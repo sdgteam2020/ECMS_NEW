@@ -684,7 +684,7 @@ function getColumnsByChoice(choice) {
                             color = 'warning';
                         }
                         else {
-                            color = 'dangers';
+                            color = 'danger';
                         }
                         return `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
                     }

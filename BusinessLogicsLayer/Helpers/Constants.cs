@@ -29,6 +29,7 @@ namespace BusinessLogicsLayer.Helpers
             internal const string Regimental = "17";
             internal const string BloodGroup = "18";
             internal const string FaultyStage = "19";
+            internal const string DispatchMode = "20";
         }
     }
 }

@@ -28,13 +28,20 @@ namespace Web.Healpers
                 ignoreProperties.Add("RankAndName");
                 ignoreProperties.Add("Unit");
             }
-            foreach (var prop in typeof(T).GetProperties())
+            else if (csvClassMapTypeEnum == CsvClassMapTypeEnum.DispatchCard)
             {
-                if (ignoreProperties.Contains(prop.Name))
-                {
-                    Map(typeof(T), prop).Ignore();
-                }
+                ignoreProperties.Add("RequestId");
+                ignoreProperties.Add("IsValid");
+                ignoreProperties.Add("Remarks");
+                ignoreProperties.Add("Status");
             }
+                foreach (var prop in typeof(T).GetProperties())
+                {
+                    if (ignoreProperties.Contains(prop.Name))
+                    {
+                        Map(typeof(T), prop).Ignore();
+                    }
+                }
         }
     }
 }

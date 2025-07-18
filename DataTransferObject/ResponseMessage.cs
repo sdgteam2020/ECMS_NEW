@@ -12,8 +12,5 @@ namespace DataTransferObject.Response
         NotSuccess=2,
         SessionExpired=3,
         DataEmpty=4
-        
-
-
     }
 }

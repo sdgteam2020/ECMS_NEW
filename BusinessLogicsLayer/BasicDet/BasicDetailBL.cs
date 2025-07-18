@@ -1,4 +1,5 @@
 ﻿using Azure;
+using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.Master;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
@@ -10,6 +11,7 @@ using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
+using Microsoft.SqlServer.Management.Smo.Wmi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,43 @@ namespace BusinessLogicsLayer.BasicDet
     {
         private readonly IBasicDetailDB _iBasicDetailDB;
         private readonly ILogger<BasicDetailBL> _logger;
+        public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger) : base(context)
+        {
+            _iBasicDetailDB = BasicDetail;
+            _logger = logger;
+        }
+        public async Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequest dTO, byte ClaimValue)
+        {
+            return await _iBasicDetailDB.GetDispatchCardStatusListForDialog(dTO, ClaimValue);
+        }
+        public async Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
+        {
+            return await _iBasicDetailDB.GetDispatchCardDataForDialog(dTO);
+        }
+        public async Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
+        {
+            return await _iBasicDetailDB.GetAllDispatchCard(dTO);
+        }
+        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch)
+        {
+            return await _iBasicDetailDB.CardDispatchCSVUpload(requests, dTODispatch);
+        }
+        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO)
+        {
+            return await _iBasicDetailDB.CardDispatchCSVCheck(requests, ClaimValue, dTO);
+        }
+        public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId)
+        {
+            return await _iBasicDetailDB.GetUserIdWithName(AspNetUsersId);
+        }
+        public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id)
+        {
+            return await _iBasicDetailDB.GetDispatchToData(CategeryId, Id);
+        }
+        public async Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue, int TDMId, int UnitId)
+        {
+            return await _iBasicDetailDB.GetddlRecordRegiment(CategeryId, ClaimValue, TDMId, UnitId);
+        }
         public async Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
             return await _iBasicDetailDB.GetRecordOfficeId(ApplyForId, ServiceNo, ArmedId, RankId, dTOApplFwdCondition);
@@ -36,14 +75,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.UploadChipAndSerial(Data);
         }
-        public async Task<string?> GetCSVString(DTOCSVExportRequest Data) 
+        public async Task<string?> GetCSVString(DTOCSVExportRequest Data)
         {
             return await _iBasicDetailDB.GetCSVString(Data);
-        }
-        public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger) : base(context)
-        {
-            _iBasicDetailDB = BasicDetail;
-            _logger = logger;
         }
         public async Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo)
         {
@@ -174,7 +208,80 @@ namespace BusinessLogicsLayer.BasicDet
             var data = await _iBasicDetailDB.ICardHistoryCompleted(RequestId);
             return data;
         }
+        public async Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(List<DTOCardDispatchCheckRequest> request,byte ClaimValue, DTODispatchOutRequest dTO)
+        {
+            try
+            {
+                // Get properties to check (excluding RequestId,Remarks, IsValid, Status)
+                var properties = typeof(DTOCardDispatchCheckRequest).GetProperties()
+                                                           .Where(p => p.Name != nameof(DTOCardDispatchCheckRequest.RequestId) 
+                                                                    && p.Name != nameof(DTOCardDispatchCheckRequest.Remarks)
+                                                                    && p.Name != nameof(DTOCardDispatchCheckRequest.IsValid)
+                                                                    && p.Name != nameof(DTOCardDispatchCheckRequest.Status))
+                                                           .ToList();
 
+                // Find duplicate values in request
+                var duplicateValuesDict = properties.ToDictionary(
+                                            prop => prop.Name,
+                                            prop => request
+                                                .Where(r => !string.IsNullOrWhiteSpace(prop.GetValue(r)?.ToString()))
+                                                .GroupBy(r => prop.GetValue(r)?.ToString()?.Trim())
+                                                .Where(g => g.Count() > 1)
+                                                .Select(g => g.Key)
+                                                .ToHashSet()
+                                        );
+
+                //Mark records with remarks
+                request = request.Select(r =>
+                {
+                    var remarks = new List<string>();
+
+                    foreach (var prop in properties)
+                    {
+                        var rawValue = prop.GetValue(r);
+                        var value = rawValue?.ToString()?.Trim();
+
+                        // Null or Blank Check
+                        if (string.IsNullOrWhiteSpace(value))
+                        {
+                            remarks.Add($"{prop.Name} is blank");
+                        }
+                        else if (prop.Name == "ChipNo" && value.Length > 30)
+                        {
+                            remarks.Add($"{prop.Name} is out of range");
+                        }
+                        else if (duplicateValuesDict[prop.Name].Contains(value))
+                        {
+                            remarks.Add($"{prop.Name} is duplicate");
+                        }
+                    }
+
+                    if (remarks.Any())
+                    {
+                        r.IsValid = false;
+                        r.Status = "SheetInValid";
+                        r.Remarks = string.Join("; ", remarks);
+                    }
+                    return r;
+                }).ToList();
+
+                var validRecords = request.Where(r => r.IsValid).ToList();
+                var invalidRecords = request.Where(r => !r.IsValid).ToList();
+                if (validRecords?.Count() > 0)
+                {
+                    var checkDbRecords = await _iBasicDetailDB.CardDispatchCSVCheck(validRecords, ClaimValue, dTO);
+                    validRecords = checkDbRecords.Where(r => r.IsValid).ToList();
+                    var invalidDbRecord = checkDbRecords.Where(r => !r.IsValid).ToList();
+                    invalidRecords = invalidRecords.Concat(invalidDbRecord).ToList();
+                }
+                request = invalidRecords.Concat(validRecords).ToList();
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "BasicDetailBL->ValidateCardPrinitng");
+            }
+            return request;
+        }
         public async Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request)
         {
             try
@@ -321,6 +428,10 @@ namespace BusinessLogicsLayer.BasicDet
         public async Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId)
         {
             return await _iBasicDetailDB.CheckBeforeDistribution(requestId);
+        }
+        public async Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId,string ToRemark)
+        {
+            return await _iBasicDetailDB.DispatchCardIn(dTODispatch, StepId, DispatchCardId, ToRemark);
         }
     }
 }

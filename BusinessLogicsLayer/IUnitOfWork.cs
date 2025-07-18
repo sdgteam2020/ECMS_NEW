@@ -6,6 +6,7 @@ using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.Corps;
+using BusinessLogicsLayer.DispatchMode;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Master;
@@ -42,6 +43,7 @@ namespace BusinessLogicsLayer
         IMasterBL MasterBL { get; }
         IOROMappingBL OROMapping { get; }
         IAfsacCellMappingBL AfsacCellMapping { get; }
+        IDispatchModeBL DispatchMode { get; }
 
 
         public Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data);

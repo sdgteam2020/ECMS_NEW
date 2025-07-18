@@ -14,13 +14,13 @@ namespace DataTransferObject.Requests
 
         [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
         public int Start { get; set; }
-        
+
         [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
         public int Length { get; set; }
-        
+
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string? searchValue { get; set; }
-        
+
         [RegularExpression(@"^[a-zA-Z_]*$", ErrorMessage = "Only alphabets and underscores are allowed.")]
         public string sortColumn { get; set; } = string.Empty;
 
@@ -82,12 +82,22 @@ namespace DataTransferObject.Requests
         public int? UnitMapId { get; set; }
         public string? MonthYear { get; set; }
     }
-    public class DTODataTablesRequestFor_BasicDetails_Index : DTODataTablesRequest 
+    public class DTODataTablesRequestFor_BasicDetails_Index : DTODataTablesRequest
     {
         public int UserId { get; set; }
         public int stepcount { get; set; }
         public int TypeId { get; set; }
         public int applyForId { get; set; }
         public string JCOOR { get; set; } = string.Empty;
+    }
+    public class DTODataTablesRequestForCardDispatch : DTODataTablesRequest
+    {
+        public byte ClaimValue { get; set; }
+        public int TDMId { get; set; }
+        public int UnitId { get; set; }
+    }
+    public class DTODataTablesRequestForCardDispatchDialog : DTODataTablesRequest
+    {
+        public int DispatchCardId { get; set; }
     }
 }

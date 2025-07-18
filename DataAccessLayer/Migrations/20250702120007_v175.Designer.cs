@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250702120007_v175")]
+    partial class v175
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -512,24 +515,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("Updatedby");
 
                     b.ToTable("MCorps");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MDispatchMode", b =>
-                {
-                    b.Property<byte>("DispatchModeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("DispatchModeId"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.HasKey("DispatchModeId");
-
-                    b.ToTable("MDispatchMode");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MDiv", b =>
@@ -2386,9 +2371,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime>("DispatchDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte>("DispatchModeId")
-                        .HasColumnType("tinyint");
-
                     b.Property<int>("FromAspNetUsersId")
                         .HasColumnType("int");
 
@@ -2409,6 +2391,11 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LotNo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("ModeOfDispatch")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("VARCHAR(50)");
@@ -2467,8 +2454,6 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ApplyForId");
 
-                    b.HasIndex("DispatchModeId");
-
                     b.HasIndex("FromAspNetUsersId");
 
                     b.HasIndex("FromUnitId");
@@ -2506,14 +2491,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("DispatchCardId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RequestId")
-                        .HasColumnType("int");
-
                     b.HasKey("DispatchCardMappingId");
 
                     b.HasIndex("DispatchCardId");
-
-                    b.HasIndex("RequestId");
 
                     b.ToTable("TrnDispatchCardMapping");
                 });
@@ -4057,12 +4037,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Master.MDispatchMode", "MDispatchMode")
-                        .WithMany()
-                        .HasForeignKey("DispatchModeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "FromApplicationUser")
                         .WithMany()
                         .HasForeignKey("FromAspNetUsersId")
@@ -4124,8 +4098,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Navigation("MApplyFor");
 
-                    b.Navigation("MDispatchMode");
-
                     b.Navigation("MRecordOffice");
 
                     b.Navigation("MRegimental");
@@ -4144,14 +4116,6 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("DispatchCardId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
-                        .WithMany()
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("MTrnICardRequest");
 
                     b.Navigation("TrnDispatchCard");
                 });

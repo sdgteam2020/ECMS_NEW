@@ -44,6 +44,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SqlServer.Management.Smo;
 using BusinessLogicsLayer.DistributeCard;
 using BusinessLogicsLayer.DestructionCard;
+using BusinessLogicsLayer.DispatchMode;
+using BusinessLogicsLayer.DispatchCard;
+using BusinessLogicsLayer.DispatchCardMapping;
 
 namespace BusinessLogicsLayer
 {
@@ -211,6 +214,12 @@ namespace BusinessLogicsLayer
             services.AddTransient<IDestructionCardBL, DestructionCardBL>();
             services.AddTransient<IDestructionCardDB, DestructionCardDB>();
 
+            services.AddTransient<IDispatchModeBL, DispatchModeBL>();
+
+            services.AddTransient<IDispatchCardBL, DispatchCardBL>();
+
+            services.AddTransient<IDispatchCardMappingBL, DispatchCardMappingBL>();
+            services.AddTransient<IDispatchCardMappingDB, DispatchCardMappingDB>();
 
 
 

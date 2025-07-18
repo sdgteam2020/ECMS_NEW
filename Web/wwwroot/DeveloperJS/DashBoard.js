@@ -44,6 +44,17 @@
         event.stopPropagation();
         location.href = '/Master/MapUnitChangeRequest';
     });
+    document.getElementById("btnDispatchCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/DispatchCard';
+    });
+    var btnAdd = document.getElementById('btnAddDispatchCard');
+    if (btnAdd) {
+        document.getElementById("btnAddDispatchCard").addEventListener("click", function (event) {
+            event.stopPropagation();
+            location.href = '/BasicDetail/DispatchOut';
+        });
+    }
 
     //document.getElementsByClassName("btnAdd").addEventListener("click", function (event) {
     //    event.stopPropagation(); // Prevent click from bubbling to the <a>
