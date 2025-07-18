@@ -4502,5 +4502,48 @@ namespace Web.Controllers
             }
             return Ok(response);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetDispatchCardStatusListForDialog(DTODataTablesRequest dTO)
+        {
+            try
+            {
+                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+                byte ClaimValue;
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    ClaimValue = 1;
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                {
+                    ClaimValue = 2;
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                {
+                    ClaimValue = 3;
+                }
+                else
+                {
+                    ClaimValue = 0;
+                }
+                return Json(await basicDetailBL.GetDispatchCardStatusListForDialog(dTO, ClaimValue));
+            }
+            catch (Exception ex)
+            {
+                List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
+                var responseData = new DTODataTablesResponse<DTODispatchCardStatusResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOCards
+                };
+                _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
+                return Json(responseData);
+            }
+        }
     }
 }

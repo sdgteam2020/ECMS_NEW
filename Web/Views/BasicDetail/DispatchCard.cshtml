@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "List of Dispatch Card";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var claimValue = ViewBag.ClaimValue;
 }
 <style>
     .count-label {
@@ -47,7 +48,7 @@
 <div class="containerMain mt-n10">
     <div class="card mb-3 ">
         <div class="card-header">
-            <span class="d-none" id="spnClaimValue">@ViewBag.ClaimValue</span>
+            <span class="d-none" id="spnClaimValue">@claimValue</span>
             <div class="row">
                 <div class="col-xl-12 text-left">
                     <h3>
@@ -64,7 +65,11 @@
                         @*                         Total Faulty <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                     </h6>
                     <div>
-                        <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                        <button type="button" id="btnDispatchStatus" class="btn btn-outline-success font-weight-600 btn-sm mr-1"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Dispatch Card Status</button>
+                        @if (claimValue == 1 || claimValue == 2 || claimValue == 3)
+                        {
+                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                        }
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -98,7 +103,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitle">Dispatch Card Lot details</span></h5>
+                <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitle"></span></h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -106,18 +111,6 @@
                     <div class="table-responsive">
                         <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
                             <thead>
-                                <tr>
-                                    <th class="wd-40-f">S No</th>
-                                    <th class="nowrap">Request ID</th>
-                                    <th class="nowrap">Arm / Service</th>
-                                    <th class="nowrap">Unit</th>
-                                    <th class="nowrap">ORO</th>
-                                    <th class="nowrap">Regt</th>
-                                    <th class="nowrap">Army No</th>
-                                    <th class="nowrap">Rank & Name</th>
-                                    <th class="nowrap">Card No</th>
-                                    <th class="nowrap">Chip No</th>
-                                </tr>
                             </thead>
                         </table>
                     </div>

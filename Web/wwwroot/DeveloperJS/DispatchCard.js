@@ -2,9 +2,18 @@
 var table2;
 $(function () {
     BindData();
-    $("#btnAdd").on("click", function () {
-        location.href = '/BasicDetail/DispatchOut';
+    if ($('#btnAdd').length) {
+        $("#btnAdd").on("click", function () {
+            location.href = '/BasicDetail/DispatchOut';
+        });
+    }
+    $("#btnDispatchStatus").on("click", function () {
+        $("#lblModelTitle").html('Dispatch Card Status details');
+        DispatchCardStatusListBindDialog(function () {
+            $("#DataTableDialog").modal("show");
+        })
     });
+
     $("#btnSubmit").on('click', async function (e) {
         let formId = '#SaveDispatchCardIn';
         $.validator.unobtrusive.parse($(formId));
@@ -260,7 +269,7 @@ function BindData() {
         ],
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search Army No" // Add custom placeholder
+            searchPlaceholder: "Search Cat/LotNo/CIC/Army No" // Add custom placeholder
         },
         dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
@@ -288,6 +297,11 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
+        initComplete: function () {
+            // Add tooltip to the search input box
+            let searchBox = $('div.dataTables_filter input');
+            searchBox.attr('title', 'Search Cat/LotNo/CIC/Army No');
+        },
         drawCallback: function (settings) {
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -303,10 +317,10 @@ function BindData() {
             $("#tbldata tbody").off("click", ".cls-btnDialog").on("click", ".cls-btnDialog", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.DispatchCardId != null) {
-                    $("#tbldatadialog").DataTable().destroy();
                     $("#lblModelTitle").html('Dispatch Card Lot details');
-                    $("#DataTableDialog").modal('show');
-                    BindDialog(rowData.DispatchCardId, rowData.ApplyForId);
+                    BindDialog(rowData.DispatchCardId, rowData.ApplyForId, function () {
+                        $("#DataTableDialog").modal("show");
+                    })
                 }
             });
 
@@ -331,8 +345,12 @@ function BindData() {
         }
     });
 }
-
-function BindDialog(DispatchCardId, ApplyForId) {
+function BindDialog(DispatchCardId, ApplyForId, callback) {
+    if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
+        $("#tbldatadialog").DataTable().destroy();
+        $("#tbldatadialog").empty(); // Clear old thead/tbody
+    }
+    const columns = getColumnsByChoice(ApplyForId);
     table2 = $("#tbldatadialog").DataTable({
         processing: true,
         serverSide: true,
@@ -351,6 +369,258 @@ function BindDialog(DispatchCardId, ApplyForId) {
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardDataForDialog", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(requestData).toString()
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
+
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },
+        columns: columns,
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search ReqId/Arm/SUSNo/" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_DispathCard',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        // 👇 Show modal only after table (header + data) is fully rendered
+        initComplete: function () {
+            if (typeof callback === "function") {
+                callback(); // show modal now
+            }
+            // Add tooltip to the search input box
+            let searchBox = $('div.dataTables_filter input');
+            searchBox.attr('title', 'Search ReqId/Arm/SUSNo/Army No/Chip No/Card Serial No');
+        }
+    });
+}
+function getColumnsByChoice(choice) {
+    let columns = [];
+
+    switch (choice) {
+        case 1:
+            columns = [
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Request ID",
+                    data: 'RequestId',
+                    name: 'RequestId',
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
+                    title: "Unit",
+                    data: "UnitAbbreviation",
+                    name: "UnitAbbreviation",
+                    orderable: false
+                },
+                {
+                    title: "SUS No",
+                    data: "SUSNo",
+                    name: "SUSNo"
+                },
+                {
+                    title: "ORO",
+                    data: "RecordOfficeName",
+                    name: "RecordOfficeName",
+                    render: function (data, type, row) {
+                        return (data ?? "");
+                    }
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
+                    render: function (data, type, row) {
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
+                    }
+                },
+                {
+                    title: "Rank & Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
+                    }
+                },
+                {
+                    title: "Card Serial No",
+                    data: "CardSerialNo",
+                    name: "CardSerialNo"
+                },
+                {
+                    title: "Chip No",
+                    data: "ChipNo",
+                    name: "ChipNo"
+                },
+            ];
+            break;
+
+        case 2:
+            columns = [
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Request ID",
+                    data: 'RequestId',
+                    name: 'RequestId',
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
+                    title: "Unit",
+                    data: "UnitAbbreviation",
+                    name: "UnitAbbreviation",
+                    orderable: false
+                },
+                {
+                    title: "SUS No",
+                    data: "SUSNo",
+                    name: "SUSNo"
+                },
+                {
+                    title: "Regt",
+                    data: "RegimentalName",
+                    name: "RegimentalName",
+                    render: function (data, type, row) {
+                        return (data ?? "");
+                    }
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
+                    render: function (data, type, row) {
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
+                    }
+                },
+                {
+                    title: "Rank & Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
+                    }
+                },
+                {
+                    title: "Card Serial No",
+                    data: "CardSerialNo",
+                    name: "CardSerialNo"
+                },
+                {
+                    title: "Chip No",
+                    data: "ChipNo",
+                    name: "ChipNo"
+                },
+            ];
+            break;
+
+        default:
+            columns = [
+                { title: "S No", data: null, orderable: false, render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1 },
+                { title: "ID", data: 'Id' },
+                { title: "Description", data: 'Description' }
+            ];
+    }
+
+    return columns;
+}
+
+function DispatchCardStatusListBindDialog(callback) {
+    if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
+        $("#tbldatadialog").DataTable().destroy();
+        $("#tbldatadialog").empty(); // Clear old thead/tbody
+    }
+    table2 = $("#tbldatadialog").DataTable({
+        processing: true,
+        serverSide: true,
+        filter: true,
+        stateSave: true,
+        order: [[1, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: new URLSearchParams(requestData).toString()
@@ -391,17 +661,28 @@ function BindDialog(DispatchCardId, ApplyForId) {
                 title: "Unit",
                 data: "UnitAbbreviation",
                 name: "UnitAbbreviation",
-                orderable: false,
+                orderable: false
+            },
+            {
+                title: "SUS No",
+                data: "SUSNo",
+                name: "SUSNo"
             },
             {
                 title: "ORO",
                 data: "RecordOfficeName",
-                name: "RecordOfficeName"
+                name: "RecordOfficeName",
+                render: function (data, type, row) {
+                    return (data ?? "");
+                }
             },
             {
                 title: "Regt",
                 data: "RegimentalName",
-                name: "RegimentalName"
+                name: "RegimentalName",
+                render: function (data, type, row) {
+                    return (data ?? "");
+                }
             },
             {
                 title: "Army No",
@@ -438,20 +719,18 @@ function BindDialog(DispatchCardId, ApplyForId) {
                 data: "ChipNo",
                 name: "ChipNo"
             },
+            {
+                title: "Status",
+                data: "StepId",
+                name: "StepId",
+                render: function (data, type, row) {
+                    return (row.Status);
+                }
+            },
         ],
-        initComplete: function () {
-            // Hide or show column (e.g. salary column at index 3)
-            if (parseInt(ApplyForId) == 1) {
-                table2.column(4).visible(true); 
-                table2.column(5).visible(false); 
-            } else {
-                table2.column(4).visible(false); 
-                table2.column(5).visible(true)
-            }
-        },
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search Service No" // Add custom placeholder
+            searchPlaceholder: "Search ReqId/Arm/SUSNo/" // Add custom placeholder
         },
         dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
@@ -478,6 +757,15 @@ function BindDialog(DispatchCardId, ApplyForId) {
                 customize: function (doc) {
                     WaterMarkOnPdf(doc)
                 }
-            }]
+            }],
+        // 👇 Show modal only after table (header + data) is fully rendered
+        initComplete: function () {
+            if (typeof callback === "function") {
+                callback(); // show modal now
+            }
+            // Add tooltip to the search input box
+            let searchBox = $('div.dataTables_filter input');
+            searchBox.attr('title', 'Search ReqId/Arm/SUSNo/Army No/Chip No/Card Serial No');
+        }
     });
 }

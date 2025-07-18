@@ -15,6 +15,7 @@ namespace BusinessLogicsLayer.BasicDet
 {
     public interface IBasicDetailBL: IGenericRepositoryDL<BasicDetail>
     {
+        public Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequest dTO, byte ClaimValue);
         public Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO);
         public Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO);
         public Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch);

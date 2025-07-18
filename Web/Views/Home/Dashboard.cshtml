@@ -6,15 +6,15 @@
 }
 <style>
     .clickable {
-        height: 190px;
-        width: 190px;
-        display: block;
-        margin-bottom: 25px;
+    height: 190px;
+    width: 190px;
+    display: block;
+    margin-bottom: 25px;
     }
 
     .p-4 {
-        padding: 1.5rem !important;
-        padding-bottom: 4.5rem !important;
+    padding: 1.5rem !important;
+    padding-bottom: 4.5rem !important;
     }
 </style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -162,9 +162,18 @@
                     <div class="col-md-2 col-sm-6">
                         <a href="#" class="clickable">
                             <div class="counter pink armyNoallserchPopup" id="btnDispatchCard">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm" id="btnAddDispatchCard"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
-                                </div>
+                                @if (claims.Count > 0 && (claims.Any(i => i.Value == "ICard Export Data") || (claims.Any(i => i.Value == "Dispatch Card") && claims.Any(i => i.Value == "Appl Approver")) || claims.Any(i => i.Value == "Dispatch Card")))
+                                {
+                                    <div class="counter-icon">
+                                        <button class="btn btn-outline-success font-weight-600 btn-sm" id="btnAddDispatchCard"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="counter-icon">
+                                        <i class="fa fa-truck"></i>
+                                    </div>
+                                }
                                 <span class="counter-value" id="TotDispatchCards"></span>
                                 <h3>Cards Dispatch</h3>
                             </div>
