@@ -65,6 +65,7 @@ namespace DataAccessLayer
 
             allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
+                ["ApplyForId"] = "mappl.ApplyForId",
                 ["RequestId"] = "req.RequestId",
                 ["StepId"] = "stepc.StepId",
                 ["ArmedAbbreviation"] = "marmed.Abbreviation",
@@ -77,7 +78,7 @@ namespace DataAccessLayer
             };
             if (ClaimValue == 1)
             {
-                query = @"req.RequestId,stepc.StepId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 6 THEN 'Pending' 
                             WHEN stepc.StepId >= 11 THEN 'Dispatch Out'
@@ -86,6 +87,7 @@ namespace DataAccessLayer
                         from TrnStepCounter stepc
                         INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                         INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
                         INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
                         INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                         INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
@@ -104,7 +106,7 @@ namespace DataAccessLayer
             }
             else if (ClaimValue == 2 || ClaimValue == 3)
             {
-                query = @"req.RequestId,stepc.StepId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 12 THEN 'Pending' 
                             WHEN stepc.StepId >= 13 THEN 'Dispatch Out'
@@ -113,6 +115,7 @@ namespace DataAccessLayer
                         from TrnStepCounter stepc
                         INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                         INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
                         INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
                         INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                         INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
@@ -131,7 +134,7 @@ namespace DataAccessLayer
             }
             else
             {
-                query = @"req.RequestId,stepc.StepId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 14 THEN 'Pending' 
                             WHEN stepc.StepId = 15 THEN 'Card Distribute'
@@ -140,6 +143,7 @@ namespace DataAccessLayer
                         from TrnStepCounter stepc
                         INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                         INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
                         INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
                         INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                         INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
@@ -1499,7 +1503,6 @@ namespace DataAccessLayer
         }
         public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
-            string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
             string query = "";
             if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
             {
@@ -1512,15 +1515,39 @@ namespace DataAccessLayer
             }
             else if (dto.TypeId == KeyConstants.FaultyCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                if (dto.Claim == 1)
+                {
+                    query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
                                 inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 where ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
+                }
+                else if (dto.Claim == 2)
+                {
+
+                }
+                else if (dto.Claim == 3)
+                {
+
+                }
+                else
+                {
+                    query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                                from BasicDetails basi
+                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=14
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                                where ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
+                }
+
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
@@ -1528,7 +1555,7 @@ namespace DataAccessLayer
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId = 11
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId = 15
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
@@ -1541,7 +1568,7 @@ namespace DataAccessLayer
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,2)
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,11)
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,11,12,13,14,15)
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
@@ -1555,7 +1582,7 @@ namespace DataAccessLayer
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=14
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 Left join TrnDistributeCards tdc on req.RequestId = tdc.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
@@ -1568,7 +1595,7 @@ namespace DataAccessLayer
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,11)
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (15)
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnDestructionCards tlc on req.RequestId = tlc.RequestId

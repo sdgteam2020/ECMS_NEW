@@ -109,6 +109,8 @@ async function Save() {
 function BindData() {
     $("#tbldata").DataTable().destroy();
     table = $("#tbldata").DataTable({
+        autoWidth: false, // Let us handle width via CSS
+        responsive: true, // Responsive breaks layout for width control
         processing: true,
         serverSide: true,
         filter: true,
@@ -352,6 +354,8 @@ function BindDialog(DispatchCardId, ApplyForId, callback) {
     }
     const columns = getColumnsByChoice(ApplyForId);
     table2 = $("#tbldatadialog").DataTable({
+        autoWidth: false, // Let us handle width via CSS
+        responsive: true, // Responsive breaks layout for width control
         processing: true,
         serverSide: true,
         filter: true,
@@ -598,13 +602,14 @@ function getColumnsByChoice(choice) {
 
     return columns;
 }
-
 function DispatchCardStatusListBindDialog(callback) {
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
         $("#tbldatadialog").DataTable().destroy();
         $("#tbldatadialog").empty(); // Clear old thead/tbody
     }
     table2 = $("#tbldatadialog").DataTable({
+        autoWidth: false, // Let us handle width via CSS
+        responsive: true, // Responsive breaks layout for width control
         processing: true,
         serverSide: true,
         filter: true,
@@ -648,6 +653,14 @@ function DispatchCardStatusListBindDialog(callback) {
                 }
             },
             {
+                title: "Categery",
+                data: "ApplyForId",
+                name: "Categery",
+                render: function (data, type, row) {
+                    return (row.ApplyFor);
+                }
+            },
+            {
                 title: "Request ID",
                 data: 'RequestId',
                 name: 'RequestId',
@@ -672,16 +685,18 @@ function DispatchCardStatusListBindDialog(callback) {
                 title: "ORO",
                 data: "RecordOfficeName",
                 name: "RecordOfficeName",
+                orderable: false,
                 render: function (data, type, row) {
-                    return (data ?? "");
+                    return (row.ApplyForId == 1 ? data : "");
                 }
             },
             {
                 title: "Regt",
                 data: "RegimentalName",
                 name: "RegimentalName",
+                orderable: false,
                 render: function (data, type, row) {
-                    return (data ?? "");
+                    return (row.ApplyForId == 2 ? data : "");
                 }
             },
             {
@@ -724,7 +739,14 @@ function DispatchCardStatusListBindDialog(callback) {
                 data: "StepId",
                 name: "StepId",
                 render: function (data, type, row) {
-                    return (row.Status);
+                    let color;
+                    if (row.Status == `Pending` ) {
+                        color = 'danger';
+                    }
+                    else {
+                        color = 'success';
+                    }
+                    return `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
                 }
             },
         ],

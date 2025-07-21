@@ -3378,16 +3378,24 @@ namespace Web.Controllers
                     var UserClaims = await userManager.GetClaimsAsync(user);
                     if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                     {
-                        dto.Claim = true;
+                        dto.Claim = 1;
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                    {
+                        dto.Claim = 2;
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                    {
+                        dto.Claim = 3;
                     }
                     else
                     {
-                        dto.Claim = false;
+                        dto.Claim = 0;
                     }
                 }
                 else
                 {
-                    dto.Claim = true;
+                    dto.Claim = 0;
                 }
 
 
@@ -3984,6 +3992,7 @@ namespace Web.Controllers
             response = await basicDetailBL.GetUserIdWithName(AspNetUsersId);
             return Ok(response);
         }
+
         public async Task<IActionResult> GetDispatchToData(byte CategeryId, byte RecordRegimentId)
         {
             DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
@@ -3991,6 +4000,7 @@ namespace Web.Controllers
             response = await basicDetailBL.GetDispatchToData(CategeryId, RecordRegimentId);
             return Ok(response);
         }
+
         public async Task<IActionResult> GetddlRecordRegiment(byte CategeryId)
         {
             DtoSession? dtoSession = new DtoSession();
@@ -4044,6 +4054,7 @@ namespace Web.Controllers
                 return Ok(response);
             }
         }
+
         public async Task<ActionResult> DispatchOut()
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -4073,6 +4084,7 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[Authorize(Policy = "ICardExportDataPolicy")]
@@ -4210,16 +4222,16 @@ namespace Web.Controllers
                         DTODispatchOutRequestWithoutIFormFile dTODispatch = new DTODispatchOutRequestWithoutIFormFile
                         {
                             DispatchCardId = dTO.DispatchCardId,
-                            Step=dTO.Step,
+                            Step = dTO.Step,
                             ApplyForId = dTO.ApplyForId,
-                            RegId =dTO.RegId,
+                            RegId = dTO.RegId,
                             RecordOfficeId = dTO.RecordOfficeId,
                             OutDate = dTO.OutDate,
                             ReceiptDate = dTO.ReceiptDate,
                             DispatchDate = dTO.DispatchDate,
                             DispatchModeId = dTO.DispatchModeId,
-                            RefOfDispatch =dTO.RefOfDispatch,
-                            LotNo= dTO.LotNo,
+                            RefOfDispatch = dTO.RefOfDispatch,
+                            LotNo = dTO.LotNo,
                             NameOfCourierIncharge = dTO.NameOfCourierIncharge,
                             UploadFilePath = dTO.UploadFilePath,
                             FromRemark = dTO.FromRemark,
@@ -4230,7 +4242,7 @@ namespace Web.Controllers
                             FromUserId = dTO.FromUserId,
                             FromAspNetUsersId = dTO.FromAspNetUsersId,
                             ToAspNetUsersId = dTO.ToAspNetUsersId,
-                            IsComplete= dTO.IsComplete,
+                            IsComplete = dTO.IsComplete,
                             IsActive = dTO.IsActive,
                             Updatedby = dTO.Updatedby,
                             UpdatedOn = dTO.UpdatedOn
@@ -4273,6 +4285,7 @@ namespace Web.Controllers
             }
         }
         [HttpGet]
+
         public async Task<IActionResult> ICardDispatchValidRecordsUpload()
         {
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
@@ -4282,7 +4295,7 @@ namespace Web.Controllers
 
                 DTODispatchOutRequestWithoutIFormFile? dTODispatch = SessionHeplers.GetObject<DTODispatchOutRequestWithoutIFormFile>(HttpContext.Session, "DestructionCardData");
 
-                if (records?.Count() > 0 && dTODispatch!=null)
+                if (records?.Count() > 0 && dTODispatch != null)
                 {
 
                     response = await basicDetailBL.CardDispatchCSVUpload(records, dTODispatch);
@@ -4308,7 +4321,6 @@ namespace Web.Controllers
                 HttpContext.Session.Remove("DestructionCardData");
             }
             return Json(response);
-            #endregion
         }
 
         public async Task<IActionResult> DispatchCard()
@@ -4413,7 +4425,7 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
         {
@@ -4470,7 +4482,7 @@ namespace Web.Controllers
                             }
                             List<DTODispatchCardInRequest> dTODispatchCards = new List<DTODispatchCardInRequest>();
                             dTODispatchCards.AddRange(await dispatchCardMappingBL.GetRequestIds(trnDispatchCard.DispatchCardId));
-                            response = await basicDetailBL.DispatchCardIn(dTODispatchCards, StepId, dTO.DispatchCardId,dTO.ToRemark);
+                            response = await basicDetailBL.DispatchCardIn(dTODispatchCards, StepId, dTO.DispatchCardId, dTO.ToRemark);
                             response.Value = string.Empty;
                         }
                     }
@@ -4545,5 +4557,7 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
+
+        #endregion
     }
 }

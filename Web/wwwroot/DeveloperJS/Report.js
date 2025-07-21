@@ -680,11 +680,14 @@ function getColumnsByChoice(choice) {
                     name: "StepId",
                     render: function (data, type, row) {
                         let color;
-                        if (data == 1 || data == 2 || data == 3 || data == 4 || data == 5 || data == 6) {
+                        if (data == 1 || data == 2 || data == 3 || data == 4 || data == 5 || data == 6 || data == 11 || data == 12 || data == 13 || data == 14) {
                             color = 'warning';
                         }
-                        else {
+                        else if (data == 7 || data == 8 || data == 9 || data == 10) {
                             color = 'danger';
+                        }
+                        else {
+                            color = 'success';
                         }
                         return `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
                     }
@@ -983,11 +986,14 @@ function getColumnsByChoice(choice) {
                     name: "StepId",
                     render: function (data, type, row) {
                         let color;
-                        if (data == 1 || data == 2 || data == 3 || data == 4 || data == 5 || data == 6) {
+                        if (data == 1 || data == 2 || data == 3 || data == 4 || data == 5 || data == 6 || data == 11 || data == 12 || data == 13 || data == 14) {
                             color = 'warning';
                         }
+                        else if (data == 7 || data == 8 || data == 9 || data == 10) {
+                            color = 'danger';
+                        }
                         else {
-                            color = 'dangers';
+                            color = 'success';
                         }
                         return `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
                     }

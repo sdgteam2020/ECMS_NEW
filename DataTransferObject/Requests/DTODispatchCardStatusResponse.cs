@@ -11,6 +11,8 @@ namespace DataTransferObject.Requests
         public int TotalFilteredRecords { get; set; }
         public int RequestId { get; set; }
         public byte StepId { get; set; }
+        public byte ApplyForId { get; set; }
+        public string ApplyFor { get; set; } = string.Empty;
         public string NameAsPerRecord { get; set; } = string.Empty;
         public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
