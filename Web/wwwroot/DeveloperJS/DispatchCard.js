@@ -9,9 +9,14 @@ $(function () {
     }
     $("#btnDispatchStatus").on("click", function () {
         $("#lblModelTitle").html('Dispatch Card Status details');
+
+        // Show the modal first
+        $("#DataTableDialog").modal("show");
+
+        // Then initialize the table
         DispatchCardStatusListBindDialog(function () {
-            $("#DataTableDialog").modal("show");
-        })
+            // Callback to show modal after DataTable is ready
+        });
     });
 
     $("#btnSubmit").on('click', async function (e) {
@@ -603,11 +608,158 @@ function getColumnsByChoice(choice) {
     return columns;
 }
 function DispatchCardStatusListBindDialog(callback) {
+    var table2 = $("#tbldatadialog");
+
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
-        $("#tbldatadialog").DataTable().destroy();
-        $("#tbldatadialog").empty(); // Clear old thead/tbody
+        // Destroy the DataTable and clear the table content
+        $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldatadialog thead").empty(); // Clear old thead
+        $("#tbldatadialog tbody").empty(); // Clear old tbody
     }
-    table2 = $("#tbldatadialog").DataTable({
+    let columns = [
+        {
+            title: "",
+            data: null,
+            name: "Id",
+            orderable: false, // Disable sorting for this column
+            render: function (data, type, row, meta) {
+                if (row.Status == `Pending`) {
+                    return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input" id="${row.RequestId}">
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                }
+                else {
+                    return `<div></div>`;
+                }
+
+            }
+        },
+        {
+            title: "S No",
+            data: null,
+            name: "SerialNumber",
+            orderable: false, // Disable sorting for this column
+            render: function (data, type, row, meta) {
+                // Calculate serial number based on row index
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }
+        },
+        {
+            title: "Categery",
+            data: "ApplyForId",
+            name: "Categery",
+            render: function (data, type, row) {
+                return (row.ApplyFor);
+            }
+        },
+        {
+            title: "Request ID",
+            data: 'RequestId',
+            name: 'RequestId',
+        },
+        {
+            title: "Arm / Service",
+            data: "ArmedAbbreviation",
+            name: "ArmedAbbreviation"
+        },
+        {
+            title: "Unit",
+            data: "UnitAbbreviation",
+            name: "UnitAbbreviation",
+            orderable: false
+        },
+        {
+            title: "SUS No",
+            data: "SUSNo",
+            name: "SUSNo"
+        },
+        {
+            title: "ORO",
+            data: "RecordOfficeName",
+            name: "RecordOfficeName",
+            render: function (data, type, row) {
+                return (row.ApplyForId == 1 ? data : "");
+            }
+        },
+        {
+            title: "Regt",
+            data: "RegimentalName",
+            name: "RegimentalName",
+            render: function (data, type, row) {
+                return (row.ApplyForId == 2 ? data : "");
+            }
+        },
+        {
+            title: "Army No",
+            data: "ServiceNo",
+            name: "ServiceNo",
+            render: function (data, type, row) {
+                // Check if first two characters are alphabets
+                if (/^[A-Za-z]{2}/.test(data)) {
+                    // Insert space after first two characters
+                    return data.slice(0, 2) + ' ' + data.slice(2);
+                } else {
+                    // No space needed
+                    return data;
+                }
+            }
+        },
+        {
+            title: "Rank & Name",
+            data: null,
+            name: null,
+            orderable: false,
+            render: function (data, type, row) {
+                let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                return (fullName);
+            }
+        },
+        {
+            title: "Card Serial No",
+            data: "CardSerialNo",
+            name: "CardSerialNo"
+        },
+        {
+            title: "Chip No",
+            data: "ChipNo",
+            name: "ChipNo"
+        },
+        {
+            title: "Status",
+            data: "StepId",
+            name: "StepId",
+            render: function (data, type, row) {
+                let color;
+                if (row.Status == `Pending`) {
+                    color = 'danger';
+                }
+                else {
+                    color = 'success';
+                }
+                return `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
+            }
+        },
+    ];
+
+    var thead = $('<thead><tr></tr></thead>');
+    var headerRow = thead.find('tr');
+
+    // Add the "select all" checkbox to the first column of the header
+    headerRow.append('<th><div class="custom-control custom-checkbox small">' +
+        '<input type="checkbox" class="custom-control-input" id="chkAll">' +
+        '<label class="custom-control-label" for="chkAll"></label>' +
+        '</div></th>');
+
+    // Append other dynamic columns to the header
+    columns.slice(1).forEach(function (col) {
+        headerRow.append('<th>' + col.title + '</th>');
+    });
+
+    // Append the header to the table (only once)
+    table2.append(thead);
+
+    table2.DataTable({
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
         processing: true,
@@ -641,118 +793,10 @@ function DispatchCardStatusListBindDialog(callback) {
                 console.error("Error fetching data:", error);
             }
         },
-        columns: [
-            {
-                title: "S No",
-                data: null,
-                name: "SerialNumber",
-                orderable: false, // Disable sorting for this column
-                render: function (data, type, row, meta) {
-                    // Calculate serial number based on row index
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            {
-                title: "Categery",
-                data: "ApplyForId",
-                name: "Categery",
-                render: function (data, type, row) {
-                    return (row.ApplyFor);
-                }
-            },
-            {
-                title: "Request ID",
-                data: 'RequestId',
-                name: 'RequestId',
-            },
-            {
-                title: "Arm / Service",
-                data: "ArmedAbbreviation",
-                name: "ArmedAbbreviation"
-            },
-            {
-                title: "Unit",
-                data: "UnitAbbreviation",
-                name: "UnitAbbreviation",
-                orderable: false
-            },
-            {
-                title: "SUS No",
-                data: "SUSNo",
-                name: "SUSNo"
-            },
-            {
-                title: "ORO",
-                data: "RecordOfficeName",
-                name: "RecordOfficeName",
-                orderable: false,
-                render: function (data, type, row) {
-                    return (row.ApplyForId == 1 ? data : "");
-                }
-            },
-            {
-                title: "Regt",
-                data: "RegimentalName",
-                name: "RegimentalName",
-                orderable: false,
-                render: function (data, type, row) {
-                    return (row.ApplyForId == 2 ? data : "");
-                }
-            },
-            {
-                title: "Army No",
-                data: "ServiceNo",
-                name: "ServiceNo",
-                render: function (data, type, row) {
-                    // Check if first two characters are alphabets
-                    if (/^[A-Za-z]{2}/.test(data)) {
-                        // Insert space after first two characters
-                        return data.slice(0, 2) + ' ' + data.slice(2);
-                    } else {
-                        // No space needed
-                        return data;
-                    }
-                }
-            },
-            {
-                title: "Rank & Name",
-                data: null,
-                name: null,
-                orderable: false,
-                render: function (data, type, row) {
-                    let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                    return (fullName);
-                }
-            },
-            {
-                title: "Card Serial No",
-                data: "CardSerialNo",
-                name: "CardSerialNo"
-            },
-            {
-                title: "Chip No",
-                data: "ChipNo",
-                name: "ChipNo"
-            },
-            {
-                title: "Status",
-                data: "StepId",
-                name: "StepId",
-                render: function (data, type, row) {
-                    let color;
-                    if (row.Status == `Pending` ) {
-                        color = 'danger';
-                    }
-                    else {
-                        color = 'success';
-                    }
-                    return `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
-                }
-            },
-        ],
+        columns: columns,
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search ReqId/Arm/SUSNo/" // Add custom placeholder
+            searchPlaceholder: "Search ReqId/Arm/SUSNo/ORO/Regt" // Add custom placeholder
         },
         dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
@@ -783,11 +827,22 @@ function DispatchCardStatusListBindDialog(callback) {
         // 👇 Show modal only after table (header + data) is fully rendered
         initComplete: function () {
             if (typeof callback === "function") {
-                callback(); // show modal now
+                callback(); // Show modal after DataTable is initialized
             }
             // Add tooltip to the search input box
             let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search ReqId/Arm/SUSNo/Army No/Chip No/Card Serial No');
+            searchBox.attr('title', 'Search ReqId/Arm/SUSNo/ORO/Regt/Army No/Chip No/Card Serial No');
         }
+    });
+    // Checkbox select all/deselect all functionality
+    $('#chkAll').on('change', function () {
+        var isChecked = $(this).prop('checked');
+        $('#tbldatadialog tbody input[type="checkbox"]').prop('checked', isChecked);
+    });
+
+    // Optional: Detect individual checkbox changes to check if all are selected
+    $('#tbldatadialog tbody').on('change', 'input[type="checkbox"]', function () {
+        var allChecked = $('#tbldatadialog tbody input[type="checkbox"]:checked').length === $('#tbldatadialog tbody input[type="checkbox"]').length;
+        $('#chkAll').prop('checked', allChecked);
     });
 }

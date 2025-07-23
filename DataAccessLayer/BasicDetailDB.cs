@@ -99,6 +99,8 @@ namespace DataAccessLayer
                             AND (
                                 req.RequestId LIKE '%' + @SearchTerm + '%' OR
                                 marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
                                 basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
                                 req.ChipNo LIKE '%' + @SearchTerm + '%' OR
                                 req.CardSerialNo LIKE '%' + @SearchTerm + '%'
@@ -127,6 +129,8 @@ namespace DataAccessLayer
                             AND (
                                 req.RequestId LIKE '%' + @SearchTerm + '%' OR
                                 marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
                                 basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
                                 req.ChipNo LIKE '%' + @SearchTerm + '%' OR
                                 req.CardSerialNo LIKE '%' + @SearchTerm + '%'
@@ -155,6 +159,8 @@ namespace DataAccessLayer
                             AND (
                                 req.RequestId LIKE '%' + @SearchTerm + '%' OR
                                 marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
                                 basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
                                 req.ChipNo LIKE '%' + @SearchTerm + '%' OR
                                 req.CardSerialNo LIKE '%' + @SearchTerm + '%'
@@ -1527,14 +1533,14 @@ namespace DataAccessLayer
                                 where ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
                 }
-                else if (dto.Claim == 2)
-                {
+                //else if (dto.Claim == 2)
+                //{
 
-                }
-                else if (dto.Claim == 3)
-                {
+                //}
+                //else if (dto.Claim == 3)
+                //{
 
-                }
+                //}
                 else
                 {
                     query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
