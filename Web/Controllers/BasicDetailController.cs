@@ -4516,7 +4516,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetDispatchCardStatusListForDialog(DTODataTablesRequest dTO)
+        public async Task<IActionResult> GetDispatchCardStatusListForDialog([FromBody] DTODataTablesRequestForCardStatusList dTO)
         {
             try
             {

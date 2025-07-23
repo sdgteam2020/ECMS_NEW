@@ -31,7 +31,7 @@ namespace BusinessLogicsLayer.BasicDet
             _iBasicDetailDB = BasicDetail;
             _logger = logger;
         }
-        public async Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequest dTO, byte ClaimValue)
+        public async Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequestForCardStatusList dTO, byte ClaimValue)
         {
             return await _iBasicDetailDB.GetDispatchCardStatusListForDialog(dTO, ClaimValue);
         }

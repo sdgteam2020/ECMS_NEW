@@ -100,4 +100,8 @@ namespace DataTransferObject.Requests
     {
         public int DispatchCardId { get; set; }
     }
+    public class DTODataTablesRequestForCardStatusList:DTODataTablesRequest
+    {
+        public int[]? selectedIds { get; set; }
+    }
 }

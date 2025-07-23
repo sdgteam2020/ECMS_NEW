@@ -1,5 +1,6 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var table2;
+var selectedIds = [];
 $(function () {
     BindData();
     if ($('#btnAdd').length) {
@@ -618,17 +619,17 @@ function DispatchCardStatusListBindDialog(callback) {
     }
     let columns = [
         {
-            title: '<div class="custom-control custom-checkbox small">' +
-                '<input type="checkbox" class="custom-control-input" id="chkAll">' +
-                '<label class="custom-control-label" for="chkAll"></label>' +
-        ' </div> ',
+            title: `<div class="custom-control custom-checkbox small">
+                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                    <label class="custom-control-label" for="chkAll"></label>
+                    </div>`,
             data: null,
             name: "Id",
             orderable: false, // Disable sorting for this column
             render: function (data, type, row, meta) {
                 if (row.Status == `Pending`) {
                     return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input" id="${row.RequestId}">
+                                    <input type="checkbox" class="custom-control-input" id="${row.RequestId}" value="${row.RequestId}">
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
                 }
@@ -746,23 +747,6 @@ function DispatchCardStatusListBindDialog(callback) {
         },
     ];
 
-    var thead = $('<thead><tr></tr></thead>');
-    let headerRow = thead.find('tr');
-
-    // Add the "select all" checkbox to the first column of the header
-    //headerRow.append('<th><div class="custom-control custom-checkbox small">' +
-    //    '<input type="checkbox" class="custom-control-input" id="chkAll">' +
-    //    '<label class="custom-control-label" for="chkAll"></label>' +
-    //    '</div></th>');
-
-    // Append other dynamic columns to the header
-    //columns.slice(1).forEach(function (col) {
-    //    headerRow.append('<th>' + col.title + '</th>');
-    //});
-
-    // Append the header to the table (only once)
-    table2.append(thead);
-
     table2.DataTable({
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
@@ -778,13 +762,14 @@ function DispatchCardStatusListBindDialog(callback) {
                 length: data.length,
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                selectedIds: selectedIds // Send the selected IDs to the server
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams(requestData).toString()
+                    headers: { "Content-Type": "application/json" }, // Change Content-Type to JSON
+                    body: JSON.stringify(requestData) // Send data as JSON
                 });
 
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -842,11 +827,52 @@ function DispatchCardStatusListBindDialog(callback) {
     $('#chkAll').on('change', function () {
         var isChecked = $(this).prop('checked');
         $('#tbldatadialog tbody input[type="checkbox"]').prop('checked', isChecked);
+
+        // Update the selected IDs across all pages
+        updateSelectedIds(isChecked);
     });
 
-    // Optional: Detect individual checkbox changes to check if all are selected
+    // Update selected IDs when any checkbox is changed
     $('#tbldatadialog tbody').on('change', 'input[type="checkbox"]', function () {
-        var allChecked = $('#tbldatadialog tbody input[type="checkbox"]:checked').length === $('#tbldatadialog tbody input[type="checkbox"]').length;
-        $('#chkAll').prop('checked', allChecked);
+        updateSelectedIds();
     });
+}
+// Function to get selected IDs across all pages
+function getSelectedIds() {
+    var localSelectedIds = [];
+
+    // Iterate through all pages and collect selected IDs
+    $('#tbldatadialog tbody input[type="checkbox"]:checked').each(function () {
+        localSelectedIds.push($(this).val());
+    });
+
+    return localSelectedIds;
+}
+// Function to update selected IDs and maintain them across all pages
+function updateSelectedIds(isChecked = null) {
+    var localSelectedIds = getSelectedIds();
+
+    // Update the selected checkbox IDs based on the current page
+    if (isChecked !== null) {
+        if (isChecked) {
+            // Mark all checkboxes across all pages as selected
+            localSelectedIds = getAllIds();
+        } else {
+            // Clear selection if the header checkbox is unchecked
+            selectedIds = [];
+        }
+    }
+
+    // Update the global selected IDs array
+    selectedIds = localSelectedIds;
+    console.log("Selected IDs (global):", selectedIds);
+}
+
+// Function to get all IDs from the current dataset
+function getAllIds() {
+    var allIds = [];
+    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
+        allIds.push($(this).val());
+    });
+    return allIds;
 }
