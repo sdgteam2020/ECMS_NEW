@@ -608,24 +608,41 @@ namespace Web.Controllers
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(userId.ToString());
             int MapUnitId = 0;
-            
+            int TDMId = 0;
+            byte ClaimValue = 0;
+
+
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
             }
-            MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
-
-            bool Claim = false;
 
             // UserManager service GetClaimsAsync method gets all the current claims of the user
             var UserClaims = await userManager.GetClaimsAsync(user);
-            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
-            {
-                Claim = true;
-            }
 
+            if (dtoSession != null)
+            {
+                MapUnitId = dtoSession.UnitId;
+                TDMId = dtoSession.TrnDomainMappingId;
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    ClaimValue = 1;
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                {
+                    ClaimValue = 2;
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                {
+                    ClaimValue = 3;
+                }
+                else
+                {
+                    ClaimValue = 0;
+                }
+            }
 
             short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
             //if (ArmedIdForORO == 0) ArmedIdForORO = 56;
@@ -646,7 +663,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
-            return Json(await _home.GetDashBoardCount(userId, dTOApplFwdCondition, ArmedIdForORO, MapUnitId, Claim));
+            return Json(await _home.GetDashBoardCount(userId, dTOApplFwdCondition, ArmedIdForORO, MapUnitId, ClaimValue, TDMId));
         }
         public async Task<IActionResult> GetRequestDashboardCount(string Id)
         {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.API
 {
-    public interface IAPIBL
+    public interface IaPiBl
     {
         public Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data);
         public Task<DTOApiPersDataResponse> GetData(DTOPersDataRequest Data);

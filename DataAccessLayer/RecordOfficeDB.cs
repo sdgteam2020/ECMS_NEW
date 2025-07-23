@@ -1,20 +1,11 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
-using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
@@ -140,7 +131,7 @@ namespace DataAccessLayer
             try
             {
                 string query = "";
-                query = "Select users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from AspNetUsers users" +
+                query = "Select users.Id as AspNetUsersId,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name,trndomain.Id as TDMId from AspNetUsers users" +
                         " inner join TrnDomainMapping trndomain on users.Id=trndomain.AspNetUsersId" +
                         " inner join UserProfile usep on usep.UserId=trndomain.UserId" +
                         " inner join MRank ra on ra.RankId=usep.RankId " +

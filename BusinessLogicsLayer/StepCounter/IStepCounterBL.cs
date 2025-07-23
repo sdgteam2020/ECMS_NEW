@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Bde
 {
-    public interface IStepCounterBL : IGenericRepository<MStepCounter>
+    public interface IStepCounterBL : IGenericRepositoryDL<MStepCounter>
     {
 
         public Task<MStepCounter> UpdateStepCounter(MStepCounter Data);

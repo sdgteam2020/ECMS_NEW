@@ -19,31 +19,70 @@ namespace DataAccessLayer
         }
         public async Task<T> Get(int id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            var entity= await _context.Set<T>().FindAsync(id);
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+            return entity;
 
         }
         public async Task<T> GetByGen<T2>(T2 val1)
         {
-            return await _context.Set<T>().FindAsync(val1);
+            var entity= await _context.Set<T>().FindAsync(val1);
+            // If no entity is found, handle the case (either throw exception or return null)
+            if (entity == null)
+            {
+                throw new KeyNotFoundException($"Entity with id {val1} not found.");
+            }
+
+            return entity;
         }
         public async Task<T> GetByByte(byte id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            // Use FindAsync to search for the entity by the provided id
+            var entity = await _context.Set<T>().FindAsync(id);
+
+            // If no entity is found, handle the case (either throw exception or return null)
+            if (entity == null)
+            {
+                throw new KeyNotFoundException($"Entity with id {id} not found.");
+            }
+            return entity;
+                 
+           // return await _context.Set<T>().FindAsync(id);
         }
 
         public async Task<IEnumerable<T>> GetAll()
         {
-             var cc=await _context.Set<T>().ToListAsync();
-            return cc;
+            var result = await _context.Set<T>().ToListAsync();
+            
+            // Handle the case where result is null or empty
+            if (result == null)
+            {
+                return Enumerable.Empty<T>();  // Return an empty collection if null
+            }
+            return result;
         }
 
         public async Task Add(T entity)
-        {
+        { 
+            // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             await _context.Set<T>().AddAsync(entity);
             await SaveAsync();
         }
         public async Task<T> AddWithReturn(T entity)
-        {
+        { // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             _context.Set<T>().Add(entity);
             await _context.SaveChangesAsync();
             return entity;
@@ -54,18 +93,33 @@ namespace DataAccessLayer
             await _context.SaveChangesAsync();
         }
         public async Task Delete(T entity)
-        {
-             _context.Set<T>().Remove(entity);
+        { // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            _context.Set<T>().Remove(entity);
             await SaveAsync();
         }
 
         public async Task Update(T entity)
-        {
+        { // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             _context.Entry(entity).State = EntityState.Modified;
             await SaveAsync();
         }
         public async Task<T> UpdateWithReturn(T entity)
-        {
+        { // Validate the entity (optional)
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return entity;
@@ -75,7 +129,7 @@ namespace DataAccessLayer
             var entity = await _context.Set<T>().FindAsync(id);
             if (entity == null)
             {
-                return entity;
+                throw new KeyNotFoundException($"Entity with id {id} not found.");
             }
 
             _context.Set<T>().Remove(entity);

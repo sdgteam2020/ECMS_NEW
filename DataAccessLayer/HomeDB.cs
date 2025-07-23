@@ -30,76 +30,105 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
-        public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO, int MapUnitId, bool Claim)
+        public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO, int MapUnitId, byte Claim,int TDM_Id)
         {
-            string query = "declare @TotReq int=0 declare @TotInaccurateData int=0 declare @TotLostCards int=0 declare @TotHotlistCards int=0 declare @TotMisprintedCard int=0 declare @TotUnitChangeRequest int=0 ,@TotDistCards int=0,@TotDestCards int=0" +
-                            " select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id" +
-                            " where domain.AspNetUsersId=@UserId" +
+            string query = @"declare @TotReq int=0 declare @TotInaccurateData int=0 declare @TotLostCards int=0 declare @TotHotlistCards int=0 declare @TotMisprintedCard int=0 declare @TotUnitChangeRequest int=0 declare @TotDistCards int=0 declare @TotDestCards int=0 declare @TotDispatchCards int=0
+                            select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id
+                            where domain.AspNetUsersId=@UserId
 
-                            " select @TotMisprintedCard=COUNT(TrnFaultyCardId) from TrnFaultyCard" +
-                            " where (@Claim = 1 OR (Updatedby=@UserId))" +
+                            BEGIN 
+                            IF @Claim=1
+                            BEGIN 
+                            Select @TotDispatchCards=COUNT(disca.DispatchCardId) from TrnDispatchCard disca
+                            WHERE disca.Step=1
+                            END 
+                            ELSE IF @Claim=2 
+                            BEGIN 
+                            Select @TotDispatchCards=COUNT(disca.DispatchCardId) from TrnDispatchCard disca
+                            INNER JOIN MRecordOffice mrec ON disca.RecordOfficeId = mrec.RecordOfficeId
+                            INNER JOIN OROMapping oro on  mrec.RecordOfficeId =oro.RecordOfficeId
+                            WHERE oro.TDMId=@TDM_Id
+                            END 
+                            ELSE IF @Claim=3
+                            BEGIN 
+                            Select @TotDispatchCards=COUNT(disca.DispatchCardId) from TrnDispatchCard disca
+                            INNER JOIN MRegimental regi on disca.RegId=regi.RegId
+                            WHERE regi.UnitId=@MapUnitId
+                            END 
+                            ELSE 
+                            BEGIN 
+                            Select @TotDispatchCards=COUNT(disca.DispatchCardId) from TrnDispatchCard disca
+                            WHERE disca.ToUnitId=@MapUnitId and disca.Step=2
+                            END 
+                            END 
 
-                            " select @TotUnitChangeRequest=COUNT(MapUnitChangeRequestId) from TrnMapUnitChangeRequest" +
-                            " where UnitMapId=@MapUnitId" +
+                            select @TotMisprintedCard=COUNT(TrnFaultyCardId) from TrnFaultyCard flt
+                            INNER JOIN TrnICardRequest  trnicard on flt.RequestId = trnicard.RequestId
+                            INNER JOIN BasicDetails bd on trnicard.BasicDetailId = bd.BasicDetailId
+                            INNER JOIN  MapUnit munit on bd.UnitId = munit.UnitMapId
+                            where (@Claim = 1 OR (munit.UnitMapId=@MapUnitId))
 
-                            " select @TotInaccurateData=COUNT(BasicDetailTempId) from BasicDetailTemps" +
-                            " where Updatedby=@UserId AND IsActive=1 " +
+                            select @TotUnitChangeRequest=COUNT(MapUnitChangeRequestId) from TrnMapUnitChangeRequest
+                            where UnitMapId=@MapUnitId
 
-                            " select @TotLostCards=COUNT(LostCardId) from TrnLostCards" +
-                            " select @TotHotlistCards=COUNT(HotlistCardId) from TrnHotlistCards" +
-                            " select @TotDistCards=COUNT(DistributeCardId) from TrnDistributeCards" +
-                            " select @TotDestCards=COUNT(DestructedCardId) from TrnDestructionCards" +
+                            select @TotInaccurateData=COUNT(BasicDetailTempId) from BasicDetailTemps
+                            where Updatedby=@UserId AND IsActive=1 
 
-                            " declare @AspNetUsersId int=0 declare @ArmedId int=0 declare @Name varchar(25) declare @TotObservationRaised int=0 declare @TDMId int=0  " +
-                            " SELECT CASE WHEN ISNULL(RECO.TDMId,0) >0 THEN RECO.TDMId ELSE ORO.TDMId END TDMId, " +
-                            " (select AspNetUsersId from TrnDomainMapping where id =(CASE WHEN ISNULL(RECO.TDMId,0) >0 THEN RECO.TDMId ELSE ORO.TDMId END )) as AspNetUsersId,RECO.Name,RECO.ArmedId  " +
-                            " into #temp " +
-                            " FROM MRecordOffice RECO " +
-                            " LEFT JOIN OROMapping ORO ON RECO.RecordOfficeId=ORO.RecordOfficeId " +
-                            " SELECT  @TDMId=TDMId, @AspNetUsersId=AspNetUsersId,@Name=Name,@ArmedId=ArmedId from #temp where AspNetUsersId=@UserId " +
-                            " drop table #temp " +
-                            " IF @AspNetUsersId=NULL " +
-                            " BEGIN " +
-                            " SET @TotObservationRaised=0 " +
-                            " END " +
-                            " ELSE IF @ArmedId != @ArmedIdForORO " +
-                            " BEGIN " +
-                            " SELECT @TotObservationRaised=COUNT(tdm.Id) FROM TrnDomainMapping tdm " +
-                            " inner join MRecordOffice mrec on mrec.TDMId = tdm.Id " +
-                            " inner join BasicDetailTemps Temps on Temps.ArmedId = mrec.ArmedId " +
-                            " WHERE tdm.AspNetUsersId=@UserId AND Temps.ApplyForId = 2 AND Temps.IsActive = 1 " +
-                            " END " +
-                            " ELSE " +
-                            " BEGIN " +
-                            " IF @Name=@MPRSO_Name " +
-                            " BEGIN " +
-                            " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps " +
-                            " inner join MArmedType at on at.ArmedId = Temps.ArmedId " +
-                            " left join OROMapping oro on oro.TDMId = @TDMId " +
-                            " WHERE Temps.ApplyForId=1 AND Temps.IsActive=1 AND at.Abbreviation in @MPRSO_ArmedAbbreviation " +
-                            " END " +
-                            " ELSE IF @Name=@MP6A_Name " +
-                            " BEGIN " +
-                            " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId) FROM BasicDetailTemps Temps " +
-                            " inner join MRank ranks1 on ranks1.RankId = Temps.RankId " +
-                            " WHERE Temps.ApplyForId=1 AND ranks1.Orderby <=@MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix  AND Temps.IsActive=1 " +
-                            " END " +
-                            " ELSE IF @Name=@MP6F_Name " +
-                            " BEGIN " +
-                            " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps " +
-                            " left join OROMapping oro on oro.TDMId = @TDMId " +
-                            " WHERE Temps.ApplyForId=1 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) = @MP6F_ArmyNoPrefix OR Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 " +
-                            " END " +
-                            " ELSE " +
-                            " BEGIN " +
-                            " SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps " +
-                            " inner join MRank ranks1 on ranks1.RankId = Temps.RankId " +
-                            " left join OROMapping oro on oro.TDMId = @TDMId " +
-                            " WHERE Temps.ApplyForId=1 AND ranks1.Orderby > @MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 " +
-                            " END " +
-                            " END " +
-                            " select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised,@TotLostCards TotLostCards,@TotHotlistCards TotHotlistCards,@TotUnitChangeRequest TotUnitChangeRequest,@TotMisprintedCard TotMisprintedCard,@TotDistCards TotDistCards,@TotDestCards TotDestCards";
+                            select @TotLostCards=COUNT(LostCardId) from TrnLostCards
+                            select @TotHotlistCards=COUNT(HotlistCardId) from TrnHotlistCards
+                            select @TotDistCards=COUNT(DistributeCardId) from TrnDistributeCards
+                            select @TotDestCards=COUNT(DestructedCardId) from TrnDestructionCards
+
+                            declare @AspNetUsersId int=0 declare @ArmedId int=0 declare @Name varchar(25) declare @TotObservationRaised int=0 declare @TDMId int=0  
+                            SELECT CASE WHEN ISNULL(RECO.TDMId,0) >0 THEN RECO.TDMId ELSE ORO.TDMId END TDMId, 
+                            (select AspNetUsersId from TrnDomainMapping where id =(CASE WHEN ISNULL(RECO.TDMId,0) >0 THEN RECO.TDMId ELSE ORO.TDMId END )) as AspNetUsersId,RECO.Name,RECO.ArmedId  
+                            into #temp 
+                            FROM MRecordOffice RECO 
+                            LEFT JOIN OROMapping ORO ON RECO.RecordOfficeId=ORO.RecordOfficeId 
+                            SELECT  @TDMId=TDMId, @AspNetUsersId=AspNetUsersId,@Name=Name,@ArmedId=ArmedId from #temp where AspNetUsersId=@UserId 
+                            drop table #temp 
+                            IF @AspNetUsersId=NULL 
+                            BEGIN 
+                            SET @TotObservationRaised=0 
+                            END 
+                            ELSE IF @ArmedId != @ArmedIdForORO 
+                            BEGIN 
+                            SELECT @TotObservationRaised=COUNT(tdm.Id) FROM TrnDomainMapping tdm 
+                            inner join MRecordOffice mrec on mrec.TDMId = tdm.Id 
+                            inner join BasicDetailTemps Temps on Temps.ArmedId = mrec.ArmedId 
+                            WHERE tdm.AspNetUsersId=@UserId AND Temps.ApplyForId = 2 AND Temps.IsActive = 1 
+                            END 
+                            ELSE 
+                            BEGIN 
+                            IF @Name=@MPRSO_Name 
+                            BEGIN 
+                            SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps 
+                            inner join MArmedType at on at.ArmedId = Temps.ArmedId 
+                            left join OROMapping oro on oro.TDMId = @TDMId 
+                            WHERE Temps.ApplyForId=1 AND Temps.IsActive=1 AND at.Abbreviation in @MPRSO_ArmedAbbreviation 
+                            END 
+                            ELSE IF @Name=@MP6A_Name 
+                            BEGIN 
+                            SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId) FROM BasicDetailTemps Temps 
+                            inner join MRank ranks1 on ranks1.RankId = Temps.RankId 
+                            WHERE Temps.ApplyForId=1 AND ranks1.Orderby <=@MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix  AND Temps.IsActive=1 
+                            END 
+                            ELSE IF @Name=@MP6F_Name 
+                            BEGIN 
+                            SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps 
+                            left join OROMapping oro on oro.TDMId = @TDMId 
+                            WHERE Temps.ApplyForId=1 AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) = @MP6F_ArmyNoPrefix OR Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 
+                            END 
+                            ELSE 
+                            BEGIN 
+                            SELECT @TotObservationRaised=COUNT(Temps.BasicDetailTempId)  FROM BasicDetailTemps Temps 
+                            inner join MRank ranks1 on ranks1.RankId = Temps.RankId 
+                            left join OROMapping oro on oro.TDMId = @TDMId 
+                            WHERE Temps.ApplyForId=1 AND ranks1.Orderby > @MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 
+                            END 
+                            END 
+                            select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised,@TotLostCards TotLostCards,@TotHotlistCards TotHotlistCards,@TotUnitChangeRequest TotUnitChangeRequest,@TotMisprintedCard TotMisprintedCard,@TotDistCards TotDistCards,@TotDestCards TotDestCards,@TotDispatchCards TotDispatchCards";
 
             try
             {
@@ -119,10 +148,11 @@ namespace DataAccessLayer
                     parameters.Add("@MP6A_Name", dTOApplFwdCondition.MP6A.Name);
 
                     parameters.Add("@MapUnitId", MapUnitId, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@Claim", Claim, DbType.Boolean, ParameterDirection.Input);
+                    parameters.Add("@TDM_Id", TDM_Id, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Claim", Claim, DbType.Byte, ParameterDirection.Input);
 
-                    var ret = await connection.QueryAsync<DTODashboardCountResponse>(query, parameters);
-                    return ret.SingleOrDefault();
+                    var ret = (await connection.QueryAsync<DTODashboardCountResponse>(query, parameters)).FirstOrDefault();
+                    return ret;
                 }
             }
             catch (Exception ex)

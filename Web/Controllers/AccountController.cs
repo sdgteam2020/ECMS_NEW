@@ -3219,7 +3219,7 @@ namespace Web.Controllers
         {
             try
             {
-                return Json(await _iAccountBL.GetAllClaims(dTO));
+                return Json(await _iAccountBL.GetAllClaimsOrderBy(dTO));
             }
             catch (Exception ex)
             {

@@ -7,6 +7,7 @@ using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.BloodGroup;
 using BusinessLogicsLayer.Corps;
+using BusinessLogicsLayer.DispatchMode;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.FaultyStage;
 using BusinessLogicsLayer.Formation;
@@ -32,7 +33,7 @@ namespace BusinessLogicsLayer
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL, IAfsacCellMappingBL _afsacCellMappingBL,ICategoryBL categoryBL) 
+        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL, IAfsacCellMappingBL _afsacCellMappingBL,ICategoryBL categoryBL,IDispatchModeBL dispatchModeBL) 
         {
             Users = _user;
             Comds = _comds;
@@ -54,6 +55,7 @@ namespace BusinessLogicsLayer
             BloodGroupBL= bloodGroupBL;
             AfsacCellMapping = _afsacCellMappingBL;
             CategoryBL = categoryBL;
+            DispatchMode = dispatchModeBL;
 
         }
         public IUserBL Users { get; }
@@ -76,7 +78,8 @@ namespace BusinessLogicsLayer
         public IBloodGroupBL BloodGroupBL { get; }
         public IAfsacCellMappingBL AfsacCellMapping  { get; }
         public ICategoryBL CategoryBL { get; }
-         
+        public IDispatchModeBL DispatchMode { get; }
+
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
             List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
@@ -350,6 +353,18 @@ namespace BusinessLogicsLayer
                     DTOMasterResponse db = new DTOMasterResponse();
                     db.Id = item.CategoryId;
                     db.Name = item.Name;
+                    lst.Add(db);
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.DispatchMode))
+            {
+                var result = await DispatchMode.GetAll();
+
+                foreach (var item in result.OrderBy(x => x.Description))
+                {
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = item.DispatchModeId;
+                    db.Name = item.Description;
                     lst.Add(db);
                 }
             }

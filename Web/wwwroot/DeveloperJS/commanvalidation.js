@@ -336,11 +336,11 @@ $(function () {
     }, 1000);
     $("#tbldatatabledata #chkAll").on("click",function () {
         if ($(this).is(':checked')) {
-            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+           let rows = memberTable.rows({ 'search': 'applied' }).nodes();
             $('input[type="checkbox"]', rows).prop('checked', this.checked);
         }
         else {
-            rows = memberTable.rows({ 'search': 'applied' }).nodes();
+          let  rows = memberTable.rows({ 'search': 'applied' }).nodes();
             $('input[type="checkbox"]', rows).prop('checked', this.checked);
         }
     });
@@ -536,6 +536,7 @@ $(function () {
 
     }, 1000);
     $("#tbldatatableForApprovalIO #chkAll").on("click", function () {
+        let rows;
         if ($(this).is(':checked')) {
             rows = memberTable.rows({ 'search': 'applied' }).nodes();
             $('input[type="checkbox"]', rows).prop('checked', this.checked);
@@ -858,7 +859,7 @@ function DateCalculateago(fmDate) {
     var milliseconds = futureDate.getTime() - todayDate.getTime();
     var hours = Math.floor(milliseconds / (60 * 60 * 1000));
     var formatted1 = formatted.substring(0, 2);
-    if (parseInt(formatted1) == 00) {
+    if (parseInt(formatted1) == 0) {
         ago = formatted.substring(0, 5) + ' Minutes ago</h6>';;
     }
     else if (hours <= 24) {
@@ -1130,4 +1131,3 @@ function PrintData(div) {
         printWindow.close();
     };
 }
-

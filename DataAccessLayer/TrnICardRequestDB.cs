@@ -6,6 +6,7 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,15 +19,41 @@ namespace DataAccessLayer
 {
     public class TrnICardRequestDB : GenericRepositoryDL<MTrnICardRequest>, ITrnICardRequestDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
-        public TrnICardRequestDB(ApplicationDbContext context, DapperContext contextDP) : base(context)
+        private readonly ILogger<TrnICardRequestDB> _logger;
+        public TrnICardRequestDB(ApplicationDbContext context, DapperContext contextDP, ILogger<TrnICardRequestDB> logger) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
+            _logger = logger;
         }
-        private readonly IConfiguration configuration;
 
+        public async Task<MTrnICardRequest?> GetRequestByBasicDetailId(int BasicDetailId)
+        {
+            string query = @"Select * from TrnICardRequest where BasicDetailId = @BasicDetailId";
+            MTrnICardRequest? trnICardRequest = new MTrnICardRequest();
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    trnICardRequest = await connection.QueryFirstOrDefaultAsync<MTrnICardRequest>(query, new { BasicDetailId });
+                    if (trnICardRequest != null)
+                    {
+                        return trnICardRequest;
+                    }
+                    else
+                    {
+                        return trnICardRequest;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "TrnICardRequestDB->GetRequestByBasicDetailId");
+                return null;
+            }
+        }
         public async Task<MTrnICardRequest> GetByAspNetUserBy(int AspnetuserId)
         {
             return null;// await _context.TrnICardRequest.Where(P => P.TrnDomainMappingId == AspnetuserId).ToListAsync();

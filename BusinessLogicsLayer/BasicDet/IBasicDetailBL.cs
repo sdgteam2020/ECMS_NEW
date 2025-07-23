@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -12,8 +13,17 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.BasicDet
 {
-    public interface IBasicDetailBL:IGenericRepository<BasicDetail>
+    public interface IBasicDetailBL: IGenericRepositoryDL<BasicDetail>
     {
+        public Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequest dTO, byte ClaimValue);
+        public Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO);
+        public Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO);
+        public Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch);
+        public Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO);
+        public Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId);
+        public Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id);
+        public Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue, int TDMId, int UnitId);
+        public Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<bool> CheckArmyNO(string ArmyNo);
         public Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data);
         public Task<string?> GetCSVString(DTOCSVExportRequest Data);
@@ -24,7 +34,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus(DTODataTablesRequestFor_BasicDetails_Index dTO);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<BasicDetail?> FindServiceNo(string ServiceNo);
-        public Task<int[]?> BasicDetailIds(string ServiceNo);
+        public Task<int?> MaxBasicDetailId(string ServiceNo);
         public Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto);
         public Task<DTOBasicDetailForParitalViewResponse> GetBasicDetailForParitalViewByRequestId(int RequestId);
         public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId);
@@ -42,11 +52,13 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         public Task<DTOApplicationTrack?> ApplicationHistory(string RequestId);
         Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request);
+        public Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(List<DTOCardDispatchCheckRequest> request, byte ClaimValue, DTODispatchOutRequest dTO);
         Task<DTOUploadChipAndSerialResponse?> CardPrinitngCSVUpload(List<DTOCardPriningRequest> request);
         Task<byte?> CheckCardStatus(int RequestId);
         Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId);
         Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId);
         Task UpdateCardStatus(int requestId, byte status);
         Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId);
+        public Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId, string ToRemark);
     }
 }

@@ -5,6 +5,7 @@
         CardPrint,
         HotlistExport,
         LostCard,
-        DistributeCard
+        DistributeCard,
+        DispatchCard
     }
 }

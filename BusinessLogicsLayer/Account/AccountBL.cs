@@ -34,7 +34,7 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.DomainApproveList();
         }
-        public async Task<DTODataTablesResponse<DTOProfileManageResponse>?> GetAllProfileManage(DTODataTablesRequest request)
+        public async Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage(DTODataTablesRequest request)
         {
             return await _iAccountDB.GetAllProfileManage(request);
         }
@@ -83,9 +83,9 @@ namespace BusinessLogicsLayer.Account
             return await _iAccountDB.GetDataForDataTable(request);
         }
 
-        public async Task<DTODataTablesResponse<DTOClaimsStoreResponse>?> GetAllClaims(DTODataTablesRequest request)
+        public async Task<DTODataTablesResponse<DTOClaimsStoreResponse>?> GetAllClaimsOrderBy(DTODataTablesRequest request)
         {
-            return await _iAccountDB.GetAllClaims(request);
+            return await _iAccountDB.GetAllClaimsOrderBy(request);
         }
         public async Task<DTODataTablesResponse<DTOUsersByClaim>> GetAllUsersByClaim(DTODataTablesRequest request)
         {

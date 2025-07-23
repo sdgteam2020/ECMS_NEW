@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.BdeCat
 {
-    public interface IBdeCatBL : IGenericRepository<MBdeCat>
+    public interface IBdeCatBL : IGenericRepositoryDL<MBdeCat>
     {
 
         public Task<bool> GetByName(MBdeCat Data);

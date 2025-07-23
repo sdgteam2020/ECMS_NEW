@@ -202,7 +202,7 @@ namespace DataAccessLayer
                                      
                                      update TrnICardRequest set StatusId = 2,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId;
                                      
-                                     update TrnStepCounter set StepId = 11,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId;
+                                     update TrnStepCounter set StepId = 15,UpdatedOn = @UpdatedOn,Updatedby = @Updatedby where RequestId = @RequestId;
                                      {(cardRequestHistory?.FaultyCard?.Count > 0 ? "update TrnFaultyCard set TrnFwdId = null where RequestId = @RequestId;" : "")}
                                      {(cardRequestHistory?.PostingOut?.Count > 0 ? "update TrnPostingOut set TrnFwdId = null where RequestId = @RequestId;" : "")}
                                      

@@ -17,10 +17,10 @@ namespace WebApi.Controllers
     [Authorize]
     public class FetchController : ControllerBase
     {
-        private readonly IAPIDataBL _aPIDataBL;
+        private readonly IapiDataBl _aPIDataBL;
        
        
-        public FetchController(IAPIDataBL aPIDataBL)
+        public FetchController(IapiDataBl aPIDataBL)
         {
          
             _aPIDataBL = aPIDataBL;

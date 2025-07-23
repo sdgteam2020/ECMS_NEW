@@ -338,37 +338,15 @@ namespace Web.Controllers
         {
             try
             {
-                DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
-                {
-                    MPRSO = new MPRSO(),
-                    MP6F = new MP6F(),
-                    MP6A = new MP6A()
-                };
-
-                //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name)) dTOApplFwdCondition.MPRSO.Name = "MPRSO";
-                //if (dTOApplFwdCondition.MPRSO.ArmedAbbreviation == null || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0)
-                //    dTOApplFwdCondition.MPRSO.ArmedAbbreviation = new List<string> { "ADC", "AMC", "MNS" };
-                //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name)) dTOApplFwdCondition.MP6F.Name = "MP 6F";
-                //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix)) dTOApplFwdCondition.MP6F.ArmyNoPrefix = "SL";
-                //if (dTOApplFwdCondition.MP6A.RankOrderby == 0) dTOApplFwdCondition.MP6A.RankOrderby = 4;
-                
-                if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
-                    string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
-                    dTOApplFwdCondition.MP6A.RankOrderby == 0) 
-                {
-                    return Json(KeyConstants.InternalServerError);
-                }
-
-
                 int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if(UnitId==0)
                 {
-                     UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId, dTOApplFwdCondition));
+                    UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId));
                 }
                 else
                 {
-                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId, dTOApplFwdCondition));
+                    return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId));
                 }
             }
             catch (Exception ex)

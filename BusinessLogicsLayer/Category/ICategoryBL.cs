@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.FaultyStage
 {
-    public interface ICategoryBL :  IGenericRepository<MCategory>
+    public interface ICategoryBL : IGenericRepositoryDL<MCategory>
     {
     }
 }

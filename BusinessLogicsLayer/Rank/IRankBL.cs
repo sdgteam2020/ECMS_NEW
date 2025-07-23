@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
@@ -10,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Bde
 {
-    public interface IRankBL : IGenericRepository<MRank>
+    public interface IRankBL : IGenericRepositoryDL<MRank>
     {
 
-        public Task<bool> GetByName(MRank DTo);
+        public Task<bool> GetByName(MRank Dto);
         public Task<short> GetByMaxOrder();
-        public Task<int> OrderByChange(MRank DTo);
+        public Task<int> OrderByChange(MRank Dto);
         public Task<IEnumerable<MRank>> GetAllByorder();
         public Task<IEnumerable<MRank>> GetAllByType(int Type);
         public Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId);

@@ -1,0 +1,159 @@
+﻿@{
+    ViewData["Title"] = "List of Dispatch Card";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var claimValue = ViewBag.ClaimValue;
+}
+<style>
+    .count-label {
+        background-color: #044C92;
+        text-align: center;
+        padding: 0.5rem !important;
+        margin-right: 0.25rem !important;
+        border: hidden;
+        font-weight: 700 !important;
+        color: #fff !important;
+        width: 120px;
+        height: 60px;
+    }
+
+    .modal-xl {
+        max-width: 90% !important;
+        width: 90% !important;
+    }
+
+    .table {
+        min-width: 100% !important;
+    }
+
+    .modal .modal-body .table-responsive {
+        max-height: 500px;
+    }
+</style>
+<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Dispatch Card
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            <span class="d-none" id="spnClaimValue">@claimValue</span>
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        Dispatch Card details
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="col-xl-12">
+                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
+                    <h6 class="mb-3 mb-md-0">
+                        @*                         Total Faulty <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
+                    </h6>
+                    <div>
+                        <button type="button" id="btnDispatchStatus" class="btn btn-outline-success font-weight-600 btn-sm mr-1">Dispatch Card Status</button>
+                        @if (claimValue == 1 || claimValue == 2 || claimValue == 3)
+                        {
+                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                        }
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
+                        <thead>
+                            <tr>
+                                <th class="wd-40-f">S No</th>
+                                <th class="nowrap">Categery</th>
+                                <th class="nowrap">Lot No</th>
+                                <th class="nowrap">Unit</th>
+                                <th class="nowrap">Regt / ORO</th>
+                                <th class="nowrap">CIC Name</th>
+                                <th class="nowrap">Army No</th>
+                                <th class="nowrap">Dispatch To</th>
+                                <th class="nowrap">Dispatch On</th>
+                                <th class="nowrap">Sender Remark</th>
+                                <th class="nowrap">Dispatch In</th>
+                                <th class="nowrap">Remark</th>
+                                <th class="noExport nowrap">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="DetailBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitle"></span></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="msg">
+                </div>
+            </div>
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>
+
+<!-- Dispatch In Dialog  -->
+<div class="modal fade" id="DispatchInDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Dispatch In</h5>
+            </div>
+            <form action="" id="SaveDispatchCardIn" method="post" name="SaveDispatchCardIn">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="row">
+                                <span class="d-none" id="spnDispatchCardId">0</span>
+                                <div class="col-sm-12 mx-auto">
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-5 labelprofile">Remark<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-7">
+                                            <textarea class="form-control1" style="height:auto!important;" name="txtToRemark" id="txtToRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtToRemark" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnSubmit" class="btn btn-primary">Proceed</button>
+                    <button type="button" id="btnClosed" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script asp-src-include="~/developerjs/DispatchCard.js"></script>
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />

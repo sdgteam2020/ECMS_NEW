@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
-namespace BusinessLogicsLayer.DestructionCard
+namespace BusinessLogicsLayer.DistributeCard
 {
-    public interface IDistributeCardBL : IGenericRepository<TrnDistributeCard>
+    public interface IDistributeCardBL : IGenericRepositoryDL<TrnDistributeCard>
     {
         Task<bool> FindRequestId(int RequestId);
         Task<DTODataTablesResponse<DTODistributeCardGetResponse>> GetAllDistribute(DTODataTablesRequest dTO);

@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Bde
 {
-    public interface IBdeBL : IGenericRepository<MBde>
+    public interface IBdeBL : IGenericRepositoryDL<MBde>
     {
 
         public Task<bool?> GetByName(MBde Data);

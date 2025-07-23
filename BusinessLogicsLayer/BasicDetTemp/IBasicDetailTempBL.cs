@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain.Model;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.BasicDetTemp
 { 
-    public interface IBasicDetailTempBL : IGenericRepository<BasicDetailTemp>
+    public interface IBasicDetailTempBL : IGenericRepositoryDL<BasicDetailTemp>
     {
         public Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, int TypeId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO);
         public Task<DTOBasicDetailTempRequest?> GetALLBasicDetailTempByBasicDetailId(int UserId,int BasicDetailId);

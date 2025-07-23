@@ -52,6 +52,12 @@ using BusinessLogicsLayer.DistributeCard;
 using BusinessLogicsLayer.BdeCate;
 using System;
 using System.Linq;
+using Org.BouncyCastle.Ocsp;
+using DataTransferObject.Response.User;
+using BusinessLogicsLayer.DispatchCard;
+using BusinessLogicsLayer.DispatchCardMapping;
+using NuGet.Packaging;
+using System.Collections.Generic;
 
 namespace Web.Controllers
 {
@@ -84,26 +90,28 @@ namespace Web.Controllers
         private readonly IConfiguration _configuration;
         public DateTime dateTimenow;
         private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
-        private readonly  ICSVImportBL _iCSVImportBL;
+        private readonly IcsvImportBl _iCSVImportBL;
         private readonly IFaultyCardBL faultyCardBL;
         private readonly IHotlistCardBL _hotlistCardBL;
         private readonly ILostCardBL _lostCardBL;
         private readonly IDistributeCardBL _distributeCardBL;
         private readonly IDestructionCardBL _destructionCardBL;
+        private readonly IDispatchCardBL dispatchCardBL;
+        private readonly IDispatchCardMappingBL dispatchCardMappingBL;
 
-        public BasicDetailController(IConfiguration configuration,IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
+        public BasicDetailController(IConfiguration configuration, IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
-                              DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL, 
+                              DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL,
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
-            ,IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, ICSVImportBL iCSVImportBL, IFaultyCardBL _faultyCardBL,IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,IDestructionCardBL destructionCardBL)
+            , IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL, IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
             this.basicDetailTempBL = basicDetailTempBL;
             this.service = service;
             this._mapper = mapper;
-            this.mapUnitBL= mapUnitBL;
+            this.mapUnitBL = mapUnitBL;
             //this.context = context;
             //this.contextTransaction = context;
             this.userManager = userManager;
@@ -119,7 +127,7 @@ namespace Web.Controllers
             this.basicinfoBL = basicinfoBL;
             this.basicAddressBL = basicAddressBL;
             this.basicuploadBL = basicUploadBL;
-            this.rankBL=rankBL;
+            this.rankBL = rankBL;
             _INotificationBL = notificationBL;
             _IMasterBL = masterBL;
             _iTrnLoginLogBL = iTrnLoginLogBL;
@@ -130,6 +138,8 @@ namespace Web.Controllers
             _lostCardBL = lostCardBL;
             _distributeCardBL = distributeCardBL;
             _destructionCardBL = destructionCardBL;
+            this.dispatchCardBL = dispatchCardBL;
+            this.dispatchCardMappingBL = dispatchCardMappingBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -272,7 +282,7 @@ namespace Web.Controllers
         public async Task<IActionResult> GetAllIndexData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            dTORecord.UserId= userId;
+            dTORecord.UserId = userId;
             try
             {
                 if (dTORecord.stepcount == 0)
@@ -708,7 +718,7 @@ namespace Web.Controllers
             #endregion End Old Code
             return View();
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registration(DTORegistrationRequest model)
@@ -721,7 +731,7 @@ namespace Web.Controllers
                 {
                     if (model.SubmitType == 1)
                     {
-                        if(model.TypeId == 4)
+                        if (model.TypeId == 4)
                         {
                             string? OldServiceNo = model.OldServiceNo;
                             string? NewServiceNo = model.ServiceNo;
@@ -844,7 +854,7 @@ namespace Web.Controllers
                         //{
                         //    Data = await basicDetailBL.FindServiceNo(model.ServiceNo);
                         //}
-                            
+
                         //if (Data != null)
                         //{
                         //    TempData["Registration"] = JsonConvert.SerializeObject(model);
@@ -997,6 +1007,7 @@ namespace Web.Controllers
                     {
                         ViewBag.OptionsUnitId = 0;
                         BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM();
+                        dTOBasicDetailCrtRequest.PreviousBasicDetailId = null;
                         dTOBasicDetailCrtRequest.FName = model.FName;
                         dTOBasicDetailCrtRequest.LName = model.LName;
                         dTOBasicDetailCrtRequest.NameAsPerRecord = model.NameAsPerRecord;
@@ -1023,7 +1034,7 @@ namespace Web.Controllers
                         dTOBasicDetailCrtRequest.Tehsil = model.Tehsil;
                         dTOBasicDetailCrtRequest.Village = model.Village;
                         dTOBasicDetailCrtRequest.PinCode = Convert.ToInt32(model.PinCode);
-                        dTOBasicDetailCrtRequest.PermanentAddress = "Village - " + model.Village + ", Post Office-" + model.PO + ", Tehsil- " + model.Tehsil + ", District- " + model.District + ", State- " + model.State + ", Pin Code- " + (model.PinCode == 0 ?"" : model.PinCode);
+                        dTOBasicDetailCrtRequest.PermanentAddress = "Village - " + model.Village + ", Post Office-" + model.PO + ", Tehsil- " + model.Tehsil + ", District- " + model.District + ", State- " + model.State + ", Pin Code- " + (model.PinCode == 0 ? "" : model.PinCode);
 
                         return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                     }
@@ -1050,14 +1061,13 @@ namespace Web.Controllers
                     ViewBag.OptionsBloodGroupId = basicDetailUpdVM.BloodGroupId;
 
 
-
                     basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
                     basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + (basicDetailUpdVM.PinCode == 0 ? "" : basicDetailUpdVM.PinCode);
 
                     string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
                     string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
                     string sourcePathSignature = Path.Combine(sourceFolderPhotoPhy, "Signature", basicDetailUpdVM.SignatureImagePath);
-                    
+
                     if (System.IO.File.Exists(sourcePathPhoto))
                     {
                         basicDetailUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
@@ -1076,7 +1086,6 @@ namespace Web.Controllers
                     if (TempData["Registration"] != null)
                     {
                         var modelex = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
-
                         basicDetailUpdVM.FName = modelex.FName;
                         basicDetailUpdVM.LName = modelex.LName;
                         basicDetailUpdVM.ServiceNo = modelex.ServiceNo;
@@ -1121,6 +1130,20 @@ namespace Web.Controllers
             try
             {
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
+                {
+                    MPRSO = new MPRSO(),
+                    MP6F = new MP6F(),
+                    MP6A = new MP6A()
+                };
+                if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
+                            string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
+                            dTOApplFwdCondition.MP6A.RankOrderby == 0)
+                {
+                    return Json(KeyConstants.InternalServerError);
+                }
+
                 if (model.BasicDetailId > 0)
                 {
                     ViewBag.OptionsRankId = model.RankId;
@@ -1153,7 +1176,7 @@ namespace Web.Controllers
 
                         MTrnUpload mTrnUpload = new MTrnUpload();
                         mTrnUpload.UploadId = model.UploadId;
-                        
+
                         MTrnAddress mTrnAddress = new MTrnAddress();
                         mTrnAddress.State = model.State;
                         mTrnAddress.District = model.District;
@@ -1213,9 +1236,9 @@ namespace Web.Controllers
                                 string destinationPath = Path.Combine(sourceFolderPhotoPhy, uniqueFileName);
 
                                 // Old image delete before new image created
-                                if(model.ExistingPhotoImagePath != null)
+                                if (model.ExistingPhotoImagePath != null)
                                 {
-                                    string ExitImagePath = Path.Combine(sourceFolderPhotoPhy_Old,"Photo" ,model.ExistingPhotoImagePath);
+                                    string ExitImagePath = Path.Combine(sourceFolderPhotoPhy_Old, "Photo", model.ExistingPhotoImagePath);
                                     if (System.IO.File.Exists(ExitImagePath))
                                     {
                                         System.IO.File.Delete(ExitImagePath);
@@ -1290,39 +1313,60 @@ namespace Web.Controllers
                         {
                             mTrnUpload.SignatureImagePath = model.ExistingSignatureImagePath;
                         }
-                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, null, null);
+
+                        MTrnICardRequest? mTrnICardRequest = await iTrnICardRequestBL.GetRequestByBasicDetailId(model.BasicDetailId);
+                        if (mTrnICardRequest != null)
+                        {
+                            byte? RecordOfficeId = await basicDetailBL.GetRecordOfficeId(model.ApplyForId, model.ServiceNo, model.ArmedId, model.RankId, dTOApplFwdCondition);
+
+                            if (RecordOfficeId != null)
+                            {
+                                mTrnICardRequest.RecordOfficeId = (byte)RecordOfficeId;
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Armed not mapped in Record Office / ORO .");
+                                goto end;
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Invalid Request Id.");
+                            goto end;
+                        }
+
+                        DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, mTrnICardRequest, null);
                         BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
                         if (ret1.Result == true)
                         {
-                            bool resultforisprocess = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
-                            if (!resultforisprocess)
-                            {
-                                MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
-                                mTrnICardRequest.BasicDetailId = basicDetail.BasicDetailId;
-                                mTrnICardRequest.StatusId = 1;
-                                mTrnICardRequest.TypeId = model.TypeId;
-                                string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
-                                mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
-                                mTrnICardRequest.RegistrationId = model.RegistrationId;
-                                mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
-                                mTrnICardRequest.UpdatedOn = DateTime.Now;
-                                mTrnICardRequest.Updatedby = Convert.ToInt32(userId); //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
-                                mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
-                                if (mTrnICardRequest.RequestId > 0)
-                                {
-                                    MStepCounter mStepCounter = new MStepCounter();
-                                    mStepCounter.StepId = Convert.ToByte(1);
-                                    mStepCounter.RequestId = mTrnICardRequest.RequestId;
-                                    mStepCounter.UpdatedOn = DateTime.Now;
-                                    mStepCounter.Updatedby = Convert.ToInt32(userId);
-                                    mStepCounter.ApplyForId = newBasicDetail.ApplyForId;
-                                    await iStepCounterBL.Add(mStepCounter);
-                                }
-                                //DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-                                //dTOApiDataResponse.Status = false;
-                                //dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
-                                //return Ok(dTOApiDataResponse);
-                            }
+                            #region This code commented by Yogendra
+                            //bool resultforisprocess = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
+                            //if (!resultforisprocess)
+                            //{
+                            //    MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
+                            //    mTrnICardRequest.BasicDetailId = basicDetail.BasicDetailId;
+                            //    mTrnICardRequest.StatusId = 1;
+                            //    mTrnICardRequest.TypeId = model.TypeId;
+                            //    string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
+                            //    mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
+                            //    mTrnICardRequest.RegistrationId = model.RegistrationId;
+                            //    mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
+                            //    mTrnICardRequest.UpdatedOn = DateTime.Now;
+                            //    mTrnICardRequest.Updatedby = Convert.ToInt32(userId); //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
+                            //    mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
+                            //    if (mTrnICardRequest.RequestId > 0)
+                            //    {
+                            //        MStepCounter mStepCounter = new MStepCounter();
+                            //        mStepCounter.StepId = Convert.ToByte(1);
+                            //        mStepCounter.RequestId = mTrnICardRequest.RequestId;
+                            //        mStepCounter.UpdatedOn = DateTime.Now;
+                            //        mStepCounter.Updatedby = Convert.ToInt32(userId);
+                            //        mStepCounter.ApplyForId = newBasicDetail.ApplyForId;
+                            //        await iStepCounterBL.Add(mStepCounter);
+                            //    }
+                            //}
+                            #endregion
+
 
 
                             TempData["success"] = "Updated Successfully.";
@@ -1363,6 +1407,41 @@ namespace Web.Controllers
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
+
+                        if (model.TypeId == 4)
+                        {
+                            if (model.OldServiceNo != null)
+                            {
+                                int? BasicDetailId = await basicDetailBL.MaxBasicDetailId(model.OldServiceNo);
+                                if (BasicDetailId != null)
+                                {
+                                    BasicDetail basicDetail = await basicDetailBL.Get((int)BasicDetailId);
+                                    newBasicDetail.PreviousBasicDetailId = basicDetail.BasicDetailId;
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError("", "Invalid Old Service No.");
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Old Service No required.");
+                                goto end;
+                            }
+                        }
+                        else
+                        {
+                            int? BasicDetailId = await basicDetailBL.MaxBasicDetailId(model.ServiceNo);
+                            if (BasicDetailId != null)
+                            {
+                                newBasicDetail.PreviousBasicDetailId = BasicDetailId;
+                            }
+                            else
+                            {
+                                newBasicDetail.PreviousBasicDetailId = 0;
+                            }
+                        }
+
                         MTrnUpload mTrnUpload = new MTrnUpload();
 
                         MTrnAddress mTrnAddress = new MTrnAddress();
@@ -1484,6 +1563,7 @@ namespace Web.Controllers
                             ModelState.AddModelError("Signature_", "Signature is required.");
                             goto end;
                         }
+
                         MTrnICardRequest mTrnICardRequest = new MTrnICardRequest();
                         mTrnICardRequest.StatusId = 1;
                         mTrnICardRequest.IsActive = true;
@@ -1497,6 +1577,19 @@ namespace Web.Controllers
                         //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
                         // mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
 
+
+
+                        byte? RecordOfficeId = await basicDetailBL.GetRecordOfficeId(model.ApplyForId, model.ServiceNo, model.ArmedId, model.RankId, dTOApplFwdCondition);
+
+                        if (RecordOfficeId != null)
+                        {
+                            mTrnICardRequest.RecordOfficeId = (byte)RecordOfficeId;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Armed not mapped in Record Office / ORO .");
+                            goto end;
+                        }
 
                         MStepCounter mStepCounter = new MStepCounter();
                         mStepCounter.StepId = Convert.ToByte(1);
@@ -1623,7 +1716,7 @@ namespace Web.Controllers
                 return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> DecryptZipFileData(DTODecryptZipFileRequest model)
         {
@@ -1823,7 +1916,7 @@ namespace Web.Controllers
             }
             else
             {
-                response.Result=false; 
+                response.Result = false;
                 response.Message = ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToString();
                 //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 return Json(response);
@@ -1904,7 +1997,7 @@ namespace Web.Controllers
                 return BadRequest();
             }
         }
-        
+
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
         {
             try
@@ -1938,7 +2031,7 @@ namespace Web.Controllers
                 return BadRequest();
             }
         }
-        
+
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {
             try
@@ -1976,7 +2069,7 @@ namespace Web.Controllers
 
                         await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
                         return Ok(data);
-                            
+
                     }
                     else
                     {
@@ -2000,7 +2093,7 @@ namespace Web.Controllers
 
 
         }
-        
+
         public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
             DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
@@ -2034,7 +2127,7 @@ namespace Web.Controllers
             }
             return Ok(response);
         }
-        
+
         //[Authorize(Roles = "DteAdmin")]
         [Authorize(Policy = "FlagICardApplPolicy")]
         public async Task<IActionResult> SaveICardRequestHold(MTrnICardHold dTO)
@@ -2114,7 +2207,7 @@ namespace Web.Controllers
                 //if (dTOApplFwdCondition.MP6A.RecordOfficeId == 0) dTOApplFwdCondition.MP6A.RecordOfficeId = 126;
                 //if (dTOApplFwdCondition.MP6A.RankOrderby == 0) dTOApplFwdCondition.MP6A.RankOrderby = 4;
                 if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
-                    dTOApplFwdCondition.MPRSO.RecordOfficeId == 0 || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || 
+                    dTOApplFwdCondition.MPRSO.RecordOfficeId == 0 || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) ||
                     string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) || dTOApplFwdCondition.MP6F.RecordOfficeId == 0 ||
                     string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name) || dTOApplFwdCondition.MP6A.RecordOfficeId == 0 || dTOApplFwdCondition.MP6A.RankOrderby == 0)
                 {
@@ -2122,7 +2215,7 @@ namespace Web.Controllers
                 }
 
                 List<DTODataExportsResponse> retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data, dTOApplFwdCondition);
-                if(retdata.Count() > 0)
+                if (retdata.Count() > 0)
                 {
                     DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                     string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell"), dtoSession.DoaminId));
@@ -2274,7 +2367,7 @@ namespace Web.Controllers
                 return RedirectToAction("Error", "Error");
             }
         }
-        
+
         // Method to serialize last record to XML
         private async Task<string> GenerateLastRecordXml(int id)
         {
@@ -2286,7 +2379,7 @@ namespace Web.Controllers
                 return writer.ToString();
             }
         }
-       
+
         // Method to merge two XML documents
         private string MergeXmlDocuments(string xmlData, string lastRecordXml)
         {
@@ -2311,7 +2404,7 @@ namespace Web.Controllers
 
             return xmlDoc3.OuterXml;
         }
-       
+
         // Method to generate JSON response when XML signing data is unavailable
         private async Task<IActionResult> GenerateJsonResponse(DTOXmlFilesFwdLogRequest xmldata, DTODataExportRequest Data)
         {
@@ -2343,7 +2436,7 @@ namespace Web.Controllers
 
             // Convert to int array
             int[] intArray = Array.ConvertAll(strArray, int.Parse);
-            
+
             return Json(await faultyCardBL.GetRemarksData(intArray));
         }
         public async Task<ViewResult> FaultyCardAsync()
@@ -2497,7 +2590,7 @@ namespace Web.Controllers
             }
             dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
             //Reject Case
-            if (dTO.Choice  == 3)
+            if (dTO.Choice == 3)
             {
                 mTrnFwd.RequestId = dTO.RequestId;
                 mTrnFwd.FromUserId = dtoSession != null ? dtoSession.UserId : 0;
@@ -2537,7 +2630,7 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
                 dTO.UpdatedOn = DateTime.Now;
 
-                
+
 
                 if (ModelState.IsValid)
                 {
@@ -2679,11 +2772,11 @@ namespace Web.Controllers
                 }
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = ex.Message;
-                return Json(dTOFaulty); 
+                return Json(dTOFaulty);
             }
         }
 
@@ -2734,12 +2827,12 @@ namespace Web.Controllers
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = "Internal Server Error!";
             }
-            ReturnSt:
+        ReturnSt:
             return Json(dTOFaulty);
         }
 
         [HttpGet]
-        public IActionResult DownloadCsv(string fileName,string fileStoreName)
+        public IActionResult DownloadCsv(string fileName, string fileStoreName)
         {
             try
             {
@@ -2779,20 +2872,20 @@ namespace Web.Controllers
 
                 if (ModelState.IsValid)
                 {
-                   bool checkduplicate = await _hotlistCardBL.FindRequestId(model.RequestId);
-                   if (checkduplicate)
-                   {
-                       dTOFaulty.Result = false;
-                       dTOFaulty.Message = "The hotlist request already exists!";
-                   }
-                   else
-                   {
-                       var result = await _hotlistCardBL.AddWithReturn(model);
-                       dTOFaulty.Result = true;
-                       dTOFaulty.Message = "Record created!";
-                       dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
-                       dTOFaulty.Id = result.HotlistCardId.ToString();
-                   }
+                    bool checkduplicate = await _hotlistCardBL.FindRequestId(model.RequestId);
+                    if (checkduplicate)
+                    {
+                        dTOFaulty.Result = false;
+                        dTOFaulty.Message = "The hotlist request already exists!";
+                    }
+                    else
+                    {
+                        var result = await _hotlistCardBL.AddWithReturn(model);
+                        dTOFaulty.Result = true;
+                        dTOFaulty.Message = "Record created!";
+                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
+                        dTOFaulty.Id = result.HotlistCardId.ToString();
+                    }
                 }
                 else
                 {
@@ -2957,13 +3050,14 @@ namespace Web.Controllers
             return Json(dTOResponse);
         }
 
-        private async Task HotlistLostCard(TrnLostCard lostCard) {
+        private async Task HotlistLostCard(TrnLostCard lostCard)
+        {
             try
             {
                 var cardStatus = await basicDetailBL.CheckCardStatus(lostCard.RequestId);
                 if (cardStatus == 1)
                 {
-                    await basicDetailBL.UpdateCardStatus(lostCard.RequestId,3);
+                    await basicDetailBL.UpdateCardStatus(lostCard.RequestId, 3);
                 }
                 else
                 {
@@ -3081,7 +3175,7 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        dTOResponse.Message = $"Please create a {checkCardBeforeDist.Message} entry for previous card!" ;
+                        dTOResponse.Message = $"Please create a {checkCardBeforeDist.Message} entry for previous card!";
                     }
                 }
                 else
@@ -3123,7 +3217,7 @@ namespace Web.Controllers
                 {
                     return Json(false);
                 }
-                    
+
             }
             catch (Exception ex)
             {
@@ -3200,10 +3294,10 @@ namespace Web.Controllers
             DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
             if (ICNumber != null)
             {
-                int[]? BasicDetailIds = await basicDetailBL.BasicDetailIds(ICNumber);
-                if (BasicDetailIds != null)
+                int? BasicDetailId = await basicDetailBL.MaxBasicDetailId(ICNumber);
+                if (BasicDetailId != null)
                 {
-                    bool result = await iTrnICardRequestBL.GetRequestPendingUsingBasicDetailIds(BasicDetailIds);
+                    bool result = await iTrnICardRequestBL.GetRequestPending((int)BasicDetailId);
                     if (result)
                     {
                         dTOApiDataResponse.Status = false;
@@ -3216,6 +3310,19 @@ namespace Web.Controllers
                         {
                             dTOApiDataResponse.Message = "You didn't Select First time Smart card";
                             dTOApiDataResponse.Status = false;
+                        }
+                        else if (lCardType == 5)
+                        {
+                            bool check = await _lostCardBL.CheckServiceNoRequestInLost(ICNumber);
+                            if (check)
+                            {
+                                dTOApiDataResponse.Status = true;
+                            }
+                            else
+                            {
+                                dTOApiDataResponse.Message = "First, report the loss and then place an I-Card request.";
+                                dTOApiDataResponse.Status = false;
+                            }
                         }
                         else
                         {
@@ -3266,21 +3373,29 @@ namespace Web.Controllers
                 if (dto.TypeId == KeyConstants.FaultyCardRequest)
                 {
                     var user = await userManager.FindByIdAsync(dto.AspNetUsersId.ToString());
-                     
+
                     // UserManager service GetClaimsAsync method gets all the current claims of the user
                     var UserClaims = await userManager.GetClaimsAsync(user);
                     if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                     {
-                        dto.Claim = true;
+                        dto.Claim = 1;
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                    {
+                        dto.Claim = 2;
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                    {
+                        dto.Claim = 3;
                     }
                     else
                     {
-                        dto.Claim = false;
+                        dto.Claim = 0;
                     }
                 }
                 else
                 {
-                    dto.Claim = true;
+                    dto.Claim = 0;
                 }
 
 
@@ -3331,7 +3446,7 @@ namespace Web.Controllers
                 return Json(null);
             }
         }
-        
+
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
             ICardHistoryResponseAll? cardHistoryResponses = new ICardHistoryResponseAll();
@@ -3358,7 +3473,7 @@ namespace Web.Controllers
             var regimentals = await service.GetRegimentalListByArmedId(ArmedId);
             return Json(regimentals);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> GetROListByArmedId(byte ArmedId)
         {
@@ -3540,7 +3655,7 @@ namespace Web.Controllers
 
             return Directory.CreateDirectory(folder);
         }
-        public static DirectoryInfo ForCreateFolderrandom(string baseFolder,string DoaminId)
+        public static DirectoryInfo ForCreateFolderrandom(string baseFolder, string DoaminId)
         {
             var now = DateTime.Now;
             var yearName = now.ToString("yyyy");
@@ -3551,7 +3666,7 @@ namespace Web.Controllers
             var ss = now.ToString("ss");
             var folder =
                         Path.Combine(baseFolder,
-                           Path.Combine(dayName+ ""+ monthName + "" + yearName + "_" + hh + "" + mm + "" + ss + "_"+ DoaminId));
+                           Path.Combine(dayName + "" + monthName + "" + yearName + "_" + hh + "" + mm + "" + ss + "_" + DoaminId));
 
             return Directory.CreateDirectory(folder);
         }
@@ -3726,7 +3841,7 @@ namespace Web.Controllers
                 _logger.LogError(1001, ex, "BasicDetail->ICardDistibutionUploadCsv");
                 response.Message = "Internal Server Error!";
             }
-            Returnstm:
+        Returnstm:
             return Json(response);
         }
 
@@ -3868,5 +3983,581 @@ namespace Web.Controllers
             return Json(dTOFaulty);
         }
         #endregion DestructionCard
+
+        #region Dispatch
+        public async Task<IActionResult> GetUserIdWithName(int AspNetUsersId)
+        {
+            DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
+
+            response = await basicDetailBL.GetUserIdWithName(AspNetUsersId);
+            return Ok(response);
+        }
+
+        public async Task<IActionResult> GetDispatchToData(byte CategeryId, byte RecordRegimentId)
+        {
+            DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
+
+            response = await basicDetailBL.GetDispatchToData(CategeryId, RecordRegimentId);
+            return Ok(response);
+        }
+
+        public async Task<IActionResult> GetddlRecordRegiment(byte CategeryId)
+        {
+            DtoSession? dtoSession = new DtoSession();
+            DTOGenericResponse<List<DTOMasterResponse>> response = new DTOGenericResponse<List<DTOMasterResponse>>();
+            List<DTOMasterResponse> ret = new List<DTOMasterResponse>();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+
+            if (dtoSession != null)
+            {
+                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                byte ClaimValue;
+
+                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    ClaimValue = 1;
+                    response = await basicDetailBL.GetddlRecordRegiment(CategeryId, ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId);
+                    return Ok(response);
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                {
+                    ClaimValue = 2;
+                    response = await basicDetailBL.GetddlRecordRegiment(CategeryId, ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId);
+                    return Ok(response);
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                {
+                    ClaimValue = 3;
+                    response = await basicDetailBL.GetddlRecordRegiment(CategeryId, ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId);
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Result = false;
+                    response.Message = "An error occurred while fetching data.";
+                    response.Value = ret;
+                    return Ok(response);
+                }
+            }
+            else
+            {
+                response.Result = false;
+                response.Message = "An error occurred while fetching data.";
+                response.Value = ret;
+                return Ok(response);
+            }
+        }
+
+        public async Task<ActionResult> DispatchOut()
+        {
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+            {
+                ViewBag.ClaimValue = 1;
+                return View();
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+            {
+                ViewBag.ClaimValue = 2;
+                return View();
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+            {
+                ViewBag.ClaimValue = 3;
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Invalid User.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Policy = "ICardExportDataPolicy")]
+        public async Task<ActionResult> DispatchOut([FromForm] DTODispatchOutRequest dTO)
+        {
+            DtoSession? dtoSession = new DtoSession();
+            DTOGenericResponse<DTOCardDispatchCheckResponse> response = new DTOGenericResponse<DTOCardDispatchCheckResponse>();
+            DTOCardDispatchCheckResponse ret = new DTOCardDispatchCheckResponse();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            }
+
+            if (dtoSession != null)
+            {
+                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                byte ClaimValue = 0;
+
+                dTO.OutDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                dTO.FromAspNetUsersId = AspNetUsersId;
+                dTO.FromUserId = dtoSession.UserId;
+                dTO.FromUnitId = dtoSession.UnitId;
+                dTO.IsActive = true;
+                dTO.IsComplete = false;
+                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                dTO.Updatedby = AspNetUsersId;
+
+                if (ModelState.IsValid)
+                {
+                    // UserManager service GetClaimsAsync method gets all the current claims of the user
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    {
+                        dTO.Step = 1;
+                        ClaimValue = 1;
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                    {
+                        dTO.Step = 2;
+                        ClaimValue = 2;
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                    {
+                        dTO.Step = 2;
+                        ClaimValue = 3;
+                    }
+                    else
+                    {
+                        response.Result = false;
+                        response.Message = "Unauthorized User.";
+                        response.Value = ret;
+                        return Ok(response);
+                    }
+
+
+
+                    string fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
+                    try
+                    {
+                        var records = new List<DTOCardDispatchCheckRequest>();
+                        using (var reader = new StreamReader(dTO.CSVFile.OpenReadStream()))
+                        using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
+                        {
+                            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDispatchCheckRequest>(true, CsvClassMapTypeEnum.DispatchCard));
+                            try
+                            {
+                                records = csv.GetRecords<DTOCardDispatchCheckRequest>().ToList();
+                            }
+                            catch (Exception ee)
+                            {
+                                _logger.LogError(1001, ee, "BasicDetail->DispatchOut");
+                                response.Result = false;
+                                response.Message = "Internal Server Error!";
+                                goto Returnstm;
+                            }
+                        }
+
+                        #region Upload File Without Remarks
+                        var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CardDispatchCSVs", "CSVWithoutRemarks");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await dTO.CSVFile.CopyToAsync(stream);
+                        }
+                        #endregion Upload User File
+
+                        var validateResult = await basicDetailBL.ValidateCardDispatchData(records, ClaimValue, dTO);
+
+                        ret.TotalRecords = validateResult.Count();
+                        ret.ValidRecords = validateResult.Where(x => x.IsValid).Count();
+                        ret.SheetInValidRecords = validateResult.Where(x => x.Status == "SheetInValid").Count();
+                        ret.DbInValidRecords = validateResult.Where(x => x.Status == "DbInvalid").Count();
+
+                        response.Result = true;
+                        response.Value = ret;
+
+                        #region Upload File With Remarks
+                        uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CardDispatchCSVs", "CSVWithRemarks");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+                        filePath = Path.Combine(uploadsFolder, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await dTO.CSVFile.CopyToAsync(stream);
+                        }
+                        using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
+                        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                        {
+                            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDispatchCheckRequest>(false));
+                            try
+                            {
+                                csv.WriteRecords(validateResult);
+                            }
+                            catch (Exception ee)
+                            {
+                                _logger.LogError(1001, ee, "BasicDetail->DispatchOut");
+                                response.Result = false;
+                                response.Message = "Internal Server Error!";
+                                response.Value = ret;
+                                goto Returnstm;
+                            }
+                        }
+                        #endregion Upload User File
+                        dTO.UploadFilePath = fileName;
+                        DTODispatchOutRequestWithoutIFormFile dTODispatch = new DTODispatchOutRequestWithoutIFormFile
+                        {
+                            DispatchCardId = dTO.DispatchCardId,
+                            Step = dTO.Step,
+                            ApplyForId = dTO.ApplyForId,
+                            RegId = dTO.RegId,
+                            RecordOfficeId = dTO.RecordOfficeId,
+                            OutDate = dTO.OutDate,
+                            ReceiptDate = dTO.ReceiptDate,
+                            DispatchDate = dTO.DispatchDate,
+                            DispatchModeId = dTO.DispatchModeId,
+                            RefOfDispatch = dTO.RefOfDispatch,
+                            LotNo = dTO.LotNo,
+                            NameOfCourierIncharge = dTO.NameOfCourierIncharge,
+                            UploadFilePath = dTO.UploadFilePath,
+                            FromRemark = dTO.FromRemark,
+                            ToRemark = dTO.ToRemark,
+                            FromUnitId = dTO.FromUnitId,
+                            ToUnitId = dTO.ToUnitId,
+                            ToUserId = dTO.ToUserId,
+                            FromUserId = dTO.FromUserId,
+                            FromAspNetUsersId = dTO.FromAspNetUsersId,
+                            ToAspNetUsersId = dTO.ToAspNetUsersId,
+                            IsComplete = dTO.IsComplete,
+                            IsActive = dTO.IsActive,
+                            Updatedby = dTO.Updatedby,
+                            UpdatedOn = dTO.UpdatedOn
+                        };
+
+                        SessionHeplers.SetObject(HttpContext.Session, "DestructionCardData", dTODispatch);
+                        SessionHeplers.SetObject(HttpContext.Session, "ValidDispatchCardRecordsUpload", validateResult.Where(v => v.IsValid == true).ToList());
+                        ret.FileName = fileName;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(1001, ex, "BasicDetail->DispatchOut");
+                        response.Message = "Internal Server Error!";
+                    }
+                Returnstm:
+                    return Json(response);
+
+                }
+                else
+                {
+                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                    if (errors.Any())
+                    {
+                        response.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    response.Result = false;
+                    return Json(response);
+                }
+            }
+            else
+            {
+                response.Result = false;
+                response.Message = "An error occurred while fetching data.";
+                response.Value = ret;
+                return Ok(response);
+            }
+        }
+        [HttpGet]
+
+        public async Task<IActionResult> ICardDispatchValidRecordsUpload()
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            try
+            {
+                var records = SessionHeplers.GetObject<List<DTOCardDispatchCheckRequest>>(HttpContext.Session, "ValidDispatchCardRecordsUpload");
+
+                DTODispatchOutRequestWithoutIFormFile? dTODispatch = SessionHeplers.GetObject<DTODispatchOutRequestWithoutIFormFile>(HttpContext.Session, "DestructionCardData");
+
+                if (records?.Count() > 0 && dTODispatch != null)
+                {
+
+                    response = await basicDetailBL.CardDispatchCSVUpload(records, dTODispatch);
+                    //response.Result = true;
+                }
+                else
+                {
+                    response.Result = false;
+                    response.Message = "There are no valid records!";
+                    response.Value = string.Empty;
+                }
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "BasicDetail->ICardPrintValidRecordsUpload");
+                response.Result = false;
+                response.Message = "Internal Server Error!";
+                response.Value = string.Empty;
+            }
+            finally
+            {
+                HttpContext.Session.Remove("ValidDispatchCardRecordsUpload");
+                HttpContext.Session.Remove("DestructionCardData");
+            }
+            return Json(response);
+        }
+
+        public async Task<IActionResult> DispatchCard()
+        {
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+            {
+                ViewBag.ClaimValue = 1;
+                return View();
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+            {
+                ViewBag.ClaimValue = 2;
+                return View();
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+            {
+                ViewBag.ClaimValue = 3;
+                return View();
+            }
+            else
+            {
+                ViewBag.ClaimValue = 0;
+                return View();
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
+        {
+            try
+            {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+
+                if (dtoSession != null)
+                {
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
+                    // UserManager service GetClaimsAsync method gets all the current claims of the user
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    {
+                        dTO.ClaimValue = 1;
+                        dTO.UnitId = dtoSession.UnitId;
+                        dTO.TDMId = dtoSession.TrnDomainMappingId;
+                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                    {
+                        dTO.ClaimValue = 2;
+                        dTO.UnitId = dtoSession.UnitId;
+                        dTO.TDMId = dtoSession.TrnDomainMappingId;
+                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                    }
+                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                    {
+                        dTO.ClaimValue = 3;
+                        dTO.UnitId = dtoSession.UnitId;
+                        dTO.TDMId = dtoSession.TrnDomainMappingId;
+                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                    }
+                    else
+                    {
+                        dTO.ClaimValue = 0;
+                        dTO.UnitId = dtoSession.UnitId;
+                        dTO.TDMId = dtoSession.TrnDomainMappingId;
+                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                    }
+                }
+                else
+                {
+                    List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
+                    var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTODispatchCardLists
+                    };
+                    return Json(responseData);
+                }
+            }
+            catch (Exception ex)
+            {
+                List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
+                var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTODispatchCardLists
+                };
+                _logger.LogError(1001, ex, "BasicDetail->GetAllDispatchCard");
+                return Json(responseData);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
+        {
+            try
+            {
+                return Json(await basicDetailBL.GetDispatchCardDataForDialog(dTO));
+            }
+            catch (Exception ex)
+            {
+                List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
+                var responseData = new DTODataTablesResponse<DTOCardDispatchDialogResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOCards
+                };
+                _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
+                return Json(responseData);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DispatchCardIn([FromForm] DTODispatchInRequest dTO)
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+
+            dTO.ReceiptDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+            dTO.IsComplete = true;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    TrnDispatchCard? trnDispatchCard = await dispatchCardBL.Get(dTO.DispatchCardId);
+                    if (trnDispatchCard != null)
+                    {
+                        if (trnDispatchCard.IsComplete == true && trnDispatchCard.ReceiptDate != null)
+                        {
+                            response.Result = false;
+                            response.Message = "Action has already been taken by you.";
+                            response.Value = string.Empty;
+                        }
+                        else
+                        {
+                            byte StepId = 0;
+                            if (trnDispatchCard.Step == 1)
+                            {
+                                StepId = 12;
+                            }
+                            else if (trnDispatchCard.Step == 2)
+                            {
+                                StepId = 14;
+                            }
+                            List<DTODispatchCardInRequest> dTODispatchCards = new List<DTODispatchCardInRequest>();
+                            dTODispatchCards.AddRange(await dispatchCardMappingBL.GetRequestIds(trnDispatchCard.DispatchCardId));
+                            response = await basicDetailBL.DispatchCardIn(dTODispatchCards, StepId, dTO.DispatchCardId, dTO.ToRemark);
+                            response.Value = string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        response.Result = false;
+                        response.Message = "Invalid Id";
+                        response.Value = string.Empty;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, "BasicDetail->DispatchCardIn");
+                    response.Message = "Internal Server Error!";
+                }
+            }
+            else
+            {
+                var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                .SelectMany(x => x.Value!.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+                if (errors.Any())
+                {
+                    response.Message = string.Join("; ", errors); // Concatenate all error messages
+                }
+                response.Result = false;
+                response.Value = string.Empty;
+            }
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetDispatchCardStatusListForDialog(DTODataTablesRequest dTO)
+        {
+            try
+            {
+                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+                byte ClaimValue;
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    ClaimValue = 1;
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                {
+                    ClaimValue = 2;
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                {
+                    ClaimValue = 3;
+                }
+                else
+                {
+                    ClaimValue = 0;
+                }
+                return Json(await basicDetailBL.GetDispatchCardStatusListForDialog(dTO, ClaimValue));
+            }
+            catch (Exception ex)
+            {
+                List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
+                var responseData = new DTODataTablesResponse<DTODispatchCardStatusResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOCards
+                };
+                _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
+                return Json(responseData);
+            }
+        }
+
+        #endregion
     }
 }

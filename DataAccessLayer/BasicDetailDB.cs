@@ -17,7 +17,6 @@ using System.Collections.Immutable;
 using System.Data;
 using Azure.Core;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTransferObject.Constants;
@@ -28,23 +27,932 @@ using Microsoft.AspNetCore.Http;
 using static Dapper.SqlMapper;
 using DataTransferObject.Response.User;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using DataTransferObject.Domain.Identitytable;
+using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using System.Transactions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccessLayer
 {
     public class BasicDetailDB : GenericRepositoryDL<BasicDetail>, IBasicDetailDB
     {
         protected new readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly DapperContext _contextDP;
         private readonly IDataProtector protector;
         private readonly ILogger<BasicDetailDB> _logger;
-        public BasicDetailDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<BasicDetailDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        private readonly IServiceProvider _serviceProvider;
+        public BasicDetailDB(ApplicationDbContext context, DapperContext contextDP, IServiceProvider serviceProvider, IDataProtectionProvider dataProtectionProvider, ILogger<BasicDetailDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings, UserManager<ApplicationUser> userManager) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
+            _serviceProvider = serviceProvider;
             _logger = logger;
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
+            this.userManager = userManager;
+        }
+        public async Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequest dTO, byte ClaimValue)
+        {
+            string query = "";
+            string wherequery = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection;
+
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ApplyForId"] = "mappl.ApplyForId",
+                ["RequestId"] = "req.RequestId",
+                ["StepId"] = "stepc.StepId",
+                ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                ["ServiceNo"] = "basi.ServiceNo",
+                ["RecordOfficeName"] = "mrec.Abbreviation",
+                ["RegimentalName"] = "regi.Abbreviation",
+                ["ChipNo"] = "req.ChipNo",
+                ["CardSerialNo"] = "req.CardSerialNo",
+                ["SUSNo"] = "munit.Sus_no"
+            };
+            if (ClaimValue == 1)
+            {
+                query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                        CASE 
+                            WHEN stepc.StepId = 6 THEN 'Pending' 
+                            WHEN stepc.StepId >= 11 THEN 'Dispatch Out'
+                            ELSE 'Unknown' 
+                        END AS Status
+                        from TrnStepCounter stepc
+                        INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
+                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
+                        INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                        INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                        INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                        INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                        LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
+                        LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
+                wherequery = @"WHERE
+                            stepc.StepId=6 OR stepc.StepId>=11
+                            AND (
+                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
+                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
+                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
+                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
+                                )";
+            }
+            else if (ClaimValue == 2 || ClaimValue == 3)
+            {
+                query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                        CASE 
+                            WHEN stepc.StepId = 12 THEN 'Pending' 
+                            WHEN stepc.StepId >= 13 THEN 'Dispatch Out'
+                            ELSE 'Unknown' 
+                        END AS Status
+                        from TrnStepCounter stepc
+                        INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
+                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
+                        INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                        INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                        INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                        INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                        LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
+                        LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
+                wherequery = @"WHERE
+                            stepc.StepId=12 OR stepc.StepId>=13
+                            AND (
+                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
+                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
+                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
+                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
+                                )";
+            }
+            else
+            {
+                query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                        CASE 
+                            WHEN stepc.StepId = 14 THEN 'Pending' 
+                            WHEN stepc.StepId = 15 THEN 'Card Distribute'
+                            ELSE 'Unknown' 
+                        END AS Status
+                        from TrnStepCounter stepc
+                        INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
+                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
+                        INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                        INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                        INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                        INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                        LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
+                        LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
+                wherequery = @"WHERE
+                            stepc.StepId=14 OR stepc.StepId=15
+                            AND (
+                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
+                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
+                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
+                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
+                                )";
+            }
+
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "basi.ServiceNo";
+                var multiQuery = query = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(query, parameters);
+                    var records = (await ret.ReadAsync<DTODispatchCardStatusResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTODispatchCardStatusResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllDispatchCard");
+                List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
+                var responseData = new DTODataTablesResponse<DTODispatchCardStatusResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOCards
+                };
+                return responseData;
+            }
+        }
+        public async Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
+        {
+            string query = "";
+            string wherequery = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection;
+
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            { 
+                ["RequestId"] = "req.RequestId",
+                ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                ["ServiceNo"] = "basi.ServiceNo",
+                ["RecordOfficeName"] = "mrec.Abbreviation",
+                ["RegimentalName"] = "regi.Abbreviation",
+                ["ChipNo"] = "req.ChipNo",
+                ["CardSerialNo"] = "req.CardSerialNo",
+                ["SUSNo"] = "munit.Sus_no"
+            };
+            query = @"dcm.DispatchCardMappingId,req.RequestId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo from TrnDispatchCardMapping dcm
+                    INNER JOIN TrnDispatchCard dcard on dcm.DispatchCardId =dcard.DispatchCardId
+                    INNER JOIN TrnICardRequest req on dcm.ChipNo=req.ChipNo
+                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                    INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                    LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
+                    LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId";
+            wherequery = @"WHERE
+                            dcm.DispatchCardId=@DispatchCardId
+                            AND (
+                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
+                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
+                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
+                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
+                                )";
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "basi.ServiceNo";
+                var multiQuery = query = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@DispatchCardId", dTO.DispatchCardId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(query, parameters);
+                    var records = (await ret.ReadAsync<DTOCardDispatchDialogResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTOCardDispatchDialogResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllDispatchCard");
+                List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
+                var responseData = new DTODataTablesResponse<DTOCardDispatchDialogResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOCards
+                };
+                return responseData;
+            }
+        }
+        public async Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
+        {
+            string query = "";
+            string wherequery = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection;
+            if (dTO.ClaimValue == 1)
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ApplyFor"] = "mappl.Name",
+                    ["LotNo"] = "dcard.LotNo",
+                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
+                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchDate"] = "dcard.DispatchDate",
+                    ["FromRemark"] = "dcard.FromRemark",
+                    ["ReceiptDate"] = "dcard.ReceiptDate",
+                    ["ToRemark"] = "dcard.ToRemark"
+                };
+                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
+                        INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
+                        INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
+                        INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
+                        INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
+                        INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
+                        INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                        INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                        INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                        INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                        INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                        INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
+                        LEFT JOIN MRegimental regi on regi.RegId=dcard.RegId
+                        LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId ";
+                wherequery = @"WHERE
+                            dcard.Step=1
+                            AND (
+                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
+                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
+                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
+                                mappl.Name LIKE '%' + @SearchTerm + '%'
+                                )";
+            }
+            else if (dTO.ClaimValue == 2)
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ApplyFor"] = "mappl.Name",
+                    ["LotNo"] = "dcard.LotNo",
+                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
+                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchDate"] = "dcard.DispatchDate",
+                    ["FromRemark"] = "dcard.FromRemark",
+                    ["ReceiptDate"] = "dcard.ReceiptDate",
+                    ["ToRemark"] = "dcard.ToRemark"
+                };
+                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
+                        INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
+                        INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
+                        INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
+                        INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
+                        INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
+                        INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                        INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                        INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                        INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                        INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                        INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
+                        INNER JOIN OROMapping oro on dcard.RecordOfficeId = oro.RecordOfficeId
+                        INNER JOIN MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId ";
+                wherequery = @"WHERE
+                            oro.TDMId=@TDMId
+                            AND (
+                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
+                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
+                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
+                                mappl.Name LIKE '%' + @SearchTerm + '%'
+                            )";
+            }
+            else if (dTO.ClaimValue == 3)
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ApplyFor"] = "mappl.Name",
+                    ["LotNo"] = "dcard.LotNo",
+                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
+                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchDate"] = "dcard.DispatchDate",
+                    ["FromRemark"] = "dcard.FromRemark",
+                    ["ReceiptDate"] = "dcard.ReceiptDate",
+                    ["ToRemark"] = "dcard.ToRemark"
+                };
+                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
+                        INNER JOIN MDispatchMode mdis on dcard.DispatchModeId=mdis.DispatchModeId
+                        INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
+                        INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
+                        INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
+                        INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
+                        INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                        INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                        INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                        INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                        INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                        INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
+                        INNER join MRegimental regi on dcard.RegId = regi.RegId";
+                wherequery = @"WHERE
+                            regi.UnitId=@UnitId
+                            AND (
+                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
+                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
+                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
+                                mappl.Name LIKE '%' + @SearchTerm + '%'
+                                )";
+            }
+            else
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ApplyFor"] = "mappl.Name",
+                    ["LotNo"] = "dcard.LotNo",
+                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
+                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchDate"] = "dcard.DispatchDate",
+                    ["FromRemark"] = "dcard.FromRemark",
+                    ["ReceiptDate"] = "dcard.ReceiptDate",
+                    ["ToRemark"] = "dcard.ToRemark"
+                };
+                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
+                        INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
+                        INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
+                        INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
+                        INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
+                        INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
+                        INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                        INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                        INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                        INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                        INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                        INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
+                        LEFT JOIN MRegimental regi on regi.RegId=dcard.RegId
+                        LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId ";
+                wherequery = @"WHERE
+                            dcard.Step=2
+                            AND dcard.ToUnitId=@UnitId
+                            AND (
+                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
+                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
+                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
+                                mappl.Name LIKE '%' + @SearchTerm + '%' OR
+                                mrec.Name LIKE '%' + @SearchTerm + '%'
+                            )";
+            }
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "toUp.ArmyNo";
+                var multiQuery = query = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UnitId", dTO.UnitId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@TDMId", dTO.TDMId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(query, parameters);
+                    var records = (await ret.ReadAsync<DTODispatchCardListResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllDispatchCard");
+                List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
+                var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTODispatchCardLists
+                };
+                return responseData;
+            }
+        }
+        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO)
+        {
+            byte StepId;
+            string Remarks = string.Empty;
+            if (ClaimValue == 1)
+            {
+                StepId = 6;
+                Remarks = "The card application is not available for printing.";
+            }
+            else
+            {
+                StepId = 12;
+                Remarks = "The card application is not in the Regiment/Officer Record Office.";
+            }
+            var response = new List<DTOCardDispatchCheckRequest>();
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                // ✅ Get scoped services like DbContext inside the scope
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var connection = context.Database.GetDbConnection();
+                try
+                {
+                    if (connection.State != ConnectionState.Open)
+                        connection.Open(); // Keep connection open throughout
+
+                    foreach (var batchRecords in requests.Chunk(5000))
+                    {
+                        var resultInChunks = await Task.Run(() =>
+                        {
+                            if (ClaimValue == 1)
+                            {
+                                if (dTO.ApplyForId == 1)
+                                {
+                                    return (from record in batchRecords
+                                            join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+                                            from chipNoExists in chipNoJoin.DefaultIfEmpty()
+                                            join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                                            from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                            select new DTOCardDispatchCheckRequest
+                                            {
+                                                ChipNo = record.ChipNo,
+                                                RequestId = chipNoExists?.RequestId ?? 0,
+                                                IsValid = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null,
+                                                Status = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null ? "Valid" : "DbInvalid",
+                                                Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+                                                          (chipNoExists != null && chipNoExists.RecordOfficeId != dTO.RecordOfficeId ? "ChipNo not Valid match to RecordOffice; " : "") +
+                                                          (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                            }).ToList();
+                                }
+                                else
+                                {
+                                    return (from record in batchRecords
+                                            join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+                                            from chipNoExists in chipNoJoin.DefaultIfEmpty()
+                                            join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.RegimentalId } into bdMatchJoin
+                                            from bdMatch in bdMatchJoin.DefaultIfEmpty()
+                                            join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                                            from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                            select new DTOCardDispatchCheckRequest
+                                            {
+                                                ChipNo = record.ChipNo,
+                                                RequestId = chipNoExists?.RequestId ?? 0,
+                                                IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
+                                                Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
+                                                Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+                                                          (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Regiment; " : "") +
+                                                          (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                            }).ToList();
+                                }
+                            }
+                            else
+                            {
+                                return (from record in batchRecords
+                                        join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+                                        from chipNoExists in chipNoJoin.DefaultIfEmpty()
+                                        join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
+                                        from bdMatch in bdMatchJoin.DefaultIfEmpty()
+                                        join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                                        from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                        select new DTOCardDispatchCheckRequest
+                                        {
+                                            ChipNo = record.ChipNo,
+                                            RequestId = chipNoExists?.RequestId ?? 0,
+                                            IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
+                                            Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
+                                            Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+                                                      (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Unit; " : "") +
+                                                      (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                        }).ToList();
+                            }
+
+                        });
+                        response.AddRange(resultInChunks);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                finally
+                {
+                    if (connection.State == ConnectionState.Open)
+                        connection.Close();
+                }
+            }
+            return response;
+        }
+        public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId) 
+        {
+            DTODispatchToResponse? ret = new DTODispatchToResponse();
+            DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
+            string query = @"Select up.UserId,up.ArmyNo,up.Name,mran.RankAbbreviation from AspNetUsers aspuser
+                            inner join TrnDomainMapping tdm on aspuser.Id = tdm.AspNetUsersId
+                            inner join UserProfile up on tdm.UserId=up.UserId
+                            inner join MRank mran on up.RankId=mran.RankId
+                            Where aspuser.Id=@AspNetUsersId";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    ret = await connection.QueryFirstOrDefaultAsync<DTODispatchToResponse>(query, new { AspNetUsersId });
+                }
+                if (ret != null && ret.UserId != null)
+                {
+                    response.Result = true;  // Operation successful
+                    response.Message = "Data retrieved successfully.";
+                    response.Value = ret;
+                }
+                else
+                {
+                    response.Message = "User not found.";
+                    response.Result = false; // Operation failed
+                    response.Value = ret;
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetUserIdWithName");
+                response.Result = false;
+                response.Message = "An error occurred while fetching data.";
+                response.Value = ret;
+                return response;
+            }
+        }
+        public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id)
+        {
+            DTODispatchToResponse? ret = new DTODispatchToResponse();
+            DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
+            string query = string.Empty;
+            if (CategeryId == 1)
+            {
+                query = @"Select oro.UnitId,mun.Abbreviation as UnitAbbreviation, CONCAT(mun.Sus_no,mun.Suffix) as Sus_no,tdm.UserId,tdm.AspNetUsersId,aspuser.DomainId,up.ArmyNo,up.Name,mran.RankAbbreviation from OROMapping oro
+                            left join MapUnit mapu on oro.UnitId = mapu.UnitMapId
+                            left join MUnit mun on mapu.UnitId = mun.UnitId
+                            left join TrnDomainMapping tdm on oro.TDMId = tdm.Id
+                            left join AspNetUsers aspuser on tdm.AspNetUsersId=aspuser.Id
+                            left join UserProfile up on tdm.UserId=up.UserId
+                            left join MRank mran on up.RankId=mran.RankId
+                            Where oro.RecordOfficeId=@Id";
+                try
+                {
+                    using (var connection = _contextDP.CreateConnection())
+                    {
+                        ret = await connection.QueryFirstOrDefaultAsync<DTODispatchToResponse>(query, new { Id });
+                    }
+                    if (ret != null && ret.UnitId != null && ret.UserId != null && ret.AspNetUsersId != null)
+                    {
+                        response.Result = true;  // Operation successful
+                        response.Message = "Data retrieved successfully.";
+                        response.Value = ret;
+                    }
+                    else
+                    {
+                        response.Message = "Unit not bind with ORO Mapping Master.Contact to MP6 Cell.";
+                        response.Result = false; // Operation failed
+                        response.Value = ret;
+                    }
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, "BasicDetailDB->GetUnitIdAndTDMIdForDispatch");
+                    response.Result = false;
+                    response.Message = "An error occurred while fetching data.";
+                    response.Value = ret;
+                    return response;
+                }
+            }
+            else if (CategeryId == 2)
+            {
+                query = @"Select UnitId from MRegimental Where RegId=@Id";
+                string query2 = @"Select AspNetUsersId from TrnDomainMapping where UnitId=@UnitId";
+                string query3 = @"Select mreg.UnitId,mun.Abbreviation as UnitAbbreviation, CONCAT(mun.Sus_no,mun.Suffix) as Sus_no,tdm.UserId,tdm.AspNetUsersId,aspuser.DomainId,up.ArmyNo,up.Name,mran.RankAbbreviation from MRegimental mreg
+                                left join MapUnit mapu on mreg.UnitId = mapu.UnitMapId
+                                left join MUnit mun on mapu.UnitId = mun.UnitId
+                                left join AspNetUsers aspuser on aspuser.Id=@AspNetUsersId
+                                left join TrnDomainMapping tdm on aspuser.Id = tdm.AspNetUsersId
+                                left join UserProfile up on tdm.UserId=up.UserId
+                                left join MRank mran on up.RankId=mran.RankId
+                                Where mreg.RegId=@Id";
+                try
+                {
+                    using (var connection = _contextDP.CreateConnection())
+                    {
+                        int? UnitId = await connection.QueryFirstOrDefaultAsync<int?>(query, new { Id });
+                        bool found = false;
+                        if (UnitId == null)
+                        {
+                            response.Result = false; // Operation failed
+                            response.Message = "Unit not bind with Regimental Master. Contact to MP6 Cell";
+                            response.Value = ret;
+                            
+                        }
+                        else
+                        {
+                            var AspNetUsersIds = await connection.QueryAsync<int>(query2, new { UnitId });
+                            int? AspNetUsersId=null;
+                            if (AspNetUsersIds.Any())
+                            {
+                                foreach (var item in AspNetUsersIds)
+                                {
+                                    var user = await userManager.FindByIdAsync(item.ToString());
+                                    
+                                    if (user == null) continue;
+                                    
+                                    var UserClaims = await userManager.GetClaimsAsync(user);
+                                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                                    {
+                                        AspNetUsersId = item;
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if(found == true && AspNetUsersId !=null)
+                                {
+                                    ret = await connection.QueryFirstOrDefaultAsync<DTODispatchToResponse>(query3, new { Id, UnitId, AspNetUsersId });
+                                    if (ret != null && ret.UnitId != null && ret.UserId != null && ret.AspNetUsersId != null)
+                                    {
+                                        response.Result = true;  // Operation successful
+                                        response.Message = "Data retrieved successfully.";
+                                        response.Value = ret;
+                                    }
+                                    else
+                                    {
+                                        response.Message = "Profile not bind with DID.Please Contact to MP6 Cell.";
+                                        response.Result = false; // Operation failed
+                                        response.Value = ret;
+                                    }
+                                }
+                                else
+                                {
+                                    response.Result = false; // Operation failed
+                                    response.Message = "Claim not assign to any DID.Please Contact to MP6 Cell.";
+                                    response.Value = ret;
+                                }
+                            }
+                            else
+                            {
+                                response.Result = false; // Operation failed
+                                response.Message = "Unit not contain any DID.Please Contact to MP6 Cell.";
+                                response.Value = ret;
+                            }
+
+                        }
+                        return response;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, "BasicDetailDB->GetUnitIdAndTDMIdForDispatch");
+                    response.Result = false;
+                    response.Message = "An error occurred while fetching data.";
+                    response.Value = ret;
+                    return response;
+                }
+            }
+            else
+            {
+                response.Result = false; // Operation failed
+                response.Message = "Invalid CategeryId provided.";
+                response.Value = ret;
+                return response;
+            }
+        }
+        public async Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue,int TDMId,int UnitId)
+        {
+            List<DTOMasterResponse> ret = new List<DTOMasterResponse>();
+            DTOGenericResponse<List<DTOMasterResponse>> response = new DTOGenericResponse<List<DTOMasterResponse>>();
+            string query=string.Empty;
+            if (ClaimValue == 1)
+            {
+                if(CategeryId == 1)
+                {
+                    query = @"Select oro.RecordOfficeId as Id,mrec.Name as Name from OROMapping oro
+                            inner join MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId";
+                }
+                else if(CategeryId == 2)
+                {
+                    query = @"Select RegId as Id, Name  from MRegimental";
+                }
+            }
+            else if (ClaimValue == 2) 
+            {
+                query = @"Select oro.RecordOfficeId as Id,mrec.Name from OROMapping oro
+                        inner join MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId WHERE oro.TDMId=@TDMId";
+            }
+            else if (ClaimValue == 3)
+            {
+                query = @"Select RegId as Id, Name  from MRegimental WHERE UnitId=@UnitId";
+            }
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                     ret = (await connection.QueryAsync<DTOMasterResponse>(query,new { TDMId , UnitId })).ToList();
+                }
+                response.Result = true;  // Operation successful
+                response.Message = "Data retrieved successfully.";
+                response.Value = ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetddlRecordRegiment");
+                response.Result = false;
+                response.Message = "An error occurred while fetching data.";
+                response.Value = ret;
+            }
+            return response;
+        }
+        public async Task<byte?> GetRecordOfficeId(byte ApplyForId,string ServiceNo,byte ArmedId,short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition)
+        {
+            try
+            {
+                string subquery = "";
+                string finalquery = "";
+                byte? RecordOfficeId;
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    if (ApplyForId == 1)
+                    {
+                        string ini = ServiceNo.Substring(0, 2).ToUpper();
+                        string MP6F = dTOApplFwdCondition.MP6F.Name;
+                        string MPRSO = dTOApplFwdCondition.MPRSO.Name;
+                        var ArmedAbbreviation = dTOApplFwdCondition.MPRSO.ArmedAbbreviation;
+
+                        subquery = @"declare @Orderby tinyint=0
+                                    declare @ArmedAbbreviation varchar(10)=''
+
+                                    Select @Orderby=Orderby from MRank where RankId=@RankId
+                                    Select @ArmedAbbreviation=Abbreviation from MArmedType where ArmedId=@ArmedId
+
+                                    Select @Orderby Orderby,@ArmedAbbreviation ArmedAbbreviation";
+
+                        var subqueryResult = await connection.QuerySingleOrDefaultAsync<DTOFwdSubqueryResponse>(subquery, new { RankId, ArmedId });
+
+                        if (subqueryResult != null)
+                        {
+                            if (ArmedAbbreviation.Contains(subqueryResult.ArmedAbbreviation, StringComparer.OrdinalIgnoreCase))
+                            {
+                                finalquery = @"Select RecordOfficeId from MRecordOffice where Name=@MPRSO";
+                                RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery, new { MPRSO });
+
+                                if (RecordOfficeId != null)
+                                {
+                                    return RecordOfficeId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                            else if (ini == dTOApplFwdCondition.MP6F.ArmyNoPrefix)
+                            {
+                                finalquery = @"Select RecordOfficeId from MRecordOffice where Name=@MP6F";
+                                RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery, new { MP6F });
+
+                                if (RecordOfficeId != null)
+                                {
+                                    return RecordOfficeId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+
+                            }
+                            else if (subqueryResult.Orderby <= dTOApplFwdCondition.MP6A.RankOrderby)
+                            {
+                                finalquery = @"Select RecordOfficeId from OROMapping where RankId is not null";
+                                RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery);
+
+                                if (RecordOfficeId != null)
+                                {
+                                    return RecordOfficeId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                            else
+                            {
+                                finalquery = @"Select RecordOfficeId from OROMapping where @ArmedId in (select value from string_split(ArmedIdList,','))";
+                                RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery, new { ArmedId });
+
+                                if (RecordOfficeId != null)
+                                {
+                                    return RecordOfficeId;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+
+                    }
+                    else
+                    {
+                        finalquery = @"Select RecordOfficeId from MRecordOffice where ArmedId=@ArmedId";
+                        RecordOfficeId = await connection.QueryFirstAsync<byte>(finalquery, new { ArmedId });
+
+                        if (RecordOfficeId != null)
+                        {
+                            return RecordOfficeId;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetRecordOfficeId");
+                return null;
+            }
+
         }
         public async Task<bool> CheckArmyNO(string ArmyNo)
         {
@@ -216,6 +1124,8 @@ namespace DataAccessLayer
                         await _context.SaveChangesAsync();
                         _context.Update(mTrnIdentityInfo);
                         await _context.SaveChangesAsync();
+                        _context.Update(mTrnICardRequest);
+                        await _context.SaveChangesAsync();
 
                         _context.Entry(Data).State = EntityState.Modified;
                         _context.Update(Data);
@@ -223,7 +1133,7 @@ namespace DataAccessLayer
 
                         transaction_.Commit();
                         dTOBasicDetailsSaveResponse.Result = true;
-                        dTOBasicDetailsSaveResponse.Message = "Updae";
+                        dTOBasicDetailsSaveResponse.Message = "Update";
                         return dTOBasicDetailsSaveResponse;
                     }
                     //do other things, then commit or rollback
@@ -313,9 +1223,9 @@ namespace DataAccessLayer
                 {
                     if (Data.BasicDetailId == 0)
                     {
-                        var insertBasicDetail = " INSERT INTO BasicDetails (ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName)" +
+                        var insertBasicDetail = " INSERT INTO BasicDetails (ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName, PreviousBasicDetailId)" +
                                                 " OUTPUT INSERTED.BasicDetailId " +
-                                                " VALUES (@ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName);";
+                                                " VALUES (@ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName, @PreviousBasicDetailId);";
                         var parametersBD = new DynamicParameters();
                         //parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Output);
                         parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
@@ -336,6 +1246,7 @@ namespace DataAccessLayer
                         parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
                         parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
+                        parametersBD.Add("@PreviousBasicDetailId", Data.PreviousBasicDetailId, DbType.Int32, ParameterDirection.Input);
                         int BasicDetailId = await db.QuerySingleAsync<int>(insertBasicDetail, parametersBD, transaction: transaction);
 
                         address.BasicDetailId = BasicDetailId;
@@ -423,7 +1334,7 @@ namespace DataAccessLayer
                         trnUpload.BasicDetailId = Data.BasicDetailId;
                         mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
 
-                        var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName WHERE BasicDetailId=@BasicDetailId ";
+                        var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName, PreviousBasicDetailId=@PreviousBasicDetailId WHERE BasicDetailId=@BasicDetailId ";
                         var parametersBD = new DynamicParameters();
                         parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                         parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
@@ -444,6 +1355,7 @@ namespace DataAccessLayer
                         parametersBD.Add("@RegimentalId", Data.RegimentalId, DbType.Byte, ParameterDirection.Input);
                         parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
+                        parametersBD.Add("@PreviousBasicDetailId", Data.PreviousBasicDetailId, DbType.Int32, ParameterDirection.Input);
                         await db.ExecuteAsync(updateBasicDetail, parametersBD, transaction: transaction);
 
                         var updateAddress = " UPDATE TrnAddress SET BasicDetailId=@BasicDetailId, State=@State, District=@District, PS=@PS, PO=@PO, Tehsil=@Tehsil, Village=@Village, PinCode=@PinCode WHERE AddressId=@AddressId";
@@ -477,6 +1389,23 @@ namespace DataAccessLayer
                         parametersIdentityInfo.Add("@Height", mTrnIdentityInfo.Height, DbType.Single, ParameterDirection.Input);
                         parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
                         await db.ExecuteAsync(updateIdentityInfo, parametersIdentityInfo, transaction: transaction);
+
+                        var updateTrnICardRequest = " UPDATE TrnICardRequest SET BasicDetailId=@BasicDetailId, TypeId=@TypeId, RegistrationId=@RegistrationId, TrnDomainMappingId=@TrnDomainMappingId, TrackingId=@TrackingId, IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, StatusId=@StatusId, CardSerialNo=@CardSerialNo, ChipNo=@ChipNo,RecordOfficeId=@RecordOfficeId WHERE RequestId=@RequestId";
+                        var parametersTrnICardRequest = new DynamicParameters();
+                        parametersTrnICardRequest.Add("@RequestId", mTrnICardRequest.RequestId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@BasicDetailId", mTrnICardRequest.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@TypeId", mTrnICardRequest.TypeId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@RegistrationId", mTrnICardRequest.RegistrationId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@TrnDomainMappingId", mTrnICardRequest.TrnDomainMappingId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@TrackingId", mTrnICardRequest.TrackingId, DbType.Int64, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@IsActive", mTrnICardRequest.IsActive, DbType.Boolean, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@Updatedby", mTrnICardRequest.Updatedby, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@UpdatedOn", mTrnICardRequest.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@StatusId", mTrnICardRequest.StatusId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardSerialNo", mTrnICardRequest.CardSerialNo, DbType.String, ParameterDirection.Input, 30);
+                        parametersTrnICardRequest.Add("@ChipNo", mTrnICardRequest.ChipNo, DbType.String, ParameterDirection.Input, 30);
+                        parametersTrnICardRequest.Add("@RecordOfficeId", mTrnICardRequest.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
+                        await db.ExecuteAsync(updateTrnICardRequest, parametersTrnICardRequest, transaction: transaction);
 
                         transaction.Commit();
                         dTOBasicDetailsSaveResponse.Result = true;
@@ -559,29 +1488,27 @@ namespace DataAccessLayer
 
 
         }
-        public async Task<int[]?> BasicDetailIds(string ServiceNo)
+        public async Task<int?> MaxBasicDetailId(string ServiceNo)
         {
-            const string query = @"SELECT BasicDetailId FROM BasicDetails WHERE ServiceNo = @ServiceNo";
+            const string query = @"SELECT MAX(BasicDetailId) AS MaxBasicDetailId FROM BasicDetails  WHERE ServiceNo = @ServiceNo";
 
             try
             {
                 using var connection = _contextDP.CreateConnection();
 
-                var result = await connection.QueryAsync<int>(query, new { ServiceNo = ServiceNo });
+                int? result = await connection.QueryFirstOrDefaultAsync<int?>(query, new { ServiceNo = ServiceNo });
 
-                // Return null if no result
-                return result.Any() ? result.ToArray() : null;
+                return result;
             }
             catch (Exception ex)
             {
                 // Log and return null if exception occurs
-                _logger.LogError(1001, ex, "BasicDetailDB->BasicDetailIdsAsync");
+                _logger.LogError(1001, ex, "BasicDetailDB->MaxBasicDetailId");
                 return null;
             }
         }
         public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
-            string unitQuery = dto.Claim ? "" : "and tdm.UnitId=@MapUnitId";
             string query = "";
             if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
             {
@@ -594,15 +1521,39 @@ namespace DataAccessLayer
             }
             else if (dto.TypeId == KeyConstants.FaultyCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                if (dto.Claim == 1)
+                {
+                    query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
                                 inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId {unitQuery}
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 where ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
+                }
+                //else if (dto.Claim == 2)
+                //{
+
+                //}
+                //else if (dto.Claim == 3)
+                //{
+
+                //}
+                else
+                {
+                    query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                                from BasicDetails basi
+                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
+                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=14
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                                where ServiceNo like @ServiceNo
+                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
+                }
+
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
@@ -610,7 +1561,7 @@ namespace DataAccessLayer
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId = 11
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId = 15
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
@@ -623,7 +1574,7 @@ namespace DataAccessLayer
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,2)
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,11)
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,11,12,13,14,15)
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
@@ -637,7 +1588,7 @@ namespace DataAccessLayer
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=14
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 Left join TrnDistributeCards tdc on req.RequestId = tdc.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
@@ -650,7 +1601,7 @@ namespace DataAccessLayer
                                 from BasicDetails basi
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,11)
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (15)
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnDestructionCards tlc on req.RequestId = tlc.RequestId
@@ -2161,7 +3112,7 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<DTOApplicationTrack?> ApplicationHistory(string TrackingId)
+        public async Task<DTOApplicationTrack?> ApplicationHistory(string ApplicationHistory)
         {
             DTOApplicationTrack lst = new DTOApplicationTrack();
             try
@@ -2188,7 +3139,7 @@ namespace DataAccessLayer
                 //" order by fwd.TrnFwdId asc";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { TrackingId });
+                    var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { ApplicationHistory });
                     lst.dTOApplicationDetails = ret.FirstOrDefault() ?? new DTOApplicationDetails();
                 }
                 query = " select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete," +
@@ -2201,7 +3152,7 @@ namespace DataAccessLayer
                         " order by fwd.TrnFwdId asc";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret1 = await connection.QueryAsync<DTOTrackHistory>(query, new { TrackingId });
+                    var ret1 = await connection.QueryAsync<DTOTrackHistory>(query, new { ApplicationHistory });
                     lst.dTOTrackHistory = ret1.ToList();
                 }
                 return lst;
@@ -2278,6 +3229,114 @@ namespace DataAccessLayer
             catch (Exception ee)
             {
                 response.Message = ee.Message;
+            }
+            return response;
+        }
+        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch)
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            try
+            {
+                byte StepId;
+                if (dTODispatch.Step == 1)
+                {
+                    StepId = 11;
+                }
+                else
+                {
+                    StepId = 13;
+                }
+                    string insert = "";
+                insert = @"INSERT INTO TrnDispatchCard(Step,ApplyForId,RegId,RecordOfficeId,OutDate,ReceiptDate,DispatchDate,RefOfDispatch,LotNo,NameOfCourierIncharge,UploadFilePath,FromRemark,ToRemark,FromUnitId,ToUnitId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,IsComplete,IsActive,Updatedby,UpdatedOn,DispatchModeId)
+                                OUTPUT INSERTED.DispatchCardId
+                                VALUES(@Step,@ApplyForId,@RegId,@RecordOfficeId,@OutDate,@ReceiptDate,@DispatchDate,@RefOfDispatch,@LotNo,@NameOfCourierIncharge,@UploadFilePath,@FromRemark,@ToRemark,@FromUnitId,@ToUnitId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@DispatchModeId)";
+                var parameters = new DynamicParameters();
+                parameters.Add("@DispatchCardId", dTODispatch.DispatchCardId, DbType.Int32, ParameterDirection.Output);
+                parameters.Add("@Step", dTODispatch.Step, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@ApplyForId", dTODispatch.ApplyForId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@RegId", dTODispatch.RegId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@RecordOfficeId", dTODispatch.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@OutDate", dTODispatch.OutDate, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@ReceiptDate", dTODispatch.ReceiptDate, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@DispatchDate", dTODispatch.DispatchDate, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@RefOfDispatch", dTODispatch.RefOfDispatch, DbType.String, ParameterDirection.Input, 50);
+                parameters.Add("@LotNo", dTODispatch.LotNo, DbType.String, ParameterDirection.Input,50);
+                parameters.Add("@NameOfCourierIncharge", dTODispatch.NameOfCourierIncharge, DbType.String, ParameterDirection.Input, 50);
+                parameters.Add("@UploadFilePath", dTODispatch.UploadFilePath, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@FromRemark", dTODispatch.FromRemark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@ToRemark", dTODispatch.ToRemark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@FromUnitId", dTODispatch.FromUnitId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUnitId", dTODispatch.ToUnitId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUserId", dTODispatch.ToUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromUserId", dTODispatch.FromUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromAspNetUsersId", dTODispatch.FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToAspNetUsersId", dTODispatch.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@IsComplete", dTODispatch.IsComplete, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@IsActive", dTODispatch.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@Updatedby", dTODispatch.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", dTODispatch.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@DispatchModeId", dTODispatch.DispatchModeId, DbType.Byte, ParameterDirection.Input);
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var Id = await connection.QuerySingleAsync<int>(insert, parameters);
+
+                    foreach (var batchRecords in requests.Chunk(5000))
+                    {
+
+                        DataTable cardDistribution = DataTableHelper.ToDataTable(batchRecords, "Remarks", "IsValid", "Status");
+                        var parameters2 = new DynamicParameters();
+                        parameters2.Add("@data", cardDistribution.AsTableValuedParameter("UT_CardDispatchCSV"));
+                        parameters2.Add("@DispatchCardId", Id, DbType.Int32, ParameterDirection.Input);
+                        parameters2.Add("@StepId", StepId, DbType.Byte, ParameterDirection.Input);
+                        response = (await connection.QueryAsync<DTOGenericResponse<string>>("CardDispatchCSVImport",
+                                                                                                parameters2,
+                                                                                                commandType: CommandType.StoredProcedure
+                                   )).FirstOrDefault();
+                    }
+                    response.Value = "Success";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetCardMovementHistory");
+                response.Message = "";
+                response.Result = false;
+            }
+            return response;
+        }
+        public async Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId,string ToRemark)
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+
+                    foreach (var batchRecords in dTODispatch.Chunk(5000))
+                    {
+
+                        DataTable dataTable = DataTableHelper.ToDataTable(batchRecords);
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@data", dataTable.AsTableValuedParameter("UT_CardDispatchIn"));
+                        parameters.Add("@DispatchCardId", DispatchCardId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@StepId", StepId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@ToRemark", ToRemark, DbType.String, ParameterDirection.Input,100);
+                        response = (await connection.QueryAsync<DTOGenericResponse<string>>("CardDispatchIn",
+                                                                                                parameters,
+                                                                                                commandType: CommandType.StoredProcedure
+                                   )).FirstOrDefault();
+                    }
+                    response.Value = "Success";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetCardMovementHistory");
+                response.Message = "";
+                response.Result = false;
             }
             return response;
         }
@@ -2426,40 +3485,92 @@ namespace DataAccessLayer
 
         public async Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId)
         {
+            #region Old Code
+            //DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
+            //try
+            //{
+            //    string query = @$"SELECT CASE
+            //                WHEN currentReq.TypeId = 1 THEN 1
+
+            //                WHEN currentReq.TypeId = 5 AND EXISTS (
+            //                    SELECT 1 FROM TrnLostCards lc
+            //                    WHERE lc.RequestId = (
+            //                        SELECT TOP 1 prevReq.RequestId
+            //                        FROM TrnICardRequest prevReq
+            //                        WHERE prevReq.BasicDetailId = currentReq.BasicDetailId
+            //                          AND prevReq.RequestId < currentReq.RequestId
+            //                          AND prevReq.StatusId != 1
+            //                        ORDER BY prevReq.RequestId DESC
+            //                    ) AND lc.IsActive = 1
+            //                ) THEN 1
+
+            //                WHEN currentReq.TypeId IN (2, 3, 4) AND EXISTS (
+            //                    SELECT 1 FROM TrnDestructionCards dc
+            //                    WHERE dc.RequestId = (
+            //                        SELECT TOP 1 prevReq.RequestId
+            //                        FROM TrnICardRequest prevReq
+            //                        WHERE prevReq.BasicDetailId = currentReq.BasicDetailId
+            //                          AND prevReq.RequestId < currentReq.RequestId
+            //                          AND prevReq.StatusId != 1
+            //                        ORDER BY prevReq.RequestId DESC
+            //                    ) AND dc.IsActive = 1
+            //                ) THEN 1
+
+            //                ELSE 0
+            //            END AS Result,case currentReq.TypeId when 1 then '' when 5 then 'Lost' else 'Destruction' end as Message
+            //            FROM TrnICardRequest currentReq
+            //            WHERE currentReq.RequestId = @RequestId";
+
+            //    using (var connection = _contextDP.CreateConnection())
+            //    {
+            //        var list = await connection.QueryAsync<DTOUploadChipAndSerialResponse>(query, new { RequestId = requestId });
+            //        response = list.FirstOrDefault();
+            //    }
+            //}
+            //catch (Exception ee)
+            //{
+            //    _logger.LogError(1001, ee, "BasicDetailDB->UpdateCardStatus");
+            //}
+            //return response;
+            #endregion
             DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
             try
             {
-                string query = @$"SELECT CASE
-                            WHEN currentReq.TypeId = 1 THEN 1
+                string query = @"SELECT CASE
+                                WHEN currentReq.TypeId = 1 THEN 1
 
-                            WHEN currentReq.TypeId = 5 AND EXISTS (
-                                SELECT 1 FROM TrnLostCards lc
-                                WHERE lc.RequestId = (
-                                    SELECT TOP 1 prevReq.RequestId
-                                    FROM TrnICardRequest prevReq
-                                    WHERE prevReq.BasicDetailId = currentReq.BasicDetailId
-                                      AND prevReq.RequestId < currentReq.RequestId
-                                      AND prevReq.StatusId != 1
-                                    ORDER BY prevReq.RequestId DESC
-                                ) AND lc.IsActive = 1
-                            ) THEN 1
+                                WHEN currentReq.TypeId = 5 AND EXISTS (
+                                    SELECT 1 FROM TrnLostCards lc
+                                    WHERE lc.RequestId = (
+                                        SELECT TIR1.RequestId
+									    FROM TrnICardRequest TIR1
+									    JOIN BasicDetails BD ON TIR1.BasicDetailId = BD.PreviousBasicDetailId
+									    JOIN TrnICardRequest TIR2 ON BD.BasicDetailId = TIR2.BasicDetailId
+									    WHERE TIR2.RequestId = currentReq.RequestId
+                                    ) AND lc.IsActive = 1
+                                ) THEN 1
 
-                            WHEN currentReq.TypeId IN (2, 3, 4) AND EXISTS (
-                                SELECT 1 FROM TrnDestructionCards dc
-                                WHERE dc.RequestId = (
-                                    SELECT TOP 1 prevReq.RequestId
-                                    FROM TrnICardRequest prevReq
-                                    WHERE prevReq.BasicDetailId = currentReq.BasicDetailId
-                                      AND prevReq.RequestId < currentReq.RequestId
-                                      AND prevReq.StatusId != 1
-                                    ORDER BY prevReq.RequestId DESC
-                                ) AND dc.IsActive = 1
-                            ) THEN 1
+                                WHEN currentReq.TypeId IN (2, 3, 4) AND EXISTS (
+                                    SELECT 1 FROM TrnDestructionCards dc
+                                    WHERE dc.RequestId = (
+                                        SELECT TIR1.RequestId
+									    FROM TrnICardRequest TIR1
+									    JOIN BasicDetails BD ON TIR1.BasicDetailId = BD.PreviousBasicDetailId
+									    JOIN TrnICardRequest TIR2 ON BD.BasicDetailId = TIR2.BasicDetailId
+									    WHERE TIR2.RequestId = currentReq.RequestId
+                                    ) AND dc.IsActive = 1
+                                ) THEN 1
 
-                            ELSE 0
-                        END AS Result,case currentReq.TypeId when 1 then '' when 5 then 'Lost' else 'Destruction' end as Message
-                        FROM TrnICardRequest currentReq
-                        WHERE currentReq.RequestId = @RequestId";
+                                ELSE 0
+                            END AS Result,
+						    case 
+						    WHEN currentReq.TypeId = 1 then '' 
+						    WHEN currentReq.TypeId IN (2, 3, 4) THEN 'Destruction' 
+						    WHEN currentReq.TypeId = 5 THEN 'Lost'
+						    ELSE ''
+						    END as Message
+                            FROM TrnICardRequest currentReq
+                            WHERE currentReq.RequestId = @RequestId;";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -2471,7 +3582,6 @@ namespace DataAccessLayer
             {
                 _logger.LogError(1001, ee, "BasicDetailDB->UpdateCardStatus");
             }
-
             return response;
         }
     }

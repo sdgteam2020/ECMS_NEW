@@ -1,11 +1,12 @@
-﻿using DataTransferObject.Domain.Identitytable;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.Account
 {
-    public interface IAccountBL : IGenericRepository<ApplicationUser>
+    public interface IAccountBL : IGenericRepositoryDL<ApplicationUser>
     {
         public Task<int> TotalProfileCount();
         public bool GetByDomainId(string DomainId, int Id);
@@ -24,7 +25,7 @@ namespace BusinessLogicsLayer.Account
         public Task<DTOAccountCountResponse> AccountCount();
         public Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO);
         public Task<DTODataTablesResponse<DTOUserRegnResponse>> GetDataForDataTable(DTODataTablesRequest request);
-        Task<DTODataTablesResponse<DTOClaimsStoreResponse>?> GetAllClaims(DTODataTablesRequest request);
+        Task<DTODataTablesResponse<DTOClaimsStoreResponse>?> GetAllClaimsOrderBy(DTODataTablesRequest request);
         Task<DTODataTablesResponse<DTOUsersByClaim>> GetAllUsersByClaim(DTODataTablesRequest request);
     }
 }

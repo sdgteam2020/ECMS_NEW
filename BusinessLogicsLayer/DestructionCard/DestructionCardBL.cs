@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BusinessLogicsLayer.DestructionCard;
 using BusinessLogicsLayer.FaultyCard;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
@@ -11,7 +10,7 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
-namespace BusinessLogicsLayer.DistributeCard
+namespace BusinessLogicsLayer.DestructionCard
 {
     public class DestructionCardBL : GenericRepositoryDL<TrnDestructionCard>, IDestructionCardBL
     {

@@ -1,35 +1,20 @@
 ﻿using DataAccessLayer;
-using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Service
 {
     public class ServiceRepository:IService
     {   
         private readonly ApplicationDbContext context;
-        private readonly ILogger<ServiceRepository> _logger;
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly DateTime EndDate;
-        private readonly static TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
         public const int ImageMinimumBytes = 512;
         public decimal filesize { get; set; }
-        public ServiceRepository(ApplicationDbContext context, ILogger<ServiceRepository> logger, UserManager<ApplicationUser> userManager)
+        public ServiceRepository(ApplicationDbContext context)
         {
             this.context = context;
-            _logger = logger;
-            this.userManager = userManager;
-            EndDate = new DateTime(2299, 01, 01);
         }
         public async Task<List<MRegimental>> GetRegimentalListByArmedId(byte ArmedId)
         {

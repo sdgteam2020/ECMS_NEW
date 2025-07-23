@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Azure.Core;
 using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Logging;
 
@@ -41,6 +43,37 @@ namespace DataAccessLayer
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "LostCardDB->FindAnyRequestId");
+                return false;
+            }
+        }
+        public async Task<bool> CheckServiceNoRequestInLost(string ServiceNo)
+        {
+            try
+            {
+                const string query = @"
+                                        IF EXISTS (
+                                            SELECT 1
+                                            FROM TrnLostCards lc
+                                            JOIN TrnICardRequest tir ON lc.RequestId = tir.RequestId
+                                            JOIN BasicDetails bd ON tir.BasicDetailId = bd.BasicDetailId
+                                            WHERE bd.BasicDetailId = (
+                                                SELECT MAX(BasicDetailId)
+                                                FROM BasicDetails
+                                                WHERE ServiceNo = @ServiceNo
+                                            )
+                                        )
+                                            SELECT 1;
+                                        ELSE
+                                            SELECT 0;";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    int result = await connection.QuerySingleAsync<int>(query, new { ServiceNo });
+                    return result == 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "LostCardDB->CheckServiceNoRequestInLost");
                 return false;
             }
         }

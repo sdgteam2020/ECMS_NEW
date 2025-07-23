@@ -21,8 +21,8 @@
   }
 }
 
-    .fi:before{
-        display: inline-block;
+.fi:before{
+  display: inline-block;
   font-family: "Flaticon";
   font-style: normal;
   font-weight: normal;
@@ -33,10 +33,9 @@
   text-transform: none;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  font-smoothing: antialiased;
-    }
+}
 
-    .flaticon-delivery-truck:before { content: "\f100"; }
+.flaticon-delivery-truck:before { content: "\f100"; }
 .flaticon-shopping-bag:before { content: "\f101"; }
 .flaticon-box-3:before { content: "\f102"; }
 .flaticon-box-2:before { content: "\f103"; }

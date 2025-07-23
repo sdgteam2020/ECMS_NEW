@@ -1,9 +1,10 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.Appt
 {
-    public interface IApptBL : IGenericRepository<MAppointment>
+    public interface IApptBL : IGenericRepositoryDL<MAppointment>
     {
         public Task<bool> GetByName(MAppointment Data);
         public Task<List<DTOAppointmentResponse>> GetALLAppt();

@@ -1450,7 +1450,7 @@ function SignXmlSendTOdatabase(XmlFile, RequestId, Id) {
 function jsonToXml(json) {
     var xml = '';
     for (var key in json) {
-        i = 1;
+       let i = 1;
         if (json.hasOwnProperty(key)) {
 
             xml += '<' + key + '>';

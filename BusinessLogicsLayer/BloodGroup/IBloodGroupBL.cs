@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.BloodGroup
 {
-    public interface IBloodGroupBL : IGenericRepository<MBloodGroup>
+    public interface IBloodGroupBL : IGenericRepositoryDL<MBloodGroup>
     {
     }
 }

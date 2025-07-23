@@ -18,7 +18,7 @@ namespace DataTransferObject.Requests
         [Range(typeof(byte), "50", "56", ErrorMessage = "Invalid TypeId Input.")]
         public byte TypeId { get; set; }
         public int AspNetUsersId { get; set; }
-        public bool Claim { get; set; } = false;
+        public byte Claim { get; set; }
         public int MapUnitId { get; set; }
     }
 }

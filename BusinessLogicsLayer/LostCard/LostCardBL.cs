@@ -23,6 +23,10 @@ namespace BusinessLogicsLayer.LostCard
         {
             return await _iLostCardDB.FindAnyRequestId(RequestId);
         }
+        public async Task<bool> CheckServiceNoRequestInLost(string ServiceNo)
+        {
+            return await _iLostCardDB.CheckServiceNoRequestInLost(ServiceNo);
+        }
 
         public async Task<DTODataTablesResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequest dTO)
         {

@@ -2144,7 +2144,7 @@ namespace DataAccessLayer
             }
         }
 
-        public async Task<DTODataTablesResponse<DTOClaimsStoreResponse>> GetAllClaims(DTODataTablesRequest request)
+        public async Task<DTODataTablesResponse<DTOClaimsStoreResponse>> GetAllClaimsOrderBy(DTODataTablesRequest request)
         {
             try
             {
@@ -2154,7 +2154,7 @@ namespace DataAccessLayer
                                     { 
                                         ClaimType = uc.FirstOrDefault().ClaimType,
                                         TotalUsers = uc.Count()
-                                    })
+                                    }) 
                                     .AsQueryable();
 
                 // Total records without filtering

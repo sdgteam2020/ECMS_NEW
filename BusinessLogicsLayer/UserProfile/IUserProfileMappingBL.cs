@@ -1,4 +1,5 @@
-﻿using DataTransferObject.Domain;
+﻿using DataAccessLayer;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Master
 {
-    public interface IUserProfileMappingBL : IGenericRepository<MMappingProfile>
+    public interface IUserProfileMappingBL : IGenericRepositoryDL<MMappingProfile>
     {
      
     }

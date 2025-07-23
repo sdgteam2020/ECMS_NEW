@@ -137,7 +137,7 @@ function GetLog(AspNetUsersId, FmDate,ToDate) {
 
                     $("#DataBoady").html(listItem2);
 
-                    memberTable = $('#tbldata').DataTable({
+                   var memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
                         searching: false,

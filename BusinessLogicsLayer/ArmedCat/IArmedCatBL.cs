@@ -1,6 +1,8 @@
-﻿namespace BusinessLogicsLayer.ArmedCat
+﻿using DataAccessLayer;
+
+namespace BusinessLogicsLayer.ArmedCat
 {
-    public interface IArmedCatBL : IGenericRepository<DataTransferObject.Domain.Master.MArmedCat>
+    public interface IArmedCatBL : IGenericRepositoryDL<DataTransferObject.Domain.Master.MArmedCat>
     {
        
     }

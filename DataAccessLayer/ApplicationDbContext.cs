@@ -97,6 +97,10 @@ namespace DataAccessLayer
         public DbSet<TrnDestructionCard> TrnDestructionCards { get; set; } = null!;
         public DbSet<CompletedICardRequest> CompletedICardRequests { get; set; } = null!;
         public DbSet<TrnMapUnitChangeRequest> TrnMapUnitChangeRequest { get; set; } = null!;
+        public DbSet<MEncryptionSetting> MEncryptionSetting { get; set; } = null!;
+        public DbSet<TrnDispatchCard> TrnDispatchCard { get; set; } = null!;
+        public DbSet<TrnDispatchCardMapping> TrnDispatchCardMapping { get; set; } = null!;
+        public DbSet<MDispatchMode> MDispatchMode { get; set; } = null!;
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

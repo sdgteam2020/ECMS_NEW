@@ -23,57 +23,9 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.API
 {
-    public class APIBL : IAPIBL
+    public class Apibl : IaPiBl
     {
-        //public const string ApiUrl = "https://localhost:7002/api/";
-        //public const string ApiUrloffrs = "https://localhost:7002/api/";
-
-        //public const string ApiUrl = "https://192.168.10.203:8443/api/";
-        //public const string ApiUrloffrs = "https://192.168.10.203:8443/api/";
-
-        //public const string ApiUrl = "https://131.3.47.13:8443/api/";
-        //public const string ApiUrloffrs = "https://131.3.47.13:8443/api/";
-
-
-
-        //public async Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data)
-        //{
-        //    try
-        //    {
-
-        //        DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
-        //        HttpClient httpClient = new HttpClient(new NativeMessageHandler() { UseDefaultCredentials = true });
-
-        //        var data1 = new[]
-        //        {
-        //            new KeyValuePair<string, string>("ClientKey", ""),
-        //            new KeyValuePair<string, string>("ClientIP", "123"),
-        //            new KeyValuePair<string, string>("ClientURL", ""),
-        //            new KeyValuePair<string, string>("ClientPW", ""),
-        //            new KeyValuePair<string, string>("ClientName", "miso"),
-        //        };
-        //        //HttpResponseMessage result = null;
-        //        HttpResponseMessage result = await httpClient.PostAsync(ApiUrl + "validate", new FormUrlEncodedContent(data1));
-
-
-
-        //        if (result != null)
-        //        {
-
-        //            // dynamicResponseDTO = result.Content.ReadAsAsync<DTOLoginResponse>().Result;
-
-        //            string responseBody = await result.Content.ReadAsStringAsync();
-        //            dynamicResponseDTO = JsonSerializer.Deserialize<DTOLoginAPIResponseData>(responseBody).ValidateRequest;
-
-        //        }
-
-        //        return dynamicResponseDTO;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return null;
-        //    }
-        //}
+       
         public async Task<DTOLoginAPIResponse> Getauthentication(DTOAPILoginRequest Data)
         {
             DTOLoginAPIResponse dynamicResponseDTO = new DTOLoginAPIResponse();
@@ -104,8 +56,7 @@ namespace BusinessLogicsLayer.API
             {
                 DTOAPIDataRequest dataRequest = new DTOAPIDataRequest();
                 dataRequest.ArmyNo = Data.Pers_Army_No;
-                //dataRequest.ApplyForId = Data.ApplyForId;
-
+               
                 using (var client = new HttpClient())
                 {
                     // Query parameters
@@ -135,7 +86,7 @@ namespace BusinessLogicsLayer.API
                     var response = await client.PostAsync(uri, content);
 
                     // Ensure the response is successful
-                    //response.EnsureSuccessStatusCode();
+                   
 
                     if (response.IsSuccessStatusCode)
                     {
