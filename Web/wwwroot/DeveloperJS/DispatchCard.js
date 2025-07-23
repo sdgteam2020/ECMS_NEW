@@ -618,7 +618,10 @@ function DispatchCardStatusListBindDialog(callback) {
     }
     let columns = [
         {
-            title: "",
+            title: '<div class="custom-control custom-checkbox small">' +
+                '<input type="checkbox" class="custom-control-input" id="chkAll">' +
+                '<label class="custom-control-label" for="chkAll"></label>' +
+        ' </div> ',
             data: null,
             name: "Id",
             orderable: false, // Disable sorting for this column
@@ -636,12 +639,13 @@ function DispatchCardStatusListBindDialog(callback) {
             }
         },
         {
-            title: "S No",
+            title: 'S No',
             data: null,
             name: "SerialNumber",
             orderable: false, // Disable sorting for this column
             render: function (data, type, row, meta) {
                 // Calculate serial number based on row index
+
                 return meta.row + meta.settings._iDisplayStart + 1;
             }
         },
@@ -743,18 +747,18 @@ function DispatchCardStatusListBindDialog(callback) {
     ];
 
     var thead = $('<thead><tr></tr></thead>');
-    var headerRow = thead.find('tr');
+    let headerRow = thead.find('tr');
 
     // Add the "select all" checkbox to the first column of the header
-    headerRow.append('<th><div class="custom-control custom-checkbox small">' +
-        '<input type="checkbox" class="custom-control-input" id="chkAll">' +
-        '<label class="custom-control-label" for="chkAll"></label>' +
-        '</div></th>');
+    //headerRow.append('<th><div class="custom-control custom-checkbox small">' +
+    //    '<input type="checkbox" class="custom-control-input" id="chkAll">' +
+    //    '<label class="custom-control-label" for="chkAll"></label>' +
+    //    '</div></th>');
 
     // Append other dynamic columns to the header
-    columns.slice(1).forEach(function (col) {
-        headerRow.append('<th>' + col.title + '</th>');
-    });
+    //columns.slice(1).forEach(function (col) {
+    //    headerRow.append('<th>' + col.title + '</th>');
+    //});
 
     // Append the header to the table (only once)
     table2.append(thead);
