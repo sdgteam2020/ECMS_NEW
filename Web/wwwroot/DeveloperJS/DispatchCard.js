@@ -130,7 +130,8 @@ function BindData() {
                 length: data.length,
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                filterApplyFor: $('#filterApplyFor').val(),
             };
             try {
                 let response = await fetch("/BasicDetail/GetAllDispatchCard", {
@@ -352,6 +353,15 @@ function BindData() {
             });
 
         }
+    });
+    $('#filterApplyFor').on('keypress', function (e) {
+        if (e.which === 13) {
+            table.ajax.reload();
+        }
+    });
+    // Optional: Search on button click
+    $('#btnSearchFilters').on('click', function () {
+        table.ajax.reload();
     });
 }
 function BindDialog(DispatchCardId, ApplyForId, callback) {

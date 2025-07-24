@@ -303,8 +303,9 @@ namespace DataAccessLayer
         }
         public async Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
         {
-            string query = "";
-            string wherequery = "";
+            string selectFields = "";
+            string fromJoinClause = "";
+            string whereClause = "";
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
@@ -322,22 +323,23 @@ namespace DataAccessLayer
                     ["ReceiptDate"] = "dcard.ReceiptDate",
                     ["ToRemark"] = "dcard.ToRemark"
                 };
-                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
-                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
-                        INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
-                        INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
-                        INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
-                        INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
-                        INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
-                        INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
-                        INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
-                        INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
-                        INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
-                        INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
-                        INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
-                        LEFT JOIN MRegimental regi on regi.RegId=dcard.RegId
-                        LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId ";
-                wherequery = @"WHERE
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                fromJoinClause = @"from TrnDispatchCard dcard 
+                                    INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
+                                    INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
+                                    INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
+                                    INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
+                                    INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
+                                    INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
+                                    INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                                    INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                                    INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                                    INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                                    INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                                    INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
+                                    LEFT JOIN MRegimental regi on regi.RegId=dcard.RegId
+                                    LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId ";
+                whereClause = @"WHERE
                             dcard.Step=1
                             AND (
                                 toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
@@ -345,6 +347,8 @@ namespace DataAccessLayer
                                 dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
                                 mappl.Name LIKE '%' + @SearchTerm + '%'
                                 )";
+                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
+                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             else if (dTO.ClaimValue == 2)
             {
@@ -359,29 +363,32 @@ namespace DataAccessLayer
                     ["ReceiptDate"] = "dcard.ReceiptDate",
                     ["ToRemark"] = "dcard.ToRemark"
                 };
-                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
-                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
-                        INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
-                        INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
-                        INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
-                        INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
-                        INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
-                        INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
-                        INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
-                        INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
-                        INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
-                        INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
-                        INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
-                        INNER JOIN OROMapping oro on dcard.RecordOfficeId = oro.RecordOfficeId
-                        INNER JOIN MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId ";
-                wherequery = @"WHERE
-                            oro.TDMId=@TDMId
-                            AND (
-                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
-                                mappl.Name LIKE '%' + @SearchTerm + '%'
-                            )";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                fromJoinClause = @"from TrnDispatchCard dcard 
+                                    INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
+                                    INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
+                                    INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
+                                    INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
+                                    INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
+                                    INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
+                                    INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                                    INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                                    INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                                    INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                                    INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                                    INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
+                                    INNER JOIN OROMapping oro on dcard.RecordOfficeId = oro.RecordOfficeId
+                                    INNER JOIN MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId ";
+                whereClause = @"WHERE
+                                oro.TDMId=@TDMId
+                                AND (
+                                    toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
+                                    dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
+                                    dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
+                                    mappl.Name LIKE '%' + @SearchTerm + '%'
+                                )";
+                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
+                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             else if (dTO.ClaimValue == 3)
             {
@@ -396,21 +403,22 @@ namespace DataAccessLayer
                     ["ReceiptDate"] = "dcard.ReceiptDate",
                     ["ToRemark"] = "dcard.ToRemark"
                 };
-                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
-                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
-                        INNER JOIN MDispatchMode mdis on dcard.DispatchModeId=mdis.DispatchModeId
-                        INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
-                        INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
-                        INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
-                        INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
-                        INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
-                        INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
-                        INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
-                        INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
-                        INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
-                        INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
-                        INNER join MRegimental regi on dcard.RegId = regi.RegId";
-                wherequery = @"WHERE
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                fromJoinClause = @"from TrnDispatchCard dcard 
+                                    INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
+                                    INNER JOIN MDispatchMode mdis on dcard.DispatchModeId=mdis.DispatchModeId
+                                    INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
+                                    INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
+                                    INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
+                                    INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
+                                    INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                                    INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                                    INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                                    INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                                    INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                                    INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
+                                    INNER join MRegimental regi on dcard.RegId = regi.RegId";
+                whereClause = @"WHERE
                             regi.UnitId=@UnitId
                             AND (
                                 toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
@@ -418,6 +426,8 @@ namespace DataAccessLayer
                                 dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
                                 mappl.Name LIKE '%' + @SearchTerm + '%'
                                 )";
+                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
+                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             else
             {
@@ -432,40 +442,43 @@ namespace DataAccessLayer
                     ["ReceiptDate"] = "dcard.ReceiptDate",
                     ["ToRemark"] = "dcard.ToRemark"
                 };
-                query = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn from TrnDispatchCard dcard 
-                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
-                        INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
-                        INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
-                        INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
-                        INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
-                        INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
-                        INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
-                        INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
-                        INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
-                        INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
-                        INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
-                        INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
-                        LEFT JOIN MRegimental regi on regi.RegId=dcard.RegId
-                        LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId ";
-                wherequery = @"WHERE
-                            dcard.Step=2
-                            AND dcard.ToUnitId=@UnitId
-                            AND (
-                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
-                                mappl.Name LIKE '%' + @SearchTerm + '%' OR
-                                mrec.Name LIKE '%' + @SearchTerm + '%'
-                            )";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                fromJoinClause = @"from TrnDispatchCard dcard 
+                                    INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
+                                    INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
+                                    INNER JOIN MapUnit fromunit on dcard.FromUnitId=fromunit.UnitMapId
+                                    INNER JOIN MUnit fromMuni on fromunit.UnitId=fromMuni.UnitId
+                                    INNER JOIN MapUnit tounit on dcard.ToUnitId=tounit.UnitMapId
+                                    INNER JOIN MUnit toMuni on tounit.UnitId=toMuni.UnitId
+                                    INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                                    INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                                    INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                                    INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                                    INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                                    INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id
+                                    LEFT JOIN MRegimental regi on regi.RegId=dcard.RegId
+                                    LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId ";
+                whereClause = @"WHERE
+                                dcard.Step=2
+                                AND dcard.ToUnitId=@UnitId
+                                AND (
+                                    toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
+                                    dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
+                                    dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
+                                    mappl.Name LIKE '%' + @SearchTerm + '%' OR
+                                    mrec.Name LIKE '%' + @SearchTerm + '%'
+                                )";
+                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
+                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             try
             {
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
                 ? allowedSortColumns[dTO.sortColumn!]
                 : "toUp.ArmyNo";
-                var multiQuery = query = $@"
+                var multiQuery = $@"
                         WITH RecordCTE AS (
-                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
                         )
                         SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
 
@@ -478,8 +491,9 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@FilterApplyFor", dTO.FilterApplyFor ?? "", DbType.String);
 
-                    var ret = await connection.QueryMultipleAsync(query, parameters);
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTODispatchCardListResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 

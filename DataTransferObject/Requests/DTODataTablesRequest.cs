@@ -95,6 +95,9 @@ namespace DataTransferObject.Requests
         public byte ClaimValue { get; set; }
         public int TDMId { get; set; }
         public int UnitId { get; set; }
+        
+        // Header filter fields
+        public string? FilterApplyFor { get; set; }
     }
     public class DTODataTablesRequestForCardDispatchDialog : DTODataTablesRequest
     {
