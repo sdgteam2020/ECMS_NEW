@@ -95,15 +95,15 @@ namespace DataAccessLayer
                         LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                         LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 wherequery = @"WHERE
-                            stepc.StepId=6 OR stepc.StepId>=11
+                            (stepc.StepId=6 OR stepc.StepId>=11)
                             AND (
-                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
-                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
-                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
-                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
+                                --req.RequestId LIKE '%' + @SearchTerm + '%' OR
+                                --marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                --mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                --regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                basi.ServiceNo LIKE '%' + @SearchTerm + '%'
+                                --req.ChipNo LIKE '%' + @SearchTerm + '%' OR
+                                --req.CardSerialNo LIKE '%' + @SearchTerm + '%'
                                 )";
             }
             else if (ClaimValue == 2 || ClaimValue == 3)
@@ -125,15 +125,15 @@ namespace DataAccessLayer
                         LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                         LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 wherequery = @"WHERE
-                            stepc.StepId=12 OR stepc.StepId>=13
+                            (stepc.StepId=12 OR stepc.StepId>=13)
                             AND (
-                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
-                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
-                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
-                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
+                                --req.RequestId LIKE '%' + @SearchTerm + '%' OR
+                                --marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                --mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                --regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                basi.ServiceNo LIKE '%' + @SearchTerm + '%'
+                                --req.ChipNo LIKE '%' + @SearchTerm + '%' OR
+                                --req.CardSerialNo LIKE '%' + @SearchTerm + '%'
                                 )";
             }
             else
@@ -155,15 +155,15 @@ namespace DataAccessLayer
                         LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                         LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 wherequery = @"WHERE
-                            stepc.StepId=14 OR stepc.StepId=15
+                            (stepc.StepId=14 OR stepc.StepId=15)
                             AND (
-                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
-                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
-                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
-                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
+                                --req.RequestId LIKE '%' + @SearchTerm + '%' OR
+                                --marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                --mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                --regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                basi.ServiceNo LIKE '%' + @SearchTerm + '%'
+                                --req.ChipNo LIKE '%' + @SearchTerm + '%' OR
+                                --req.CardSerialNo LIKE '%' + @SearchTerm + '%'
                                 )";
             }
 

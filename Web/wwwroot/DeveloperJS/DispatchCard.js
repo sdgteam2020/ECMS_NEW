@@ -1,6 +1,7 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var table2;
 var selectedIds = [];
+var lastSearchValue = "";
 $(function () {
     BindData();
     if ($('#btnAdd').length) {
@@ -628,10 +629,17 @@ function DispatchCardStatusListBindDialog(callback) {
             orderable: false, // Disable sorting for this column
             render: function (data, type, row, meta) {
                 if (row.Status == `Pending`) {
-                    return `<div class="custom-control custom-checkbox small">
+                    if ($("#chkAll").prop('checked')) {
+                        return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input" id="${row.RequestId}" value="${row.RequestId}" checked>
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                    } else {
+                        return `<div class="custom-control custom-checkbox small">
                                     <input type="checkbox" class="custom-control-input" id="${row.RequestId}" value="${row.RequestId}">
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
+                    }
                 }
                 else {
                     return `<div></div>`;
@@ -756,6 +764,14 @@ function DispatchCardStatusListBindDialog(callback) {
         stateSave: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
+            const currentSearchValue = data.search.value || '';
+
+            // Reset selection if search term has changed
+            if (currentSearchValue !== lastSearchValue) {
+                selectedIds = [];
+                lastSearchValue = currentSearchValue;
+            }
+
             let requestData = {
                 draw: data.draw,
                 start: data.start,
@@ -821,6 +837,9 @@ function DispatchCardStatusListBindDialog(callback) {
             // Add tooltip to the search input box
             let searchBox = $('div.dataTables_filter input');
             searchBox.attr('title', 'Search ReqId/Arm/SUSNo/ORO/Regt/Army No/Chip No/Card Serial No');
+        },
+        drawCallback: function (settings) {
+           // updateUICheckboxes();
         }
     });
     // Checkbox select all/deselect all functionality
@@ -837,42 +856,72 @@ function DispatchCardStatusListBindDialog(callback) {
         updateSelectedIds();
     });
 }
-// Function to get selected IDs across all pages
+function updateUICheckboxes() {
+    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
+        const id = $(this).val().toString();
+
+        if (selectedIds.includes(id)) {
+            $(this).prop('checked', true);
+        } else {
+            $(this).prop('checked', false);
+        }
+    });
+
+    // Update the header checkbox based on whether all on-page checkboxes are checked
+    const totalOnPage = $('#tbldatadialog tbody input[type="checkbox"]').length;
+    const checkedOnPage = $('#tbldatadialog tbody input[type="checkbox"]:checked').length;
+
+    $('#chkAll').prop('checked', totalOnPage > 0 && totalOnPage === checkedOnPage);
+}
+
+function updateSelectedIds(isChecked = null) {
+    if (isChecked !== null) {
+        if (isChecked) {
+            // Use existing getAllIds to get all checkbox values on current page
+            const idsToAdd = getAllIds();
+            idsToAdd.forEach(id => {
+                if (!selectedIds.includes(id)) {
+                    selectedIds.push(id);
+                }
+            });
+        } else {
+            // Use getAllIds to remove only current page IDs from selectedIds
+            const idsToRemove = getAllIds();
+            selectedIds = selectedIds.filter(id => !idsToRemove.includes(id));
+        }
+    } else {
+        // Use getSelectedIds to get checked IDs on current page
+        const idsChecked = getSelectedIds();
+        const idsOnPage = getAllIds();
+
+        // Remove all IDs from current page
+        selectedIds = selectedIds.filter(id => !idsOnPage.includes(id));
+
+        // Add only checked ones
+        idsChecked.forEach(id => {
+            if (!selectedIds.includes(id)) {
+                selectedIds.push(id);
+            }
+        });
+    }
+
+    console.log("Selected IDs (global):", selectedIds);
+}
 function getSelectedIds() {
     var localSelectedIds = [];
 
     // Iterate through all pages and collect selected IDs
     $('#tbldatadialog tbody input[type="checkbox"]:checked').each(function () {
-        localSelectedIds.push($(this).val());
+        localSelectedIds.push($(this).val().toString());
     });
 
     return localSelectedIds;
 }
-// Function to update selected IDs and maintain them across all pages
-function updateSelectedIds(isChecked = null) {
-    var localSelectedIds = getSelectedIds();
 
-    // Update the selected checkbox IDs based on the current page
-    if (isChecked !== null) {
-        if (isChecked) {
-            // Mark all checkboxes across all pages as selected
-            localSelectedIds = getAllIds();
-        } else {
-            // Clear selection if the header checkbox is unchecked
-            selectedIds = [];
-        }
-    }
-
-    // Update the global selected IDs array
-    selectedIds = localSelectedIds;
-    console.log("Selected IDs (global):", selectedIds);
-}
-
-// Function to get all IDs from the current dataset
 function getAllIds() {
-    var allIds = [];
+    var all = [];
     $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
-        allIds.push($(this).val());
+        all.push($(this).val().toString());
     });
-    return allIds;
+    return all;
 }
