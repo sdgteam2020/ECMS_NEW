@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataTransferObject.Validation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,11 @@ namespace DataAccessLayer.Healpers
     {
         public string GenerateCsv<T>(IEnumerable<T> data)
         {
-            var properties = typeof(T).GetProperties();  // Get properties of the object
+            var properties = typeof(T)
+                .GetProperties()
+                .Where(p => !Attribute.IsDefined(p, typeof(CsvIgnoreAttribute)))
+                .ToArray();
+
             var csvBuilder = new StringBuilder();
 
             // Add the headers (column names) to the CSV
