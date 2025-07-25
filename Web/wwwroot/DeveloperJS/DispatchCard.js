@@ -359,10 +359,6 @@ function BindData() {
             table.ajax.reload();
         }
     });
-    // Optional: Search on button click
-    $('#btnSearchFilters').on('click', function () {
-        table.ajax.reload();
-    });
 }
 function BindDialog(DispatchCardId, ApplyForId, callback) {
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
