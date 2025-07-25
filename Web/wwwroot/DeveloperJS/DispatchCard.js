@@ -2,6 +2,8 @@
 var table2;
 var selectedIds = [];
 var lastSearchValue = "";
+var unchedRequestId = []; // label array
+var checkedRequestId = []; // total array
 $(function () {
     BindData();
     if ($('#btnAdd').length) {
@@ -9,7 +11,18 @@ $(function () {
             location.href = '/BasicDetail/DispatchOut';
         });
     }
-    $("#btnDispatchStatus").on("click", function () {
+    $("#export").on("click", function () {
+        let chkAllstatus = false;
+        if ($("#chkAll").prop('checked'))
+        {
+            chkAllstatus = true;
+        }
+      
+        ExportCsvFile(chkAllstatus, checkedRequestId, unchedRequestId)
+    });
+
+
+        $("#btnDispatchStatus").on("click", function () {
         $("#lblModelTitle").html('Dispatch Card Status details');
 
         // Show the modal first
@@ -631,12 +644,12 @@ function DispatchCardStatusListBindDialog(callback) {
                 if (row.Status == `Pending`) {
                     if ($("#chkAll").prop('checked')) {
                         return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input" id="${row.RequestId}" value="${row.RequestId}" checked>
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
                     } else {
                         return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input" id="${row.RequestId}" value="${row.RequestId}">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
                     }
@@ -754,7 +767,7 @@ function DispatchCardStatusListBindDialog(callback) {
             }
         },
     ];
-
+    
     table2.DataTable({
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
@@ -842,8 +855,28 @@ function DispatchCardStatusListBindDialog(callback) {
            // updateUICheckboxes();
         }
     });
+    $(document).on('change', '.chkRequestId', function () {
+        if ($(this).prop('checked')) {
+            if (!$("#chkAll").prop('checked')) {
+                checkedRequestId.push($(this).val())
+            } else {
+                checkedRequestId = [];
+                unchedRequestId = [];
+            }
+
+               unchedRequestId.pop($(this).val())
+        } else {
+            checkedRequestId.pop($(this).val())
+            if ($("#chkAll").prop('checked'))
+            unchedRequestId.push($(this).val())
+        }
+       
+       
+    });
+    
     // Checkbox select all/deselect all functionality
     $('#chkAll').on('change', function () {
+      
         var isChecked = $(this).prop('checked');
         $('#tbldatadialog tbody input[type="checkbox"]').prop('checked', isChecked);
 
@@ -924,4 +957,32 @@ function getAllIds() {
         all.push($(this).val().toString());
     });
     return all;
+}
+function ExportCsvFile(Allstatus, checkedRequestId, unchedRequestId) {
+   // alert(Allstatus)
+   // alert("checked---" + checkedRequestId)
+   // alert("Unchecked---" + unchedRequestId)
+    var userdata = {
+        Allstatus: Allstatus,
+        checkedRequestId: checkedRequestId,
+        unchedRequestId: unchedRequestId
+    };
+
+    $.ajax({
+        url: '/BasicDetail/ExportCsvForDispatch',
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: userdata,
+        success: function (response) {
+            // handle success
+          // alert("WriteReadData/Dispatchexports/" + response)
+            window.location.href = "/" + "WriteReadData/Dispatchexports/" + response;
+            console.log("Export successful", response);
+        },
+        error: function (xhr, status, error) {
+            console.error("Export failed:", error);
+        }
+    });
+
+    
 }
