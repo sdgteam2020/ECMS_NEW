@@ -16,7 +16,7 @@ namespace DataTransferObject.Requests
         public string NameAsPerRecord { get; set; } = string.Empty;
         public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
-        public string RankName { get; set; } = string.Empty;
+        public string RankName { get; set; } = string.Empty; 
         public string Name { get; set; } = string.Empty;
         public string ServiceNo { get; set; } = string.Empty;
         public string ArmedAbbreviation { get; set; } = string.Empty;

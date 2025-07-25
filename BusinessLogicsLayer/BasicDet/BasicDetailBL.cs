@@ -35,6 +35,10 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetDispatchCardStatusListForDialog(dTO, ClaimValue);
         }
+        public async Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForExport(byte ClaimValue,DTOExportDispatch Data)
+        {
+            return await _iBasicDetailDB.GetDispatchCardStatusListForExport(ClaimValue,Data);
+        }
         public async Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
         {
             return await _iBasicDetailDB.GetDispatchCardDataForDialog(dTO);

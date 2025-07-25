@@ -32,6 +32,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Transactions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data.SqlClient;
 
 namespace DataAccessLayer
 {
@@ -214,6 +215,146 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+        public async Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForExport(byte ClaimValue, DTOExportDispatch Data)
+        {
+            string query = "";
+            string wherequery = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            
+
+           
+            if (ClaimValue == 1)
+            {
+                query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                        CASE 
+                            WHEN stepc.StepId = 6 THEN 'Pending' 
+                            WHEN stepc.StepId >= 11 THEN 'Dispatch Out'
+                            ELSE 'Unknown' 
+                        END AS Status
+                        from TrnStepCounter stepc
+                        INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
+                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
+                        INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                        INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                        INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                        INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                        LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
+                        LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
+                wherequery = @"WHERE
+                            (stepc.StepId=6 OR stepc.StepId>=11)
+
+                           ";
+            }
+            else if (ClaimValue == 2 || ClaimValue == 3)
+            {
+                query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                        CASE 
+                            WHEN stepc.StepId = 12 THEN 'Pending' 
+                            WHEN stepc.StepId >= 13 THEN 'Dispatch Out'
+                            ELSE 'Unknown' 
+                        END AS Status
+                        from TrnStepCounter stepc
+                        INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
+                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
+                        INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                        INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                        INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                        INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                        LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
+                        LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
+                wherequery = @"WHERE
+                            (stepc.StepId=12 OR stepc.StepId>=13)
+                           ";
+            }
+            else
+            {
+                query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                        CASE 
+                            WHEN stepc.StepId = 14 THEN 'Pending' 
+                            WHEN stepc.StepId = 15 THEN 'Card Distribute'
+                            ELSE 'Unknown' 
+                        END AS Status
+                        from TrnStepCounter stepc
+                        INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
+                        INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                        INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
+                        INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                        INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                        INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                        INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                        LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
+                        LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
+                wherequery = @"WHERE
+                            (stepc.StepId=14 OR stepc.StepId=15)
+                           ";
+            }
+
+            try
+            {
+               
+                var multiQuery = query = $@" SELECT
+                        {query} {wherequery}
+                        
+                        ";
+                var Dataforfilter = @"";
+                if (Data.unchedRequestId != null && Data.unchedRequestId.Length > 0)
+                {
+                    Dataforfilter = @" And stepc.RequestId not in @unchedRequestId";
+                    Dataforfilter = query = $@" {query} {Dataforfilter}";
+                }
+                if (Data.checkedRequestId != null && Data.checkedRequestId.Length > 0)
+                {
+                    Dataforfilter = @" And stepc.RequestId in @checkedRequestId";
+                    Dataforfilter = query = $@" {query}  {Dataforfilter}";
+                }
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+
+                    var parameters = new DynamicParameters();
+
+
+                    if (Data.unchedRequestId != null && Data.unchedRequestId.Length > 0)
+                    {
+                        parameters.Add("@unchedRequestId", Data.unchedRequestId); // List<int> or int[]
+                    }
+
+                    if (Data.checkedRequestId != null && Data.checkedRequestId.Length > 0 && Data.Allstatus==false)
+                    {
+                        parameters.Add("@checkedRequestId", Data.checkedRequestId); // List<int> or int[]
+                    }
+
+                    var ret = await connection.QueryMultipleAsync(query, parameters);
+                    var records = (await ret.ReadAsync<DTODispatchCardStatusResponse>()).ToList();
+                 
+                    var responseData = new DTODataTablesResponse<DTODispatchCardStatusResponse>
+                    {
+                     
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllDispatchCard");
+                List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
+                var responseData = new DTODataTablesResponse<DTODispatchCardStatusResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOCards
+                };
+                return responseData;
+            }
+        }
+
         public async Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
         {
             string query = "";
@@ -1427,7 +1568,8 @@ namespace DataAccessLayer
                         return dTOBasicDetailsSaveResponse;
                     }
                 }
-                catch (SqlException ex) // Unique constraint violation error number
+                
+                catch (Microsoft.Data.SqlClient.SqlException ex) // Unique constraint violation error number
                 {
                     transaction.Rollback();  // Rollback the transaction
                     _logger.LogError(1006, ex, "BasicDetailDB->SaveBasicDetailsWithAll");
