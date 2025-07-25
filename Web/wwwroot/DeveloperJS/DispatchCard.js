@@ -624,7 +624,8 @@ function getColumnsByChoice(choice) {
 }
 function DispatchCardStatusListBindDialog(callback) {
     var table2 = $("#tbldatadialog");
-
+    checkedRequestId = [];
+    unchedRequestId = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
         // Destroy the DataTable and clear the table content
         $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
@@ -648,10 +649,15 @@ function DispatchCardStatusListBindDialog(callback) {
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
                     } else {
-                        return `<div class="custom-control custom-checkbox small">
+                        //let checkedRequestId = ['7', '10000', '9999', '9998']
+                    
+                                
+                            return `<div class="custom-control custom-checkbox small">
                                     <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
+                       
+                       
                     }
                 }
                 else {
@@ -805,7 +811,12 @@ function DispatchCardStatusListBindDialog(callback) {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-
+                setTimeout(function () {
+                    checkedRequestId.forEach(function (id) {
+                        
+                        $('#' + id).prop('checked', true);  // If checkbox IDs match
+                    });
+                }, 500); // wait 500ms before checking
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -863,9 +874,9 @@ function DispatchCardStatusListBindDialog(callback) {
                 checkedRequestId = [];
                 unchedRequestId = [];
             }
-
-               unchedRequestId.pop($(this).val())
+             unchedRequestId.pop($(this).val())
         } else {
+
             checkedRequestId.pop($(this).val())
             if ($("#chkAll").prop('checked'))
             unchedRequestId.push($(this).val())
@@ -876,7 +887,8 @@ function DispatchCardStatusListBindDialog(callback) {
     
     // Checkbox select all/deselect all functionality
     $('#chkAll').on('change', function () {
-      
+        checkedRequestId = [];
+        unchedRequestId = [];
         var isChecked = $(this).prop('checked');
         $('#tbldatadialog tbody input[type="checkbox"]').prop('checked', isChecked);
 
