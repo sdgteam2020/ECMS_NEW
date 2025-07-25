@@ -12,11 +12,6 @@ $(function () {
         });
     }
     $("#export").on("click", function () {
-        if (checkedRequestId.length == 0 && !$("#chkAll").prop('checked')) {
-            toastr.error('Please Select at least one row.');
-            return;
-        }
-
         let chkAllstatus = false;
         if ($("#chkAll").prop('checked'))
         {
@@ -794,6 +789,13 @@ function DispatchCardStatusListBindDialog(callback) {
         stateSave: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
+            const currentSearchValue = data.search.value || '';
+
+            // Reset selection if search term has changed
+            if (currentSearchValue !== lastSearchValue) {
+                selectedIds = [];
+                lastSearchValue = currentSearchValue;
+            }
 
             let requestData = {
                 draw: data.draw,
@@ -801,7 +803,8 @@ function DispatchCardStatusListBindDialog(callback) {
                 length: data.length,
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                selectedIds: selectedIds // Send the selected IDs to the server
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
@@ -819,13 +822,13 @@ function DispatchCardStatusListBindDialog(callback) {
                         
                         $('#' + id).prop('checked', true);  // If checkbox IDs match
                     });
-                }, 500); // wait 500ms before checking
+                }, 100); // wait 500ms before checking
                 setTimeout(function () {
                     unchedRequestId.forEach(function (id) {
 
                         $('#' + id).prop('checked', false);  // If checkbox IDs match
                     });
-                }, 500); // wait 500ms before checking
+                }, 100); // wait 500ms before checking
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -887,23 +890,97 @@ function DispatchCardStatusListBindDialog(callback) {
         } else {
 
             checkedRequestId.pop($(this).val())
-           // if ($("#chkAll").prop('checked'))
+            if ($("#chkAll").prop('checked'))
             unchedRequestId.push($(this).val())
         }
        
        
     });
+    
+    // Checkbox select all/deselect all functionality
     $('#chkAll').on('change', function () {
         checkedRequestId = [];
         unchedRequestId = [];
-        if (!$("#chkAll").prop('checked')) {
-            $(".chkRequestId").prop('checked', false)
-        } else {
-            $(".chkRequestId").prop('checked', true)
-        }
+        var isChecked = $(this).prop('checked');
+        $('#tbldatadialog tbody input[type="checkbox"]').prop('checked', isChecked);
 
-        
+        // Update the selected IDs across all pages
+        updateSelectedIds(isChecked);
     });
+
+    // Update selected IDs when any checkbox is changed
+    $('#tbldatadialog tbody').on('change', 'input[type="checkbox"]', function () {
+        updateSelectedIds();
+    });
+}
+function updateUICheckboxes() {
+    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
+        const id = $(this).val().toString();
+
+        if (selectedIds.includes(id)) {
+            $(this).prop('checked', true);
+        } else {
+            $(this).prop('checked', false);
+        }
+    });
+
+    // Update the header checkbox based on whether all on-page checkboxes are checked
+    const totalOnPage = $('#tbldatadialog tbody input[type="checkbox"]').length;
+    const checkedOnPage = $('#tbldatadialog tbody input[type="checkbox"]:checked').length;
+
+    $('#chkAll').prop('checked', totalOnPage > 0 && totalOnPage === checkedOnPage);
+}
+
+function updateSelectedIds(isChecked = null) {
+    if (isChecked !== null) {
+        if (isChecked) {
+            // Use existing getAllIds to get all checkbox values on current page
+            const idsToAdd = getAllIds();
+            idsToAdd.forEach(id => {
+                if (!selectedIds.includes(id)) {
+                    selectedIds.push(id);
+                }
+            });
+        } else {
+            // Use getAllIds to remove only current page IDs from selectedIds
+            const idsToRemove = getAllIds();
+            selectedIds = selectedIds.filter(id => !idsToRemove.includes(id));
+        }
+    } else {
+        // Use getSelectedIds to get checked IDs on current page
+        const idsChecked = getSelectedIds();
+        const idsOnPage = getAllIds();
+
+        // Remove all IDs from current page
+        selectedIds = selectedIds.filter(id => !idsOnPage.includes(id));
+
+        // Add only checked ones
+        idsChecked.forEach(id => {
+            if (!selectedIds.includes(id)) {
+                selectedIds.push(id);
+            }
+        });
+    }
+
+    console.log("Selected IDs (global):", selectedIds);
+}
+function getSelectedIds() {
+    var localSelectedIds = [];
+
+    // Iterate through all pages and collect selected IDs
+    $('#tbldatadialog tbody input[type="checkbox"]:checked').each(function () {
+        localSelectedIds.push($(this).val().toString());
+    });
+
+    return localSelectedIds;
+}
+
+function getAllIds() {
+    var all = [];
+    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
+        all.push($(this).val().toString());
+    });
+    return all;
 }
 function ExportCsvFile(Allstatus, checkedRequestId, unchedRequestId) {
    // alert(Allstatus)

@@ -231,7 +231,6 @@ namespace DataAccessLayer
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 6 THEN 'Pending' 
-                            WHEN stepc.StepId >= 11 THEN 'Dispatch Out'
                             ELSE 'Unknown' 
                         END AS Status
                         from TrnStepCounter stepc
@@ -245,7 +244,7 @@ namespace DataAccessLayer
                         LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                         LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 wherequery = @"WHERE
-                            (stepc.StepId=6 OR stepc.StepId>=11)
+                            (stepc.StepId=6)
 
                            ";
             }
@@ -254,7 +253,6 @@ namespace DataAccessLayer
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 12 THEN 'Pending' 
-                            WHEN stepc.StepId >= 13 THEN 'Dispatch Out'
                             ELSE 'Unknown' 
                         END AS Status
                         from TrnStepCounter stepc
@@ -268,7 +266,7 @@ namespace DataAccessLayer
                         LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                         LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 wherequery = @"WHERE
-                            (stepc.StepId=12 OR stepc.StepId>=13)
+                            (stepc.StepId=12)
                            ";
             }
             else
@@ -276,7 +274,6 @@ namespace DataAccessLayer
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 14 THEN 'Pending' 
-                            WHEN stepc.StepId = 15 THEN 'Card Distribute'
                             ELSE 'Unknown' 
                         END AS Status
                         from TrnStepCounter stepc
@@ -290,7 +287,7 @@ namespace DataAccessLayer
                         LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                         LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 wherequery = @"WHERE
-                            (stepc.StepId=14 OR stepc.StepId=15)
+                            (stepc.StepId=14)
                            ";
             }
 
@@ -324,9 +321,13 @@ namespace DataAccessLayer
                         parameters.Add("@unchedRequestId", Data.unchedRequestId); // List<int> or int[]
                     }
 
-                    if (Data.checkedRequestId != null && Data.checkedRequestId.Length > 0 && Data.Allstatus==false)
+                    else if (Data.checkedRequestId != null && Data.checkedRequestId.Length > 0 && Data.Allstatus == false)
                     {
                         parameters.Add("@checkedRequestId", Data.checkedRequestId); // List<int> or int[]
+                    }
+                    else if(Data.Allstatus == false)
+                    {
+                        //responseData.data = null;
                     }
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
