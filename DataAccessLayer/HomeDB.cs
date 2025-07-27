@@ -30,12 +30,9 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
-        public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO, int MapUnitId, byte Claim,int TDM_Id)
+        public async Task<DTOTaskCountResponse> GetTaskBoardCount(int MapUnitId, byte Claim, int TDM_Id)
         {
-            string query = @"declare @TotReq int=0 declare @TotInaccurateData int=0 declare @TotLostCards int=0 declare @TotHotlistCards int=0 declare @TotMisprintedCard int=0 declare @TotUnitChangeRequest int=0 declare @TotDistCards int=0 declare @TotDestCards int=0 declare @TotDispatchCards int=0
-                            select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain
-                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id
-                            where domain.AspNetUsersId=@UserId
+            string query = @"declare @TotHotlistCards int=0 declare @TotMisprintedCard int=0 declare @TotUnitChangeRequest int=0 declare @TotDistCards int=0 declare @TotDestCards int=0 declare @TotDispatchCards int=0
 
                             BEGIN 
                             IF @Claim=1
@@ -72,13 +69,44 @@ namespace DataAccessLayer
                             select @TotUnitChangeRequest=COUNT(MapUnitChangeRequestId) from TrnMapUnitChangeRequest
                             where UnitMapId=@MapUnitId
 
+
+                            select @TotHotlistCards=COUNT(HotlistCardId) from TrnHotlistCards
+                            select @TotDistCards=COUNT(DistributeCardId) from TrnDistributeCards
+                            select @TotDestCards=COUNT(DestructedCardId) from TrnDestructionCards
+
+                            select @TotHotlistCards TotHotlistCards,@TotUnitChangeRequest TotUnitChangeRequest,@TotMisprintedCard TotMisprintedCard,@TotDistCards TotDistCards,@TotDestCards TotDestCards,@TotDispatchCards TotDispatchCards";
+
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@MapUnitId", MapUnitId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@TDM_Id", TDM_Id, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Claim", Claim, DbType.Byte, ParameterDirection.Input);
+
+                    var ret = (await connection.QueryAsync<DTOTaskCountResponse>(query, parameters)).FirstOrDefault();
+                    return ret;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "HomeDB->GetDashBoardCount");
+                return null;
+            }
+        }
+        public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
+        {
+            string query = @"declare @TotReq int=0 declare @TotInaccurateData int=0 declare @TotLostCards int=0
+                            select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id
+                            where domain.AspNetUsersId=@UserId
+
+
                             select @TotInaccurateData=COUNT(BasicDetailTempId) from BasicDetailTemps
                             where Updatedby=@UserId AND IsActive=1 
 
                             select @TotLostCards=COUNT(LostCardId) from TrnLostCards
-                            select @TotHotlistCards=COUNT(HotlistCardId) from TrnHotlistCards
-                            select @TotDistCards=COUNT(DistributeCardId) from TrnDistributeCards
-                            select @TotDestCards=COUNT(DestructedCardId) from TrnDestructionCards
 
                             declare @AspNetUsersId int=0 declare @ArmedId int=0 declare @Name varchar(25) declare @TotObservationRaised int=0 declare @TDMId int=0  
                             SELECT CASE WHEN ISNULL(RECO.TDMId,0) >0 THEN RECO.TDMId ELSE ORO.TDMId END TDMId, 
@@ -128,7 +156,7 @@ namespace DataAccessLayer
                             WHERE Temps.ApplyForId=1 AND ranks1.Orderby > @MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 
                             END 
                             END 
-                            select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised,@TotLostCards TotLostCards,@TotHotlistCards TotHotlistCards,@TotUnitChangeRequest TotUnitChangeRequest,@TotMisprintedCard TotMisprintedCard,@TotDistCards TotDistCards,@TotDestCards TotDestCards,@TotDispatchCards TotDispatchCards";
+                            select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised,@TotLostCards TotLostCards";
 
             try
             {
@@ -146,10 +174,6 @@ namespace DataAccessLayer
 
                     parameters.Add("@MP6A_RankOrderby", dTOApplFwdCondition.MP6A.RankOrderby);
                     parameters.Add("@MP6A_Name", dTOApplFwdCondition.MP6A.Name);
-
-                    parameters.Add("@MapUnitId", MapUnitId, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@TDM_Id", TDM_Id, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@Claim", Claim, DbType.Byte, ParameterDirection.Input);
 
                     var ret = (await connection.QueryAsync<DTODashboardCountResponse>(query, parameters)).FirstOrDefault();
                     return ret;

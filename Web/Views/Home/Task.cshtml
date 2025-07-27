@@ -2,6 +2,7 @@
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<string> RoleNameList = new List<string>() { "user" };
+    List<Claim> claims = ViewBag.UserClaims;
 }
 <style>
     .clickable {
@@ -98,6 +99,128 @@
                     </div>
                 </div>
             </div>
+            <div class="card p-4">
+                <div class="seven">
+                    <h1>
+                        AFSAC Dispatching
+                    </h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#" class="clickable">
+                            <div class="counter pink armyNoallserchPopup" id="btnDispatchCard">
+                                @if (claims.Count > 0 && (claims.Any(i => i.Value == "ICard Export Data") || (claims.Any(i => i.Value == "Dispatch Card") && claims.Any(i => i.Value == "Appl Approver")) || claims.Any(i => i.Value == "Dispatch Card")))
+                                {
+                                    <div class="counter-icon">
+                                        <button class="btn btn-outline-success font-weight-600 btn-sm" id="btnAddDispatchCard"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="counter-icon">
+                                        <i class="fa fa-truck"></i>
+                                    </div>
+                                }
+                                <span class="counter-value" id="TotDispatchCards"></span>
+                                <h3>
+                                    AFSAC Dispatching
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="seven">
+                    <h1>
+                        AFSAC Issuance & Destruction
+                    </h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#" class="clickable">
+                            <div class="counter pink armyNoallserchPopup" id="btnDistCard">
+                                <div class="counter-icon">
+                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddDistsCard" data-type="55"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                                </div>
+                                <span class="counter-value" id="TotDistCards"></span>
+                                <h3>
+                                    AFSAC Issuance
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#" class="clickable">
+                            <div class="counter pink armyNoallserchPopup" id="btnDestCard">
+                                <div class="counter-icon">
+                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddDestsCard" data-type="56"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                                </div>
+                                <span class="counter-value" id="TotDestCards"></span>
+                                <h3>
+                                    AFSAC Destruction
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="seven">
+                    <h1>
+                        AFSAC Management Post Issuance
+                    </h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#" class="clickable">
+                            <div class="counter purple armyNoallserchPopup" id="btnHotlistCard">
+                                <div class="counter-icon">
+                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddHotlistCard" data-type="53"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                                </div>
+                                <span class="counter-value" id="TotHotlistCards"></span>
+                                <h3>
+                                    Hotlisting of AFSAC
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#" class="clickable">
+                            <div class="counter purple armyNoallserchPopup" id="btnMisprintedCard">
+                                <div class="counter-icon">
+                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddMisprintedCard" data-type="52"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                                </div>
+                                <span class="counter-value" id="TotMisprintedCard"></span>
+                                <h3>
+                                    Faulty/Non Functional AFSAC
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="seven">
+                    <h1>
+                        SD Move Units & Indls Mov
+                    </h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="#" class="clickable">
+                            <div class="counter purple armyNoallserchPopup" id="btnUnitChangeRequest">
+                                <div class="counter-icon">
+                                    <button class="btn btn-outline-success font-weight-600 btn-sm" id="btnAddUnitChangeRequest"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                                </div>
+                                <span class="counter-value" id="TotUnitChangeRequest"></span>
+                                <h3>Unit Move Request</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     }
 </div>
+<script asp-src-include="~/developerjs/Task.js"></script>
