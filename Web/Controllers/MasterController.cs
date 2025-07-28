@@ -1563,16 +1563,23 @@ namespace Web.Controllers
 
             return View();
         }
-        [Authorize(Roles = "admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> SaveAppointment(MAppointment dTO)
         {
             try
             {
-
-                dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var claimvalue = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (claimvalue == 0)
+                {
+                    dTO.Approved = 0;
+                }
+                else {                    
+                    dTO.Updatedby = claimvalue;
+                }
+                dTO.IsActive = true;                
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.AppointmentName = dTO.AppointmentName.Trim();
+                
                 if (ModelState.IsValid)
                 {
                     if (!await unitOfWork.Appt.GetByName(dTO))
