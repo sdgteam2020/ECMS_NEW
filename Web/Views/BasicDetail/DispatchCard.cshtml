@@ -80,7 +80,7 @@
                                 <th class="wd-40-f">S No</th>
                                 <th class="nowrap">
                                     Categery<br>
-                                    <input type="text" id="filterApplyFor" class="form-control-AllowedKey" placeholder="Search Category" />
+                                    <input type="text" id="filterApplyFor" class="form-control-AllowedKey d-none" placeholder="Search Category" />
                                 </th>
                                 <th class="nowrap">Lot No</th>
                                 <th class="nowrap">Unit</th>
@@ -112,7 +112,9 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <button id="export" class="btn btn-warning" value="">Export</button>
+                     <div class="mb-2 d-flex justify-content-end">
+                        <button id="export" class="btn btn-outline-success font-weight-600 btn-sm mr-1" value="">Export CSV</button>
+                     </div>
                     <div class="table-responsive">
                         <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
                         </table>
