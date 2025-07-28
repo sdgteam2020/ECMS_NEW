@@ -59,6 +59,7 @@ namespace DataAccessLayer
         {
             string query = "";
             string wherequery = "";
+            string searchFilter = "";
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
@@ -77,6 +78,38 @@ namespace DataAccessLayer
                 ["CardSerialNo"] = "req.CardSerialNo",
                 ["SUSNo"] = "munit.Sus_no"
             };
+            if (!string.IsNullOrWhiteSpace(dTO.SearchField) && !string.IsNullOrWhiteSpace(dTO.SearchText))
+            {
+                string safeField = dTO.SearchField.Trim().ToLower();
+                switch (safeField)
+                {
+                    case "requestid":
+                        searchFilter = @"AND req.RequestId LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "serviceno":
+                        searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "susno":
+                        searchFilter = @"AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "regimentalname":
+                        searchFilter = @"AND regi.Abbreviation LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "recordofficename":
+                        searchFilter = @"AND mrec.Abbreviation LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "chipno":
+                        searchFilter = @"AND req.ChipNo LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "cardserialno":
+                        searchFilter = @"AND req.CardSerialNo LIKE '%' + @SearchText + '%'";
+                        break;
+                    default:
+                        // optional fallback to global filter
+                        searchFilter = @"";
+                        break;
+                }
+            }
             if (ClaimValue == 1)
             {
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
@@ -96,16 +129,7 @@ namespace DataAccessLayer
                         LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                         LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 wherequery = @"WHERE
-                            (stepc.StepId=6 OR stepc.StepId>=11)
-                            AND (
-                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
-                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
-                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
-                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
-                                )";
+                            (stepc.StepId=6 OR stepc.StepId>=11)";
             }
             else if (ClaimValue == 2 || ClaimValue == 3)
             {
@@ -126,16 +150,7 @@ namespace DataAccessLayer
                         LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                         LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 wherequery = @"WHERE
-                            (stepc.StepId=12 OR stepc.StepId>=13)
-                            AND (
-                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
-                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
-                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
-                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
-                                )";
+                            (stepc.StepId=12 OR stepc.StepId>=13)";
             }
             else
             {
@@ -156,16 +171,7 @@ namespace DataAccessLayer
                         LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                         LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 wherequery = @"WHERE
-                            (stepc.StepId=14 OR stepc.StepId=15)
-                            AND (
-                                req.RequestId LIKE '%' + @SearchTerm + '%' OR
-                                marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                mrec.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                basi.ServiceNo LIKE '%' + @SearchTerm + '%' OR
-                                req.ChipNo LIKE '%' + @SearchTerm + '%' OR
-                                req.CardSerialNo LIKE '%' + @SearchTerm + '%'
-                                )";
+                            (stepc.StepId=14 OR stepc.StepId=15)";
             }
 
             try
@@ -175,7 +181,7 @@ namespace DataAccessLayer
                 : "basi.ServiceNo";
                 var multiQuery = query = $@"
                         WITH RecordCTE AS (
-                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery} {searchFilter}
                         )
                         SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
 
@@ -185,7 +191,8 @@ namespace DataAccessLayer
                     var parameters = new DynamicParameters();
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@SearchText", dTO.SearchText, DbType.String, ParameterDirection.Input);
+                    //parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
                     var records = (await ret.ReadAsync<DTODispatchCardStatusResponse>()).ToList();

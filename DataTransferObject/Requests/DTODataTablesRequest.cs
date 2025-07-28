@@ -106,5 +106,7 @@ namespace DataTransferObject.Requests
     public class DTODataTablesRequestForCardStatusList:DTODataTablesRequest
     {
         //public int[]? selectedIds { get; set; }
+        public string? SearchField { get; set; }
+        public string? SearchText { get; set; }
     }
 }

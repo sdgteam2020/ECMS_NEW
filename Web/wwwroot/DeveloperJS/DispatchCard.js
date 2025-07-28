@@ -801,7 +801,7 @@ function DispatchCardStatusListBindDialog(callback) {
                 draw: data.draw,
                 start: data.start,
                 length: data.length,
-                searchValue: data.search.value,
+                //searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                 searchField: $('#searchField').val(), // Field-based search
@@ -877,6 +877,19 @@ function DispatchCardStatusListBindDialog(callback) {
         },
         drawCallback: function (settings) {
            // updateUICheckboxes();
+        }
+    });
+    $('#btnSearch').on('click', function () {
+        table.ajax.reload();
+    });
+    $('#btnClear').on('click', function () {
+        $('#searchText').val('');
+        $('#searchField').val([]).trigger('change');
+        table.ajax.reload();
+    });
+    $('#searchText').on('keypress', function (e) {
+        if (e.which === 13) {
+            table.ajax.reload();
         }
     });
     $(document).on('change', '.chkRequestId', function () {
