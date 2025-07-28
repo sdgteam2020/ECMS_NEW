@@ -4516,7 +4516,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetDispatchCardStatusListForDialog(DTODataTablesRequest dTO)
+        public async Task<IActionResult> GetDispatchCardStatusListForDialog([FromBody] DTODataTablesRequestForCardStatusList dTO)
         {
             try
             {
@@ -4557,7 +4557,64 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
+      
+        [HttpPost]
+        public async Task<IActionResult> ExportCsvForDispatch(DTOExportDispatch Data )
+        {
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            byte ClaimValue;
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+            {
+                ClaimValue = 1;
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+            {
+                ClaimValue = 2;
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+            {
+                ClaimValue = 3;
+            }
+            else
+            {
+                ClaimValue = 0;
+            }
+            string fileName = $"UploadForDispatch_{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
+            var ret = await basicDetailBL.GetDispatchCardStatusListForExport(ClaimValue, Data);
+            var csv = new StringBuilder();
 
+            // Header
+            csv.AppendLine("Name,ServiceNo,ChipNo,RequestId");
+
+            // Data rows
+            foreach (var item in ret.data)
+            {
+                csv.AppendLine($"{item.RankName +" "+ item.NameAsPerRecord},\"{item.ServiceNo}\",\"{item.ChipNo}\",\"{item.RequestId}\"");
+            }
+
+            // Convert to byte array
+            var bytes = Encoding.UTF8.GetBytes(csv.ToString());
+           
+           // var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Dispatchexports");
+            var folderPath = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Dispatchexports");
+            // Create folder if not exists
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            var fullPath = Path.Combine(folderPath, fileName);
+
+            // Write the bytes to file
+            System.IO.File.WriteAllBytes(fullPath, bytes);
+            return Json(fileName);
+
+            
+            
+        }
         #endregion
     }
 }

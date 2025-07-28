@@ -6552,6 +6552,7 @@ input[type=button].btn-block {
         height: 1rem;
         content: "";
         background: no-repeat 50%/50% 50%;
+        border: 2px solid black;
     }
 
 .custom-checkbox .custom-control-label::before {

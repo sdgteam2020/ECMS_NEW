@@ -1,5 +1,9 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var table2;
+var selectedIds = [];
+var lastSearchValue = "";
+var unchedRequestId = []; // label array
+var checkedRequestId = []; // total array
 $(function () {
     BindData();
     if ($('#btnAdd').length) {
@@ -7,9 +11,26 @@ $(function () {
             location.href = '/BasicDetail/DispatchOut';
         });
     }
-    $("#btnDispatchStatus").on("click", function () {
+    $("#export").on("click", function () {
+        if (checkedRequestId.length == 0 && !$("#chkAll").prop('checked')) {
+            toastr.error('Please Select at least one row.');
+            return;
+        }
+
+        let chkAllstatus = false;
+        if ($("#chkAll").prop('checked'))
+        {
+            chkAllstatus = true;
+        }
+      
+        ExportCsvFile(chkAllstatus, checkedRequestId, unchedRequestId)
+    });
+
+
+        $("#btnDispatchStatus").on("click", function () {
         $("#lblModelTitle").html('Dispatch Card Status details');
 
+        $("#AdvSearch").removeClass("d-none");
         // Show the modal first
         $("#DataTableDialog").modal("show");
 
@@ -128,7 +149,8 @@ function BindData() {
                 length: data.length,
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                filterApplyFor: $('#filterApplyFor').val(),
             };
             try {
                 let response = await fetch("/BasicDetail/GetAllDispatchCard", {
@@ -349,6 +371,11 @@ function BindData() {
                 }
             });
 
+        }
+    });
+    $('#filterApplyFor').on('keypress', function (e) {
+        if (e.which === 13) {
+            table.ajax.reload();
         }
     });
 }
@@ -609,7 +636,8 @@ function getColumnsByChoice(choice) {
 }
 function DispatchCardStatusListBindDialog(callback) {
     var table2 = $("#tbldatadialog");
-
+    checkedRequestId = [];
+    unchedRequestId = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
         // Destroy the DataTable and clear the table content
         $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
@@ -618,19 +646,31 @@ function DispatchCardStatusListBindDialog(callback) {
     }
     let columns = [
         {
-            title: '<div class="custom-control custom-checkbox small">' +
-                '<input type="checkbox" class="custom-control-input" id="chkAll">' +
-                '<label class="custom-control-label" for="chkAll"></label>' +
-        ' </div> ',
+            title: `<div class="custom-control custom-checkbox small">
+                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                    <label class="custom-control-label" for="chkAll"></label>
+                    </div>`,
             data: null,
             name: "Id",
             orderable: false, // Disable sorting for this column
             render: function (data, type, row, meta) {
                 if (row.Status == `Pending`) {
-                    return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input" id="${row.RequestId}">
+                    if ($("#chkAll").prop('checked')) {
+                        return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
+                    } else {
+                        //let checkedRequestId = ['7', '10000', '9999', '9998']
+                    
+                                
+                            return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                       
+                       
+                    }
                 }
                 else {
                     return `<div></div>`;
@@ -745,24 +785,7 @@ function DispatchCardStatusListBindDialog(callback) {
             }
         },
     ];
-
-    var thead = $('<thead><tr></tr></thead>');
-    let headerRow = thead.find('tr');
-
-    // Add the "select all" checkbox to the first column of the header
-    //headerRow.append('<th><div class="custom-control custom-checkbox small">' +
-    //    '<input type="checkbox" class="custom-control-input" id="chkAll">' +
-    //    '<label class="custom-control-label" for="chkAll"></label>' +
-    //    '</div></th>');
-
-    // Append other dynamic columns to the header
-    //columns.slice(1).forEach(function (col) {
-    //    headerRow.append('<th>' + col.title + '</th>');
-    //});
-
-    // Append the header to the table (only once)
-    table2.append(thead);
-
+    
     table2.DataTable({
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
@@ -772,26 +795,40 @@ function DispatchCardStatusListBindDialog(callback) {
         stateSave: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
+
             let requestData = {
                 draw: data.draw,
                 start: data.start,
                 length: data.length,
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                searchField: $('#searchField').val(), // Field-based search
+                searchText: $('#searchText').val()
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams(requestData).toString()
+                    headers: { "Content-Type": "application/json" }, // Change Content-Type to JSON
+                    body: JSON.stringify(requestData) // Send data as JSON
                 });
 
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                setTimeout(function () {
+                    checkedRequestId.forEach(function (id) {
+                        
+                        $('#' + id).prop('checked', true);  // If checkbox IDs match
+                    });
+                }, 500); // wait 500ms before checking
+                setTimeout(function () {
+                    unchedRequestId.forEach(function (id) {
 
+                        $('#' + id).prop('checked', false);  // If checkbox IDs match
+                    });
+                }, 500); // wait 500ms before checking
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -836,17 +873,66 @@ function DispatchCardStatusListBindDialog(callback) {
             // Add tooltip to the search input box
             let searchBox = $('div.dataTables_filter input');
             searchBox.attr('title', 'Search ReqId/Arm/SUSNo/ORO/Regt/Army No/Chip No/Card Serial No');
+        },
+        drawCallback: function (settings) {
+           // updateUICheckboxes();
         }
     });
-    // Checkbox select all/deselect all functionality
+    $(document).on('change', '.chkRequestId', function () {
+        if ($(this).prop('checked')) {
+            if (!$("#chkAll").prop('checked')) {
+                checkedRequestId.push($(this).val())
+            } else {
+                checkedRequestId = [];
+                unchedRequestId = [];
+            }
+             unchedRequestId.pop($(this).val())
+        } else {
+
+            checkedRequestId.pop($(this).val())
+           // if ($("#chkAll").prop('checked'))
+            unchedRequestId.push($(this).val())
+        }
+       
+       
+    });
     $('#chkAll').on('change', function () {
-        var isChecked = $(this).prop('checked');
-        $('#tbldatadialog tbody input[type="checkbox"]').prop('checked', isChecked);
+        checkedRequestId = [];
+        unchedRequestId = [];
+        if (!$("#chkAll").prop('checked')) {
+            $(".chkRequestId").prop('checked', false)
+        } else {
+            $(".chkRequestId").prop('checked', true)
+        }
+
+        
+    });
+}
+function ExportCsvFile(Allstatus, checkedRequestId, unchedRequestId) {
+   // alert(Allstatus)
+   // alert("checked---" + checkedRequestId)
+   // alert("Unchecked---" + unchedRequestId)
+    var userdata = {
+        Allstatus: Allstatus,
+        checkedRequestId: checkedRequestId,
+        unchedRequestId: unchedRequestId
+    };
+
+    $.ajax({
+        url: '/BasicDetail/ExportCsvForDispatch',
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: userdata,
+        success: function (response) {
+            // handle success
+          // alert("WriteReadData/Dispatchexports/" + response)
+            window.location.href = "/" + "WriteReadData/Dispatchexports/" + response;
+            console.log("Export successful", response);
+        },
+        error: function (xhr, status, error) {
+            console.error("Export failed:", error);
+        }
     });
 
-    // Optional: Detect individual checkbox changes to check if all are selected
-    $('#tbldatadialog tbody').on('change', 'input[type="checkbox"]', function () {
-        var allChecked = $('#tbldatadialog tbody input[type="checkbox"]:checked').length === $('#tbldatadialog tbody input[type="checkbox"]').length;
-        $('#chkAll').prop('checked', allChecked);
-    });
+    
 }
