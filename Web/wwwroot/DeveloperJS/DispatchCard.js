@@ -30,6 +30,7 @@ $(function () {
         $("#btnDispatchStatus").on("click", function () {
         $("#lblModelTitle").html('Dispatch Card Status details');
 
+        $("#AdvSearch").removeClass("d-none");
         // Show the modal first
         $("#DataTableDialog").modal("show");
 
@@ -787,6 +788,7 @@ function DispatchCardStatusListBindDialog(callback) {
     
     table2.DataTable({
         autoWidth: false, // Let us handle width via CSS
+        searching: false,
         responsive: true, // Responsive breaks layout for width control
         processing: true,
         serverSide: true,
@@ -801,7 +803,9 @@ function DispatchCardStatusListBindDialog(callback) {
                 length: data.length,
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                searchField: $('#searchField').val(), // Field-based search
+                searchText: $('#searchText').val()
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {

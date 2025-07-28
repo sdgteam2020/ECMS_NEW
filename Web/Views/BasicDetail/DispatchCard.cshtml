@@ -80,7 +80,7 @@
                                 <th class="wd-40-f">S No</th>
                                 <th class="nowrap">
                                     Categery<br>
-                                    <input type="text" id="filterApplyFor" class="form-control-AllowedKey" placeholder="Search Category" />
+                                    <input type="text" id="filterApplyFor" class="form-control-AllowedKey d-none" placeholder="Search Category" />
                                 </th>
                                 <th class="nowrap">Lot No</th>
                                 <th class="nowrap">Unit</th>
@@ -113,6 +113,20 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="mb-2 d-flex justify-content-end">
+                        <div id="AdvSearch" class="d-flex mb-2 d-none">
+                            <select id="searchField" class="form-control form-control-sm mr-2" style="max-width: 180px;">
+                                <option value="All">All</option>
+                                <option value="ToServiceNo">SUS No</option>
+                                <option value="LotNo">Lot No</option>
+                                <option value="ToUnit">To Unit</option>
+                                <option value="NameOfCourierIncharge">Courier</option>
+                            </select>
+
+                            <input type="text" id="searchText" class="form-control form-control-sm mr-2" placeholder="Search..." style="max-width: 250px;" />
+
+                            <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
+                            <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
+                        </div>
                         <button id="export" class="btn btn-outline-success font-weight-600 btn-sm mr-1" value="">Export CSV</button>
                     </div>
                     <div class="table-responsive">
