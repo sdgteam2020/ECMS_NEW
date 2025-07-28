@@ -107,6 +107,8 @@ namespace DataTransferObject.Requests
     {
         //public int[]? selectedIds { get; set; }
         public string? SearchField { get; set; }
+
+        [RegularExpression("^[a-zA-Z0-9_/ ]*$", ErrorMessage = "Only Alphabets,Numbers,underscores and slash are allowed.")]
         public string? SearchText { get; set; }
     }
 }

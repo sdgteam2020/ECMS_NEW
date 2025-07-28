@@ -60,6 +60,7 @@ namespace DataAccessLayer
             string query = "";
             string wherequery = "";
             string searchFilter = "";
+            byte PendingStepId = 0;
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
@@ -78,40 +79,9 @@ namespace DataAccessLayer
                 ["CardSerialNo"] = "req.CardSerialNo",
                 ["SUSNo"] = "munit.Sus_no"
             };
-            if (!string.IsNullOrWhiteSpace(dTO.SearchField) && !string.IsNullOrWhiteSpace(dTO.SearchText))
-            {
-                string safeField = dTO.SearchField.Trim().ToLower();
-                switch (safeField)
-                {
-                    case "requestid":
-                        searchFilter = @"AND req.RequestId LIKE '%' + @SearchText + '%'";
-                        break;
-                    case "serviceno":
-                        searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
-                        break;
-                    case "susno":
-                        searchFilter = @"AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
-                        break;
-                    case "regimentalname":
-                        searchFilter = @"AND regi.Abbreviation LIKE '%' + @SearchText + '%'";
-                        break;
-                    case "recordofficename":
-                        searchFilter = @"AND mrec.Abbreviation LIKE '%' + @SearchText + '%'";
-                        break;
-                    case "chipno":
-                        searchFilter = @"AND req.ChipNo LIKE '%' + @SearchText + '%'";
-                        break;
-                    case "cardserialno":
-                        searchFilter = @"AND req.CardSerialNo LIKE '%' + @SearchText + '%'";
-                        break;
-                    default:
-                        // optional fallback to global filter
-                        searchFilter = @"";
-                        break;
-                }
-            }
             if (ClaimValue == 1)
             {
+                PendingStepId = 6; // Pending Step for AFSAC
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 6 THEN 'Pending' 
@@ -133,6 +103,7 @@ namespace DataAccessLayer
             }
             else if (ClaimValue == 2 || ClaimValue == 3)
             {
+                PendingStepId = 12; // Pending Step for RO / Regiment
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 12 THEN 'Pending' 
@@ -154,6 +125,7 @@ namespace DataAccessLayer
             }
             else
             {
+                PendingStepId = 14; // Pending Step for Unit
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 14 THEN 'Pending' 
@@ -173,6 +145,45 @@ namespace DataAccessLayer
                 wherequery = @"WHERE
                             (stepc.StepId=14 OR stepc.StepId=15)";
             }
+            if (!string.IsNullOrWhiteSpace(dTO.SearchField) && !string.IsNullOrWhiteSpace(dTO.SearchText))
+            {
+                string safeField = dTO.SearchField.Trim().ToLower();
+                switch (safeField)
+                {
+                    case "categery":
+                        searchFilter = @"AND mappl.Name=@SearchText";
+                        break;
+                    case "requestid":
+                        searchFilter = @"AND req.RequestId=@SearchText";
+                        break;
+                    case "serviceno":
+                        searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "susno":
+                        searchFilter = @"AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "regimentalname":
+                        searchFilter = @"AND regi.Abbreviation LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "recordofficename":
+                        searchFilter = @"AND mrec.Abbreviation LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "chipno":
+                        searchFilter = @"AND req.ChipNo LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "cardserialno":
+                        searchFilter = @"AND req.CardSerialNo LIKE '%' + @SearchText + '%'";
+                        break;
+                    case "status":
+                        byte finalValue = ((dTO.searchValue?.Trim().ToLower() == "pending" || dTO.searchValue?.Trim().ToLower() == "pending") ? PendingStepId : PendingStepId);
+                        searchFilter = @"AND stepc.StepId =  LIKE '%' + @SearchText + '%'";
+                        break;
+                    default:
+                        // optional fallback to global filter
+                        searchFilter = @"";
+                        break;
+                }
+            }
 
             try
             {
@@ -187,7 +198,7 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    dTO.SearchText = string.IsNullOrEmpty(dTO.SearchText) ? string.Empty : dTO.SearchText.Trim();
                     var parameters = new DynamicParameters();
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);

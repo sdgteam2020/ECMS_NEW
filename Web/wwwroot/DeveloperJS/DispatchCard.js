@@ -635,7 +635,7 @@ function getColumnsByChoice(choice) {
     return columns;
 }
 function DispatchCardStatusListBindDialog(callback) {
-    var table2 = $("#tbldatadialog");
+    var table2;
     checkedRequestId = [];
     unchedRequestId = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
@@ -786,7 +786,7 @@ function DispatchCardStatusListBindDialog(callback) {
         },
     ];
     
-    table2.DataTable({
+    table2 = $("#tbldatadialog").DataTable({
         autoWidth: false, // Let us handle width via CSS
         searching: false,
         responsive: true, // Responsive breaks layout for width control
@@ -879,17 +879,56 @@ function DispatchCardStatusListBindDialog(callback) {
            // updateUICheckboxes();
         }
     });
+
     $('#btnSearch').on('click', function () {
-        table.ajax.reload();
+        table2.ajax.reload();
     });
     $('#btnClear').on('click', function () {
         $('#searchText').val('');
         $('#searchField').val([]).trigger('change');
-        table.ajax.reload();
+        table2.ajax.reload();
     });
+    // Restrict typing
     $('#searchText').on('keypress', function (e) {
+        let field = $('#searchField').val();
+        let char = String.fromCharCode(e.which);
+
         if (e.which === 13) {
-            table.ajax.reload();
+            table2.ajax.reload();
+        }
+
+        // Allow navigation keys
+        if (e.ctrlKey || e.metaKey || e.altKey || e.which < 32) return;
+
+        if (field === "requestid") {
+            // Allow only digits
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+            }
+        } else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
+            // Allow alphanumeric and space only, block special characters
+            if (!/^[a-zA-Z0-9_/ ]$/.test(char)) {
+                e.preventDefault();
+            }
+        }
+    });
+    // Sanitize pasted value
+    $('#searchText').on('input', function () {
+        let field = $('#searchField').val();
+        let currentVal = $(this).val();
+
+        if (field === "requestid") {
+            // Allow digits only
+            let cleaned = currentVal.replace(/[^0-9]/g, '');
+            if (cleaned !== currentVal) {
+                $(this).val(cleaned);
+            }
+        } else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
+            // Allow only letters, numbers, and space
+            let cleaned = currentVal.replace(/[^a-zA-Z0-9_/ ]/g, '');
+            if (cleaned !== currentVal) {
+                $(this).val(cleaned);
+            }
         }
     });
     $(document).on('change', '.chkRequestId', function () {
