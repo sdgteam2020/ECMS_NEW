@@ -796,7 +796,13 @@ function DispatchCardStatusListBindDialog(callback) {
         stateSave: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
+            const currentSearchValue = searchText || '';
 
+            // Reset selection if search term has changed
+            if (currentSearchValue !== lastSearchValue) {
+                checkedRequestId = [];
+                lastSearchValue = currentSearchValue;
+            }
             let requestData = {
                 draw: data.draw,
                 start: data.start,
@@ -805,7 +811,8 @@ function DispatchCardStatusListBindDialog(callback) {
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                 searchField: $('#searchField').val(), // Field-based search
-                searchText: $('#searchText').val()
+                searchText: $('#searchText').val(),
+                AllChecked: $('#chkAll').is(':checked')
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
