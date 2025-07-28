@@ -28,7 +28,7 @@ $(function () {
 
 
         $("#btnDispatchStatus").on("click", function () {
-        $("#lblModelTitle").html('Dispatch Card Status details');
+            $("#lblModelTitle").html('Cards Dispatch Status details');
 
         $("#AdvSearch").removeClass("d-none");
         // Show the modal first
