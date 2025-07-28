@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
     $("#btntokenrefresh").click(function () {
-        
-        GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo","Thumbprint");
+
+        GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo", "Thumbprint");
     });
     $('.form-control-Alphabets').keypress(function (e) {
 
@@ -12,10 +12,10 @@
         if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122) || (keyCode == 32)) {
             return true; // Allow the keypress
         } else {
-           return false; // Block the keypress
+            return false; // Block the keypress
         }
     });
-    $("#IsTokenWaiverYes").on("click",function () {
+    $("#IsTokenWaiverYes").on("click", function () {
         $("#spnReasonTokenWaiver").removeClass("d-none");
         $('#ReasonTokenWaiver').prop('required', true);
         $("#ReasonTokenWaiver-error").html('Reason for IACA Token Waiver is required.');
@@ -44,7 +44,7 @@
     //});
 
     $("#btnUnitMapReset").click(function () {
-        Reset();    
+        Reset();
         ResetErrorMessage();
     });
     $("#btnSubmit").on("click", function () {
@@ -52,6 +52,16 @@
     });
     $("#btnUnitMapsave").on("click", function () {
         ProceedUnitSave();
+    });
+
+    $("#btnNewAppointment").on("click", function () {
+        ProceedAppointmentSave();
+    });
+
+    $("#btnAppointmentReset").on("click", function () {
+        $("#txtAppointment").val('');
+        $("#txtAppointmentAbbr").val('');
+        $(".text-danger").html("");
     });
 
     if ($("#spnUnitAppointmentId").html() > 0) {
@@ -105,13 +115,13 @@
             $("#spnApptIdMap").html(i.item.value);
             $("#ApptId").val(i.item.value);
             //alert(i.item.value)
-         },
+        },
         appendTo: '#suggesstion-box'
     });
 
     $("#txtUnitName").autocomplete({
         source: function (request, response) {
-            $("#spnUnitMapId").html(''); 
+            $("#spnUnitMapId").html('');
             $("#lblSusno").html('');
             $("#lblPso").html('');
             $("#lblDG").html('');
@@ -132,7 +142,7 @@
                         if (data.length != 0) {
                             response($.map(data, function (item) {
                                 $("#loading").addClass("d-none");
-                                return { label: item.Sus_no + item.Suffix +' '+ item.UnitName, value: item.UnitMapId };
+                                return { label: item.Sus_no + item.Suffix + ' ' + item.UnitName, value: item.UnitMapId };
 
                             }))
                         }
@@ -237,7 +247,7 @@
                             //$("#txtUnit").val("");
                             $("#spnUnitId").html("0");
                             $("#txtUnit").prop('readOnly', false);
-/*                            alert("SUS No not found.")*/
+                            /*                            alert("SUS No not found.")*/
                         }
                     },
                     error: function (response) {
@@ -287,7 +297,7 @@
         }
     });
 
-    $("#btnAddUnit").on("click",function () {
+    $("#btnAddUnit").on("click", function () {
         if ($("#Name").val().length > 0 && $("#RankId").val() > 0) {
             Reset();
             ResetErrorMessage();
@@ -304,6 +314,13 @@
                 alert("Please Type Name");
         }
 
+    });
+
+    $("#btnAddAppointment").on("click", function () {
+        $("#txtAppointment").val('');
+        $("#txtAppointmentAbbr").val('');
+        $(".text-danger").html("");
+        $("#AddNewAppointment").modal('show');
     });
 
     mMsater(0, "ddlCommand", Command, "");
@@ -474,7 +491,7 @@ function ResetErrorMessage() {
     //$("#IsORO-error").html("");
     $("#IsIO-error").html("");
     $("#IsCO-error").html("");
-    $("#IsTokenWaiver-error").html("");
+    $("#IsTokenWaiver-error").html("");    
 }
 function GetALLByUnitById(param1) {
     $.ajax({
@@ -596,7 +613,7 @@ function UnitSave() {
             "PsoId": $("#ddlPSODte").val(),
             "FmnBranchID": $("#ddlFmnBranch").val(),
             "SubDteId": $("#ddlDgSubDte").val()
-        }, 
+        },
         success: function (result) {
             if (result == DataSave) {
                 Swal.fire({
@@ -630,7 +647,7 @@ function UnitSave() {
 
             } else {
                 if (result.length > 0) {
-                    var err="";
+                    var err = "";
                     for (var i = 0; i < result.length; i++) {
                         err = err + result[i][0].ErrorMessage + '<br />';
                     }
@@ -644,10 +661,93 @@ function UnitSave() {
         }
     });
 }
+
+function ProceedAppointmentSave() {
+    let formId = '#SaveNewAppointment';
+    $.validator.unobtrusive.parse($(formId));
+
+    if ($(formId).valid()) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                AppointmentSave();
+            }
+        })
+    }
+    else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill required field.',
+
+        })
+        return false;
+    }
+}
+
+function AppointmentSave() {
+    $.ajax({
+        url: '/Master/SaveAppointment',
+        type: 'POST',
+        data: {
+            "AppointmentName": $("#txtAppointment").val().trim(),
+            "AppointmentAbbreviation": $("#txtAppointmentAbbr").val().trim() == "" ? null : $("#txtAppointmentAbbr").val().trim(),
+            "ApptId": $("#spnAppointmentId").html()
+        },
+        success: function (result) {
+            if (result == DataSave) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Unit',
+                    html: 'Appointment has been saved.',
+                })
+                $("#AddNewAppointment").modal('hide');
+                $("#txtAppointment").val('');
+                $("#txtAppointmentAbbr").val('');
+                $(".text-danger").html("");
+            }
+            else if (result == DataExists) {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Appointment Name Exits!',
+                })
+
+            }
+            else if (result == InternalServerError) {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Something went wrong or Invalid Entry!',
+
+                })
+
+            } else {
+                if (result.length > 0) {
+                    var err = "";
+                    for (var i = 0; i < result.length; i++) {
+                        err = err + result[i][0].ErrorMessage + '<br />';
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: err,
+                    })
+                }
+            }
+        }
+    });
+}
+
 function Reset() {
     $("#spnDomainRegId").html("0");
     $("#txtUnit").prop('readOnly', false);
-    $("#txtSusno").val(""); 
+    $("#txtSusno").val("");
     $("#txtUnit").val("");
     //$("#txtMobileNo").val("");
     //$("#txtDialingCode").val("");
