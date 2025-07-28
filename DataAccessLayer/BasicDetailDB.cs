@@ -180,8 +180,16 @@ namespace DataAccessLayer
                         searchFilter = @"AND req.CardSerialNo LIKE '%' + @SearchText + '%'";
                         break;
                     case "status":
-                        finalValue = ((dTO.searchValue?.Trim().ToLower() == "pending" || dTO.searchValue?.Trim().ToLower() == "card distribute") ? PendingStepId : DispatchStepId);
-                        searchFilter = @"AND stepc.StepId = @FinalStepId";
+                        if (dTO.SearchText?.Trim().ToLower() == "pending" || dTO.SearchText?.Trim().ToLower() == "card distribute")
+                        {
+                            finalValue = PendingStepId;
+                            searchFilter = @"AND stepc.StepId = @FinalStepId";
+                        }
+                        else
+                        {
+                            finalValue = DispatchStepId;
+                            searchFilter = @"AND stepc.StepId >= @FinalStepId";
+                        }
                         break;
                     default:
                         // optional fallback to global filter
