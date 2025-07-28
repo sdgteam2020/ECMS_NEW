@@ -61,6 +61,8 @@ namespace DataAccessLayer
             string wherequery = "";
             string searchFilter = "";
             byte PendingStepId = 0;
+            byte DispatchStepId = 0;
+            byte finalValue=0;
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
@@ -82,6 +84,7 @@ namespace DataAccessLayer
             if (ClaimValue == 1)
             {
                 PendingStepId = 6; // Pending Step for AFSAC
+                DispatchStepId = 11; // Dispatch Step for AFSAC
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 6 THEN 'Pending' 
@@ -104,6 +107,7 @@ namespace DataAccessLayer
             else if (ClaimValue == 2 || ClaimValue == 3)
             {
                 PendingStepId = 12; // Pending Step for RO / Regiment
+                DispatchStepId = 13; // Dispatch Step for RO / Regiment
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 12 THEN 'Pending' 
@@ -126,6 +130,7 @@ namespace DataAccessLayer
             else
             {
                 PendingStepId = 14; // Pending Step for Unit
+                DispatchStepId = 15; // Dispatch Step for Unit
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 14 THEN 'Pending' 
@@ -175,8 +180,8 @@ namespace DataAccessLayer
                         searchFilter = @"AND req.CardSerialNo LIKE '%' + @SearchText + '%'";
                         break;
                     case "status":
-                        byte finalValue = ((dTO.searchValue?.Trim().ToLower() == "pending" || dTO.searchValue?.Trim().ToLower() == "pending") ? PendingStepId : PendingStepId);
-                        searchFilter = @"AND stepc.StepId =  LIKE '%' + @SearchText + '%'";
+                        finalValue = ((dTO.searchValue?.Trim().ToLower() == "pending" || dTO.searchValue?.Trim().ToLower() == "card distribute") ? PendingStepId : DispatchStepId);
+                        searchFilter = @"AND stepc.StepId = @FinalStepId";
                         break;
                     default:
                         // optional fallback to global filter
@@ -203,6 +208,7 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchText", dTO.SearchText, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@FinalStepId", finalValue, DbType.Byte, ParameterDirection.Input);
                     //parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
