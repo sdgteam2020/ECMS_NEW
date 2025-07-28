@@ -270,6 +270,9 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("VARCHAR(50)");
 
+                    b.Property<short>("Approved")
+                        .HasColumnType("smallint");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
