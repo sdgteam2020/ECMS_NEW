@@ -37,10 +37,11 @@ namespace DataAccessLayer
         public async Task<List<DTOAppointmentResponse>> GetALLAppt()
         {
             var GetALL = await (from A in _context.MAppointment
-                         //join F in _context.MFormation
-                         //on A.FormationId equals F.FormationId
-                        
-                         select new DTOAppointmentResponse
+                                where A.Approved == 1
+                                //join F in _context.MFormation
+                                //on A.FormationId equals F.FormationId
+
+                                select new DTOAppointmentResponse
                          {
                              ApptId=A.ApptId,
                              AppointmentName=A.AppointmentName,
@@ -58,6 +59,7 @@ namespace DataAccessLayer
             {
                 var GetALL = (from A in _context.MAppointment
                               where A.AppointmentName.Contains(AppointmentName)
+                              && A.Approved == 1
                               select new DTOAppointmentResponse
                               {
                                   ApptId = A.ApptId,
