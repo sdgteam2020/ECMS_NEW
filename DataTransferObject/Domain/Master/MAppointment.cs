@@ -24,6 +24,7 @@ namespace DataTransferObject.Domain.Master
         [Column(TypeName = "varchar(20)")]
         [MaxLength(20, ErrorMessage = "Maximum length of Appointment Abbreviation is twenty character.")]
         public string? AppointmentAbbreviation { get; set; }
+        public short Approved { get; set; } = 1;
         // [Required(ErrorMessage = "required!")]
 
         //[ForeignKey("mFormation"), DatabaseGenerated(DatabaseGeneratedOption.None)]
