@@ -2,6 +2,8 @@
 var table2;
 var selectedIds = [];
 var lastSearchValue = "";
+var unchedRequestId = []; // label array
+var checkedRequestId = []; // total array
 $(function () {
     BindData();
     if ($('#btnAdd').length) {
@@ -10,10 +12,18 @@ $(function () {
         });
     }
     $("#export").on("click", function () {
-        if (selectedIds.length == 0) {
+        if (checkedRequestId.length == 0 && !$("#chkAll").prop('checked')) {
             toastr.error('Please Select at least one row.');
             return;
         }
+
+        let chkAllstatus = false;
+        if ($("#chkAll").prop('checked'))
+        {
+            chkAllstatus = true;
+        }
+      
+        ExportCsvFile(chkAllstatus, checkedRequestId, unchedRequestId)
     });
 
 
@@ -657,7 +667,8 @@ function getColumnsByChoice(choice) {
 }
 function DispatchCardStatusListBindDialog(callback) {
     var table2;
-    selectedIds = [];
+    checkedRequestId = [];
+    unchedRequestId = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
         // Destroy the DataTable and clear the table content
         $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
@@ -681,11 +692,15 @@ function DispatchCardStatusListBindDialog(callback) {
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
                     } else {
- 
+                        //let checkedRequestId = ['7', '10000', '9999', '9998']
+                    
+                                
                             return `<div class="custom-control custom-checkbox small">
                                     <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
+                       
+                       
                     }
                 }
                 else {
@@ -816,7 +831,7 @@ function DispatchCardStatusListBindDialog(callback) {
 
             // Reset selection if search term has changed
             if (currentSearchValue !== lastSearchValue) {
-                selectedIds = [];
+                checkedRequestId = [];
                 lastSearchValue = currentSearchValue;
             }
             let requestData = {
@@ -840,13 +855,19 @@ function DispatchCardStatusListBindDialog(callback) {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
-
-                if (result.selectedIds != null && result.selectedIds.length > 0) {
-                    selectedIds = result.selectedIds; // Update global selectedIds with the response
-                    console.log("Selected IDs (from server):", selectedIds);
-                }
-
                 callback(result); // Sends data to DataTables
+                setTimeout(function () {
+                    checkedRequestId.forEach(function (id) {
+                        
+                        $('#' + id).prop('checked', true);  // If checkbox IDs match
+                    });
+                }, 500); // wait 500ms before checking
+                setTimeout(function () {
+                    unchedRequestId.forEach(function (id) {
+
+                        $('#' + id).prop('checked', false);  // If checkbox IDs match
+                    });
+                }, 500); // wait 500ms before checking
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -892,7 +913,7 @@ function DispatchCardStatusListBindDialog(callback) {
             searchBox.attr('title', 'Search ReqId/Arm/SUSNo/ORO/Regt/Army No/Chip No/Card Serial No');
         },
         drawCallback: function (settings) {
-           updateUICheckboxes();
+           // updateUICheckboxes();
         }
     });
 
@@ -960,81 +981,61 @@ function DispatchCardStatusListBindDialog(callback) {
             }
         }
     });
-    $('#chkAll').on('change', function () {
-        selectedIds = [];
-        if ($("#chkAll").prop('checked')) {
-            table2.ajax.reload();
-        } else {
-            selectedIds = [];
-            table2.ajax.reload();
-        }
-     });
-}
-function updateUICheckboxes() {
-    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
-        const id = $(this).val().toString();
-
-        if (selectedIds.includes(id)) {
-            $(this).prop('checked', true);
-        } else {
-            $(this).prop('checked', false);
-        }
-    });
-
-    // Update the header checkbox based on whether all on-page checkboxes are checked
-    const totalOnPage = $('#tbldatadialog tbody input[type="checkbox"]').length;
-    const checkedOnPage = $('#tbldatadialog tbody input[type="checkbox"]:checked').length;
-
-    $('#chkAll').prop('checked', totalOnPage > 0 && totalOnPage === checkedOnPage);
-}
-function updateSelectedIds(isChecked = null) {
-    if (isChecked !== null) {
-        if (isChecked) {
-            // Use existing getAllIds to get all checkbox values on current page
-            const idsToAdd = getAllIds();
-            idsToAdd.forEach(id => {
-                if (!selectedIds.includes(id)) {
-                    selectedIds.push(id);
-                }
-            });
-        } else {
-            // Use getAllIds to remove only current page IDs from selectedIds
-            const idsToRemove = getAllIds();
-            selectedIds = selectedIds.filter(id => !idsToRemove.includes(id));
-        }
-    } else {
-        // Use getSelectedIds to get checked IDs on current page
-        const idsChecked = getSelectedIds();
-        const idsOnPage = getAllIds();
-
-        // Remove all IDs from current page
-        selectedIds = selectedIds.filter(id => !idsOnPage.includes(id));
-
-        // Add only checked ones
-        idsChecked.forEach(id => {
-            if (!selectedIds.includes(id)) {
-                selectedIds.push(id);
+    $(document).on('change', '.chkRequestId', function () {
+        if ($(this).prop('checked')) {
+            if (!$("#chkAll").prop('checked')) {
+                checkedRequestId.push($(this).val())
+            } else {
+                checkedRequestId = [];
+                unchedRequestId = [];
             }
-        });
-    }
+             unchedRequestId.pop($(this).val())
+        } else {
 
-    console.log("Selected IDs (global):", selectedIds);
+            checkedRequestId.pop($(this).val())
+           // if ($("#chkAll").prop('checked'))
+            unchedRequestId.push($(this).val())
+        }
+       
+       
+    });
+    $('#chkAll').on('change', function () {
+        checkedRequestId = [];
+        unchedRequestId = [];
+        if (!$("#chkAll").prop('checked')) {
+            $(".chkRequestId").prop('checked', false)
+        } else {
+            $(".chkRequestId").prop('checked', true)
+        }
+
+        
+    });
 }
-function getSelectedIds() {
-    var localSelectedIds = [];
+function ExportCsvFile(Allstatus, checkedRequestId, unchedRequestId) {
+   // alert(Allstatus)
+   // alert("checked---" + checkedRequestId)
+   // alert("Unchecked---" + unchedRequestId)
+    var userdata = {
+        Allstatus: Allstatus,
+        checkedRequestId: checkedRequestId,
+        unchedRequestId: unchedRequestId
+    };
 
-    // Iterate through all pages and collect selected IDs
-    $('#tbldatadialog tbody input[type="checkbox"]:checked').each(function () {
-        localSelectedIds.push($(this).val().toString());
+    $.ajax({
+        url: '/BasicDetail/ExportCsvForDispatch',
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: userdata,
+        success: function (response) {
+            // handle success
+          // alert("WriteReadData/Dispatchexports/" + response)
+            window.location.href = "/" + "WriteReadData/Dispatchexports/" + response;
+            console.log("Export successful", response);
+        },
+        error: function (xhr, status, error) {
+            console.error("Export failed:", error);
+        }
     });
 
-    return localSelectedIds;
-}
-
-function getAllIds() {
-    var all = [];
-    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
-        all.push($(this).val().toString());
-    });
-    return all;
+    
 }
