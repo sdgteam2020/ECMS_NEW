@@ -86,7 +86,7 @@ namespace DataAccessLayer
             {
                 PendingStepId = 6; // Pending Step for AFSAC
                 DispatchStepId = 11; // Dispatch Step for AFSAC
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                                 CASE 
                                     WHEN stepc.StepId = 6 THEN 'Pending' 
                                     WHEN stepc.StepId >= 11 THEN 'Dispatch Out'
@@ -109,7 +109,7 @@ namespace DataAccessLayer
             {
                 PendingStepId = 12; // Pending Step for RO / Regiment
                 DispatchStepId = 13; // Dispatch Step for RO / Regiment
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                                 CASE 
                                     WHEN stepc.StepId = 12 THEN 'Pending' 
                                     WHEN stepc.StepId >= 13 THEN 'Dispatch Out'
@@ -132,7 +132,7 @@ namespace DataAccessLayer
             {
                 PendingStepId = 14; // Pending Step for Unit
                 DispatchStepId = 15; // Dispatch Step for Unit
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                                 CASE 
                                     WHEN stepc.StepId = 14 THEN 'Pending' 
                                     WHEN stepc.StepId = 15 THEN 'Card Distribute'
@@ -156,42 +156,42 @@ namespace DataAccessLayer
                 string safeField = dTO.SearchField.Trim().ToLower();
                 switch (safeField)
                 {
-                    case "categery":
-                        searchFilter = @"AND mappl.Name=@SearchText";
-                        break;
-                    case "requestid":
-                        searchFilter = @"AND req.RequestId=@SearchText";
-                        break;
-                    case "serviceno":
-                        searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
-                        break;
+                    //case "categery":
+                    //    searchFilter = @"AND mappl.Name=@SearchText";
+                    //    break;
+                    //case "requestid":
+                    //    searchFilter = @"AND req.RequestId=@SearchText";
+                    //    break;
+                    //case "serviceno":
+                    //    searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
+                    //    break;
                     case "susno":
                         searchFilter = @"AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
                         break;
                     case "regimentalname":
-                        searchFilter = @"AND regi.Abbreviation LIKE '%' + @SearchText + '%'";
+                        searchFilter = @"AND regi.RegId=@SearchText";
                         break;
                     case "recordofficename":
-                        searchFilter = @"AND mrec.Abbreviation LIKE '%' + @SearchText + '%'";
+                        searchFilter = @"AND mrec.RecordOfficeId=@SearchText";
                         break;
-                    case "chipno":
-                        searchFilter = @"AND req.ChipNo LIKE '%' + @SearchText + '%'";
-                        break;
-                    case "cardserialno":
-                        searchFilter = @"AND req.CardSerialNo LIKE '%' + @SearchText + '%'";
-                        break;
-                    case "status":
-                        if (dTO.SearchText?.Trim().ToLower() == "pending" || dTO.SearchText?.Trim().ToLower() == "card distribute")
-                        {
-                            finalValue = PendingStepId;
-                            searchFilter = @"AND stepc.StepId = @FinalStepId";
-                        }
-                        else
-                        {
-                            finalValue = DispatchStepId;
-                            searchFilter = @"AND stepc.StepId >= @FinalStepId";
-                        }
-                        break;
+                    //case "chipno":
+                    //    searchFilter = @"AND req.ChipNo LIKE '%' + @SearchText + '%'";
+                    //    break;
+                    //case "cardserialno":
+                    //    searchFilter = @"AND req.CardSerialNo LIKE '%' + @SearchText + '%'";
+                    //    break;
+                    //case "status":
+                    //    if (dTO.SearchText?.Trim().ToLower() == "pending" || dTO.SearchText?.Trim().ToLower() == "card distribute")
+                    //    {
+                    //        finalValue = PendingStepId;
+                    //        searchFilter = @"AND stepc.StepId = @FinalStepId";
+                    //    }
+                    //    else
+                    //    {
+                    //        finalValue = DispatchStepId;
+                    //        searchFilter = @"AND stepc.StepId >= @FinalStepId";
+                    //    }
+                    //    break;
                     default:
                         // optional fallback to global filter
                         searchFilter = @"";

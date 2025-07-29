@@ -43,5 +43,7 @@ const Regimental = 17;
 const BloodGroup = 18;
 const FaultyStage = 19;
 const DispatchMode = 20;
+const AllRegimental = 21;
+const ORO = 22;
 const HostUrlDGISToken = 'https://dgisapp.army.mil:55102'; /*http://localhost*/
 const HostUrl = 'https://localhost:7023';

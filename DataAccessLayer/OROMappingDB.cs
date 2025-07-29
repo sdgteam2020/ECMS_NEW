@@ -58,5 +58,25 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<List<DTOAllOROResponse>> GetAllORO()
+        {
+            try
+            {
+                string query = "";
+                query = @"SELECT oro.OROMappingId,rec.RecordOfficeId,rec.Name FROM OROMapping oro
+                        INNER JOIN MRecordOffice rec on oro.RecordOfficeId=rec.RecordOfficeId";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var allrecord = await connection.QueryAsync<DTOAllOROResponse>(query);
+                    return allrecord.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "OROMappingDB->GetAllORO");
+                return new List<DTOAllOROResponse>();
+            }
+
+        }
     }
 }

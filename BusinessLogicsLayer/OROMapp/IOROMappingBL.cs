@@ -13,5 +13,6 @@ namespace BusinessLogicsLayer.OROMapp
     {
         public Task<List<DTOOROMappingResponse>?> GetAllOROMapping();
         public Task<bool> GetByName(OROMapping Dto);
+        public Task<List<DTOAllOROResponse>> GetAllORO();
     }
 }

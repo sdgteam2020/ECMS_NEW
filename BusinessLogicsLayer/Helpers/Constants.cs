@@ -30,6 +30,8 @@ namespace BusinessLogicsLayer.Helpers
             internal const string BloodGroup = "18";
             internal const string FaultyStage = "19";
             internal const string DispatchMode = "20";
+            internal const string AllRegimental = "21";
+            internal const string ORO = "22";
         }
     }
 }

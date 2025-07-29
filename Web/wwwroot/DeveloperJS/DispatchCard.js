@@ -76,6 +76,37 @@ $(function () {
             return false;
         }
     });
+
+    $('#searchField').on('change', function () {
+        const selectedField = $(this).val();
+        const $container = $('#searchInputContainer');
+
+        if (selectedField === 'regimentalname' || selectedField === 'recordofficename') {
+            // Replace input with a select dropdown
+            let newSelect = $('<select id="searchText" class="form-control form-control-sm"></select>')
+                .append('<option value="">Select...</option>');
+
+            $container.html(newSelect); // Replace input with dropdown
+
+            // Fetch data from server
+            let url = (selectedField === 'regimentalname')
+                ? mMsater(0, "searchText", AllRegimental, "")
+                : mMsater(0, "searchText", ORO, "");
+
+            //fetch(url)
+            //    .then(res => res.json())
+            //    .then(data => {
+            //        data.forEach(item => {
+            //            newSelect.append(`<option value="${item.value}">${item.label}</option>`);
+            //        });
+            //    });
+
+        } else {
+            // Revert to text input for 'susno' or blank
+            let newInput = $('<input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />');
+            $container.html(newInput);
+        }
+    });
 });
 async function Save() {
     try {
@@ -907,12 +938,18 @@ function DispatchCardStatusListBindDialog(callback) {
         // Allow navigation keys
         if (e.ctrlKey || e.metaKey || e.altKey || e.which < 32) return;
 
-        if (field === "requestid") {
-            // Allow only digits
-            if (!/[0-9]/.test(char)) {
-                e.preventDefault();
-            }
-        } else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
+        //if (field === "requestid") {
+        //    // Allow only digits
+        //    if (!/[0-9]/.test(char)) {
+        //        e.preventDefault();
+        //    }
+        //} else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
+        //    // Allow alphanumeric and space only, block special characters
+        //    if (!/^[a-zA-Z0-9_/ ]$/.test(char)) {
+        //        e.preventDefault();
+        //    }
+        //}
+        if (["susno", "regimentalname", "recordofficename"].includes(field)) {
             // Allow alphanumeric and space only, block special characters
             if (!/^[a-zA-Z0-9_/ ]$/.test(char)) {
                 e.preventDefault();
@@ -924,13 +961,20 @@ function DispatchCardStatusListBindDialog(callback) {
         let field = $('#searchField').val();
         let currentVal = $(this).val();
 
-        if (field === "requestid") {
-            // Allow digits only
-            let cleaned = currentVal.replace(/[^0-9]/g, '');
-            if (cleaned !== currentVal) {
-                $(this).val(cleaned);
-            }
-        } else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
+        //if (field === "requestid") {
+        //    // Allow digits only
+        //    let cleaned = currentVal.replace(/[^0-9]/g, '');
+        //    if (cleaned !== currentVal) {
+        //        $(this).val(cleaned);
+        //    }
+        //} else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
+        //    // Allow only letters, numbers, and space
+        //    let cleaned = currentVal.replace(/[^a-zA-Z0-9_/ ]/g, '');
+        //    if (cleaned !== currentVal) {
+        //        $(this).val(cleaned);
+        //    }
+        //}
+        if (["susno", "regimentalname", "recordofficename"].includes(field)) {
             // Allow only letters, numbers, and space
             let cleaned = currentVal.replace(/[^a-zA-Z0-9_/ ]/g, '');
             if (cleaned !== currentVal) {
