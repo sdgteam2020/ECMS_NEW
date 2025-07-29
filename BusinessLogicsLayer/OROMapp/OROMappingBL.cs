@@ -26,5 +26,9 @@ namespace BusinessLogicsLayer.OROMapp
         {
             return await _OROMappingDB.GetByName(Dto);
         }
+        public async Task<List<DTOAllOROResponse>> GetAllORO()
+        {
+            return await _OROMappingDB.GetAllORO();
+        }
     }
 }

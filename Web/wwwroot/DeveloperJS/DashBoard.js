@@ -1,65 +1,10 @@
 ﻿$(function () {
     GetDashboardCount();
 
-    //$("#btnMisprintedCard").on("click", function () {
-    //    location.href = '/BasicDetail/FaultyCard';
-    //});
-    //$("#btnAdd").on("click", function () {
-    //    $("#armynosearchAllName").html("");
-    //    $("#txtarmynosearchAll").val("");
-    //    $("#armynosearchAllpic").attr("src", "");
-    //    $("#unitoffrsModal").modal("show");
-    //    $("#armynosearchTypeId").val(FaultyCardRequest);
-    //});
-    document.getElementById("btnMisprintedCard").addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        location.href = '/BasicDetail/FaultyCard';
-    });
-
-    document.getElementById("btnHotlistCard").addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        location.href = '/BasicDetail/HotlistCard';
-    });
-
     document.getElementById("btnLostCard").addEventListener("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         location.href = '/BasicDetail/LostCard';
     });
-
-    document.getElementById("btnDistCard").addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        location.href = '/BasicDetail/DistributeCard';
-    });
-
-    document.getElementById("btnDestCard").addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        location.href = '/BasicDetail/DestructionCard';
-    });
-
-    document.getElementById("btnUnitChangeRequest").addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        location.href = '/Master/MapUnitChange';
-    });
-    document.getElementById("btnAddUnitChangeRequest").addEventListener("click", function (event) {
-        event.stopPropagation();
-        location.href = '/Master/MapUnitChangeRequest';
-    });
-    document.getElementById("btnDispatchCard").addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        location.href = '/BasicDetail/DispatchCard';
-    });
-    var btnAdd = document.getElementById('btnAddDispatchCard');
-    if (btnAdd) {
-        document.getElementById("btnAddDispatchCard").addEventListener("click", function (event) {
-            event.stopPropagation();
-            location.href = '/BasicDetail/DispatchOut';
-        });
-    }
-
-    //document.getElementsByClassName("btnAdd").addEventListener("click", function (event) {
-    //    event.stopPropagation(); // Prevent click from bubbling to the <a>
-        
-    //});
 
     $('.btnAdd').on('click', function (event) {
         const type = $(this).data('type');
@@ -97,18 +42,11 @@ function GetDashboardCount() {
                 }
 
                 else {
-                   
+
                     $("#TotReq").html(response.TotReq);
                     $("#TotInaccurateData").html(response.TotInaccurateData);
                     $("#TotObservationRaised").html(response.TotObservationRaised);
                     $("#TotLostCards").html(response.TotLostCards);
-                    $("#TotDistCards").html(response.TotDistCards);
-                    $("#TotDestCards").html(response.TotDestCards);
-                    $("#TotHotlistCards").html(response.TotHotlistCards);
-                    $("#TotUnitChangeRequest").html(response.TotUnitChangeRequest);
-                    $("#TotMisprintedCard").html(response.TotMisprintedCard);
-                    $("#TotDispatchCards").html(response.TotDispatchCards);
-                      
                    
                      $('.counter-value').each(function () {
                      $(this).prop('Counter', 0).animate({

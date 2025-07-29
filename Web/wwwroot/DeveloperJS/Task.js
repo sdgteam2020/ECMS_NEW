@@ -1,21 +1,65 @@
-﻿
-$(function () {
+﻿$(function () {
+    GetDashboardCount();
 
-    GetTaskIcardRequestCount($("#Id").html(), $("#applyForId").html())
-   
-    //GetNotification(1, 1);
-    //GetNotification(1, 2);
-    //GetNotificationRequestId(1, 1);
-    //GetNotificationRequestId(1, 2);
-});
-function GetTaskIcardRequestCount(Id, applyForId) {
+    document.getElementById("btnMisprintedCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/FaultyCard';
+    });
+
+    document.getElementById("btnHotlistCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/HotlistCard';
+    });
+
+    document.getElementById("btnDistCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/DistributeCard';
+    });
+
+    document.getElementById("btnDestCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/DestructionCard';
+    });
+
+    document.getElementById("btnUnitChangeRequest").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/Master/MapUnitChange';
+    });
+    document.getElementById("btnAddUnitChangeRequest").addEventListener("click", function (event) {
+        event.stopPropagation();
+        location.href = '/Master/MapUnitChangeRequest';
+    });
+    document.getElementById("btnDispatchCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/DispatchCard';
+    });
+    var btnAdd = document.getElementById('btnAddDispatchCard');
+    if (btnAdd) {
+        document.getElementById("btnAddDispatchCard").addEventListener("click", function (event) {
+            event.stopPropagation();
+            location.href = '/BasicDetail/DispatchOut';
+        });
+    }
+
+    $('.btnAdd').on('click', function (event) {
+        const type = $(this).data('type');
+        event.stopPropagation();
+        $("#armynosearchAllName").html("");
+        $("#txtarmynosearchAll").val("");
+        $("#armynosearchAllpic").attr("src", "");
+        $("#unitoffrsModal").modal("show");
+        $("#armynosearchTypeId").val(type);
+    });
+
+})
+function GetDashboardCount() {
     var userdata =
     {
-        "Id": Id,
-        "applyForId": applyForId
+        "Id": 0,
+
     };
     $.ajax({
-        url: '/Home/GetTaskCountICardRequest',
+        url: '/Home/GetTaskBoardCount',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -23,62 +67,40 @@ function GetTaskIcardRequestCount(Id, applyForId) {
         success: function (response) {
             if (response != "null" && response != null) {
 
-                if (response == InternalServerError) {
+                if (response == InternalServerError) {TotDispatchCards
                     Swal.fire({
                         text: errormsg
                     });
                 }
                 else if (response == 0) {
-                   
+
                 }
 
                 else {
-                    if (applyForId == 1) {
-                        if (Id == 1) { // Submitted
-                            $("#ToDrafted").html(response.ToDrafted);
-                            $("#ToSubmitted").html(response.ToSubmitted);
-                            $("#ToCompleted").html(response.ToCompleted);
-                            $("#ToRejected").html(response.ToRejected);
-                        }
-                        else if (Id == 2) { // Pending
-                            $("#_2ndLevelPending").html(response._2ndLevelPending);
-                            $("#_2ndLevelApproved").html(response._2ndLevelApproved);
-                            $("#_2ndLevelReject").html(response._2ndLevelReject);
-                            $("#_3rdLevelPending").html(response._3rdLevelPending);
-                            $("#_3rdLevelApproved").html(response._3rdLevelApproved);
-                            $("#_3rdLevelReject").html(response._3rdLevelReject);
-                            $("#_4thLevelPending").html(response._4thLevelPending);
-                            $("#_4thLevelApproved").html(response._4thLevelApproved);
-                            $("#_4thLevelReject").html(response._4thLevelReject);
-                            $("#ExportPending").html(response.ExportPending);
-                            $("#ExportApproved").html(response.ExportApproved);
-                            $("#ExportReject").html(response.ExportReject);
-                            $(".csvUploadCount").html(response.CsvUploadCount);
-                        }
-                    } else {
-                        if (Id == 1) { // Submitted
-                            $("#ToDrafted").html(response.ToDrafted);
-                            $("#ToSubmitted").html(response.ToSubmitted);
-                            $("#ToCompleted").html(response.ToCompleted);
-                            $("#ToRejected").html(response.ToRejected);
-                        }
-                        else if (Id == 2) { // Pending
-                            $("#_2ndLevelPending").html(response._2ndLevelPending);
-                            $("#_2ndLevelApproved").html(response._2ndLevelApproved);
-                            $("#_2ndLevelReject").html(response._2ndLevelReject);
-                            $("#_3rdLevelPending").html(response._3rdLevelPending);
-                            $("#_3rdLevelApproved").html(response._3rdLevelApproved);
-                            $("#_3rdLevelReject").html(response._3rdLevelReject);                     
-                            $("#_4thLevelPending").html(response._4thLevelPending);
-                            $("#_4thLevelApproved").html(response._4thLevelApproved);
-                            $("#ToInternalForward").html(response.ToInternalForward);
-                            $(".csvUploadCount").html(response.CsvUploadCount);
-                        }
-                    }
+
+                    $("#TotUnitChangeRequest").html(response.TotUnitChangeRequest);
+                    $("#TotMisprintedCard").html(response.TotMisprintedCard);
+                    $("#TotHotlistCards").html(response.TotHotlistCards);
+                    $("#TotDestCards").html(response.TotDestCards);
+                    $("#TotDistCards").html(response.TotDistCards);
+                    $("#TotDispatchCards").html(response.TotDispatchCards);
+
+
+                    $('.counter-value').each(function () {
+                        $(this).prop('Counter', 0).animate({
+                            Counter: $(this).text()
+                        }, {
+                            duration: 200,
+                            easing: 'swing',
+                            step: function (now) {
+                                $(this).text(Math.ceil(now));
+                            }
+                        });
+                    });
                 }
             }
             else {
-               
+
             }
         },
         error: function (result) {
@@ -87,5 +109,4 @@ function GetTaskIcardRequestCount(Id, applyForId) {
             });
         }
     });
-
 }

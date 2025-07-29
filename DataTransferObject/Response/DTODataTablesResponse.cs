@@ -13,4 +13,12 @@ namespace DataTransferObject.Response
         public int recordsFiltered { get; set; }
         public List<T> data { get; set; }
     }
+    public class DTODataTablesForDispatchCardStatusListResponse<T>
+    {
+        public int draw { get; set; }
+        public int recordsTotal { get; set; }
+        public int recordsFiltered { get; set; }
+        public List<int>? selectedIds { get; set; }
+        public List<T> data { get; set; }
+    }
 }

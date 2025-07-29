@@ -12,11 +12,6 @@ $(function () {
         });
     }
     $("#export").on("click", function () {
-        if (checkedRequestId.length == 0 && !$("#chkAll").prop('checked')) {
-            toastr.error('Please Select at least one row.');
-            return;
-        }
-
         let chkAllstatus = false;
         if ($("#chkAll").prop('checked'))
         {
@@ -28,9 +23,8 @@ $(function () {
 
 
         $("#btnDispatchStatus").on("click", function () {
-            $("#lblModelTitle").html('Cards Dispatch Status details');
+        $("#lblModelTitle").html('Dispatch Card Status details');
 
-        $("#AdvSearch").removeClass("d-none");
         // Show the modal first
         $("#DataTableDialog").modal("show");
 
@@ -74,37 +68,6 @@ $(function () {
             })
             toastr.error('Please fill required field.');
             return false;
-        }
-    });
-
-    $('#searchField').on('change', function () {
-        const selectedField = $(this).val();
-        const $container = $('#searchInputContainer');
-
-        if (selectedField === 'regimentalname' || selectedField === 'recordofficename') {
-            // Replace input with a select dropdown
-            let newSelect = $('<select id="searchText" class="form-control form-control-sm"></select>')
-                .append('<option value="">Select...</option>');
-
-            $container.html(newSelect); // Replace input with dropdown
-
-            // Fetch data from server
-            let url = (selectedField === 'regimentalname')
-                ? mMsater(0, "searchText", AllRegimental, "")
-                : mMsater(0, "searchText", ORO, "");
-
-            //fetch(url)
-            //    .then(res => res.json())
-            //    .then(data => {
-            //        data.forEach(item => {
-            //            newSelect.append(`<option value="${item.value}">${item.label}</option>`);
-            //        });
-            //    });
-
-        } else {
-            // Revert to text input for 'susno' or blank
-            let newInput = $('<input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />');
-            $container.html(newInput);
         }
     });
 });
@@ -666,7 +629,7 @@ function getColumnsByChoice(choice) {
     return columns;
 }
 function DispatchCardStatusListBindDialog(callback) {
-    var table2;
+    var table2 = $("#tbldatadialog");
     checkedRequestId = [];
     unchedRequestId = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
@@ -817,9 +780,8 @@ function DispatchCardStatusListBindDialog(callback) {
         },
     ];
     
-    table2 = $("#tbldatadialog").DataTable({
+    table2.DataTable({
         autoWidth: false, // Let us handle width via CSS
-        searching: false,
         responsive: true, // Responsive breaks layout for width control
         processing: true,
         serverSide: true,
@@ -827,23 +789,22 @@ function DispatchCardStatusListBindDialog(callback) {
         stateSave: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
-            const currentSearchValue = searchText || '';
+            const currentSearchValue = data.search.value || '';
 
             // Reset selection if search term has changed
             if (currentSearchValue !== lastSearchValue) {
-                checkedRequestId = [];
+                selectedIds = [];
                 lastSearchValue = currentSearchValue;
             }
+
             let requestData = {
                 draw: data.draw,
                 start: data.start,
                 length: data.length,
-                //searchValue: data.search.value,
+                searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                searchField: $('#searchField').val(), // Field-based search
-                searchText: $('#searchText').val(),
-                AllChecked: $('#chkAll').is(':checked')
+                selectedIds: selectedIds // Send the selected IDs to the server
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
@@ -861,17 +822,13 @@ function DispatchCardStatusListBindDialog(callback) {
                         
                         $('#' + id).prop('checked', true);  // If checkbox IDs match
                     });
-                }, 500); // wait 500ms before checking
+                }, 100); // wait 500ms before checking
                 setTimeout(function () {
                     unchedRequestId.forEach(function (id) {
 
                         $('#' + id).prop('checked', false);  // If checkbox IDs match
                     });
-                }, 500); // wait 500ms before checking
-
-                        $('#' + id).prop('checked', false);  // If checkbox IDs match
-                    });
-                }, 500); // wait 500ms before checking
+                }, 100); // wait 500ms before checking
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -921,71 +878,6 @@ function DispatchCardStatusListBindDialog(callback) {
            // updateUICheckboxes();
         }
     });
-
-    $('#btnSearch').on('click', function () {
-        table2.ajax.reload();
-    });
-    $('#btnClear').on('click', function () {
-        $('#searchText').val('');
-        $('#searchField').val([]).trigger('change');
-        table2.ajax.reload();
-    });
-    // Restrict typing
-    $('#searchText').on('keypress', function (e) {
-        let field = $('#searchField').val();
-        let char = String.fromCharCode(e.which);
-
-        if (e.which === 13) {
-            table2.ajax.reload();
-        }
-
-        // Allow navigation keys
-        if (e.ctrlKey || e.metaKey || e.altKey || e.which < 32) return;
-
-        //if (field === "requestid") {
-        //    // Allow only digits
-        //    if (!/[0-9]/.test(char)) {
-        //        e.preventDefault();
-        //    }
-        //} else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
-        //    // Allow alphanumeric and space only, block special characters
-        //    if (!/^[a-zA-Z0-9_/ ]$/.test(char)) {
-        //        e.preventDefault();
-        //    }
-        //}
-        if (["susno", "regimentalname", "recordofficename"].includes(field)) {
-            // Allow alphanumeric and space only, block special characters
-            if (!/^[a-zA-Z0-9_/ ]$/.test(char)) {
-                e.preventDefault();
-            }
-        }
-    });
-    // Sanitize pasted value
-    $('#searchText').on('input', function () {
-        let field = $('#searchField').val();
-        let currentVal = $(this).val();
-
-        //if (field === "requestid") {
-        //    // Allow digits only
-        //    let cleaned = currentVal.replace(/[^0-9]/g, '');
-        //    if (cleaned !== currentVal) {
-        //        $(this).val(cleaned);
-        //    }
-        //} else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
-        //    // Allow only letters, numbers, and space
-        //    let cleaned = currentVal.replace(/[^a-zA-Z0-9_/ ]/g, '');
-        //    if (cleaned !== currentVal) {
-        //        $(this).val(cleaned);
-        //    }
-        //}
-        if (["susno", "regimentalname", "recordofficename"].includes(field)) {
-            // Allow only letters, numbers, and space
-            let cleaned = currentVal.replace(/[^a-zA-Z0-9_/ ]/g, '');
-            if (cleaned !== currentVal) {
-                $(this).val(cleaned);
-            }
-        }
-    });
     $(document).on('change', '.chkRequestId', function () {
         if ($(this).prop('checked')) {
             if (!$("#chkAll").prop('checked')) {
@@ -998,23 +890,97 @@ function DispatchCardStatusListBindDialog(callback) {
         } else {
 
             checkedRequestId.pop($(this).val())
-           // if ($("#chkAll").prop('checked'))
+            if ($("#chkAll").prop('checked'))
             unchedRequestId.push($(this).val())
         }
        
        
     });
+    
+    // Checkbox select all/deselect all functionality
     $('#chkAll').on('change', function () {
         checkedRequestId = [];
         unchedRequestId = [];
-        if (!$("#chkAll").prop('checked')) {
-            $(".chkRequestId").prop('checked', false)
-        } else {
-            $(".chkRequestId").prop('checked', true)
-        }
+        var isChecked = $(this).prop('checked');
+        $('#tbldatadialog tbody input[type="checkbox"]').prop('checked', isChecked);
 
-        
+        // Update the selected IDs across all pages
+        updateSelectedIds(isChecked);
     });
+
+    // Update selected IDs when any checkbox is changed
+    $('#tbldatadialog tbody').on('change', 'input[type="checkbox"]', function () {
+        updateSelectedIds();
+    });
+}
+function updateUICheckboxes() {
+    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
+        const id = $(this).val().toString();
+
+        if (selectedIds.includes(id)) {
+            $(this).prop('checked', true);
+        } else {
+            $(this).prop('checked', false);
+        }
+    });
+
+    // Update the header checkbox based on whether all on-page checkboxes are checked
+    const totalOnPage = $('#tbldatadialog tbody input[type="checkbox"]').length;
+    const checkedOnPage = $('#tbldatadialog tbody input[type="checkbox"]:checked').length;
+
+    $('#chkAll').prop('checked', totalOnPage > 0 && totalOnPage === checkedOnPage);
+}
+
+function updateSelectedIds(isChecked = null) {
+    if (isChecked !== null) {
+        if (isChecked) {
+            // Use existing getAllIds to get all checkbox values on current page
+            const idsToAdd = getAllIds();
+            idsToAdd.forEach(id => {
+                if (!selectedIds.includes(id)) {
+                    selectedIds.push(id);
+                }
+            });
+        } else {
+            // Use getAllIds to remove only current page IDs from selectedIds
+            const idsToRemove = getAllIds();
+            selectedIds = selectedIds.filter(id => !idsToRemove.includes(id));
+        }
+    } else {
+        // Use getSelectedIds to get checked IDs on current page
+        const idsChecked = getSelectedIds();
+        const idsOnPage = getAllIds();
+
+        // Remove all IDs from current page
+        selectedIds = selectedIds.filter(id => !idsOnPage.includes(id));
+
+        // Add only checked ones
+        idsChecked.forEach(id => {
+            if (!selectedIds.includes(id)) {
+                selectedIds.push(id);
+            }
+        });
+    }
+
+    console.log("Selected IDs (global):", selectedIds);
+}
+function getSelectedIds() {
+    var localSelectedIds = [];
+
+    // Iterate through all pages and collect selected IDs
+    $('#tbldatadialog tbody input[type="checkbox"]:checked').each(function () {
+        localSelectedIds.push($(this).val().toString());
+    });
+
+    return localSelectedIds;
+}
+
+function getAllIds() {
+    var all = [];
+    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
+        all.push($(this).val().toString());
+    });
+    return all;
 }
 function ExportCsvFile(Allstatus, checkedRequestId, unchedRequestId) {
    // alert(Allstatus)

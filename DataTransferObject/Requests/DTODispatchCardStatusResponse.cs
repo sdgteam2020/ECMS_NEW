@@ -20,7 +20,9 @@ namespace DataTransferObject.Requests
         public string Name { get; set; } = string.Empty;
         public string ServiceNo { get; set; } = string.Empty;
         public string ArmedAbbreviation { get; set; } = string.Empty;
+        public byte? RegId { get; set; }
         public string? RegimentalName { get; set; }
+        public byte? RecordOfficeId { get; set; }
         public string? RecordOfficeName { get; set; }
         public string ChipNo { get; set; } = string.Empty;
         public string CardSerialNo { get; set; } = string.Empty;

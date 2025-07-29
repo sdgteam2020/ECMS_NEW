@@ -452,6 +452,14 @@ namespace Web.Controllers
         {
             string role = GetSessionValue();
             ViewBag.Role = role;
+
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+
             return View();
         }
       
@@ -603,7 +611,7 @@ namespace Web.Controllers
             return Json(await _INotificationBL.UpdateRead(Data));
 
         }
-        public async Task<IActionResult> GetDashboardCount()
+        public async Task<IActionResult> GetTaskBoardCount()
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(userId.ToString());
@@ -644,6 +652,12 @@ namespace Web.Controllers
                 }
             }
 
+            return Json(await _home.GetTaskBoardCount(MapUnitId, ClaimValue, TDMId));
+        }
+        public async Task<IActionResult> GetDashboardCount()
+        {
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
             short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
             //if (ArmedIdForORO == 0) ArmedIdForORO = 56;
 
@@ -663,7 +677,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
-            return Json(await _home.GetDashBoardCount(userId, dTOApplFwdCondition, ArmedIdForORO, MapUnitId, ClaimValue, TDMId));
+            return Json(await _home.GetDashBoardCount(userId, dTOApplFwdCondition, ArmedIdForORO));
         }
         public async Task<IActionResult> GetRequestDashboardCount(string Id)
         {

@@ -38,7 +38,7 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Cards Dispatch
+                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Task" class="mr-2">Task</a> > Dispatch Card
                     </h1>
                 </div>
             </div>
@@ -112,9 +112,30 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                     <div class="mb-2 d-flex justify-content-end">
-                        <button id="export" class="btn btn-outline-success font-weight-600 btn-sm mr-1" value="">Export CSV</button>
-                     </div>
+                    <div class="mb-2 d-flex justify-content-end">
+                        <div id="AdvSearch" class="d-flex mb-2 d-none">
+                            <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
+                                <option value="" selected>Select Field</option>
+                                <option value="susno">SUS No</option>
+                                <option value="regimentalname">Regt</option>
+                                <option value="recordofficename">ORO</option>
+@*                                 <option value="categery">Categery</option>
+                                <option value="requestid">Request Id</option>
+                                <option value="serviceno">Army No</option>
+                                <option value="chipno">Chip No</option>
+                                <option value="cardserialno">Card Serial No</option>
+                                <option value="status">Status</option> *@
+                            </select>
+
+                            <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
+                                <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
+                            </div>
+
+                            <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
+                            <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
+                        </div>
+                        <button id="export" class="btn btn-sm btn-outline-success mr-1">Export CSV</button>
+                    </div>
                     <div class="table-responsive">
                         <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
                         </table>
@@ -163,4 +184,5 @@
     </div>
 </div>
 <script asp-src-include="~/developerjs/DispatchCard.js"></script>
+<script asp-src-include="~/developerjs/mtables.js"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

@@ -368,6 +368,30 @@ namespace BusinessLogicsLayer
                     lst.Add(db);
                 }
             }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.AllRegimental))
+            {
+                var result = await Regimental.GetAll();
+
+                foreach (var item in result)
+                {
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = item.RegId;
+                    db.Name = item.Abbreviation;
+                    lst.Add(db);
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.ORO))
+            {
+                var Ret = await OROMapping.GetAllORO();
+                foreach (var item in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = item.RecordOfficeId;
+                    db.Name = item.Name;
+                    lst.Add(db);
+                }
+            }
             //Constants.MasterTbl.Command;
             return lst;
         }

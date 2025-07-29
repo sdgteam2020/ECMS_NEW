@@ -4546,12 +4546,13 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
-                var responseData = new DTODataTablesResponse<DTODispatchCardStatusResponse>
+                var responseData = new DTODataTablesForDispatchCardStatusListResponse<DTODispatchCardStatusResponse>
                 {
                     draw = 0,
                     recordsTotal = 0,
                     recordsFiltered = 0,
-                    data = dTOCards
+                    data = dTOCards,
+                    selectedIds = null
                 };
                 _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
                 return Json(responseData);

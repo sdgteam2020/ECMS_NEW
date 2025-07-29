@@ -50,18 +50,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/BasicDetail/InaccurateData?Id=MQ==" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-address-card"></i>
-                                </div>
-                                <span class="counter-value" id="TotInaccurateData">0</span>
-                                <h3>Requests pending due to Incorrect Details/Data</h3>
-                            </div>
-                        </a>
-                    </div>
-                    @if (claims.Count > 0 && claims.Any(i => i.Value == "View Indl Incorrect Data"))//@if (ViewBag.Role == "Coordinator" || ViewBag.Role == "RecordUser" || ViewBag.Role == "OROUser" || ViewBag.Role == "DteAdmin")
+                    @if (claims.Count > 0 && claims.Any(i => i.Value == "View Indl Incorrect Data"))
                     {
                         <div class="col-md-2 col-sm-6">
                             <a href="/BasicDetail/InaccurateData?Id=Mg==" class="clickable">
@@ -76,18 +65,6 @@
                         </div>
                     }
                     <div class="col-md-2 col-sm-6">
-                        <a href="/Home/DashboardUserMgt" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-address-card"></i>
-                                </div>
-                                <h3 style="margin-top:3.0rem!important;">
-                                    User Management
-                                </h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
                         <a href="/Home/ReportAndReturn" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
@@ -96,55 +73,6 @@
                                 <h3 style="margin-top:3.0rem!important;">
                                     Reports &amp; Returns
                                 </h3>
-                            </div>
-                        </a>
-                    </div>
-                    @if (ViewBag.Role == "DteAdmin")
-                    {
-                        <div class="col-md-2 col-sm-6">
-                            <a href="/Home/ICardProcessReport" class="clickable">
-                                @*  OffrsSubmitted *@
-                                <div class="counter blue">
-                                    <div class="counter-icon">
-                                        <i class="fa fa-user"></i>
-                                    </div>
-                                    <h3 style="margin-top:2.0rem!important;">
-                                        I-Card Process Report
-                                    </h3>
-                                </div>
-                            </a>
-                        </div>
-                    }
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter purple armyNoallserchPopup" id="btnMisprintedCard">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddMisprintedCard" data-type="52"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
-                                </div>
-                                <span class="counter-value" id="TotMisprintedCard"></span>
-                                <h3>Misprinted / Faulty Card</h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter purple armyNoallserchPopup" id="btnHotlistCard">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddHotlistCard" data-type="53"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
-                                </div>
-                                <span class="counter-value" id="TotHotlistCards"></span>
-                                <h3>HOT LISTING</h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter purple armyNoallserchPopup" id="btnUnitChangeRequest">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm" id="btnAddUnitChangeRequest"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
-                                </div>
-                                <span class="counter-value" id="TotUnitChangeRequest"></span>
-                                <h3>Unit Move Request</h3>
                             </div>
                         </a>
                     </div>
@@ -159,45 +87,25 @@
                             </div>
                         </a>
                     </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="seven">
+                    <h1>
+                        AFSAC Card (Requisition and Printing Status)
+                    </h1>
+                </div>
+                <div class="row">
                     <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter pink armyNoallserchPopup" id="btnDispatchCard">
-                                @if (claims.Count > 0 && (claims.Any(i => i.Value == "ICard Export Data") || (claims.Any(i => i.Value == "Dispatch Card") && claims.Any(i => i.Value == "Appl Approver")) || claims.Any(i => i.Value == "Dispatch Card")))
-                                {
-                                    <div class="counter-icon">
-                                        <button class="btn btn-outline-success font-weight-600 btn-sm" id="btnAddDispatchCard"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="counter-icon">
-                                        <i class="fa fa-truck"></i>
-                                    </div>
-                                }
-                                <span class="counter-value" id="TotDispatchCards"></span>
-                                <h3>Cards Dispatch</h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter pink armyNoallserchPopup" id="btnDistCard">
+                        <a href="/BasicDetail/InaccurateData?Id=MQ==" class="clickable">
+                            <div class="counter pink">
                                 <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddDistsCard" data-type="55"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
+                                    <i class="fa fa-address-card"></i>
                                 </div>
-                                <span class="counter-value" id="TotDistCards"></span>
-                                <h3>Card Issuance</h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter pink armyNoallserchPopup" id="btnDestCard">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddDestsCard" data-type="56"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
-                                </div>
-                                <span class="counter-value" id="TotDestCards"></span>
-                                <h3>Card Destruction</h3>
+                                <span class="counter-value" id="TotInaccurateData">0</span>
+                                <h3>
+                                    Requisitions Pending Due to Incorrect Data
+                                </h3>
                             </div>
                         </a>
                     </div>
@@ -215,20 +123,28 @@
                     </div>
                 </div>
             </div>
+            <div class="card p-4">
+                <div class="seven">
+                    <h1>
+                        User Management
+                    </h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 col-sm-6">
+                        <a href="/Home/DashboardUserMgt" class="clickable">
+                            <div class="counter pink">
+                                <div class="counter-icon">
+                                    <i class="fa fa-address-card"></i>
+                                </div>
+                                <h3 style="margin-top:3.0rem!important;">
+                                    User Management
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     }
 </div>
 <script asp-src-include="~/developerjs/dashboard.js"></script>
-<script>
-    // $('.counter-value').each(function () {
-    //     $(this).prop('Counter', 0).animate({
-    //         Counter: $(this).text()
-    //     }, {
-    //         duration: 3500,
-    //         easing: 'swing',
-    //         step: function (now) {
-    //             $(this).text(Math.ceil(now));
-    //         }
-    //     });
-    // });
-</script>
