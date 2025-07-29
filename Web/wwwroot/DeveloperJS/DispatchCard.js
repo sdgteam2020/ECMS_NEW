@@ -868,11 +868,6 @@ function DispatchCardStatusListBindDialog(callback) {
                         $('#' + id).prop('checked', false);  // If checkbox IDs match
                     });
                 }, 500); // wait 500ms before checking
-
-                        $('#' + id).prop('checked', false);  // If checkbox IDs match
-                    });
-                }, 500); // wait 500ms before checking
-
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
