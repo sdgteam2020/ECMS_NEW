@@ -1,7 +1,11 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var table2;
 var selectedIds = [];
-var lastSearchValue = "";
+let previousSearchText = "";
+let previousSearchField = "";
+let isFirstSelectAll = true;
+let searchChanged = false;
+let globalAllChecked = false;
 $(function () {
     BindData();
     if ($('#btnAdd').length) {
@@ -20,13 +24,13 @@ $(function () {
         $("#btnDispatchStatus").on("click", function () {
             $("#lblModelTitle").html('Cards Dispatch Status details');
 
-        $("#AdvSearch").removeClass("d-none");
-        // Show the modal first
-        $("#DataTableDialog").modal("show");
+            $("#AdvSearch").removeClass("d-none");
+            // Show the modal first
+            $("#DataTableDialog").modal("show");
 
-        // Then initialize the table
-        DispatchCardStatusListBindDialog(function () {
-            // Callback to show modal after DataTable is ready
+            // Then initialize the table
+            DispatchCardStatusListBindDialog(function () {
+                // Callback to show modal after DataTable is ready
         });
     });
 
@@ -812,13 +816,19 @@ function DispatchCardStatusListBindDialog(callback) {
         stateSave: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
-            const currentSearchValue = searchText || '';
 
-            // Reset selection if search term has changed
-            if (currentSearchValue !== lastSearchValue) {
+            let searchStatus = getSearchStatus();
+
+            // Clear old selectedIds on search change, but keep globalAllChecked state
+            if (searchStatus.searchChanged) {
                 selectedIds = [];
-                lastSearchValue = currentSearchValue;
+
+                // Only re-fetch from server if globalAllChecked is already true
+                if (globalAllChecked) {
+                    isFirstSelectAll = true;
+                }
             }
+
             let requestData = {
                 draw: data.draw,
                 start: data.start,
@@ -826,9 +836,10 @@ function DispatchCardStatusListBindDialog(callback) {
                 //searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                searchField: $('#searchField').val(), // Field-based search
-                searchText: $('#searchText').val(),
-                AllChecked: $('#chkAll').is(':checked')
+                searchField: searchStatus.currentSearchField,
+                searchText: searchStatus.currentSearchText,
+                searchTextChanged: searchStatus.searchChanged,
+                AllChecked: globalAllChecked // if "Select All" is active
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
@@ -841,9 +852,33 @@ function DispatchCardStatusListBindDialog(callback) {
 
                 let result = await response.json();
 
-                if (result.selectedIds != null && result.selectedIds.length > 0) {
-                    selectedIds = result.selectedIds; // Update global selectedIds with the response
-                    console.log("Selected IDs (from server):", selectedIds);
+                // 🔁 If no data returned, always clear selection
+                if (result.data.length === 0) {
+                    selectedIds = [];
+                    console.log("No results. Cleared selectedIds.");
+                }
+
+                const validPendingIds = result.data
+                    .filter(x => x.Status === 'Pending')
+                    .map(x => x.RequestId.toString());
+
+                // 🧼 Clean selectedIds to only include those visible & valid in current result
+                selectedIds = selectedIds.filter(id => validPendingIds.includes(id));
+
+                // Only update selectedIds if server returns new ones
+                if (globalAllChecked && (isFirstSelectAll || searchStatus.searchChanged)) {
+                    if (result.selectedIds != null && result.selectedIds.length > 0) {
+                        //selectedIds = result.selectedIds;
+                        selectedIds = result.selectedIds.map(x => x.toString());
+                        console.log("Fetched selectedIds from server:", selectedIds);
+                        isFirstSelectAll = false; // Mark as handled
+                    }
+                    else {
+                        selectedIds = [];
+                        globalAllChecked = false; // ⛔ Deselect internally
+                        $('#chkAll').prop('checked', false); // ⛔ Deselect visually
+                        console.warn("⚠️ No eligible request IDs found. 'Select All' cleared.");
+                    }
                 }
 
                 callback(result); // Sends data to DataTables
@@ -892,7 +927,7 @@ function DispatchCardStatusListBindDialog(callback) {
             searchBox.attr('title', 'Search ReqId/Arm/SUSNo/ORO/Regt/Army No/Chip No/Card Serial No');
         },
         drawCallback: function (settings) {
-           updateUICheckboxes();
+            setTimeout(() => updateUICheckboxes(), 50);
         }
     });
 
@@ -903,6 +938,10 @@ function DispatchCardStatusListBindDialog(callback) {
         $('#searchText').val('');
         $('#searchField').val([]).trigger('change');
         table2.ajax.reload();
+    });
+    $(document).on('change', '.chkRequestId', function () {
+        updateSelectedIds();
+        updateUICheckboxes(); // Sync master checkbox state
     });
     // Restrict typing
     $('#searchText').on('keypress', function (e) {
@@ -962,79 +1001,75 @@ function DispatchCardStatusListBindDialog(callback) {
     });
     $('#chkAll').on('change', function () {
         selectedIds = [];
-        if ($("#chkAll").prop('checked')) {
-            table2.ajax.reload();
-        } else {
-            selectedIds = [];
-            table2.ajax.reload();
-        }
-     });
+        globalAllChecked = $(this).prop('checked');
+        isFirstSelectAll = globalAllChecked; // Only true if checked
+        table2.ajax.reload();
+    });
 }
 function updateUICheckboxes() {
-    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
+    let allCheckedOnPage = true;
+
+    $('#tbldatadialog tbody input[type="checkbox"].chkRequestId').each(function () {
         const id = $(this).val().toString();
 
         if (selectedIds.includes(id)) {
             $(this).prop('checked', true);
         } else {
             $(this).prop('checked', false);
+            allCheckedOnPage = false; // At least one unchecked
         }
     });
 
-    // Update the header checkbox based on whether all on-page checkboxes are checked
-    const totalOnPage = $('#tbldatadialog tbody input[type="checkbox"]').length;
-    const checkedOnPage = $('#tbldatadialog tbody input[type="checkbox"]:checked').length;
-
-    $('#chkAll').prop('checked', totalOnPage > 0 && totalOnPage === checkedOnPage);
+    // Update master checkbox (chkAll) based on all on-page checkboxes
+    $('#chkAll').prop('checked', allCheckedOnPage);
 }
-function updateSelectedIds(isChecked = null) {
-    if (isChecked !== null) {
-        if (isChecked) {
-            // Use existing getAllIds to get all checkbox values on current page
-            const idsToAdd = getAllIds();
-            idsToAdd.forEach(id => {
-                if (!selectedIds.includes(id)) {
-                    selectedIds.push(id);
-                }
-            });
-        } else {
-            // Use getAllIds to remove only current page IDs from selectedIds
-            const idsToRemove = getAllIds();
-            selectedIds = selectedIds.filter(id => !idsToRemove.includes(id));
+function updateSelectedIds() {
+    const idsOnPage = getAllIds();
+    const idsChecked = getSelectedIds();
+
+    // Remove unchecked
+    selectedIds = selectedIds.filter(id => !idsOnPage.includes(id));
+
+    // Add checked
+    idsChecked.forEach(id => {
+        if (!selectedIds.includes(id)) {
+            selectedIds.push(id);
         }
-    } else {
-        // Use getSelectedIds to get checked IDs on current page
-        const idsChecked = getSelectedIds();
-        const idsOnPage = getAllIds();
+    });
 
-        // Remove all IDs from current page
-        selectedIds = selectedIds.filter(id => !idsOnPage.includes(id));
-
-        // Add only checked ones
-        idsChecked.forEach(id => {
-            if (!selectedIds.includes(id)) {
-                selectedIds.push(id);
-            }
-        });
-    }
-
-    console.log("Selected IDs (global):", selectedIds);
+    console.log("Updated selectedIds:", selectedIds);
 }
 function getSelectedIds() {
-    var localSelectedIds = [];
-
-    // Iterate through all pages and collect selected IDs
-    $('#tbldatadialog tbody input[type="checkbox"]:checked').each(function () {
-        localSelectedIds.push($(this).val().toString());
+    let ids = [];
+    $('#tbldatadialog tbody input.chkRequestId:checked').each(function () {
+        ids.push($(this).val().toString());
     });
-
-    return localSelectedIds;
+    return ids;
 }
 
 function getAllIds() {
-    var all = [];
-    $('#tbldatadialog tbody input[type="checkbox"]').each(function () {
+    let all = [];
+    $('#tbldatadialog tbody input.chkRequestId').each(function () {
         all.push($(this).val().toString());
     });
     return all;
+}
+function getSearchStatus() {
+    const currentSearchText = $('#searchText').val().trim();
+    const currentSearchField = $('#searchField').val();
+
+    searchChanged = (
+        currentSearchText !== previousSearchText ||
+        currentSearchField !== previousSearchField
+    );
+
+    // Update previous values after comparison
+    previousSearchText = currentSearchText;
+    previousSearchField = currentSearchField;
+
+    return {
+        searchChanged: searchChanged,
+        currentSearchText,
+        currentSearchField
+    };
 }

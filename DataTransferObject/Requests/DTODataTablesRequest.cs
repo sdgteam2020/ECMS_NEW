@@ -111,5 +111,6 @@ namespace DataTransferObject.Requests
         [RegularExpression("^[a-zA-Z0-9_/ ]*$", ErrorMessage = "Only Alphabets,Numbers,underscores and slash are allowed.")]
         public string? SearchText { get; set; }
         public bool AllChecked { get; set; } = false;
+        public bool SearchTextChanged { get; set; } = false;
     }
 }

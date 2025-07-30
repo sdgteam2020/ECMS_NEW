@@ -229,7 +229,7 @@ namespace DataAccessLayer
 
                         List<int>? selectedIds = new List<int>();
 
-                        if (dTO.AllChecked == true)
+                        if (dTO.AllChecked == true && (string.IsNullOrEmpty(dTO.SearchText) || dTO.SearchTextChanged == true))
                         {
                             var result = await connection.QueryMultipleAsync(queryRequestIds, parameters);
                             selectedIds = (await result.ReadAsync<int>()).ToList();
