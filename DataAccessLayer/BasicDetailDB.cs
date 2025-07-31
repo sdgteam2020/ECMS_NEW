@@ -60,6 +60,7 @@ namespace DataAccessLayer
             string selectFields = "";
             string fromJoinClause = "";
             string whereClause = "";
+            string whereClauseForChecked = "";
             string searchFilter = "";
             byte PendingStepId = 0;
             byte DispatchStepId = 0;
@@ -104,6 +105,8 @@ namespace DataAccessLayer
                                     LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
                             (stepc.StepId=6 OR stepc.StepId>=11)";
+                whereClauseForChecked = @"WHERE
+                                        (stepc.StepId=6)";
             }
             else if (ClaimValue == 2 || ClaimValue == 3)
             {
@@ -127,6 +130,8 @@ namespace DataAccessLayer
                                     LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
                                 (stepc.StepId=12 OR stepc.StepId>=13)";
+                whereClauseForChecked = @"WHERE
+                                        (stepc.StepId=12)";
             }
             else
             {
@@ -150,6 +155,8 @@ namespace DataAccessLayer
                             LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
                                 (stepc.StepId=14 OR stepc.StepId=15)";
+                whereClauseForChecked = @"WHERE
+                                        (stepc.StepId=14)";
             }
             if (!string.IsNullOrWhiteSpace(dTO.SearchField) && !string.IsNullOrWhiteSpace(dTO.SearchText))
             {
@@ -209,7 +216,7 @@ namespace DataAccessLayer
                             select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause} {searchFilter}
                         )
                         SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
-                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {whereClause} {searchFilter}";
+                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {whereClauseForChecked} {searchFilter}";
 
 
 

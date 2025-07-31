@@ -19,8 +19,9 @@ $(function () {
             return;
         }
     });
-
-
+    $('#DataTableDialog').on('hidden.bs.modal', function () {
+        resetSelectedFields(); // Reset selected fields when the modal is closed
+    });
         $("#btnDispatchStatus").on("click", function () {
             $("#lblModelTitle").html('Cards Dispatch Status details');
 
@@ -102,6 +103,26 @@ $(function () {
         }
     });
 });
+function resetSelectedFields() {
+    // Reset global variables as explained
+    selectedIds = [];
+    previousSearchText = "";
+    previousSearchField = "";
+    isFirstSelectAll = true;
+    searchChanged = false;
+    globalAllChecked = false;
+
+    // Uncheck all checkboxes
+    $('#tbldatadialog tbody input[type="checkbox"].chkRequestId').prop('checked', false);
+
+    // Reset "Select All" checkbox
+    $('#chkAll').prop('checked', false);
+
+    $('#searchText').val('');
+    $('#searchField').val([]).trigger('change');
+
+    console.log("Reset selectedIds and checkboxes.");
+}
 async function Save() {
     try {
         var token = $('input[name="__RequestVerificationToken"]').val();
@@ -823,11 +844,16 @@ function DispatchCardStatusListBindDialog(callback) {
             if (searchStatus.searchChanged) {
                 selectedIds = [];
 
-                // Only re-fetch from server if globalAllChecked is already true
+                // Mark for re-fetch if needed
                 if (globalAllChecked) {
                     isFirstSelectAll = true;
                 }
             }
+
+            // ✅ Determine if a fetch is needed
+            const shouldFetchSelectedIds =
+                globalAllChecked && (isFirstSelectAll || searchStatus.searchChanged) ||
+                (!globalAllChecked && searchStatus.searchChanged && isFirstSelectAll);
 
             let requestData = {
                 draw: data.draw,
@@ -839,7 +865,7 @@ function DispatchCardStatusListBindDialog(callback) {
                 searchField: searchStatus.currentSearchField,
                 searchText: searchStatus.currentSearchText,
                 searchTextChanged: searchStatus.searchChanged,
-                AllChecked: globalAllChecked // if "Select All" is active
+                AllChecked: shouldFetchSelectedIds ? true : globalAllChecked
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
@@ -858,26 +884,22 @@ function DispatchCardStatusListBindDialog(callback) {
                     console.log("No results. Cleared selectedIds.");
                 }
 
-                const validPendingIds = result.data
-                    .filter(x => x.Status === 'Pending')
-                    .map(x => x.RequestId.toString());
-
-                // 🧼 Clean selectedIds to only include those visible & valid in current result
-                selectedIds = selectedIds.filter(id => validPendingIds.includes(id));
-
                 // Only update selectedIds if server returns new ones
-                if (globalAllChecked && (isFirstSelectAll || searchStatus.searchChanged)) {
+                if (shouldFetchSelectedIds) {
                     if (result.selectedIds != null && result.selectedIds.length > 0) {
                         //selectedIds = result.selectedIds;
                         selectedIds = result.selectedIds.map(x => x.toString());
                         console.log("Fetched selectedIds from server:", selectedIds);
-                        isFirstSelectAll = false; // Mark as handled
+                        // If user hadn’t checked Select All, now we just load into selectedIds silently
+                        if (globalAllChecked) isFirstSelectAll = false;
                     }
                     else {
-                        selectedIds = [];
-                        globalAllChecked = false; // ⛔ Deselect internally
-                        $('#chkAll').prop('checked', false); // ⛔ Deselect visually
-                        console.warn("⚠️ No eligible request IDs found. 'Select All' cleared.");
+                        //selectedIds = [];
+                        if (globalAllChecked) {
+                            globalAllChecked = false;
+                            $('#chkAll').prop('checked', false);
+                        }
+                        console.warn("⚠️ No valid Pending IDs found.");
                     }
                 }
 
@@ -932,6 +954,17 @@ function DispatchCardStatusListBindDialog(callback) {
     });
 
     $('#btnSearch').on('click', function () {
+        // Get search field and search text values
+        const searchField = $('#searchField').val().trim();
+        const searchText = $('#searchText').val().trim();
+
+        // If no search field is selected or no search text entered, prevent the search
+        if (!searchField || !searchText) {
+            toastr.error('Please select a search field and enter a value.');
+            return; // Exit the function and prevent table reload
+        }
+
+        // Proceed with table reload if search criteria is valid
         table2.ajax.reload();
     });
     $('#btnClear').on('click', function () {
@@ -1002,7 +1035,9 @@ function DispatchCardStatusListBindDialog(callback) {
     $('#chkAll').on('change', function () {
         selectedIds = [];
         globalAllChecked = $(this).prop('checked');
-        isFirstSelectAll = globalAllChecked; // Only true if checked
+        if (globalAllChecked) {
+            isFirstSelectAll = true; // Force fresh fetch
+        }
         table2.ajax.reload();
     });
 }
@@ -1058,9 +1093,11 @@ function getSearchStatus() {
     const currentSearchText = $('#searchText').val().trim();
     const currentSearchField = $('#searchField').val();
 
+    // Ensure searchChanged is only true when the actual search field or text changes.
+    // If currentSearchField is null (i.e., no field selected), treat it as no change.
     searchChanged = (
-        currentSearchText !== previousSearchText ||
-        currentSearchField !== previousSearchField
+        (currentSearchText !== previousSearchText || currentSearchField !== previousSearchField) &&
+        currentSearchField !== null
     );
 
     // Update previous values after comparison
