@@ -5,17 +5,122 @@
     List<Claim> claims = ViewBag.UserClaims;
 }
 <style>
+    /* .clickable {
+                                    height: 190px;
+                                    width: 190px;
+                                    display: block;
+                                    margin-bottom: 25px;
+                                    }
+
+                                    .p-4 {
+                                    padding: 1.5rem !important;
+                                    padding-bottom: 4.5rem !important;
+                                    } */
+
     .clickable {
-    height: 190px;
-    width: 190px;
-    display: block;
-    margin-bottom: 25px;
+        display: block;
+        margin: 10px auto;
+        text-decoration: none;
     }
 
-    .p-4 {
-    padding: 1.5rem !important;
-    padding-bottom: 4.5rem !important;
+    .card {
+        display: inline-block;
+        width: auto;
+        padding: 1rem;
+        margin: 20px;
+        vertical-align: top;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        background: #fff;
+        text-align: center;
     }
+
+    .containerMain {
+        text-align: center;
+    }
+
+    .card .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 10px 0;
+    }
+
+    .card .col-md-2, .card .col-sm-6 {
+        flex: 0 0 auto;
+        width: auto;
+    }
+
+    .counter {
+        width: 190px;
+        height: 190px;
+        background-color: #f4f4f4;
+        border-radius: 16px;
+        border: 2px solid #007bff;
+        box-shadow: 6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        transition: 0.3s ease;
+    }
+
+        .counter:hover {
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 10px #d1d9e6, -4px -4px 10px #ffffff;
+        }
+
+    .counter-icon {
+        height: 45px;
+        font-size: 32px;
+        color: #007bff;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .div-counter-value {
+        height: 25px;
+        width: 100%;
+    }
+
+    .counter-value {
+        font-size: 20px;
+        font-weight: bold;
+        color: #343a40;
+        margin-bottom: 4px;
+    }
+
+    .counter h3 {
+        font-size: 14px;
+        color: #007bff;
+        font-weight: 600;
+        margin: 0;
+        padding: 0 5px;
+        text-align: center;
+        text-transform: uppercase;
+        line-height: 1.2;
+    }
+
+    .card-heading {
+        background: linear-gradient(to right, #007bff, #0056b3);
+        color: #fff;
+        padding: 10px 16px;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+        margin: -1rem -1rem 1rem -1rem;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .fake-header {
+        height: 40px;
+        margin-bottom: 10px;
+        visibility: hidden;
+    }
+
 </style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -38,14 +143,20 @@
     {
         <div class="row">
             <div class="card p-4">
+                <div class="card-heading fake-header">
+                    <span class="sub-card-heading">Invisible Title</span>
+                </div>
                 <div class="row">
                     <div class="col-md-2 col-sm-6">
                         <a href="/Home/SubDashboard" class="clickable">
-                            <div class="counter pink d-sm-block d-md-block">
+                            <div class="counter pink">
+                                @* border:1px solid black; *@
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
                                 </div>
-                                <span class="counter-value" id="TotReq">0</span>
+                                <div class="div-counter-value">
+                                    <span class="counter-value" id="TotReq">0</span>
+                                </div>
                                 <h3>I-Card Request</h3>
                             </div>
                         </a>
@@ -58,19 +169,23 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-address-card"></i>
                                     </div>
-                                    <span class="counter-value" id="TotObservationRaised">0</span>
+                                    <div class="div-counter-value">
+                                        <span class="counter-value" id="TotObservationRaised">0</span>
+                                    </div>
                                     <h3>Observation Raised List</h3>
                                 </div>
                             </a>
                         </div>
                     }
                     <div class="col-md-2 col-sm-6">
-                        <a href="/Home/ReportAndReturn" class="clickable">
+                        <a href="/Home/ " class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
                                 </div>
-                                <h3 style="margin-top:3.0rem!important;">
+                                <div class="div-counter-value"></div>
+                                <h3>
+                                    @*  style="margin-top:3.0rem!important;" *@
                                     Reports &amp; Returns
                                 </h3>
                             </div>
@@ -82,7 +197,9 @@
                                 <div class="counter-icon">
                                     <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddLostCard" data-type="54"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
                                 </div>
-                                <span class="counter-value" id="TotLostCards"></span>
+                                <div class="div-counter-value">
+                                    <span class="counter-value" id="TotLostCards"></span>
+                                </div>
                                 <h3>REPORT LOSS OF AFSAC</h3>
                             </div>
                         </a>
@@ -90,10 +207,10 @@
                 </div>
             </div>
             <div class="card p-4">
-                <div class="seven">
-                    <h1>
+                <div class="card-heading">
+                    <span class="sub-card-heading">
                         AFSAC Card (Requisition and Printing Status)
-                    </h1>
+                    </span>
                 </div>
                 <div class="row">
                     <div class="col-md-2 col-sm-6">
@@ -102,7 +219,9 @@
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
                                 </div>
-                                <span class="counter-value" id="TotInaccurateData">0</span>
+                                <div class="div-counter-value">
+                                    <span class="counter-value" id="TotInaccurateData">0</span>
+                                </div>
                                 <h3>
                                     Requisitions Pending Due to Incorrect Data
                                 </h3>
@@ -115,7 +234,9 @@
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
                                 </div>
-                                <h3 style="margin-top:3.0rem!important;">
+                                <div class="div-counter-value"></div>
+                                <h3>
+                                    @* style="margin-top:3.0rem!important;" *@
                                     Report & Returns (Cards)
                                 </h3>
                             </div>
@@ -124,10 +245,10 @@
                 </div>
             </div>
             <div class="card p-4">
-                <div class="seven">
-                    <h1>
+                <div class="card-heading">
+                    <span class="sub-card-heading">
                         User Management
-                    </h1>
+                    </span>
                 </div>
                 <div class="row">
                     <div class="col-md-2 col-sm-6">
@@ -136,7 +257,9 @@
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
                                 </div>
-                                <h3 style="margin-top:3.0rem!important;">
+                                <div class="div-counter-value"></div>
+                                <h3>
+                                    @* style="margin-top:3.0rem!important;" *@
                                     User Management
                                 </h3>
                             </div>
