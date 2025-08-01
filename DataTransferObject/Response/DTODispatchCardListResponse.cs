@@ -15,13 +15,14 @@ namespace DataTransferObject.Response
         public DateTime DispatchDate { get; set; }
         public string DispatchMode { get; set; } = string.Empty;
         public string RefOfDispatch { get; set; } = string.Empty;
-        public string LotNo { get; set; } = string.Empty;
         public string NameOfCourierIncharge { get; set; } = string.Empty;
         public string UploadFilePath { get; set; } = string.Empty;
         public string? FromRemark { get; set; }
         public string? ToRemark { get; set; }
         public string FromUnit { get; set; } = string.Empty;
+        public string? FromSUSNo { get; set; }
         public string ToUnit { get; set; } = string.Empty;
+        public string? ToSUSNo { get; set; }
         public string FromRankName { get; set; } = string.Empty;
         public string ToRankName { get; set; } = string.Empty;
         public string FromName { get; set; } = string.Empty;

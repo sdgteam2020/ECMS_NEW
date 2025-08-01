@@ -513,15 +513,14 @@ namespace DataAccessLayer
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["ApplyFor"] = "mappl.Name",
-                    ["LotNo"] = "dcard.LotNo",
-                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
-                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchCardId"] = "dcard.DispatchCardId",
                     ["DispatchDate"] = "dcard.DispatchDate",
-                    ["FromRemark"] = "dcard.FromRemark",
-                    ["ReceiptDate"] = "dcard.ReceiptDate",
-                    ["ToRemark"] = "dcard.ToRemark"
+                    ["RegimentalName"] = "regi.Abbreviation",
+                    ["RecordOfficeName"] = "mrec.Name",
+                    ["ToSUSNo"] = "toMuni.Sus_no",
+                    ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
-                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,concat(toMuni.Sus_no,toMuni.Suffix) as ToSUSNo,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
                 fromJoinClause = @"from TrnDispatchCard dcard 
                                     INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                                     INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
@@ -540,28 +539,25 @@ namespace DataAccessLayer
                 whereClause = @"WHERE
                             dcard.Step=1
                             AND (
-                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
+                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                mrec.Name LIKE '%' + @SearchTerm + '%' OR
+                                dcard.DispatchCardId LIKE '%' + @SearchTerm + '%' OR
+                                concat(toMuni.Sus_no,toMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
                                 mappl.Name LIKE '%' + @SearchTerm + '%'
                                 )";
-                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
-                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             else if (dTO.ClaimValue == 2)
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ApplyFor"] = "mappl.Name",
-                    ["LotNo"] = "dcard.LotNo",
-                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
-                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["Step"] = "dcard.Step",
+                    ["DispatchCardId"] = "dcard.DispatchCardId",
+                    ["FromSUSNo"] = "fromMuni.Sus_no",
+                    ["ToSUSNo"] = "toMuni.Sus_no",
                     ["DispatchDate"] = "dcard.DispatchDate",
-                    ["FromRemark"] = "dcard.FromRemark",
-                    ["ReceiptDate"] = "dcard.ReceiptDate",
-                    ["ToRemark"] = "dcard.ToRemark"
+                    ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
-                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,concat(fromMuni.Sus_no,fromMuni.Suffix) as FromSUSNo,toMuni.Abbreviation as ToUnit,concat(toMuni.Sus_no,toMuni.Suffix) as ToSUSNo,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
                 fromJoinClause = @"from TrnDispatchCard dcard 
                                     INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                                     INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
@@ -580,28 +576,24 @@ namespace DataAccessLayer
                 whereClause = @"WHERE
                                 oro.TDMId=@TDMId
                                 AND (
-                                    toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                    dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                    dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
-                                    mappl.Name LIKE '%' + @SearchTerm + '%'
+                                    dcard.Step LIKE '%' + @SearchTerm + '%' OR
+                                    dcard.DispatchCardId LIKE '%' + @SearchTerm + '%' OR
+                                    concat(fromMuni.Sus_no,fromMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
+                                    concat(toMuni.Sus_no,toMuni.Suffix) LIKE '%' + @SearchTerm + '%'
                                 )";
-                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
-                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             else if (dTO.ClaimValue == 3)
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ApplyFor"] = "mappl.Name",
-                    ["LotNo"] = "dcard.LotNo",
-                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
-                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["Step"] = "dcard.Step",
+                    ["DispatchCardId"] = "dcard.DispatchCardId",
+                    ["FromSUSNo"] = "fromMuni.Sus_no",
+                    ["ToSUSNo"] = "toMuni.Sus_no",
                     ["DispatchDate"] = "dcard.DispatchDate",
-                    ["FromRemark"] = "dcard.FromRemark",
-                    ["ReceiptDate"] = "dcard.ReceiptDate",
-                    ["ToRemark"] = "dcard.ToRemark"
+                    ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
-                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,concat(fromMuni.Sus_no,fromMuni.Suffix) as FromSUSNo,toMuni.Abbreviation as ToUnit,concat(toMuni.Sus_no,toMuni.Suffix) as ToSUSNo,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
                 fromJoinClause = @"from TrnDispatchCard dcard 
                                     INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                                     INNER JOIN MDispatchMode mdis on dcard.DispatchModeId=mdis.DispatchModeId
@@ -619,28 +611,25 @@ namespace DataAccessLayer
                 whereClause = @"WHERE
                             regi.UnitId=@UnitId
                             AND (
-                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
-                                mappl.Name LIKE '%' + @SearchTerm + '%'
+                                dcard.Step LIKE '%' + @SearchTerm + '%' OR
+                                dcard.DispatchCardId LIKE '%' + @SearchTerm + '%' OR
+                                concat(fromMuni.Sus_no,fromMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
+                                concat(toMuni.Sus_no,toMuni.Suffix) LIKE '%' + @SearchTerm + '%'
                                 )";
-                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
-                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             else
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["ApplyFor"] = "mappl.Name",
-                    ["LotNo"] = "dcard.LotNo",
-                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
-                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchCardId"] = "dcard.DispatchCardId",
+                    ["FromSUSNo"] = "fromMuni.Sus_no",
+                    ["RecordOfficeName"] = "mrec.Name",
+                    ["RegimentalName"] = "regi.Abbreviation",
                     ["DispatchDate"] = "dcard.DispatchDate",
-                    ["FromRemark"] = "dcard.FromRemark",
-                    ["ReceiptDate"] = "dcard.ReceiptDate",
-                    ["ToRemark"] = "dcard.ToRemark"
+                    ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
-                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,concat(fromMuni.Sus_no,fromMuni.Suffix) as FromSUSNo,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
                 fromJoinClause = @"from TrnDispatchCard dcard 
                                     INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                                     INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
@@ -660,14 +649,12 @@ namespace DataAccessLayer
                                 dcard.Step=2
                                 AND dcard.ToUnitId=@UnitId
                                 AND (
-                                    toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                    dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                    dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
                                     mappl.Name LIKE '%' + @SearchTerm + '%' OR
-                                    mrec.Name LIKE '%' + @SearchTerm + '%'
+                                    dcard.DispatchCardId LIKE '%' + @SearchTerm + '%' OR
+                                    concat(fromMuni.Sus_no,fromMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
+                                    mrec.Name LIKE '%' + @SearchTerm + '%' OR
+                                    regi.Abbreviation LIKE '%' + @SearchTerm + '%'
                                 )";
-                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
-                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             try
             {
@@ -689,7 +676,6 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
-                    parameters.Add("@FilterApplyFor", dTO.FilterApplyFor ?? "", DbType.String);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTODispatchCardListResponse>()).ToList();

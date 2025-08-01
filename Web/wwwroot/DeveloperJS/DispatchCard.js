@@ -7,7 +7,10 @@ let isFirstSelectAll = true;
 let searchChanged = false;
 let globalAllChecked = false;
 $(function () {
-    BindData();
+    let cvalue = parseInt($("#spnClaimValue").html());
+    BindData(cvalue, function () {
+    });
+
     if ($('#btnAdd').length) {
         $("#btnAdd").on("click", function () {
             location.href = '/BasicDetail/DispatchOut';
@@ -178,8 +181,12 @@ async function Save() {
         alert("Error: " + error.message);
     }
 }
-function BindData() {
-    $("#tbldata").DataTable().destroy();
+function BindData(cvalue, callback) {
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        $("#tbldata").DataTable().destroy();
+        $("#tbldata").empty(); // Clear old thead/tbody
+    }
+    const columns = getColumnsForDispatchCard(cvalue);
     table = $("#tbldata").DataTable({
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
@@ -195,8 +202,7 @@ function BindData() {
                 length: data.length,
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                filterApplyFor: $('#filterApplyFor').val(),
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
             };
             try {
                 let response = await fetch("/BasicDetail/GetAllDispatchCard", {
@@ -215,136 +221,10 @@ function BindData() {
                 console.error("Error fetching data:", error);
             }
         },
-        columns: [
-            // Serial number column
-            {
-                data: null,
-                name: "SerialNumber",
-                orderable: false, // Disable sorting for this column
-                render: function (data, type, row, meta) {
-                    // Calculate serial number based on row index
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            {
-                data: "ApplyFor",
-                name: "Categery",
-            },
-            {
-                data: "LotNo",
-                name: "LotNo",
-            },
-            {
-                data: "ToUnit",
-                name: "ToUnit",
-                orderable: false,
-            },
-            {
-                data: null,
-                name: "Regt / ORO",
-                orderable: false,
-                render: function (data, type, row) {
-                    let Name = row.RegimentalName == null ? row.RecordOfficeName : row.RegimentalName;
-                    return (Name);
-                }
-            },
-            {
-                data: "NameOfCourierIncharge",
-                name: "Name Of Courier Incharge"
-            },
-            {
-                data: "ToServiceNo",
-                name: "Army No",
-                render: function (data, type, row) {
-                    // Check if first two characters are alphabets
-                    if (/^[A-Za-z]{2}/.test(data)) {
-                        // Insert space after first two characters
-                        return data.slice(0, 2) + ' ' + data.slice(2);
-                    } else {
-                        // No space needed
-                        return data;
-                    }
-                }
-            },
-            {
-                data: null,
-                name: "Dispatch To",
-                orderable: false,
-                render: function (data, type, row) {
-                    let fullName = `${row.ToDID} (${row.ToRankName} ${row.ToName} )`.trim();
-                    return (fullName);
-                }
-            },
-
-            {
-                data: "DispatchDate",
-                name: "Dispatch On",
-                render: function (data, type, row) {
-                    return DateFormateddMMyyyyhhmmss(data);
-                }
-            },
-            {
-                data: "FromRemark",
-                name: "Sender Remark",
-                render: function (data, type, row) {
-                    if (data != null) {
-                        let sentence = data;
-                        let words = sentence.split(" ");
-
-                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
-                        return `<span class='cls-FromRemark'>${truncatedSentence}</span>`;
-                    } else {
-                        return `NA`;
-                    }
-
-                }
-            },
-            {
-                data: "ReceiptDate",
-                name: "Dispatch In",
-                render: function (data, type, row) {
-                    return data != null ? DateFormateddMMyyyyhhmmss(data): "NA";
-                }
-            },
-            {
-                data: "ToRemark",
-                name: "Remark",
-                render: function (data, type, row) {
-                    if (data != null) {
-                        let sentence = data;
-                        let words = sentence.split(" ");
-
-                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
-                        return `<span class='cls-ToRemark'>${truncatedSentence}</span>`;
-                    } else {
-                        return `NA`;
-                    }
-
-                }
-            },
-            // Additional column for Edit action
-            {
-                data: "IsComplete",
-                name: "Action",
-                orderable: false,
-                render: function (data, type, row) {
-                    let ClaimValue = parseInt($("#spnClaimValue").html());
-                    let Action = `<div class='d-flex'><button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
-                    if (data == false && row.Step == 1 && (ClaimValue == 2 || ClaimValue == 3)) {
-                        return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></div>`;
-                    }
-                    else if (data == false && row.Step == 2 && ClaimValue == 0) {
-                        return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></div>`;
-                    }
-                    else {
-                        return Action += `NA</div>`;
-                    }
-                }
-            }
-        ],
+        columns: columns,
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search Cat/LotNo/CIC/Army No" // Add custom placeholder
+            searchPlaceholder: "Search" // Add custom placeholder
         },
         dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
@@ -375,7 +255,16 @@ function BindData() {
         initComplete: function () {
             // Add tooltip to the search input box
             let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search Cat/LotNo/CIC/Army No');
+            if (cvalue == 1) {
+                searchBox.attr('title', 'Search Cat/SUS NO/Lot No/ORO/Reg');
+            }
+            else if (cvalue == 2 || cvalue == 3) {
+                searchBox.attr('title', 'Search In/Out/LotNo/SUS NO');
+            }
+            else {
+                searchBox.attr('title', 'Search Cat/SUS NO/Lot No/ORO/Reg');
+            }
+            
         },
         drawCallback: function (settings) {
 
@@ -393,7 +282,7 @@ function BindData() {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.DispatchCardId != null) {
                     $("#lblModelTitle").html('Dispatch Card Lot details');
-                    BindDialog(rowData.DispatchCardId, rowData.ApplyForId, function () {
+                    BindDialog(rowData, function () {
                         $("#DataTableDialog").modal("show");
                     })
                 }
@@ -425,12 +314,12 @@ function BindData() {
         }
     });
 }
-function BindDialog(DispatchCardId, ApplyForId, callback) {
+function BindDialog(rowData, callback) {
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
         $("#tbldatadialog").DataTable().destroy();
         $("#tbldatadialog").empty(); // Clear old thead/tbody
     }
-    const columns = getColumnsByChoice(ApplyForId);
+    const columns = getColumnsByChoice(rowData.ApplyForId);
     table2 = $("#tbldatadialog").DataTable({
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
@@ -447,7 +336,7 @@ function BindDialog(DispatchCardId, ApplyForId, callback) {
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                DispatchCardId: DispatchCardId
+                DispatchCardId: rowData.DispatchCardId
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardDataForDialog", {
@@ -508,6 +397,260 @@ function BindDialog(DispatchCardId, ApplyForId, callback) {
         }
     });
 }
+function getColumnsForDispatchCard(choice) {
+    let columns = [];
+    switch (choice) {
+        case 1:
+            columns = [
+                // Serial number column
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Category",
+                    data: "ApplyFor",
+                    name: "Categery",
+                },
+                {
+                    title: "Lot No",
+                    data: "DispatchCardId",
+                    name: "DispatchCardId",
+                },
+                {
+                    title: "Unit",
+                    data: "ToUnit",
+                    name: "ToUnit",
+                    orderable: false,
+                },
+                {
+                    title: "SUS No",
+                    data: "ToSUSNo",
+                    name: "ToSUSNo",
+                },
+                {
+                    title: "ORO",
+                    data: "RecordOfficeName",
+                    name: "RecordOfficeName",
+                    render: function (data, type, row) {
+                        return (data ?? "");
+                    }
+                },
+                {
+                    title: "Reg",
+                    data: "RegimentalName",
+                    name: "RegimentalName",
+                    render: function (data, type, row) {
+                        return (data??"");
+                    }
+                },
+                {
+                    title: "Dispatch On",
+                    data: "DispatchDate",
+                    name: "Dispatch On",
+                    render: function (data, type, row) {
+                        return DateFormateddMMyyyyhhmmss(data);
+                    }
+                },
+                {
+                    title: "Dispatch In",
+                    data: "ReceiptDate",
+                    name: "Dispatch In",
+                    render: function (data, type, row) {
+                        return data != null ? DateFormateddMMyyyyhhmmss(data) : "NA";
+                    }
+                },
+                // Additional column for Edit action
+                {
+                    title: "Action",
+                    data: "IsComplete",
+                    name: "Action",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let Action = `<div class='d-flex'><button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
+                        return Action;
+                    }
+                }
+            ];
+            break;
+        case 2:
+        case 3:
+            columns = [
+                // Serial number column
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "In / Out",
+                    data: "Step",
+                    name: "Step",
+                    render: function (data, type, row) {
+                        return data == 1 ? "In" : "Out";
+                    }
+                },
+                {
+                    title: "Lot No",
+                    data: "DispatchCardId",
+                    name: "DispatchCardId",
+                },
+                {
+                    title: "Unit",
+                    data: null,
+                    name: "ToUnit",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return row.Step == 1 ? row.FromUnit : row.ToUnit;
+                    }
+                },
+                {
+                    title: "To SUS No",
+                    data: "ToSUSNo",
+                    name: "ToSUSNo",
+                    render: function (data, type, row) {
+                        return row.Step == 2 ? data : "";
+                    }
+                },
+                {
+                    title: "From SUS No",
+                    data: "FromSUSNo",
+                    name: "FromSUSNo",
+                    render: function (data, type, row) {
+                        return row.Step == 1 ? data : "";
+                    }
+                },
+                {
+                    title: "Dispatch On",
+                    data: "DispatchDate",
+                    name: "Dispatch On",
+                    render: function (data, type, row) {
+                        return DateFormateddMMyyyyhhmmss(data);
+                    }
+                },
+                {
+                    title: "Dispatch In",
+                    data: "ReceiptDate",
+                    name: "Dispatch In",
+                    render: function (data, type, row) {
+                        return data != null ? DateFormateddMMyyyyhhmmss(data) : "NA";
+                    }
+                },
+                // Additional column for Edit action
+                {
+                    title: "Action",
+                    data: "IsComplete",
+                    name: "Action",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let Action = `<div class='d-flex'><button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
+                        if (data == false && row.Step == 1) {
+                            return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></div>`;
+                        }
+                        else {
+                            return Action += `NA</div>`;
+                        }
+                    }
+                }
+            ];
+            break;
+        default:
+            columns = [
+                // Serial number column
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Category",
+                    data: "ApplyFor",
+                    name: "Categery",
+                },
+                {
+                    title: "Lot No",
+                    data: "DispatchCardId",
+                    name: "DispatchCardId",
+                },
+                {
+                    title: "Unit",
+                    data: "FromUnit",
+                    name: "FromUnit",
+                    orderable: false,
+                },
+                {
+                    title: "SUS No",
+                    data: "FromSUSNo",
+                    name: "FromSUSNo",
+                },
+                {
+                    title: "ORO",
+                    data: "RecordOfficeName",
+                    name: "RecordOfficeName",
+                    render: function (data, type, row) {
+                        return (data ?? "");
+                    }
+                },
+                {
+                    title: "Reg",
+                    data: "RegimentalName",
+                    name: "RegimentalName",
+                    render: function (data, type, row) {
+                        return (data ?? "");
+                    }
+                },
+                {
+                    title: "Dispatch On",
+                    data: "DispatchDate",
+                    name: "Dispatch On",
+                    render: function (data, type, row) {
+                        return DateFormateddMMyyyyhhmmss(data);
+                    }
+                },
+                {
+                    title: "Dispatch In",
+                    data: "ReceiptDate",
+                    name: "Dispatch In",
+                    render: function (data, type, row) {
+                        return data != null ? DateFormateddMMyyyyhhmmss(data) : "NA";
+                    }
+                },
+                // Additional column for Edit action
+                {
+                    title: "Action",
+                    data: "IsComplete",
+                    name: "Action",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let Action = `<div class='d-flex'><button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
+                        if (data == false && row.Step == 2) {
+                            return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></div>`;
+                        }
+                        else {
+                            return Action += `NA</div>`;
+                        }
+                    }
+                }
+            ];
+    }
+    return columns;
+}
 function getColumnsByChoice(choice) {
     let columns = [];
 
@@ -525,7 +668,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Request ID",
+                    title: "Appl Id",
                     data: 'RequestId',
                     name: 'RequestId',
                 },
@@ -544,6 +687,14 @@ function getColumnsByChoice(choice) {
                     title: "SUS No",
                     data: "SUSNo",
                     name: "SUSNo"
+                },
+                {
+                    title: "ORO",
+                    data: "RecordOfficeName",
+                    name: "RecordOfficeName",
+                    render: function (data, type, row) {
+                        return (data ?? "");
+                    }
                 },
                 {
                     title: "ORO",
