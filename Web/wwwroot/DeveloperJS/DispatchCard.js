@@ -16,7 +16,7 @@ $(function () {
             location.href = '/BasicDetail/DispatchOut';
         });
     }
-    $("#export").on("click", function () {
+    $("#exportLot").on("click", function () {
         if (selectedIds.length == 0) {
             toastr.error('Please Select at least one row.');
             return;
@@ -281,9 +281,19 @@ function BindData(cvalue, callback) {
             $("#tbldata tbody").off("click", ".cls-btnDialog").on("click", ".cls-btnDialog", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.DispatchCardId != null) {
-                    $("#lblModelTitle").html('Dispatch Card Lot details');
+                    $("#lblModelTitleLot").html('Dispatch Card Lot details');
+                    $("#LotDetails").html(
+                        `<strong>Name Of Courier Incharge :</strong> ${rowData.NameOfCourierIncharge}
+                         <strong>Army No : </strong>${
+                        /^[A-Za-z]{2}/.test(rowData.ToServiceNo)
+                            ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}`
+                            : rowData.ToServiceNo
+                        }
+                    <strong> Dispatch To:</strong > ${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()}
+                    <strong>Sender Remark</strong> ${rowData.FromRemark}  <strong>Receiver Remark</strong> ${rowData.ToRemark != null ? rowData.ToRemark : ''} 
+                    `);
                     BindDialog(rowData, function () {
-                        $("#DataTableDialog").modal("show");
+                        $("#DataTableDialogForLot").modal("show");
                     })
                 }
             });
@@ -315,12 +325,12 @@ function BindData(cvalue, callback) {
     });
 }
 function BindDialog(rowData, callback) {
-    if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
-        $("#tbldatadialog").DataTable().destroy();
-        $("#tbldatadialog").empty(); // Clear old thead/tbody
+    if ($.fn.DataTable.isDataTable("#tbldatadialogLot")) {
+        $("#tbldatadialogLot").DataTable().destroy();
+        $("#tbldatadialogLot").empty(); // Clear old thead/tbody
     }
     const columns = getColumnsByChoice(rowData.ApplyForId);
-    table2 = $("#tbldatadialog").DataTable({
+    table2 = $("#tbldatadialogLot").DataTable({
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
         processing: true,

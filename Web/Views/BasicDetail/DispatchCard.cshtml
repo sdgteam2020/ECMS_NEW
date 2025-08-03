@@ -125,6 +125,35 @@
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
 </div>
+<!-- Dispatch Details of Lot Wise -->
+<div class="modal fade" id="DataTableDialogForLot" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitleLot"></span></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div>
+                        <div id="LotDetails">
+
+                        </div>
+                        <div class="mb-2 d-flex justify-content-end">
+                            <button id="exportLot" class="btn btn-sm btn-outline-success mr-1">Export CSV</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialogLot">
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="msg">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Dispatch In Dialog  -->
 <div class="modal fade" id="DispatchInDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
