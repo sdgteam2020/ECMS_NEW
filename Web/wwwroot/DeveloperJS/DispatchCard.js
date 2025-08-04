@@ -282,17 +282,41 @@ function BindData(cvalue, callback) {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.DispatchCardId != null) {
                     $("#lblModelTitleLot").html('Dispatch Card Lot details');
-                    $("#LotDetails").html(
-                        `<strong>Name Of Courier Incharge :</strong> ${rowData.NameOfCourierIncharge}
-                         <strong>Army No : </strong>${
-                        /^[A-Za-z]{2}/.test(rowData.ToServiceNo)
-                            ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}`
-                            : rowData.ToServiceNo
-                        }
-                    <strong> Dispatch To:</strong > ${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()}
-                    <strong>Sender Remark</strong> ${rowData.FromRemark}  <strong>Receiver Remark</strong> ${rowData.ToRemark != null ? rowData.ToRemark : ''} 
-                    `);
-                    BindDialog(rowData, function () {
+                    let summary = '';
+                    if (cvalue == 1) {
+                        summary =
+                            `<strong>Unit & SUS No : </strong> ${rowData.ToUnit} ${rowData.ToSUSNo} |
+                             ${rowData.ApplyForId == 1 ? `<strong>ORO : </strong> ${rowData.RecordOfficeName}` : `<strong>Regiment : </strong> ${rowData.RegimentalName}`} |
+                             <strong>Name Of Courier Incharge : </strong> ${rowData.NameOfCourierIncharge} |
+                             <strong>Dispatch To : </strong > ${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo)? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo} |
+                             <strong>Sender Remark : </strong> ${rowData.FromRemark} |
+                             <strong>Receiver Remark : </strong> ${rowData.ToRemark != null ? rowData.ToRemark : ''} 
+                    `;
+                    }
+                    else if (cvalue == 2 || cvalue == 3) {
+                        summary =
+                            `<strong>Unit & SUS No : </strong> ${rowData.Step == 1 ? `${rowData.FromUnit} ${rowData.FromSUSNo }` : `${ rowData.ToUnit } ${ rowData.ToSUSNo }`} |
+                             <strong>Name Of Courier Incharge : </strong> ${rowData.NameOfCourierIncharge} |
+                             ${rowData.Step == 1 ?
+                                `<strong>Dispatch From : </strong >${`${rowData.FromDID} (${rowData.FromRankName} ${rowData.FromName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.FromServiceNo) ? `${rowData.FromServiceNo.slice(0, 2)}  ${rowData.FromServiceNo.slice(2)}` : rowData.FromServiceNo} |`
+                                :`<strong>Dispatch To : </strong >${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo) ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo} |`
+                              } 
+                             <strong>Sender Remark : </strong> ${rowData.FromRemark} |
+                             <strong>Receiver Remark : </strong> ${rowData.ToRemark != null ? rowData.ToRemark : ''} 
+                    `;
+                    }
+                    else {
+                        summary =
+                            `<strong>Unit & SUS No : </strong> ${rowData.ToUnit} ${rowData.ToSUSNo} |
+                             ${rowData.ApplyForId == 1 ? `<strong>ORO : </strong> ${rowData.RecordOfficeName}` : `<strong>Regiment : </strong> ${rowData.RegimentalName}`} |
+                             <strong>Name Of Courier Incharge :</strong> ${rowData.NameOfCourierIncharge} |
+                             <strong>Dispatch From : </strong > ${`${rowData.FromDID} (${rowData.FromRankName} ${rowData.FromName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.FromServiceNo) ? `${rowData.FromServiceNo.slice(0, 2)}  ${rowData.FromServiceNo.slice(2)}` : rowData.FromServiceNo} |
+                             <strong>Sender Remark : </strong> ${rowData.FromRemark} |
+                             <strong>Receiver Remark : </strong> ${rowData.ToRemark != null ? rowData.ToRemark : ''} 
+                    `;
+                    }
+                    $("#LotDetails").html(summary);
+                    BindDialog(rowData, cvalue, function () {
                         $("#DataTableDialogForLot").modal("show");
                     })
                 }
@@ -324,12 +348,12 @@ function BindData(cvalue, callback) {
         }
     });
 }
-function BindDialog(rowData, callback) {
+function BindDialog(rowData, cvalue, callback) {
     if ($.fn.DataTable.isDataTable("#tbldatadialogLot")) {
         $("#tbldatadialogLot").DataTable().destroy();
         $("#tbldatadialogLot").empty(); // Clear old thead/tbody
     }
-    const columns = getColumnsByChoice(rowData.ApplyForId);
+    const columns = getColumnsByChoice(cvalue);
     table2 = $("#tbldatadialogLot").DataTable({
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
@@ -368,7 +392,7 @@ function BindDialog(rowData, callback) {
         columns: columns,
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search ReqId/Arm/SUSNo/" // Add custom placeholder
+            searchPlaceholder: "Search" // Add custom placeholder
         },
         dom: 'lBfrtip', // Add buttons to the DOM
         buttons: [
@@ -403,7 +427,7 @@ function BindDialog(rowData, callback) {
             }
             // Add tooltip to the search input box
             let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search ReqId/Arm/SUSNo/Army No/Chip No/Card Serial No');
+            searchBox.attr('title', 'Search Appl Id/Arm/Army No/Chip No/Card Serial No');
         }
     });
 }
@@ -678,6 +702,16 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
+                    title: "Card Serial No",
+                    data: "CardSerialNo",
+                    name: "CardSerialNo"
+                },
+                {
+                    title: "Chip No",
+                    data: "ChipNo",
+                    name: "ChipNo"
+                },
+                {
                     title: "Appl Id",
                     data: 'RequestId',
                     name: 'RequestId',
@@ -697,22 +731,6 @@ function getColumnsByChoice(choice) {
                     title: "SUS No",
                     data: "SUSNo",
                     name: "SUSNo"
-                },
-                {
-                    title: "ORO",
-                    data: "RecordOfficeName",
-                    name: "RecordOfficeName",
-                    render: function (data, type, row) {
-                        return (data ?? "");
-                    }
-                },
-                {
-                    title: "ORO",
-                    data: "RecordOfficeName",
-                    name: "RecordOfficeName",
-                    render: function (data, type, row) {
-                        return (data ?? "");
-                    }
                 },
                 {
                     title: "Army No",
@@ -739,20 +757,11 @@ function getColumnsByChoice(choice) {
                         return (fullName);
                     }
                 },
-                {
-                    title: "Card Serial No",
-                    data: "CardSerialNo",
-                    name: "CardSerialNo"
-                },
-                {
-                    title: "Chip No",
-                    data: "ChipNo",
-                    name: "ChipNo"
-                },
             ];
             break;
 
         case 2:
+        case 3:
             columns = [
                 {
                     title: "S No",
@@ -763,6 +772,16 @@ function getColumnsByChoice(choice) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }
+                },
+                {
+                    title: "Card Serial No",
+                    data: "CardSerialNo",
+                    name: "CardSerialNo"
+                },
+                {
+                    title: "Chip No",
+                    data: "ChipNo",
+                    name: "ChipNo"
                 },
                 {
                     title: "Request ID",
@@ -786,12 +805,65 @@ function getColumnsByChoice(choice) {
                     name: "SUSNo"
                 },
                 {
-                    title: "Regt",
-                    data: "RegimentalName",
-                    name: "RegimentalName",
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
                     render: function (data, type, row) {
-                        return (data ?? "");
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
                     }
+                },
+                {
+                    title: "Rank & Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
+                    }
+                },
+
+            ];
+            break;
+
+        default:
+            columns = [
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Card Serial No",
+                    data: "CardSerialNo",
+                    name: "CardSerialNo"
+                },
+                {
+                    title: "Chip No",
+                    data: "ChipNo",
+                    name: "ChipNo"
+                },
+                {
+                    title: "Request ID",
+                    data: 'RequestId',
+                    name: 'RequestId',
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
                 },
                 {
                     title: "Army No",
@@ -818,24 +890,7 @@ function getColumnsByChoice(choice) {
                         return (fullName);
                     }
                 },
-                {
-                    title: "Card Serial No",
-                    data: "CardSerialNo",
-                    name: "CardSerialNo"
-                },
-                {
-                    title: "Chip No",
-                    data: "ChipNo",
-                    name: "ChipNo"
-                },
-            ];
-            break;
 
-        default:
-            columns = [
-                { title: "S No", data: null, orderable: false, render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1 },
-                { title: "ID", data: 'Id' },
-                { title: "Description", data: 'Description' }
             ];
     }
 
@@ -892,15 +947,25 @@ function DispatchCardStatusListBindDialog(callback) {
             }
         },
         {
-            title: "Categery",
+            title: "Card Serial No",
+            data: "CardSerialNo",
+            name: "CardSerialNo"
+        },
+        {
+            title: "Chip No",
+            data: "ChipNo",
+            name: "ChipNo"
+        },
+        {
+            title: "Category",
             data: "ApplyForId",
-            name: "Categery",
+            name: "Category",
             render: function (data, type, row) {
                 return (row.ApplyFor);
             }
         },
         {
-            title: "Request ID",
+            title: "Appl Id",
             data: 'RequestId',
             name: 'RequestId',
         },
@@ -959,31 +1024,6 @@ function DispatchCardStatusListBindDialog(callback) {
             render: function (data, type, row) {
                 let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                 return (fullName);
-            }
-        },
-        {
-            title: "Card Serial No",
-            data: "CardSerialNo",
-            name: "CardSerialNo"
-        },
-        {
-            title: "Chip No",
-            data: "ChipNo",
-            name: "ChipNo"
-        },
-        {
-            title: "Status",
-            data: "StepId",
-            name: "StepId",
-            render: function (data, type, row) {
-                let color;
-                if (row.Status == `Pending`) {
-                    color = 'danger';
-                }
-                else {
-                    color = 'success';
-                }
-                return `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
             }
         },
     ];
