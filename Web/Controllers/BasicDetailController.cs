@@ -4558,7 +4558,41 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
-      
+
+        [HttpPost]
+        public async Task<IActionResult> ExportCsvFileForDispatchCard(int[] RequestIds)
+        {
+            List<DTODispatchCardForCSVResponse> dTOs = new List<DTODispatchCardForCSVResponse>();
+            string fileName = $"UploadForDispatch_{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
+            dTOs = await basicDetailBL.ExportCsvFileForDispatchCard(RequestIds);
+            var csv = new StringBuilder();
+
+            // Header
+            csv.AppendLine("Name,ServiceNo,ChipNo,RequestId");
+
+            // Data rows
+            foreach (var item in dTOs)
+            {
+                csv.AppendLine($"{item.RankName + " " + item.FName},\"{item.ServiceNo}\",\"{item.ChipNo}\",\"{item.RequestId}\"");
+            }
+
+            // Convert to byte array
+            var bytes = Encoding.UTF8.GetBytes(csv.ToString());
+
+            // var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Dispatchexports");
+            var folderPath = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Dispatchexports");
+            // Create folder if not exists
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            var fullPath = Path.Combine(folderPath, fileName);
+
+            // Write the bytes to file
+            System.IO.File.WriteAllBytes(fullPath, bytes);
+            return Json(fileName);
+        }
         [HttpPost]
         public async Task<IActionResult> ExportCsvForDispatch(DTOExportDispatch Data )
         {

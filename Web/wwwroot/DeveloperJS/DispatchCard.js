@@ -3,6 +3,7 @@ var table2;
 var selectedIds = [];
 let previousSearchText = "";
 let previousSearchField = "";
+let previousSearchCategory = "";
 let isFirstSelectAll = true;
 let searchChanged = false;
 let globalAllChecked = false;
@@ -20,6 +21,15 @@ $(function () {
         if (selectedIds.length == 0) {
             toastr.error('Please Select at least one row.');
             return;
+        }
+    });
+    $("#exportRequestIds").on("click", function () {
+        if (selectedIds.length == 0) {
+            toastr.error('Please Select at least one row.');
+            return;
+        }
+        else {
+            ExportCsvFile(selectedIds);
         }
     });
     $('#DataTableDialog').on('hidden.bs.modal', function () {
@@ -111,6 +121,7 @@ function resetSelectedFields() {
     selectedIds = [];
     previousSearchText = "";
     previousSearchField = "";
+    previousSearchCategory = "";
     isFirstSelectAll = true;
     searchChanged = false;
     globalAllChecked = false;
@@ -123,6 +134,7 @@ function resetSelectedFields() {
 
     $('#searchText').val('');
     $('#searchField').val([]).trigger('change');
+    $('#ddlCategory').val([]).trigger('change');
 
     console.log("Reset selectedIds and checkboxes.");
 }
@@ -915,22 +927,17 @@ function DispatchCardStatusListBindDialog(callback) {
             name: "Id",
             orderable: false, // Disable sorting for this column
             render: function (data, type, row, meta) {
-                if (row.Status == `Pending`) {
-                    if ($("#chkAll").prop('checked')) {
-                        return `<div class="custom-control custom-checkbox small">
+                if ($("#chkAll").prop('checked')) {
+                    return `<div class="custom-control custom-checkbox small">
                                     <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
-                    } else {
- 
-                            return `<div class="custom-control custom-checkbox small">
+                } else {
+
+                    return `<div class="custom-control custom-checkbox small">
                                     <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
                                     <label class="custom-control-label" for="${row.RequestId}"></label>
                                 </div>`;
-                    }
-                }
-                else {
-                    return `<div></div>`;
                 }
 
             }
@@ -1056,6 +1063,11 @@ function DispatchCardStatusListBindDialog(callback) {
                 globalAllChecked && (isFirstSelectAll || searchStatus.searchChanged) ||
                 (!globalAllChecked && searchStatus.searchChanged && isFirstSelectAll);
 
+            // If fetch is needed, manually set searchChanged to true
+            if (shouldFetchSelectedIds) {
+                searchStatus.searchChanged = true; // Manually set to true to ensure data fetch
+            }
+
             let requestData = {
                 draw: data.draw,
                 start: data.start,
@@ -1063,6 +1075,7 @@ function DispatchCardStatusListBindDialog(callback) {
                 //searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                searchCategory: searchStatus.currentSearchCategory,
                 searchField: searchStatus.currentSearchField,
                 searchText: searchStatus.currentSearchText,
                 searchTextChanged: searchStatus.searchChanged,
@@ -1156,12 +1169,13 @@ function DispatchCardStatusListBindDialog(callback) {
 
     $('#btnSearch').on('click', function () {
         // Get search field and search text values
-        const searchField = $('#searchField').val().trim();
-        const searchText = $('#searchText').val().trim();
+        const searchField = $('#searchField').val()?.trim();
+        const searchText = $('#searchText').val()?.trim();
+        const searchCategory = $('#ddlCategory').val();
 
         // If no search field is selected or no search text entered, prevent the search
-        if (!searchField || !searchText) {
-            toastr.error('Please select a search field and enter a value.');
+        if (!searchField || !searchText || !searchCategory) {
+            toastr.error('Please select a search category, search field and enter a value.');
             return; // Exit the function and prevent table reload
         }
 
@@ -1171,6 +1185,7 @@ function DispatchCardStatusListBindDialog(callback) {
     $('#btnClear').on('click', function () {
         $('#searchText').val('');
         $('#searchField').val([]).trigger('change');
+        $('#ddlCategory').val([]).trigger('change');
         table2.ajax.reload();
     });
     $(document).on('change', '.chkRequestId', function () {
@@ -1293,21 +1308,45 @@ function getAllIds() {
 function getSearchStatus() {
     const currentSearchText = $('#searchText').val().trim();
     const currentSearchField = $('#searchField').val();
+    const currentSearchCategory = $('#ddlCategory').val();
 
     // Ensure searchChanged is only true when the actual search field or text changes.
     // If currentSearchField is null (i.e., no field selected), treat it as no change.
     searchChanged = (
-        (currentSearchText !== previousSearchText || currentSearchField !== previousSearchField) &&
-        currentSearchField !== null
+        (currentSearchText !== previousSearchText || currentSearchField !== previousSearchField || currentSearchCategory !== previousSearchCategory) &&
+        (currentSearchField !== null && currentSearchCategory !== null )
     );
 
     // Update previous values after comparison
     previousSearchText = currentSearchText;
     previousSearchField = currentSearchField;
+    previousSearchCategory = currentSearchCategory;
 
     return {
         searchChanged: searchChanged,
+        currentSearchCategory,
         currentSearchText,
         currentSearchField
     };
+}
+function ExportCsvFile(selectedIds) {
+    var userdata = {
+        RequestIds: selectedIds
+    };
+
+    $.ajax({
+        url: '/BasicDetail/ExportCsvFileForDispatchCard',
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: userdata,
+        success: function (response) {
+            window.location.href = "/" + "WriteReadData/Dispatchexports/" + response;
+            console.log("Export successful", response);
+        },
+        error: function (xhr, status, error) {
+            console.error("Export failed:", error);
+        }
+    });
+
+
 }

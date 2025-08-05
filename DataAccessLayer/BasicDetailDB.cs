@@ -55,15 +55,36 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.userManager = userManager;
         }
+        public async Task<List<DTODispatchCardForCSVResponse>> ExportCsvFileForDispatchCard(int[] RequestIds)
+        {
+            List<DTODispatchCardForCSVResponse> dTOs = new List<DTODispatchCardForCSVResponse>();
+            string query = @"SELECT req.RequestId,ranks.RankAbbreviation as RankName,basi.FName,basi.LName,basi.ServiceNo,req.ChipNo,req.CardSerialNo
+                            from TrnICardRequest req
+                            INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                            INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                            WHERE req.RequestId in @RequestIds";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RequestIds", RequestIds, DbType.Int32, ParameterDirection.Input);
+
+                    dTOs = (await connection.QueryAsync<DTODispatchCardForCSVResponse>(query, parameters)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->ExportCsvFileForDispatchCard");
+            }
+            return dTOs;
+        }
         public async Task<DTODataTablesForDispatchCardStatusListResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequestForCardStatusList dTO, byte ClaimValue)
         {
             string selectFields = "";
             string fromJoinClause = "";
             string whereClause = "";
-            string whereClauseForChecked = "";
             string searchFilter = "";
-            byte PendingStepId = 0;
-            byte DispatchStepId = 0;
             byte finalValue=0;
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
@@ -85,14 +106,7 @@ namespace DataAccessLayer
             };
             if (ClaimValue == 1)
             {
-                PendingStepId = 6; // Pending Step for AFSAC
-                DispatchStepId = 11; // Dispatch Step for AFSAC
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
-                                CASE 
-                                    WHEN stepc.StepId = 6 THEN 'Pending' 
-                                    WHEN stepc.StepId >= 11 THEN 'Dispatch Out'
-                                    ELSE 'Unknown' 
-                                END AS Status";
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
                 fromJoinClause = @"from TrnStepCounter stepc
                                     INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                                     INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
@@ -104,20 +118,11 @@ namespace DataAccessLayer
                                     LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                                     LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
-                            (stepc.StepId=6 OR stepc.StepId>=11)";
-                whereClauseForChecked = @"WHERE
-                                        (stepc.StepId=6)";
+                            (stepc.StepId=6)";
             }
             else if (ClaimValue == 2 || ClaimValue == 3)
             {
-                PendingStepId = 12; // Pending Step for RO / Regiment
-                DispatchStepId = 13; // Dispatch Step for RO / Regiment
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
-                                CASE 
-                                    WHEN stepc.StepId = 12 THEN 'Pending' 
-                                    WHEN stepc.StepId >= 13 THEN 'Dispatch Out'
-                                    ELSE 'Unknown' 
-                                END AS Status";
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
                 fromJoinClause = @"from TrnStepCounter stepc
                                     INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                                     INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
@@ -129,20 +134,11 @@ namespace DataAccessLayer
                                     LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                                     LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
-                                (stepc.StepId=12 OR stepc.StepId>=13)";
-                whereClauseForChecked = @"WHERE
-                                        (stepc.StepId=12)";
+                                (stepc.StepId=12)";
             }
             else
             {
-                PendingStepId = 14; // Pending Step for Unit
-                DispatchStepId = 15; // Dispatch Step for Unit
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
-                                CASE 
-                                    WHEN stepc.StepId = 14 THEN 'Pending' 
-                                    WHEN stepc.StepId = 15 THEN 'Card Distribute'
-                                    ELSE 'Unknown' 
-                                END AS Status";
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
                 fromJoinClause = @"from TrnStepCounter stepc
                             INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                             INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
@@ -154,9 +150,7 @@ namespace DataAccessLayer
                             LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                             LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
-                                (stepc.StepId=14 OR stepc.StepId=15)";
-                whereClauseForChecked = @"WHERE
-                                        (stepc.StepId=14)";
+                                (stepc.StepId=14)";
             }
             if (!string.IsNullOrWhiteSpace(dTO.SearchField) && !string.IsNullOrWhiteSpace(dTO.SearchText))
             {
@@ -173,13 +167,13 @@ namespace DataAccessLayer
                     //    searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
                     //    break;
                     case "susno":
-                        searchFilter = @"AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
+                        searchFilter = @"AND mappl.ApplyForId =@Category AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
                         break;
                     case "regimentalname":
-                        searchFilter = @"AND regi.RegId=@SearchText";
+                        searchFilter = @"AND mappl.ApplyForId =@Category AND regi.RegId=@SearchText";
                         break;
                     case "recordofficename":
-                        searchFilter = @"AND mrec.RecordOfficeId=@SearchText";
+                        searchFilter = @"AND mappl.ApplyForId =@Category AND mrec.RecordOfficeId=@SearchText";
                         break;
                     //case "chipno":
                     //    searchFilter = @"AND req.ChipNo LIKE '%' + @SearchText + '%'";
@@ -216,7 +210,7 @@ namespace DataAccessLayer
                             select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause} {searchFilter}
                         )
                         SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
-                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {whereClauseForChecked} {searchFilter}";
+                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {whereClause} {searchFilter}";
 
 
 
@@ -226,6 +220,7 @@ namespace DataAccessLayer
                         var parameters = new DynamicParameters();
                         parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                         parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@Category", dTO.searchCategory, DbType.Byte, ParameterDirection.Input);
                         parameters.Add("@SearchText", dTO.SearchText, DbType.String, ParameterDirection.Input);
                         parameters.Add("@FinalStepId", finalValue, DbType.Byte, ParameterDirection.Input);
                         //parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
