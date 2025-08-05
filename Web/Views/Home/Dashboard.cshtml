@@ -6,15 +6,14 @@
 }
 <style>
     .clickable {
-    height: 190px;
-    width: 190px;
-    display: block;
-    margin-bottom: 25px;
+        display: block;
+        text-decoration: none;
+        color: inherit;
     }
 
     .p-4 {
-    padding: 1.5rem !important;
-    padding-bottom: 4.5rem !important;
+        padding: 1.5rem !important;
+        padding-bottom: 4.5rem !important;
     }
 </style>
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -38,8 +37,11 @@
     {
         <div class="row">
             <div class="card p-4">
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
+                <div class="card-heading fake-header">
+                    <span class="sub-card-heading">Invisible Title</span>
+                </div>
+                <div class="row align-items-start">
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
                         <a href="/Home/SubDashboard" class="clickable">
                             <div class="counter pink d-sm-block d-md-block">
                                 <div class="counter-icon">
@@ -52,7 +54,7 @@
                     </div>
                     @if (claims.Count > 0 && claims.Any(i => i.Value == "View Indl Incorrect Data"))
                     {
-                        <div class="col-md-2 col-sm-6">
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
                             <a href="/BasicDetail/InaccurateData?Id=Mg==" class="clickable">
                                 <div class="counter pink">
                                     <div class="counter-icon">
@@ -64,7 +66,7 @@
                             </a>
                         </div>
                     }
-                    <div class="col-md-2 col-sm-6">
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
                         <a href="/Home/ReportAndReturn" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
@@ -76,7 +78,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-2 col-sm-6">
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
                         <a href="#" class="clickable">
                             <div class="counter pink armyNoallserchPopup" id="btnLostCard">
                                 <div class="counter-icon">
@@ -95,8 +97,8 @@
                         AFSAC Card (Requisition and Printing Status)
                     </h1>
                 </div>
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
+                <div class="row align-items-start">
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
                         <a href="/BasicDetail/InaccurateData?Id=MQ==" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
@@ -109,7 +111,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-2 col-sm-6">
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
                         <a href="/Home/Report" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
@@ -129,8 +131,8 @@
                         User Management
                     </h1>
                 </div>
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
+                <div class="row align-items-start">
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
                         <a href="/Home/DashboardUserMgt" class="clickable">
                             <div class="counter pink">
                                 <div class="counter-icon">
