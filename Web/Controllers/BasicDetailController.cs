@@ -1,63 +1,64 @@
 ﻿using AutoMapper;
+using BusinessLogicsLayer.BasicDet;
+using BusinessLogicsLayer.BasicDetTemp;
+using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.BdeCate;
+using BusinessLogicsLayer.CSVImports;
+using BusinessLogicsLayer.DestructionCard;
+using BusinessLogicsLayer.DispatchCard;
+using BusinessLogicsLayer.DispatchCardMapping;
+using BusinessLogicsLayer.DistributeCard;
+using BusinessLogicsLayer.FaultyCard;
+using BusinessLogicsLayer.HotlistCard;
+using BusinessLogicsLayer.LostCard;
+using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.Service;
+using BusinessLogicsLayer.TrnICardHold;
+using BusinessLogicsLayer.TrnLoginLog;
+using BusinessLogicsLayer.Unit;
+using CsvHelper;
+using CsvHelper.Configuration;
+using DataAccessLayer;
+using DataAccessLayer.Healpers;
+using DataTransferObject.Constants;
+using DataTransferObject.Domain.Identitytable;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
+using DataTransferObject.Response.User;
+using DataTransferObject.ViewModels;
+using EntityFramework.Exceptions.Common;
+using Humanizer;
+using iText.Commons.Bouncycastle.Cert.Ocsp;
+using iText.IO.Font.Cmap;
+using iText.Layout.Renderer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Security.Claims;
-using DataAccessLayer;
-using DataTransferObject.Domain.Identitytable;
-using DataTransferObject.Requests;
-using EntityFramework.Exceptions.Common;
-using DataTransferObject.Response;
-using BusinessLogicsLayer.Service;
-using BusinessLogicsLayer.Bde;
-using Web.WebHelpers;
-using DataTransferObject.ViewModels;
-using BusinessLogicsLayer.BasicDet;
-using BusinessLogicsLayer.BasicDetTemp;
-using BusinessLogicsLayer.Master;
-using System.Text;
-using BusinessLogicsLayer.Unit;
-using System.IO.Compression;
-using BusinessLogicsLayer.TrnLoginLog;
-using Web.Healpers;
-using System.Xml.Serialization;
-using System.Xml.Linq;
-using BusinessLogicsLayer.TrnICardHold;
-using DataTransferObject.Domain.Master;
-using DataAccessLayer.Healpers;
-using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
-using Microsoft.SqlServer.Management.Smo.Wmi;
-using System.Xml;
-using Microsoft.SqlServer.Management.Smo;
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using DataTransferObject.Constants;
-using CsvHelper;
-using CsvHelper.Configuration;
-using BusinessLogicsLayer.CSVImports;
-using BusinessLogicsLayer.FaultyCard;
-using Humanizer;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Microsoft.IdentityModel.Tokens;
-using BusinessLogicsLayer.HotlistCard;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using BusinessLogicsLayer.LostCard;
-using iText.IO.Font.Cmap;
-using BusinessLogicsLayer.DestructionCard;
-using iText.Layout.Renderer;
-using BusinessLogicsLayer.DistributeCard;
-using BusinessLogicsLayer.BdeCate;
-using System;
-using System.Linq;
-using Org.BouncyCastle.Ocsp;
-using DataTransferObject.Response.User;
-using BusinessLogicsLayer.DispatchCard;
-using BusinessLogicsLayer.DispatchCardMapping;
+using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.SqlServer.Management.Smo;
+using Microsoft.SqlServer.Management.Smo.Wmi;
+using Newtonsoft.Json;
 using NuGet.Packaging;
+using Org.BouncyCastle.Ocsp;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO.Compression;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Serialization;
+using Web.Healpers;
+using Web.WebHelpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
@@ -4560,38 +4561,49 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ExportCsvFileForDispatchCard(int[] RequestIds)
+        public async Task<IActionResult> ExportCsvFileForDispatchCard([FromBody] DTORequestIdForCSVRequest requestIdsWrapper)
         {
             List<DTODispatchCardForCSVResponse> dTOs = new List<DTODispatchCardForCSVResponse>();
-            string fileName = $"UploadForDispatch_{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
-            dTOs = await basicDetailBL.ExportCsvFileForDispatchCard(RequestIds);
-            var csv = new StringBuilder();
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            int[]? RequestIds = requestIdsWrapper.RequestIds;
 
-            // Header
-            csv.AppendLine("Name,ServiceNo,ChipNo,RequestId");
-
-            // Data rows
-            foreach (var item in dTOs)
+            if (RequestIds == null || RequestIds.Length == 0)
             {
-                csv.AppendLine($"{item.RankName + " " + item.FName},\"{item.ServiceNo}\",\"{item.ChipNo}\",\"{item.RequestId}\"");
+                response.Result = false;
+                response.Message = "No request IDs provided.";
+                response.Value = string.Empty;
+                return Json(response);
             }
 
-            // Convert to byte array
-            var bytes = Encoding.UTF8.GetBytes(csv.ToString());
-
-            // var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Dispatchexports");
-            var folderPath = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Dispatchexports");
-            // Create folder if not exists
-            if (!Directory.Exists(folderPath))
+            string fileName = $"CSVForDispatch_{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
+            var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "DispatchExports", "Temp");
+            if (!Directory.Exists(uploadsFolder))
             {
-                Directory.CreateDirectory(folderPath);
+                Directory.CreateDirectory(uploadsFolder);
             }
-
-            var fullPath = Path.Combine(folderPath, fileName);
-
-            // Write the bytes to file
-            System.IO.File.WriteAllBytes(fullPath, bytes);
-            return Json(fileName);
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            try
+            {
+                dTOs = await basicDetailBL.ExportCsvFileForDispatchCard(RequestIds);
+                
+                using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap(new CsvClassMap<DTODispatchCardForCSVResponse>(true, CsvClassMapTypeEnum.CSVExport));
+                    await csv.WriteRecordsAsync(dTOs);
+                }
+                response.Result = true;
+                response.Message = "Ok";
+                response.Value = Path.GetFileName(fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->ExportCsvFileForDispatchCard");
+                response.Result = false;
+                response.Message = "Internal Server Error!";
+                response.Value =string.Empty;
+            }
+            return Json(response);  
         }
         [HttpPost]
         public async Task<IActionResult> ExportCsvForDispatch(DTOExportDispatch Data )

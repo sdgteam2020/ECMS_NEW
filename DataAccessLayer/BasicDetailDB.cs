@@ -58,17 +58,26 @@ namespace DataAccessLayer
         public async Task<List<DTODispatchCardForCSVResponse>> ExportCsvFileForDispatchCard(int[] RequestIds)
         {
             List<DTODispatchCardForCSVResponse> dTOs = new List<DTODispatchCardForCSVResponse>();
-            string query = @"SELECT req.RequestId,ranks.RankAbbreviation as RankName,basi.FName,basi.LName,basi.ServiceNo,req.ChipNo,req.CardSerialNo
+            string query = @"SELECT req.RequestId as ApplId,ranks.RankAbbreviation as RankName,basi.FName,basi.LName,basi.ServiceNo,req.ChipNo,req.CardSerialNo
                             from TrnICardRequest req
                             INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
                             INNER JOIN MRank ranks on ranks.RankId=basi.RankId
-                            WHERE req.RequestId in @RequestIds";
+                            WHERE req.RequestId IN (SELECT RequestId FROM @RequestIds)";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    // Create a table-valued parameter for the RequestIds
+                    var table = new DataTable();
+                    table.Columns.Add("RequestId", typeof(int));
+
+                    foreach (var id in RequestIds)
+                    {
+                        table.Rows.Add(id);
+                    }
+
                     var parameters = new DynamicParameters();
-                    parameters.Add("@RequestIds", RequestIds, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@RequestIds", table.AsTableValuedParameter("RequestIdList"));
 
                     dTOs = (await connection.QueryAsync<DTODispatchCardForCSVResponse>(query, parameters)).ToList();
                 }

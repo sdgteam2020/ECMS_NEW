@@ -35,6 +35,10 @@ namespace Web.Healpers
                 ignoreProperties.Add("Remarks");
                 ignoreProperties.Add("Status");
             }
+            else if (csvClassMapTypeEnum == CsvClassMapTypeEnum.CSVExport)
+            {
+
+            }
                 foreach (var prop in typeof(T).GetProperties())
                 {
                     if (ignoreProperties.Contains(prop.Name))

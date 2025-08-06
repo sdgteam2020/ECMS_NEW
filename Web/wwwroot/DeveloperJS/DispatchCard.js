@@ -1330,23 +1330,31 @@ function getSearchStatus() {
     };
 }
 function ExportCsvFile(selectedIds) {
-    var userdata = {
-        RequestIds: selectedIds
-    };
-
-    $.ajax({
-        url: '/BasicDetail/ExportCsvFileForDispatchCard',
-        type: 'POST',
-        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-        data: userdata,
-        success: function (response) {
-            window.location.href = "/" + "WriteReadData/Dispatchexports/" + response;
-            console.log("Export successful", response);
-        },
-        error: function (xhr, status, error) {
-            console.error("Export failed:", error);
-        }
+    return new Promise((resolve, reject) => {
+        const requestData = {
+            RequestIds: selectedIds  //Passing the JavaScript array directly
+        };
+        fetch('/BasicDetail/ExportCsvFileForDispatchCard', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Tell the server we are sending JSON
+            },
+            body: JSON.stringify(requestData), // Convert the request     data to JSON
+        })
+            .then(response => response.json())
+            .then((response) => {
+                if (response.Result === true) {
+                    window.location.href = "/" + "WriteReadData/DispatchExports/Temp/" + response.Value;
+                    console.log("Export successful", response);
+                    resolve(response);
+                } else {
+                    toastr.error("Export failed: " + response.Message);
+                    reject(new Error(response.Message));
+                }
+            })
+            .catch((error) => {
+                console.error("Export failed:", error);
+                reject(new Error("Export failed: " + error.message));
+            });
     });
-
-
 }
