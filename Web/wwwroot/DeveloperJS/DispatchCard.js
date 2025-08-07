@@ -3,7 +3,6 @@ var table2;
 var selectedIds = [];
 let previousSearchText = "";
 let previousSearchField = "";
-let previousSearchCategory = "";
 let isFirstSelectAll = true;
 let searchChanged = false;
 let globalAllChecked = false;
@@ -24,6 +23,15 @@ $(function () {
         }
     });
     $("#exportRequestIds").on("click", function () {
+        if (selectedIds.length == 0) {
+            toastr.error('Please Select at least one row.');
+            return;
+        }
+        else {
+            ExportCsvFile(selectedIds);
+        }
+    });
+    $("#btnProceedToDispatch").on("click", function () {
         if (selectedIds.length == 0) {
             toastr.error('Please Select at least one row.');
             return;
@@ -96,18 +104,7 @@ $(function () {
 
             $container.html(newSelect); // Replace input with dropdown
 
-            // Fetch data from server
-            let url = (selectedField === 'regimentalname')
-                ? mMsater(0, "searchText", AllRegimental, "")
-                : mMsater(0, "searchText", ORO, "");
-
-            //fetch(url)
-            //    .then(res => res.json())
-            //    .then(data => {
-            //        data.forEach(item => {
-            //            newSelect.append(`<option value="${item.value}">${item.label}</option>`);
-            //        });
-            //    });
+            selectedField === 'regimentalname'? mMsater(0, "searchText", AllRegimental, "") : mMsater(0, "searchText", ORO, "");
 
         } else {
             // Revert to text input for 'susno' or blank
@@ -121,7 +118,6 @@ function resetSelectedFields() {
     selectedIds = [];
     previousSearchText = "";
     previousSearchField = "";
-    previousSearchCategory = "";
     isFirstSelectAll = true;
     searchChanged = false;
     globalAllChecked = false;
@@ -134,7 +130,6 @@ function resetSelectedFields() {
 
     $('#searchText').val('');
     $('#searchField').val([]).trigger('change');
-    $('#ddlCategory').val([]).trigger('change');
 
     console.log("Reset selectedIds and checkboxes.");
 }
@@ -917,124 +912,7 @@ function DispatchCardStatusListBindDialog(callback) {
         $("#tbldatadialog thead").empty(); // Clear old thead
         $("#tbldatadialog tbody").empty(); // Clear old tbody
     }
-    let columns = [
-        {
-            title: `<div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll">
-                    <label class="custom-control-label" for="chkAll"></label>
-                    </div>`,
-            data: null,
-            name: "Id",
-            orderable: false, // Disable sorting for this column
-            render: function (data, type, row, meta) {
-                if ($("#chkAll").prop('checked')) {
-                    return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                } else {
-
-                    return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                }
-
-            }
-        },
-        {
-            title: 'S No',
-            data: null,
-            name: "SerialNumber",
-            orderable: false, // Disable sorting for this column
-            render: function (data, type, row, meta) {
-                // Calculate serial number based on row index
-
-                return meta.row + meta.settings._iDisplayStart + 1;
-            }
-        },
-        {
-            title: "Card Serial No",
-            data: "CardSerialNo",
-            name: "CardSerialNo"
-        },
-        {
-            title: "Chip No",
-            data: "ChipNo",
-            name: "ChipNo"
-        },
-        {
-            title: "Category",
-            data: "ApplyForId",
-            name: "Category",
-            render: function (data, type, row) {
-                return (row.ApplyFor);
-            }
-        },
-        {
-            title: "Appl Id",
-            data: 'RequestId',
-            name: 'RequestId',
-        },
-        {
-            title: "Arm / Service",
-            data: "ArmedAbbreviation",
-            name: "ArmedAbbreviation"
-        },
-        {
-            title: "Unit",
-            data: "UnitAbbreviation",
-            name: "UnitAbbreviation",
-            orderable: false
-        },
-        {
-            title: "SUS No",
-            data: "SUSNo",
-            name: "SUSNo"
-        },
-        {
-            title: "ORO",
-            data: "RecordOfficeName",
-            name: "RecordOfficeName",
-            render: function (data, type, row) {
-                return (row.ApplyForId == 1 ? data : "");
-            }
-        },
-        {
-            title: "Regt",
-            data: "RegimentalName",
-            name: "RegimentalName",
-            render: function (data, type, row) {
-                return (row.ApplyForId == 2 ? data : "");
-            }
-        },
-        {
-            title: "Army No",
-            data: "ServiceNo",
-            name: "ServiceNo",
-            render: function (data, type, row) {
-                // Check if first two characters are alphabets
-                if (/^[A-Za-z]{2}/.test(data)) {
-                    // Insert space after first two characters
-                    return data.slice(0, 2) + ' ' + data.slice(2);
-                } else {
-                    // No space needed
-                    return data;
-                }
-            }
-        },
-        {
-            title: "Rank & Name",
-            data: null,
-            name: null,
-            orderable: false,
-            render: function (data, type, row) {
-                let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                return (fullName);
-            }
-        },
-    ];
-    
+    let columns = getColumnsForListBindDialog(cvalue);
     table2 = $("#tbldatadialog").DataTable({
         autoWidth: false, // Let us handle width via CSS
         searching: false,
@@ -1075,7 +953,6 @@ function DispatchCardStatusListBindDialog(callback) {
                 //searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                searchCategory: searchStatus.currentSearchCategory,
                 searchField: searchStatus.currentSearchField,
                 searchText: searchStatus.currentSearchText,
                 searchTextChanged: searchStatus.searchChanged,
@@ -1171,11 +1048,10 @@ function DispatchCardStatusListBindDialog(callback) {
         // Get search field and search text values
         const searchField = $('#searchField').val()?.trim();
         const searchText = $('#searchText').val()?.trim();
-        const searchCategory = $('#ddlCategory').val();
 
         // If no search field is selected or no search text entered, prevent the search
-        if (!searchField || !searchText || !searchCategory) {
-            toastr.error('Please select a search category, search field and enter a value.');
+        if (!searchField || !searchText) {
+            toastr.error('Please select a search field and enter a value.');
             return; // Exit the function and prevent table reload
         }
 
@@ -1185,7 +1061,7 @@ function DispatchCardStatusListBindDialog(callback) {
     $('#btnClear').on('click', function () {
         $('#searchText').val('');
         $('#searchField').val([]).trigger('change');
-        $('#ddlCategory').val([]).trigger('change');
+
         table2.ajax.reload();
     });
     $(document).on('change', '.chkRequestId', function () {
@@ -1257,6 +1133,475 @@ function DispatchCardStatusListBindDialog(callback) {
         table2.ajax.reload();
     });
 }
+
+function getColumnsForListBindDialog(choice) {
+    let columns = [];
+
+    switch (choice) {
+        case 1:
+            columns = [
+                {
+                    title: `<div class="custom-control custom-checkbox small">
+                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                    <label class="custom-control-label" for="chkAll"></label>
+                    </div>`,
+                    data: null,
+                    name: "Id",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        if ($("#chkAll").prop('checked')) {
+                            return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                        } else {
+
+                            return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                        }
+
+                    }
+                },
+                {
+                    title: 'S No',
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Card Serial No",
+                    data: "CardSerialNo",
+                    name: "CardSerialNo"
+                },
+                {
+                    title: "Chip No",
+                    data: "ChipNo",
+                    name: "ChipNo"
+                },
+                {
+                    title: "Category",
+                    data: "ApplyForId",
+                    name: "Category",
+                    render: function (data, type, row) {
+                        return (row.ApplyFor);
+                    }
+                },
+                {
+                    title: "Appl Id",
+                    data: 'RequestId',
+                    name: 'RequestId',
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
+                    title: "Unit",
+                    data: "UnitAbbreviation",
+                    name: "UnitAbbreviation",
+                    orderable: false
+                },
+                {
+                    title: "SUS No",
+                    data: "SUSNo",
+                    name: "SUSNo"
+                },
+                {
+                    title: "ORO",
+                    data: "RecordOfficeName",
+                    name: "RecordOfficeName",
+                    render: function (data, type, row) {
+                        return (row.ApplyForId == 1 ? data : "");
+                    }
+                },
+                {
+                    title: "Regt",
+                    data: "RegimentalName",
+                    name: "RegimentalName",
+                    render: function (data, type, row) {
+                        return (row.ApplyForId == 2 ? data : "");
+                    }
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
+                    render: function (data, type, row) {
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
+                    }
+                },
+                {
+                    title: "Rank & Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
+                    }
+                },
+            ];
+            break;
+        case 2:
+            columns = [
+                {
+                    title: `<div class="custom-control custom-checkbox small">
+                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                    <label class="custom-control-label" for="chkAll"></label>
+                    </div>`,
+                    data: null,
+                    name: "Id",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        if ($("#chkAll").prop('checked')) {
+                            return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                        } else {
+
+                            return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                        }
+
+                    }
+                },
+                {
+                    title: 'S No',
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Card Serial No",
+                    data: "CardSerialNo",
+                    name: "CardSerialNo"
+                },
+                {
+                    title: "Chip No",
+                    data: "ChipNo",
+                    name: "ChipNo"
+                },
+                {
+                    title: "Category",
+                    data: "ApplyForId",
+                    name: "Category",
+                    render: function (data, type, row) {
+                        return (row.ApplyFor);
+                    }
+                },
+                {
+                    title: "Appl Id",
+                    data: 'RequestId',
+                    name: 'RequestId',
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
+                    title: "Unit",
+                    data: "UnitAbbreviation",
+                    name: "UnitAbbreviation",
+                    orderable: false
+                },
+                {
+                    title: "SUS No",
+                    data: "SUSNo",
+                    name: "SUSNo"
+                },
+                {
+                    title: "ORO",
+                    data: "RecordOfficeName",
+                    name: "RecordOfficeName",
+                    render: function (data, type, row) {
+                        return (row.ApplyForId == 1 ? data : "");
+                    }
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
+                    render: function (data, type, row) {
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
+                    }
+                },
+                {
+                    title: "Rank & Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
+                    }
+                },
+            ];
+            break;
+        case 3:
+            columns = [
+                {
+                    title: `<div class="custom-control custom-checkbox small">
+                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                    <label class="custom-control-label" for="chkAll"></label>
+                    </div>`,
+                    data: null,
+                    name: "Id",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        if ($("#chkAll").prop('checked')) {
+                            return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                        } else {
+
+                            return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                        }
+
+                    }
+                },
+                {
+                    title: 'S No',
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Card Serial No",
+                    data: "CardSerialNo",
+                    name: "CardSerialNo"
+                },
+                {
+                    title: "Chip No",
+                    data: "ChipNo",
+                    name: "ChipNo"
+                },
+                {
+                    title: "Category",
+                    data: "ApplyForId",
+                    name: "Category",
+                    render: function (data, type, row) {
+                        return (row.ApplyFor);
+                    }
+                },
+                {
+                    title: "Appl Id",
+                    data: 'RequestId',
+                    name: 'RequestId',
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
+                    title: "Unit",
+                    data: "UnitAbbreviation",
+                    name: "UnitAbbreviation",
+                    orderable: false
+                },
+                {
+                    title: "SUS No",
+                    data: "SUSNo",
+                    name: "SUSNo"
+                },
+                {
+                    title: "Regt",
+                    data: "RegimentalName",
+                    name: "RegimentalName",
+                    render: function (data, type, row) {
+                        return (row.ApplyForId == 2 ? data : "");
+                    }
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
+                    render: function (data, type, row) {
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
+                    }
+                },
+                {
+                    title: "Rank & Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
+                    }
+                },
+            ];
+            break;
+        default:
+            columns = [
+                {
+                    title: `<div class="custom-control custom-checkbox small">
+                    <input type="checkbox" class="custom-control-input" id="chkAll">
+                    <label class="custom-control-label" for="chkAll"></label>
+                    </div>`,
+                    data: null,
+                    name: "Id",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        if ($("#chkAll").prop('checked')) {
+                            return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                        } else {
+
+                            return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                        }
+
+                    }
+                },
+                {
+                    title: 'S No',
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Card Serial No",
+                    data: "CardSerialNo",
+                    name: "CardSerialNo"
+                },
+                {
+                    title: "Chip No",
+                    data: "ChipNo",
+                    name: "ChipNo"
+                },
+                {
+                    title: "Category",
+                    data: "ApplyForId",
+                    name: "Category",
+                    render: function (data, type, row) {
+                        return (row.ApplyFor);
+                    }
+                },
+                {
+                    title: "Appl Id",
+                    data: 'RequestId',
+                    name: 'RequestId',
+                },
+                {
+                    title: "Arm / Service",
+                    data: "ArmedAbbreviation",
+                    name: "ArmedAbbreviation"
+                },
+                {
+                    title: "Unit",
+                    data: "UnitAbbreviation",
+                    name: "UnitAbbreviation",
+                    orderable: false
+                },
+                {
+                    title: "SUS No",
+                    data: "SUSNo",
+                    name: "SUSNo"
+                },
+                {
+                    title: "ORO",
+                    data: "RecordOfficeName",
+                    name: "RecordOfficeName",
+                    render: function (data, type, row) {
+                        return (row.ApplyForId == 1 ? data : "");
+                    }
+                },
+                {
+                    title: "Regt",
+                    data: "RegimentalName",
+                    name: "RegimentalName",
+                    render: function (data, type, row) {
+                        return (row.ApplyForId == 2 ? data : "");
+                    }
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
+                    render: function (data, type, row) {
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
+                    }
+                },
+                {
+                    title: "Rank & Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
+                    }
+                },
+            ];
+
+    }
+
+    return columns;
+}
 function updateUICheckboxes() {
     let allCheckedOnPage = true;
 
@@ -1306,25 +1651,23 @@ function getAllIds() {
     return all;
 }
 function getSearchStatus() {
+
     const currentSearchText = $('#searchText').val().trim();
     const currentSearchField = $('#searchField').val();
-    const currentSearchCategory = $('#ddlCategory').val();
 
     // Ensure searchChanged is only true when the actual search field or text changes.
     // If currentSearchField is null (i.e., no field selected), treat it as no change.
     searchChanged = (
-        (currentSearchText !== previousSearchText || currentSearchField !== previousSearchField || currentSearchCategory !== previousSearchCategory) &&
-        (currentSearchField !== null && currentSearchCategory !== null )
+        (currentSearchText !== previousSearchText || currentSearchField !== previousSearchField) &&
+        (currentSearchField !== null)
     );
 
     // Update previous values after comparison
     previousSearchText = currentSearchText;
     previousSearchField = currentSearchField;
-    previousSearchCategory = currentSearchCategory;
 
     return {
         searchChanged: searchChanged,
-        currentSearchCategory,
         currentSearchText,
         currentSearchField
     };

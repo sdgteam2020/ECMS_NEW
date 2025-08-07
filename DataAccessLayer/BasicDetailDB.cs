@@ -129,9 +129,9 @@ namespace DataAccessLayer
                 whereClause = @"WHERE
                             (stepc.StepId=6)";
             }
-            else if (ClaimValue == 2 || ClaimValue == 3)
+            else if (ClaimValue == 2)
             {
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
                 fromJoinClause = @"from TrnStepCounter stepc
                                     INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                                     INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
@@ -140,8 +140,23 @@ namespace DataAccessLayer
                                     INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                                     INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                                     INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
-                                    LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
-                                    LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
+                                    INNER JOIN OROMapping oro on req.RecordOfficeId = oro.RecordOfficeId
+                                    INNER JOIN MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId";
+                whereClause = @"WHERE
+                                (stepc.StepId=12)";
+            }
+            else if (ClaimValue == 3)
+            {
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
+                fromJoinClause = @"from TrnStepCounter stepc
+                                    INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
+                                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                                    INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                                    INNER JOIN MRegimental regi on regi.RegId=basi.RegimentalId";
                 whereClause = @"WHERE
                                 (stepc.StepId=12)";
             }
@@ -172,17 +187,17 @@ namespace DataAccessLayer
                     //case "requestid":
                     //    searchFilter = @"AND req.RequestId=@SearchText";
                     //    break;
-                    //case "serviceno":
-                    //    searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
-                    //    break;
+                    case "serviceno":
+                        searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
+                        break;
                     case "susno":
-                        searchFilter = @"AND mappl.ApplyForId =@Category AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
+                        searchFilter = @"AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
                         break;
                     case "regimentalname":
-                        searchFilter = @"AND mappl.ApplyForId =@Category AND regi.RegId=@SearchText";
+                        searchFilter = @"AND mappl.ApplyForId = 2 AND regi.RegId=@SearchText";
                         break;
                     case "recordofficename":
-                        searchFilter = @"AND mappl.ApplyForId =@Category AND mrec.RecordOfficeId=@SearchText";
+                        searchFilter = @"AND mappl.ApplyForId = 1 AND mrec.RecordOfficeId=@SearchText";
                         break;
                     //case "chipno":
                     //    searchFilter = @"AND req.ChipNo LIKE '%' + @SearchText + '%'";
@@ -229,7 +244,6 @@ namespace DataAccessLayer
                         var parameters = new DynamicParameters();
                         parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                         parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                        parameters.Add("@Category", dTO.searchCategory, DbType.Byte, ParameterDirection.Input);
                         parameters.Add("@SearchText", dTO.SearchText, DbType.String, ParameterDirection.Input);
                         parameters.Add("@FinalStepId", finalValue, DbType.Byte, ParameterDirection.Input);
                         //parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);

@@ -103,10 +103,6 @@ namespace DataTransferObject.Requests
     }
     public class DTODataTablesRequestForCardStatusList:DTODataTablesRequest
     {
-        //public int[]? selectedIds { get; set; }
-        
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
-        public byte? searchCategory { get; set; }
         public string? SearchField { get; set; }
 
         [RegularExpression("^[a-zA-Z0-9_/ ]*$", ErrorMessage = "Only Alphabets,Numbers,underscores and slash are allowed.")]
