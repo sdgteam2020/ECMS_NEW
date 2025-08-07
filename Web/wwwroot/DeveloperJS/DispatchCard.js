@@ -51,7 +51,7 @@ $(function () {
             $("#DataTableDialog").modal("show");
 
             // Then initialize the table
-            DispatchCardStatusListBindDialog(function () {
+            DispatchCardStatusListBindDialog(cvalue,function () {
                 // Callback to show modal after DataTable is ready
         });
     });
@@ -903,7 +903,7 @@ function getColumnsByChoice(choice) {
 
     return columns;
 }
-function DispatchCardStatusListBindDialog(callback) {
+function DispatchCardStatusListBindDialog(cvalue,callback) {
     var table2;
     selectedIds = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
@@ -1138,236 +1138,7 @@ function getColumnsForListBindDialog(choice) {
     let columns = [];
 
     switch (choice) {
-        case 1:
-            columns = [
-                {
-                    title: `<div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll">
-                    <label class="custom-control-label" for="chkAll"></label>
-                    </div>`,
-                    data: null,
-                    name: "Id",
-                    orderable: false, // Disable sorting for this column
-                    render: function (data, type, row, meta) {
-                        if ($("#chkAll").prop('checked')) {
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        } else {
-
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        }
-
-                    }
-                },
-                {
-                    title: 'S No',
-                    data: null,
-                    name: "SerialNumber",
-                    orderable: false, // Disable sorting for this column
-                    render: function (data, type, row, meta) {
-                        // Calculate serial number based on row index
-
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {
-                    title: "Card Serial No",
-                    data: "CardSerialNo",
-                    name: "CardSerialNo"
-                },
-                {
-                    title: "Chip No",
-                    data: "ChipNo",
-                    name: "ChipNo"
-                },
-                {
-                    title: "Category",
-                    data: "ApplyForId",
-                    name: "Category",
-                    render: function (data, type, row) {
-                        return (row.ApplyFor);
-                    }
-                },
-                {
-                    title: "Appl Id",
-                    data: 'RequestId',
-                    name: 'RequestId',
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
-                },
-                {
-                    title: "Unit",
-                    data: "UnitAbbreviation",
-                    name: "UnitAbbreviation",
-                    orderable: false
-                },
-                {
-                    title: "SUS No",
-                    data: "SUSNo",
-                    name: "SUSNo"
-                },
-                {
-                    title: "ORO",
-                    data: "RecordOfficeName",
-                    name: "RecordOfficeName",
-                    render: function (data, type, row) {
-                        return (row.ApplyForId == 1 ? data : "");
-                    }
-                },
-                {
-                    title: "Regt",
-                    data: "RegimentalName",
-                    name: "RegimentalName",
-                    render: function (data, type, row) {
-                        return (row.ApplyForId == 2 ? data : "");
-                    }
-                },
-                {
-                    title: "Army No",
-                    data: "ServiceNo",
-                    name: "ServiceNo",
-                    render: function (data, type, row) {
-                        // Check if first two characters are alphabets
-                        if (/^[A-Za-z]{2}/.test(data)) {
-                            // Insert space after first two characters
-                            return data.slice(0, 2) + ' ' + data.slice(2);
-                        } else {
-                            // No space needed
-                            return data;
-                        }
-                    }
-                },
-                {
-                    title: "Rank & Name",
-                    data: null,
-                    name: null,
-                    orderable: false,
-                    render: function (data, type, row) {
-                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
-                    }
-                },
-            ];
-            break;
         case 2:
-            columns = [
-                {
-                    title: `<div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll">
-                    <label class="custom-control-label" for="chkAll"></label>
-                    </div>`,
-                    data: null,
-                    name: "Id",
-                    orderable: false, // Disable sorting for this column
-                    render: function (data, type, row, meta) {
-                        if ($("#chkAll").prop('checked')) {
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        } else {
-
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        }
-
-                    }
-                },
-                {
-                    title: 'S No',
-                    data: null,
-                    name: "SerialNumber",
-                    orderable: false, // Disable sorting for this column
-                    render: function (data, type, row, meta) {
-                        // Calculate serial number based on row index
-
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {
-                    title: "Card Serial No",
-                    data: "CardSerialNo",
-                    name: "CardSerialNo"
-                },
-                {
-                    title: "Chip No",
-                    data: "ChipNo",
-                    name: "ChipNo"
-                },
-                {
-                    title: "Category",
-                    data: "ApplyForId",
-                    name: "Category",
-                    render: function (data, type, row) {
-                        return (row.ApplyFor);
-                    }
-                },
-                {
-                    title: "Appl Id",
-                    data: 'RequestId',
-                    name: 'RequestId',
-                },
-                {
-                    title: "Arm / Service",
-                    data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
-                },
-                {
-                    title: "Unit",
-                    data: "UnitAbbreviation",
-                    name: "UnitAbbreviation",
-                    orderable: false
-                },
-                {
-                    title: "SUS No",
-                    data: "SUSNo",
-                    name: "SUSNo"
-                },
-                {
-                    title: "ORO",
-                    data: "RecordOfficeName",
-                    name: "RecordOfficeName",
-                    render: function (data, type, row) {
-                        return (row.ApplyForId == 1 ? data : "");
-                    }
-                },
-                {
-                    title: "Army No",
-                    data: "ServiceNo",
-                    name: "ServiceNo",
-                    render: function (data, type, row) {
-                        // Check if first two characters are alphabets
-                        if (/^[A-Za-z]{2}/.test(data)) {
-                            // Insert space after first two characters
-                            return data.slice(0, 2) + ' ' + data.slice(2);
-                        } else {
-                            // No space needed
-                            return data;
-                        }
-                    }
-                },
-                {
-                    title: "Rank & Name",
-                    data: null,
-                    name: null,
-                    orderable: false,
-                    render: function (data, type, row) {
-                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
-                    }
-                },
-            ];
-            break;
         case 3:
             columns = [
                 {
@@ -1443,14 +1214,6 @@ function getColumnsForListBindDialog(choice) {
                     title: "SUS No",
                     data: "SUSNo",
                     name: "SUSNo"
-                },
-                {
-                    title: "Regt",
-                    data: "RegimentalName",
-                    name: "RegimentalName",
-                    render: function (data, type, row) {
-                        return (row.ApplyForId == 2 ? data : "");
-                    }
                 },
                 {
                     title: "Army No",
