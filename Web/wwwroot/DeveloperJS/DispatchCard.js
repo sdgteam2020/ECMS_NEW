@@ -11,6 +11,54 @@ $(function () {
     BindData(cvalue, function () {
     });
 
+    $("#searchText").autocomplete({
+        source: function (request, response) {
+            if (cvalue === 2 || cvalue === 3) {
+                if (request.term.length > 2) {
+                    $("#spnUnitMapId").html('');
+                    var param = { "UnitName": request.term };
+                    $("#spnUnitMapId").html(0);
+
+                    // Use fetch instead of jQuery AJAX
+                    fetch('/Master/GetALLByUnitName', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams(param) // Send data in URL encoded format
+                    })
+                        .then(response => response.json())  // Parse the JSON response
+                        .then(data => {
+                            if (data.length != 0) {
+                                response($.map(data, function (item) {
+                                    $("#loading").addClass("d-none");
+                                    return {
+                                        label: `${item.Sus_no}${item.Suffix} ${item.UnitName}`,
+                                        value: `${item.UnitMapId}`
+                                    };
+                                }));
+                            }
+                            else {
+                                $("#searchText").val("");
+                                $("#spnUnitMapId").html("");
+                                alert("Unit not found.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching data:", error);
+                            alert("Error fetching data: " + error);
+                        });
+                }
+            } 
+        },
+        select: function (e, i) {
+            e.preventDefault();
+            $("#searchText").val(i.item.label);
+            $("#spnUnitMapId").html(i.item.value);
+        },
+        appendTo: '#suggesstion-box'
+    });
+
     if ($('#btnAdd').length) {
         $("#btnAdd").on("click", function () {
             location.href = '/BasicDetail/DispatchOut';
@@ -38,7 +86,8 @@ $(function () {
         }
         else {
             let searchField = $("#searchField").val();
-            let searchText = $("#searchText").val();
+            let searchText = (cvalue == 2 || cvalue == 3) ? $("#spnUnitMapId").html() : $('#searchText').val().trim();
+
             if (searchField == null) {
                 toastr.error('Please Select Field.');
             }
@@ -934,7 +983,7 @@ function DispatchCardStatusListBindDialog(cvalue,callback) {
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
 
-            let searchStatus = getSearchStatus();
+            let searchStatus = getSearchStatus(cvalue);
 
             // Clear old selectedIds on search change, but keep globalAllChecked state
             if (searchStatus.searchChanged) {
@@ -1421,9 +1470,8 @@ function getAllIds() {
     });
     return all;
 }
-function getSearchStatus() {
-
-    const currentSearchText = $('#searchText').val().trim();
+function getSearchStatus(cvalue) {
+    const currentSearchText = (cvalue == 2 || cvalue == 3) ? $("#spnUnitMapId").html() : $('#searchText').val().trim();
     const currentSearchField = $('#searchField').val();
 
     // Ensure searchChanged is only true when the actual search field or text changes.

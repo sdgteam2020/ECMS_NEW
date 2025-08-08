@@ -191,7 +191,7 @@ namespace DataAccessLayer
                         searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
                         break;
                     case "susno":
-                        searchFilter = @"AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
+                        searchFilter = @"AND unit.UnitMapId=@SearchText";
                         break;
                     case "regimentalname":
                         searchFilter = @"AND mappl.ApplyForId = 2 AND regi.RegId=@SearchText";
@@ -244,7 +244,15 @@ namespace DataAccessLayer
                         var parameters = new DynamicParameters();
                         parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                         parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                        parameters.Add("@SearchText", dTO.SearchText, DbType.String, ParameterDirection.Input);
+                        if (ClaimValue == 0)
+                        {
+                            parameters.Add("@SearchText", dTO.SearchText, DbType.String, ParameterDirection.Input);
+                        }
+                        else
+                        {
+                            parameters.Add("@SearchText", dTO.SearchText != string.Empty ? Convert.ToInt32(dTO.SearchText) : 0 , DbType.Int32, ParameterDirection.Input);
+                        }
+
                         parameters.Add("@FinalStepId", finalValue, DbType.Byte, ParameterDirection.Input);
                         //parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
 
@@ -3477,7 +3485,7 @@ namespace DataAccessLayer
                 parameters.Add("@ReceiptDate", dTODispatch.ReceiptDate, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@DispatchDate", dTODispatch.DispatchDate, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@RefOfDispatch", dTODispatch.RefOfDispatch, DbType.String, ParameterDirection.Input, 50);
-                parameters.Add("@LotNo", dTODispatch.LotNo, DbType.String, ParameterDirection.Input,50);
+                parameters.Add("@LotNo", string.Empty, DbType.String, ParameterDirection.Input,50);
                 parameters.Add("@NameOfCourierIncharge", dTODispatch.NameOfCourierIncharge, DbType.String, ParameterDirection.Input, 50);
                 parameters.Add("@UploadFilePath", dTODispatch.UploadFilePath, DbType.String, ParameterDirection.Input, 100);
                 parameters.Add("@FromRemark", dTODispatch.FromRemark, DbType.String, ParameterDirection.Input, 100);

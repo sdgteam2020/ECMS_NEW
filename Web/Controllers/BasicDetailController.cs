@@ -4249,7 +4249,6 @@ namespace Web.Controllers
                                 DispatchDate = dTO.DispatchDate,
                                 DispatchModeId = dTO.DispatchModeId,
                                 RefOfDispatch = dTO.RefOfDispatch,
-                                LotNo = dTO.LotNo,
                                 NameOfCourierIncharge = dTO.NameOfCourierIncharge,
                                 UploadFilePath = dTO.UploadFilePath,
                                 FromRemark = dTO.FromRemark,
