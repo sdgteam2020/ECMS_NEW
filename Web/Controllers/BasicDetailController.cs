@@ -4058,32 +4058,46 @@ namespace Web.Controllers
 
         public async Task<ActionResult> DispatchOut()
         {
-            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+            DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
+            if (dTOTempSession1 != null)
+            {
+                ViewBag.SearchField = dTOTempSession1.SearchField;
+                ViewBag.SearchText = dTOTempSession1.SearchText;
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
-            var UserClaims = await userManager.GetClaimsAsync(user);
-            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
-            {
-                ViewBag.ClaimValue = 1;
-                return View();
-            }
-            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
-            {
-                ViewBag.ClaimValue = 2;
-                return View();
-            }
-            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
-            {
-                ViewBag.ClaimValue = 3;
-                return View();
+                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
+                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    ViewBag.ClaimValue = 1;
+                    return View();
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                {
+                    ViewBag.ClaimValue = 2;
+                    return View();
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                {
+                    ViewBag.ClaimValue = 3;
+                    return View();
+                }
+                else
+                {
+                    TempData["error"] = "Invalid User.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
             }
             else
             {
-                TempData["error"] = "Invalid User.";
+                TempData["error"] = "Invalid Session.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
+
         }
 
         [HttpPost]
@@ -4091,198 +4105,208 @@ namespace Web.Controllers
         //[Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<ActionResult> DispatchOut([FromForm] DTODispatchOutRequest dTO)
         {
-            DtoSession? dtoSession = new DtoSession();
-            DTOGenericResponse<DTOCardDispatchCheckResponse> response = new DTOGenericResponse<DTOCardDispatchCheckResponse>();
-            DTOCardDispatchCheckResponse ret = new DTOCardDispatchCheckResponse();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
+            if (dTOTempSession1 != null)
             {
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-            }
-
-            if (dtoSession != null)
-            {
-                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
-                byte ClaimValue = 0;
-
-                dTO.OutDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                dTO.FromAspNetUsersId = AspNetUsersId;
-                dTO.FromUserId = dtoSession.UserId;
-                dTO.FromUnitId = dtoSession.UnitId;
-                dTO.IsActive = true;
-                dTO.IsComplete = false;
-                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                dTO.Updatedby = AspNetUsersId;
-
-                if (ModelState.IsValid)
+                DtoSession? dtoSession = new DtoSession();
+                DTOGenericResponse<DTOCardDispatchCheckResponse> response = new DTOGenericResponse<DTOCardDispatchCheckResponse>();
+                DTOCardDispatchCheckResponse ret = new DTOCardDispatchCheckResponse();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
-                    // UserManager service GetClaimsAsync method gets all the current claims of the user
-                    var UserClaims = await userManager.GetClaimsAsync(user);
-                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                }
+
+                if (dtoSession != null)
+                {
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                    byte ClaimValue = 0;
+
+                    dTO.OutDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                    dTO.FromAspNetUsersId = AspNetUsersId;
+                    dTO.FromUserId = dtoSession.UserId;
+                    dTO.FromUnitId = dtoSession.UnitId;
+                    dTO.IsActive = true;
+                    dTO.IsComplete = false;
+                    dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                    dTO.Updatedby = AspNetUsersId;
+
+                    if (ModelState.IsValid)
                     {
-                        dTO.Step = 1;
-                        ClaimValue = 1;
-                    }
-                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
-                    {
-                        dTO.Step = 2;
-                        ClaimValue = 2;
-                    }
-                    else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
-                    {
-                        dTO.Step = 2;
-                        ClaimValue = 3;
+                        // UserManager service GetClaimsAsync method gets all the current claims of the user
+                        var UserClaims = await userManager.GetClaimsAsync(user);
+                        if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                        {
+                            dTO.Step = 1;
+                            ClaimValue = 1;
+                        }
+                        else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                        {
+                            dTO.Step = 2;
+                            ClaimValue = 2;
+                        }
+                        else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                        {
+                            dTO.Step = 2;
+                            ClaimValue = 3;
+                        }
+                        else
+                        {
+                            response.Result = false;
+                            response.Message = "Unauthorized User.";
+                            response.Value = ret;
+                            return Ok(response);
+                        }
+
+
+
+                        string fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
+                        try
+                        {
+                            var records = new List<DTOCardDispatchCheckRequest>();
+                            using (var reader = new StreamReader(dTO.CSVFile.OpenReadStream()))
+                            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
+                            {
+                                csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDispatchCheckRequest>(true, CsvClassMapTypeEnum.DispatchCard));
+                                try
+                                {
+                                    records = csv.GetRecords<DTOCardDispatchCheckRequest>().ToList();
+                                }
+                                catch (Exception ee)
+                                {
+                                    _logger.LogError(1001, ee, "BasicDetail->DispatchOut");
+                                    response.Result = false;
+                                    response.Message = "Internal Server Error!";
+                                    goto Returnstm;
+                                }
+                            }
+
+                            #region Upload File Without Remarks
+                            var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CardDispatchCSVs", "CSVWithoutRemarks");
+                            if (!Directory.Exists(uploadsFolder))
+                            {
+                                Directory.CreateDirectory(uploadsFolder);
+                            }
+                            var filePath = Path.Combine(uploadsFolder, fileName);
+
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await dTO.CSVFile.CopyToAsync(stream);
+                            }
+                            #endregion Upload User File
+
+                            var validateResult = await basicDetailBL.ValidateCardDispatchData(records, ClaimValue, dTO);
+
+                            ret.TotalRecords = validateResult.Count();
+                            ret.ValidRecords = validateResult.Where(x => x.IsValid).Count();
+                            ret.SheetInValidRecords = validateResult.Where(x => x.Status == "SheetInValid").Count();
+                            ret.DbInValidRecords = validateResult.Where(x => x.Status == "DbInvalid").Count();
+
+                            response.Result = true;
+                            response.Value = ret;
+
+                            #region Upload File With Remarks
+                            uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CardDispatchCSVs", "CSVWithRemarks");
+                            if (!Directory.Exists(uploadsFolder))
+                            {
+                                Directory.CreateDirectory(uploadsFolder);
+                            }
+                            filePath = Path.Combine(uploadsFolder, fileName);
+
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await dTO.CSVFile.CopyToAsync(stream);
+                            }
+                            using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
+                            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                            {
+                                csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDispatchCheckRequest>(false));
+                                try
+                                {
+                                    csv.WriteRecords(validateResult);
+                                }
+                                catch (Exception ee)
+                                {
+                                    _logger.LogError(1001, ee, "BasicDetail->DispatchOut");
+                                    response.Result = false;
+                                    response.Message = "Internal Server Error!";
+                                    response.Value = ret;
+                                    goto Returnstm;
+                                }
+                            }
+                            #endregion Upload User File
+                            dTO.UploadFilePath = fileName;
+                            DTODispatchOutRequestWithoutIFormFile dTODispatch = new DTODispatchOutRequestWithoutIFormFile
+                            {
+                                DispatchCardId = dTO.DispatchCardId,
+                                Step = dTO.Step,
+                                ApplyForId = dTO.ApplyForId,
+                                RegId = dTO.RegId,
+                                RecordOfficeId = dTO.RecordOfficeId,
+                                OutDate = dTO.OutDate,
+                                ReceiptDate = dTO.ReceiptDate,
+                                DispatchDate = dTO.DispatchDate,
+                                DispatchModeId = dTO.DispatchModeId,
+                                RefOfDispatch = dTO.RefOfDispatch,
+                                LotNo = dTO.LotNo,
+                                NameOfCourierIncharge = dTO.NameOfCourierIncharge,
+                                UploadFilePath = dTO.UploadFilePath,
+                                FromRemark = dTO.FromRemark,
+                                ToRemark = dTO.ToRemark,
+                                FromUnitId = dTO.FromUnitId,
+                                ToUnitId = dTO.ToUnitId,
+                                ToUserId = dTO.ToUserId,
+                                FromUserId = dTO.FromUserId,
+                                FromAspNetUsersId = dTO.FromAspNetUsersId,
+                                ToAspNetUsersId = dTO.ToAspNetUsersId,
+                                IsComplete = dTO.IsComplete,
+                                IsActive = dTO.IsActive,
+                                Updatedby = dTO.Updatedby,
+                                UpdatedOn = dTO.UpdatedOn
+                            };
+
+                            SessionHeplers.SetObject(HttpContext.Session, "DestructionCardData", dTODispatch);
+                            SessionHeplers.SetObject(HttpContext.Session, "ValidDispatchCardRecordsUpload", validateResult.Where(v => v.IsValid == true).ToList());
+                            ret.FileName = fileName;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(1001, ex, "BasicDetail->DispatchOut");
+                            response.Message = "Internal Server Error!";
+                        }
+                    Returnstm:
+                        return Json(response);
+
                     }
                     else
                     {
+                        //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                        var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                        if (errors.Any())
+                        {
+                            response.Message = string.Join("; ", errors); // Concatenate all error messages
+                        }
                         response.Result = false;
-                        response.Message = "Unauthorized User.";
-                        response.Value = ret;
-                        return Ok(response);
+                        return Json(response);
                     }
-
-
-
-                    string fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
-                    try
-                    {
-                        var records = new List<DTOCardDispatchCheckRequest>();
-                        using (var reader = new StreamReader(dTO.CSVFile.OpenReadStream()))
-                        using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
-                        {
-                            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDispatchCheckRequest>(true, CsvClassMapTypeEnum.DispatchCard));
-                            try
-                            {
-                                records = csv.GetRecords<DTOCardDispatchCheckRequest>().ToList();
-                            }
-                            catch (Exception ee)
-                            {
-                                _logger.LogError(1001, ee, "BasicDetail->DispatchOut");
-                                response.Result = false;
-                                response.Message = "Internal Server Error!";
-                                goto Returnstm;
-                            }
-                        }
-
-                        #region Upload File Without Remarks
-                        var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CardDispatchCSVs", "CSVWithoutRemarks");
-                        if (!Directory.Exists(uploadsFolder))
-                        {
-                            Directory.CreateDirectory(uploadsFolder);
-                        }
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await dTO.CSVFile.CopyToAsync(stream);
-                        }
-                        #endregion Upload User File
-
-                        var validateResult = await basicDetailBL.ValidateCardDispatchData(records, ClaimValue, dTO);
-
-                        ret.TotalRecords = validateResult.Count();
-                        ret.ValidRecords = validateResult.Where(x => x.IsValid).Count();
-                        ret.SheetInValidRecords = validateResult.Where(x => x.Status == "SheetInValid").Count();
-                        ret.DbInValidRecords = validateResult.Where(x => x.Status == "DbInvalid").Count();
-
-                        response.Result = true;
-                        response.Value = ret;
-
-                        #region Upload File With Remarks
-                        uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CardDispatchCSVs", "CSVWithRemarks");
-                        if (!Directory.Exists(uploadsFolder))
-                        {
-                            Directory.CreateDirectory(uploadsFolder);
-                        }
-                        filePath = Path.Combine(uploadsFolder, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await dTO.CSVFile.CopyToAsync(stream);
-                        }
-                        using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
-                        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                        {
-                            csv.Context.RegisterClassMap(new CsvClassMap<DTOCardDispatchCheckRequest>(false));
-                            try
-                            {
-                                csv.WriteRecords(validateResult);
-                            }
-                            catch (Exception ee)
-                            {
-                                _logger.LogError(1001, ee, "BasicDetail->DispatchOut");
-                                response.Result = false;
-                                response.Message = "Internal Server Error!";
-                                response.Value = ret;
-                                goto Returnstm;
-                            }
-                        }
-                        #endregion Upload User File
-                        dTO.UploadFilePath = fileName;
-                        DTODispatchOutRequestWithoutIFormFile dTODispatch = new DTODispatchOutRequestWithoutIFormFile
-                        {
-                            DispatchCardId = dTO.DispatchCardId,
-                            Step = dTO.Step,
-                            ApplyForId = dTO.ApplyForId,
-                            RegId = dTO.RegId,
-                            RecordOfficeId = dTO.RecordOfficeId,
-                            OutDate = dTO.OutDate,
-                            ReceiptDate = dTO.ReceiptDate,
-                            DispatchDate = dTO.DispatchDate,
-                            DispatchModeId = dTO.DispatchModeId,
-                            RefOfDispatch = dTO.RefOfDispatch,
-                            LotNo = dTO.LotNo,
-                            NameOfCourierIncharge = dTO.NameOfCourierIncharge,
-                            UploadFilePath = dTO.UploadFilePath,
-                            FromRemark = dTO.FromRemark,
-                            ToRemark = dTO.ToRemark,
-                            FromUnitId = dTO.FromUnitId,
-                            ToUnitId = dTO.ToUnitId,
-                            ToUserId = dTO.ToUserId,
-                            FromUserId = dTO.FromUserId,
-                            FromAspNetUsersId = dTO.FromAspNetUsersId,
-                            ToAspNetUsersId = dTO.ToAspNetUsersId,
-                            IsComplete = dTO.IsComplete,
-                            IsActive = dTO.IsActive,
-                            Updatedby = dTO.Updatedby,
-                            UpdatedOn = dTO.UpdatedOn
-                        };
-
-                        SessionHeplers.SetObject(HttpContext.Session, "DestructionCardData", dTODispatch);
-                        SessionHeplers.SetObject(HttpContext.Session, "ValidDispatchCardRecordsUpload", validateResult.Where(v => v.IsValid == true).ToList());
-                        ret.FileName = fileName;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(1001, ex, "BasicDetail->DispatchOut");
-                        response.Message = "Internal Server Error!";
-                    }
-                Returnstm:
-                    return Json(response);
-
                 }
                 else
                 {
-                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
-                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                    .SelectMany(x => x.Value!.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-                    if (errors.Any())
-                    {
-                        response.Message = string.Join("; ", errors); // Concatenate all error messages
-                    }
                     response.Result = false;
-                    return Json(response);
+                    response.Message = "An error occurred while fetching data.";
+                    response.Value = ret;
+                    return Ok(response);
                 }
             }
             else
             {
-                response.Result = false;
-                response.Message = "An error occurred while fetching data.";
-                response.Value = ret;
-                return Ok(response);
+                TempData["error"] = "Invalid Session / Session Timeout.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
         }
         [HttpGet]
@@ -4604,6 +4628,41 @@ namespace Web.Controllers
                 response.Value =string.Empty;
             }
             return Json(response);  
+        }
+        [HttpPost]
+        public IActionResult BeforeProceedToDispatchCheck([FromBody] DTOBeforeProceedToDispatchCheckRequest dTO)
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            try
+            {
+                if(ModelState.IsValid)
+                {
+                    DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
+                    if (dTOTempSession1 != null)
+                    {
+                        HttpContext.Session.Remove("DispatchLot");
+                    }
+                    SessionHeplers.SetObject(HttpContext.Session, "DispatchLot", dTO);
+                    response.Result = true;
+                    response.Message = "Ok";
+                    response.Value = string.Empty;
+                }
+                else
+                {
+                    response.Result = false;
+                    response.Message = "No request IDs provided.";
+                    response.Value = string.Empty;
+                    return Json(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetail->BeforeProceedToDispatchCheck");
+                response.Result = false;
+                response.Message = "Internal Server Error!";
+                response.Value = string.Empty;
+            }
+            return Json(response);
         }
         [HttpPost]
         public async Task<IActionResult> ExportCsvForDispatch(DTOExportDispatch Data )

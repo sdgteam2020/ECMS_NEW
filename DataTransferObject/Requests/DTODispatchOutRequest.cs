@@ -44,10 +44,6 @@ namespace DataTransferObject.Requests
         public string RefOfDispatch { get; set; } = string.Empty;
 
         [RegularExpression(@"^[\w \.]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        [MaxLength(50, ErrorMessage = "Maximum length of LotNo is fifty character.")]
-        public string LotNo { get; set; } = string.Empty;
-        
-        [RegularExpression(@"^[\w \.]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(50, ErrorMessage = "Maximum length of Name Of Courier Incharge is fifty character.")]
         public string NameOfCourierIncharge { get; set; } = string.Empty;
 

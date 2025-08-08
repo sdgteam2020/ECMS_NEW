@@ -41,29 +41,51 @@
 
     mMsater(0, "ddlDispatch", DispatchMode, "");
     let ClaimValue = $("#spnClaimValue").html();
-    let Field = $("#spnField").html();
-    let SearchText = $("#spnSearchText").html();
     if (ClaimValue == 1) {
-        let CategoryId = Field === "recordofficename" ? 1 : 2;
-        let RecordRegimentId = SearchText;
+        $("#DispatchOut_Categery").removeClass("d-none");
 
         $("#txtUnitName").attr('readonly', true);
         
-        await GetddlRecordRegiment(CategoryId);
-        await GetDispatchToData(CategoryId, RecordRegimentId);
+        $('#ddlCategery').on('change', async function () {
+            let CategeryId = $(this).val(); // Get the selected value
+            await GetddlRecordRegiment(CategeryId);
+        });
+        $('#ddlRecordRegiment').on('change', async function () {
+            let RecordRegimentId = parseInt($(this).val()); // Get the selected value
+
+            if (RecordRegimentId == 0) {
+                $("#spnUnitMapId").html(0);
+                $("#spnUserId").html(0);
+
+                $("#txtUnitName").val(``);
+                $("#txtArmyNo").val(``);
+                $("#txtRkName").val(``);
+
+                $("#ddlDID").find("option").not(":first").remove();
+                $("#ddlDID").val("0");
+            }
+            if (RecordRegimentId > 0) {
+                await GetDispatchToData($('#ddlCategery').val(), RecordRegimentId);
+            }
+        });
     }
     else if (ClaimValue == 2) {
+        $("#DispatchOut_Categery").addClass("d-none");
 
         if ($('#txtUnitName').attr('readonly') !== undefined) {
             $("#txtUnitName").removeAttr('readonly');
         }
+
+        $("#ddlCategery").val(1); // Set default value for Categery
         await GetddlRecordRegiment(1);
     }
     else if (ClaimValue == 3) {
+        $("#DispatchOut_Categery").addClass("d-none");
 
         if ($('#txtUnitName').attr('readonly') !== undefined) {
             $("#txtUnitName").removeAttr('readonly');
         }
+        $("#ddlCategery").val(2); // Set default value for Categery
         await GetddlRecordRegiment(2);
     }
     $('#ddlDID').on('change', async function () {
@@ -202,6 +224,60 @@
     });
 
 });
+async function validateCsvFileOnChange() {
+    var fileInput = $('#CSVFile')[0];
+    var file = fileInput.files[0];
+
+    if (!file) {
+        toastr.error('Please select a CSV file.');
+        return false;
+    }
+
+    var fileType = file.name.split('.').pop().toLowerCase();
+    if (fileType !== 'csv') {
+        toastr.error('Only CSV files are allowed.');
+        return false;
+    }
+
+    return new Promise((resolve) => {
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            var content = event.target.result;
+            const lines = content.split(/\r\n|\n/).filter(line => line.trim() !== "");
+            if (lines.length === 0) {
+                toastr.error('The selected file is empty.');
+                resolve(false);
+                return;
+            }
+            if (lines.length < 2) {
+                toastr.error('The CSV file must contain at least 1 data row.');
+                resolve(false);
+                return;
+            }
+            var headers = lines[0].split(",");
+            var expectedColumns = ['ChipNo'];
+            var missingColumns = expectedColumns.filter(col => !headers.includes(col));
+            var duplicateColumns = headers.filter((value, index, self) => self.indexOf(value) !== index);
+
+            if (missingColumns.length > 0) {
+                toastr.error('Missing columns: ' + missingColumns.join(', '));
+                resolve(false);
+                return;
+            }
+            if (duplicateColumns.length > 0) {
+                toastr.error('Duplicate columns found: ' + duplicateColumns.join(', '));
+                resolve(false);
+                return;
+            }
+            resolve(true); // Resolve as true if all validations pass
+        };
+        reader.onerror = function () {
+            toastr.error('Error reading the CSV file.');
+            resolve(false); // Resolve false if there is an error reading the file
+        };
+        reader.readAsText(file);
+    });
+}
 async function Save(file) {
     try
     {

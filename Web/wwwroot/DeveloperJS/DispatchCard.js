@@ -37,7 +37,17 @@ $(function () {
             return;
         }
         else {
-            ExportCsvFile(selectedIds);
+            let searchField = $("#searchField").val();
+            let searchText = $("#searchText").val();
+            if (searchField == null) {
+                toastr.error('Please Select Field.');
+            }
+            else if (searchText == null || searchText.trim() === "" ) {
+                toastr.error('Please Valid Search Input.');
+            }
+            else {
+                ProceedToDispatch(selectedIds, searchField, searchText);
+            }
         }
     });
     $('#DataTableDialog').on('hidden.bs.modal', function () {
@@ -1133,7 +1143,6 @@ function DispatchCardStatusListBindDialog(cvalue,callback) {
         table2.ajax.reload();
     });
 }
-
 function getColumnsForListBindDialog(choice) {
     let columns = [];
 
@@ -1405,7 +1414,6 @@ function getSelectedIds() {
     });
     return ids;
 }
-
 function getAllIds() {
     let all = [];
     $('#tbldatadialog tbody input.chkRequestId').each(function () {
@@ -1461,6 +1469,36 @@ function ExportCsvFile(selectedIds) {
             .catch((error) => {
                 console.error("Export failed:", error);
                 reject(new Error("Export failed: " + error.message));
+            });
+    });
+}
+function ProceedToDispatch(selectedIds, searchField, searchText) {
+    return new Promise((resolve, reject) => {
+        const requestData = {
+            RequestIds: selectedIds,  //Passing the JavaScript array directly
+            SearchField: searchField, // Pass the search field
+            SearchText: searchText // Pass the search text
+        };
+        fetch('/BasicDetail/BeforeProceedToDispatchCheck', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Tell the server we are sending JSON
+            },
+            body: JSON.stringify(requestData), // Convert the request     data to JSON
+        })
+            .then(response => response.json())
+            .then((response) => {
+                if (response.Result === true) {
+                    location.href = '/BasicDetail/DispatchOut';
+                    resolve(response);
+                } else {
+                    toastr.error("Export failed: " + response.Message);
+                    reject(new Error(response.Message));
+                }
+            })
+            .catch((error) => {
+                toastr.error("Proceed To Dispatch failed: " + response.Message);
+                reject(new Error("Proceed To Dispatch: " + error.message));
             });
     });
 }
