@@ -1017,41 +1017,50 @@ namespace DataAccessLayer
                 return response;
             }
         }
-        public async Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue,int TDMId,int UnitId)
+        public async Task<DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>> GetddlRecordRegiment(byte ClaimValue,int TDMId,int UnitId,int ToUnitId)
         {
-            List<DTOMasterResponse> ret = new List<DTOMasterResponse>();
-            DTOGenericResponse<List<DTOMasterResponse>> response = new DTOGenericResponse<List<DTOMasterResponse>>();
+            DTOOROWithRegimentAndUnitResponse ret = new DTOOROWithRegimentAndUnitResponse();
+            DTOOROWithRegimentAndUnitResponse ret2 = new DTOOROWithRegimentAndUnitResponse();
+            DTOGenericResponse<DTOOROWithRegimentAndUnitResponse> response = new DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>();
             string query=string.Empty;
-            if (ClaimValue == 1)
+            string query2 = string.Empty;
+            if (ClaimValue == 2) 
             {
-                if(CategeryId == 1)
-                {
-                    query = @"Select oro.RecordOfficeId as Id,mrec.Name as Name from OROMapping oro
-                            inner join MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId";
-                }
-                else if(CategeryId == 2)
-                {
-                    query = @"Select RegId as Id, Name  from MRegimental";
-                }
-            }
-            else if (ClaimValue == 2) 
-            {
-                query = @"Select oro.RecordOfficeId as Id,mrec.Name from OROMapping oro
+                query = @"Select TOP 1 oro.RecordOfficeId as Id,mrec.Name from OROMapping oro
                         inner join MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId WHERE oro.TDMId=@TDMId";
             }
             else if (ClaimValue == 3)
             {
-                query = @"Select RegId as Id, Name  from MRegimental WHERE UnitId=@UnitId";
+                query = @"Select TOP 1 RegId as Id, Name  from MRegimental WHERE UnitId=@UnitId";
             }
+                query2 = @"Select CONCAT(mu.Sus_no,mu.Suffix) as SUSNo,mu.Abbreviation as UnitAbbreviation from MUnit mu
+                            INNER JOIN MapUnit munit on mu.UnitId=munit.UnitId
+                            WHERE munit.UnitMapId=@ToUnitId";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                     ret = (await connection.QueryAsync<DTOMasterResponse>(query,new { TDMId , UnitId })).ToList();
+                     ret = await connection.QueryFirstOrDefaultAsync<DTOOROWithRegimentAndUnitResponse>(query,new { TDMId , UnitId });
+                     ret2 = await connection.QueryFirstOrDefaultAsync<DTOOROWithRegimentAndUnitResponse>(query2, new { ToUnitId });
                 }
-                response.Result = true;  // Operation successful
-                response.Message = "Data retrieved successfully.";
-                response.Value = ret;
+                if (ret == null)
+                {
+                    response.Result = false; 
+                    response.Message = "No records found.";
+                    response.Value = new DTOOROWithRegimentAndUnitResponse();
+                }
+                else
+                {
+                    response.Result = true;  // Operation successful
+                    response.Message = "Data retrieved successfully.";
+                    if (ret2 !=null)
+                    {
+                        ret.SUSNo= ret2.SUSNo;
+                        ret.UnitAbbreviation = ret2.UnitAbbreviation;
+                    }
+                    response.Value = ret;
+                }
+
             }
             catch (Exception ex)
             {

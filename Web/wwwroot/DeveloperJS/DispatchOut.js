@@ -1,4 +1,11 @@
-﻿$(async function () {
+﻿let ClaimValue;
+let Field;
+let SearchText;
+let CategoryId;
+let ToUnitId;
+let ToUserId;
+let RecordRegimentId;
+$(async function () {
     var dtToday = new Date();
 
     var month = dtToday.getMonth() + 1;
@@ -40,27 +47,38 @@
 
 
     mMsater(0, "ddlDispatch", DispatchMode, "");
-    let ClaimValue = $("#spnClaimValue").html();
-    let Field = $("#spnField").html();
-    let SearchText = $("#spnSearchText").html();
+    ClaimValue = parseInt($("#spnClaimValue").html());
+    Field = $("#spnField").html();
+    SearchText = $("#spnSearchText").html();
     if (ClaimValue == 1) {
-        let CategoryId = Field === "recordofficename" ? 1 : 2;
-        let RecordRegimentId = SearchText;
+        CategoryId = Field === "recordofficename" ? 1 : 2;
+        RecordRegimentId = parseInt(SearchText);
 
-        $("#txtUnitName").attr('readonly', true);
-        
-        await GetDispatchToData(CategoryId, RecordRegimentId);
+        if (isNaN(RecordRegimentId)) {
+            toastr.error('Invalid  ORO / Regiment.');
+        }
+        else {
+            await GetDispatchToData(CategoryId, RecordRegimentId);
+        }
     }
     else if (ClaimValue == 2) {
-        await GetDDMappedForRecord(SearchText);
-        if ($('#txtUnitName').attr('readonly') !== undefined) {
-            $("#txtUnitName").removeAttr('readonly');
+        CategoryId = 1;
+        ToUnitId = parseInt(SearchText);
+        if (isNaN(ToUnitId)) {
+            toastr.error('Invalid  Unit.');
+        }
+        else {
+            await GetddlRecordRegiment();
         }
     }
     else if (ClaimValue == 3) {
-        await GetDDMappedForRecord(SearchText);
-        if ($('#txtUnitName').attr('readonly') !== undefined) {
-            $("#txtUnitName").removeAttr('readonly');
+        CategoryId = 2;
+        ToUnitId = parseInt(SearchText);
+        if (isNaN(ToUnitId)) {
+            toastr.error('Invalid  Unit.');
+        }
+        else {
+            await GetddlRecordRegiment();
         }
     }
     $('#ddlDID').on('change', async function () {
@@ -71,17 +89,9 @@
 
     $("#btnSubmit").on('click', async function (e) {
         let formId = '#SaveDispatchCard';
-        var fileInput = $('#CSVFile')[0];
-        var file = fileInput.files[0];
         $.validator.unobtrusive.parse($(formId));
 
-        // 1. Check CSV File Validation
-        const isValid = await validateCsvFileOnChange();
-        if (!isValid) {
-            return false; // If CSV file is not valid, stop further execution
-        }
-
-        // 2. Check Form Validation
+        // 1. Check Form Validation
         if ($(formId).valid()) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -93,7 +103,7 @@
                 confirmButtonText: 'Yes, Save it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Save(file);
+                    Save();
                 }
             })
         }
@@ -110,28 +120,24 @@
     });
 
 });
-async function Save(file) {
+async function Save() {
     try
     {
-        let ClaimValue = parseInt($("#spnClaimValue").html());
         var token = $('input[name="__RequestVerificationToken"]').val();
-        let Categery = parseInt($("#ddlCategery").val());
         let formData = new FormData();
 
-        formData.append('ApplyForId', $("#ddlCategery").val());
+        formData.append('ApplyForId', CategoryId);
         formData.append('Step', ClaimValue == 1 ? 1 : 2);
         formData.append('DispatchDate', convertToISOWithTime($("#txtDispatchDate").val()));
         formData.append('DispatchModeId', $("#ddlDispatch").val());
         formData.append('NameOfCourierIncharge', $("#txtCourierIncharge").val());
         formData.append('RefOfDispatch', $("#txtRefOfDispatch").val());
-        formData.append('LotNo', $("#txtLotNo").val());
         formData.append('FromRemark', $("#txtFromRemark").val());
-        formData.append('RegId', Categery == 2 ? $("#ddlRecordRegiment").val() : '');
-        formData.append('RecordOfficeId', Categery == 1 ? $("#ddlRecordRegiment").val() : '');
-        formData.append('ToUnitId', $("#spnUnitMapId").html());
+        formData.append('RegId', CategoryId == 2 ? RecordRegimentId : '');
+        formData.append('RecordOfficeId', CategoryId == 1 ? RecordRegimentId : '');
+        formData.append('ToUnitId', ToUnitId);
         formData.append('ToAspNetUsersId', $("#ddlDID").val());
-        formData.append('ToUserId', $("#spnUserId").html());
-        formData.append('CSVFile', file); // File is added here
+        formData.append('ToUserId', ToUserId);
 
         // Append the CSRF token if needed (depends on your backend configuration)
         formData.append('__RequestVerificationToken', token);
@@ -254,9 +260,125 @@ async function Save(file) {
     alert("Error: " + error.message);
     }
 }
-async function GetDDMappedForRecord(UnitMapId) {
+async function GetUserIdWithName(AspNetUsersId) {
     let param = new URLSearchParams({
-        "UnitMapId": UnitMapId
+        "AspNetUsersId": AspNetUsersId
+    });
+
+    try {
+        const response = await fetch('/BasicDetail/GetUserIdWithName', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: param
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+
+        if (Boolean(result.Result)) {
+            ToUserId = result.Value.UserId;
+            $("#txtArmyNo").val(`${result.Value.ArmyNo}`);
+            $("#txtRkName").val(`${result.Value.RankAbbreviation} ${result.Value.Name}`);
+
+        } else {
+            ToUserId = 0;   
+            $("#txtRkName").val(``);
+            $("#txtArmyNo").val(``);
+            toastr.error(`${result.Message}`);
+        }
+
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
+}
+async function GetDispatchToData(CategeryId, RecordRegimentId) {
+    let param = new URLSearchParams({
+        "CategeryId": CategeryId,
+        "RecordRegimentId": RecordRegimentId
+        });
+
+    try {
+        const response = await fetch('/BasicDetail/GetDispatchToData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: param
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+
+        if (Boolean(result.Result)) {
+            $("#lblToUnitName").text(`${result.Value.Sus_no} ${result.Value.UnitAbbreviation}`);
+            ToUnitId = result.Value.UnitId;
+            ToUserId = result.Value.UserId;
+
+            let listItemddl = "";
+            listItemddl += '<option value="0">Select Domain Id</option>';
+            listItemddl += `<option value="${result.Value.AspNetUsersId}">${result.Value.DomainId}</option>`;
+
+            $("#ddlDID").html(listItemddl);
+            $("#ddlDID").val(`${result.Value.AspNetUsersId}`);
+            $("#txtArmyNo").val(`${result.Value.ArmyNo}`);
+            $("#txtRkName").val(`${result.Value.RankAbbreviation} ${result.Value.Name}`);
+        }
+        else {
+            Reset();
+            toastr.error(`${result.Message}`);
+        }
+
+    } catch (error) {
+        Reset();
+        alert("Error: " + error.message);
+    }
+}
+async function GetddlRecordRegiment() {
+    let param = new URLSearchParams({
+        "ToUnitId": ToUnitId
+    });
+    try {
+        const response = await fetch('/BasicDetail/GetddlRecordRegiment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: param
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+
+        if (Boolean(result.Result)) {
+            $("#lblToUnitName").text(`${result.Value.SUSNo} ${result.Value.UnitAbbreviation}`);
+            $("#lblRecordRegiment").text(result.Value.Name);
+            RecordRegimentId = result.Value.Id;
+
+            await GetDDMappedForRecord(ToUnitId);
+
+        } else {
+            toastr.error(`${result.Message}`);
+            Reset();
+        }
+
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
+}
+async function GetDDMappedForRecord() {
+    let param = new URLSearchParams({
+        "UnitMapId": ToUnitId
     });
 
     try {
@@ -303,98 +425,12 @@ async function GetDDMappedForRecord(UnitMapId) {
         alert("Error: " + error.message);
     }
 }
-
-async function GetUserIdWithName(AspNetUsersId) {
-    let param = new URLSearchParams({
-        "AspNetUsersId": AspNetUsersId
-    });
-
-    try {
-        const response = await fetch('/BasicDetail/GetUserIdWithName', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: param
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const result = await response.json();
-
-        if (Boolean(result.Result)) {
-            $("#txtArmyNo").val(`${result.Value.ArmyNo}`);
-            $("#spnUserId").html(result.Value.UserId);
-
-            $("#txtRkName").val(`${result.Value.RankAbbreviation} ${result.Value.Name}`);
-
-        } else {
-            $("#spnUserId").html(0);
-            $("#txtRkName").val(``);
-            $("#txtArmyNo").val(``);
-            toastr.error(`${result.Message}`);
-        }
-
-    } catch (error) {
-        alert("Error: " + error.message);
-    }
-}
-async function GetDispatchToData(CategeryId, RecordRegimentId) {
-    let param = new URLSearchParams({
-        "CategeryId": CategeryId,
-        "RecordRegimentId": RecordRegimentId
-        });
-
-    try {
-        const response = await fetch('/BasicDetail/GetDispatchToData', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: param
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const result = await response.json();
-
-        if (Boolean(result.Result)) {
-            $("#txtUnitName").val(`${result.Value.Sus_no} ${result.Value.UnitAbbreviation}`);
-            $("#spnUnitMapId").html(result.Value.UnitId);
-
-
-            let listItemddl = "";
-            listItemddl += '<option value="0">Select Domain Id</option>';
-            listItemddl += `<option value="${result.Value.AspNetUsersId}">${result.Value.DomainId}</option>`;
-
-            $("#ddlDID").html(listItemddl);
-            $("#ddlDID").val(`${result.Value.AspNetUsersId}`);
-
-            $("#txtArmyNo").val(`${result.Value.ArmyNo}`);
-            $("#spnUserId").html(result.Value.UserId);
-
-            $("#txtRkName").val(`${result.Value.RankAbbreviation} ${result.Value.Name}`);
-
-        }
-        else {
-            Reset();
-            toastr.error(`${result.Message}`);
-        }
-
-    } catch (error) {
-        Reset();
-        alert("Error: " + error.message);
-    }
-}
 function Reset() {
-    $("#spnUnitMapId").html(0);
-    $("#spnUserId").html(0);
+    ToUnitId=0;
+    ToUserId=0;
 
-    $("#txtUnitName").val(``);
+    $("#lblToUnitName").text(``);
+    $("#lblRecordRegiment").text(``);
     $("#txtArmyNo").val(``);
     $("#txtRkName").val(``);
     //$('#ddlDID').empty();

@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace DataTransferObject.Requests
 {
-    public class DTODispatchOutRequestWithoutIFormFile
+    public class DTODispatchOutRequest
     {
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public int DispatchCardId { get; set; }
@@ -82,14 +82,5 @@ namespace DataTransferObject.Requests
         public DateTime UpdatedOn { get; set; }
 
 
-    }
-    public class DTODispatchOutRequest : DTODispatchOutRequestWithoutIFormFile
-    {
-        [Required(ErrorMessage = "File is required!")]
-        [SecureFile(allowedExtensions: new[] { ".csv" },
-        allowedMimeTypes: new[] { "text/csv", "application/vnd.ms-excel" },
-        expectedHeaders: new[] { "ChipNo" },
-        maxFileSize: 5 * 1024 * 1024)]
-        public required IFormFile CSVFile { get; set; }
     }
 }

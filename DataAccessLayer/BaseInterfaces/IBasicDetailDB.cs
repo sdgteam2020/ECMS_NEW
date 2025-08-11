@@ -23,7 +23,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO);
         public Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId);
         public Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id);
-        public Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue, int TDMId, int UnitId);
+        public Task<DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>> GetddlRecordRegiment(byte ClaimValue, int TDMId, int UnitId, int ToUnitId);
         public Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<bool> CheckArmyNO(string ArmyNo);
         public Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data);

@@ -67,9 +67,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetDispatchToData(CategeryId, Id);
         }
-        public async Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue, int TDMId, int UnitId)
+        public async Task<DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>> GetddlRecordRegiment(byte ClaimValue, int TDMId, int UnitId, int ToUnitId)
         {
-            return await _iBasicDetailDB.GetddlRecordRegiment(CategeryId, ClaimValue, TDMId, UnitId);
+            return await _iBasicDetailDB.GetddlRecordRegiment(ClaimValue, TDMId, UnitId, ToUnitId);
         }
         public async Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {

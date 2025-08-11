@@ -2,6 +2,15 @@
     ViewData["Title"] = "List of Dispatch Card";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var claimValue = ViewBag.ClaimValue;
+    string lblForDispatch = string.Empty;
+    if (claimValue == 1 || claimValue == 2 || claimValue == 3)
+    {
+        lblForDispatch = "Ready For Dispatch";
+    }
+    else
+    {
+        lblForDispatch = "Ready For Distribution";
+    }
 }
 <style>
     .count-label {
@@ -66,11 +75,7 @@
                         @*                         Total Faulty <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                     </h6>
                     <div>
-                        <button type="button" id="btnDispatchStatus" class="btn btn-outline-success font-weight-600 btn-sm mr-1">Cards Dispatch Status</button>
-                        @if (claimValue == 1 || claimValue == 2 || claimValue == 3)
-                        {
-                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
-                        }
+                        <button type="button" id="btnDispatchStatus" class="btn btn-outline-success font-weight-600 btn-sm mr-1">@lblForDispatch</button>
                     </div>
                 </div>
                 <div class="table-responsive">
