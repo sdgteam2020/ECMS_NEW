@@ -157,13 +157,13 @@ async function Save() {
         const result = await response.json();
 
         if (Boolean(result.Result)) {
-            let responseHtml = `<p><strong>Total Records:</strong> ${result.Value.TotalRecords}</p>
+            let responseHtml = `<p><strong>Lot No : </strong> ${result.Value.LotNo}</p>
+                                <p><strong>Total Records:</strong> ${result.Value.TotalRecords}</p>
                                 <p><strong>Valid Records:</strong> ${result.Value.ValidRecords}</p>
-                                <p><strong>SheetInvalid Records:</strong> ${result.Value.SheetInValidRecords}</p>
                                 <p><strong>DbInvalid Records:</strong> ${result.Value.DbInValidRecords}</p>`;
             Swal.fire({
-                title: "Validation Complete!",
-                text: "Please download validated CSV with remarks.",
+                title: "Dispatch Process Completed!",
+                text: "Please download CSV with remarks.",
                 html: responseHtml,
                 icon: "success",
                 showConfirmButton: false, // We'll create custom buttons
@@ -192,54 +192,17 @@ async function Save() {
                         document.body.removeChild(link); // Clean up by removing the link
                     };
 
-                    const proceedBtn = document.createElement('button');
-                    proceedBtn.textContent = 'Proceed';
-                    proceedBtn.className = 'swal2-confirm swal2-styled';
-                    proceedBtn.style.backgroundColor = '#007bff'; // blue
-                    proceedBtn.onclick = function () {
+                    const closedBtn = document.createElement('button');
+                    closedBtn.textContent = 'Close';
+                    closedBtn.className = 'swal2-cancel swal2-styled';
+                    closedBtn.style.backgroundColor = '#dc3545'; // red
+                    closedBtn.onclick = function () {
                         Swal.close();
-                        $.ajax({
-                            url: '/BasicDetail/ICardDispatchValidRecordsUpload',
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function (data) {
-                                if (data.Result) {
-                                    Swal.fire({
-                                        title: "Success!",
-                                        text: data.Message,
-                                        icon: "success",
-                                        confirmButtonText: "OK"
-                                    });
-                                }
-                                else {
-                                    Swal.fire({
-                                        title: "OOPs!",
-                                        text: data.Message,
-                                        icon: "error",
-                                        confirmButtonText: "Ok"
-                                    });
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.error('Error while uploading valid records:', error);
-                            }
-                        });
-                    };
-
-                    const cancelBtn = document.createElement('button');
-                    cancelBtn.textContent = 'Cancel';
-                    cancelBtn.className = 'swal2-cancel swal2-styled';
-                    cancelBtn.style.backgroundColor = '#dc3545'; // red
-                    cancelBtn.onclick = function () {
-                        Swal.close();
+                        location.href = '/BasicDetail/DispatchCard';
                     };
 
                     btnGroup.appendChild(downloadBtn);
-                    if (result.Value.ValidRecords > 0) {
-                        btnGroup.appendChild(proceedBtn);
-                    }
-
-                    btnGroup.appendChild(cancelBtn);
+                    btnGroup.appendChild(closedBtn);
 
                     swal.appendChild(btnGroup);
                 }

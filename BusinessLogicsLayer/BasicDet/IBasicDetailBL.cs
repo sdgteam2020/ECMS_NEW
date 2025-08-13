@@ -21,8 +21,8 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForExport(byte ClaimValue, DTOExportDispatch Data);
         public Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO);
         public Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO);
-        public Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch);
-        public Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO);
+        public Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequest dTODispatch);
+        public Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO);
         public Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId);
         public Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id);
         public Task<DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>> GetddlRecordRegiment(byte ClaimValue, int TDMId, int UnitId, int ToUnitId);
@@ -55,7 +55,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         public Task<DTOApplicationTrack?> ApplicationHistory(string RequestId);
         Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request);
-        public Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(List<DTOCardDispatchCheckRequest> request, byte ClaimValue, DTODispatchOutRequest dTO);
+        public Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO);
         Task<DTOUploadChipAndSerialResponse?> CardPrinitngCSVUpload(List<DTOCardPriningRequest> request);
         Task<byte?> CheckCardStatus(int RequestId);
         Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId);

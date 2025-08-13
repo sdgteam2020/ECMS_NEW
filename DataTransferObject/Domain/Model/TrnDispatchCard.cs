@@ -43,10 +43,6 @@ namespace DataTransferObject.Domain.Model
         
         [StringLength(50)]
         [Column(TypeName = "VARCHAR(50)")]
-        public string LotNo { get; set; } = string.Empty;
-
-        [StringLength(50)]
-        [Column(TypeName = "VARCHAR(50)")]
         public string NameOfCourierIncharge { get; set; } = string.Empty;
         
         [StringLength(100)]

@@ -731,8 +731,115 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
-        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO)
+        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO)
         {
+            #region Old Code
+            //byte StepId;
+            //string Remarks = string.Empty;
+            //if (ClaimValue == 1)
+            //{
+            //    StepId = 6;
+            //    Remarks = "The card application is not available for printing.";
+            //}
+            //else
+            //{
+            //    StepId = 12;
+            //    Remarks = "The card application is not in the Regiment/Officer Record Office.";
+            //}
+            //var response = new List<DTOCardDispatchCheckRequest>();
+            //using (var scope = _serviceProvider.CreateScope())
+            //{
+            //    // ✅ Get scoped services like DbContext inside the scope
+            //    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            //    var connection = context.Database.GetDbConnection();
+            //    try
+            //    {
+            //        if (connection.State != ConnectionState.Open)
+            //            connection.Open(); // Keep connection open throughout
+
+            //        foreach (var batchRecords in requests.Chunk(5000))
+            //        {
+            //            var resultInChunks = await Task.Run(() =>
+            //            {
+            //                if (ClaimValue == 1)
+            //                {
+            //                    if (dTO.ApplyForId == 1)
+            //                    {
+            //                        return (from record in batchRecords
+            //                                join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+            //                                from chipNoExists in chipNoJoin.DefaultIfEmpty()
+            //                                join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+            //                                from stepStatus in stepStatusJoin.DefaultIfEmpty()
+            //                                select new DTOCardDispatchCheckRequest
+            //                                {
+            //                                    ChipNo = record.ChipNo,
+            //                                    RequestId = chipNoExists?.RequestId ?? 0,
+            //                                    IsValid = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null,
+            //                                    Status = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null ? "Valid" : "DbInvalid",
+            //                                    Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+            //                                              (chipNoExists != null && chipNoExists.RecordOfficeId != dTO.RecordOfficeId ? "ChipNo not Valid match to RecordOffice; " : "") +
+            //                                              (chipNoExists != null && stepStatus == null ? Remarks : "")
+            //                                }).ToList();
+            //                    }
+            //                    else
+            //                    {
+            //                        return (from record in batchRecords
+            //                                join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+            //                                from chipNoExists in chipNoJoin.DefaultIfEmpty()
+            //                                join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.RegimentalId } into bdMatchJoin
+            //                                from bdMatch in bdMatchJoin.DefaultIfEmpty()
+            //                                join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+            //                                from stepStatus in stepStatusJoin.DefaultIfEmpty()
+            //                                select new DTOCardDispatchCheckRequest
+            //                                {
+            //                                    ChipNo = record.ChipNo,
+            //                                    RequestId = chipNoExists?.RequestId ?? 0,
+            //                                    IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
+            //                                    Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
+            //                                    Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+            //                                              (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Regiment; " : "") +
+            //                                              (chipNoExists != null && stepStatus == null ? Remarks : "")
+            //                                }).ToList();
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    return (from record in batchRecords
+            //                            join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+            //                            from chipNoExists in chipNoJoin.DefaultIfEmpty()
+            //                            join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
+            //                            from bdMatch in bdMatchJoin.DefaultIfEmpty()
+            //                            join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+            //                            from stepStatus in stepStatusJoin.DefaultIfEmpty()
+            //                            select new DTOCardDispatchCheckRequest
+            //                            {
+            //                                ChipNo = record.ChipNo,
+            //                                RequestId = chipNoExists?.RequestId ?? 0,
+            //                                IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
+            //                                Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
+            //                                Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+            //                                          (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Unit; " : "") +
+            //                                          (chipNoExists != null && stepStatus == null ? Remarks : "")
+            //                            }).ToList();
+            //                }
+
+            //            });
+            //            response.AddRange(resultInChunks);
+            //        }
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine("Error: " + ex.Message);
+            //    }
+            //    finally
+            //    {
+            //        if (connection.State == ConnectionState.Open)
+            //            connection.Close();
+            //    }
+            //}
+            //return response;
+            #endregion
             byte StepId;
             string Remarks = string.Empty;
             if (ClaimValue == 1)
@@ -756,7 +863,7 @@ namespace DataAccessLayer
                     if (connection.State != ConnectionState.Open)
                         connection.Open(); // Keep connection open throughout
 
-                    foreach (var batchRecords in requests.Chunk(5000))
+                    foreach (var batchRecords in RequestIds.Chunk(5000))
                     {
                         var resultInChunks = await Task.Run(() =>
                         {
@@ -765,60 +872,60 @@ namespace DataAccessLayer
                                 if (dTO.ApplyForId == 1)
                                 {
                                     return (from record in batchRecords
-                                            join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
-                                            from chipNoExists in chipNoJoin.DefaultIfEmpty()
-                                            join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
-                                            from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                            join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
+                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
+                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
+                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
                                             select new DTOCardDispatchCheckRequest
                                             {
-                                                ChipNo = record.ChipNo,
-                                                RequestId = chipNoExists?.RequestId ?? 0,
-                                                IsValid = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null,
-                                                Status = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null ? "Valid" : "DbInvalid",
-                                                Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
-                                                          (chipNoExists != null && chipNoExists.RecordOfficeId != dTO.RecordOfficeId ? "ChipNo not Valid match to RecordOffice; " : "") +
-                                                          (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
+                                                RequestId = RequestIdExists?.RequestId ?? 0,
+                                                IsValid = RequestIdExists != null && RequestIdExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null,
+                                                Status = RequestIdExists != null && RequestIdExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                                Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
+                                                          (RequestIdExists != null && RequestIdExists.RecordOfficeId != dTO.RecordOfficeId ? "Appl number not Valid match to RecordOffice; " : "") +
+                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
                                             }).ToList();
                                 }
                                 else
                                 {
                                     return (from record in batchRecords
-                                            join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
-                                            from chipNoExists in chipNoJoin.DefaultIfEmpty()
-                                            join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.RegimentalId } into bdMatchJoin
-                                            from bdMatch in bdMatchJoin.DefaultIfEmpty()
-                                            join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
-                                            from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                            join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
+                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
+                                            join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.RegimentalId } into bdMatchJoin
+                                            from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
+                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
+                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
                                             select new DTOCardDispatchCheckRequest
                                             {
-                                                ChipNo = record.ChipNo,
-                                                RequestId = chipNoExists?.RequestId ?? 0,
-                                                IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
-                                                Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
-                                                Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
-                                                          (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Regiment; " : "") +
-                                                          (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
+                                                RequestId = RequestIdExists?.RequestId ?? 0,
+                                                IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
+                                                Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                                Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
+                                                          (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Regiment; " : "") +
+                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
                                             }).ToList();
                                 }
                             }
                             else
                             {
                                 return (from record in batchRecords
-                                        join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
-                                        from chipNoExists in chipNoJoin.DefaultIfEmpty()
-                                        join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
-                                        from bdMatch in bdMatchJoin.DefaultIfEmpty()
-                                        join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
-                                        from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                        join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
+                                        from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
+                                        join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
+                                        from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
+                                        join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
+                                        from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
                                         select new DTOCardDispatchCheckRequest
                                         {
-                                            ChipNo = record.ChipNo,
-                                            RequestId = chipNoExists?.RequestId ?? 0,
-                                            IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
-                                            Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
-                                            Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
-                                                      (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Unit; " : "") +
-                                                      (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                            ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
+                                            RequestId = RequestIdExists?.RequestId ?? 0,
+                                            IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
+                                            Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                            Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
+                                                      (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Unit; " : "") +
+                                                      (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
                                         }).ToList();
                             }
 
@@ -3466,7 +3573,7 @@ namespace DataAccessLayer
             }
             return response;
         }
-        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch)
+        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequest dTODispatch)
         {
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
             try
@@ -3480,10 +3587,10 @@ namespace DataAccessLayer
                 {
                     StepId = 13;
                 }
-                    string insert = "";
-                insert = @"INSERT INTO TrnDispatchCard(Step,ApplyForId,RegId,RecordOfficeId,OutDate,ReceiptDate,DispatchDate,RefOfDispatch,LotNo,NameOfCourierIncharge,UploadFilePath,FromRemark,ToRemark,FromUnitId,ToUnitId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,IsComplete,IsActive,Updatedby,UpdatedOn,DispatchModeId)
+                string insert = "";
+                insert = @"INSERT INTO TrnDispatchCard(Step,ApplyForId,RegId,RecordOfficeId,OutDate,ReceiptDate,DispatchDate,RefOfDispatch,NameOfCourierIncharge,UploadFilePath,FromRemark,ToRemark,FromUnitId,ToUnitId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,IsComplete,IsActive,Updatedby,UpdatedOn,DispatchModeId)
                                 OUTPUT INSERTED.DispatchCardId
-                                VALUES(@Step,@ApplyForId,@RegId,@RecordOfficeId,@OutDate,@ReceiptDate,@DispatchDate,@RefOfDispatch,@LotNo,@NameOfCourierIncharge,@UploadFilePath,@FromRemark,@ToRemark,@FromUnitId,@ToUnitId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@DispatchModeId)";
+                                VALUES(@Step,@ApplyForId,@RegId,@RecordOfficeId,@OutDate,@ReceiptDate,@DispatchDate,@RefOfDispatch,@NameOfCourierIncharge,@UploadFilePath,@FromRemark,@ToRemark,@FromUnitId,@ToUnitId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@DispatchModeId)";
                 var parameters = new DynamicParameters();
                 parameters.Add("@DispatchCardId", dTODispatch.DispatchCardId, DbType.Int32, ParameterDirection.Output);
                 parameters.Add("@Step", dTODispatch.Step, DbType.Byte, ParameterDirection.Input);
@@ -3494,7 +3601,6 @@ namespace DataAccessLayer
                 parameters.Add("@ReceiptDate", dTODispatch.ReceiptDate, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@DispatchDate", dTODispatch.DispatchDate, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@RefOfDispatch", dTODispatch.RefOfDispatch, DbType.String, ParameterDirection.Input, 50);
-                parameters.Add("@LotNo", string.Empty, DbType.String, ParameterDirection.Input,50);
                 parameters.Add("@NameOfCourierIncharge", dTODispatch.NameOfCourierIncharge, DbType.String, ParameterDirection.Input, 50);
                 parameters.Add("@UploadFilePath", dTODispatch.UploadFilePath, DbType.String, ParameterDirection.Input, 100);
                 parameters.Add("@FromRemark", dTODispatch.FromRemark, DbType.String, ParameterDirection.Input, 100);
@@ -3529,7 +3635,10 @@ namespace DataAccessLayer
                                    )).FirstOrDefault();
                     }
                     response.Value = "Success";
+                    response.Message = Id.ToString();
                 }
+                response.Result = true;
+
 
             }
             catch (Exception ex)
