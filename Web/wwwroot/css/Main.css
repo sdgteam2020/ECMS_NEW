@@ -76,7 +76,155 @@
     z-index: 2147483647;
 }
 
-.card {
+/*-----------------------------------------------------------------------------old card css start-----------------------------------------------------------------------------*/
+.counter {
+    color: rgba(22, 125, 207, 1);
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+    height: 190px;
+    width: 190px;
+    padding: 30px 25px 25px;
+    margin: 0 auto;
+    border: 3px solid rgba(22, 125, 207, 1);
+    border-radius: 20px 20px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 15px;
+}
+
+    .counter:before,
+    .counter:after {
+        content: "";
+        background: #f3f3f3;
+        border-radius: 20px;
+        box-shadow: 10px -9px 4px 0px rgba(0,0,0,0.2);
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        bottom: 15px;
+        right: 15px;
+        z-index: -1;
+    }
+
+    .counter:after {
+        background: transparent;
+        width: 100px;
+        height: 100px;
+        /* border: 15px solid #f27f21;*/
+        border-top: none;
+        border-right: none;
+        border-radius: 0 0 0 20px;
+        box-shadow: none;
+        top: auto;
+        left: -10px;
+        bottom: -10px;
+        right: auto;
+    }
+
+    .counter .counter-icon {
+        font-size: 40px;
+        line-height: 35px;
+        margin: 0 0 15px;
+        transition: all 0.3s ease 0s;
+    }
+
+    .counter:hover .counter-icon {
+        /*  transform: rotateY(360deg);*/
+        transform: scale(1.5);
+    }
+
+    .counter .counter-value {
+        color: #555;
+        font-size: 30px;
+        font-weight: 600;
+        line-height: 20px;
+        margin: 0 0 20px;
+        display: block;
+        transition: all 0.3s ease 0s;
+    }
+
+    .counter:hover .counter-value {
+        text-shadow: 2px 2px 0 #d1d8e0;
+    }
+
+    .counter h3 {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin: 0 0 15px;
+    }
+
+    .counter.blue {
+        color: rgba(22, 125, 207, 1);
+        border-color: rgba(22, 125, 207, 1);
+    }
+
+        .counter.blue:after {
+            border-bottom-color: #346AA7;
+            border-left-color: #346AA7;
+        }
+
+    .counter.pink {
+        color: rgba(22, 125, 207, 1);
+        border-color: rgba(22, 125, 207, 1);
+    }
+
+        .counter.pink:after {
+            border-bottom-color: #EE436D;
+            border-left-color: #EE436D;
+        }
+
+    .counter.purple {
+        color: rgba(22, 125, 207, 1);
+        border-color: rgba(22, 125, 207, 1);
+    }
+
+        .counter.purple:after {
+            border-bottom-color: #9C52A1;
+            border-left-color: #9C52A1;
+        }
+
+    .counter.green {
+        color: rgb(34 207 22);
+        border-color: rgb(34 207 22);
+    }
+
+        .counter.green:after {
+            border-bottom-color: #9C52A1;
+            border-left-color: #9C52A1;
+        }
+
+    .counter.orange {
+        color: #f4a100;
+        border-color: #f4a100;
+    }
+
+        .counter.orange:after {
+            border-bottom-color: #9C52A1;
+            border-left-color: #9C52A1;
+        }
+
+    .counter.green:after {
+        border-bottom-color: #68BD55;
+        border-left-color: #68BD55;
+    }
+
+    .counter.yellow {
+        color: rgba(22, 125, 207, 1);
+        border-color: rgba(22, 125, 207, 1);
+    }
+
+        .counter.yellow:after {
+            border-bottom-color: #C1C353;
+            border-left-color: #C1C353;
+        }
+/*-----------------------------------------------------------------------------old card css end-----------------------------------------------------------------------------*/
+
+
+/*-----------------------------------------------------------------------------new card css start-----------------------------------------------------------------------------*/
+
+/* Scope to elements that have BOTH classes: class="card new_css" */
+.card.new_css {
     display: inline-block;
     width: auto;
     padding: 1rem;
@@ -88,11 +236,13 @@
     text-align: center;
 }
 
-.containerMain {
+/* Center the page header container (this is outside the card scope) */
+/*.containerMain {
     text-align: center;
-}
+}*/
 
-.card .row {
+/* Rows and columns INSIDE the card.new_css */
+.card.new_css .row {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -100,12 +250,14 @@
     padding: 10px 0;
 }
 
-.card .col-md-2, .card .col-sm-6 {
+.card.new_css .col-md-2,
+.card.new_css .col-sm-6 {
     flex: 0 0 auto;
     width: auto;
 }
 
-.counter {
+/* Counter blocks */
+.card.new_css .counter {
     width: 190px;
     height: 190px;
     background-color: #f4f4f4;
@@ -120,12 +272,12 @@
     transition: 0.3s ease;
 }
 
-    .counter:hover {
+    .card.new_css .counter:hover {
         transform: translateY(-4px);
         box-shadow: 4px 4px 10px #d1d9e6, -4px -4px 10px #ffffff;
     }
 
-.counter-icon {
+.card.new_css .counter-icon {
     height: 45px;
     font-size: 32px;
     color: #007bff;
@@ -133,19 +285,19 @@
     margin-bottom: 10px;
 }
 
-.div-counter-value {
+.card.new_css .div-counter-value {
     height: 25px;
     width: 100%;
 }
 
-.counter-value {
+.card.new_css .counter-value {
     font-size: 20px;
     font-weight: bold;
     color: #343a40;
     margin-bottom: 4px;
 }
 
-.counter h3 {
+.card.new_css .counter h3 {
     font-size: 14px;
     color: #007bff;
     font-weight: 600;
@@ -156,18 +308,19 @@
     line-height: 1.2;
 }
 
-/* Color Variants */
-.counter.pink,
-.counter.green,
-.counter.orange,
-.counter.yellow,
-.counter.blue,
-.counter.purple {
+/* Color variants */
+.card.new_css .counter.pink,
+.card.new_css .counter.green,
+.card.new_css .counter.orange,
+.card.new_css .counter.yellow,
+.card.new_css .counter.blue,
+.card.new_css .counter.purple {
     border-color: #167DCF !important;
     color: #167DCF !important;
 }
 
-.seven h1 {
+/* Card header inside the new_css card */
+.card.new_css .seven h1 {
     background: linear-gradient(to right, #007bff, #0056b3);
     color: #fff;
     padding: 10px 16px;
@@ -178,11 +331,16 @@
     font-size: 1.1rem;
     font-weight: 600;
 }
-.fake-header {
+
+/* Fake header spacer */
+.card.new_css .fake-header {
     height: 28.5px;
     margin-bottom: 10px;
     visibility: hidden;
 }
+
+/*-----------------------------------------------------------------------------new card css start-----------------------------------------------------------------------------*/
+
 /* Responsive tweak */
 @media screen and (max-width: 990px) {
     .counter {
