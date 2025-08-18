@@ -11,8 +11,7 @@ namespace DataTransferObject.Response
         public int TotalRecords { get; set; }
         public int ValidRecords { get; set; }
         public int DbInValidRecords { get; set; }
-        public int SheetInValidRecords { get; set; }
-        public string File { get; set; } = string.Empty;
+        public int LotNo { get; set; }
         public string FileName { get; set; } = string.Empty;
     }
 }

@@ -95,9 +95,7 @@ namespace DataTransferObject.Requests
         public byte ClaimValue { get; set; }
         public int TDMId { get; set; }
         public int UnitId { get; set; }
-        
-        // Header filter fields
-        public string? FilterApplyFor { get; set; }
+     
     }
     public class DTODataTablesRequestForCardDispatchDialog : DTODataTablesRequest
     {
@@ -105,11 +103,11 @@ namespace DataTransferObject.Requests
     }
     public class DTODataTablesRequestForCardStatusList:DTODataTablesRequest
     {
-        //public int[]? selectedIds { get; set; }
         public string? SearchField { get; set; }
 
         [RegularExpression("^[a-zA-Z0-9_/ ]*$", ErrorMessage = "Only Alphabets,Numbers,underscores and slash are allowed.")]
         public string? SearchText { get; set; }
         public bool AllChecked { get; set; } = false;
+        public bool SearchTextChanged { get; set; } = false;
     }
 }

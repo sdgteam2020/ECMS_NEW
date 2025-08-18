@@ -55,14 +55,45 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.userManager = userManager;
         }
+        public async Task<List<DTODispatchCardForCSVResponse>> ExportCsvFileForDispatchCard(int[] RequestIds)
+        {
+            List<DTODispatchCardForCSVResponse> dTOs = new List<DTODispatchCardForCSVResponse>();
+            string query = @"SELECT req.RequestId as ApplId,ranks.RankAbbreviation as RankName,basi.FName,basi.LName,basi.ServiceNo,req.ChipNo,req.CardSerialNo
+                            from TrnICardRequest req
+                            INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                            INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                            WHERE req.RequestId IN (SELECT RequestId FROM @RequestIds)";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    // Create a table-valued parameter for the RequestIds
+                    var table = new DataTable();
+                    table.Columns.Add("RequestId", typeof(int));
+
+                    foreach (var id in RequestIds)
+                    {
+                        table.Rows.Add(id);
+                    }
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RequestIds", table.AsTableValuedParameter("RequestIdList"));
+
+                    dTOs = (await connection.QueryAsync<DTODispatchCardForCSVResponse>(query, parameters)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->ExportCsvFileForDispatchCard");
+            }
+            return dTOs;
+        }
         public async Task<DTODataTablesForDispatchCardStatusListResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequestForCardStatusList dTO, byte ClaimValue)
         {
             string selectFields = "";
             string fromJoinClause = "";
             string whereClause = "";
             string searchFilter = "";
-            byte PendingStepId = 0;
-            byte DispatchStepId = 0;
             byte finalValue=0;
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
@@ -84,14 +115,7 @@ namespace DataAccessLayer
             };
             if (ClaimValue == 1)
             {
-                PendingStepId = 6; // Pending Step for AFSAC
-                DispatchStepId = 11; // Dispatch Step for AFSAC
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
-                                CASE 
-                                    WHEN stepc.StepId = 6 THEN 'Pending' 
-                                    WHEN stepc.StepId >= 11 THEN 'Dispatch Out'
-                                    ELSE 'Unknown' 
-                                END AS Status";
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
                 fromJoinClause = @"from TrnStepCounter stepc
                                     INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                                     INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
@@ -103,18 +127,11 @@ namespace DataAccessLayer
                                     LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                                     LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
-                            (stepc.StepId=6 OR stepc.StepId>=11)";
+                            (stepc.StepId=6)";
             }
-            else if (ClaimValue == 2 || ClaimValue == 3)
+            else if (ClaimValue == 2)
             {
-                PendingStepId = 12; // Pending Step for RO / Regiment
-                DispatchStepId = 13; // Dispatch Step for RO / Regiment
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
-                                CASE 
-                                    WHEN stepc.StepId = 12 THEN 'Pending' 
-                                    WHEN stepc.StepId >= 13 THEN 'Dispatch Out'
-                                    ELSE 'Unknown' 
-                                END AS Status";
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
                 fromJoinClause = @"from TrnStepCounter stepc
                                     INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                                     INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
@@ -123,21 +140,29 @@ namespace DataAccessLayer
                                     INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                                     INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                                     INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
-                                    LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
-                                    LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
+                                    INNER JOIN OROMapping oro on req.RecordOfficeId = oro.RecordOfficeId
+                                    INNER JOIN MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
-                                (stepc.StepId=12 OR stepc.StepId>=13)";
+                                (stepc.StepId=12)";
+            }
+            else if (ClaimValue == 3)
+            {
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
+                fromJoinClause = @"from TrnStepCounter stepc
+                                    INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
+                                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                                    INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
+                                    INNER JOIN MRegimental regi on regi.RegId=basi.RegimentalId";
+                whereClause = @"WHERE
+                                (stepc.StepId=12)";
             }
             else
             {
-                PendingStepId = 14; // Pending Step for Unit
-                DispatchStepId = 15; // Dispatch Step for Unit
-                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
-                                CASE 
-                                    WHEN stepc.StepId = 14 THEN 'Pending' 
-                                    WHEN stepc.StepId = 15 THEN 'Card Distribute'
-                                    ELSE 'Unknown' 
-                                END AS Status";
+                selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
                 fromJoinClause = @"from TrnStepCounter stepc
                             INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
                             INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
@@ -149,7 +174,7 @@ namespace DataAccessLayer
                             LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                             LEFT JOIN MRecordOffice mrec on req.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
-                                (stepc.StepId=14 OR stepc.StepId=15)";
+                                (stepc.StepId=14)";
             }
             if (!string.IsNullOrWhiteSpace(dTO.SearchField) && !string.IsNullOrWhiteSpace(dTO.SearchText))
             {
@@ -162,17 +187,17 @@ namespace DataAccessLayer
                     //case "requestid":
                     //    searchFilter = @"AND req.RequestId=@SearchText";
                     //    break;
-                    //case "serviceno":
-                    //    searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
-                    //    break;
+                    case "serviceno":
+                        searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
+                        break;
                     case "susno":
-                        searchFilter = @"AND concat(munit.Sus_no, munit.Suffix) LIKE '%' + @SearchText + '%'";
+                        searchFilter = @"AND unit.UnitMapId=@SearchText";
                         break;
                     case "regimentalname":
-                        searchFilter = @"AND regi.RegId=@SearchText";
+                        searchFilter = @"AND mappl.ApplyForId = 2 AND regi.RegId=@SearchText";
                         break;
                     case "recordofficename":
-                        searchFilter = @"AND mrec.RecordOfficeId=@SearchText";
+                        searchFilter = @"AND mappl.ApplyForId = 1 AND mrec.RecordOfficeId=@SearchText";
                         break;
                     //case "chipno":
                     //    searchFilter = @"AND req.ChipNo LIKE '%' + @SearchText + '%'";
@@ -219,7 +244,15 @@ namespace DataAccessLayer
                         var parameters = new DynamicParameters();
                         parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                         parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                        parameters.Add("@SearchText", dTO.SearchText, DbType.String, ParameterDirection.Input);
+                        if (ClaimValue == 0)
+                        {
+                            parameters.Add("@SearchText", dTO.SearchText, DbType.String, ParameterDirection.Input);
+                        }
+                        else
+                        {
+                            parameters.Add("@SearchText", dTO.SearchText != string.Empty ? Convert.ToInt32(dTO.SearchText) : 0 , DbType.Int32, ParameterDirection.Input);
+                        }
+
                         parameters.Add("@FinalStepId", finalValue, DbType.Byte, ParameterDirection.Input);
                         //parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
 
@@ -229,7 +262,7 @@ namespace DataAccessLayer
 
                         List<int>? selectedIds = new List<int>();
 
-                        if (dTO.AllChecked == true)
+                        if (dTO.AllChecked == true && (string.IsNullOrEmpty(dTO.SearchText) || dTO.SearchTextChanged == true))
                         {
                             var result = await connection.QueryMultipleAsync(queryRequestIds, parameters);
                             selectedIds = (await result.ReadAsync<int>()).ToList();
@@ -506,15 +539,14 @@ namespace DataAccessLayer
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["ApplyFor"] = "mappl.Name",
-                    ["LotNo"] = "dcard.LotNo",
-                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
-                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchCardId"] = "dcard.DispatchCardId",
                     ["DispatchDate"] = "dcard.DispatchDate",
-                    ["FromRemark"] = "dcard.FromRemark",
-                    ["ReceiptDate"] = "dcard.ReceiptDate",
-                    ["ToRemark"] = "dcard.ToRemark"
+                    ["RegimentalName"] = "regi.Abbreviation",
+                    ["RecordOfficeName"] = "mrec.Name",
+                    ["ToSUSNo"] = "toMuni.Sus_no",
+                    ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
-                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,concat(toMuni.Sus_no,toMuni.Suffix) as ToSUSNo,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
                 fromJoinClause = @"from TrnDispatchCard dcard 
                                     INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                                     INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
@@ -533,28 +565,25 @@ namespace DataAccessLayer
                 whereClause = @"WHERE
                             dcard.Step=1
                             AND (
-                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
+                                regi.Abbreviation LIKE '%' + @SearchTerm + '%' OR
+                                mrec.Name LIKE '%' + @SearchTerm + '%' OR
+                                dcard.DispatchCardId LIKE '%' + @SearchTerm + '%' OR
+                                concat(toMuni.Sus_no,toMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
                                 mappl.Name LIKE '%' + @SearchTerm + '%'
                                 )";
-                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
-                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             else if (dTO.ClaimValue == 2)
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ApplyFor"] = "mappl.Name",
-                    ["LotNo"] = "dcard.LotNo",
-                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
-                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["Step"] = "dcard.Step",
+                    ["DispatchCardId"] = "dcard.DispatchCardId",
+                    ["FromSUSNo"] = "fromMuni.Sus_no",
+                    ["ToSUSNo"] = "toMuni.Sus_no",
                     ["DispatchDate"] = "dcard.DispatchDate",
-                    ["FromRemark"] = "dcard.FromRemark",
-                    ["ReceiptDate"] = "dcard.ReceiptDate",
-                    ["ToRemark"] = "dcard.ToRemark"
+                    ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
-                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,concat(fromMuni.Sus_no,fromMuni.Suffix) as FromSUSNo,toMuni.Abbreviation as ToUnit,concat(toMuni.Sus_no,toMuni.Suffix) as ToSUSNo,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
                 fromJoinClause = @"from TrnDispatchCard dcard 
                                     INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                                     INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
@@ -573,28 +602,24 @@ namespace DataAccessLayer
                 whereClause = @"WHERE
                                 oro.TDMId=@TDMId
                                 AND (
-                                    toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                    dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                    dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
-                                    mappl.Name LIKE '%' + @SearchTerm + '%'
+                                    dcard.Step LIKE '%' + @SearchTerm + '%' OR
+                                    dcard.DispatchCardId LIKE '%' + @SearchTerm + '%' OR
+                                    concat(fromMuni.Sus_no,fromMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
+                                    concat(toMuni.Sus_no,toMuni.Suffix) LIKE '%' + @SearchTerm + '%'
                                 )";
-                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
-                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             else if (dTO.ClaimValue == 3)
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ApplyFor"] = "mappl.Name",
-                    ["LotNo"] = "dcard.LotNo",
-                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
-                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["Step"] = "dcard.Step",
+                    ["DispatchCardId"] = "dcard.DispatchCardId",
+                    ["FromSUSNo"] = "fromMuni.Sus_no",
+                    ["ToSUSNo"] = "toMuni.Sus_no",
                     ["DispatchDate"] = "dcard.DispatchDate",
-                    ["FromRemark"] = "dcard.FromRemark",
-                    ["ReceiptDate"] = "dcard.ReceiptDate",
-                    ["ToRemark"] = "dcard.ToRemark"
+                    ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
-                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,concat(fromMuni.Sus_no,fromMuni.Suffix) as FromSUSNo,toMuni.Abbreviation as ToUnit,concat(toMuni.Sus_no,toMuni.Suffix) as ToSUSNo,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
                 fromJoinClause = @"from TrnDispatchCard dcard 
                                     INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                                     INNER JOIN MDispatchMode mdis on dcard.DispatchModeId=mdis.DispatchModeId
@@ -612,28 +637,25 @@ namespace DataAccessLayer
                 whereClause = @"WHERE
                             regi.UnitId=@UnitId
                             AND (
-                                toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
-                                mappl.Name LIKE '%' + @SearchTerm + '%'
+                                dcard.Step LIKE '%' + @SearchTerm + '%' OR
+                                dcard.DispatchCardId LIKE '%' + @SearchTerm + '%' OR
+                                concat(fromMuni.Sus_no,fromMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
+                                concat(toMuni.Sus_no,toMuni.Suffix) LIKE '%' + @SearchTerm + '%'
                                 )";
-                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
-                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             else
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["ApplyFor"] = "mappl.Name",
-                    ["LotNo"] = "dcard.LotNo",
-                    ["NameOfCourierIncharge"] = "dcard.NameOfCourierIncharge",
-                    ["ToServiceNo"] = "toUp.ArmyNo",
+                    ["DispatchCardId"] = "dcard.DispatchCardId",
+                    ["FromSUSNo"] = "fromMuni.Sus_no",
+                    ["RecordOfficeName"] = "mrec.Name",
+                    ["RegimentalName"] = "regi.Abbreviation",
                     ["DispatchDate"] = "dcard.DispatchDate",
-                    ["FromRemark"] = "dcard.FromRemark",
-                    ["ReceiptDate"] = "dcard.ReceiptDate",
-                    ["ToRemark"] = "dcard.ToRemark"
+                    ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
-                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.LotNo,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
+                selectFields = @"dcard.DispatchCardId,dcard.Step,mappl.Name as ApplyFor,mappl.ApplyForId,regi.Abbreviation RegimentalName,mrec.Name as RecordOfficeName,dcard.OutDate,dcard.ReceiptDate,dcard.DispatchDate,mdis.Description as DispatchMode,dcard.RefOfDispatch,dcard.NameOfCourierIncharge,dcard.UploadFilePath,dcard.FromRemark,dcard.ToRemark,fromMuni.Abbreviation as FromUnit,concat(fromMuni.Sus_no,fromMuni.Suffix) as FromSUSNo,toMuni.Abbreviation as ToUnit,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID,dcard.IsComplete,dcard.IsActive,dcard.UpdatedOn";
                 fromJoinClause = @"from TrnDispatchCard dcard 
                                     INNER JOIN MApplyFor mappl on mappl.ApplyForId=dcard.ApplyForId
                                     INNER JOIN MDispatchMode mdis on dcard.DispatchModeId =mdis.DispatchModeId
@@ -653,14 +675,12 @@ namespace DataAccessLayer
                                 dcard.Step=2
                                 AND dcard.ToUnitId=@UnitId
                                 AND (
-                                    toUp.ArmyNo LIKE '%' + @SearchTerm + '%' OR
-                                    dcard.LotNo LIKE '%' + @SearchTerm + '%' OR
-                                    dcard.NameOfCourierIncharge LIKE '%' + @SearchTerm + '%' OR
                                     mappl.Name LIKE '%' + @SearchTerm + '%' OR
-                                    mrec.Name LIKE '%' + @SearchTerm + '%'
+                                    dcard.DispatchCardId LIKE '%' + @SearchTerm + '%' OR
+                                    concat(fromMuni.Sus_no,fromMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
+                                    mrec.Name LIKE '%' + @SearchTerm + '%' OR
+                                    regi.Abbreviation LIKE '%' + @SearchTerm + '%'
                                 )";
-                if (!string.IsNullOrEmpty(dTO.FilterApplyFor))
-                    whereClause += " AND mappl.Name = @FilterApplyFor";
             }
             try
             {
@@ -682,7 +702,6 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
-                    parameters.Add("@FilterApplyFor", dTO.FilterApplyFor ?? "", DbType.String);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTODispatchCardListResponse>()).ToList();
@@ -712,8 +731,115 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
-        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO)
+        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO)
         {
+            #region Old Code
+            //byte StepId;
+            //string Remarks = string.Empty;
+            //if (ClaimValue == 1)
+            //{
+            //    StepId = 6;
+            //    Remarks = "The card application is not available for printing.";
+            //}
+            //else
+            //{
+            //    StepId = 12;
+            //    Remarks = "The card application is not in the Regiment/Officer Record Office.";
+            //}
+            //var response = new List<DTOCardDispatchCheckRequest>();
+            //using (var scope = _serviceProvider.CreateScope())
+            //{
+            //    // ✅ Get scoped services like DbContext inside the scope
+            //    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            //    var connection = context.Database.GetDbConnection();
+            //    try
+            //    {
+            //        if (connection.State != ConnectionState.Open)
+            //            connection.Open(); // Keep connection open throughout
+
+            //        foreach (var batchRecords in requests.Chunk(5000))
+            //        {
+            //            var resultInChunks = await Task.Run(() =>
+            //            {
+            //                if (ClaimValue == 1)
+            //                {
+            //                    if (dTO.ApplyForId == 1)
+            //                    {
+            //                        return (from record in batchRecords
+            //                                join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+            //                                from chipNoExists in chipNoJoin.DefaultIfEmpty()
+            //                                join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+            //                                from stepStatus in stepStatusJoin.DefaultIfEmpty()
+            //                                select new DTOCardDispatchCheckRequest
+            //                                {
+            //                                    ChipNo = record.ChipNo,
+            //                                    RequestId = chipNoExists?.RequestId ?? 0,
+            //                                    IsValid = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null,
+            //                                    Status = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null ? "Valid" : "DbInvalid",
+            //                                    Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+            //                                              (chipNoExists != null && chipNoExists.RecordOfficeId != dTO.RecordOfficeId ? "ChipNo not Valid match to RecordOffice; " : "") +
+            //                                              (chipNoExists != null && stepStatus == null ? Remarks : "")
+            //                                }).ToList();
+            //                    }
+            //                    else
+            //                    {
+            //                        return (from record in batchRecords
+            //                                join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+            //                                from chipNoExists in chipNoJoin.DefaultIfEmpty()
+            //                                join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.RegimentalId } into bdMatchJoin
+            //                                from bdMatch in bdMatchJoin.DefaultIfEmpty()
+            //                                join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+            //                                from stepStatus in stepStatusJoin.DefaultIfEmpty()
+            //                                select new DTOCardDispatchCheckRequest
+            //                                {
+            //                                    ChipNo = record.ChipNo,
+            //                                    RequestId = chipNoExists?.RequestId ?? 0,
+            //                                    IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
+            //                                    Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
+            //                                    Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+            //                                              (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Regiment; " : "") +
+            //                                              (chipNoExists != null && stepStatus == null ? Remarks : "")
+            //                                }).ToList();
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    return (from record in batchRecords
+            //                            join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
+            //                            from chipNoExists in chipNoJoin.DefaultIfEmpty()
+            //                            join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
+            //                            from bdMatch in bdMatchJoin.DefaultIfEmpty()
+            //                            join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+            //                            from stepStatus in stepStatusJoin.DefaultIfEmpty()
+            //                            select new DTOCardDispatchCheckRequest
+            //                            {
+            //                                ChipNo = record.ChipNo,
+            //                                RequestId = chipNoExists?.RequestId ?? 0,
+            //                                IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
+            //                                Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
+            //                                Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
+            //                                          (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Unit; " : "") +
+            //                                          (chipNoExists != null && stepStatus == null ? Remarks : "")
+            //                            }).ToList();
+            //                }
+
+            //            });
+            //            response.AddRange(resultInChunks);
+            //        }
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine("Error: " + ex.Message);
+            //    }
+            //    finally
+            //    {
+            //        if (connection.State == ConnectionState.Open)
+            //            connection.Close();
+            //    }
+            //}
+            //return response;
+            #endregion
             byte StepId;
             string Remarks = string.Empty;
             if (ClaimValue == 1)
@@ -737,7 +863,7 @@ namespace DataAccessLayer
                     if (connection.State != ConnectionState.Open)
                         connection.Open(); // Keep connection open throughout
 
-                    foreach (var batchRecords in requests.Chunk(5000))
+                    foreach (var batchRecords in RequestIds.Chunk(5000))
                     {
                         var resultInChunks = await Task.Run(() =>
                         {
@@ -746,60 +872,60 @@ namespace DataAccessLayer
                                 if (dTO.ApplyForId == 1)
                                 {
                                     return (from record in batchRecords
-                                            join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
-                                            from chipNoExists in chipNoJoin.DefaultIfEmpty()
-                                            join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
-                                            from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                            join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
+                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
+                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
+                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
                                             select new DTOCardDispatchCheckRequest
                                             {
-                                                ChipNo = record.ChipNo,
-                                                RequestId = chipNoExists?.RequestId ?? 0,
-                                                IsValid = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null,
-                                                Status = chipNoExists != null && chipNoExists.RecordOfficeId == dTO.RecordOfficeId && stepStatus != null ? "Valid" : "DbInvalid",
-                                                Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
-                                                          (chipNoExists != null && chipNoExists.RecordOfficeId != dTO.RecordOfficeId ? "ChipNo not Valid match to RecordOffice; " : "") +
-                                                          (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
+                                                RequestId = RequestIdExists?.RequestId ?? 0,
+                                                IsValid = RequestIdExists != null && RequestIdExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null,
+                                                Status = RequestIdExists != null && RequestIdExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                                Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
+                                                          (RequestIdExists != null && RequestIdExists.RecordOfficeId != dTO.RecordOfficeId ? "Appl number not Valid match to RecordOffice; " : "") +
+                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
                                             }).ToList();
                                 }
                                 else
                                 {
                                     return (from record in batchRecords
-                                            join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
-                                            from chipNoExists in chipNoJoin.DefaultIfEmpty()
-                                            join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.RegimentalId } into bdMatchJoin
-                                            from bdMatch in bdMatchJoin.DefaultIfEmpty()
-                                            join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
-                                            from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                            join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
+                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
+                                            join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.RegimentalId } into bdMatchJoin
+                                            from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
+                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
+                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
                                             select new DTOCardDispatchCheckRequest
                                             {
-                                                ChipNo = record.ChipNo,
-                                                RequestId = chipNoExists?.RequestId ?? 0,
-                                                IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
-                                                Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
-                                                Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
-                                                          (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Regiment; " : "") +
-                                                          (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
+                                                RequestId = RequestIdExists?.RequestId ?? 0,
+                                                IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
+                                                Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                                Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
+                                                          (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Regiment; " : "") +
+                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
                                             }).ToList();
                                 }
                             }
                             else
                             {
                                 return (from record in batchRecords
-                                        join chipNoMatch in context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
-                                        from chipNoExists in chipNoJoin.DefaultIfEmpty()
-                                        join bdMatch in context.BasicDetails on new { BasicDetailId = chipNoExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
-                                        from bdMatch in bdMatchJoin.DefaultIfEmpty()
-                                        join stepStatus in context.TrnStepCounter on new { RequestId = chipNoExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
-                                        from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                        join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
+                                        from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
+                                        join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
+                                        from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
+                                        join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
+                                        from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
                                         select new DTOCardDispatchCheckRequest
                                         {
-                                            ChipNo = record.ChipNo,
-                                            RequestId = chipNoExists?.RequestId ?? 0,
-                                            IsValid = chipNoExists != null && bdMatch != null && stepStatus != null,
-                                            Status = chipNoExists != null && bdMatch != null && stepStatus != null ? "Valid" : "DbInvalid",
-                                            Remarks = (chipNoExists == null ? "ChipNo not exists; " : "") +
-                                                      (chipNoExists != null && bdMatch == null ? "ChipNo not Valid match to Unit; " : "") +
-                                                      (chipNoExists != null && stepStatus == null ? Remarks : "")
+                                            ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
+                                            RequestId = RequestIdExists?.RequestId ?? 0,
+                                            IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
+                                            Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                            Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
+                                                      (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Unit; " : "") +
+                                                      (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
                                         }).ToList();
                             }
 
@@ -998,41 +1124,50 @@ namespace DataAccessLayer
                 return response;
             }
         }
-        public async Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue,int TDMId,int UnitId)
+        public async Task<DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>> GetddlRecordRegiment(byte ClaimValue,int TDMId,int UnitId,int ToUnitId)
         {
-            List<DTOMasterResponse> ret = new List<DTOMasterResponse>();
-            DTOGenericResponse<List<DTOMasterResponse>> response = new DTOGenericResponse<List<DTOMasterResponse>>();
+            DTOOROWithRegimentAndUnitResponse ret = new DTOOROWithRegimentAndUnitResponse();
+            DTOOROWithRegimentAndUnitResponse ret2 = new DTOOROWithRegimentAndUnitResponse();
+            DTOGenericResponse<DTOOROWithRegimentAndUnitResponse> response = new DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>();
             string query=string.Empty;
-            if (ClaimValue == 1)
+            string query2 = string.Empty;
+            if (ClaimValue == 2) 
             {
-                if(CategeryId == 1)
-                {
-                    query = @"Select oro.RecordOfficeId as Id,mrec.Name as Name from OROMapping oro
-                            inner join MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId";
-                }
-                else if(CategeryId == 2)
-                {
-                    query = @"Select RegId as Id, Name  from MRegimental";
-                }
-            }
-            else if (ClaimValue == 2) 
-            {
-                query = @"Select oro.RecordOfficeId as Id,mrec.Name from OROMapping oro
+                query = @"Select TOP 1 oro.RecordOfficeId as Id,mrec.Name from OROMapping oro
                         inner join MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId WHERE oro.TDMId=@TDMId";
             }
             else if (ClaimValue == 3)
             {
-                query = @"Select RegId as Id, Name  from MRegimental WHERE UnitId=@UnitId";
+                query = @"Select TOP 1 RegId as Id, Name  from MRegimental WHERE UnitId=@UnitId";
             }
+                query2 = @"Select CONCAT(mu.Sus_no,mu.Suffix) as SUSNo,mu.Abbreviation as UnitAbbreviation from MUnit mu
+                            INNER JOIN MapUnit munit on mu.UnitId=munit.UnitId
+                            WHERE munit.UnitMapId=@ToUnitId";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                     ret = (await connection.QueryAsync<DTOMasterResponse>(query,new { TDMId , UnitId })).ToList();
+                     ret = await connection.QueryFirstOrDefaultAsync<DTOOROWithRegimentAndUnitResponse>(query,new { TDMId , UnitId });
+                     ret2 = await connection.QueryFirstOrDefaultAsync<DTOOROWithRegimentAndUnitResponse>(query2, new { ToUnitId });
                 }
-                response.Result = true;  // Operation successful
-                response.Message = "Data retrieved successfully.";
-                response.Value = ret;
+                if (ret == null)
+                {
+                    response.Result = false; 
+                    response.Message = "No records found.";
+                    response.Value = new DTOOROWithRegimentAndUnitResponse();
+                }
+                else
+                {
+                    response.Result = true;  // Operation successful
+                    response.Message = "Data retrieved successfully.";
+                    if (ret2 !=null)
+                    {
+                        ret.SUSNo= ret2.SUSNo;
+                        ret.UnitAbbreviation = ret2.UnitAbbreviation;
+                    }
+                    response.Value = ret;
+                }
+
             }
             catch (Exception ex)
             {
@@ -3438,7 +3573,7 @@ namespace DataAccessLayer
             }
             return response;
         }
-        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch)
+        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequest dTODispatch)
         {
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
             try
@@ -3452,10 +3587,10 @@ namespace DataAccessLayer
                 {
                     StepId = 13;
                 }
-                    string insert = "";
-                insert = @"INSERT INTO TrnDispatchCard(Step,ApplyForId,RegId,RecordOfficeId,OutDate,ReceiptDate,DispatchDate,RefOfDispatch,LotNo,NameOfCourierIncharge,UploadFilePath,FromRemark,ToRemark,FromUnitId,ToUnitId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,IsComplete,IsActive,Updatedby,UpdatedOn,DispatchModeId)
+                string insert = "";
+                insert = @"INSERT INTO TrnDispatchCard(Step,ApplyForId,RegId,RecordOfficeId,OutDate,ReceiptDate,DispatchDate,RefOfDispatch,NameOfCourierIncharge,UploadFilePath,FromRemark,ToRemark,FromUnitId,ToUnitId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,IsComplete,IsActive,Updatedby,UpdatedOn,DispatchModeId)
                                 OUTPUT INSERTED.DispatchCardId
-                                VALUES(@Step,@ApplyForId,@RegId,@RecordOfficeId,@OutDate,@ReceiptDate,@DispatchDate,@RefOfDispatch,@LotNo,@NameOfCourierIncharge,@UploadFilePath,@FromRemark,@ToRemark,@FromUnitId,@ToUnitId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@DispatchModeId)";
+                                VALUES(@Step,@ApplyForId,@RegId,@RecordOfficeId,@OutDate,@ReceiptDate,@DispatchDate,@RefOfDispatch,@NameOfCourierIncharge,@UploadFilePath,@FromRemark,@ToRemark,@FromUnitId,@ToUnitId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@DispatchModeId)";
                 var parameters = new DynamicParameters();
                 parameters.Add("@DispatchCardId", dTODispatch.DispatchCardId, DbType.Int32, ParameterDirection.Output);
                 parameters.Add("@Step", dTODispatch.Step, DbType.Byte, ParameterDirection.Input);
@@ -3466,7 +3601,6 @@ namespace DataAccessLayer
                 parameters.Add("@ReceiptDate", dTODispatch.ReceiptDate, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@DispatchDate", dTODispatch.DispatchDate, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@RefOfDispatch", dTODispatch.RefOfDispatch, DbType.String, ParameterDirection.Input, 50);
-                parameters.Add("@LotNo", dTODispatch.LotNo, DbType.String, ParameterDirection.Input,50);
                 parameters.Add("@NameOfCourierIncharge", dTODispatch.NameOfCourierIncharge, DbType.String, ParameterDirection.Input, 50);
                 parameters.Add("@UploadFilePath", dTODispatch.UploadFilePath, DbType.String, ParameterDirection.Input, 100);
                 parameters.Add("@FromRemark", dTODispatch.FromRemark, DbType.String, ParameterDirection.Input, 100);
@@ -3501,7 +3635,10 @@ namespace DataAccessLayer
                                    )).FirstOrDefault();
                     }
                     response.Value = "Success";
+                    response.Message = Id.ToString();
                 }
+                response.Result = true;
+
 
             }
             catch (Exception ex)

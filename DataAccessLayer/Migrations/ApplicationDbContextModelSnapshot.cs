@@ -2411,11 +2411,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsComplete")
                         .HasColumnType("bit");
 
-                    b.Property<string>("LotNo")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("VARCHAR(50)");
-
                     b.Property<string>("NameOfCourierIncharge")
                         .IsRequired()
                         .HasMaxLength(50)

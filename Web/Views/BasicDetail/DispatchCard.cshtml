@@ -2,6 +2,15 @@
     ViewData["Title"] = "List of Dispatch Card";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var claimValue = ViewBag.ClaimValue;
+    string lblForDispatch = string.Empty;
+    if (claimValue == 1 || claimValue == 2 || claimValue == 3)
+    {
+        lblForDispatch = "Ready For Dispatch";
+    }
+    else
+    {
+        lblForDispatch = "Ready For Distribution";
+    }
 }
 <style>
     .count-label {
@@ -66,37 +75,11 @@
                         @*                         Total Faulty <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                     </h6>
                     <div>
-                        <button type="button" id="btnDispatchStatus" class="btn btn-outline-success font-weight-600 btn-sm mr-1">Cards Dispatch Status</button>
-                        @if (claimValue == 1 || claimValue == 2 || claimValue == 3)
-                        {
-                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add</button>
-                        }
+                        <button type="button" id="btnDispatchStatus" class="btn btn-outline-success font-weight-600 btn-sm mr-1">@lblForDispatch</button>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
-                        <thead>
-                            <tr >
-                                <th class="wd-40-f">S No</th>
-                                <th class="nowrap">
-                                    Categery<br>
-                                    <input type="text" id="filterApplyFor" class="form-control-AllowedKey d-none" placeholder="Search Category" />
-                                </th>
-                                <th class="nowrap">Lot No</th>
-                                <th class="nowrap">Unit</th>
-                                <th class="nowrap">Regt / ORO</th>
-                                <th class="nowrap">CIC Name</th>
-                                <th class="nowrap">Army No</th>
-                                <th class="nowrap">Dispatch To</th>
-                                <th class="nowrap">Dispatch On</th>
-                                <th class="nowrap">Sender Remark</th>
-                                <th class="nowrap">Dispatch In</th>
-                                <th class="nowrap">Remark</th>
-                                <th class="noExport nowrap">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="DetailBody">
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -112,29 +95,64 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="mb-2 d-flex justify-content-end">
-                        <div id="AdvSearch" class="d-flex mb-2 d-none">
-                            <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
-                                <option value="" selected>Select Field</option>
-                                <option value="susno">SUS No</option>
-                                <option value="regimentalname">Regt</option>
-                                <option value="recordofficename">ORO</option>
-@*                                 <option value="categery">Categery</option>
-                                <option value="requestid">Request Id</option>
-                                <option value="serviceno">Army No</option>
-                                <option value="chipno">Chip No</option>
-                                <option value="cardserialno">Card Serial No</option>
-                                <option value="status">Status</option> *@
-                            </select>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <div id="AdvSearch" class="mb-2 d-flex d-none">
+                            @if (claimValue == 1)
+                            {
+                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
+                                    <option value="" selected>Select Field</option>
+                                    <option value="regimentalname">Regt</option>
+                                    <option value="recordofficename">ORO</option>
+                                </select>
+                                <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
+                                    <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
+                                </div>
+                                <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
+                                <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
+                                <button id="btnProceedToDispatch" class="btn btn-sm btn-outline-success">Proceed to Dispatch</button>
+                            }
+                            else if (claimValue == 2)
+                            {
+                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
+                                    <option value="susno" selected>SUS No</option>
+                                </select>
+                                <span class=" d-none" id="spnUnitMapId"></span>
+                                <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
+                                    <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Type SUS No" />
+                                </div>
+                                <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
+                                <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
+                                <button id="btnProceedToDispatch" class="btn btn-sm btn-outline-success">Proceed to Dispatch</button>
+                            }
+                            else if (claimValue == 3)
+                            {
+                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
+                                    <option value="susno" selected>SUS No</option>
+                                </select>
+                                <span class=" d-none" id="spnUnitMapId"></span>
+                                <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
+                                    <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Type SUS No" />
+                                </div>
+                                <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
+                                <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
+                                <button id="btnProceedToDispatch" class="btn btn-sm btn-outline-success">Proceed to Dispatch</button>
+                            }
+                            else
+                            {
+                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
+                                    <option value="" selected>Select Field</option>
+                                    <option value="serviceno">Service No</option>
+                                </select>
+                                <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
+                                    <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
+                                </div>
+                                <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
+                                <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
+                            }
 
-                            <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
-                                <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
-                            </div>
-
-                            <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
-                            <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
                         </div>
-                        <button id="export" class="btn btn-sm btn-outline-success mr-1">Export CSV</button>
+                        <button id="exportRequestIds" class="btn btn-sm btn-outline-success">Export CSV</button>
+
                     </div>
                     <div class="table-responsive">
                         <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialog">
@@ -146,6 +164,35 @@
             </div>
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
+</div>
+<!-- Dispatch Details of Lot Wise -->
+<div class="modal fade" id="DataTableDialogForLot" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitleLot"></span></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div>
+                        <div id="LotDetails" class="alert alert-info small" style="white-space: nowrap; overflow-x: auto;">
+
+                        </div>
+                        <div class="mb-2 d-flex justify-content-end">
+                            <button id="exportLot" class="btn btn-sm btn-outline-success mr-1">Export CSV</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldatadialogLot">
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="msg">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Dispatch In Dialog  -->

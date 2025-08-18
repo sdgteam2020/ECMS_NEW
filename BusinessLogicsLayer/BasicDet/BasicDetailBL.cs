@@ -31,6 +31,10 @@ namespace BusinessLogicsLayer.BasicDet
             _iBasicDetailDB = BasicDetail;
             _logger = logger;
         }
+        public async Task<List<DTODispatchCardForCSVResponse>> ExportCsvFileForDispatchCard(int[] RequestIds)
+        {
+            return await _iBasicDetailDB.ExportCsvFileForDispatchCard(RequestIds);
+        }
         public async Task<DTODataTablesForDispatchCardStatusListResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequestForCardStatusList dTO, byte ClaimValue)
         {
             return await _iBasicDetailDB.GetDispatchCardStatusListForDialog(dTO, ClaimValue);
@@ -47,13 +51,13 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetAllDispatchCard(dTO);
         }
-        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequestWithoutIFormFile dTODispatch)
+        public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequest dTODispatch)
         {
             return await _iBasicDetailDB.CardDispatchCSVUpload(requests, dTODispatch);
         }
-        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(List<DTOCardDispatchCheckRequest> requests, byte ClaimValue, DTODispatchOutRequest dTO)
+        public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO)
         {
-            return await _iBasicDetailDB.CardDispatchCSVCheck(requests, ClaimValue, dTO);
+            return await _iBasicDetailDB.CardDispatchCSVCheck(RequestIds, ClaimValue, dTO);
         }
         public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId)
         {
@@ -63,9 +67,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetDispatchToData(CategeryId, Id);
         }
-        public async Task<DTOGenericResponse<List<DTOMasterResponse>>> GetddlRecordRegiment(byte CategeryId, byte ClaimValue, int TDMId, int UnitId)
+        public async Task<DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>> GetddlRecordRegiment(byte ClaimValue, int TDMId, int UnitId, int ToUnitId)
         {
-            return await _iBasicDetailDB.GetddlRecordRegiment(CategeryId, ClaimValue, TDMId, UnitId);
+            return await _iBasicDetailDB.GetddlRecordRegiment(ClaimValue, TDMId, UnitId, ToUnitId);
         }
         public async Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
@@ -212,79 +216,91 @@ namespace BusinessLogicsLayer.BasicDet
             var data = await _iBasicDetailDB.ICardHistoryCompleted(RequestId);
             return data;
         }
-        public async Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(List<DTOCardDispatchCheckRequest> request,byte ClaimValue, DTODispatchOutRequest dTO)
+        public async Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO)
         {
+            #region Old Code
+            //try
+            //{
+            //    // Get properties to check (excluding RequestId,Remarks, IsValid, Status)
+            //    var properties = typeof(DTOCardDispatchCheckRequest).GetProperties()
+            //                                               .Where(p => p.Name != nameof(DTOCardDispatchCheckRequest.RequestId)
+            //                                                        && p.Name != nameof(DTOCardDispatchCheckRequest.Remarks)
+            //                                                        && p.Name != nameof(DTOCardDispatchCheckRequest.IsValid)
+            //                                                        && p.Name != nameof(DTOCardDispatchCheckRequest.Status))
+            //                                               .ToList();
+
+            //    // Find duplicate values in request
+            //    var duplicateValuesDict = properties.ToDictionary(
+            //                                prop => prop.Name,
+            //                                prop => request
+            //                                    .Where(r => !string.IsNullOrWhiteSpace(prop.GetValue(r)?.ToString()))
+            //                                    .GroupBy(r => prop.GetValue(r)?.ToString()?.Trim())
+            //                                    .Where(g => g.Count() > 1)
+            //                                    .Select(g => g.Key)
+            //                                    .ToHashSet()
+            //                            );
+
+            //    //Mark records with remarks
+            //    request = request.Select(r =>
+            //    {
+            //        var remarks = new List<string>();
+
+            //        foreach (var prop in properties)
+            //        {
+            //            var rawValue = prop.GetValue(r);
+            //            var value = rawValue?.ToString()?.Trim();
+
+            //            // Null or Blank Check
+            //            if (string.IsNullOrWhiteSpace(value))
+            //            {
+            //                remarks.Add($"{prop.Name} is blank");
+            //            }
+            //            else if (prop.Name == "ChipNo" && value.Length > 30)
+            //            {
+            //                remarks.Add($"{prop.Name} is out of range");
+            //            }
+            //            else if (duplicateValuesDict[prop.Name].Contains(value))
+            //            {
+            //                remarks.Add($"{prop.Name} is duplicate");
+            //            }
+            //        }
+
+            //        if (remarks.Any())
+            //        {
+            //            r.IsValid = false;
+            //            r.Status = "SheetInValid";
+            //            r.Remarks = string.Join("; ", remarks);
+            //        }
+            //        return r;
+            //    }).ToList();
+
+            //    var validRecords = request.Where(r => r.IsValid).ToList();
+            //    var invalidRecords = request.Where(r => !r.IsValid).ToList();
+            //    if (validRecords?.Count() > 0)
+            //    {
+            //        var checkDbRecords = await _iBasicDetailDB.CardDispatchCSVCheck(validRecords, ClaimValue, dTO);
+            //        validRecords = checkDbRecords.Where(r => r.IsValid).ToList();
+            //        var invalidDbRecord = checkDbRecords.Where(r => !r.IsValid).ToList();
+            //        invalidRecords = invalidRecords.Concat(invalidDbRecord).ToList();
+            //    }
+            //    request = invalidRecords.Concat(validRecords).ToList();
+            //}
+            //catch (Exception ee)
+            //{
+            //    _logger.LogError(1001, ee, "BasicDetailBL->ValidateCardPrinitng");
+            //}
+            //return request;
+            #endregion
+            List<DTOCardDispatchCheckRequest> checkDbRecords = new List<DTOCardDispatchCheckRequest>();
             try
             {
-                // Get properties to check (excluding RequestId,Remarks, IsValid, Status)
-                var properties = typeof(DTOCardDispatchCheckRequest).GetProperties()
-                                                           .Where(p => p.Name != nameof(DTOCardDispatchCheckRequest.RequestId) 
-                                                                    && p.Name != nameof(DTOCardDispatchCheckRequest.Remarks)
-                                                                    && p.Name != nameof(DTOCardDispatchCheckRequest.IsValid)
-                                                                    && p.Name != nameof(DTOCardDispatchCheckRequest.Status))
-                                                           .ToList();
-
-                // Find duplicate values in request
-                var duplicateValuesDict = properties.ToDictionary(
-                                            prop => prop.Name,
-                                            prop => request
-                                                .Where(r => !string.IsNullOrWhiteSpace(prop.GetValue(r)?.ToString()))
-                                                .GroupBy(r => prop.GetValue(r)?.ToString()?.Trim())
-                                                .Where(g => g.Count() > 1)
-                                                .Select(g => g.Key)
-                                                .ToHashSet()
-                                        );
-
-                //Mark records with remarks
-                request = request.Select(r =>
-                {
-                    var remarks = new List<string>();
-
-                    foreach (var prop in properties)
-                    {
-                        var rawValue = prop.GetValue(r);
-                        var value = rawValue?.ToString()?.Trim();
-
-                        // Null or Blank Check
-                        if (string.IsNullOrWhiteSpace(value))
-                        {
-                            remarks.Add($"{prop.Name} is blank");
-                        }
-                        else if (prop.Name == "ChipNo" && value.Length > 30)
-                        {
-                            remarks.Add($"{prop.Name} is out of range");
-                        }
-                        else if (duplicateValuesDict[prop.Name].Contains(value))
-                        {
-                            remarks.Add($"{prop.Name} is duplicate");
-                        }
-                    }
-
-                    if (remarks.Any())
-                    {
-                        r.IsValid = false;
-                        r.Status = "SheetInValid";
-                        r.Remarks = string.Join("; ", remarks);
-                    }
-                    return r;
-                }).ToList();
-
-                var validRecords = request.Where(r => r.IsValid).ToList();
-                var invalidRecords = request.Where(r => !r.IsValid).ToList();
-                if (validRecords?.Count() > 0)
-                {
-                    var checkDbRecords = await _iBasicDetailDB.CardDispatchCSVCheck(validRecords, ClaimValue, dTO);
-                    validRecords = checkDbRecords.Where(r => r.IsValid).ToList();
-                    var invalidDbRecord = checkDbRecords.Where(r => !r.IsValid).ToList();
-                    invalidRecords = invalidRecords.Concat(invalidDbRecord).ToList();
-                }
-                request = invalidRecords.Concat(validRecords).ToList();
+                checkDbRecords = await _iBasicDetailDB.CardDispatchCSVCheck(RequestIds, ClaimValue, dTO);
             }
             catch (Exception ee)
             {
-                _logger.LogError(1001, ee, "BasicDetailBL->ValidateCardPrinitng");
+                _logger.LogError(1001, ee, "BasicDetailBL->ValidateCardDispatchData");
             }
-            return request;
+            return checkDbRecords;
         }
         public async Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request)
         {
