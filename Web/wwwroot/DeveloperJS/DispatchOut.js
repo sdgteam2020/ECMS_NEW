@@ -20,6 +20,21 @@ $(async function () {
     var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
     var maxDate = year + '-' + month + '-' + day;
 
+    //$('#txtDispatchDate').datetimepicker({
+    //    format: 'DD/MM/YYYY HH:mm',   // Moment.js format (date + 24h time)
+    //    stepping: 15,                 // minute step (like controlType: 'select')
+    //    useCurrent: false,            // don't auto-fill current time
+    //    minDate: moment(),            // today onwards
+    //    maxDate: moment().year(2100).endOf('year'), // restrict till 2100
+    //    icons: {                      // optional icons (FontAwesome or Glyphicons)
+    //        time: 'fa fa-clock',
+    //        date: 'fa fa-calendar',
+    //        up: 'fa fa-chevron-up',
+    //        down: 'fa fa-chevron-down'
+    //    }
+    //});
+
+
     $('#txtDispatchDate').attr('min', minDate);
     $('#txtDispatchDate').attr('max', maxDate);
 
