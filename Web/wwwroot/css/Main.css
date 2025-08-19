@@ -76,7 +76,7 @@
     z-index: 2147483647;
 }
 
-/*-----------------------------------------------------------------------------old card css start-----------------------------------------------------------------------------*/
+/* *********************************old card css start **********************************/
 .counter {
     color: rgba(22, 125, 207, 1);
     font-family: 'Open Sans', sans-serif;
@@ -92,7 +92,7 @@
     margin-bottom: 15px;
 }
 
-    .counter:before,
+    /*.counter:before,
     .counter:after {
         content: "";
         background: #f3f3f3;
@@ -109,9 +109,9 @@
     .counter:after {
         background: transparent;
         width: 100px;
-        height: 100px;
+        height: 100px;*/
         /* border: 15px solid #f27f21;*/
-        border-top: none;
+        /*border-top: none;
         border-right: none;
         border-radius: 0 0 0 20px;
         box-shadow: none;
@@ -119,21 +119,21 @@
         left: -10px;
         bottom: -10px;
         right: auto;
-    }
+    }*/
 
-    .counter .counter-icon {
+   /* .counter .counter-icon {
         font-size: 40px;
         line-height: 35px;
         margin: 0 0 15px;
         transition: all 0.3s ease 0s;
-    }
+    }*/
 
-    .counter:hover .counter-icon {
+    /*.counter:hover .counter-icon {*/
         /*  transform: rotateY(360deg);*/
-        transform: scale(1.5);
-    }
+        /*transform: scale(1.5);
+    }*/
 
-    .counter .counter-value {
+    /*.counter .counter-value {
         color: #555;
         font-size: 30px;
         font-weight: 600;
@@ -141,11 +141,11 @@
         margin: 0 0 20px;
         display: block;
         transition: all 0.3s ease 0s;
-    }
+    }*/
 
-    .counter:hover .counter-value {
+   /* .counter:hover .counter-value {
         text-shadow: 2px 2px 0 #d1d8e0;
-    }
+    }*/
 
     .counter h3 {
         font-size: 12px;
@@ -218,10 +218,10 @@
             border-bottom-color: #C1C353;
             border-left-color: #C1C353;
         }
-/*-----------------------------------------------------------------------------old card css end-----------------------------------------------------------------------------*/
+/* *********************************old card css end **********************************/
 
 
-/*-----------------------------------------------------------------------------new card css start-----------------------------------------------------------------------------*/
+/* *********************************new card css start **********************************/
 
 /* Scope to elements that have BOTH classes: class="card new_css" */
 .card.new_css {
@@ -339,7 +339,7 @@
     visibility: hidden;
 }
 
-/*-----------------------------------------------------------------------------new card css start-----------------------------------------------------------------------------*/
+/* *********************************new card css end **********************************/
 
 /* Responsive tweak */
 @media screen and (max-width: 990px) {
@@ -348,10 +348,10 @@
     }
 }
 
-tbody{
+/*tbody{
     text-wrap:nowrap;
-    text-align:right;
-}
+    text-align:left;
+}*/
 .box-shadow {
     box-shadow: 10px 4px 2px rgba(0,0,0,0.2);
 }
