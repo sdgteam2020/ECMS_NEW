@@ -6,55 +6,24 @@ let ToUnitId;
 let ToUserId;
 let RecordRegimentId;
 $(async function () {
-    var dtToday = new Date();
+    const now = moment();                 // current date-time
+    const max = moment().add(1, 'month'); // +1 month
 
-    var month = dtToday.getMonth() + 1;
-    var day = dtToday.getDate();
-    var year = dtToday.getFullYear() + 1;
+    if ($('#txtDispatchDate').data('DateTimePicker')) {
+        $('#txtDispatchDate').data('DateTimePicker').destroy();
+    }
 
-    if (month < 10)
-        month = '0' + month.toString();
-    if (day < 10)
-        day = '0' + day.toString();
-
-    var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
-    var maxDate = year + '-' + month + '-' + day;
-
-    //$('#txtDispatchDate').datetimepicker({
-    //    format: 'DD/MM/YYYY HH:mm',   // Moment.js format (date + 24h time)
-    //    stepping: 15,                 // minute step (like controlType: 'select')
-    //    useCurrent: false,            // don't auto-fill current time
-    //    minDate: moment(),            // today onwards
-    //    maxDate: moment().year(2100).endOf('year'), // restrict till 2100
-    //    icons: {                      // optional icons (FontAwesome or Glyphicons)
-    //        time: 'fa fa-clock',
-    //        date: 'fa fa-calendar',
-    //        up: 'fa fa-chevron-up',
-    //        down: 'fa fa-chevron-down'
-    //    }
-    //});
-
-
-    $('#txtDispatchDate').attr('min', minDate);
-    $('#txtDispatchDate').attr('max', maxDate);
-
-    $('#txtDispatchDate').on('change', function () {
-        var dtToday = new Date();
-
-        var month = dtToday.getMonth() + 1;
-        var day = dtToday.getDate();
-        var year = dtToday.getFullYear() + 1;
-
-        if (month < 10)
-            month = '0' + month.toString();
-        if (day < 10)
-            day = '0' + day.toString();
-        var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
-        var maxDate = year + '-' + month + '-' + day;
-        $('#txtDispatchDate').attr('min', minDate);
-        $('#txtDispatchDate').attr('max', maxDate);
+    $('#txtDispatchDate').datetimepicker({
+        format: 'DD/MM/YYYY HH:mm',
+        sideBySide: true,
+        stepping: 15,
+        useCurrent: false,
+        minDate: now,  // block past
+        maxDate: max   // allow only up to 1 month from now
+    }).on('dp.show', function () {
+        // Refresh minDate in case page was open long time
+        $(this).data('DateTimePicker').minDate(moment());
     });
-
     $('#txtDispatchDate').on('keydown', (e) => {
         e.preventDefault();
         return false;
@@ -143,7 +112,7 @@ async function Save() {
 
         formData.append('ApplyForId', CategoryId);
         formData.append('Step', ClaimValue == 1 ? 1 : 2);
-        formData.append('DispatchDate', convertToISOWithTime($("#txtDispatchDate").val()));
+        formData.append('DispatchDate', convertToISOWithTime_dtp($("#txtDispatchDate").val()));
         formData.append('DispatchModeId', $("#ddlDispatch").val());
         formData.append('NameOfCourierIncharge', $("#txtCourierIncharge").val());
         formData.append('RefOfDispatch', $("#txtRefOfDispatch").val());
