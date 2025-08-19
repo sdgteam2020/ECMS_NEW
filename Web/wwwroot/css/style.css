@@ -22788,7 +22788,7 @@ a.bg-alternate:hover, a.bg-alternate:focus, button.bg-alternate:hover, button.bg
 .nav-pills .nav-link:hover {
     color: #fff !important;
     border-radius: 3px; 
-    padding: 1.5px; 
+    /*padding: 1.5px;*/ 
 }
 
 /*.nav-pills .nav-link {
