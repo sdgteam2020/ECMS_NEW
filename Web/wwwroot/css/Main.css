@@ -92,7 +92,7 @@
     margin-bottom: 15px;
 }
 
-    /*.counter:before,
+    .counter:before,
     .counter:after {
         content: "";
         background: #f3f3f3;
@@ -106,12 +106,12 @@
         z-index: -1;
     }
 
-    .counter:after {
+    /*.counter:after {
         background: transparent;
         width: 100px;
-        height: 100px;*/
-        /* border: 15px solid #f27f21;*/
-        /*border-top: none;
+        height: 100px;
+        border: 15px solid #f27f21;
+        border-top: none;
         border-right: none;
         border-radius: 0 0 0 20px;
         box-shadow: none;
@@ -121,19 +121,19 @@
         right: auto;
     }*/
 
-   /* .counter .counter-icon {
+    .counter .counter-icon {
         font-size: 40px;
         line-height: 35px;
         margin: 0 0 15px;
         transition: all 0.3s ease 0s;
-    }*/
+    }
 
-    /*.counter:hover .counter-icon {*/
-        /*  transform: rotateY(360deg);*/
-        /*transform: scale(1.5);
-    }*/
+    .counter:hover .counter-icon {
+        transform: rotateY(360deg);
+        transform: scale(1.5);
+    }
 
-    /*.counter .counter-value {
+    .counter .counter-value {
         color: #555;
         font-size: 30px;
         font-weight: 600;
@@ -141,11 +141,11 @@
         margin: 0 0 20px;
         display: block;
         transition: all 0.3s ease 0s;
-    }*/
+    }
 
-   /* .counter:hover .counter-value {
+    .counter:hover .counter-value {
         text-shadow: 2px 2px 0 #d1d8e0;
-    }*/
+    }
 
     .counter h3 {
         font-size: 12px;
@@ -236,108 +236,108 @@
     text-align: center;
 }
 
-/* Center the page header container (this is outside the card scope) */
-/*.containerMain {
+    /* Center the page header container (this is outside the card scope) */
+    /*.containerMain {
     text-align: center;
 }*/
 
-/* Rows and columns INSIDE the card.new_css */
-.card.new_css .row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    padding: 10px 0;
-}
-
-.card.new_css .col-md-2,
-.card.new_css .col-sm-6 {
-    flex: 0 0 auto;
-    width: auto;
-}
-
-/* Counter blocks */
-.card.new_css .counter {
-    width: 190px;
-    height: 190px;
-    background-color: #f4f4f4;
-    border-radius: 16px;
-    border: 2px solid #007bff;
-    box-shadow: 6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
-    transition: 0.3s ease;
-}
-
-    .card.new_css .counter:hover {
-        transform: translateY(-4px);
-        box-shadow: 4px 4px 10px #d1d9e6, -4px -4px 10px #ffffff;
+    /* Rows and columns INSIDE the card.new_css */
+    .card.new_css .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 10px 0;
     }
 
-.card.new_css .counter-icon {
-    height: 45px;
-    font-size: 32px;
-    color: #007bff;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
+    .card.new_css .col-md-2,
+    .card.new_css .col-sm-6 {
+        flex: 0 0 auto;
+        width: auto;
+    }
 
-.card.new_css .div-counter-value {
-    height: 25px;
-    width: 100%;
-}
+    /* Counter blocks */
+    .card.new_css .counter {
+        width: 190px;
+        height: 190px;
+        background-color: #f4f4f4;
+        border-radius: 16px;
+        border: 2px solid #007bff;
+        box-shadow: 6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        transition: 0.3s ease;
+    }
 
-.card.new_css .counter-value {
-    font-size: 20px;
-    font-weight: bold;
-    color: #343a40;
-    margin-bottom: 4px;
-}
+        .card.new_css .counter:hover {
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 10px #d1d9e6, -4px -4px 10px #ffffff;
+        }
 
-.card.new_css .counter h3 {
-    font-size: 14px;
-    color: #007bff;
-    font-weight: 600;
-    margin: 0;
-    padding: 0 5px;
-    text-align: center;
-    text-transform: uppercase;
-    line-height: 1.2;
-}
+    .card.new_css .counter-icon {
+        height: 45px;
+        font-size: 32px;
+        color: #007bff;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 
-/* Color variants */
-.card.new_css .counter.pink,
-.card.new_css .counter.green,
-.card.new_css .counter.orange,
-.card.new_css .counter.yellow,
-.card.new_css .counter.blue,
-.card.new_css .counter.purple {
-    border-color: #167DCF !important;
-    color: #167DCF !important;
-}
+    .card.new_css .div-counter-value {
+        height: 25px;
+        width: 100%;
+    }
 
-/* Card header inside the new_css card */
-.card.new_css .seven h1 {
-    background: linear-gradient(to right, #007bff, #0056b3);
-    color: #fff;
-    padding: 10px 16px;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    margin: -1rem -1rem 1rem -1rem;
-    text-align: center;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
+    .card.new_css .counter-value {
+        font-size: 20px;
+        font-weight: bold;
+        color: #343a40;
+        margin-bottom: 4px;
+    }
 
-/* Fake header spacer */
-.card.new_css .fake-header {
-    height: 28.5px;
-    margin-bottom: 10px;
-    visibility: hidden;
-}
+    .card.new_css .counter h3 {
+        font-size: 14px;
+        color: #007bff;
+        font-weight: 600;
+        margin: 0;
+        padding: 0 5px;
+        text-align: center;
+        text-transform: uppercase;
+        line-height: 1.2;
+    }
+
+    /* Color variants */
+    .card.new_css .counter.pink,
+    .card.new_css .counter.green,
+    .card.new_css .counter.orange,
+    .card.new_css .counter.yellow,
+    .card.new_css .counter.blue,
+    .card.new_css .counter.purple {
+        border-color: #167DCF !important;
+        color: #167DCF !important;
+    }
+
+    /* Card header inside the new_css card */
+    .card.new_css .seven h1 {
+        background: linear-gradient(to right, #007bff, #0056b3);
+        color: #fff;
+        padding: 10px 16px;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+        margin: -1rem -1rem 1rem -1rem;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* Fake header spacer */
+    .card.new_css .fake-header {
+        height: 28.5px;
+        margin-bottom: 10px;
+        visibility: hidden;
+    }
 
 /* *********************************new card css end **********************************/
 
@@ -734,30 +734,25 @@ i.material-icons {
     }
 
 .seven h1 {
-    text-align: center;
-    font-size: 20px;
-    /* font-weight: 500; */
+    background: linear-gradient(to right, #007bff, #0056b3);
     color: #fff;
-    letter-spacing: 1px;
-    text-transform: capitalize;
-    /*  display: grid;*/
-    /*grid-template-columns: 1fr max-content 1fr;
-    grid-template-rows: 4px 0;
-    grid-gap: 11px;*/
-    align-items: center;
-    /* margin-top: 10px;*/
-    background-color: rgba(22,125,207,1);
-    padding: 5px;
+    padding: 10px 16px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    /*margin: -1rem -1rem 1rem -1rem;*/
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
-    .seven h1:after, .seven h1:before {
+/*.seven h1:after, .seven h1:before {
         content: " ";
         display: block;
-        /* border-bottom: 1px solid #141ac6;
-        border-top: 1px solid #141ac6;*/
-        /* height: 5px;*/
+         border-bottom: 1px solid #141ac6;
+        border-top: 1px solid #141ac6;
+         height: 5px;
         background-color: #f8f8f8;
-    }
+    }*/
 
 .form-check-input[type=checkbox] {
     border: 1px solid;
