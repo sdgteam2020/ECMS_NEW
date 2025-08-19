@@ -103,7 +103,7 @@ $(function () {
         resetSelectedFields(); // Reset selected fields when the modal is closed
     });
         $("#btnDispatchStatus").on("click", function () {
-            $("#lblModelTitle").html('Cards Dispatch Status details');
+            $("#lblModelTitle").html('Details of Card Dispatch Status');
 
             $("#AdvSearch").removeClass("d-none");
             // Show the modal first
@@ -123,33 +123,41 @@ $(function () {
             toastr.error('Invalid Dispatch Card Id.');
             return false; 
         }
+        if ($("#TermsConditions").prop("checked")) {
+            // Check Form Validation
+            if ($(formId).valid()) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Save it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Save();
+                    }
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please fill required field.',
 
-        // Check Form Validation
-        if ($(formId).valid()) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Save it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Save();
-                }
-            })
+                })
+                toastr.error('Please fill required field.');
+                return false;
+            }
+
         }
         else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please fill required field.',
-
-            })
-            toastr.error('Please fill required field.');
+            toastr.error('Please accept the Terms and Conditions');
             return false;
         }
+
+
     });
 
     $('#searchField').on('change', function () {
@@ -559,11 +567,11 @@ function getColumnsForDispatchCard(choice) {
                     }
                 },
                 {
-                    title: "Dispatch In",
+                    title: "Received On",
                     data: "ReceiptDate",
                     name: "Dispatch In",
                     render: function (data, type, row) {
-                        return data != null ? DateFormateddMMyyyyhhmmss(data) : "NA";
+                        return data != null ? DateFormateddMMyyyyhhmmss(data) : "";
                     }
                 },
                 // Additional column for Edit action
@@ -640,11 +648,11 @@ function getColumnsForDispatchCard(choice) {
                     }
                 },
                 {
-                    title: "Dispatch In",
+                    title: "Received On",
                     data: "ReceiptDate",
                     name: "Dispatch In",
                     render: function (data, type, row) {
-                        return data != null ? DateFormateddMMyyyyhhmmss(data) : "NA";
+                        return data != null ? DateFormateddMMyyyyhhmmss(data) : "";
                     }
                 },
                 // Additional column for Edit action
@@ -659,7 +667,7 @@ function getColumnsForDispatchCard(choice) {
                             return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></div>`;
                         }
                         else {
-                            return Action += `NA</div>`;
+                            return Action += `</div>`;
                         }
                     }
                 }
@@ -724,11 +732,11 @@ function getColumnsForDispatchCard(choice) {
                     }
                 },
                 {
-                    title: "Dispatch In",
+                    title: "Received On",
                     data: "ReceiptDate",
                     name: "Dispatch In",
                     render: function (data, type, row) {
-                        return data != null ? DateFormateddMMyyyyhhmmss(data) : "NA";
+                        return data != null ? DateFormateddMMyyyyhhmmss(data) : "";
                     }
                 },
                 // Additional column for Edit action
@@ -743,7 +751,7 @@ function getColumnsForDispatchCard(choice) {
                             return Action += `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-primary mr-1'><i class='fas fa-edit'></i></button></div>`;
                         }
                         else {
-                            return Action += `NA</div>`;
+                            return Action += `</div>`;
                         }
                     }
                 }

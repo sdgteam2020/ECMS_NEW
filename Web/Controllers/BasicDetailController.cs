@@ -2195,18 +2195,6 @@ namespace Web.Controllers
                     MP6A = new MP6A()
                 };
 
-                //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name)) dTOApplFwdCondition.MPRSO.Name = "MPRSO";
-                //if (dTOApplFwdCondition.MPRSO.ArmedAbbreviation == null || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0)
-                //    dTOApplFwdCondition.MPRSO.ArmedAbbreviation = new List<string> { "ADC", "AMC", "MNS" };
-                //if (dTOApplFwdCondition.MPRSO.RecordOfficeId == 0) dTOApplFwdCondition.MPRSO.RecordOfficeId = 135;
-
-                //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name)) dTOApplFwdCondition.MP6F.Name = "MP 6F";
-                //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix)) dTOApplFwdCondition.MP6F.ArmyNoPrefix = "SL";
-                //if (dTOApplFwdCondition.MP6F.RecordOfficeId == 0) dTOApplFwdCondition.MP6F.RecordOfficeId = 132;
-
-                //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name)) dTOApplFwdCondition.MP6A.Name = "MP 6A";
-                //if (dTOApplFwdCondition.MP6A.RecordOfficeId == 0) dTOApplFwdCondition.MP6A.RecordOfficeId = 126;
-                //if (dTOApplFwdCondition.MP6A.RankOrderby == 0) dTOApplFwdCondition.MP6A.RankOrderby = 4;
                 if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
                     dTOApplFwdCondition.MPRSO.RecordOfficeId == 0 || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) ||
                     string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) || dTOApplFwdCondition.MP6F.RecordOfficeId == 0 ||
