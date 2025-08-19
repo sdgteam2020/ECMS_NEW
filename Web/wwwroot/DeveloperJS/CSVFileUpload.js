@@ -267,7 +267,6 @@ function BindData() {
             }
         },
         columns: [
-            { data: "FileName", name: "FileName", visible: false },
             // Serial number column
             {
                 data: null,
@@ -278,6 +277,7 @@ function BindData() {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
+            { data: "FileName", name: "FileName"},
             { data: "TotalRecords", name: "TotalRecords" },
             { data: "ValidRecords", name: "ValidRecords" },
             { data: "DbInvalidRecords", name: "DbInvalidRecords" },
