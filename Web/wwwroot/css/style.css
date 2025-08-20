@@ -23346,8 +23346,8 @@ a.bg-alternate:hover, a.bg-alternate:focus, button.bg-alternate:hover, button.bg
 
 .feature-icon-box3 {
     position: relative;
-    border: 1px solid #b0c5c4;
-    padding: 0.7rem;
+   /* border: 1px solid #b0c5c4;
+    padding: 0.7rem;*/
 }
 
     .feature-icon-box3 .content-block {
