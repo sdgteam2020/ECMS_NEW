@@ -178,9 +178,18 @@ $(document).ready(function () {
             }
             else {
                 if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0) {
+                    let ArmyNoSfx = $("#txtApplyForArmyNo").val();
+                    let result;
                     if (OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
                         if ($("#txtApplyForArmyNo").val() === $("#aspntokenarmyno").html()) {
-                            IsValid = 1;
+                            result = await ChkSfx(ArmyNoSfx);
+                            if (result == false) {
+                                IsValid = 0;
+                                toastr.error("Invalid Army No.");
+                            }
+                            else {
+                                IsValid = 1;
+                            }
                         } else {
                             Message = "Please Inset Valid Token Token ArmyNo And Login ArmyNo Not Match";
                             IsValid = 0;
@@ -188,7 +197,14 @@ $(document).ready(function () {
                     }
                     if (OffType == 1 && parseInt(RegistrationApplyFor) == 2) {
                         if ($("#txtApplyForArmyNo").val() != "") {
-                            IsValid = 1;
+                            result = await ChkSfx(ArmyNoSfx);
+                            if (result == false) {
+                                IsValid = 0;
+                                toastr.error("Invalid Old Army No.");
+                            }
+                            else {
+                                IsValid = 1;
+                            }
                         }
                         else {
                             Message = "Please Inset Token";
@@ -197,7 +213,14 @@ $(document).ready(function () {
                     }
                     else if (OffType == 1 && parseInt(RegistrationApplyFor) != 1) {
                         if ($("#txtApplyForArmyNo").val() != "") {
-                            IsValid = 1;
+                            result = await ChkSfx(ArmyNoSfx);
+                            if (result == false) {
+                                IsValid = 0;
+                                toastr.error("Invalid Old Army No.");
+                            }
+                            else {
+                                IsValid = 1;
+                            }
                         }
                         else {
                             Message = "Please Enter Army No";
@@ -210,7 +233,14 @@ $(document).ready(function () {
                             Message = "Please Enter Army No";
                         }
                         else {
-                            IsValid = 1;
+                            result = await ChkSfx(ArmyNoSfx);
+                            if (result == false) {
+                                IsValid = 0;
+                                toastr.error("Invalid Old Army No.");
+                            }
+                            else {
+                                IsValid = 1;
+                            }
                         }
                     }
 
@@ -219,7 +249,7 @@ $(document).ready(function () {
                         CheckArmyNOExist();
                     }
                     else {
-                        toastr.error(Message);
+                        //toastr.error(Message);
                     }
                 }
                 else {

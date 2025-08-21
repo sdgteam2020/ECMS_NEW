@@ -60,6 +60,11 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 }
             },
             {
+                title: "Appl ID",
+                data: "ApplId",
+                name: "ApplId",
+            },
+            {
                 data: "ServiceNo",
                 name: "ServiceNo",
                 render: function (data, type, row) {
@@ -88,11 +93,6 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 data: "UnitName",
                 name: "UnitName",
                 orderable: false,
-            },
-            {
-                title: "Appl ID",
-                data: "TrackingId",
-                name: "TrackingId",
             },
             {
                 title: "Type",
@@ -148,7 +148,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     else if (row.StepCounter >= 2 && row.StepCounter <= 6)
                     {
                         html += `<span class="badge rounded-pill bg-light text-primary mt-3">Processed</span>
-                                <button class=" btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details">
+                                <button class="cls-btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details">
                                 <img src="/Images/digitalsign.png" width="40" />
                                 </button>`;
                     }
@@ -204,6 +204,12 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     GetMovementHistory(rowData.RequestId);
+                }
+            });
+            $("#tbldatatabledata tbody").off("click", ".cls-btndownloadpdf").on("click", ".cls-btndownloadpdf", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    DownloadPdf(rowData.RequestId);
                 }
             });
             //$(".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {

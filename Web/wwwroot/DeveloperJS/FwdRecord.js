@@ -232,7 +232,10 @@ $(function () {
 
     });
     $(".btndownloadpdf").on("click", function () {
-        DownloadPdf($(this).closest("tr").find(".spnRequestId").html())
+        alert("Hello");
+        //DownloadPdf($(this).closest("tr").find(".spnRequestId").html())
+        var rowData = $(this).closest("tr").data();
+        DownloadPdf(rowData.RequestId);
     });
     $(".btndownloadxml").on("click", function () {
         DownloadXml($(this).closest("tr").find(".spnRequestId").html())

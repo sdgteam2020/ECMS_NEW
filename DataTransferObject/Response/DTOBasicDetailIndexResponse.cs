@@ -27,7 +27,7 @@ namespace DataTransferObject.Response
         public byte ApplyForId { get; set; }
         public int RequestId { get; set; }
         public byte IsFwdStatusId { get; set; }
-        public string? TrackingId { get; set; }
+        public int? ApplId { get; set; }
         public string? RankName { get; set; }
         public int UnitId { get; set; }
         public string UnitName { get; set; } = string.Empty;

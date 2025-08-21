@@ -79,6 +79,11 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 }
             },
             {
+                title: "Appl ID",
+                data: "ApplId",
+                name: "ApplId",
+            },
+            {
                 data: "ServiceNo",
                 name: "ServiceNo",
                 render: function (data, type, row) {
@@ -116,11 +121,6 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 render: function (data, type, row) {
                     return data != null ? data : "";
                 }
-            },
-            {
-                title: "Appl ID",
-                data: "TrackingId",
-                name: "TrackingId",
             },
             {
                 title: "Type",
