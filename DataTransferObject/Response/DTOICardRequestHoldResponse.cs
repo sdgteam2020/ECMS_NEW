@@ -8,6 +8,7 @@ namespace DataTransferObject.Response
 {
     public class DTOICardRequestHoldResponse
     {
+        public int TotalFilteredRecords { get; set; }
         public int ICardHoldId { get; set; }
         public int RequestId { get; set; }
         public string ServiceNo { get; set; } = string.Empty;

@@ -57,29 +57,7 @@
                         }
                     </div>
                     <div class="table-responsive">
-                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tblData">
-                            <thead>
-                                <tr>
-                                    <th class="noExport d-none"></th>
-                                    <th>S No.</th>
-                                    <th class="nowrap">Army No</th>
-                                    <th class="nowrap">Rank , Name</th>
-                                    <th class="nowrap">Unit</th>
-                                    <th class="nowrap">Type</th>
-                                    <th class="nowrap">Held By</th>
-                                    <th class="nowrap">Reason for Held</th>
-                                    <th class="nowrap">Hold</th>
-                                    <th class="nowrap">Updated On</th>
-                                    <th class="noExport">History</th>
-                                    @if (claims.Count > 0 && claims.Any(i => i.Value == "Flag ICard Appl"))
-                                    {
-                                        <th class="noExport">Print / Edit</th>
-                                    }
-
-                                </tr>
-                            </thead>
-                            <tbody id="DetailBody">
-                            </tbody>
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
                         </table>
                     </div>
                 </div>

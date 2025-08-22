@@ -32,7 +32,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<string?> GetCSVString(DTOCSVExportRequest Data);
         public Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo);
         public Task<DTOBDetailByRequestIdResponse?> GetBDetailByRequestId(int RequestId);
-        public Task<List<DTOICardRequestHoldResponse>?> GetAllICardRequestHold();
+        public Task<DTODataTablesResponse<DTOICardRequestHoldResponse>> GetAllICardRequestHold(DTODataTablesRequest dTO);
         public Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLBasicDetail(DTODataTablesRequestFor_BasicDetails_Index dTO);
         public Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus(DTODataTablesRequestFor_BasicDetails_Index dTO);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();

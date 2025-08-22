@@ -1388,30 +1388,103 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<List<DTOICardRequestHoldResponse>?> GetAllICardRequestHold()
+        public async Task<DTODataTablesResponse<DTOICardRequestHoldResponse>> GetAllICardRequestHold(DTODataTablesRequest dTO)
         {
-            string query = "";
-            query = " SELECT munit.UnitName,B.FName,B.LName,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn " +
-                    " FROM MTrnICardHold thold " +
-                    " inner join AspNetUsers u on u.Id = thold.Updatedby " +
-                    " inner join TrnICardRequest trnicrd on trnicrd.RequestId = thold.RequestId " +
-                    " inner join BasicDetails B on B.BasicDetailId = trnicrd.BasicDetailId " +
-                    " inner join MRank ran on ran.RankId=B.RankId " +
-                    " inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
-                    " inner join MUnit munit on munit.UnitId=mapunit.UnitId " +
-                    " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId ";
+            #region Old Code
+            //string query = "";
+            //query = " SELECT munit.UnitName,B.FName,B.LName,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn " +
+            //        " FROM MTrnICardHold thold " +
+            //        " inner join AspNetUsers u on u.Id = thold.Updatedby " +
+            //        " inner join TrnICardRequest trnicrd on trnicrd.RequestId = thold.RequestId " +
+            //        " inner join BasicDetails B on B.BasicDetailId = trnicrd.BasicDetailId " +
+            //        " inner join MRank ran on ran.RankId=B.RankId " +
+            //        " inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId " +
+            //        " inner join MUnit munit on munit.UnitId=mapunit.UnitId " +
+            //        " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId ";
+            //try
+            //{
+            //    using (var connection = _contextDP.CreateConnection())
+            //    {
+            //        var allrecord = await connection.QueryAsync<DTOICardRequestHoldResponse>(query);
+            //        return await Task.FromResult(allrecord.ToList());
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "BasicDetailDB->GetAllICardRequestHold");
+            //    return null;
+            //}
+            #endregion
+            string selectFields = "";
+            string fromJoinClause = "";
+            string whereClause = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["DispatchCardId"] = "RequestId",
+                ["ApplyFor"] = "ApplyFor",
+            };
+
+            var sortOrder = dTO.sortDirection;
+            selectFields = @"munit.UnitName,B.FName,B.LName,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn";
+            fromJoinClause = @"FROM MTrnICardHold thold
+                                inner join AspNetUsers u on u.Id = thold.Updatedby
+                                inner join TrnICardRequest trnicrd on trnicrd.RequestId = thold.RequestId
+                                inner join BasicDetails B on B.BasicDetailId = trnicrd.BasicDetailId
+                                inner join MRank ran on ran.RankId=B.RankId
+                                inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId
+                                inner join MUnit munit on munit.UnitId=mapunit.UnitId
+                                inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId";
+            whereClause = @"WHERE
+                                trnicrd.RequestId LIKE '%' + @SearchTerm + '%' OR
+                                B.ServiceNo LIKE '%' + @SearchTerm + '%'
+                                ";
             try
             {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "thold.ICardHoldId";
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var allrecord = await connection.QueryAsync<DTOICardRequestHoldResponse>(query);
-                    return await Task.FromResult(allrecord.ToList());
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+                    var records = (await ret.ReadAsync<DTOICardRequestHoldResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetAllICardRequestHold");
-                return null;
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllDispatchCard");
+                List<DTOICardRequestHoldResponse> dTODispatchCardLists = new List<DTOICardRequestHoldResponse>();
+                var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTODispatchCardLists
+                };
+                return responseData;
             }
         }
         public async Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)

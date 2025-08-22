@@ -1,5 +1,8 @@
-﻿$(function () {
-    BindData();
+﻿var table; // Declare table variable outside the function to preserve the instance
+$(function () {
+    let cvalue = $("#spnFlagICardAppl").html();
+    BindData(cvalue, function () {
+    });
     $('.select2').select2({
         dropdownParent: $('#AddICardRequestHold'),
         closeOnSelect: false
@@ -114,147 +117,135 @@
     });
 
 });
-function BindData() {
-    var listItem = "";
-
-    $.ajax({
-        url: '/BasicDetail/GetAllICardRequestHold',
-        contentType: 'application/x-www-form-urlencoded',
-        type: 'POST',
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-
-                }
-                else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=12>No Record Found</td></tr>";
-                    $("#tblData").DataTable().destroy();
-                    $("#DetailBody").html(listItem);
-                }
-                else {
-                    $("#tblData").DataTable().destroy();
-
-                    for (var i = 0; i < response.length; i++) {
-
-                        listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='iCardHoldId'>" + response[i].ICardHoldId + "</span><span id='requestId'>" + response[i].RequestId + "</span><span id='rankName'>" + response[i].RankName + "</span><span id='name'>" + (response[i].LName == null ? response[i].FName : response[i].FName + ' ' + response[i].LName) + "</span><span id='unHoldReason'>" + response[i].UnHoldReason + "</span></td>";
-                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><a href='#' class='BasicDetailView'><span id='serviceNo'>" + response[i].ServiceNo + "</span></a></td>";
-                        if (response[i].LName == null)
-                            listItem += "<td class='align-middle'><span id='nameWithRank'>" + response[i].RankName + ' ' + response[i].FName + "</span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span id='nameWithRank'>" + response[i].RankName + ' ' + response[i].FName + ' ' + response[i].LName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='unitName'>" + response[i].UnitName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='applyFor'>" + response[i].ApplyFor + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='domainId'>" + response[i].DomainId + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='holdReason'>" + response[i].HoldReason + "</span></td>";
-                        if (response[i].IsHold == true)
-                            listItem += "<td class='align-middle'><span class='badge badge-pill badge-success' id='isHold'>Yes</span></td>";
-                        else
-                            listItem += "<td class='align-middle'><span class='badge badge-pill badge-danger' id='isHold'>No</span></td>";
-                        listItem += "<td class='align-middle'><span id='updatedOn'>" + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + "</span></td>";
-                        listItem += "<td class='noExport'><button class='historyRequest btn btn-icon btn-round btn-primary mr-1' data-toggle='tooltip' data-placement='left' title=''><i class='fa fa-history' aria-hidden='true'></i></button></td>";
-                        if ($("#spnFlagICardAppl").html() == 'Flag ICard Appl') {
-                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
-                        }
-                        
-                        listItem += "</tr>";
-
-                    }
-
-                    $("#DetailBody").html(listItem);
-
-                   var memberTable = $('#tblData').DataTable({
-                        retrieve: true,
-                        lengthChange: false,
-                        stateSave: true,
-                        "order": [[1, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_ICardRequestHold',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tblData_wrapper .col-md-6:eq(0)');
-
-
-                    $("body").on("click", ".cls-btnedit", function () {
-                        Reset();
-                        ResetErrorMessage();
-                        $("#gpUnHoldReason").removeClass("d-none");
-                        $("#txtArmyNo").prop('readonly', true);
-                        $("#txtHoldReason").prop('readonly', true);
-                        $("#spnICardHoldId").html($(this).closest("tr").find("#iCardHoldId").html());
-                        $("#spnRequestId").html($(this).closest("tr").find("#requestId").html());
-                        $("#txtArmyNo").val($(this).closest("tr").find("#serviceNo").html());
-                        $("#lblRank").html($(this).closest("tr").find("#rankName").html());
-                        $("#lblName").html($(this).closest("tr").find("#name").html());
-                        $("#lblUnitName").html($(this).closest("tr").find("#unitName").html());
-                        $("#txtHoldReason").val($(this).closest("tr").find("#holdReason").html());
-                        $("#txtUnHoldReason").val($(this).closest("tr").find("#unHoldReason").html() != 'null' ? $(this).closest("tr").find("#unHoldReason").html() : "");
-
-                        if ($(this).closest("tr").find("#isHold").html() == 'Yes') {
-                            $("#IsHoldYes").prop("checked", true);
-                        }
-                        else {
-                            $("#IsHoldNo").prop("checked", true);
-                        }
-
-                        $("#btnAddICardRequestHold").val("Update");
-                        $("#AddICardRequestHold").modal('show');
-                    });
-                    $("body").on("click", ".BasicDetailView", function () {
-                        GetBasicDetailByRequestId($(this).closest("tr").find("#requestId").html());
-                    });
-                    $("body").on("click", ".historyRequest", function () {
-                        $("#exampleModal").modal('show');
-                        GetRequestHistory($(this).closest("tr").find("#requestId").html());
-                    });
-                }
-            }
-            else {
-                $("#tblData").DataTable().destroy();
-
-                $("#DetailBody").html(listItem);
-               var memberTable = $('#tblData').DataTable({
-                    "language": {
-                        "emptyTable": "No data available"
-                    }
+function BindData(cvalue, callback) {
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        $("#tbldata").DataTable().destroy();
+        $("#tbldata").empty(); // Clear old thead/tbody
+    }
+    const columns = getColumnsData(cvalue);
+    table = $("#tbldata").DataTable({
+        autoWidth: false, // Let us handle width via CSS
+        responsive: true, // Responsive breaks layout for width control
+        processing: true,
+        serverSide: true,
+        filter: true,
+        stateSave: true,
+        order: [[1, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/BasicDetail/GetAllICardRequestHold", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(requestData).toString()
                 });
 
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
+
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
+        columns: columns,
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search" // Add custom placeholder
+        },
+        dom: 'lBfrtip', // Add buttons to the DOM
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                title: 'E-IASC_ApplicationHold',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        initComplete: function () {
+        },
+        drawCallback: function (settings) {
+
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.ICardHoldId != null) {
+
+                    Reset();
+                    ResetErrorMessage();
+                    $("#gpUnHoldReason").removeClass("d-none");
+                    $("#txtArmyNo").prop('readonly', true);
+                    $("#txtHoldReason").prop('readonly', true);
+                    $("#spnICardHoldId").html(rowData.ICardHoldId);
+                    $("#spnRequestId").html(rowData.RequestId);
+                    $("#txtArmyNo").val(rowData.ServiceNo);
+                    $("#lblRank").html(rowData.RankName);
+                    $("#lblName").html(`${rowData.FName || ""} ${rowData.LName || ""}`.trim());
+                    $("#lblUnitName").html(rowData.UnitName);
+                    $("#txtHoldReason").val(rowData.HoldReason);
+                    $("#txtUnHoldReason").val(rowData.UnHoldReason != null ? rowData.UnHoldReason :"");
+
+                    if (rowData.IsHold == true) {
+                        $("#IsHoldYes").prop("checked", true);
+                    }
+                    else {
+                        $("#IsHoldNo").prop("checked", true);
+                    }
+
+                    $("#btnAddICardRequestHold").val("Update");
+                    $("#AddICardRequestHold").modal('show');
+                }
+                else {
+                    $("#spnDispatchCardId").html(0);
+                }
+            });
+
+            $("#tbldata tbody").off("click", ".cls-HoldReason").on("click", ".cls-HoldReason", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    $("#MessageDialogLabel").html('Reason');
+                    $("#MessageDialogBody").html(rowData.HoldReason);
+                    $("#MessageDialog").modal('show');
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    GetRequestHistory(rowData.RequestId);
+                }
             });
         }
     });
-
+    $('#filterApplyFor').on('keypress', function (e) {
+        if (e.which === 13) {
+            table.ajax.reload();
+        }
+    });
 }
 function Save() {
     $.ajax({
@@ -304,7 +295,199 @@ function Save() {
         }
     });
 }
+function getColumnsData(choice) {
+    let columns = [];
+    switch (choice) {
+        case 'Flag ICard Appl':
+            columns = [
+                // Serial number column
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
+                    render: function (data, type, row) {
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
+                    }
+                },
+                {
+                    title: "Rank & Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
+                    }
+                },
+                {
+                    title: "Unit",
+                    data: "UnitName",
+                    name: "UnitName",
+                    orderable: false,
+                },
+                {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor",
+                },
+                {
+                    title: "Held By",
+                    data: "DomainId",
+                    name: "DomainId",
+                },
+                {
+                    title: "Reason for Held",
+                    data: "HoldReason",
+                    name: "HoldReason",
+                    render: function (data, type, row) {
+                        let words = data.split(" ");
+                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : data;
+                        return `<span class='cls-HoldReason'>${truncatedSentence}</span>`;
+                    }
+                },
+                {
+                    title: "Hold",
+                    data: "IsHold",
+                    name: "IsHold",
+                    render: function (data, type, row) {
+                        // Convert boolean to "Yes" or "No"
+                        return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                    }
+                },
+                {
+                    title: "Updated On",
+                    data: "UpdatedOn",
+                    name: "UpdatedOn",
+                    render: function (data, type, row) {
+                        return DateFormateddMMyyyyhhmmss(data);
+                    }
+                },
+                {
+                    title: "History",
+                    data: null,
+                    name: "History",
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" aria-hidden="true"></i></button>`
+                    }
+                },
+                {
+                    title: "Print / Edit",
+                    data: null,
+                    name: "Action",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>`;
+                        return Action;
+                    }
+                }
+            ];
+            break;
+        default:
+            columns = [
+                // Serial number column
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
+                    render: function (data, type, row) {
+                        // Check if first two characters are alphabets
+                        if (/^[A-Za-z]{2}/.test(data)) {
+                            // Insert space after first two characters
+                            return data.slice(0, 2) + ' ' + data.slice(2);
+                        } else {
+                            // No space needed
+                            return data;
+                        }
+                    }
+                },
+                {
+                    title: "Rank & Name",
+                    data: null,
+                    name: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        return (fullName);
+                    }
+                },
+                {
+                    title: "Unit",
+                    data: "UnitName",
+                    name: "UnitName",
+                    orderable: false,
+                },
+                {
+                    title: "Type",
+                    data: "ApplyFor",
+                    name: "ApplyFor",
+                },
+                {
+                    title: "Held By",
+                    data: "DomainId",
+                    name: "DomainId",
+                },
 
+                {
+                    title: "Reason for Held",
+                    data: "HoldReason",
+                    name: "HoldReason",
+                },
+                {
+                    title: "Hold",
+                    data: "IsHold",
+                    name: "IsHold",
+                    render: function (data, type, row) {
+                        // Convert boolean to "Yes" or "No"
+                        return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                    }
+                },
+                {
+                    title: "Updated On",
+                    data: "UpdatedOn",
+                    name: "UpdatedOn",
+                    render: function (data, type, row) {
+                        return DateFormateddMMyyyyhhmmss(data);
+                    }
+                },
+                {
+                    title: "History",
+                    data: null,
+                    name: "History",
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" aria-hidden="true"></i></button>`
+                    }
+                }
+            ];
+    }
+    return columns;
+}
 function Reset() {
     $("#spnICardHoldId").html("0");
     $("#spnUserProfileId").html("0");

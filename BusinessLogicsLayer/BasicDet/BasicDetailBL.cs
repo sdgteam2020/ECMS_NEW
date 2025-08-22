@@ -95,9 +95,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetBDetailByRequestId(RequestId);
         }
-        public async Task<List<DTOICardRequestHoldResponse>?> GetAllICardRequestHold()
+        public async Task<DTODataTablesResponse<DTOICardRequestHoldResponse>> GetAllICardRequestHold(DTODataTablesRequest dTO)
         {
-            return await _iBasicDetailDB.GetAllICardRequestHold();
+            return await _iBasicDetailDB.GetAllICardRequestHold(dTO);
         }
         public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLBasicDetail(DTODataTablesRequestFor_BasicDetails_Index dTO)
         {

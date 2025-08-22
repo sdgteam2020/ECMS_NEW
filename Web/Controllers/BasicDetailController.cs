@@ -3597,16 +3597,24 @@ namespace Web.Controllers
 
         [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
         [HttpPost]
-        public async Task<IActionResult> GetAllICardRequestHold()
+        public async Task<IActionResult> GetAllICardRequestHold(DTODataTablesRequest dTO)
         {
             try
             {
-                return Json(await basicDetailBL.GetAllICardRequestHold());
+                return Json(await basicDetailBL.GetAllICardRequestHold(dTO));
             }
             catch (Exception ex)
             {
+                List<DTOICardRequestHoldResponse> dTODispatchCardLists = new List<DTOICardRequestHoldResponse>();
+                var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTODispatchCardLists
+                };
                 _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
-                return Json(KeyConstants.InternalServerError);
+                return Json(responseData);
             }
 
         }
@@ -3691,20 +3699,20 @@ namespace Web.Controllers
             return View();
         }
 
-        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
-        [HttpPost]
-        public async Task<IActionResult> GetAllICardDistribution()
-        {
-            try
-            {
-                return Json(await basicDetailBL.GetAllICardRequestHold());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
-                return Json(KeyConstants.InternalServerError);
-            }
-        }
+        //[Authorize(Policy = "ViewFlaggedICardApplPolicy")]
+        //[HttpPost]
+        //public async Task<IActionResult> GetAllICardDistribution()
+        //{
+        //    try
+        //    {
+        //        return Json(await basicDetailBL.GetAllICardRequestHold());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
+        //        return Json(KeyConstants.InternalServerError);
+        //    }
+        //}
         #endregion Card Distribution
 
         #region ICard Printing
