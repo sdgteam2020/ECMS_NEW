@@ -107,6 +107,8 @@ $(async function () {
 async function Save() {
     try
     {
+        $("#loading").show();
+
         var token = $('input[name="__RequestVerificationToken"]').val();
         let formData = new FormData();
 
@@ -205,6 +207,10 @@ async function Save() {
     }
      catch (error) {
     alert("Error: " + error.message);
+    }
+    finally {
+        // Hide loader in all cases
+        $("#loading").hide();
     }
 }
 async function GetUserIdWithName(AspNetUsersId) {

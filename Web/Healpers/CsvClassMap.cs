@@ -11,6 +11,8 @@ namespace Web.Healpers
             List<string> ignoreProperties = new List<string>();
             if (csvClassMapTypeEnum == CsvClassMapTypeEnum.CardPrint)
             {
+                // Don’t ignore RequestId → instead rename it
+                Map(typeof(T), typeof(T).GetProperty("RequestId")).Name("ApplId");
                 ignoreProperties.Add("IsValid");
                 if (isSample)
                 {
@@ -30,7 +32,8 @@ namespace Web.Healpers
             }
             else if (csvClassMapTypeEnum == CsvClassMapTypeEnum.DispatchCard)
             {
-                ignoreProperties.Add("RequestId");
+                // Don’t ignore RequestId → instead rename it
+                Map(typeof(T), typeof(T).GetProperty("RequestId")).Name("ApplId");
                 ignoreProperties.Add("IsValid");
                 ignoreProperties.Add("Remarks");
                 ignoreProperties.Add("Status");

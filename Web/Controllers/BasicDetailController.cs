@@ -4810,7 +4810,7 @@ namespace Web.Controllers
             var csv = new StringBuilder();
 
             // Header
-            csv.AppendLine("Name,ServiceNo,ChipNo,RequestId");
+            csv.AppendLine("Name,ServiceNo,ChipNo,ApplId");
 
             // Data rows
             foreach (var item in ret.data)
