@@ -92,7 +92,12 @@ function BindData() {
                 callback(result); // Sends data to DataTables
 
             } catch (error) {
-                console.error("Error fetching data:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Data Fetch Failed",
+                    text: "We couldn’t load the data right now. Please try again later.",
+                    confirmButtonText: "OK"
+                });
             }
         },
         columns: [
