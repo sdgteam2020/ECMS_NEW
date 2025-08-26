@@ -176,19 +176,19 @@ function Save(choice) {
             url: urladd,
             type: 'POST',
             data: {
-                "MapUnitChangeRequestId": document.getElementById('spnMapUnitChangeRequestId').textContent,
-                "UnitMapId": document.getElementById('spnUnitMapId').textContent,
-                "Remark": document.getElementById('txtRemark').value,
-                "AdminRemark": document.getElementById('txtAdminRemark').value,
-                "Choice": choice,
-                "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value,
-                "ComdId": document.getElementById('ddlCommand').value,
-                "CorpsId": document.getElementById('ddlCorps').value,
-                "DivId": document.getElementById('ddlDiv').value,
-                "BdeId": document.getElementById('ddlBde').value,
-                "PsoId": document.getElementById('ddlPSODte').value,
-                "FmnBranchID": document.getElementById('ddlFmnBranch').value,
-                "SubDteId": document.getElementById('ddlDgSubDte').value
+                "MapUnitChangeRequestId": document.getElementById('spnMapUnitChangeRequestId')?.textContent || "",
+                "UnitMapId": document.getElementById('spnUnitMapId')?.textContent || "",
+                "Remark": document.getElementById('txtRemark')?.value || "",
+                "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
+                "Choice": choice || "",
+                "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "",
+                "ComdId": document.getElementById('ddlCommand')?.value || "",
+                "CorpsId": document.getElementById('ddlCorps')?.value || "",
+                "DivId": document.getElementById('ddlDiv')?.value || "",
+                "BdeId": document.getElementById('ddlBde')?.value || "",
+                "PsoId": document.getElementById('ddlPSODte')?.value || "",
+                "FmnBranchID": document.getElementById('ddlFmnBranch')?.value || "",
+                "SubDteId": document.getElementById('ddlDgSubDte')?.value || ""
             }, //get the search string
             success: function (result) {
                 if (result.Result == true) {
@@ -216,19 +216,20 @@ function Save(choice) {
             url: urladd,
             type: 'POST',
             data: {
-                "MapUnitChangeRequestId": document.getElementById('spnMapUnitChangeRequestId').textContent,
-                "UnitMapId": document.getElementById('spnUnitMapId').textContent,
-                "Remark": document.getElementById('txtRemark').value,
-                "AdminRemark": document.getElementById('txtAdminRemark').value,
-                "Choice": choice,
-                "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value,
-                "ComdId": document.getElementById('ddlCommand').value,
-                "CorpsId": document.getElementById('ddlCorps').value,
-                "DivId": document.getElementById('ddlDiv').value,
-                "BdeId": document.getElementById('ddlBde').value,
-                "PsoId": document.getElementById('ddlPSODte').value,
-                "FmnBranchID": document.getElementById('ddlFmnBranch').value,
-                "SubDteId": document.getElementById('ddlDgSubDte').value
+                "MapUnitChangeRequestId": document.getElementById('spnMapUnitChangeRequestId')?.textContent || "",
+                "UnitMapId": document.getElementById('spnUnitMapId')?.textContent || "",
+                "Remark": document.getElementById('txtRemark')?.value || "",
+                "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
+                "Choice": choice || "",
+                "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "",
+                "ComdId": document.getElementById('ddlCommand')?.value || "",
+                "CorpsId": document.getElementById('ddlCorps')?.value || "",
+                "DivId": document.getElementById('ddlDiv')?.value || "",
+                "BdeId": document.getElementById('ddlBde')?.value || "",
+                "PsoId": document.getElementById('ddlPSODte')?.value || "",
+                "FmnBranchID": document.getElementById('ddlFmnBranch')?.value || "",
+                "SubDteId": document.getElementById('ddlDgSubDte')?.value || ""
+
             }, //get the search string
             success: function (result) {
                 if ($("#spnRoleName").html().toLowerCase() === "admin" && result.Result == true) {
