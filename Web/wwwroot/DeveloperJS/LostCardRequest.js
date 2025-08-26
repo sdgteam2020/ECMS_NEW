@@ -153,6 +153,37 @@ async function Save() {
     var formData = jsonToFormData(data);
     formData.append("File", $('#supportingDoc')[0].files[0]);
 
+    // -------------------------------
+    // File validation (client-side)
+    // -------------------------------
+    const fileInput = $('#supportingDoc')[0];
+    if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const errorLabel = $("#lblCSVFileNotification");
+
+        // 1. Check extension
+        if (!file.name.toLowerCase().endsWith(".pdf")) {
+            toastr.error("Only PDF files are allowed.");
+            return;
+        }
+
+        // 2. Check MIME type
+        if (file.type !== "application/pdf") {
+            toastr.error("Invalid file type.");
+            return;
+        }
+
+        // 3. Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            toastr.error("File size must not exceed 5MB.");
+            return;
+        }
+
+        // ✅ Passed validation
+        formData.append("File", file);
+    }
+    // -------------------------------
+
     $.ajax({
         url: '/BasicDetail/SaveLostCardRequest' ,
         type: 'POST',
