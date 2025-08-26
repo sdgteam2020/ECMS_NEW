@@ -1,27 +1,48 @@
-﻿using Microsoft.AspNetCore.StaticFiles;
+﻿using BusinessLogicsLayer.EncryptionSetting;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Security.Cryptography;
+using Web.Healpers.BaseInterfaces;
 
 namespace Web.Healpers
 {
-    public static class ImageEncryptAndDecrypt
+    public class ImageEncryptAndDecrypt : IImageEncryptAndDecrypt
     {
-        // Fixed key and IV (hardcoded)
-        private static readonly byte[] FixedKey = new byte[32] // 256-bit key
-        {
-            0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF,
-            0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF
-        };
+        private readonly IEncryptionSettingBL encryptionSettingBL;
 
-        private static readonly byte[] FixedIV = new byte[16] // 128-bit IV
+        #region Key and IV Initialization
+        //// Fixed key and IV (hardcoded)
+        //private static readonly byte[] FixedKey = new byte[32] // 256-bit key
+        //{
+        //    0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF,
+        //    0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF
+        //};
+
+        //private static readonly byte[] FixedIV = new byte[16] // 128-bit IV
+        //{
+        //    0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF
+        //};
+        #endregion
+        public ImageEncryptAndDecrypt(IEncryptionSettingBL encryptionSettingBL)
         {
-            0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF
-        };
-        public static void EncryptImageFile(string inputFilePath, string encryptedFilePath)
+            this.encryptionSettingBL = encryptionSettingBL;
+        }
+        public async Task EncryptImageFile(string inputFilePath, string encryptedFilePath)
         {
             using (Aes aes = Aes.Create())
             {
-                aes.Key = FixedKey;
-                aes.IV = FixedIV;
+                // Await the asynchronous Get method to retrieve the key record
+                var keyRecord = await encryptionSettingBL.Get(1);
+                if (keyRecord != null)
+                {
+                    aes.Key = keyRecord.KeyBytes;
+                    aes.IV = keyRecord.IVBytes;
+                }
+                else
+                {
+                   throw new InvalidOperationException("Encryption key record not found.");
+                }
+
 
                 // Create an encryptor
                 ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
@@ -47,12 +68,21 @@ namespace Web.Healpers
                 }
             }
         }
-        public static void DecryptImageFile(string encryptedFilePath, string decryptedFilePath)
+        public async Task DecryptImageFile(string encryptedFilePath, string decryptedFilePath)
         {
             using (Aes aes = Aes.Create())
             {
-                aes.Key = FixedKey;
-                aes.IV = FixedIV;
+                // Await the asynchronous Get method to retrieve the key record
+                var keyRecord = await encryptionSettingBL.Get(1);
+                if (keyRecord != null)
+                {
+                    aes.Key = keyRecord.KeyBytes;
+                    aes.IV = keyRecord.IVBytes;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Encryption key record not found.");
+                }
 
                 // Create a decryptor
                 ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
@@ -78,12 +108,21 @@ namespace Web.Healpers
                 }
             }
         }
-        public static IFormFile DecryptImageToIFormFile(string encryptedFilePath, string fileName)
+        public async Task<IFormFile> DecryptImageToIFormFile(string encryptedFilePath, string fileName)
         {
             using (Aes aes = Aes.Create())
             {
-                aes.Key = FixedKey;
-                aes.IV = FixedIV;
+                // Await the asynchronous Get method to retrieve the key record
+                var keyRecord = await encryptionSettingBL.Get(1);
+                if (keyRecord != null)
+                {
+                    aes.Key = keyRecord.KeyBytes;
+                    aes.IV = keyRecord.IVBytes;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Encryption key record not found.");
+                }
 
                 // Ensure the encrypted file exists
                 if (!File.Exists(encryptedFilePath))
@@ -139,8 +178,7 @@ namespace Web.Healpers
                 }
             }
         }
-
-        public static string DecryptImageToBase64(string encryptedFilePath)
+        public async Task<string> DecryptImageToBase64(string encryptedFilePath)
         {
             // Create a provider for mapping extensions to MIME types
             var provider = new FileExtensionContentTypeProvider();
@@ -157,8 +195,17 @@ namespace Web.Healpers
             using (var inputStream = new FileStream(encryptedFilePath, FileMode.Open, FileAccess.Read))
             using (var aes = Aes.Create())
             {
-                aes.Key = FixedKey;
-                aes.IV = FixedIV;
+                // Await the asynchronous Get method to retrieve the key record
+                var keyRecord = await encryptionSettingBL.Get(1);
+                if (keyRecord != null)
+                {
+                    aes.Key = keyRecord.KeyBytes;
+                    aes.IV = keyRecord.IVBytes;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Encryption key record not found.");
+                }
 
                 using (var cryptoStream = new CryptoStream(inputStream, aes.CreateDecryptor(), CryptoStreamMode.Read))
                 using (var memoryStream = new MemoryStream())

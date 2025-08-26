@@ -11,12 +11,9 @@ namespace DataTransferObject.Domain.Master
     public class MEncryptionSetting
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }  // Primary Key
-
-        [Column("KeyValue")]
-        public required byte[] KeyValue { get; set; }  // 256-bit key (32 bytes)
-
-        [Column("IVValue")]
-        public required byte[] IVValue { get; set; }  // 128-bit IV (16 bytes)
+        public required byte[] KeyBytes { get; set; }  // 256-bit key (32 bytes)
+        public required byte[] IVBytes { get; set; }  // 128-bit IV (16 bytes)
     }
 }

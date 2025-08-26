@@ -57,6 +57,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Web.Healpers;
+using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -99,13 +100,14 @@ namespace Web.Controllers
         private readonly IDestructionCardBL _destructionCardBL;
         private readonly IDispatchCardBL dispatchCardBL;
         private readonly IDispatchCardMappingBL dispatchCardMappingBL;
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;
 
         public BasicDetailController(IConfiguration configuration, IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL,
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             , IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL, IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL, IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL, IImageEncryptAndDecrypt imageEncryptAndDecrypt)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -141,6 +143,7 @@ namespace Web.Controllers
             _destructionCardBL = destructionCardBL;
             this.dispatchCardBL = dispatchCardBL;
             this.dispatchCardMappingBL = dispatchCardMappingBL;
+            this.imageEncryptAndDecrypt= imageEncryptAndDecrypt;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -1071,13 +1074,13 @@ namespace Web.Controllers
 
                     if (System.IO.File.Exists(sourcePathPhoto))
                     {
-                        basicDetailUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                        basicDetailUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
                         basicDetailUpdVM.ExistingPhotoImagePath = basicDetailUpdVM.PhotoImagePath;
                     }
 
                     if (System.IO.File.Exists(sourcePathSignature))
                     {
-                        basicDetailUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                        basicDetailUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
                         basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                     }
 
@@ -1246,7 +1249,7 @@ namespace Web.Controllers
                                     }
                                 }
 
-                                ImageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
+                                await imageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
                                 if (System.IO.File.Exists(path))
                                 {
                                     System.IO.File.Delete(path);
@@ -1301,7 +1304,7 @@ namespace Web.Controllers
                                     }
                                 }
 
-                                ImageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
+                                await imageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
                                 if (System.IO.File.Exists(path))
                                 {
                                     System.IO.File.Delete(path);
@@ -1504,7 +1507,7 @@ namespace Web.Controllers
                                 string uniqueFileName = FileName + ".enc";
                                 //string destinationPath = sourceFolderPhotoPhy + model.ServiceNo + ".txt";
                                 string destinationPath = Path.Combine(sourceFolderPhotoPhy, uniqueFileName);
-                                ImageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
+                                await imageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
                                 if (System.IO.File.Exists(path))
                                 {
                                     System.IO.File.Delete(path);
@@ -1550,7 +1553,7 @@ namespace Web.Controllers
                                 string uniqueFileName = FileName + ".enc";
                                 //string destinationPath = sourceFolderSignaturePhy + model.ServiceNo + ".txt";
                                 string destinationPath = Path.Combine(sourceFolderSignaturePhy, uniqueFileName);
-                                ImageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
+                                await imageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
                                 if (System.IO.File.Exists(path))
                                 {
                                     System.IO.File.Delete(path);
@@ -2251,8 +2254,8 @@ namespace Web.Controllers
                         parts = temp.Split('.');
                         string extenstionSign = parts[parts.Length - 1];
 
-                        ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath), recoffphotos + "/" + data.ServiceNo + "." + extenstionImage);
-                        ImageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing + "/" + data.ServiceNo + "." + extenstionSign);
+                        await imageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath), recoffphotos + "/" + data.ServiceNo + "." + extenstionImage);
+                        await imageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing + "/" + data.ServiceNo + "." + extenstionSign);
 
                         lst.Add(data);
                         csvlst.Add(data);
@@ -2555,11 +2558,11 @@ namespace Web.Controllers
 
             if (System.IO.File.Exists(sourcePathPhoto))
             {
-                data.PhotoImagePath = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                data.PhotoImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
             }
             if (System.IO.File.Exists(sourcePathSignature))
             {
-                data.SignatureImagePath = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                data.SignatureImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
             }
             return PartialView("_BasicDetail_ParitalView", data);
         }
@@ -3401,7 +3404,7 @@ namespace Web.Controllers
 
                             if (System.IO.File.Exists(sourcePathPhoto))
                             {
-                                item.Image = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                                item.Image = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
                             }
                         }
 
@@ -3424,10 +3427,10 @@ namespace Web.Controllers
                 string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
                 string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
-                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
 
                 string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
-                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
                 return Json(basicDetailCrtAndUpdVM);
             }
             else
@@ -3538,10 +3541,10 @@ namespace Web.Controllers
                 string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
                 string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
-                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
 
                 string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
-                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
 
                 return Json(basicDetailCrtAndUpdVM);
             }

@@ -12,8 +12,14 @@ using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.BloodGroup;
 using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.CSVImports;
+using BusinessLogicsLayer.DestructionCard;
+using BusinessLogicsLayer.DispatchCard;
+using BusinessLogicsLayer.DispatchCardMapping;
+using BusinessLogicsLayer.DispatchMode;
+using BusinessLogicsLayer.DistributeCard;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.EncryptBySql;
+using BusinessLogicsLayer.EncryptionSetting;
 using BusinessLogicsLayer.FaultyCard;
 using BusinessLogicsLayer.FaultyStage;
 using BusinessLogicsLayer.Formation;
@@ -21,8 +27,8 @@ using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.HotlistCard;
 using BusinessLogicsLayer.IAMSetting;
 using BusinessLogicsLayer.IssuingAuthority;
-using BusinessLogicsLayer.MapUnitChange;
 using BusinessLogicsLayer.LostCard;
+using BusinessLogicsLayer.MapUnitChange;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.Posting;
@@ -42,11 +48,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SqlServer.Management.Smo;
-using BusinessLogicsLayer.DistributeCard;
-using BusinessLogicsLayer.DestructionCard;
-using BusinessLogicsLayer.DispatchMode;
-using BusinessLogicsLayer.DispatchCard;
-using BusinessLogicsLayer.DispatchCardMapping;
 
 namespace BusinessLogicsLayer
 {
@@ -221,6 +222,7 @@ namespace BusinessLogicsLayer
             services.AddTransient<IDispatchCardMappingBL, DispatchCardMappingBL>();
             services.AddTransient<IDispatchCardMappingDB, DispatchCardMappingDB>();
 
+            services.AddTransient<IEncryptionSettingBL, EncryptionSettingBL>();
 
 
 
