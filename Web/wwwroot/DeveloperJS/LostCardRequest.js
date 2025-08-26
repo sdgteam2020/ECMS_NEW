@@ -126,6 +126,19 @@ function Proceed() {
     }
 }
 
+// Initially disable the file input
+$("#supportingDoc").prop("disabled", true);
+
+// Watch for radio button change
+$("input[name='isFIRLogged']").change(function () {
+    if ($("#isFIRLoggedYes").is(":checked")) {
+        $("#supportingDoc").prop("disabled", false); // Enable
+    } else if ($("#isFIRLoggedNo").is(":checked")) {
+        $("#supportingDoc").prop("disabled", true);  // Disable
+        $("#supportingDoc").val(""); // Clear file if any
+    }
+});
+
 async function Save() {
     let inputDate = $("#txtlostoninp").val();
     var lostlistRemarkIds = "" + $("#ddlLostRemark").val() + "";
