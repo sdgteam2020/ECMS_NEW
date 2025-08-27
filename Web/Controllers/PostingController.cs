@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Web.Healpers;
+using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
 
 namespace Web.Controllers
@@ -30,7 +31,8 @@ namespace Web.Controllers
         private readonly ILogger<PostingController> _logger;
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly IDataProtector _protector;
-        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings)
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;
+        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings, IImageEncryptAndDecrypt imageEncryptAndDecrypt)
         {
             _iPostingBL = postingBL;
             _iApplCloseBL = iApplCloseBL;
@@ -40,6 +42,7 @@ namespace Web.Controllers
             this.hostingEnvironment = hostingEnvironment;
             _protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
+            this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
         }
         public async Task<IActionResult> PostingIn(string? EncId)
         {
@@ -53,7 +56,7 @@ namespace Web.Controllers
 
             if (System.IO.File.Exists(sourcePathPhoto))
             {
-                data.PhotoImagePath = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                data.PhotoImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
             }
             return Json(data);
         }

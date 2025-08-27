@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Rewrite;
 using EntityFramework.Exceptions.SqlServer;
 using Microsoft.Extensions.FileProviders;
+using Web.Healpers.BaseInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var configration = builder.Configuration;
@@ -77,6 +78,7 @@ builder.Services.AddCors(options =>
 //builder.Services.AddRazorPages();
 //builder.Services.AddScoped<IGenericRepositoryDL, GenericRepositoryDL>();
 builder.Services.AddScoped<IService, ServiceRepository>();
+builder.Services.AddScoped<IImageEncryptAndDecrypt, ImageEncryptAndDecrypt>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddSingleton<DapperContextDb2>();

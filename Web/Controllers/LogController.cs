@@ -1,30 +1,31 @@
-﻿using BusinessLogicsLayer.TrnLoginLog;
+﻿using BusinessLogicsLayer.BasicDet;
+using BusinessLogicsLayer.TrnLoginLog;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Web.WebHelpers;
+using DataTransferObject.ViewModels;
 using iText.IO.Font.Constants;
 using iText.IO.Image;
 using iText.Kernel.Colors;
 using iText.Kernel.Events;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Extgstate;
 using iText.Layout;
-using iTextImage = iText.Layout.Element.Image;
 using iText.Layout.Element;
 using iText.Layout.Properties;
-using iText.Kernel.Pdf;
-using BusinessLogicsLayer.BasicDet;
-using DataTransferObject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
-using System.Xml;
-using Web.Healpers;
-using System.Xml.Linq;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Linq;
+using Web.Healpers;
+using Web.Healpers.BaseInterfaces;
+using Web.WebHelpers;
+using iTextImage = iText.Layout.Element.Image;
 using Path = System.IO.Path;
 
 namespace Web.Controllers
@@ -36,12 +37,14 @@ namespace Web.Controllers
         private readonly IBasicDetailBL BasicDetailBL;
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public LogController(ITrnLoginLogBL iTrnLoginLogBL, IWebHostEnvironment hostingEnvironment, IBasicDetailBL BasicDetailBL, IHttpContextAccessor httpContextAccessor)
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;
+        public LogController(ITrnLoginLogBL iTrnLoginLogBL, IWebHostEnvironment hostingEnvironment, IBasicDetailBL BasicDetailBL, IHttpContextAccessor httpContextAccessor, IImageEncryptAndDecrypt imageEncryptAndDecrypt)
         {
             _iTrnLoginLogBL = iTrnLoginLogBL;
             this.hostingEnvironment = hostingEnvironment;
             this.BasicDetailBL = BasicDetailBL;
             _httpContextAccessor = httpContextAccessor;
+            this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
         }
         public async Task<IActionResult> LoginLog()
         {
@@ -335,7 +338,7 @@ namespace Web.Controllers
                 //ImageData dataphoto = ImageDataFactory.Create(imphotoFile);
 
                 String sourcePathPhoto = System.IO.Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo" , db.PhotoImagePath);
-                string base64Image = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                string base64Image = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
                 // Decode Base64 string to byte array
                 string base64Data = base64Image.Split(',')[1]; // Remove data:image/jpeg;base64, prefix
                 byte[] imageBytes = Convert.FromBase64String(base64Data);
@@ -389,7 +392,7 @@ namespace Web.Controllers
                 //imagedatasig.SetWidth(60);
 
                 String sourcePathSignature = System.IO.Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", db.SignatureImagePath);
-                base64Image = ImageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                base64Image = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
                 // Decode Base64 string to byte array
                 base64Data = base64Image.Split(',')[1]; // Remove data:image/jpeg;base64, prefix
                 imageBytes = Convert.FromBase64String(base64Data);
