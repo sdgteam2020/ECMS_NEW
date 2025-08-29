@@ -2000,9 +2000,22 @@ namespace Web.Controllers
 
         #region DecryptZipFile/DecryptZipFileData
 
+        /// <summary>
+        /// Decrypts a Base64-encoded string representing a ZIP file identifier (jcoor).
+        /// Validates input, decodes from Base64, and returns the view with decoded value.  
+        /// Redirects to "ContactUs" with error if invalid.
+        /// </summary>
+        /// <param name="jcoor">
+        /// Base64-encoded string representing a ZIP file identifier.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task{ActionResult}"/> that renders the view with decoded data,
+        /// or redirects to "ContactUs" if input is invalid or an exception occurs.
+        /// </returns>
         [HttpGet]
         public Task<ActionResult> DecryptZipFile(string jcoor)
         {
+            // Validate that jcoor is not null/empty and is a valid Base64 string
             if (string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
             {
                 TempData["error"] = "Invalid Input.";
@@ -2011,13 +2024,19 @@ namespace Web.Controllers
             }
             try
             {
+                // Decode Base64 string
                 var base64EncodedBytes = Convert.FromBase64String(jcoor);
                 var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+
+                // Pass decoded string to ViewBag for use in the View
                 ViewBag.jcoor = decodedString;
+
+                // Return view with decoded data
                 return Task.FromResult<ActionResult>(View());
             }
             catch (FormatException ex)
             {
+                // Log specific error if input string is invalid Base64
                 _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {jcoor}", jcoor);
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
@@ -2025,12 +2044,14 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log generic errors
                 _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> DecryptZipFileData(DTODecryptZipFileRequest model)
