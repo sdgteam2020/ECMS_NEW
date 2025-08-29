@@ -921,25 +921,47 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles POST requests for Registration submission.
+        /// Validates input model, performs Army Number consistency checks, 
+        /// processes registration details, and either redirects to the BasicDetail view 
+        /// or stores data in the temporary table based on the request type.
+        /// </summary>
+        /// <param name="model">
+        /// A <see cref="DTORegistrationRequest"/> object containing user registration input 
+        /// such as ServiceNo, OldServiceNo, personal details, and type of request.
+        /// </param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> which either redirects to another view (BasicDetail/InaccurateData) 
+        /// on success or re-renders the Registration view with errors.
+        /// </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registration(DTORegistrationRequest model)
         {
             try
             {
+                // Extract userId from claims and assign as UpdatedBy
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 model.Updatedby = Convert.ToInt32(userId);
+
+                // Validate ModelState
                 if (ModelState.IsValid)
                 {
+                    // Case 1: SubmitType == 1 (new application flow)
                     if (model.SubmitType == 1)
                     {
+                        // Special logic for TypeId == 4 (change of Army No)
                         if (model.TypeId == 4)
                         {
                             string? OldServiceNo = model.OldServiceNo;
                             string? NewServiceNo = model.ServiceNo;
 
-                            if ((OldServiceNo != null && (OldServiceNo.Length > 7 && OldServiceNo.Length < 10)) && (NewServiceNo != null && (NewServiceNo.Length > 7 && NewServiceNo.Length < 10)))
+                            // Validate Army number lengths
+                            if ((OldServiceNo != null && (OldServiceNo.Length > 7 && OldServiceNo.Length < 10)) &&
+                                (NewServiceNo != null && (NewServiceNo.Length > 7 && NewServiceNo.Length < 10)))
                             {
+                                // Disallow same Old and New Army numbers
                                 if (NewServiceNo == OldServiceNo)
                                 {
                                     TempData["error"] = "Old Army No and New Army No not same.";
@@ -947,16 +969,15 @@ namespace Web.Controllers
                                 }
                                 else
                                 {
+                                    // Check if Army numbers exist in DB
                                     bool OldArmyNoFound = await basicDetailBL.CheckArmyNO(OldServiceNo);
                                     bool NewArmyNoFound = await basicDetailBL.CheckArmyNO(NewServiceNo);
 
+                                    // Extract prefixes (IC, SL, SS, etc.)
                                     string OldFirstTwo = service.CheckFirstTwoChars(OldServiceNo);
                                     string NewFirstTwo = service.CheckFirstTwoChars(NewServiceNo);
 
-                                    //string[] Prefix = { "IC", "SL", "SS", "WC", "TA" };
-
-                                    //string[] NotAllowedPrefix = { "SL", "SS", "WC", "TA", "JC" };
-
+                                    // Validate Army No conditions and rank-based rules
                                     if (OldArmyNoFound == false)
                                     {
                                         TempData["error"] = "Old Army No not found.";
@@ -969,6 +990,7 @@ namespace Web.Controllers
                                     }
                                     else if (OldFirstTwo.IsNullOrEmpty())
                                     {
+                                        // Handle OR rank cases
                                         if (NewFirstTwo.IsNullOrEmpty())
                                         {
                                             TempData["error"] = "Both Old and New Army No is OR rank.";
@@ -984,10 +1006,10 @@ namespace Web.Controllers
                                             TempData["error"] = "Please Select JCOs/OR tab.";
                                             goto end;
                                         }
-
                                     }
                                     else if (!OldFirstTwo.IsNullOrEmpty())
                                     {
+                                        // Validation rules for IC, SL, SS, WC, TA, JC
                                         if (OldFirstTwo == "IC" && NewFirstTwo.IsNullOrEmpty())
                                         {
                                             TempData["error"] = "Permanent Commissioned Officers are not downgraded.";
@@ -1003,7 +1025,8 @@ namespace Web.Controllers
                                             TempData["error"] = "Permanent Commissioned Officers are not downgraded.";
                                             goto end;
                                         }
-                                        else if ((OldFirstTwo == "SL" || OldFirstTwo == "TA") && (NewFirstTwo == "IC" || NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA" || NewFirstTwo == "JC"))
+                                        else if ((OldFirstTwo == "SL" || OldFirstTwo == "TA") &&
+                                                 (NewFirstTwo == "IC" || NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA" || NewFirstTwo == "JC"))
                                         {
                                             TempData["error"] = "SL / TA are not changed Army No.";
                                             goto end;
@@ -1020,10 +1043,10 @@ namespace Web.Controllers
                                         }
                                     }
                                 }
-
                             }
                             else
                             {
+                                // Validation errors for missing/invalid Army No
                                 if (OldServiceNo == null)
                                 {
                                     ModelState.AddModelError("OldServiceNo", "Old Service No required.");
@@ -1047,56 +1070,40 @@ namespace Web.Controllers
                             }
                         }
 
-                        //BasicDetail? Data = new BasicDetail();
-                        //if (model.TypeId == 4 && model.OldServiceNo != null)
-                        //{
-                        //    Data = await basicDetailBL.FindServiceNo(model.OldServiceNo);
-                        //}
-                        //else
-                        //{
-                        //    Data = await basicDetailBL.FindServiceNo(model.ServiceNo);
-                        //}
-
-                        //if (Data != null)
-                        //{
-                        //    TempData["Registration"] = JsonConvert.SerializeObject(model);
-                        //    string id = protector.Protect(Data.BasicDetailId.ToString());
-                        //    return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect(Convert.ToString(Data.BasicDetailId)) });
-                        //}
-                        //else
-                        //{
-                        //    TempData["Registration"] = JsonConvert.SerializeObject(model);
-                        //    return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect("0") });
-                        //}
-
+                        // Store Registration model temporarily and redirect to BasicDetail with protected Id=0
                         TempData["Registration"] = JsonConvert.SerializeObject(model);
                         return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect("0") });
                     }
+                    // Case 2: SubmitType != 1 (temporary save flow)
                     else
                     {
-                        BasicDetailTemp basicDetailTemp = new BasicDetailTemp();
-                        basicDetailTemp.FName = model.FName;
-                        basicDetailTemp.LName = model.LName;
-                        basicDetailTemp.NameAsPerRecord = model.NameAsPerRecord;
-                        basicDetailTemp.ServiceNo = model.ServiceNo;
-                        basicDetailTemp.DOB = model.DOB;
-                        basicDetailTemp.DateOfCommissioning = model.DateOfCommissioning;
-                        basicDetailTemp.State = model.State;
-                        basicDetailTemp.District = model.District;
-                        basicDetailTemp.PS = model.PS;
-                        basicDetailTemp.PO = model.PO;
-                        basicDetailTemp.Tehsil = model.Tehsil;
-                        basicDetailTemp.Village = model.Village;
-                        basicDetailTemp.PinCode = model.PinCode;
-                        basicDetailTemp.Observations = model.Observations;
-                        basicDetailTemp.Updatedby = model.Updatedby;
-                        basicDetailTemp.RemarksIds = model.RemarksIds;
-                        basicDetailTemp.ApplyForId = model.ApplyForId;
-                        basicDetailTemp.RegistrationId = model.RegistrationId;
-                        basicDetailTemp.TypeId = model.TypeId;
-                        basicDetailTemp.RankId = model.RankId;
-                        basicDetailTemp.ArmedId = model.ArmedId;
-                        basicDetailTemp.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        BasicDetailTemp basicDetailTemp = new BasicDetailTemp
+                        {
+                            FName = model.FName,
+                            LName = model.LName,
+                            NameAsPerRecord = model.NameAsPerRecord,
+                            ServiceNo = model.ServiceNo,
+                            DOB = model.DOB,
+                            DateOfCommissioning = model.DateOfCommissioning,
+                            State = model.State,
+                            District = model.District,
+                            PS = model.PS,
+                            PO = model.PO,
+                            Tehsil = model.Tehsil,
+                            Village = model.Village,
+                            PinCode = model.PinCode,
+                            Observations = model.Observations,
+                            Updatedby = model.Updatedby,
+                            RemarksIds = model.RemarksIds,
+                            ApplyForId = model.ApplyForId,
+                            RegistrationId = model.RegistrationId,
+                            TypeId = model.TypeId,
+                            RankId = model.RankId,
+                            ArmedId = model.ArmedId,
+                            UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                        };
+
+                        // Check if a temporary record already exists → Update; else → Add
                         BasicDetailTemp? temp = await basicDetailTempBL.GetByArmyNo(model.ServiceNo);
 
                         if (temp != null && temp.BasicDetailTempId > 0)
@@ -1108,16 +1115,19 @@ namespace Web.Controllers
                         {
                             await basicDetailTempBL.Add(basicDetailTemp);
                         }
+
                         TempData["success"] = "Request Submited Successfully.";
                         return RedirectToAction("InaccurateData", "BasicDetail", new { Id = "MQ==" });
                     }
                 }
                 else
                 {
+                    // ModelState invalid → extract first error message
                     var error = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
                     TempData["error"] = error[0][0].ErrorMessage;
                 }
             }
+            // Exception handling for DB/validation related errors
             catch (ReferenceConstraintException ex)
             {
                 _logger.LogError(1001, ex, "ReferenceConstraintException");
@@ -1156,8 +1166,10 @@ namespace Web.Controllers
             }
 
         end:
+            // If errors occurred, re-render the Registration view with the model and error messages
             return View(model);
         }
+
 
         [HttpGet]
         public async Task<ActionResult> BasicDetail(string? Id)
