@@ -2622,16 +2622,31 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Updates the step counter information based on the provided MStepCounter object.
+        /// Performs necessary checks, such as verifying domain mapping, session data, and unit mapping.
+        /// Returns a response indicating success or failure along with a relevant message.
+        /// </summary>
+        /// <param name="mStepCounter">
+        /// The MStepCounter object containing the details to be updated.
+        /// </param>
+        /// <returns>
+        /// A JSON response indicating the result of the update operation. If successful, 
+        /// it returns `Result = true`, otherwise `Result = false` with an appropriate message.
+        /// </returns>
         public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
             DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
             try
             {
+                // If the Flag is 'R', perform additional checks
                 if (mStepCounter.Flag == "R")
                 {
+                    // Retrieve domain mapping using the request ID
                     TrnDomainMapping Domain = new TrnDomainMapping();
                     Domain = await iDomainMapBL.GetByRequestId(mStepCounter.RequestId);
 
+                    // If the UserId from the domain mapping is 0, return an error response
                     if (Domain?.UserId.GetValueOrDefault() == 0)
                     {
                         response.Message = "Profile is not mapped with domain Id!";
@@ -2639,22 +2654,33 @@ namespace Web.Controllers
                         return Ok(response);
                     }
                 }
+
+                // Retrieve session data for unit ID
                 DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                // Get unit details based on the session's unit ID
                 DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
 
+                // Update the step counter with the current date, user ID, and unit name
                 mStepCounter.UpdatedOn = DateTime.Now;
                 mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
+
+                // Call the service to update the step counter
                 await iStepCounterBL.UpdateStepCounter(mStepCounter);
                 response.Result = true;
             }
             catch (Exception ex)
             {
+                // Log the exception and return a generic error message
                 _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
                 response.Message = "Internal Server Error!";
             }
+
+            // Return the response with the operation result
             return Ok(response);
         }
+
 
         [Authorize(Policy = "FlagICardApplPolicy")]
         public async Task<IActionResult> SaveICardRequestHold(MTrnICardHold dTO)
