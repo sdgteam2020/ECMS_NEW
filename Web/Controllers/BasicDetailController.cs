@@ -2420,12 +2420,26 @@ namespace Web.Controllers
 
         #region SaveInternalFwd/IcardFwd/IcardRejecte/UpdateStepCounter/SaveICardRequestHold/DataExport/DataDigitalXmlSign/GenerateLastRecordXml/MergeXmlDocuments/GenerateJsonResponse
 
+        /// <summary>
+        /// Handles the saving of internal forward data, validates the request, and processes it.
+        /// The method updates the necessary details and returns the success or failure response in JSON format.
+        /// </summary>
+        /// <param name="data">
+        /// The DTO containing the internal forward request data to be saved.
+        /// </param>
+        /// <returns>
+        /// A JSON response indicating the result of the save operation. 
+        /// Returns `true` if the save is successful, `false` if it fails, or `null` if no result is obtained.
+        /// </returns>
         [Authorize(Policy = "InternalWkDistrPolicy")]
         public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data)
         {
             try
             {
+                // Retrieve session data for user ID and unit ID
                 DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                // Set values for the data object using session data and user information
                 data.FromUserId = sessiondata.UserId;
                 data.UnitId = sessiondata.UnitId;
                 data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -2434,38 +2448,46 @@ namespace Web.Controllers
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
                 data.TypeId = Convert.ToByte(data.TypeId);
+
+                // Check if the model state is valid
                 if (ModelState.IsValid)
                 {
+                    // Call the business logic layer to save the internal forward data
                     bool? result = (bool)await iTrnFwnBL.SaveInternalFwd(data);
+
+                    // Return appropriate JSON response based on the result
                     if (result != null)
                     {
                         if (result == true)
                         {
-                            return Json(true);
+                            return Json(true); // Success
                         }
                         else
                         {
-                            return Json(false);
+                            return Json(false); // Failure
                         }
                     }
                     else
                     {
-                        return Json(null);
+                        return Json(null); // Null result case
                     }
 
                 }
                 else
                 {
+                    // Return validation errors as a JSON response if the model state is invalid
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
             catch (Exception ex)
             {
+                // Log the exception and return a BadRequest response if an error occurs
                 _logger.LogError(1001, ex, "BasicDetails=>SaveInternalFwd");
                 return BadRequest();
             }
         }
+
 
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
         {
