@@ -1368,20 +1368,37 @@ namespace Web.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Handles POST requests for creating or updating Basic Detail records.
+        /// - Validates Aadhaar, Unit, Regimental inputs
+        /// - Handles Photo and Signature uploads (with encryption and replacement logic)
+        /// - Maps <see cref="BasicDetailCrtAndUpdVM"/> to entity objects
+        /// - Saves details along with related entities (Address, Upload, IdentityInfo, ICardRequest, StepCounter)
+        /// - Supports both Update (BasicDetailId > 0) and Create flows
+        /// </summary>
+        /// <param name="model">
+        /// The form input data mapped to <see cref="BasicDetailCrtAndUpdVM"/>.
+        /// </param>
+        /// <returns>
+        /// Returns redirect to Index on success, otherwise re-renders the view with errors.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> BasicDetail(BasicDetailCrtAndUpdVM model)
         {
             try
             {
+                // Fetch current logged-in user ID from claims
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+                // Retrieve application forward condition settings from configuration
                 DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
                 {
                     MPRSO = new MPRSO(),
                     MP6F = new MP6F(),
                     MP6A = new MP6A()
                 };
+
+                // Validate that essential configuration values are present before proceeding
                 if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
                             string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
                             dTOApplFwdCondition.MP6A.RankOrderby == 0)
@@ -1389,14 +1406,17 @@ namespace Web.Controllers
                     return Json(KeyConstants.InternalServerError);
                 }
 
+                // Case 1: Update existing BasicDetail (when BasicDetailId > 0)
                 if (model.BasicDetailId > 0)
                 {
+                    // Populate dropdown options for the view
                     ViewBag.OptionsRankId = model.RankId;
                     ViewBag.OptionsUnitId = model.UnitId;
                     ViewBag.OptionsArmedId = model.ArmedId;
                     ViewBag.OptionsRegimentalId = model.RegimentalId;
                     ViewBag.OptionsBloodGroupId = model.BloodGroupId;
 
+                    // Basic validations
                     if (model.UnitId == 0)
                     {
                         ModelState.AddModelError("UnitId", "Please Enter Unit Name");
@@ -1412,13 +1432,17 @@ namespace Web.Controllers
                         ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
                         goto end;
                     }
+
+                    // If ModelState is valid, proceed with update logic
                     if (ModelState.IsValid)
                     {
+                        // Map ViewModel to BasicDetail entity
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.DateOfIssue = null;
                         newBasicDetail.Updatedby = Convert.ToInt32(userId);
                         newBasicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
+                        // Create related entities (Upload, Address, IdentityInfo)
                         MTrnUpload mTrnUpload = new MTrnUpload();
                         mTrnUpload.UploadId = model.UploadId;
 
@@ -1451,6 +1475,8 @@ namespace Web.Controllers
 
 
                         //string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
+
+                        // --- Handle Photo upload: encrypt new file, delete old one if exists ---
                         string sourceFolderPhotoPhy_Old = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
                         string sourceFolderPhotoPhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo")));
                         if (!Directory.Exists(sourceFolderPhotoPhy))
@@ -1490,13 +1516,13 @@ namespace Web.Controllers
                                     }
                                 }
 
+                                // Encrypt and replace
                                 await imageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
                                 if (System.IO.File.Exists(path))
                                 {
                                     System.IO.File.Delete(path);
-                                }
-                                //mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName;
-                                //// ViewBag.PhotoImagePath = mTrnUpload.PhotoImagePath;
+                                } 
+
                                 mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName + ".enc";
                             }
                         }
@@ -1505,8 +1531,8 @@ namespace Web.Controllers
                             mTrnUpload.PhotoImagePath = model.ExistingPhotoImagePath;
                         }
 
-                        //string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
-                        //string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
+                        
+                        // --- Handle Signature upload: encrypt new file, delete old one if exists ---
                         string sourceFolderSignaturePhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature")));
                         if (!Directory.Exists(sourceFolderSignaturePhy))
                             Directory.CreateDirectory(sourceFolderSignaturePhy);
@@ -1544,7 +1570,8 @@ namespace Web.Controllers
                                         System.IO.File.Delete(ExitImagePath);
                                     }
                                 }
-
+                                
+                                // Encrypt and replace
                                 await imageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
                                 if (System.IO.File.Exists(path))
                                 {
@@ -1559,6 +1586,7 @@ namespace Web.Controllers
                             mTrnUpload.SignatureImagePath = model.ExistingSignatureImagePath;
                         }
 
+                        // Validate record office mapping for request
                         MTrnICardRequest? mTrnICardRequest = await iTrnICardRequestBL.GetRequestByBasicDetailId(model.BasicDetailId);
                         if (mTrnICardRequest != null)
                         {
@@ -1580,6 +1608,7 @@ namespace Web.Controllers
                             goto end;
                         }
 
+                        // Save via BL
                         DTOBasicDetailsSaveResponse ret1 = await basicDetailBL.SaveBasicDetailsWithAll(newBasicDetail, mTrnAddress, mTrnUpload, mTrnIdentityInfo, mTrnICardRequest, null);
                         BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
                         if (ret1.Result == true)
@@ -1630,8 +1659,7 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        //var error = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
-                        //TempData["error"] = error[0][0].ErrorMessage;
+                        // Collect model validation errors and pass via TempData 
                         var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
                                             .SelectMany(x => x.Value!.Errors)
                                             .Select(e => e.ErrorMessage)
@@ -1643,8 +1671,9 @@ namespace Web.Controllers
 
                     }
                 }
-                else
+                else // Case 2: Create new BasicDetail (when BasicDetailId == 0)
                 {
+                    // Similar flow: validate, map VM to entity, handle file uploads (mandatory), create request & step counter, save via BL
                     model.Updatedby = Convert.ToInt32(userId);
                     model.StatusLevel = 0;
 
@@ -1881,12 +1910,14 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Catch unexpected errors and log
                 _logger.LogError(1006, ex, "Exception");
                 ModelState.AddModelError("", ex.Message);
                 goto end;
             }
 
         end:
+            // If we reach here, something failed; repopulate dropdowns and return view with model to show errors
             return View(model);
 
         }
