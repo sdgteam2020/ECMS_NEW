@@ -2289,21 +2289,38 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Maps the header columns of a CSV file to their respective indices.
+        /// </summary>
+        /// <param name="headers">
+        /// An array of header strings from the CSV file.
+        /// </param>
+        /// <returns>
+        /// A dictionary mapping the header column names (case-insensitive) to their indices in the CSV file,
+        /// or null if any of the expected columns are missing.
+        /// </returns>
         private Dictionary<string, int>? GetHeaderMap(string[] headers)
         {
+            // Create a case-insensitive dictionary to store header names and their indices
             var headerMap = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+            // Populate the dictionary with header names and their respective index positions
             for (int i = 0; i < headers.Length; i++)
             {
                 headerMap[headers[i]] = i;
             }
 
+            // Check if all expected columns are present in the header map
             if (!_expectedColumns.All(expected => headerMap.ContainsKey(expected)))
             {
+                // Return null if any expected columns are missing
                 return null;
             }
 
+            // Return the populated header map if all expected columns are present
             return headerMap;
         }
+
 
         [HttpPost]
         public async Task<ActionResult> UploadChipAndSerial([FromBody] List<DTOUploadChipAndSerialRequest> data)
