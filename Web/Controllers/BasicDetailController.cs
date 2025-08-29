@@ -2188,29 +2188,45 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Handles the uploading of a CSV file, processes the contents, and validates each record.
+        /// </summary>
+        /// <param name="model">
+        /// The request model containing the uploaded CSV file.
+        /// </param>
+        /// <returns>
+        /// A JSON response with the processed records. If any errors occur, returns an appropriate error message.
+        /// </returns>
         [HttpPost]
         public IActionResult UploadCsv(DTOCSVFileRequest model)
         {
+            // Check if the CSV file is provided and not empty
             if (model.CSVFile == null || model.CSVFile.Length == 0)
             {
+                // Return bad request if the file is not uploaded or is empty
                 return BadRequest(new { message = "File is not uploaded or is empty." });
             }
 
-            var records = new List<object>();
+            var records = new List<object>(); // List to store the processed records
 
             try
             {
+                // Read the uploaded file stream
                 using (var stream = new StreamReader(model.CSVFile.OpenReadStream()))
                 {
+                    // Read the header line of the CSV file
                     string? headerLine = stream.ReadLine();
                     if (headerLine == null)
                     {
+                        // Return bad request if the file is empty or missing headers
                         return BadRequest(new { message = "File is empty or missing headers." });
                     }
 
+                    // Split header line into columns
                     var headers = headerLine.Split(',');
-                    var headerMap = GetHeaderMap(headers);
+                    var headerMap = GetHeaderMap(headers); // Map header columns to known fields
 
+                    // If header mapping is invalid, return an error message with expected columns
                     if (headerMap == null)
                     {
                         return BadRequest(new
@@ -2219,11 +2235,13 @@ namespace Web.Controllers
                         });
                     }
 
+                    // Process each line in the CSV file
                     string? line;
                     while ((line = stream.ReadLine()) != null)
                     {
                         var values = line.Split(',');
 
+                        // Create a record object for each line
                         var record = new
                         {
                             ServiceNo = values[headerMap["ServiceNo"]],
@@ -2236,8 +2254,10 @@ namespace Web.Controllers
                             IsValid = true
                         };
 
+                        // Validate the record (e.g., check if RequestId is valid, ChipNo length, etc.)
                         if (record.RequestId == -1 || record.ChipNo.Length != 12 || !long.TryParse(record.ChipNo, out _))
                         {
+                            // If validation fails, mark the record as invalid and add it to the list
                             records.Add(new
                             {
                                 record.RequestId,
@@ -2252,6 +2272,7 @@ namespace Web.Controllers
                         }
                         else
                         {
+                            // If validation passes, add the valid record to the list
                             records.Add(record);
                         }
                     }
@@ -2259,12 +2280,14 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                // Return a JSON response with status code 500 and detailed error message
+                // Log and return a 500 status code if an exception occurs during file processing
                 return StatusCode(500, new { message = $"An error occurred while processing the file: {ex.Message}" });
             }
 
+            // Return the processed records in a successful response
             return Ok(records);
         }
+
 
         private Dictionary<string, int>? GetHeaderMap(string[] headers)
         {
