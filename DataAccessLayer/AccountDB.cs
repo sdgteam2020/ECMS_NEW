@@ -37,11 +37,31 @@ namespace DataAccessLayer
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
+        /// <summary>
+        /// Returns the total count of user profiles in the system.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="int"/> representing the total number of user profiles.
+        /// </returns>
         public async Task<int> TotalProfileCount()
         {
             int ret = await _context.UserProfile.CountAsync();
             return ret;
         }
+        
+        /// <summary>
+        /// Checks whether any other user already has the specified <paramref name="DomainId"/>.
+        /// </summary>
+        /// <param name="DomainId">The domain identifier to test for uniqueness.</param>
+        /// <param name="Id">The current record's user ID to exclude from the check.</param>
+        /// <returns>
+        /// <c>true</c> if a different user (ID != <paramref name="Id"/>) exists with the same
+        /// <paramref name="DomainId"/> (case-insensitive); otherwise <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// Uses a case-insensitive comparison via <c>ToUpper()</c> and excludes the provided ID to
+        /// allow updates without triggering a false duplicate.
+        /// </remarks>
         public bool GetByDomainId(string DomainId, int Id)
         {
             var ret = _context.Users.Any(x => x.DomainId.ToUpper() == DomainId.ToUpper() && x.Id != Id);
@@ -88,30 +108,14 @@ namespace DataAccessLayer
                 return null;
             }
         }
-        public async Task<List<DTORegisterListRequest>?> DomainApproveList()
-        {
-            try
-            {
-                var allrecord = await (from e in _context.Users
-                                       join r in _context.UserRoles on e.Id equals r.UserId
-                                       join n in _context.Roles on r.RoleId equals n.Id
-                                       where e.AdminFlag == false
-                                       orderby e.Id
-                                       select new DTORegisterListRequest()
-                                       {
-                                           EncryptedId = protector.Protect(e.Id.ToString()),
-                                           DomainId = e.DomainId,
-                                           RoleName = n.Name ?? "no role assign",
-                                       }).ToListAsync();
-                return allrecord;
-            }
-            catch (Exception ex) 
-            {
-                _logger.LogError(1001, ex, "AccountDB->DomainApproveList");
-                return null;
-            }
-
-        }
+        /// <summary>Builds a server-side DataTables payload of domain registrations.</summary>
+        /// <param name="request">DataTables request: draw/start/length/search/sort.</param>
+        /// <returns><see cref="DTODataTablesResponse{DTODomainRegnResponse}"/> with totals and current page rows.</returns>
+        /// <remarks>
+        /// Steps: join Users←→TrnDomainMapping←→UserProfile; count total; search DomainId (case-insensitive);
+        /// sort via EF.Property; count filtered; page with Skip/Take; map roles & claims;
+        /// on exception log(1001) and return empty (draw=0).
+        /// </remarks>
         public async Task<DTODataTablesResponse<DTODomainRegnResponse>> GetAllDomainRegn(DTODataTablesRequest request)
         {
             try
@@ -214,6 +218,21 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+        /// <summary>
+        /// Retrieves a paginated, sortable, and searchable list of user registration data for DataTables.
+        /// </summary>
+        /// <param name="request">
+        /// DataTables request containing pagination, sorting, filtering, and choice parameters.
+        /// </param>
+        /// <returns>
+        /// A <see cref="DTODataTablesResponse{DTOUserRegnResponse}"/> containing the total records, filtered records, and the current page of user registration data.
+        /// </returns>
+        /// <remarks>
+        /// Supports multiple filter choices (e.g., User, MappedUser, UnMappedUser, ActiveUser, InActiveUser, Verified, NotVerifiedUser, IO, CO).
+        /// Joins <c>Users</c> with <c>TrnDomainMapping</c> and <c>UserProfile</c> to build the result set.
+        /// Applies filtering by <c>DomainId</c>, sorting by any column, and paginates the results.
+        /// On exception, logs the error and returns an empty response.
+        /// </remarks>
         public async Task<DTODataTablesResponse<DTOUserRegnResponse>> GetDataForDataTable(DTODataTablesRequest request)
         {
             try
@@ -997,6 +1016,20 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+        /// <summary>
+        /// Retrieves a paginated, sortable, and searchable list of all user registrations.
+        /// </summary>
+        /// <param name="request">
+        /// DataTables request containing pagination, sorting, and search parameters.
+        /// </param>
+        /// <returns>
+        /// A <see cref="DTODataTablesResponse{DTOUserRegnResponse}"/> containing the total records, filtered records, and the current page of user registration data.
+        /// </returns>
+        /// <remarks>
+        /// Joins <c>Users</c> with <c>TrnDomainMapping</c> and <c>UserProfile</c> to build the result set.
+        /// Supports filtering by <c>DomainId</c>, sorting by any column, and paginates the results.
+        /// On exception, logs the error and returns an empty response.
+        /// </remarks>
         public async Task<DTODataTablesResponse<DTOUserRegnResponse>> GetAllUserRegn(DTODataTablesRequest request)
         {
             try
@@ -1080,141 +1113,20 @@ namespace DataAccessLayer
             }
         }
 
-        #region Comment code GetAllProfileManage
-        //public async Task<List<DTOProfileManageResponse>?> GetAllProfileManage(string Search, string Choice)
-        //{
-        //    try
-        //    {
-        //        if (Choice == "DomainId")
-        //        {
-        //            Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
-        //            var allrecord = await (from u in _context.Users.Where(P => Search == "" || P.DomainId.ToLower().Contains(Search))
-        //                                   join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId into utdm_jointable
-        //                                   from xtdm in utdm_jointable.DefaultIfEmpty()
-        //                                   join up in _context.UserProfile on xtdm.UserId equals up.UserId
-        //                                   join rk in _context.MRank on up.RankId equals rk.RankId
-        //                                   join at in _context.MArmedType on up.ArmedId equals at.ArmedId
-        //                                   select new DTOProfileManageResponse()
-        //                                   {
-        //                                       UserId = up.UserId,
-        //                                       ArmyNo = up.ArmyNo,
-        //                                       Name = up.Name,
-        //                                       IsToken=up.IsToken,
-        //                                       IsWithTokenApply = up.IsWithTokenApply,
-        //                                       MobileNo = up.MobileNo,
-        //                                       IsTokenWaiver=up.IsTokenWaiver,
-        //                                       ReasonTokenWaiver =up.ReasonTokenWaiver,
-        //                                       RankId =rk.RankId,
-        //                                       RankName=rk.RankName,
-        //                                       ArmedId=at.ArmedId,
-        //                                       ArmedName=at.ArmedName,
-        //                                       RankAbbreviation=rk.RankAbbreviation,
-        //                                       Id = u.Id,
-        //                                       DomainId = u.DomainId,
-
-        //                                   }).Take(200).ToListAsync();
-        //            return allrecord;
-        //        }
-        //        else if (Choice == "ICNo")
-        //        {
-        //            Search = string.IsNullOrEmpty(Search) ? "" : Search.ToLower();
-        //            var allrecord = await (from up in _context.UserProfile.Where(P => Search == "" || P.ArmyNo.ToLower().Contains(Search)).OrderByDescending(x => x.UserId)
-        //                                   join rk in _context.MRank on up.RankId equals rk.RankId
-        //                                   join at in _context.MArmedType on up.ArmedId equals at.ArmedId
-        //                                   join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
-        //                                   from xtdm in uptdm_jointable.DefaultIfEmpty()
-        //                                   join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
-        //                                   from xu in xtdmu_jointable.DefaultIfEmpty()
-        //                                   select new DTOProfileManageResponse()
-        //                                   {
-        //                                       UserId = up.UserId,
-        //                                       ArmyNo = up.ArmyNo,
-        //                                       Name = up.Name,
-        //                                       IsToken = up.IsToken,
-        //                                       IsWithTokenApply = up.IsWithTokenApply,
-        //                                       MobileNo = up.MobileNo,
-        //                                       IsTokenWaiver = up.IsTokenWaiver,
-        //                                       ReasonTokenWaiver = up.ReasonTokenWaiver,
-        //                                       RankId = rk.RankId,
-        //                                       RankName = rk.RankName,
-        //                                       RankAbbreviation = rk.RankAbbreviation,
-        //                                       ArmedId = at.ArmedId,
-        //                                       ArmedName = at.ArmedName,
-        //                                       Id = xu != null ? xu.Id : 0,
-        //                                       DomainId = xu != null ? xu.DomainId : null,
-        //                                   }).Take(200).ToListAsync();
-        //            return allrecord;
-        //        }
-        //        else if (Choice == "UserId")
-        //        {
-        //            int UserId = string.IsNullOrEmpty(Search) ? 0 : Convert.ToInt32(Search);
-        //            var allrecord = await (from up in _context.UserProfile.Where(x=>x.UserId == UserId)
-        //                                   join rk in _context.MRank on up.RankId equals rk.RankId
-        //                                   join at in _context.MArmedType on up.ArmedId equals at.ArmedId
-        //                                   join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
-        //                                   from xtdm in uptdm_jointable.DefaultIfEmpty()
-        //                                   join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
-        //                                   from xu in xtdmu_jointable.DefaultIfEmpty()
-        //                                   select new DTOProfileManageResponse()
-        //                                   {
-        //                                       UserId = up.UserId,
-        //                                       ArmyNo = up.ArmyNo,
-        //                                       Name = up.Name,
-        //                                       IsToken = up.IsToken,
-        //                                       IsWithTokenApply = up.IsWithTokenApply,
-        //                                       MobileNo = up.MobileNo,
-        //                                       IsTokenWaiver = up.IsTokenWaiver,
-        //                                       ReasonTokenWaiver = up.ReasonTokenWaiver,
-        //                                       RankId = rk.RankId,
-        //                                       RankName = rk.RankName,
-        //                                       RankAbbreviation = rk.RankAbbreviation,
-        //                                       ArmedId = at.ArmedId,
-        //                                       ArmedName = at.ArmedName,
-        //                                       Id = xu != null ? xu.Id : 0,
-        //                                       DomainId = xu != null ? xu.DomainId : null,
-        //                                   }).ToListAsync();
-        //            return allrecord;
-
-        //        }
-        //        else
-        //        {
-        //            var allrecord = await (from up in _context.UserProfile.OrderByDescending(x=>x.UserId).Take(200)
-        //                                   join rk in _context.MRank on up.RankId equals rk.RankId
-        //                                   join at in _context.MArmedType on up.ArmedId equals at.ArmedId
-        //                                   join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
-        //                                   from xtdm in uptdm_jointable.DefaultIfEmpty()
-        //                                   join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
-        //                                   from xu in xtdmu_jointable.DefaultIfEmpty()
-        //                                   select new DTOProfileManageResponse()
-        //                                   {
-        //                                       UserId = up.UserId,
-        //                                       ArmyNo = up.ArmyNo,
-        //                                       Name = up.Name,
-        //                                       IsToken = up.IsToken,
-        //                                       IsWithTokenApply = up.IsWithTokenApply,
-        //                                       MobileNo = up.MobileNo,
-        //                                       IsTokenWaiver = up.IsTokenWaiver,
-        //                                       ReasonTokenWaiver = up.ReasonTokenWaiver,
-        //                                       RankId = rk.RankId,
-        //                                       RankName = rk.RankName,
-        //                                       RankAbbreviation = rk.RankAbbreviation,
-        //                                       ArmedId = at.ArmedId,
-        //                                       ArmedName = at.ArmedName,
-        //                                       Id = xu != null ?xu.Id : 0,
-        //                                       DomainId = xu != null ? xu.DomainId : null,
-        //                                   }).ToListAsync();
-        //            return allrecord;
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "AccountDB->ProfileManage");
-        //        return null;
-        //    }
-        //}
-        #endregion Comment code GetAllProfileManage
-
+        /// <summary>
+        /// Retrieves a paginated, sortable, and searchable list of user profiles for profile management.
+        /// </summary>
+        /// <param name="request">
+        /// DataTables request containing pagination, sorting, and search parameters.
+        /// </param>
+        /// <returns>
+        /// A <see cref="DTODataTablesResponse{DTOProfileManageResponse}"/> containing the total records, filtered records, and the current page of profile management data.
+        /// </returns>
+        /// <remarks>
+        /// Joins <c>UserProfile</c> with <c>MRank</c>, <c>MArmedType</c>, <c>TrnDomainMapping</c>, and <c>Users</c> to build the result set.
+        /// Supports filtering by ArmyNo, sorting by any column, and paginates the results.
+        /// On exception, logs the error and returns an empty response.
+        /// </remarks>
         public async Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage(DTODataTablesRequest request)
         {
             try
@@ -1299,6 +1211,26 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+        /// <summary>
+        /// Saves the mapping between a user and domain, with logging for both mapping and unmapping actions.
+        /// </summary>
+        /// <param name="dTO">
+        /// The input DTO containing the details to map or unmap the user from the domain. Includes user ID, domain ID,
+        /// updated information (updated by and updated date), and the transaction log history.
+        /// </param>
+        /// <returns>
+        /// Returns a <see cref="DTOUserRegnResultResponse"/> with:
+        /// - <c>Result = true</c> on successful mapping or unmapping.
+        /// - <c>Result = false</c> with an appropriate message if any validation fails (e.g., profile already mapped).
+        /// </returns>
+        /// <remarks>
+        /// This method checks if the user is already mapped to a domain. If so, it either updates the mapping or unmaps the user.
+        /// The mapping history is logged in <c>TrnMappingUnMapping_Log</c> for both actions:
+        /// 1) If the user is mapped, a new mapping log is added and the domain mapping is updated with user information.
+        /// 2) If the user is unmapping, it logs the current mapping status and updates the domain mapping to null.
+        /// Validation checks ensure that the user isn't already mapped or requires removal first.
+        /// </remarks>
         public async Task<DTOUserRegnResultResponse?> SaveMapping(DTOUserRegnMappingRequest dTO)
         {
             DTOUserRegnResultResponse dTOUserRegnResultResponse = new DTOUserRegnResultResponse();
@@ -1311,8 +1243,8 @@ namespace DataAccessLayer
                 TrnDomainMapping trnDomainMapping = await domainMapDB.Get(dTO.TDMId);
                 if (dTO.UserId > 0)
                 {
-                    DTOProfileResponse? dTOProfileResponse = await userProfileDB.GetProfileByUserId(dTO.UserId);
-                    if (dTOProfileResponse != null && dTOProfileResponse.Mapping == false)
+                    DTOProfileResponse? dTOProfileResponse = await userProfileDB.GetProfileByUserId(dTO.UserId);//Check Profile Id valid or not
+                    if (dTOProfileResponse != null && dTOProfileResponse.Mapping == false) //Not mapped to any Domain
                     {
                         //Insert Log History
                         var mapping_Log_Old = new TrnMappingUnMapping_Log()
@@ -1349,13 +1281,13 @@ namespace DataAccessLayer
                         dTOUserRegnResultResponse.Message = "Profile mapped.";
                         return dTOUserRegnResultResponse;
                     }
-                    else if (dTOProfileResponse != null && dTOProfileResponse.Mapping == true && dTOProfileResponse.DomainId != null && dTOProfileResponse.AspNetUsersId == dTO.Id)
+                    else if (dTOProfileResponse != null && dTOProfileResponse.Mapping == true && dTOProfileResponse.DomainId != null && dTOProfileResponse.AspNetUsersId == dTO.Id)//Already mapped to same Domain
                     {
                         dTOUserRegnResultResponse.Result = false;
                         dTOUserRegnResultResponse.Message = "Profile Id -" + dTOProfileResponse.UserId + " is alredy mapped to Domain Id - " + dTOProfileResponse.DomainId + " in Sys.<br/>Action not required.";
                         return dTOUserRegnResultResponse;
                     }
-                    else if (dTOProfileResponse != null && dTOProfileResponse.Mapping == true && dTOProfileResponse.DomainId != null && dTOProfileResponse.AspNetUsersId != dTO.Id)
+                    else if (dTOProfileResponse != null && dTOProfileResponse.Mapping == true && dTOProfileResponse.DomainId != null && dTOProfileResponse.AspNetUsersId != dTO.Id)//Already mapped to other Domain
                     {
                         dTOUserRegnResultResponse.Result = false;
                         dTOUserRegnResultResponse.Message = "Profile Id -" + dTOProfileResponse.UserId + " is mapped to Domain Id - " + dTOProfileResponse.DomainId + " in Sys.<br/>Pl relieved first and try again.";
@@ -1401,6 +1333,35 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+        /// <summary>
+        /// Creates or updates a domain registration (user), along with roles, claims,
+        /// and <c>TrnDomainMapping</c>, inside a database transaction.
+        /// </summary>
+        /// <param name="dTO">
+        /// Input DTO. If <c>Id &gt; 0</c>, updates the existing user; otherwise inserts a new user.
+        /// Also carries role IDs, claim values, and mapping fields (e.g., <c>UnitMappId</c>, <c>ApptId</c>).
+        /// </param>
+        /// <returns>
+        /// <c>true</c> on successful insert/update; <c>false</c> if the target user for update is not found;
+        /// <c>null</c> if an exception occurs (transaction is rolled back and error is logged).
+        /// </returns>
+        /// <remarks>
+        /// Update path:
+        /// - Loads user; if missing returns <c>false</c>.
+        /// - Updates identity fields (DomainId, UserName/Email normalized, Active, AdminFlag/Date, audit fields).
+        /// - Replaces all current roles and claims with those in the request.
+        /// - Upserts <c>TrnDomainMapping</c> (by <c>TDMId</c>).
+        /// - Commits and updates security stamp.
+        /// <para/>
+        /// Insert path:
+        /// - Creates a new user with provided flags and computed identity fields; sets a default password.
+        /// - Adds requested roles and claims.
+        /// - Inserts <c>TrnDomainMapping</c>.
+        /// - Commits and updates security stamp.
+        /// <para/>
+        /// Uses IST for date fields and logs errors with event ID 1001. No exceptions are thrown out of this method.
+        /// </remarks>
         public async Task<bool?> SaveDomainRegn(DTODomainRegnRequest dTO)
         {
             using (var transaction = _context.Database.BeginTransaction())
@@ -1546,7 +1507,7 @@ namespace DataAccessLayer
                             LockoutEnabled = true
                         };
 
-                        userAdd.PasswordHash = _passwordHasher.HashPassword(userAdd, "Admin123#");
+                        userAdd.PasswordHash = _passwordHasher.HashPassword(userAdd, "Admin123#");//Default Password
                         await _context.Users.AddAsync(userAdd);
                         await _context.SaveChangesAsync();
                         int Id = userAdd.Id;
@@ -1601,6 +1562,22 @@ namespace DataAccessLayer
                 }
             }
         }
+
+        /// <summary>
+        /// Updates the domain flag and related user information for a specified user based on the provided DTO.
+        /// </summary>
+        /// <param name="dTO">The request DTO containing the updated values for the user.</param>
+        /// <returns>
+        /// <c>true</c> if the domain flag and user information were successfully updated;
+        /// <c>false</c> if the update failed (e.g., user not found or update failed);
+        /// <c>null</c> if an exception occurs during the process.
+        /// </returns>
+        /// <remarks>
+        /// This method retrieves the user by ID, updates the user's active status, admin flag, and related properties,
+        /// and saves the changes to the user using <c>userManager.UpdateAsync</c>. If the <c>AdminFlag</c> is set to true,
+        /// the <c>AdminFlagDate</c> is updated to the current IST time. The method also handles errors by logging them
+        /// and returning <c>null</c> in case of an exception.
+        /// </remarks>
         public async Task<bool?> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO)
         {
             try
@@ -1646,6 +1623,18 @@ namespace DataAccessLayer
             }
 
         }
+
+        /// <summary>
+        /// Retrieves all application roles ordered by ID and maps them to <see cref="DTOMasterResponse"/> items.
+        /// </summary>
+        /// <returns>
+        /// A list of <see cref="DTOMasterResponse"/> where each item contains the role ID and name
+        /// (defaults to <c>"Role Name Blank"</c> when the source name is null).
+        /// </returns>
+        /// <remarks>
+        /// Queries <c>_context.Roles</c>, orders by <c>Id</c>, materializes the results, and performs a simple
+        /// projection to the DTO list.
+        /// </remarks>
         public async Task<List<DTOMasterResponse>>GetAllRole()
         {
             List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
@@ -1661,6 +1650,16 @@ namespace DataAccessLayer
             }
             return lst;
         }
+
+        /// <summary>
+        /// Retrieves all claim definitions from the claims store and maps them to <see cref="DTOClaimsResponse"/>.
+        /// </summary>
+        /// <returns>
+        /// A list of <see cref="DTOClaimsResponse"/> items ordered by <c>ClaimValue</c>.
+        /// </returns>
+        /// <remarks>
+        /// Queries <c>_context.ClaimsStore</c>, orders by <c>ClaimValue</c>, and projects to DTOs (value + type).
+        /// </remarks>
         public async Task<List<DTOClaimsResponse>> GetAllClaims()
         {
             List<DTOClaimsResponse> lst = new List<DTOClaimsResponse>();
@@ -1677,9 +1676,27 @@ namespace DataAccessLayer
             return lst;
         }
 
+        /// <summary>
+        /// Saves the profile and domain mapping for a user based on the provided <paramref name="model"/> and session details.
+        /// </summary>
+        /// <param name="model">The request model containing updated profile and domain mapping information.</param>
+        /// <param name="dTOTempSession">Temporary session data used for saving profile and mapping information.</param>
+        /// <returns>
+        /// A <see cref="DTOTempSession"/> with the status updated to indicate whether the profile and mapping were saved successfully.
+        /// Returns <c>null</c> if the process encounters any issues or fails.
+        /// </returns>
+        /// <remarks>
+        /// This method handles different states based on <paramref name="dTOTempSession.Status"/>:
+        /// <list type="bullet">
+        ///     <item><description>Status 2: Inserts a new user, maps the user to a domain, and updates user profile details if necessary.</description></item>
+        ///     <item><description>Status 3: Updates the domain mapping for an existing user profile.</description></item>
+        ///     <item><description>Status 4: Updates the user profile and domain mapping, and logs the operation.</description></item>
+        /// </list>
+        /// Transactions are used to ensure atomicity of the database operations, and any errors or exceptions are logged with event ID 1001.
+        /// </remarks>
         public async Task<DTOTempSession?> ProfileAndMappingSaving(DTOProfileAndMappingRequest model, DTOTempSession dTOTempSession)
         {
-            if (dTOTempSession.Status == 2)
+            if (dTOTempSession.Status == 2)//New Regn
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
@@ -1802,7 +1819,7 @@ namespace DataAccessLayer
 
                 }
             }   
-            else if (dTOTempSession.Status == 3)
+            else if (dTOTempSession.Status == 3)//Mapping only
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
@@ -1909,7 +1926,7 @@ namespace DataAccessLayer
 
                 }
             }
-            else if (dTOTempSession.Status == 4)
+            else if (dTOTempSession.Status == 4)//Profile Update with Mapping
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
@@ -2019,7 +2036,24 @@ namespace DataAccessLayer
             }
 
         }
-
+        /// <summary>
+        /// Computes aggregate account statistics: total users, active/inactive counts,
+        /// verified/not-verified counts, and mapping stats (mapped/unmapped, IO/CO/RO/ORO).
+        /// </summary>
+        /// <returns>
+        /// A populated <see cref="DTOAccountCountResponse"/> with:
+        /// <c>User</c>, <c>ActiveUser</c>, <c>InActiveUser</c>,
+        /// <c>VerifiedUser</c>, <c>NotVerifiedUser</c>,
+        /// <c>MappedUser</c>, <c>UnMappedUser</c>, <c>IO</c>, <c>CO</c>, <c>RO</c>, <c>ORO</c>.
+        /// On exception, returns a new (zeroed) response and logs the error.
+        /// </returns>
+        /// <remarks>
+        /// Executes three aggregated EF Core queries:
+        /// 1) Users → active/inactive counts.
+        /// 2) Users → verified/not-verified via <c>AdminFlag</c>.
+        /// 3) TrnDomainMapping → mapped/unmapped and role-flag counts (IO/CO/RO/ORO).
+        /// Uses <c>GroupBy(1)</c> to materialize single rows; logs with event ID 1001 on failure.
+        /// </remarks>
         public async Task<DTOAccountCountResponse> AccountCount()
         {
             try

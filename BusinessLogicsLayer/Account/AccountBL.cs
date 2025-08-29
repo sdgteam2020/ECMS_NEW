@@ -30,10 +30,6 @@ namespace BusinessLogicsLayer.Account
         {
             return await _iAccountDB.FindRoleByName(Role);
         }
-        public async Task<List<DTORegisterListRequest>?> DomainApproveList()
-        {
-            return await _iAccountDB.DomainApproveList();
-        }
         public async Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage(DTODataTablesRequest request)
         {
             return await _iAccountDB.GetAllProfileManage(request);

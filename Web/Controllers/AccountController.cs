@@ -94,43 +94,54 @@ namespace Web.Controllers
             public string AppName { get; set; } = string.Empty;
 
         }
+        /// <summary>
+        /// Returns the "Access Denied" view shown when a user does not have
+        /// sufficient permissions to access a protected resource.
+        /// </summary>
+        /// <returns>The AccessDenied view.</returns>
         [HttpGet]
         [AllowAnonymous]
         public IActionResult AccessDenied()
         {
             return View();
         }
+
         #region Domain Regn.
 
+        /// <summary>Displays the Domain Registration management page.</summary>
+        /// <returns>The <c>DomainRegn</c> view.</returns>
+        /// <remarks>Accessible only to users in the <c>admin</c> role.</remarks>
         [Authorize(Roles = "admin")]
         [HttpGet]
         public IActionResult DomainRegn()
         {
             return View();
         }
+
+        /// <summary>Admin-only: returns DataTables JSON for domain registrations.</summary>
+        /// <param name="dTO">DataTables request (draw/start/length/search/sort).</param>
+        /// <returns>JSON result; empty set if model invalid; generic error on exception.</returns>
+        /// <remarks>Validates model, delegates to BL, logs errors (eventId: 1001).</remarks>
         [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetAllDomainRegn(DTODataTablesRequest dTO)
         {
+            if (!ModelState.IsValid)
+            {
+                var empty = new DTODataTablesResponse<DTODomainRegnResponse>
+                {
+                    // Use dto.Draw or dto.draw depending on your DTO property name
+                    draw = (dTO?.Draw) ?? 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = new List<DTODomainRegnResponse>()
+                };
+                return Json(empty);
+            }
             try
             {
-                if (ModelState.IsValid)
-                {
-                    return Json(await _iAccountBL.GetAllDomainRegn(dTO));
-                }
-                else
-                {
-                    List<DTODomainRegnResponse> dTODomains = new List<DTODomainRegnResponse>();
-                    var responseData = new DTODataTablesResponse<DTODomainRegnResponse>
-                    {
-                        draw = 0,
-                        recordsTotal = 0,
-                        recordsFiltered = 0,
-                        data = dTODomains
-                    };
-                    return Json(responseData);
-                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
-                }
+                // Get paged/filtered/sorted domain registrations (DataTables response).
+                return Json(await _iAccountBL.GetAllDomainRegn(dTO));
             }
             catch (Exception ex)
             {
@@ -139,57 +150,80 @@ namespace Web.Controllers
             }
 
         }
+
+        /// <summary>
+        /// Admin-only action to upsert a domain registration.
+        /// Sets <c>Updatedby</c> from the current user, <c>UpdatedOn</c> to IST,
+        /// and forces <c>IsORO</c>/<c>IsRO</c> to <c>false</c>.
+        /// </summary>
+        /// <param name="dTO">
+        /// Request DTO with domain details; if <c>Id &gt; 0</c> updates the existing record,
+        /// otherwise inserts a new one. <c>DomainId</c> must be unique.
+        /// </param>
+        /// <returns>
+        /// JSON result:
+        /// <c>KeyConstants.Save</c> (insert success),
+        /// <c>KeyConstants.Update</c> (update success),
+        /// <c>KeyConstants.Exists</c> (duplicate <c>DomainId</c>),
+        /// validation errors when <c>ModelState</c> is invalid,
+        /// or <c>KeyConstants.InternalServerError</c> on failure.
+        /// </returns>
+        /// <remarks>
+        /// Flow (compact): validate → check duplicate via <c>_iAccountBL.GetByDomainId</c> →
+        /// call <c>_iAccountBL.SaveDomainRegn</c> (insert/update) → return status.  
+        /// Errors are logged with eventId 1001. Requires role <c>admin</c>.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveDomainRegn(DTODomainRegnRequest dTO)
         {
             try
             {
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));// Logged in User Id
+                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));// IST
                 dTO.IsORO = false;
                 dTO.IsRO = false;
 
-                if (ModelState.IsValid)
+                if (ModelState.IsValid)// Server side validation check
                 {
-                    if (!_iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))
+                    if (!_iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))// Check Duplicate DomainId
                     {
                         bool result;
-                        if (dTO.Id > 0)
+                        if (dTO.Id > 0)// Update
                         {
-                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO);
-                            if(result==true)
+                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO);// Update
+                            if (result==true)
                             {
-                                return Json(KeyConstants.Update);
+                                return Json(KeyConstants.Update);// Update Success
                             }
                             else
                             {
-                                return Json(KeyConstants.InternalServerError);
+                                return Json(KeyConstants.InternalServerError);// Update Failed
                             }
                             
                         }
-                        else
+                        else// Insert
                         {
-                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO);
+                            result = (bool)await _iAccountBL.SaveDomainRegn(dTO);// Insert
                             if (result == true)
                             {
-                                return Json(KeyConstants.Save);
+                                return Json(KeyConstants.Save);// Insert Success
                             }
                             else
                             {
-                                return Json(KeyConstants.InternalServerError);
+                                return Json(KeyConstants.InternalServerError);// Insert Failed
                             }
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        return Json(KeyConstants.Exists);// DomainId already exists
                     }
 
                 }
                 else
                 {
 
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());// Server side validation error
                 }
 
             }
@@ -200,24 +234,47 @@ namespace Web.Controllers
             }
 
         }
+
+        /// <summary>
+        /// Returns all roles as a JSON payload.
+        /// </summary>
+        /// <returns>
+        /// JSON result containing the list of roles from the business layer, or
+        /// <c>KeyConstants.InternalServerError</c> if an exception occurs.
+        /// </returns>
+        /// <remarks>
+        /// Delegates to <c>_iAccountBL.GetAllRole()</c>. Any unhandled exceptions are logged
+        /// with event ID 1001 and a generic error token is returned.
+        /// </remarks>
         public async Task<IActionResult> GetAllRole()
         {
             try
             {
-                return Json(await _iAccountBL.GetAllRole());
+                return Json(await _iAccountBL.GetAllRole());// Get All Role
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Account->GetAllRole");
+                _logger.LogError(1001, ex, "Account->GetAllRole");// Log Error
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
+        /// <summary>
+        /// Returns all claim definitions as a JSON payload.
+        /// </summary>
+        /// <returns>
+        /// JSON list from <c>_iAccountBL.GetAllClaims()</c>, or
+        /// <c>KeyConstants.InternalServerError</c> if an exception occurs.
+        /// </returns>
+        /// <remarks>
+        /// Delegates to the business layer; logs exceptions with event ID 1001.
+        /// </remarks>
         [HttpGet]
         public async Task<IActionResult> GetAllClaims()
         {
             try
             {
-                return Json(await _iAccountBL.GetAllClaims());
+                return Json(await _iAccountBL.GetAllClaims());// Get All Claims
             }
             catch (Exception ex)
             {
@@ -225,31 +282,57 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        
+        /// Returns the count of accounts as a JSON payload.
+        /// </summary>
+        /// <returns>
+        /// JSON result containing the account count from the business layer,
+        /// or <c>KeyConstants.InternalServerError</c> if an exception occurs.
+        /// </returns>
+        /// <remarks>
+        /// Delegates to <c>_iAccountBL.AccountCount()</c>. Any unhandled exceptions are logged
+        /// with event ID 1001 and a generic error token is returned. Requires <c>admin</c> role.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> AccountCount()
         {
             try
             {
-                return Json(await _iAccountBL.AccountCount());
+                return Json(await _iAccountBL.AccountCount());// Get Account Count
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Account->AccountCount");
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
 
         #endregion End Domain Regn.
 
         #region ProfileManage
+
+        /// <summary>
+        /// Displays the Profile Management page for administrators.
+        /// </summary>
+        /// <returns>The ProfileManage view.</returns>
         [Authorize(Roles = "admin")]
         [HttpGet]
         public IActionResult ProfileManage()
         {
             return View();
         }
+        
+        /// Admin-only action to add or update a user profile.
+        /// Sets <c>IsActive</c> to <c>true</c>, <c>Updatedby</c> to the current user, and <c>UpdatedOn</c> to now.
+        /// If <c>UserId &gt; 0</c>, updates the existing profile after checking for duplicate ArmyNo.
+        /// If <c>UserId == 0</c>, inserts a new profile after checking for duplicate ArmyNo.
+        /// Returns <c>KeyConstants.Exists</c> if ArmyNo already exists, <c>KeyConstants.Update</c> or <c>KeyConstants.Save</c> on success,
+        /// validation errors if <c>ModelState</c> is invalid, or <c>KeyConstants.InternalServerError</c> on failure.
+        /// Errors are logged with eventId 1001.
+        /// </summary>
+        /// <param name="dTO">Profile data to add or update.</param>
+        /// <returns>JSON result indicating success, duplicate, validation errors, or error.</returns>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveProfileManage(MUserProfile dTO)
         {
@@ -259,11 +342,11 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
-                if (ModelState.IsValid)
+                if (ModelState.IsValid)// Server side validation check
                 {
-                    if (dTO.UserId > 0)
+                    if (dTO.UserId > 0)// Update
                     {
-                        bool? result = await _userProfileBL.FindByArmyNoWithUserId(dTO.ArmyNo, dTO.UserId);
+                        bool? result = await _userProfileBL.FindByArmyNoWithUserId(dTO.ArmyNo, dTO.UserId);// Check Duplicate ArmyNo
                         if (result !=null)
                         {
                             if(result == true)
@@ -281,10 +364,10 @@ namespace Web.Controllers
                             return Json(KeyConstants.InternalServerError);
                         }
                     }
-                    else
+                    else 
                     {
-                        bool? result = await _userProfileBL.FindByArmyNo(dTO.ArmyNo);
-                        if(result!=null)
+                        bool? result = await _userProfileBL.FindByArmyNo(dTO.ArmyNo);// Check Duplicate ArmyNo
+                        if (result!=null)
                         {
                             if(result == true)
                             {
@@ -304,24 +387,32 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());// Server side validation error
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Account->SaveProfileManage");
-                return Json(KeyConstants.InternalServerError);
+                return Json(KeyConstants.InternalServerError);// Log Error
             }
 
         }
+        
+        /// Admin-only: returns DataTables JSON for profile management.
+        /// </summary>
+        /// <param name="dTO">DataTables request (draw/start/length/search/sort).</param>
+        /// <returns>
+        /// JSON result containing paged/filtered/sorted profile management data,
+        /// or an empty set if an exception occurs.
+        /// </returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetAllProfileManage(DTODataTablesRequest dTO)
         {
             try
             {
-                return Json(await _iAccountBL.GetAllProfileManage(dTO));
+                return Json(await _iAccountBL.GetAllProfileManage(dTO));// Get All Profile Manage
             }
             catch (Exception ex)
             {
@@ -337,33 +428,50 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
+        /// <summary>
+        /// Returns the total count of user profiles as a JSON payload.
+        /// </summary>
+        /// <returns>
+        /// JSON result containing the total profile count from the business layer,
+        /// or <c>KeyConstants.InternalServerError</c> if an exception occurs.
+        /// </returns>
+        /// <remarks>
+        /// Delegates to <c>_iAccountBL.TotalProfileCount()</c>. Any unhandled exceptions are logged
+        /// with event ID 1001 and a generic error token is returned. Requires <c>admin</c> role.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> TotalProfileCount()
         {
             try
             {
-                return Json(await _iAccountBL.TotalProfileCount());
+                return Json(await _iAccountBL.TotalProfileCount());// Get Total Profile Count
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Account->TotalProfileCount");
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
 
+        /// <summary>
+        /// Admin-only action to delete a user profile.
+        /// Checks for foreign key references in related tables before deletion.
+        /// Returns Json(5) if references exist, otherwise deletes and returns success.
+        /// </summary>
+        /// <param name="dTO">User profile to delete.</param>
+        /// <returns>JSON result indicating success or reference constraint.</returns>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteProfile(MUserProfile dTO)
         {
-            DTOProfileIdCheckInFKTableResponse? response = await _userProfileBL.ProfileIdCheckInFKTable(dTO.UserId);
-            if (response.TotalTDM > 0 || response.TotalTH > 0 || response.TotalTPO_To > 0 || response.TotalTPO_From > 0 || response.TotalTFFrom > 0 || response.TotalTFTo > 0)
+            DTOProfileIdCheckInFKTableResponse? response = await _userProfileBL.ProfileIdCheckInFKTable(dTO.UserId);// Check FK Reference
+            if (response.TotalTDM > 0 || response.TotalTH > 0 || response.TotalTPO_To > 0 || response.TotalTPO_From > 0 || response.TotalTFFrom > 0 || response.TotalTFTo > 0)// If reference exists
             {
                 return Json(5);
             }
             else
             {
-                await _userProfileBL.Delete(dTO);
+                await _userProfileBL.Delete(dTO);// Delete Profile
                 return Json(KeyConstants.Success);
             }
         }
@@ -372,6 +480,10 @@ namespace Web.Controllers
 
         #region UserRegn
 
+        /// <summary>
+        /// Displays the User Registration management page for administrators.
+        /// </summary>
+        /// <returns>The UserRegn view.</returns>
         [Authorize(Roles = "admin")]
         [HttpGet]
         public IActionResult UserRegn()
@@ -379,6 +491,17 @@ namespace Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Admin-only: returns DataTables JSON for user registrations.
+        /// </summary>
+        /// <param name="dTO">DataTables request (draw/start/length/search/sort).</param>
+        /// <returns>
+        /// JSON result containing paged/filtered/sorted user registration data,
+        /// or an empty set if model is invalid or an exception occurs.
+        /// </returns>
+        /// <remarks>
+        /// Validates model, delegates to business layer, logs errors (eventId: 1001).
+        /// </remarks>
         [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetAllUserRegn(DTODataTablesRequest dTO)
@@ -387,7 +510,7 @@ namespace Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    return Json(await _iAccountBL.GetAllUserRegn(dTO));
+                    return Json(await _iAccountBL.GetAllUserRegn(dTO));// Get All User Regn
                 }
                 else
                 {
@@ -410,6 +533,18 @@ namespace Web.Controllers
             }
 
         }
+
+        /// <summary>
+        /// Admin-only: returns DataTables JSON for user registration mapping.
+        /// </summary>
+        /// <param name="dTO">DataTables request (draw/start/length/search/sort).</param>
+        /// <returns>
+        /// JSON result containing paged/filtered/sorted user registration mapping data,
+        /// or an empty set if model is invalid or an exception occurs.
+        /// </returns>
+        /// <remarks>
+        /// Validates model, delegates to business layer, logs errors (eventId: 1001).
+        /// </remarks>
         [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetDataForDataTable(DTODataTablesRequest dTO)
@@ -418,7 +553,7 @@ namespace Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    return Json(await _iAccountBL.GetDataForDataTable(dTO));
+                    return Json(await _iAccountBL.GetDataForDataTable(dTO));// Get All User Regn
                 }
                 else
                 {
@@ -427,7 +562,7 @@ namespace Web.Controllers
                     {
                         draw = 0,
                         recordsTotal = 0,
-                        recordsFiltered = 0, 
+                        recordsFiltered = 0,
                         data = dTOUserRegnResponses
                     };
                     return Json(responseData);
@@ -442,6 +577,21 @@ namespace Web.Controllers
 
         }
 
+        /// <summary>
+        /// Admin-only action to save user registration mapping (domain/user role/claims mapping).
+        /// </summary>
+        /// <param name="dTO">Request DTO containing user registration mapping details.</param>
+        /// <returns>
+        /// JSON result indicating success or failure:
+        /// - Success: Serialized <see cref="DTOUserRegnResultResponse"/>.
+        /// - Failure: Error message and <see cref="DTOUserRegnResultResponse"/> with <c>Result = false</c>.
+        /// </returns>
+        /// <remarks>
+        /// Validates model state before delegating to <c>_iAccountBL.SaveMapping</c>.
+        /// If the mapping is saved successfully, it returns the serialized result. Otherwise, 
+        /// it returns a failure message.
+        /// In case of validation errors, the model state errors are returned as a JSON array.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveMapping(DTOUserRegnMappingRequest dTO)
         {
@@ -452,7 +602,7 @@ namespace Web.Controllers
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 if (ModelState.IsValid)
                 {
-                    DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveMapping(dTO);
+                    DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveMapping(dTO);// Save Mapping
                     if (dTOUserRegnResultResponse != null)
                     {
                         string json = JsonConvert.SerializeObject(dTOUserRegnResultResponse);
@@ -486,6 +636,22 @@ namespace Web.Controllers
 
         }
 
+        /// <summary>
+        /// Admin-only action to update the domain flag for a user registration.
+        /// </summary>
+        /// <param name="dTO">Request DTO containing the details to update the domain flag.</param>
+        /// <returns>
+        /// JSON result:
+        /// <list type="bullet">
+        ///   <item><c>KeyConstants.Update</c> on successful update.</item>
+        ///   <item><c>KeyConstants.InternalServerError</c> if an error occurs or the update fails.</item>
+        ///   <item>Validation errors if <paramref name="ModelState"/> is invalid.</item>
+        /// </list>
+        /// </returns>
+        /// <remarks>
+        /// This method checks the validity of the input model, calls the business layer to update the domain flag,
+        /// and returns the appropriate result. Errors are logged with event ID 1001 if an exception occurs.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateDomainFlag(DTOUserRegnUpdateDomainFlagRequest dTO)
         {
@@ -495,8 +661,8 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if (ModelState.IsValid)
                 {
-                    bool? result = (bool)await _iAccountBL.UpdateDomainFlag(dTO);
-                    if(result!=null)
+                    bool? result = (bool)await _iAccountBL.UpdateDomainFlag(dTO);// Update Domain Flag
+                    if (result!=null)
                     {
                         if(result == true)
                         {
@@ -531,7 +697,18 @@ namespace Web.Controllers
 
         #region IMLogin
 
-        // When the code is published on IAM, these IMLogin name change.
+        /// <summary>
+        /// Handles the self-login for IM (Identity Management) based on the environment setting and IAM configuration.
+        /// Redirects to an IAM login page if the login is enabled; otherwise, it clears session data and renders the view.
+        /// </summary>
+        /// <returns>
+        /// A view of the IM login page. If the environment is development, a different IAM login URL is used.
+        /// </returns>
+        /// <remarks>
+        /// - Checks whether IAM login is enabled by reading settings from the <see cref="IAMSetting"/> with the appropriate environment byte value.
+        /// - If IAM login is enabled, redirects the user to the IAM login page (https://iam2.army.mil/IAM/User).
+        /// - If IAM login is disabled, it clears any session data related to the IM and sets a footer value in the view.
+        /// </remarks>
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> IMLoginSelf()
@@ -578,6 +755,29 @@ namespace Web.Controllers
 
             return View();
         }
+        /// <summary>
+        /// Handles the self-login process for IM (Identity Management) by validating the user's domain and role information.
+        /// </summary>
+        /// <param name="model">The request DTO containing the domain and role information for login validation.</param>
+        /// <returns>
+        /// A redirection to the <see cref="TokenValidate"/> action if the domain and role are valid. 
+        /// If any validation fails, the method handles it by setting the appropriate session status and error message.
+        /// </returns>
+        /// <remarks>
+        /// This method checks several conditions based on the <paramref name="model"/> (such as role and domain ID):
+        /// <list type="bullet">
+        ///     <item>
+        ///         <description>If the user has an active domain mapping and a valid role, the user is redirected to the <see cref="TokenValidate"/> action.</description>
+        ///     </item>
+        ///     <item>
+        ///         <description>If the user is not mapped or their role is invalid, the method sets the status to 6 and returns an error message.</description>
+        ///     </item>
+        ///     <item>
+        ///         <description>If the user is new, the status is set to 2 and they are redirected for further validation.</description>
+        ///     </item>
+        /// </list>
+        /// Session variables are set to store important data like user ID, domain ID, and mapping status, and these are passed along for use in subsequent actions.
+        /// </remarks>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> IMLoginSelf(DTOIMLoginRequest model)
@@ -1437,990 +1637,6 @@ namespace Web.Controllers
         //}
 
         #endregion End Login
-
-        #region  Policy Commented Code for Super Admin Role For  Phase II
-
-        //[HttpGet]
-        //[Authorize(Policy = "EditRolePolicy")]
-        //public async Task<IActionResult> ManageUserRoles(string userId)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(userId);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-
-        //    ViewBag.userId = userId;
-
-        //    var user = await userManager.FindByIdAsync(decryptedId);
-
-        //    if (user == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-        //        return View("NotFound");
-        //    }
-
-        //    var model = new List<UserRolesViewModel>();
-
-        //    foreach (var role in roleManager.Roles)
-        //    {
-        //        var userRolesViewModel = new UserRolesViewModel
-        //        {
-        //            RoleId = role.Id.ToString(),
-        //            RoleName = role.Name
-        //        };
-
-        //        if (await userManager.IsInRoleAsync(user, role.Name))
-        //        {
-        //            userRolesViewModel.IsSelected = true;
-        //        }
-        //        else
-        //        {
-        //            userRolesViewModel.IsSelected = false;
-        //        }
-
-        //        model.Add(userRolesViewModel);
-        //    }
-
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //[Authorize(Policy = "EditRolePolicy")]
-        //public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(userId);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-        //    var user = await userManager.FindByIdAsync(decryptedId);
-
-        //    if (user == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
-        //        return View("NotFound");
-        //    }
-
-        //    var roles = await userManager.GetRolesAsync(user);
-        //    var result = await userManager.RemoveFromRolesAsync(user, roles);
-
-        //    if (!result.Succeeded)
-        //    {
-        //        ModelState.AddModelError("", "Cannot remove user existing roles");
-        //        return View(model);
-        //    }
-
-        //    result = await userManager.AddToRolesAsync(user, model.Where(x => x.IsSelected).Select(y => y.RoleName));
-
-        //    if (!result.Succeeded)
-        //    {
-        //        ModelState.AddModelError("", "Cannot add selected roles to user");
-        //        return View(model);
-        //    }
-        //    TempData["success"] = "Updated Successfully.";
-        //    return RedirectToAction("EditUser", new { Id = userId });
-        //}
-
-        //[HttpPost]
-        //[Authorize(Policy = "DeleteRolePolicy")]
-        //public async Task<IActionResult> DeleteRole(string Id)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(Id);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-        //    var role = await roleManager.FindByIdAsync(decryptedId);
-
-        //    if (role == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"Role with Id = {decryptedId} cannot be found";
-        //        return View("NotFound");
-        //    }
-        //    else
-        //    {
-        //        try
-        //        {
-        //            //throw new Exception("Test Exception");
-
-        //            var result = await roleManager.DeleteAsync(role);
-
-        //            if (result.Succeeded)
-        //            {
-        //                TempData["success"] = "Role Deleted Successfully.";
-        //                return RedirectToAction("ListRoles");
-        //            }
-
-        //            foreach (var error in result.Errors)
-        //            {
-        //                ModelState.AddModelError("", error.Description);
-        //            }
-
-        //            return View("ListRoles");
-        //        }
-        //        catch (DbUpdateException ex)
-        //        {
-        //            _logger.LogError($"Error deleting role {ex}");
-
-        //            ViewBag.ErrorTitle = $"{role.Name} role is in use";
-        //            ViewBag.ErrorMessage = $"{role.Name} role cannot be deleted as there are users " +
-        //                $"in this role. If you want to delete this role, please remove the users from " +
-        //                $"the role and then try to delete";
-        //            return View("Error");
-        //        }
-        //    }
-        //}
-
-        #endregion End Policy
-
-        #region Commented Code for Super Admin Role For  Phase II
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin")]
-        //public IActionResult Create()
-        //{
-        //    ViewBag.T = "Register User";
-        //    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    ViewBag.RoleOptions = unitOfWork.Users.GetRole();
-        //    ViewBag.OptionsRank = service.GetRank(1);
-        //    DTORegisterRequest model = new DTORegisterRequest();
-        //    string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
-        //    HttpContext.Session.SetString(SessionKeySalt, dd);
-        //    model.hdns = dd;
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //[Authorize(Roles = "Super Admin")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(DTORegisterRequest model)
-        //{
-        //    //var data =await unitOfWork.Users.GetAll();
-        //    ////var data1 = unitOfWork.Users.GetByUserName("Kapoor").Result;
-        //    //int i = (int)ResponseMessage.Success;
-        //    //return View();
-        //    string rolename = "";
-        //    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    ViewBag.RoleOptions = unitOfWork.Users.GetRole();
-        //    ViewBag.OptionsRank = service.GetRank(1);
-        //    if (userId == null)
-        //    {
-        //        userId = "0";
-        //        rolename = "Super Admin";
-        //    }
-        //    else
-        //    {
-        //        var usera = await userManager.FindByIdAsync(userId);
-        //        var roles = await userManager.GetRolesAsync(usera);
-
-        //        if (roles[0] == "Super Admin")
-        //        {
-        //            rolename = model.UserRole;
-        //        }
-        //    }
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user_ = await userManager.FindByIdAsync(userId);
-        //        string user_name = string.Empty;
-        //        string ipAddress;
-
-        //        string dd = HttpContext.Session.GetString(SessionKeySalt);
-        //        csConst.cSalt = dd;
-        //        //string Password = AESEncrytDecry.DecryptStringAES(model.Password);
-
-        //        user_name = model.DomainId;
-        //        ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-        //        var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
-        //        var url = location.AbsoluteUri;
-
-        //        var user = new ApplicationUser
-        //        {
-        //            Active = true,
-        //            DomainId = model.DomainId,
-        //            Updatedby = 1,
-        //            UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
-        //            UserName = model.DomainId.ToLower(),
-        //            Email = model.DomainId.ToLower() + "@army.mil",
-        //        };
-        //        //var password = Password.Generate(8, 6);
-        //        var result = await userManager.CreateAsync(user, "Admin123#");//model.Password);
-
-        //        if (result.Succeeded)
-        //        {
-        //            await userManager.AddToRoleAsync(user, rolename);
-        //            TempData["success"] = "User ID has been successfully created.";
-        //            return RedirectToAction("Index");
-        //        }
-        //        foreach (var error in result.Errors)
-        //        {
-        //            ModelState.AddModelError(string.Empty, error.Description);
-        //        }
-        //    }
-        //    return View(model);
-
-        //}
-
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin")]
-        //public IActionResult CreateRole()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //[Authorize(Roles = "Super Admin")]
-        //public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        ApplicationRole identityRole = new ApplicationRole
-        //        {
-        //            Name = model.RoleName
-        //        };
-
-        //        IdentityResult result = await roleManager.CreateAsync(identityRole);
-
-        //        if (result.Succeeded)
-        //        {
-        //            TempData["success"] = "Created Role Successfully.";
-        //            return RedirectToAction("ListRoles", "Account");
-        //        }
-
-        //        foreach (IdentityError error in result.Errors)
-        //        {
-        //            ModelState.AddModelError("", error.Description);
-        //        }
-        //        TempData["error"] = "Operation failed.";
-        //    }
-
-        //    return View(model);
-        //}
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin")]
-        //public IActionResult ListRoles()
-        //{
-        //    int sno = 1;
-        //    var roles = roleManager.Roles;
-        //    List<ApplicationRole> rolesList = new List<ApplicationRole>();
-        //    foreach (var e in roles)
-        //    {
-        //        ApplicationRole applicationRole = new ApplicationRole()
-        //        {
-        //            Id = e.Id,
-        //            Sno = sno++,
-        //            EncryptedId = protector.Protect(e.Id.ToString()),
-        //            Name = e.Name,
-        //        };
-        //        rolesList.Add(applicationRole);
-        //    }
-        //    //var allrecord = (from e in roles
-        //    //                 select new ApplicationRole()
-        //    //                 {
-        //    //                     Id =e.Id,
-        //    //                     Sno = sno++,
-        //    //                     EncryptedId = protector.Protect(e.Id.ToString()),
-        //    //                     Name=e.Name,
-        //    //                 }).ToList();
-        //    return View(rolesList);
-        //}
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin")]
-        //public async Task<IActionResult> EditUsersInRole(string roleId)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(roleId);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-        //    ViewBag.roleId = roleId;
-
-        //    var role = await roleManager.FindByIdAsync(decryptedId);
-
-        //    if (role == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"Role with Id = {roleId} cannot be found";
-        //        return View("NotFound");
-        //    }
-
-        //    var model = new List<UserRoleViewModel>();
-
-        //    foreach (var user in userManager.Users)
-        //    {
-        //        var userRoleViewModel = new UserRoleViewModel
-        //        {
-        //            UserId = user.Id,
-        //            EncryptedId = protector.Protect(user.Id.ToString()),
-        //            DomainId = user.DomainId
-        //        };
-
-        //        if (await userManager.IsInRoleAsync(user, role.Name))
-        //        {
-        //            userRoleViewModel.IsSelected = true;
-        //        }
-        //        else
-        //        {
-        //            userRoleViewModel.IsSelected = false;
-        //        }
-
-        //        model.Add(userRoleViewModel);
-        //    }
-
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //[Authorize(Roles = "Super Admin")]
-        //public async Task<IActionResult> EditUsersInRole(List<UserRoleViewModel> model, string roleId)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(roleId);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-        //    var role = await roleManager.FindByIdAsync(decryptedId);
-
-        //    if (role == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"Role with Id = {decryptedId} cannot be found";
-        //        return View("NotFound");
-        //    }
-
-        //    for (int i = 0; i < model.Count; i++)
-        //    {
-        //        var user = await userManager.FindByIdAsync(model[i].UserId.ToString());
-
-        //        IdentityResult result = null;
-
-        //        if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user, role.Name)))
-        //        {
-        //            result = await userManager.AddToRoleAsync(user, role.Name);
-        //        }
-        //        else if (!model[i].IsSelected && await userManager.IsInRoleAsync(user, role.Name))
-        //        {
-        //            result = await userManager.RemoveFromRoleAsync(user, role.Name);
-        //        }
-        //        else
-        //        {
-        //            continue;
-        //        }
-
-        //        if (result.Succeeded)
-        //        {
-        //            if (i < (model.Count - 1))
-        //                continue;
-        //            else
-        //            {
-        //                TempData["success"] = "Updated Successfully.";
-        //                return RedirectToAction("EditRole", new { Id = roleId });
-        //            }
-        //        }
-        //    }
-
-        //    return RedirectToAction("EditRole", new { Id = roleId });
-        //}
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin")]
-        //public async Task<IActionResult> Index()
-        //{
-        //    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    var usera = await userManager.FindByIdAsync(userId);
-        //    List<DTORegisterListRequest>? dTORegisterListRequests = await _iAccountBL.DomainApproveList();
-        //    ViewBag.Title = "List of Register User";
-        //    return View(dTORegisterListRequests);
-        //}
-
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin")]
-        //public async Task<IActionResult> EditRole(string Id)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(Id);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-
-        //    var role = await roleManager.FindByIdAsync(decryptedId);
-
-        //    if (role == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"Role with Id = {decryptedId} cannot be found";
-        //        return View("NotFound");
-        //    }
-
-        //    var model = new EditRoleViewModel
-        //    {
-        //        RoleId = role.Id,
-        //        EncryptedId = protector.Protect(role.Id.ToString()),
-        //        RoleName = role.Name
-        //    };
-
-        //    foreach (var user in userManager.Users)
-        //    {
-        //        if (await userManager.IsInRoleAsync(user, role.Name))
-        //        {
-        //            model.Users.Add(user.UserName);
-        //        }
-        //    }
-
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //[Authorize(Roles = "Super Admin")]
-        //public async Task<IActionResult> EditRole(EditRoleViewModel model)
-        //{
-        //    var role = await roleManager.FindByIdAsync(model.RoleId.ToString());
-
-        //    if (role == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"Role with Id = {model.RoleId} cannot be found";
-        //        return View("NotFound");
-        //    }
-        //    else
-        //    {
-        //        role.Name = model.RoleName;
-        //        var result = await roleManager.UpdateAsync(role);
-
-        //        if (result.Succeeded)
-        //        {
-        //            TempData["success"] = "Role Updated Successfully.";
-        //            return RedirectToAction("ListRoles");
-        //        }
-
-        //        foreach (var error in result.Errors)
-        //        {
-        //            ModelState.AddModelError("", error.Description);
-        //        }
-        //        TempData["error"] = "Operation failed.";
-        //        return View(model);
-        //    }
-        //}
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin")]
-        //public async Task<IActionResult> ManageUserClaims(string userId)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(userId);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-        //    var user = await userManager.FindByIdAsync(decryptedId);
-
-        //    if (user == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-        //        return View("NotFound");
-        //    }
-
-        //    var existingUserClaims = await userManager.GetClaimsAsync(user);
-
-        //    var model = new UserClaimsViewModel
-        //    {
-        //        UserId = userId
-        //    };
-
-        //    foreach (Claim claim in ClaimsStored.AllClaims)
-        //    {
-        //        UserClaim userClaim = new UserClaim
-        //        {
-        //            ClaimType = claim.Type
-        //        };
-
-        //        // If the user has the claim, set IsSelected property to true, so the checkbox
-        //        // next to the claim is checked on the UI
-        //        if (existingUserClaims.Any(c => c.Type == claim.Type && c.Value == "true"))
-        //        {
-        //            userClaim.IsSelected = true;
-        //        }
-
-        //        model.Cliams.Add(userClaim);
-        //    }
-
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //[Authorize(Roles = "Super Admin")]
-        //public async Task<IActionResult> ManageUserClaims(UserClaimsViewModel model)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(model.UserId);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-        //    var user = await userManager.FindByIdAsync(decryptedId);
-
-        //    if (user == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"User with Id = {model.UserId} cannot be found";
-        //        return View("NotFound");
-        //    }
-
-        //    var claims = await userManager.GetClaimsAsync(user);
-        //    var result = await userManager.RemoveClaimsAsync(user, claims);
-
-        //    if (!result.Succeeded)
-        //    {
-        //        ModelState.AddModelError("", "Cannot remove user existing claims");
-        //        return View(model);
-        //    }
-
-        //    result = await userManager.AddClaimsAsync(user,
-        //        model.Cliams.Select(c => new Claim(c.ClaimType, c.IsSelected ? "true" : "false")));
-
-        //    if (!result.Succeeded)
-        //    {
-        //        ModelState.AddModelError("", "Cannot add selected claims to user");
-        //        return View(model);
-        //    }
-        //    TempData["success"] = "Updated Successfully.";
-        //    return RedirectToAction("EditUser", new { Id = model.UserId });
-        //}
-
-        #endregion End Super Admin Section
-
-        #region Commented Code for Super Admin Role For  Phase II
-
-        //[HttpPost]
-        //[Authorize(Roles = "Super Admin,Admin")]
-        //public async Task<IActionResult> DeleteUser(string Id)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(Id);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-
-        //    var user = await userManager.FindByIdAsync(decryptedId);
-
-        //    if (user == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-        //        return View("NotFound");
-        //    }
-        //    else
-        //    {
-        //        var result = await userManager.DeleteAsync(user);
-
-        //        if (result.Succeeded)
-        //        {
-        //            TempData["success"] = "User Deleted Successfully.";
-        //            return RedirectToAction("Index");
-        //        }
-
-        //        foreach (var error in result.Errors)
-        //        {
-        //            ModelState.AddModelError("", error.Description);
-        //        }
-
-        //        return View("Index");
-        //    }
-        //}
-
-
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin,Admin")]
-        //public async Task<IActionResult> EditUser(string Id)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(Id);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-        //    var user = await userManager.FindByIdAsync(decryptedId);
-
-        //    if (user == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-        //        return View("NotFound");
-        //    }
-
-        //    var userClaims = await userManager.GetClaimsAsync(user);
-        //    var userRoles = await userManager.GetRolesAsync(user);
-
-        //    var model = new EditUserViewModel
-        //    {
-        //        UserId = user.Id,
-        //        EncryptedId = protector.Protect(user.Id.ToString()),
-        //        DomainId = user.DomainId,
-        //        Active = user.Active,
-        //        AdminFlag = user.AdminFlag,
-        //        Claims = userClaims.Select(c => c.Type + " : " + c.Value).ToList(),
-        //        Roles = userRoles
-        //    };
-
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //[Authorize(Roles = "Super Admin,Admin")]
-        //public async Task<IActionResult> EditUser(EditUserViewModel model)
-        //{
-        //    string decryptedId = string.Empty;
-        //    int decryptedIntId = 0;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(model.EncryptedId);
-        //        decryptedIntId = Convert.ToInt32(decryptedId);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-        //        return RedirectToAction("Error", "Error");
-        //    }
-        //    var user = await userManager.FindByIdAsync(decryptedId);
-
-        //    if (user == null)
-        //    {
-        //        ViewBag.ErrorMessage = $"User with Id = {decryptedId} cannot be found";
-        //        return View("NotFound");
-        //    }
-        //    else
-        //    {
-        //        user.DomainId = model.DomainId;
-        //        user.Active = model.Active;
-        //        user.AdminFlag = model.AdminFlag;
-
-        //        var result = await userManager.UpdateAsync(user);
-
-        //        if (result.Succeeded)
-        //        {
-        //            TempData["success"] = "User detail Updated Successfully.";
-        //            return RedirectToAction("Index");
-        //        }
-
-        //        foreach (var error in result.Errors)
-        //        {
-        //            ModelState.AddModelError("", error.Description);
-        //        }
-
-        //        return View(model);
-        //    }
-        //}
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin,Admin,User")]
-
-        //public async Task<IActionResult> SetPassword(string Id)
-        //{
-        //    string decryptedId = string.Empty;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(Id);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return RedirectToAction("Error", "Error");
-        //    }
-
-        //    var usera = await userManager.FindByIdAsync(decryptedId);
-
-        //    var user = new ApplicationUser
-        //    {
-        //        Id = usera.Id,
-        //        UserName = usera.UserName,
-
-        //    };
-        //    //var token = await userManager.GeneratePasswordResetTokenAsync(usera);
-
-        //    string dd = AESEncrytDecry.GetSalt();
-        //    HttpContext.Session.SetString(SessionKeySalt, dd);
-        //    //var model = new SetPasswordVM { Token = token, UserId = user.UserId,hdns = dd };
-        //    var model = new DTOSetPasswordRequest { UserName = user.UserName, hdns = dd };
-        //    return View(model);
-        //}
-        //[HttpPost]
-        //[Authorize(Roles = "Super Admin,Admin,User")]
-        //[ValidateAntiForgeryToken]
-
-        //public async Task<IActionResult> SetPassword(DTOSetPasswordRequest model)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return View(model);
-
-        //    var user = await userManager.FindByNameAsync(model.UserName);
-
-        //    if (user == null)
-        //        RedirectToAction("UserNotFound");
-
-        //    string dd = HttpContext.Session.GetString(SessionKeySalt);
-        //    csConst.cSalt = dd;
-        //    string ConfirmPassword = AESEncrytDecry.DecryptStringAES(model.ConfirmPassword);
-        //    string OldPassword = AESEncrytDecry.DecryptStringAES(model.OldPassword);
-
-        //    //var resetPassResult = await userManager.ResetPasswordAsync(user, model.Token, ConfirmPassword);
-        //    var resetPassResult = await userManager.ChangePasswordAsync(user, OldPassword, ConfirmPassword);
-        //    if (resetPassResult.Succeeded)
-        //    {
-        //        await signInManager.RefreshSignInAsync(user);
-        //        TempData["success"] = "Password Successfully Changed.";
-        //        return RedirectToAction("Detail");
-        //    }
-        //    else
-        //    {
-        //        foreach (var error in resetPassResult.Errors)
-        //        {
-        //            ModelState.TryAddModelError(error.Code, error.Description);
-        //        }
-        //        return View();
-        //    }
-
-        //}
-        //[HttpGet]
-        //[Authorize(Roles = "Super Admin,Admin")]
-
-        //public async Task<IActionResult> ResetPassword(string Id)
-        //{
-        //    string decryptedId = string.Empty;
-        //    try
-        //    {
-        //        // Decrypt the  id using Unprotect method
-        //        decryptedId = protector.Unprotect(Id);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return RedirectToAction("Error", "Error");
-        //    }
-
-        //    var usera = await userManager.FindByIdAsync(decryptedId);
-
-        //    var user = new ApplicationUser
-        //    {
-        //        Id = usera.Id,
-        //        UserName = usera.UserName,
-
-        //    };
-        //    var token = await userManager.GeneratePasswordResetTokenAsync(usera);
-
-        //    string dd = AESEncrytDecry.GetSalt();
-        //    HttpContext.Session.SetString(SessionKeySalt, dd);
-        //    var model = new DTOResetPasswordRequest { Token = token, UserName = user.UserName, hdns = dd };
-
-        //    return View(model);
-        //}
-        //[HttpPost]
-        //[Authorize(Roles = "Super Admin,Admin")]
-        //[ValidateAntiForgeryToken]
-
-        //public async Task<IActionResult> ResetPassword(DTOResetPasswordRequest model)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return View(model);
-
-        //    var user = await userManager.FindByNameAsync(model.UserName);
-
-        //    if (user == null)
-        //        RedirectToAction("UserNotFound");
-
-        //    string dd = HttpContext.Session.GetString(SessionKeySalt);
-        //    csConst.cSalt = dd;
-        //    string ConfirmPassword = AESEncrytDecry.DecryptStringAES(model.ConfirmPassword);
-
-        //    var resetPassResult = await userManager.ResetPasswordAsync(user, model.Token, ConfirmPassword);
-        //    if (resetPassResult.Succeeded)
-        //    {
-        //        await signInManager.RefreshSignInAsync(user);
-        //        TempData["success"] = "New Password Successfully Created.";
-        //        return RedirectToAction("Index");
-        //    }
-        //    else
-        //    {
-        //        foreach (var error in resetPassResult.Errors)
-        //        {
-        //            ModelState.TryAddModelError(error.Code, error.Description);
-        //        }
-        //        return View();
-        //    }
-
-        //}
-
-        //[HttpPost]
-        //[Authorize]
-        //[ValidateAntiForgeryToken]
-
-        //public async Task<ActionResult> Add(RegisterRequest model)
-        //{
-        //    return View(model);
-        //}
-
-        //public async Task<ActionResult> Add(RegisterRequest model)
-        //{
-        //    try
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            var user = CreateUser();
-        //            user.UserName = model.Username.ToLower();
-        //            //user.Email = string.Format("{0}@{1}", model.Username.ToLower(), Common.Configurations.Application.MailDomain);
-        //            user.EmailConfirmed = true;
-        //            user.RankId = model.RankId;
-        //            // user.PersonnelNumber = model.Number;
-        //            user.FullName = model.FullName;
-        //            // user.DEFwdAuth = model.DEFwdAuth;
-        //            // user.GEBFwdAuth = model.GEBFwdAuth;
-        //            user.Active = model.Active;
-        //            //user.EstablishmentFull = model.EstablishmentFull;
-        //            //user.EstablishmentAbbreviation = model.EstablishmentAbbreviation;
-        //            // user.CreatedByIntId = CurrentUser.IntId;
-        //            user.CreatedOn = DateTime.Now;
-        //            //user.Superior = CurrentUser;
-        //            user.PhoneNumber = model.ASCON;
-        //            user.Unit_ID = model.Unit_ID;
-        //            user.UserTypeId = model.UserTypeId;
-        //            user.CreatedBy = 1;
-        //            user.ParentId = 1;
-        //            user.IntId = 1;
-        //            // user.Appointment = model.Appointment;
-
-        //            // await _userStore.SetUserNameAsync(user, model.Username, CancellationToken.None);
-        //            // await _emailStore.SetEmailAsync(user, model.Username, CancellationToken.None);
-        //            string Usenm = model.Username;
-        //            //AH Commented password and Hardcoded due to logic changed by Kapoor during IAM Integration 
-        //            //AH Corrected by Sub Maj Sanal on 09 Jun 23
-        //            string pwd = "Dte@123"; // char.ToUpper(Usenm[0]) + Usenm.Substring(1) + "@123";
-        //                                    //  end
-
-        //            var result = await _userManager.CreateAsync(user, pwd);
-
-        //            if (result.Succeeded)
-        //            {
-        //                // _logger.LogInformation("User created a new account with password.");
-        //                await _userManager.AddToRoleAsync(user, "admin");
-
-        //                var userId = await _userManager.GetUserIdAsync(user);
-
-        //                TempData["msg"] = "*********** User Sucessfully Registered *************";
-        //                //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        //                //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        //                //var callbackUrl = Url.Page(
-        //                //    "/Account/ConfirmEmail",
-        //                //    pageHandler: null,
-        //                //    values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-        //                //    protocol: Request.Scheme);
-
-        //                //await _emailSender.SendEmailAsync(Input.UserName, "Confirm your email",
-        //                //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-        //                //if (_userManager.Options.SignIn.RequireConfirmedAccount)
-        //                //{
-        //                return LocalRedirect("~/Identity/Account/Register");
-
-        //                //}
-        //                //else
-        //                //{
-        //                //    await _signInManager.SignInAsync(user, isPersistent: false);
-        //                //    return LocalRedirect(returnUrl);
-        //                //}
-        //            }
-        //            foreach (var error in result.Errors)
-        //            {
-        //                ModelState.AddModelError(string.Empty, error.Description);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //    return View(model);
-        //}
-        //private ApplicationUser CreateUser()
-        //{
-        //    try
-        //    {
-        //        return Activator.CreateInstance<ApplicationUser>();
-        //    }
-        //    catch
-        //    {
-        //        throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-        //            $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-        //            $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
-        //    }
-        //}
-
-        #endregion End Common Method
 
         #region IAM Code
 

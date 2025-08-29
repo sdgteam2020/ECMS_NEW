@@ -12,7 +12,6 @@ namespace BusinessLogicsLayer.Account
         public bool GetByDomainId(string DomainId, int Id);
         public Task<DTOAccountResponse?> FindDomainId(string DomainId);
         public Task<bool?> FindRoleByName(string Role);
-        public Task<List<DTORegisterListRequest>?> DomainApproveList();
         public Task<DTODataTablesResponse<DTOUserRegnResponse>> GetAllUserRegn(DTODataTablesRequest request);
         public Task<DTODataTablesResponse<DTODomainRegnResponse>> GetAllDomainRegn(DTODataTablesRequest request);
         public Task<DTODataTablesResponse<DTOProfileManageResponse>> GetAllProfileManage(DTODataTablesRequest request);

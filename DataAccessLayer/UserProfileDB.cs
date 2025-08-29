@@ -32,6 +32,15 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
+        /// <summary>
+        /// Checks if the specified UserId exists in any foreign key child tables.
+        /// Returns counts of related records in TrnDomainMapping, MTrnICardHold, TrnPostingOut (To/From), and TrnFwds (To/From).
+        /// </summary>
+        /// <param name="UserId">The UserId to check for foreign key references.</param>
+        /// <returns>
+        /// A <see cref="DTOProfileIdCheckInFKTableResponse"/> containing counts of related records.
+        /// If an error occurs, returns a new DTOProfileIdCheckInFKTableResponse with default values.
+        /// </returns>
         public async Task<DTOProfileIdCheckInFKTableResponse> ProfileIdCheckInFKTable(int UserId)
         {
             try
@@ -238,6 +247,24 @@ namespace DataAccessLayer
             }
 
         }
+        /// <summary>
+        /// Retrieves the user profile by the specified <paramref name="UserId"/> including related data 
+        /// such as rank, domain mapping, and user details.
+        /// </summary>
+        /// <param name="UserId">The user ID to retrieve the profile for.</param>
+        /// <returns>
+        /// A <see cref="DTOProfileResponse"/> containing user profile details such as army number, rank, 
+        /// mobile number, domain information, and mapping status. Returns <c>null</c> if no profile is found 
+        /// or an error occurs.
+        /// </returns>
+        /// <remarks>
+        /// This method performs a series of left joins to combine the user profile with related tables:
+        /// - <c>UserProfile</c> (basic user details)
+        /// - <c>MRank</c> (rank details)
+        /// - <c>TrnDomainMapping</c> (domain mapping)
+        /// - <c>Users</c> (user identity and domain ID)
+        /// The query fetches the user's rank, mobile, extension, dialing code, mapping status, and related domain information.
+        /// </remarks>
         public async Task<DTOProfileResponse?> GetProfileByUserId(int UserId)
         {
             try
@@ -273,8 +300,6 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "UserProfileDB->GetProfileByUserId");
                 return null; 
             }
-
-
         }
         public async Task<DTOUserProfileResponse?> GetByArmyNo(string ArmyNo, int UserId)
         {
