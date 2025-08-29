@@ -2376,15 +2376,28 @@ namespace Web.Controllers
 
 
 
+        /// <summary>
+        /// Handles the POST request to retrieve the history of uploaded CSV files for data tables.
+        /// Calls the business logic layer to fetch the data and returns it as a JSON response.
+        /// In case of an error, returns an empty data table with appropriate error logging.
+        /// </summary>
+        /// <param name="dTO">
+        /// The request model containing parameters for filtering and pagination (DataTables request).
+        /// </param>
+        /// <returns>
+        /// A JSON response containing the CSV file upload history data or an empty data table in case of failure.
+        /// </returns>
         [HttpPost]
         public async Task<ActionResult> GetCSVFileUploadsHistory([FromForm] DTODataTablesRequest dTO)
         {
             try
             {
+                // Fetch the data for the CSV file upload history using the business logic layer
                 return Json(await _iCSVImportBL.GetDataTableResponse(dTO));
             }
             catch (Exception ex)
             {
+                // In case of an error, create an empty data table response and log the error
                 List<CSVImport> dTOClaimsStoreResponses = new List<CSVImport>();
                 var responseData = new DTODataTablesResponse<CSVImport>
                 {
@@ -2393,10 +2406,15 @@ namespace Web.Controllers
                     recordsFiltered = 0,
                     data = dTOClaimsStoreResponses
                 };
+
+                // Log the error details with the exception message
                 _logger.LogError(1001, ex, "BasicDetail->GetCSVFileUploadsHistory");
+
+                // Return the empty data table response as JSON
                 return Json(responseData);
             }
         }
+
 
         #endregion
 
