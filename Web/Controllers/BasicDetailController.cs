@@ -1922,22 +1922,41 @@ namespace Web.Controllers
 
         }
 
+        /// <summary>
+        /// Calls an external API endpoint to fetch data by ICNumber.
+        /// </summary>
+        /// <param name="ICNumber">
+        /// Identifier used to fetch data from the API.
+        /// </param>
+        /// <returns>
+        /// A task that represents the asynchronous operation.  
+        /// The task result contains a <see cref="DTOApiDataResponse"/> object with the API response data.
+        /// </returns>
         public async Task<DTOApiDataResponse> GetApiData(string ICNumber)
         {
             using (var client = new HttpClient())
             {
-                //client.BaseAddress = new Uri("https://api.postalpincode.in/");
+                // API base address (local test URL used here, can be swapped with production URL)
+                // client.BaseAddress = new Uri("https://api.postalpincode.in/");
                 client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/GetData/");
-                //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
+
+                // Perform GET request by appending ICNumber to the base URL
                 using (HttpResponseMessage response = await client.GetAsync(ICNumber))
                 {
+                    // Read response content synchronously as string
                     var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                    // Throw exception if status code is not successful (ensures 2xx)
                     response.EnsureSuccessStatusCode();
+
+                    // Deserialize JSON response into DTOApiDataResponse
                     DTOApiDataResponse? responseData = JsonConvert.DeserializeObject<DTOApiDataResponse>(responseContent);
+
                     return responseData;
                 }
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetUserData(string ICNumber)
