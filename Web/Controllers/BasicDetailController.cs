@@ -684,67 +684,96 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles GET requests for viewing inaccurate data or observations in I-Card requests.
+        /// Decodes and validates the Base64 encoded Id, checks configuration conditions, and retrieves
+        /// pending/observation data for the logged-in user.
+        /// </summary>
+        /// <param name="Id">
+        /// A Base64 encoded string representing the type identifier (1 = Incorrect Data, 2 = Observation Raised).
+        /// </param>
+        /// <returns>
+        /// An <see cref="ActionResult"/> that renders a view with the list of inaccurate data or observations
+        /// if validation passes, or redirects to ContactUs with an error message if input or configuration is invalid.
+        /// </returns>
         [HttpGet]
         public async Task<ActionResult> InaccurateData(string Id)
         {
+            // Extract current user identifier from claims
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Validate Id: must not be null/empty and must be a valid Base64 string
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
                 TempData["error"] = "Invalid or tampered request.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
+
             try
             {
+                // Decode the Base64 Id into plain string
                 var base64EncodedBytes = Convert.FromBase64String(Id);
                 var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+
+                // Convert decoded string to integer typeId (1 or 2 expected)
                 int typeId = Convert.ToInt32(decodedString);
+
                 if (typeId == 1 || typeId == 2)
                 {
+                    // Retrieve hardcoded ArmedId from configuration
                     short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
-                    //if (ArmedIdForORO == 0) ArmedIdForORO = 56;
+                    // If not set, fallback could be hardcoded (commented-out sample code)
 
-                    DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
-                    {
-                        MPRSO = new MPRSO(),
-                        MP6F = new MP6F(),
-                        MP6A = new MP6A()
-                    };
+                    // Load application forward condition settings from configuration
+                    DTOApplFwdConditionRequest? dTOApplFwdCondition =
+                        _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>()
+                        ?? new DTOApplFwdConditionRequest
+                        {
+                            MPRSO = new MPRSO(),
+                            MP6F = new MP6F(),
+                            MP6A = new MP6A()
+                        };
 
-                    if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
-                        string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
-                        string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name) || dTOApplFwdCondition.MP6A.RankOrderby == 0 || ArmedIdForORO == 0)
+                    // Validate configuration values: must not be empty/zero
+                    if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name)
+                        || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0
+                        || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name)
+                        || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix)
+                        || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name)
+                        || dTOApplFwdCondition.MP6A.RankOrderby == 0
+                        || ArmedIdForORO == 0)
                     {
+                        // If validation fails, show error and redirect
                         TempData["error"] = "Invalid Input.";
                         TempData.Keep("error");
                         return RedirectToAction("ContactUs", "Home");
                     }
                     else
                     {
-                        var allrecord = await Task.Run(() => basicDetailTempBL.GetALLBasicDetailTemp(Convert.ToInt32(userId), typeId, dTOApplFwdCondition, ArmedIdForORO));
-                        ViewBag.Title = typeId == 1 ? "Requests pending due to Incorrect Details/Data" : "List of Observation Raised";
+                        // Fetch inaccurate/observation records from business layer
+                        var allrecord = await Task.Run(() =>
+                            basicDetailTempBL.GetALLBasicDetailTemp(
+                                Convert.ToInt32(userId), typeId, dTOApplFwdCondition, ArmedIdForORO));
+
+                        // Set dynamic title depending on typeId
+                        ViewBag.Title = typeId == 1
+                            ? "Requests pending due to Incorrect Details/Data"
+                            : "List of Observation Raised";
+
+                        // Return view with retrieved records
                         return View(allrecord);
                     }
-
-                    //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name)) dTOApplFwdCondition.MPRSO.Name = "MPRSO";
-                    //if (dTOApplFwdCondition.MPRSO.ArmedAbbreviation == null || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0)
-                    //    dTOApplFwdCondition.MPRSO.ArmedAbbreviation = new List<string> { "ADC", "AMC", "MNS" };
-                    //if (dTOApplFwdCondition.MPRSO.RecordOfficeId == 0) dTOApplFwdCondition.MPRSO.RecordOfficeId = 135;
-
-                    //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name)) dTOApplFwdCondition.MP6F.Name = "MP 6F";
-                    //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix)) dTOApplFwdCondition.MP6F.ArmyNoPrefix = "SL";
-                    //if (dTOApplFwdCondition.MP6F.RecordOfficeId == 0) dTOApplFwdCondition.MP6F.RecordOfficeId = 132;
-
-                    //if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name)) dTOApplFwdCondition.MP6A.Name = "MP 6A";
-                    //if (dTOApplFwdCondition.MP6A.RankOrderby == 0) dTOApplFwdCondition.MP6A.RankOrderby = 4;
-                    //if (dTOApplFwdCondition.MP6A.RecordOfficeId == 0) dTOApplFwdCondition.MP6A.RecordOfficeId = 126;
                 }
+
+                // If typeId is not valid, return error
                 TempData["error"] = "Invalid or tampered request.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
             catch (FormatException ex)
             {
+                // Handle Base64 decoding or int parsing errors
                 _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
                 TempData["error"] = "Invalid or tampered request.";
                 TempData.Keep("error");
@@ -752,12 +781,14 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Handle any other unexpected errors
                 _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
                 TempData["error"] = "Invalid or tampered request.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
 
         [HttpGet]
         public async Task<ActionResult> InaccurateDataView(string Id)
