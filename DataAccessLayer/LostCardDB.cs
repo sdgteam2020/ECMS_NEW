@@ -114,12 +114,7 @@ namespace DataAccessLayer
                             lost.UpdatedOn,lost.Remark,lost.IsActive,
                             bas.NameAsPerRecord,lost.LostOn,
                             regi.Abbreviation RegimentalName,
-                            CASE
-                            WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
-                            CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
-                            ELSE
-                            bas.ServiceNo
-                            END AS ModifiedServiceNo,lost.IsFIRLogged,lost.SupportDocName
+                            lost.IsFIRLogged,lost.SupportDocName
                             from TrnLostCards lost
                             inner join TrnICardRequest req on req.RequestId = lost.RequestId
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
@@ -158,7 +153,6 @@ namespace DataAccessLayer
                                     FName = e.FName,
                                     LName = e.LName,
                                     ServiceNo = e.ServiceNo,
-                                    ModifiedServiceNo = e.ModifiedServiceNo,
                                     UnitName = e.UnitName,
                                     UnitAbbreviation = e.UnitAbbreviation,
                                     RankName = e.RankName,

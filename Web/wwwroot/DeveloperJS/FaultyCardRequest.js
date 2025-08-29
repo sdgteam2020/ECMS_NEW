@@ -10,62 +10,6 @@
         closeOnSelect: false // Only needed for multi-select
     });
 
-    let TrnFaultyCardId = parseInt($("#spnTrnFaultyCardId").html());
-
-    if (TrnFaultyCardId > 0) {
-
-        await GetTrnFaultyCardDetail(TrnFaultyCardId);
-    }
-    else {
-        if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
-            var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
-            var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
-            var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
-
-            var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
-
-            var bytes = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey);
-            var decryptedArmyNo = bytes.toString(CryptoJS.enc.Utf8);
-
-            var bytes = CryptoJS.AES.decrypt(encryptedRequestId, secretKey);
-            var decryptedRequestId = bytes.toString(CryptoJS.enc.Utf8);
-
-            var bytes = CryptoJS.AES.decrypt(encryptedMaxTrnFwdId, secretKey);
-            var decryptedMaxTrnFwdId = bytes.toString(CryptoJS.enc.Utf8);
-
-
-            $("#spnArmyNo").html(decryptedArmyNo);
-            $("#spnFaultyCardRequestId").html(decryptedRequestId);
-            $("#spnMaxTrnFwdId").html(decryptedMaxTrnFwdId);
-            $("#lblFaultyRequestId").html(decryptedRequestId);
-
-            GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
-
-            
-        }
-    }
-
-    if ($("#spnClaimValue").html().toLowerCase() === "true") {
-        $("#btnSubmit").addClass("d-none");
-        $("#btnAccept").removeClass("d-none");
-        $("#btnReject").removeClass("d-none");
-
-        $(".Stage").addClass("d-none");
-        $(".ToRemark").removeClass("d-none");
-
-        mMsater(1, "ddlStage", FaultyStage, "");
-    } else {
-        $("#btnSubmit").removeClass("d-none");
-        $("#btnAccept").addClass("d-none");
-        $("#btnReject").addClass("d-none");
-
-        $(".Stage").addClass("d-none");
-        $(".ToRemark").addClass("d-none");
-
-        mMsater(2, "ddlStage", FaultyStage, "");
-    }
-
-
     $("#btnSubmit").on("click", function () {
         selectionButton = 1;
         Proceed(selectionButton);
@@ -108,6 +52,93 @@
     $("#btnBackDashboard").on("click", function () {
         window.location.href = '/BasicDetail/FaultyCard';
     });
+
+    if ($("#spnClaimValue").html().toLowerCase() === "true") {
+        $("#btnSubmit").addClass("d-none");
+        $("#btnAccept").removeClass("d-none");
+        $("#btnReject").removeClass("d-none");
+
+        $(".Stage").addClass("d-none");
+        $(".ToRemark").removeClass("d-none");
+
+        mMsater(1, "ddlStage", FaultyStage, "");
+    } else {
+        $("#btnSubmit").removeClass("d-none");
+        $("#btnAccept").addClass("d-none");
+        $("#btnReject").addClass("d-none");
+
+        $(".Stage").addClass("d-none");
+        $(".ToRemark").addClass("d-none");
+
+        mMsater(2, "ddlStage", FaultyStage, "");
+    }
+
+    let TrnFaultyCardId = parseInt($("#spnTrnFaultyCardId").html());
+
+    if (TrnFaultyCardId > 0) {
+
+        await GetTrnFaultyCardDetail(TrnFaultyCardId);
+    }
+    else {
+        //if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
+        //    var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
+        //    var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
+        //    var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
+
+        //    var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
+
+        //    var bytes = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey);
+        //    var decryptedArmyNo = bytes.toString(CryptoJS.enc.Utf8);
+
+        //    var bytes = CryptoJS.AES.decrypt(encryptedRequestId, secretKey);
+        //    var decryptedRequestId = bytes.toString(CryptoJS.enc.Utf8);
+
+        //    var bytes = CryptoJS.AES.decrypt(encryptedMaxTrnFwdId, secretKey);
+        //    var decryptedMaxTrnFwdId = bytes.toString(CryptoJS.enc.Utf8);
+
+
+        //    $("#spnArmyNo").html(decryptedArmyNo);
+        //    $("#spnFaultyCardRequestId").html(decryptedRequestId);
+        //    $("#spnMaxTrnFwdId").html(decryptedMaxTrnFwdId);
+        //    $("#lblFaultyRequestId").html(decryptedRequestId);
+
+        //    GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
+
+            
+        //}
+        return new Promise((resolve, reject) => {
+            fetch('/BasicDetail/DataRecForGetSession', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Tell the server we are sending JSON
+                }
+            })
+                .then(response => response.json())
+                .then((response) => {
+                    if (response.Result === true) {
+                        let ArmyNo = response.Value.ArmyNo;
+                        let RequestIdForFaulty = response.Value.RequestIdForFaulty;
+                        let MaxTrnFwdId = response.Value.MaxTrnFwdId
+
+                        $("#spnArmyNo").html(ArmyNo);
+                        $("#spnFaultyCardRequestId").html(RequestIdForFaulty);
+                        $("#spnMaxTrnFwdId").html(MaxTrnFwdId);
+                        $("#lblFaultyRequestId").html(RequestIdForFaulty);
+
+                        GetBasicDetailForParitalViewByRequestId(RequestIdForFaulty);
+
+                        resolve(response);
+                    } else {
+                        toastr.error("Failed to Fetch Session Value: " + response.Message);
+                        reject(new Error(response.Message));
+                    }
+                })
+                .catch((error) => {
+                    toastr.error("Failed to Fetch Session Value : " + response.Message);
+                    reject(new Error("Failed to Fetch Session Value : " + error.message));
+                });
+        });
+    }
 });
 function Proceed(choice) {
     //ResetErrorMessage();

@@ -2878,7 +2878,7 @@ namespace DataAccessLayer
                             " inner join MRecordOffice reco on bas.ArmedId=reco.ArmedId" +
                             " inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId " +
                             " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
-                            " where icardreq.RequestId in @Ids";
+                            " where icardreq.RequestId as ApplId in @Ids";
                 }
                 else
                 {
@@ -2899,7 +2899,7 @@ namespace DataAccessLayer
 	                                WHEN ran.Orderby<=@MP6A_RankOrderby THEN @MP6A_Name 
 	                                ELSE reco.Name 
 	                                END AS RecordOffice
-                                ,icardreq.RequestId from BasicDetails bas
+                                ,icardreq.RequestId as ApplId  from BasicDetails bas
                                 inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId
                                 inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId
                                 inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId
@@ -3587,7 +3587,7 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var resultInChunks = (from record in batchRecords
-                                          join dbrecord in _context.TrnICardRequest on record.RequestId equals dbrecord.RequestId.ToString() into dbRecordJoin
+                                          join dbrecord in _context.TrnICardRequest on record.ApplId equals dbrecord.RequestId.ToString() into dbRecordJoin
                                           from matchRecord in dbRecordJoin.DefaultIfEmpty()
                                           join cardNoMatch in _context.TrnICardRequest on record.CardSerialNo equals cardNoMatch.CardSerialNo into cardNoJoin
                                           from cardNoExists in cardNoJoin.DefaultIfEmpty()
@@ -3599,13 +3599,13 @@ namespace DataAccessLayer
                                           from armyNoCheck in basicDetailJoin.DefaultIfEmpty()
                                           select new DTOCardPriningRequest
                                           {
-                                              RequestId = record.RequestId,
+                                              ApplId = record.ApplId,
                                               ServiceNo = record.ServiceNo,
                                               ChipNo = record.ChipNo,
                                               CardSerialNo = record.CardSerialNo,
                                               IsValid = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null && armyNoCheck != null,
                                               Status = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null ? "Valid" : "DbInvalid",
-                                              Remarks = (matchRecord == null ? "RequestId not exists; " : "") +
+                                              Remarks = (matchRecord == null ? "ApplId not exists; " : "") +
                                                             (cardNoExists != null ? "CardSerialNo already exists; " : "") +
                                                             (chipNoExists != null ? "ChipNo already exists; " : "") +
                                                             (matchRecord != null && stepStatus == null ? "Card application is not available for printing; " : "") +

@@ -44,7 +44,7 @@ function validateCsvFileOnChange() {
         var headers = lines[0].split(",");
 
         // 4. Validate columns (missing or duplicate columns)
-        var expectedColumns = ['RequestId', 'ServiceNo', 'CardSerialNo', 'ChipNo']; // Modify this based on your required columns
+        var expectedColumns = ['ApplId', 'ServiceNo', 'CardSerialNo', 'ChipNo']; // Modify this based on your required columns
         var missingColumns = expectedColumns.filter(col => !headers.includes(col));
         var duplicateColumns = headers.filter((value, index, self) => self.indexOf(value) !== index);
 

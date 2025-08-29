@@ -173,10 +173,6 @@ $(function () {
 
             selectedField === 'regimentalname'? mMsater(0, "searchText", AllRegimental, "") : mMsater(0, "searchText", ORO, "");
 
-        } else {
-            // Revert to text input for 'susno' or blank
-            let newInput = $('<input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />');
-            $container.html(newInput);
         }
     });
 });

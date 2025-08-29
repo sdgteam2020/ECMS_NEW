@@ -37,39 +37,69 @@ $(function () {
     if (window.location.pathname !="/UserProfile/Profile")
         CheckProfileExist();
 
-    $("#btnSercharmynoSmart").on("click", function () {
+    $("#btnSercharmynoSmart").on("click", async function () {
         if ($("#armynosearchAllName").html() != "") {
 
             $("#unitoffrsModal").modal("hide");
-            var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
 
-            var encryptedArmyNo = CryptoJS.AES.encrypt($("#txtarmynosearchAll").val(), secretKey).toString();
-            var encryptedRequestId = CryptoJS.AES.encrypt($("#RequestId_unitoffrsModal").val(), secretKey).toString();
-            var encryptedMaxTrnFwdId = CryptoJS.AES.encrypt($("#MaxTrnFwdId_unitoffrsModal").val(), secretKey).toString();
+            try {
+                const requestData = {
+                    ArmyNo: $("#txtarmynosearchAll").val(),
+                    RequestIdForFaulty: $("#RequestId_unitoffrsModal").val(),
+                    MaxTrnFwdId: $("#MaxTrnFwdId_unitoffrsModal").val()
+                };
 
-            sessionStorage.setItem("ArmyNo", encryptedArmyNo);
-            sessionStorage.setItem("RequestIdForFaulty", encryptedRequestId);
-            sessionStorage.setItem("MaxTrnFwdId", encryptedMaxTrnFwdId);
+                // Send POST request using fetch
+                const response = await fetch('/BasicDetail/DataSendForSetSession', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Tell the server we are sending JSON
+                    },
+                    body: JSON.stringify(requestData), // Convert the request data to JSON
+                });
 
-            if ($("#armynosearchTypeId").val() == ApplicantPostingOut)
-                window.location.href = "/Posting/PostingIn";
-            else if ($("#armynosearchTypeId").val() == ApplicantClose)
-                window.location.href = "/Posting/ApplicationClose";
-            else if ($("#armynosearchTypeId").val() == FaultyCardRequest) 
-                window.location.href = "/BasicDetail/FaultyCardRequest";
-            else if ($("#armynosearchTypeId").val() == HoltlistCardRequest)
-                window.location.href = "/BasicDetail/HotListCardRequest";
-            else if ($("#armynosearchTypeId").val() == LostCardRequest)
-                window.location.href = "/BasicDetail/LostCardRequest";
-            else if ($("#armynosearchTypeId").val() == DistributeCardRequest)
-                window.location.href = "/BasicDetail/DistributeCardRequest";
-            else if ($("#armynosearchTypeId").val() == DestructionCardRequest)
-                window.location.href = "/BasicDetail/DestructionCardRequest";
+                // Parse the response as JSON
+                const data = await response.json();
+
+                if (data === true) {
+                    // Redirect based on the value of #armynosearchTypeId
+                    let TypeId = Number($("#armynosearchTypeId").val());
+                    switch (TypeId) {
+                        case ApplicantPostingOut:
+                            window.location.href = "/Posting/PostingIn";
+                            break;
+                        case ApplicantClose:
+                            window.location.href = "/Posting/ApplicationClose";
+                            break;
+                        case FaultyCardRequest:
+                            window.location.href = "/BasicDetail/FaultyCardRequest";
+                            break;
+                        case HoltlistCardRequest:
+                            window.location.href = "/BasicDetail/HotListCardRequest";
+                            break;
+                        case LostCardRequest:
+                            window.location.href = "/BasicDetail/LostCardRequest";
+                            break;
+                        case DistributeCardRequest:
+                            window.location.href = "/BasicDetail/DistributeCardRequest";
+                            break;
+                        case DestructionCardRequest:
+                            window.location.href = "/BasicDetail/DestructionCardRequest";
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    toastr.error("Failed to Create Session: " + data.Message);
+                }
+            } catch (error) {
+                // Catch any errors during the fetch and display the error
+                toastr.error("Failed to Create Session: " + error.message);
+            }
         } else {
             toastr.error("Please Enter Army No");
         }
     });
-    
     $("#txtarmynosearchAll").autocomplete({
         source: function (request, response) {
             if (request.term.length > 1) {

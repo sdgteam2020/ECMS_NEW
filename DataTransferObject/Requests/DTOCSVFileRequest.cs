@@ -17,7 +17,7 @@ namespace DataTransferObject.Requests
         [Required(ErrorMessage = "File is required!")]
         [SecureFile(allowedExtensions: new[] { ".csv" },
         allowedMimeTypes: new[] { "text/csv", "application/vnd.ms-excel" },
-        expectedHeaders : new[] { "RequestId", "ServiceNo", "CardSerialNo", "ChipNo" },
+        expectedHeaders : new[] { "ApplId", "ServiceNo", "CardSerialNo", "ChipNo" },
         maxFileSize: 5 * 1024 * 1024)]
         public required IFormFile CSVFile { get; set; }
     }

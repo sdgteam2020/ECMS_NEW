@@ -62,6 +62,7 @@ $(function () {
 
 });
 function BindData() {
+    var token = $('input[name="__RequestVerificationToken"]').val();
     $("#tbldata").DataTable().destroy();
     table = $("#tbldata").DataTable({
         processing: true,
@@ -82,7 +83,10 @@ function BindData() {
             try {
                 let response = await fetch("/BasicDetail/GetAllLost", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': token
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -115,14 +119,6 @@ function BindData() {
             },
             {
                 data: null,
-                name: null,
-                visible: false,
-                render: function (data, type, row) {
-                    return `<span id='spnTrnFaultyCardId'> ${row.LostCardId}</span><span id='spnEncryptedId'>${row.EncryptedId}</span><span id='spnRequestId'>${row.RequestId}</span><span id='spnServiceNo'>${row.ServiceNo}</span>`;
-                }
-            },
-            {
-                data: null,
                 name: "SerialNumber",
                 orderable: false, // Disable sorting for this column
                 render: function (data, type, row, meta) {
@@ -131,7 +127,20 @@ function BindData() {
                 }
             },
             //{ data: "RequestId", name: "RequestId" },
-            { data: "ModifiedServiceNo", name: "ModifiedServiceNo" },
+            {
+                data: "ServiceNo",
+                name: "ServiceNo",
+                render: function (data, type, row) {
+                    // Check if first two characters are alphabets
+                    if (/^[A-Za-z]{2}/.test(data)) {
+                        // Insert space after first two characters
+                        return data.slice(0, 2) + ' ' + data.slice(2);
+                    } else {
+                        // No space needed
+                        return data;
+                    }
+                }
+            },
             {
                 data: null,
                 name: null,
@@ -241,7 +250,7 @@ function BindData() {
                 });
             });
 
-            $('#tbldata .customcheckbox').on('change', function () {
+            $('#tbldata').on('change', '.customcheckbox', function () {
                 const id = $(this).attr('id');
                 const isChecked = this.checked;
                 if (isChecked) {
@@ -268,6 +277,7 @@ function BindData() {
 }
 
 function DataExport() {
+    var token = $('input[name="__RequestVerificationToken"]').val();
     var userdata = {
         "Ids": checkedDataIds,
         "DataExportType": dataExportType
@@ -276,9 +286,11 @@ function DataExport() {
     fetch('/BasicDetail/LostDataExport', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': token
         },
-        body: JSON.stringify(userdata)
+        body: JSON.stringify(userdata),
+        credentials: 'same-origin'
     })
     .then(response => response.json())
         .then(data => {

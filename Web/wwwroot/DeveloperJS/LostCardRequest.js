@@ -14,31 +14,40 @@ $(async function () {
         closeOnSelect: false // Only needed for multi-select
     });
 
-    
-    if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
-        var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
-        var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
-        var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
+    return new Promise((resolve, reject) => {
+        fetch('/BasicDetail/DataRecForGetSession', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Tell the server we are sending JSON
+            }
+        })
+            .then(response => response.json())
+            .then((response) => {
+                if (response.Result === true) {
+                    let ArmyNo = response.Value.ArmyNo;
+                    let RequestIdForFaulty = response.Value.RequestIdForFaulty;
+                    let MaxTrnFwdId = response.Value.MaxTrnFwdId
 
-        var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
+                    // Updating UI elements with the received data
+                    $("#spnArmyNo").text(ArmyNo);
+                    $("#spnLostCardRequestId").text(RequestIdForFaulty);
+                    $("#spnMaxTrnFwdId").text(MaxTrnFwdId);
+                    $("#lblFaultyRequestId").text(RequestIdForFaulty);
 
-        var bytes = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey);
-        var decryptedArmyNo = bytes.toString(CryptoJS.enc.Utf8);
+                    // Fetching additional details
+                    GetBasicDetailForParitalViewByRequestId(RequestIdForFaulty);
 
-        var bytes = CryptoJS.AES.decrypt(encryptedRequestId, secretKey);
-        var decryptedRequestId = bytes.toString(CryptoJS.enc.Utf8);
-
-        var bytes = CryptoJS.AES.decrypt(encryptedMaxTrnFwdId, secretKey);
-        var decryptedMaxTrnFwdId = bytes.toString(CryptoJS.enc.Utf8);
-
-
-        $("#spnArmyNo").text(decryptedArmyNo);
-        $("#spnLostCardRequestId").text(decryptedRequestId);
-        $("#spnMaxTrnFwdId").text(decryptedMaxTrnFwdId);
-        $("#lblFaultyRequestId").text(decryptedRequestId);
-
-        GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
-    }
+                    resolve(response);
+                } else {
+                    toastr.error("Failed to Fetch Session Value: " + response.Message);
+                    reject(new Error(response.Message));
+                }
+            })
+            .catch((error) => {
+                toastr.error("Failed to Fetch Session Value : " + response.Message);
+                reject(new Error("Failed to Fetch Session Value : " + error.message));
+            });
+    });
 
     $("#btnSubmit").on("click", function () {
         Proceed();
