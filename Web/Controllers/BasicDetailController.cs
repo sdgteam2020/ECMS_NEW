@@ -870,12 +870,23 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles GET requests to retrieve and display all available I-Card request types.
+        /// Fetches the list of request types from the business layer and renders them in the view.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="ActionResult"/> rendering the view populated with a list of I-Card types.
+        /// </returns>
         [HttpGet]
         public async Task<ActionResult> RequestType()
         {
+            // Retrieve all I-Card types asynchronously from the business layer
             var allrecord = await Task.Run(() => basicDetailBL.GetAllICardType());
+
+            // Render the view with the retrieved list of I-Card types
             return View(allrecord);
         }
+
 
         #endregion
 
