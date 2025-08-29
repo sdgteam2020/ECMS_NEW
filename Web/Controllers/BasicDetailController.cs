@@ -2137,37 +2137,57 @@ namespace Web.Controllers
         #endregion
 
         #region CSVFileUpload/UploadCsv/GetHeaderMap/UploadChipAndSerial
+        /// <summary>
+        /// Handles the GET request to upload a CSV file, validates and decodes a Base64-encoded string (jcoor),
+        /// and then passes the decoded value to the view.
+        /// </summary>
+        /// <param name="jcoor">
+        /// Base64-encoded string containing the identifier for CSV file upload.
+        /// </param>
+        /// <returns>
+        /// Returns the view with the decoded string (jcoor) if valid, 
+        /// or redirects to the "ContactUs" page with an error message if invalid or an exception occurs.
+        /// </returns>
         [HttpGet]
         public Task<ActionResult> CSVFileUpload(string jcoor)
         {
+            // Validate the Base64 string (jcoor)
             if (string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
             {
-                TempData["error"] = "Invalid Input.";
+                TempData["error"] = "Invalid Input."; // Set error message in TempData
                 TempData.Keep("error");
-                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
             }
+
             try
             {
+                // Decode the Base64 string (jcoor) into the original string
                 var base64EncodedBytes = Convert.FromBase64String(jcoor);
                 var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+
+                // Pass the decoded string to the view via ViewBag
                 ViewBag.jcoor = decodedString;
-                return Task.FromResult<ActionResult>(View());
+
+                return Task.FromResult<ActionResult>(View()); // Return the view with decoded string
             }
             catch (FormatException ex)
             {
+                // Handle FormatException if the Base64 string is not properly formatted
                 _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {jcoor}", jcoor);
-                TempData["error"] = "Invalid Input.";
+                TempData["error"] = "Invalid Input."; // Set error message in TempData
                 TempData.Keep("error");
-                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
             }
             catch (Exception ex)
             {
+                // Handle any other unexpected errors
                 _logger.LogError(1001, ex, "BasicDetailsController=>CSVFileUpload.");
-                TempData["error"] = "Invalid Input.";
+                TempData["error"] = "Invalid Input."; // Set error message in TempData
                 TempData.Keep("error");
-                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
             }
         }
+
         [HttpPost]
         public IActionResult UploadCsv(DTOCSVFileRequest model)
         {
