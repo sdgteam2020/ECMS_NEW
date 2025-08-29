@@ -323,27 +323,43 @@ namespace Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Handles POST requests to retrieve I-Card index data based on user input and step count.
+        /// The method determines the <c>applyForId</c> value depending on the request data,
+        /// invokes the business layer to fetch records, and returns the result as JSON.
+        /// </summary>
+        /// <param name="dTORecord">
+        /// A <see cref="DTODataTablesRequestFor_BasicDetails_Index"/> object received from the request body,
+        /// containing filtering and step count information.
+        /// </param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> returning JSON with I-Card index data on success,
+        /// or a BadRequest response with an error message if an exception occurs.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetAllIndexData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
         {
+            // Retrieve current userId from claims and assign it into the DTO
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             dTORecord.UserId = userId;
+
             try
             {
+                // Case 1: If stepcount = 0, treat as default case
                 if (dTORecord.stepcount == 0)
                 {
                     dTORecord.applyForId = 0;
                     var allrecord = await basicDetailBL.GetALLForIcardSttaus(dTORecord);
-
                     return Json(allrecord);
                 }
+                // Case 2: If stepcount > 0 but JCOOR is null/empty
                 else if (string.IsNullOrEmpty(dTORecord.JCOOR))
                 {
                     dTORecord.applyForId = 1;
                     var allrecord = await basicDetailBL.GetALLForIcardSttaus(dTORecord);
-
                     return Json(allrecord);
                 }
+                // Case 3: Otherwise, JCOOR is present → set applyForId = 2
                 else
                 {
                     dTORecord.applyForId = 2;
@@ -353,11 +369,12 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log exception with event id 1001 and return 400 Bad Request
                 _logger.LogError(1001, ex, "Home->GetAllIndexData");
                 return BadRequest(new { message = "Internal Server Error" });
             }
-
         }
+
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {
             // Fetch role and user info
