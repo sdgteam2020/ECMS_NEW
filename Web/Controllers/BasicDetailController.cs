@@ -2489,11 +2489,24 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles the forwarding of ICard data, updates the request details, and adds a new forward record.
+        /// If the update is successful, returns the new forward record. Otherwise, returns a bad request response.
+        /// </summary>
+        /// <param name="data">
+        /// The MTrnFwd data object containing the forward request details.
+        /// </param>
+        /// <returns>
+        /// A JSON response indicating success with the new forward record, or a bad request response in case of failure.
+        /// </returns>
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
         {
             try
             {
+                // Retrieve session data for user ID and unit ID
                 DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                // Set values for the forward data object using session data and user information
                 data.FromUserId = sessiondata.UserId;
                 data.UnitId = sessiondata.UnitId;
                 data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -2501,27 +2514,31 @@ namespace Web.Controllers
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
                 data.TypeId = Convert.ToByte(data.TypeId);
-                //if (data.TrnFwdId > 0)
-                //{
-                //    await iTrnFwnBL.UpdateFieldBYTrnFwdId(data.TrnFwdId);
-                //}
+
+                // Check if all records by RequestId can be updated
                 if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                 {
+                    // If successful, reset TrnFwdId and add the new forward record
                     data.TrnFwdId = 0;
                     data = await iTrnFwnBL.AddWithReturn(data);
+
+                    // Return the new forward record as a successful response
                     return Ok(data);
                 }
                 else
                 {
+                    // Return bad request if the update failed
                     return BadRequest();
                 }
             }
             catch (Exception ex)
             {
+                // Log any exceptions and return a bad request response
                 _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
                 return BadRequest();
             }
         }
+
 
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {
