@@ -2053,60 +2053,86 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles the decryption and extraction of files from a ZIP file, given a private key.
+        /// </summary>
+        /// <param name="model">
+        /// The request model containing the uploaded ZIP file and other decryption parameters.
+        /// </param>
+        /// <returns>
+        /// A JSON response containing the filename of the decrypted ZIP file if successful,
+        /// otherwise returns a model error or internal server error as a response.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> DecryptZipFileData(DTODecryptZipFileRequest model)
         {
             try
             {
+                // Retrieve the encryption key from the database
                 var keyRecord = await encryptionSettingBL.Get(1);
                 if (keyRecord != null)
                 {
-                    model.PrivateKey = keyRecord.PrivateKey;
+                    model.PrivateKey = keyRecord.PrivateKey; // Assign the private key from the database record
                 }
                 else
                 {
-                    throw new InvalidOperationException("Encryption key record not found.");
+                    throw new InvalidOperationException("Encryption key record not found."); // Throw error if key record is missing
                 }
-                
+
+                // Validate the model before proceeding
                 if (ModelState.IsValid)
                 {
+                    // Define the folder for saving the uploaded file
                     string sourceFolderPhotoPhy = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp"));
+
+                    // Ensure the directory exists, create it if not
                     if (!Directory.Exists(sourceFolderPhotoPhy))
                         Directory.CreateDirectory(sourceFolderPhotoPhy);
+
+                    // Generate a unique file name for the uploaded file
                     string TempFileName = Guid.NewGuid().ToString();
                     string FileName = service.ProcessUploadedFile(model.ZipFile, sourceFolderPhotoPhy, TempFileName);
+
+                    // Define the full path where the file will be saved
                     string destinationzipfilename = Path.GetFileName(model.ZipFile.FileName);
                     string path = Path.Combine(sourceFolderPhotoPhy, FileName);
 
+                    // Validate that the uploaded file is a valid ZIP file
                     bool result = service.IsValidZipHeader(path);
 
                     if (!result)
                     {
+                        // Add error if file format is not correct and delete the invalid file
                         ModelState.AddModelError("ZipFile", "File format not correct");
                         if (System.IO.File.Exists(path))
                         {
-                            System.IO.File.Delete(path);
+                            System.IO.File.Delete(path); // Clean up the file if it's invalid
                         }
-                        return Json(KeyConstants.InternalServerError);
+                        return Json(KeyConstants.InternalServerError); // Return an error response
                     }
 
-                    ZipDecrypt.DecryptAndUnzip(path, sourceFolderPhotoPhy, sourceFolderPhotoPhy, destinationzipfilename, model.PrivateKey); // Decrypt and unzip folder
+                    // Decrypt and unzip the file using the provided private key
+                    ZipDecrypt.DecryptAndUnzip(path, sourceFolderPhotoPhy, sourceFolderPhotoPhy, destinationzipfilename, model.PrivateKey);
 
+                    // Return the filename of the decrypted ZIP file as a JSON response
                     return Json(model.ZipFile.FileName);
                 }
                 else
                 {
+                    // Return validation errors as a JSON response
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
             catch (Exception ex)
             {
+                // Log any unexpected errors and return an internal server error response
                 _logger.LogError(1001, ex, "BasicDetail->DecryptZipFile");
                 return Json(KeyConstants.InternalServerError);
             }
             //end:
-            //    return View(model);
+            //    return View(model); // No longer used, since returning JSON response
         }
+
 
         #endregion
 
