@@ -375,12 +375,28 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Displays the Approval view for IO (I-Card Officer) based on the provided Id.
+        /// Validates the user, decodes the Base64 Id, and sets up ViewBag values
+        /// (Title, Id, Type, StepCounter, Export flags, etc.) depending on workflow status.
+        /// </summary>
+        /// <param name="Id">
+        /// A Base64 encoded string representing the current step/status of the I-Card workflow.
+        /// </param>
+        /// <param name="jcoor">
+        /// An optional string parameter (coordinate or reference), used to set conditional flags in the view.
+        /// </param>
+        /// <returns>
+        /// An <see cref="ActionResult"/> that renders the ApprovalForIO view with pre-populated ViewBag data,
+        /// or redirects to the ContactUs page if input or user validation fails.
+        /// </returns>
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {
-            // Fetch role and user info
+            // Fetch current role from session and store in ViewBag
             string role = GetSessionValue();
             ViewBag.Role = role;
 
+            // Extract userId from claims and validate it
             var userIdStr = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!int.TryParse(userIdStr, out int userId))
             {
@@ -389,16 +405,19 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
 
+            // Retrieve user and their claims for display or further logic
             var user = await userManager.FindByIdAsync(userIdStr);
             var userClaims = await userManager.GetClaimsAsync(user);
             ViewBag.UserClaims = userClaims;
 
+            // Initialize notification object with current userId
             var noti = new MTrnNotification
             {
                 ReciverAspNetUsersId = userId,
                 DisplayId = 0
             };
 
+            // Validate Id: must be Base64 encoded and non-empty
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
                 TempData["error"] = "Invalid Input.";
@@ -406,25 +425,27 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
 
-            int retint;
-            int type = 0;
-            int stepCounter = 0;
+            int retint;             // decoded integer representing workflow state
+            int type = 0;           // type indicator (Pending, Approved, Rejected, etc.)
+            int stepCounter = 0;    // tracks workflow step position
+
             try
             {
+                // Decode Base64 Id into integer and assign as stepCounter
                 var decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));
                 retint = Convert.ToInt32(decodedString);
                 stepCounter = retint;
             }
             catch (Exception ex)
             {
+                // Log error and redirect on decoding failure
                 _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
 
-
-
+            // Determine Title, Type, StepCounter, and Export flags based on decoded Id
             switch (retint)
             {
                 case 1:
@@ -536,12 +557,16 @@ namespace Web.Controllers
                     break;
             }
 
+            // Assign computed values to ViewBag for the view
             ViewBag.Type = type;
             ViewBag.StepCounter = stepCounter;
             ViewBag.jcoor = string.IsNullOrEmpty(jcoor) ? 1 : 0;
 
+            // Render the view with ViewBag context
             return View();
         }
+
+
         [HttpPost]
         public async Task<IActionResult> GetAllApprovalForIOData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
         {
