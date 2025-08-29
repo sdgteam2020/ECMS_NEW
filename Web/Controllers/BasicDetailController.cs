@@ -790,25 +790,42 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles GET requests to view details of inaccurate data entries.
+        /// Decrypts and validates the provided Id, fetches records from the business layer,
+        /// and renders the view with the retrieved details if found.
+        /// </summary>
+        /// <param name="Id">
+        /// A protected (encrypted) string representing the BasicDetail identifier.
+        /// </param>
+        /// <returns>
+        /// An <see cref="ActionResult"/> rendering the inaccurate data detail view if found,
+        /// or redirects to ContactUs with an error message if input is invalid, tampered, or not found.
+        /// </returns>
         [HttpGet]
         public async Task<ActionResult> InaccurateDataView(string Id)
         {
+            // Validate Id: must not be null or empty
             if (string.IsNullOrEmpty(Id))
             {
                 TempData["error"] = "Invalid or tampered request.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
+
+            // Retrieve current logged-in user's Id from claims (as string) and convert to integer
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            int userIntId = Convert.ToInt32(userId); // Assuming userId is always a valid integer
-            string decryptedId = string.Empty;
-            int decryptedIntId = 0;
+            int userIntId = Convert.ToInt32(userId); // Assumes claim value is a valid integer
+
+            string decryptedId = string.Empty;  // will hold decrypted string Id
+            int decryptedIntId = 0;             // will hold decrypted integer Id
+
             try
             {
-                // Decrypt the  id using Unprotect method
+                // Attempt to decrypt the protected Id
                 decryptedId = protector.Unprotect(Id);
 
-                // Validate decrypted Id
+                // Validate decrypted Id: must be a valid integer
                 if (!int.TryParse(decryptedId, out decryptedIntId))
                 {
                     _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, userId);
@@ -816,22 +833,27 @@ namespace Web.Controllers
                     TempData.Keep("error");
                     return RedirectToAction("ContactUs", "Home");
                 }
-                // Retrieve records asynchronously
-                DTOBasicDetailTempRequest? dTOBasicDetail = await basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(userIntId, decryptedIntId);
+
+                // Fetch records from business layer using userId and decryptedId
+                DTOBasicDetailTempRequest? dTOBasicDetail =
+                    await basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(userIntId, decryptedIntId);
+
+                // If record found, render the view with retrieved details
                 if (dTOBasicDetail != null)
                 {
                     return View(dTOBasicDetail);
                 }
                 else
                 {
+                    // If no record found, show error and redirect
                     TempData["error"] = "Id not found.";
                     TempData.Keep("error");
                     return RedirectToAction("ContactUs", "Home");
                 }
-
             }
             catch (System.Security.Cryptography.CryptographicException ex)
             {
+                // Handle cryptographic errors (tampered/invalid encrypted Id)
                 _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
                 TempData["error"] = "Invalid or tampered request.";
                 TempData.Keep("error");
@@ -839,12 +861,14 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Handle any unexpected exceptions
                 _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
                 TempData["error"] = ex.Message;
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
 
         [HttpGet]
         public async Task<ActionResult> RequestType()
