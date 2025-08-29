@@ -567,34 +567,51 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles POST requests to retrieve approval data for IO (I-Card Officer).
+        /// Determines which dataset to fetch based on the JCOOR flag in the request,
+        /// and returns the corresponding records as JSON.
+        /// </summary>
+        /// <param name="dTORecord">
+        /// A <see cref="DTODataTablesRequestFor_BasicDetails_Index"/> object received from the request body,
+        /// containing filtering information, user context, and JCOOR flag.
+        /// </param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> returning JSON with approval data for IO,
+        /// or a BadRequest response with an error message if an exception occurs.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetAllApprovalForIOData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
         {
+            // Extract userId from claims and assign it into the DTO
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             dTORecord.UserId = userId;
+
             try
             {
+                // If JCOOR == "1" → applyForId = 1 (fetch one type of dataset)
                 if (dTORecord.JCOOR == "1")
                 {
                     dTORecord.applyForId = 1;
-                    var allrecord = await basicDetailBL.GetALLBasicDetail(dTORecord); //Convert.ToInt32(userId), stepcounter, type, 1)
+                    var allrecord = await basicDetailBL.GetALLBasicDetail(dTORecord);
                     return Json(allrecord);
-
                 }
+                // Otherwise → applyForId = 2 (fetch alternative dataset)
                 else
                 {
                     dTORecord.applyForId = 2;
-                    var allrecord = await basicDetailBL.GetALLBasicDetail(dTORecord); //Convert.ToInt32(userId), stepcounter, type, 2)
+                    var allrecord = await basicDetailBL.GetALLBasicDetail(dTORecord);
                     return Json(allrecord);
                 }
             }
             catch (Exception ex)
             {
+                // Log the error with event id 1001 and return 400 Bad Request
                 _logger.LogError(1001, ex, "Home->GetAllApprovalForIOData");
                 return BadRequest(new { message = "Internal Server Error" });
             }
-
         }
+
 
         [HttpGet]
         public async Task<ActionResult> View(string Id)
