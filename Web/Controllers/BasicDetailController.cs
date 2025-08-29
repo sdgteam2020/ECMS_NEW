@@ -2322,37 +2322,58 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles the POST request to upload Chip and Serial data and processes it.
+        /// Validates input, calls the business logic layer to upload the data, and returns a response.
+        /// </summary>
+        /// <param name="data">
+        /// A list of DTO objects containing Chip and Serial data to be uploaded.
+        /// </param>
+        /// <returns>
+        /// A JSON response indicating the result of the upload operation, including success or failure message.
+        /// If the input is invalid or empty, returns an appropriate error message.
+        /// </returns>
         [HttpPost]
         public async Task<ActionResult> UploadChipAndSerial([FromBody] List<DTOUploadChipAndSerialRequest> data)
         {
-            // Validate that lstUpdate contains at least one record
+            // Validate that data contains at least one record
             if (data == null || data.Count == 0)
             {
+                // Return a bad request if no records are provided
                 return BadRequest(new { message = "No records received. Please select at least one record to process." });
             }
+
             DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
 
+            // Check if the model state is valid before proceeding
             if (ModelState.IsValid)
             {
-
+                // Call the business logic layer to upload the Chip and Serial data
                 response = await basicDetailBL.UploadChipAndSerial(data);
+
+                // Return the response indicating success or failure of the upload
                 if (response.Result == true)
                 {
-                    return Json(response);
+                    return Json(response); // Return success response as JSON
                 }
                 else
                 {
-                    return Json(response);
+                    return Json(response); // Return failure response as JSON
                 }
             }
             else
             {
+                // Handle the case where the model state is invalid
                 response.Result = false;
+
+                // Collect all error messages from the model state
                 response.Message = ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToString();
-                //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+
+                // Return failure response with validation error messages
                 return Json(response);
             }
         }
+
 
 
         [HttpPost]
