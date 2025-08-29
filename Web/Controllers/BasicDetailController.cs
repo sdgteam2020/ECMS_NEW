@@ -2682,52 +2682,75 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles the saving of an ICard hold request. It validates the model state, checks if a record with the given request ID already exists, 
+        /// and either updates or adds the record accordingly. The method returns a JSON response indicating the result of the operation.
+        /// </summary>
+        /// <param name="dTO">
+        /// The MTrnICardHold object containing the data for the ICard hold request to be saved.
+        /// </param>
+        /// <returns>
+        /// A JSON response indicating the outcome of the operation. Possible responses include:
+        /// - KeyConstants.Save: If the data was successfully saved.
+        /// - KeyConstants.Update: If the data was successfully updated.
+        /// - KeyConstants.Exists: If a record with the same request ID already exists.
+        /// - ModelState error messages if the model is invalid.
+        /// </returns>
         [Authorize(Policy = "FlagICardApplPolicy")]
         public async Task<IActionResult> SaveICardRequestHold(MTrnICardHold dTO)
         {
             try
             {
+                // Retrieve session data for the current user
                 DtoSession? sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
                 if (sessiondata != null)
                 {
-                    dTO.UserId = sessiondata.UserId;
+                    dTO.UserId = sessiondata.UserId;  // Set the UserId from session data
                 }
 
+                // Set additional metadata for the ICard hold request
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
+                // Check if the model state is valid
                 if (ModelState.IsValid)
                 {
+                    // Check if a record with the given request ID already exists
                     if (!await _iICardHoldBL.GetByRequestId(dTO))
                     {
+                        // If the ICard hold record has an ID, update it, else add a new record
                         if (dTO.ICardHoldId > 0)
                         {
-                            await _iICardHoldBL.Update(dTO);
-                            return Json(KeyConstants.Save);
+                            await _iICardHoldBL.Update(dTO);  // Update existing record
+                            return Json(KeyConstants.Save);   // Return success response
                         }
                         else
                         {
-                            await _iICardHoldBL.Add(dTO);
-                            return Json(KeyConstants.Update);
+                            await _iICardHoldBL.Add(dTO);    // Add new record
+                            return Json(KeyConstants.Update);  // Return success response
                         }
                     }
                     else
                     {
+                        // If the record with the same request ID already exists, return an "exists" response
                         return Json(KeyConstants.Exists);
                     }
                 }
                 else
                 {
+                    // If model state is invalid, return the validation errors as a JSON response
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
             catch (Exception ex)
             {
+                // Log any exceptions and return an internal server error response
                 _logger.LogError(1001, ex, "BasicDetail->SaveICardRequestHold");
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
 
         [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> DataExport(DTODataExportRequest Data)
