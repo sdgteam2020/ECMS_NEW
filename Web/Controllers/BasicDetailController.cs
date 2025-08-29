@@ -892,33 +892,34 @@ namespace Web.Controllers
 
         #region Registration/BasicDetail/GetApiData/GetUserData
 
+        /// <summary>
+        /// Handles GET requests for the Registration view.
+        /// Currently returns the Registration view without additional processing.
+        /// </summary>
+        /// <param name="Id">
+        /// An optional encrypted identifier (not currently used, old code for decryption and setup is commented out).
+        /// </param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> rendering the Registration view.
+        /// </returns>
         [HttpGet]
         public IActionResult Registration(string Id)
         {
             #region Old Code
-            //var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //string decryptedId = string.Empty;
-            //ViewBag.OptionsBloodGroup = service.GetBloodGroup();
-            //ViewBag.OptionsArmedType = service.GetArmedType();
-            //int decryptedIntId = 0;
-            //try
-            //{
-            //    Decrypt the  id using Unprotect method
-            //    decryptedId = protector.Unprotect(Id);
-            //    decryptedIntId = Convert.ToInt32(decryptedId);
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(1001, ex, "This error occure because Id value change by user.");
-            //    return RedirectToAction("Error", "Error");
-            //}
-            //DTORegistrationRequest dTORegistrationRequest = new DTORegistrationRequest();
-            //dTORegistrationRequest.TypeId = (byte)decryptedIntId;
-            //ViewBag.OptionsRegistration = service.GetRegistration();
-            //return View(dTORegistrationRequest);
+            // Previous implementation included:
+            // - Fetching logged-in userId from claims
+            // - Decrypting the provided Id using Unprotect
+            // - Populating dropdown options for BloodGroup, ArmedType, and Registration
+            // - Building a DTORegistrationRequest with decrypted TypeId
+            // - Returning the populated view with DTO model
+            //
+            // This logic is currently commented out and not in use.
             #endregion End Old Code
+
+            // Render the Registration view (empty for now)
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
