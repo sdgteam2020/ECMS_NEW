@@ -2540,67 +2540,87 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles the rejection of an ICard forward request. Updates the forward details, performs domain mapping, 
+        /// processes XML digital sign data, and returns a success or failure response.
+        /// </summary>
+        /// <param name="data">
+        /// The MTrnFwd data object containing the forward request details to be rejected.
+        /// </param>
+        /// <returns>
+        /// A JSON response indicating success with the updated forward record or a bad request response in case of failure.
+        /// </returns>
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {
             try
             {
+                // Create response object
                 DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
 
+                // Retrieve session data for user ID and unit ID
                 DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                // Set values for the forward data object using session data and user information
                 data.FromUserId = sessiondata.UserId;
                 data.UnitId = sessiondata.UnitId;
                 data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.UpdatedOn = DateTime.Now;
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
-                data.TypeId = Convert.ToByte(1);
+                data.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
+
+                // Retrieve domain mapping using the request ID
                 TrnDomainMapping Domain = new TrnDomainMapping();
                 Domain = await iDomainMapBL.GetByRequestId(data.RequestId);
+
                 if (Domain != null)
                 {
+                    // Set the recipient user ID and AspNetUsersId for the rejection
                     data.ToAspNetUsersId = Domain.AspNetUsersId;
                     data.ToUserId = Domain.UserId.GetValueOrDefault();
 
+                    // Update all records by request ID
                     if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
                     {
+                        // Add the rejection record
                         await iTrnFwnBL.Add(data);
 
-
-                        int[] d;
-                        d = new int[1];
+                        // Process digital sign XML files for the rejection
+                        int[] d = new int[1];
                         d[0] = data.RequestId;
                         var dataret = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
+
                         if (dataret != null)
                         {
-                            dataret.XmlFiles = "";
+                            dataret.XmlFiles = ""; // Clear the XML files after processing
                         }
 
+                        // Save the processed XML digital sign
                         await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
-                        return Ok(data);
 
+                        // Return the updated rejection data as JSON
+                        return Ok(data);
                     }
                     else
                     {
+                        // Return a bad request if update fails
                         return BadRequest();
                     }
                 }
                 else
                 {
+                    // Return a bad request if domain mapping is not found
                     return BadRequest();
                 }
-
-
             }
             catch (Exception ex)
             {
+                // Log any exceptions and return a bad request response
                 _logger.LogError(1001, ex, "BasicDetails=>IcardRejecte.");
                 return BadRequest();
             }
-
-
-
-
         }
+
 
         public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
