@@ -64,46 +64,58 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
+    /// <summary>
+    /// This controller manages basic details related to I-Card requests, including viewing, approval, and data accuracy checks.
+    /// And it handles various user roles and permissions for accessing and modifying I-Card data.
+    /// Also, it provides functionalities for exporting and importing I-Card related data.
+    /// Moreover, it integrates with notification and logging systems to track user actions and system events.
+    /// </summary>
     [Authorize]
     public class BasicDetailController : Controller
     {
         //private readonly ApplicationDbContext context, contextTransaction;
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly IStepCounterBL iStepCounterBL;
-        private readonly ITrnICardRequestBL iTrnICardRequestBL;
-        private readonly IDomainMapBL iDomainMapBL;
-        private readonly ITrnFwnBL iTrnFwnBL;
-        private readonly IBasicDetailBL basicDetailBL;
-        private readonly IBasicUploadBL basicuploadBL;
-        private readonly IBasicAddressBL basicAddressBL;
-        private readonly IBasicinfoBL basicinfoBL;
-        private readonly IRankBL rankBL;
-        private readonly IBasicDetailTempBL basicDetailTempBL;
-        private readonly IService service;
-        private readonly IMapper _mapper;
-        private readonly IMapUnitBL mapUnitBL;
-        private readonly IWebHostEnvironment hostingEnvironment;
-        private readonly IDataProtector protector;
+        private readonly UserManager<ApplicationUser> userManager;// For Identity
+        private readonly IStepCounterBL iStepCounterBL;// For Step Counter
+        private readonly ITrnICardRequestBL iTrnICardRequestBL;// For ICard Request
+        private readonly IDomainMapBL iDomainMapBL;// For Domain Mapping
+        private readonly ITrnFwnBL iTrnFwnBL;// For Forwarding
+        private readonly IBasicDetailBL basicDetailBL;// For Basic Detail
+        private readonly IBasicUploadBL basicuploadBL;// For Basic Upload
+        private readonly IBasicAddressBL basicAddressBL;// For Basic Address
+        private readonly IBasicinfoBL basicinfoBL;// For Basic Info
+        private readonly IRankBL rankBL;// For Rank and Type
+        private readonly IBasicDetailTempBL basicDetailTempBL;// For Basic Detail Temp
+        private readonly IService service;// For Service
+        private readonly IMapper _mapper;// For Auto Mapper
+        private readonly IMapUnitBL mapUnitBL;// For Map Unit
+        private readonly IWebHostEnvironment hostingEnvironment;// For Hosting Environment
+        private readonly IDataProtector protector;// For Data Protection
         private readonly TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
-        private readonly ILogger<BasicDetailController> _logger;
-        private readonly INotificationBL _INotificationBL;
-        private readonly IMasterBL _IMasterBL;
-        private readonly ITrnLoginLogBL _iTrnLoginLogBL;
-        private readonly IICardHoldBL _iICardHoldBL;
-        private readonly IConfiguration _configuration;
+        private readonly ILogger<BasicDetailController> _logger;// For Logging
+        private readonly INotificationBL _INotificationBL;// For Notification
+        private readonly IMasterBL _IMasterBL;// For Master Data
+        private readonly ITrnLoginLogBL _iTrnLoginLogBL;// For Login Log
+        private readonly IICardHoldBL _iICardHoldBL;// For I-Card Hold
+        private readonly IConfiguration _configuration;// For Configuration
         public DateTime dateTimenow;
         private readonly string[] _expectedColumns = { "RequestId", "RankName", "FName", "LName", "ServiceNo", "ChipNo", "CardSerialNo" };
-        private readonly IcsvImportBl _iCSVImportBL;
-        private readonly IFaultyCardBL faultyCardBL;
-        private readonly IHotlistCardBL _hotlistCardBL;
-        private readonly ILostCardBL _lostCardBL;
-        private readonly IDistributeCardBL _distributeCardBL;
-        private readonly IDestructionCardBL _destructionCardBL;
-        private readonly IDispatchCardBL dispatchCardBL;
-        private readonly IDispatchCardMappingBL dispatchCardMappingBL;
-        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;
-        private readonly IEncryptionSettingBL encryptionSettingBL;
+        private readonly IcsvImportBl _iCSVImportBL;// For CSV Import
+        private readonly IFaultyCardBL faultyCardBL;// For Faulty Card
+        private readonly IHotlistCardBL _hotlistCardBL;// For Hotlist Card
+        private readonly ILostCardBL _lostCardBL;// For Lost Card
+        private readonly IDistributeCardBL _distributeCardBL;// For Distribute Card
+        private readonly IDestructionCardBL _destructionCardBL;// For Destruction Card
+        private readonly IDispatchCardBL dispatchCardBL;// For Dispatch Card
+        private readonly IDispatchCardMappingBL dispatchCardMappingBL;// For Dispatch Card Mapping
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// For Image Encrypt and Decrypt
+        private readonly IEncryptionSettingBL encryptionSettingBL;// For Encryption Setting
 
+        /// <summary>
+        /// This is the constructor for the BasicDetailController class, 
+        /// which initializes various services and dependencies required for handling basic details related to I-Card requests.
+        /// Via dependency injection, it sets up services for user management, data protection, 
+        /// logging, and business logic layers for managing I-Card details, notifications, and other related functionalities.
+        /// </summary>        
         public BasicDetailController(IConfiguration configuration, IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL,
@@ -150,15 +162,33 @@ namespace Web.Controllers
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
-
+        /// <summary>
+        /// Handles requests to display the Index view for I-Card application statuses.
+        /// Accepts a Base64 encoded Id string and an optional coordinate string (jcoor),
+        /// decodes and validates the Id, determines the status, step counter, and title
+        /// based on predefined mappings, and sets the corresponding ViewBag properties.
+        /// </summary>
+        /// <param name="Id">
+        /// A Base64 encoded string representing a numeric status code for the I-Card process.
+        /// </param>
+        /// <param name="jcoor">
+        /// An optional parameter (e.g., coordinates or external reference) passed through to the view.
+        /// </param>
+        /// <returns>
+        /// Returns an <see cref="ActionResult"/> rendering the Index view with relevant ViewBag data,
+        /// or redirects to the ContactUs page if input is invalid.
+        /// </returns>
         public async Task<ActionResult> Index(string Id, string jcoor)
         {
+            // Initialize notification object (example usage, not persisted here)
             MTrnNotification noti = new MTrnNotification
             {
+                // Convert logged-in UserId (NameIdentifier claim) to int
                 ReciverAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
                 DisplayId = 0
             };
 
+            // Validate Id: must not be null/empty and must be valid Base64
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
                 TempData["error"] = "Invalid Input.";
@@ -166,34 +196,36 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
 
-            int retint;
-            int type = 1;
-            int stepcounter = 0;
-            string title = "List of Drafted Appl"; // default
+            int retint;              // decoded integer identifier
+            int type = 1;            // default type (status group)
+            int stepcounter = 0;     // step tracker for workflow
+            string title = "List of Drafted Appl"; // default title
 
             try
             {
+                // Decode Base64 string into integer
                 var decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));
                 retint = Convert.ToInt32(decodedString);
-                stepcounter = retint;
+                stepcounter = retint; // default step counter equals decoded int
             }
             catch (FormatException ex)
             {
+                // Log error and redirect if Base64 decoding or int conversion fails
                 _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
 
-
-
+            // Map decoded integer Ids to application statuses, step counters, and titles
             switch (retint)
             {
                 case 0:
-                case 1:  // request from DashBoard
+                case 1:  // Request from Dashboard
                     stepcounter = retint;
                     break;
-                case 11: // request from Task Board
+
+                case 11: // Request from Task Board → maps to Dashboard (1)
                     stepcounter = retint = 1;
                     break;
 
@@ -202,8 +234,8 @@ namespace Web.Controllers
                     type = 2; stepcounter = 2;
                     break;
 
-                case 22: // request from DashBoard
-                case 2222: // request from Task Board
+                case 22:    // Request from Dashboard
+                case 2222:  // Request from Task Board
                     title = "I-Card Rejectd From IO / Superior";
                     type = 1; stepcounter = 7;
                     break;
@@ -258,8 +290,8 @@ namespace Web.Controllers
                     type = 2; stepcounter = 5;
                     break;
 
-                case 88:  // request from Task Board
-                case 888:  // request from DashBoard
+                case 88:   // Request from Task Board
+                case 888:  // Request from Dashboard
                     title = "Status of Appl Approved & Fwd";
                     type = 2; stepcounter = 888;
                     break;
@@ -270,21 +302,27 @@ namespace Web.Controllers
                     type = 2; stepcounter = 777;
                     break;
 
-                case 99:  // request from Task Board
-                case 999:  // request from DashBoard 
+                case 99:   // Request from Task Board
+                case 999:  // Request from Dashboard
                     title = "Appl rejected by Approver, Verifier";
                     type = 2; stepcounter = 999;
                     break;
             }
 
+            // Assign resolved values to ViewBag for the view to consume
             ViewBag.Id = retint;
             ViewBag.Title = title;
             ViewBag.Type = type;
             ViewBag.StepCounter = stepcounter;
             ViewBag.jcoor = jcoor;
 
+            // Placeholder await to satisfy async signature
+            await Task.CompletedTask;
+
+            // Return Index view
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> GetAllIndexData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
         {
@@ -3217,7 +3255,7 @@ namespace Web.Controllers
         }
         #endregion DistributeCard
 
-        #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
+      #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
 
         public async Task<IActionResult> CheckArmyNO(string ArmyNo)
         {
