@@ -1171,21 +1171,39 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles GET requests for creating or editing Basic Detail records.
+        /// Decrypts and validates the provided Id, retrieves data from TempData or the business layer,
+        /// and returns the appropriate view (new form, edit form, or not found view).
+        /// </summary>
+        /// <param name="Id">
+        /// A protected (encrypted) string identifier representing the BasicDetail record.
+        /// If null or decrypted to "0", a new record creation flow is initiated.
+        /// </param>
+        /// <returns>
+        /// An <see cref="ActionResult"/> that renders:
+        /// - A creation view with pre-populated registration data if Id is null or "0" and TempData exists.
+        /// - A populated edit view if a record exists for the decrypted Id.
+        /// - Redirects to Registration if no TempData or invalid Id is provided.
+        /// - A NotFound view if no record is found in the database.
+        /// </returns>
         [HttpGet]
         public async Task<ActionResult> BasicDetail(string? Id)
         {
+            // Get the current logged-in user's identifier from claims
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             string decryptedId = string.Empty;
             int decryptedIntId = 0;
 
+            // If Id is provided, attempt to decrypt and validate it
             if (Id != null)
             {
                 try
                 {
-                    // Decrypt the  id using Unprotect method
+                    // Decrypt the Id using Unprotect method
                     decryptedId = protector.Unprotect(Id);
 
-                    // Validate decrypted Id
+                    // Validate that the decrypted Id is an integer
                     if (!int.TryParse(decryptedId, out decryptedIntId))
                     {
                         _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, userId);
@@ -1196,6 +1214,7 @@ namespace Web.Controllers
                 }
                 catch (System.Security.Cryptography.CryptographicException ex)
                 {
+                    // Handle cryptographic errors (tampered or invalid encrypted Id)
                     _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
                     TempData["error"] = "Invalid or tampered request.";
                     TempData.Keep("error");
@@ -1203,6 +1222,7 @@ namespace Web.Controllers
                 }
                 catch (Exception ex)
                 {
+                    // Handle unexpected exceptions during Id processing
                     _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
                     TempData["error"] = ex.Message;
                     TempData.Keep("error");
@@ -1210,74 +1230,86 @@ namespace Web.Controllers
                 }
             }
 
+            // Case 1: New record creation (Id is null or decryptedId == "0")
             if (Id == null || decryptedId == "0")
             {
-                //TempData.Keep("Registration"); // not required for keep
                 DTORegistrationRequest? model = new DTORegistrationRequest();
+
+                // If registration data exists in TempData, pre-populate the form
                 if (TempData["Registration"] != null)
                 {
                     model = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
+
+                    // If SubmitType == 1, build a new BasicDetail creation ViewModel
                     if (model.SubmitType == 1)
                     {
                         ViewBag.OptionsUnitId = 0;
-                        BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM();
-                        dTOBasicDetailCrtRequest.PreviousBasicDetailId = null;
-                        dTOBasicDetailCrtRequest.FName = model.FName;
-                        dTOBasicDetailCrtRequest.LName = model.LName;
-                        dTOBasicDetailCrtRequest.NameAsPerRecord = model.NameAsPerRecord;
-                        dTOBasicDetailCrtRequest.ServiceNo = model.ServiceNo;
-                        dTOBasicDetailCrtRequest.OldServiceNo = model.OldServiceNo;
-                        dTOBasicDetailCrtRequest.DOB = model.DOB;
-                        dTOBasicDetailCrtRequest.DateOfCommissioning = model.DateOfCommissioning;
-                        dTOBasicDetailCrtRequest.IdenMark1 = model.IdenMark1;
-                        dTOBasicDetailCrtRequest.IdenMark2 = model.IdenMark2;
+                        BasicDetailCrtAndUpdVM dTOBasicDetailCrtRequest = new BasicDetailCrtAndUpdVM
+                        {
+                            PreviousBasicDetailId = null,
+                            FName = model.FName,
+                            LName = model.LName,
+                            NameAsPerRecord = model.NameAsPerRecord,
+                            ServiceNo = model.ServiceNo,
+                            OldServiceNo = model.OldServiceNo,
+                            DOB = model.DOB,
+                            DateOfCommissioning = model.DateOfCommissioning,
+                            IdenMark1 = model.IdenMark1,
+                            IdenMark2 = model.IdenMark2,
+                            AadhaarNo = Convert.ToInt64(model.AadhaarNo).ToString("D12"),
+                            ApplyForId = model.ApplyForId,
+                            RegistrationId = model.RegistrationId,
+                            TypeId = model.TypeId,
+                            State = model.State,
+                            District = model.District,
+                            PS = model.PS,
+                            PO = model.PO,
+                            Tehsil = model.Tehsil,
+                            Village = model.Village,
+                            PinCode = Convert.ToInt32(model.PinCode),
+                            PermanentAddress = "Village - " + model.Village + ", Post Office-" + model.PO + ", Tehsil- " + model.Tehsil +
+                                                ", District- " + model.District + ", State- " + model.State +
+                                                ", Pin Code- " + (model.PinCode == 0 ? "" : model.PinCode)
+                        };
+
                         ViewBag.OptionsRankId = model.RankId;
                         ViewBag.OptionsArmedId = model.ArmedId;
 
-                        dTOBasicDetailCrtRequest.AadhaarNo = Convert.ToInt64(model.AadhaarNo).ToString("D12");
-
-                        dTOBasicDetailCrtRequest.ApplyForId = model.ApplyForId;
-                        dTOBasicDetailCrtRequest.RegistrationId = model.RegistrationId;
-                        dTOBasicDetailCrtRequest.TypeId = model.TypeId;
-
-
-                        dTOBasicDetailCrtRequest.State = model.State;
-                        dTOBasicDetailCrtRequest.District = model.District;
-                        dTOBasicDetailCrtRequest.PS = model.PS;
-                        dTOBasicDetailCrtRequest.PO = model.PO;
-                        dTOBasicDetailCrtRequest.Tehsil = model.Tehsil;
-                        dTOBasicDetailCrtRequest.Village = model.Village;
-                        dTOBasicDetailCrtRequest.PinCode = Convert.ToInt32(model.PinCode);
-                        dTOBasicDetailCrtRequest.PermanentAddress = "Village - " + model.Village + ", Post Office-" + model.PO + ", Tehsil- " + model.Tehsil + ", District- " + model.District + ", State- " + model.State + ", Pin Code- " + (model.PinCode == 0 ? "" : model.PinCode);
-
+                        // Render creation view with pre-populated details
                         return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                     }
                     else
                     {
+                        // Redirect to Registration if SubmitType != 1
                         return RedirectToAction("Registration");
                     }
                 }
                 else
                 {
+                    // No TempData → redirect to Registration
                     return RedirectToAction("Registration");
                 }
             }
+            // Case 2: Edit existing record (Id provided and valid)
             else
             {
                 BasicDetailCrtAndUpdVM? basicDetailUpdVM = await basicDetailBL.GetBesicDetailForEditById(decryptedIntId);
 
                 if (basicDetailUpdVM != null)
                 {
+                    // Populate dropdown options and permanent address
                     ViewBag.OptionsRankId = basicDetailUpdVM.RankId;
                     ViewBag.OptionsUnitId = basicDetailUpdVM.UnitId;
                     ViewBag.OptionsArmedId = basicDetailUpdVM.ArmedId;
                     ViewBag.OptionsRegimentalId = basicDetailUpdVM.RegimentalId;
                     ViewBag.OptionsBloodGroupId = basicDetailUpdVM.BloodGroupId;
 
+                    basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO +
+                                                        ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District +
+                                                        ", State- " + basicDetailUpdVM.State +
+                                                        ", Pin Code- " + (basicDetailUpdVM.PinCode == 0 ? "" : basicDetailUpdVM.PinCode);
 
-                    basicDetailUpdVM.BloodGroupId = basicDetailUpdVM.BloodGroupId;
-                    basicDetailUpdVM.PermanentAddress = "Village - " + basicDetailUpdVM.Village + ", Post Office-" + basicDetailUpdVM.PO + ", Tehsil- " + basicDetailUpdVM.Tehsil + ", District- " + basicDetailUpdVM.District + ", State- " + basicDetailUpdVM.State + ", Pin Code- " + (basicDetailUpdVM.PinCode == 0 ? "" : basicDetailUpdVM.PinCode);
-
+                    // Load existing photo and signature if files exist
                     string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
                     string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
                     string sourcePathSignature = Path.Combine(sourceFolderPhotoPhy, "Signature", basicDetailUpdVM.SignatureImagePath);
@@ -1294,9 +1326,10 @@ namespace Web.Controllers
                         basicDetailUpdVM.ExistingSignatureImagePath = basicDetailUpdVM.SignatureImagePath;
                     }
 
-
+                    // Store encrypted Id for further use
                     basicDetailUpdVM.EncryptedId = Id;
 
+                    // If TempData exists, override some fields with submitted values
                     if (TempData["Registration"] != null)
                     {
                         var modelex = JsonConvert.DeserializeObject<DTORegistrationRequest>(TempData["Registration"].ToString());
@@ -1306,10 +1339,7 @@ namespace Web.Controllers
                         basicDetailUpdVM.OldServiceNo = modelex.OldServiceNo;
                         basicDetailUpdVM.DOB = modelex.DOB;
                         basicDetailUpdVM.DateOfCommissioning = modelex.DateOfCommissioning;
-                        //basicDetailUpdVM.IdenMark1 = modelex.IdenMark1;
-                        //basicDetailUpdVM.IdenMark2 = modelex.IdenMark2;
                         ViewBag.OptionsRankId = modelex.RankId;
-                        //basicDetailUpdVM.AadhaarNo = Convert.ToInt64(modelex.AadhaarNo).ToString("D12"); ;// Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
                         basicDetailUpdVM.ApplyForId = modelex.ApplyForId;
                         basicDetailUpdVM.RegistrationId = modelex.RegistrationId;
                         basicDetailUpdVM.TypeId = modelex.TypeId;
@@ -1320,23 +1350,24 @@ namespace Web.Controllers
                         basicDetailUpdVM.Tehsil = modelex.Tehsil;
                         basicDetailUpdVM.Village = modelex.Village;
                         basicDetailUpdVM.PinCode = Convert.ToInt32(modelex.PinCode);
-                        basicDetailUpdVM.PermanentAddress = "Village - " + modelex.Village + ", Post Office-" + modelex.PO + ", Tehsil- " + modelex.Tehsil + ", District- " + modelex.District + ", State- " + modelex.State + ", Pin Code- " + (modelex.PinCode == 0 ? "" : modelex.PinCode);
-
+                        basicDetailUpdVM.PermanentAddress = "Village - " + modelex.Village + ", Post Office-" + modelex.PO +
+                                                            ", Tehsil- " + modelex.Tehsil + ", District- " + modelex.District +
+                                                            ", State- " + modelex.State +
+                                                            ", Pin Code- " + (modelex.PinCode == 0 ? "" : modelex.PinCode);
                     }
-                    // ViewBag.UnitName = await context.MUnit.FindAsync(basicDetailUpdVM.UnitId);
 
-                    //MRegistration? mRegistration = await context.MRegistration.FindAsync(basicDetailUpdVM.RegistrationId);
-                    //basicDetailUpdVM.Type = mRegistration != null ? mRegistration.ApplyForId : 1;
-
+                    // Render edit view with populated details
                     return View(basicDetailUpdVM);
                 }
                 else
                 {
+                    // Record not found → return 404 and NotFound view
                     Response.StatusCode = 404;
                     return View("BasicDetailNotFound", decryptedId.ToString());
                 }
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> BasicDetail(BasicDetailCrtAndUpdVM model)
