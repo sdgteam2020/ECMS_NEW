@@ -1958,23 +1958,43 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Makes an HTTP POST request to fetch user data from an external API using ICNumber.
+        /// </summary>
+        /// <param name="ICNumber">
+        /// The identifier (ICNumber) used to request user data from the API.
+        /// </param>
+        /// <returns>
+        /// Returns an <see cref="IActionResult"/> containing the deserialized API response data if successful,
+        /// otherwise it throws an exception when the API call fails.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetUserData(string ICNumber)
         {
             using (var client = new HttpClient())
             {
-                //client.BaseAddress = new Uri("https://api.postalpincode.in/");
+                // API base address (currently set to localhost; can be changed to production URL)
+                // client.BaseAddress = new Uri("https://api.postalpincode.in/");
                 client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/Get/");
-                //using (HttpResponseMessage response = await client.GetAsync("ICNumber/" + ICNumber))
+
+                // Perform GET request by appending ICNumber to the base URL
                 using (HttpResponseMessage response = await client.GetAsync(ICNumber))
                 {
+                    // Read response content synchronously as string
                     var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                    // Ensure status code indicates success (throws otherwise)
                     response.EnsureSuccessStatusCode();
+
+                    // Deserialize response content into a dynamic object (no type specified)
                     var responseData = JsonConvert.DeserializeObject(responseContent);
+
+                    // Return successful result with API response
                     return Ok(responseData);
                 }
             }
         }
+
 
         #endregion
 
