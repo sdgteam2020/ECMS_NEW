@@ -3869,12 +3869,20 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Fetches all lost card records based on DataTables request parameters.
+        /// This endpoint is called via AJAX to populate the lost card DataTable.
+        /// </summary>
+        /// <param name="dTO">DataTables request object containing paging, sorting, and filtering info.</param>
+        /// <returns>JSON result containing the list of lost card records.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetAllLost(DTODataTablesRequest dTO)
         {
+            // Call the business layer to get all lost card records and return as JSON
             return Json(await _lostCardBL.GetAllLost(dTO));
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
