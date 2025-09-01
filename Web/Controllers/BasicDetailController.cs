@@ -5257,11 +5257,20 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves all destruction card records based on the provided DataTables request parameters.
+        /// </summary>
+        /// <param name="dTO">The DataTables request object containing paging, sorting, and filtering info.</param>
+        /// <returns>
+        /// Returns a JSON result containing the destruction card records.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetAllDestruction(DTODataTablesRequest dTO)
         {
+            // Call the business layer to fetch all destruction card records and return as JSON
             return Json(await _destructionCardBL.GetAllDestruction(dTO));
         }
+
 
         [HttpPost]
         public async Task<IActionResult> DestructionDataExport([FromBody] DTOHotlistCardsExportRequest req)
