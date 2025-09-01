@@ -14,16 +14,30 @@ using Web.WebHelpers;
 
 namespace Web.Controllers
 {
+    /// <summary>
+    /// This controller manages user profile operations such as viewing and updating profiles, mapping units, and deregistering user IDs.
+    /// And it interacts with business logic layers to perform these operations.
+    /// And it ensures that only authorized users can access its actions.
+    /// </summary>
     [Authorize]
     public class UserProfileController : Controller
     {
-        private readonly IUserProfileBL _userProfileBL;
-        private readonly IUserProfileMappingBL _userProfileMappingBL;
-        private readonly IDomainMapBL _iDomainMapBL;
-        private readonly ITrnMappingUnMappingLogBL _iTrnMappingUnMappingLogBL;
-        private readonly ILogger<UserProfileController> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly IUserProfileBL _userProfileBL;// Business logic layer for user profile operations
+        private readonly IUserProfileMappingBL _userProfileMappingBL;// Business logic layer for user profile mapping operations
+        private readonly IDomainMapBL _iDomainMapBL;// Business logic layer for domain mapping operations
+        private readonly ITrnMappingUnMappingLogBL _iTrnMappingUnMappingLogBL;// Business logic layer for transaction mapping and unmapping log operations
+        private readonly ILogger<UserProfileController> _logger;// Logger for logging information and errors
+        private readonly IConfiguration _configuration;// Configuration settings
 
+        /// <summary>
+        /// This constructor initializes the UserProfileController with necessary dependencies
+        /// </summary>
+        /// <param name="userProfileBL"></param>
+        /// <param name="logger"></param>
+        /// <param name="userProfileMappingBL"></param>
+        /// <param name="domainMapBL"></param>
+        /// <param name="trnMappingUnMappingLogBL"></param>
+        /// <param name="configuration"></param>
         public UserProfileController(IUserProfileBL userProfileBL, ILogger<UserProfileController> logger, IUserProfileMappingBL userProfileMappingBL, IDomainMapBL domainMapBL,ITrnMappingUnMappingLogBL trnMappingUnMappingLogBL, IConfiguration configuration)
         {
             _userProfileBL=userProfileBL;
@@ -33,32 +47,67 @@ namespace Web.Controllers
             _logger = logger;
             _configuration = configuration;
         }
+        /// <summary>
+        /// This method retrieves the role of the currently logged-in user from the session.
+        /// It checks if the session contains a valid "Token" and retrieves the user's role from it.
+        /// If the token is not found, it returns an empty string.
+        /// </summary>
+        /// <returns>
+        /// A string representing the role of the user, or an empty string if no session is found.
+        /// </returns>
         private string GetSessionValue()
         {
             DtoSession? dtoSession = new DtoSession();
+
+            // Check if session contains a valid token
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
+                // Retrieve the session object
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
             }
+
+            // Return the role of the user from the session, or an empty string if session is not found
             string role = dtoSession != null ? dtoSession.RoleName : "";
             return role;
         }
+
+        /// <summary>
+        /// This action method is responsible for deregistering a user by removing their mapping from the domain.
+        /// It updates the "TrnDomainMapping" table by setting the "UserId" field to null and logs the action in the "TrnMappingUnMapping_Log" table.
+        /// </summary>
+        /// <returns>
+        /// Returns a Json response indicating whether the deregistration was successful or not.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> DeRegisterUserId()
         {
+            // Get the domain ID of the currently logged-in user
             int DomainId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Get the current time in IST to update the last modified time
             DateTime UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
             DtoSession? dtoSession = new DtoSession();
+
+            // Check if the session contains a valid token
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
+                // Retrieve the session object
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
                 if (dtoSession != null)
                 {
+                    // Get the domain mapping based on the session's domain mapping ID
                     TrnDomainMapping trnDomainMapping = await _iDomainMapBL.Get(dtoSession.TrnDomainMappingId);
+
+                    // Deregister the user by setting the UserId to null
                     trnDomainMapping.UserId = null;
                     trnDomainMapping.UpdatedOn = UpdatedOn;
+
+                    // Update the domain mapping in the database
                     await _iDomainMapBL.Update(trnDomainMapping);
 
+                    // Log the deregistration action
                     var mapping_Log = new TrnMappingUnMapping_Log()
                     {
                         TrnMappUnMapLogId = 0,
@@ -69,27 +118,44 @@ namespace Web.Controllers
                         Updatedby = DomainId,
                         UpdatedOn = UpdatedOn,
                     };
+
+                    // Add the log entry to the database
                     await _iTrnMappingUnMappingLogBL.Add(mapping_Log);
 
                     return Json(true);
                 }
                 else
                 {
+                    // If no session data is found, return failure
                     return Json(false);
                 }
             }
             else
             {
+                // If session is not valid, return failure
                 return Json(false);
             }
         }
+
+        /// <summary>
+        /// This action method is used to display the user's profile information.
+        /// It retrieves the user's role from the session and sets it in the ViewBag for display in the view.
+        /// </summary>
+        /// <returns>
+        /// Returns the Profile view with the user's role set in the ViewBag.
+        /// </returns>
         public IActionResult Profile()
         {
+            // Get the role of the user from the session
             string role = GetSessionValue();
 
+            // Set the role in the ViewBag to make it accessible in the view
             ViewBag.Role = role;
+
+            // Return the Profile view
             return View();
         }
+
         public async Task<IActionResult> SaveUserProfile(MUserProfile dTO)
         {
             try
