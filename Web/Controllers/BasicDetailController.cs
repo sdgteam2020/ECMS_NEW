@@ -4655,10 +4655,17 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves remarks based on the type ID provided in the request.
+        /// </summary>
+        /// <param name="Data">The DTO containing the TypeId for which remarks are to be fetched.</param>
+        /// <returns>Returns a JSON result containing the list of remarks.</returns>
         public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
         {
+            // Call the master business layer to get remarks by TypeId
             return Json(await _IMasterBL.GetRemarksByTypeId(Data));
         }
+
 
         public async Task<IActionResult> CreateCSV(DTOCSVExportRequest model)
         {
