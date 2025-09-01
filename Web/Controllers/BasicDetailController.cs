@@ -2752,16 +2752,18 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Exports data based on the provided request and generates corresponding CSV and JSON files.
+        /// Handles encryption of images/signatures and optionally encrypts and zips the final export folder.
+        /// </summary>
+        /// <param name="Data">DTODataExportRequest object containing export parameters such as DataExportType, public/private keys, etc.</param>
+        /// <returns>Returns a JSON response containing the last folder name of exported data, or an internal server error key in case of failure.</returns>
         [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> DataExport(DTODataExportRequest Data)
         {
             try
             {
-                #region Value
-                //puk = "MIIBCgKCAQEArhSYCF6ie0rkkXe2HSqKXQ/Sa/NwwbXQ/q1sEEL2eWGnpCa0+49DtRWtybLfK6A51Cj1TX2HnOGuPROQ46DOPI6giwDXnIimHeHAMCd4GqFuDAlDytFNls4XHCMxt1Ql2nVWVxBc2DSTGB35H+eT06rgL+j6ra0iaorAnghUzgIsgH8uLoXX9WqQZXI3rZcH6483ymh0fs/6hS0L5D/pNSaAIuMse3Jg6vcv5z/M7ZzTfiKHO0XkZE/qkm6hIR8uHi4jJwoCdHJ4Fc0wZ+ekd3h/Z2nNXbim07jX6ZcoKL5udYf5u0iFqplg6ao+qssiHF4RMCeDh1vBU5vkSpyUEQIDAQAB";
-                //prK = "MIIEpgIBAAKCAQEArhSYCF6ie0rkkXe2HSqKXQ/Sa/NwwbXQ/q1sEEL2eWGnpCa0+49DtRWtybLfK6A51Cj1TX2HnOGuPROQ46DOPI6giwDXnIimHeHAMCd4GqFuDAlDytFNls4XHCMxt1Ql2nVWVxBc2DSTGB35H+eT06rgL+j6ra0iaorAnghUzgIsgH8uLoXX9WqQZXI3rZcH6483ymh0fs/6hS0L5D/pNSaAIuMse3Jg6vcv5z/M7ZzTfiKHO0XkZE/qkm6hIR8uHi4jJwoCdHJ4Fc0wZ+ekd3h/Z2nNXbim07jX6ZcoKL5udYf5u0iFqplg6ao+qssiHF4RMCeDh1vBU5vkSpyUEQIDAQABAoIBAQCDDhgDPRPAFHsNlP1y6cLvGulEwiqiezoTcgZIG9GpQj7OUyGvvYSwwNhsYBCprF+8/PToWNgO4MynSKKs7DQ33Py6iXDJdQrytjFVT3GZQu0xfIwgFgD+xrsZQNm99kjlNa9BrpznXHVdE7upLFPbZ+qNxy1qMU0Wvs0SbJ1D1ZruXtbRqbOKzryZKa5NpboDBXIPw/o9RZS8eTFVl1SZC6asrokEepVWUsMwg/yORvKf/p/cCZBjbKQ+oclsT5ljht5j53YuYlixIYJNghmniMMEWwuyfeKZ5swL0HbGTJvkrz55mWKP7NtWGIIUzhMltPef6LNcjeMw/SOvTghNAoGBAMmSwbWRmJfXzAuq/UnnUoi8zpJuoWHh8fww0w0/bOuuVGkk/0Z+LXaWOeSRFjrwT1UU+uSW5Lj0bTRJHeGCxwaA8d2CJMUlPCBx6xukFDyaCZavtwxUMC5hOLp7DvCWyMZqQP5UAI5ukMYgljE9rvTfpXQBp04QH3xYCjXiUPffAoGBAN0VdxY+uvd7roiW1JamrzeyDCkIlWGriUd+WoO6KVKGM7Gi1E7oZcaSW9BC/qutRBuuuOFfu3btC3BlBbieXXAztAvEPD8e/JvE5FSpkcY8rELlC9Y0M3hxdJoMWH/tIwJIVKsxnGzCfRemMjvLiAGc1YSWnl5lslpQSrlJG7IPAoGBAMCXmL87ijliNRHc4L7w5vnAs/pS+5zDPerAV5ZryEzytrHzaHhY7GVGqa/KNBxCKPpY3lL0HTreR0zSo1spEbIUF4OV6j33EpjJX2J8hd1VK94uq017TsGxoHsEQsT6vIBfWxPk/NcZqveygO4xSm2rFbFeNxUt8HdkwvSy9LuvAoGBAL/W9HMVE9/ULurPFsFy+e/2S57/l8AcvQ6QkbJkQ58cXJbzmA6wkj/wmELrH1mRC9yJjFvkWiMkJhztTD2bDbFi7ASZzz1mggQYoZjlW10NIN0bK15ABbmpmWhi9hhriUldwjqa3gVx7mIrEMPaJLZhhNV8bQe0b0L3ESAeVC35AoGBAIFUQ9VziGZ2UMrDxMPU2AoMqfJe3X82CcUu/WS3KntAObSlSA3Od2Ow8gHs6KtVxMYLND9nHJ+WXMXASbv/ou1E/h8lRvg7OjFEnscgz8w5Kvf5egIoYFoMAg7TA8e/8mZ8NIli88T2/vvMZHhUSrRm43cssViI1kLFXfywzzOX";
-                #endregion
-
+                // Retrieve the encryption key record from the database
                 var keyRecord = await encryptionSettingBL.Get(1);
                 if (keyRecord != null)
                 {
@@ -2770,9 +2772,11 @@ namespace Web.Controllers
                 }
                 else
                 {
+                    // Throw exception if encryption keys are not found
                     throw new InvalidOperationException("Encryption key record not found.");
                 }
 
+                // Get application forward condition configuration from appsettings
                 DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
                 {
                     MPRSO = new MPRSO(),
@@ -2780,54 +2784,68 @@ namespace Web.Controllers
                     MP6A = new MP6A()
                 };
 
+                // Validate critical fields in configuration
                 if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
                     dTOApplFwdCondition.MPRSO.RecordOfficeId == 0 || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) ||
                     string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) || dTOApplFwdCondition.MP6F.RecordOfficeId == 0 ||
                     string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name) || dTOApplFwdCondition.MP6A.RecordOfficeId == 0 || dTOApplFwdCondition.MP6A.RankOrderby == 0)
                 {
+                    // Return internal server error if configuration is invalid
                     return Json(KeyConstants.InternalServerError);
                 }
 
+                // Fetch basic details for requested data export
                 List<DTODataExportsResponse> retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data, dTOApplFwdCondition);
                 if (retdata.Count() > 0)
                 {
+                    // Retrieve session object
                     DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                    // Create folder for export with unique random name
                     string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell"), dtoSession.DoaminId));
                     string lastFolderName = new DirectoryInfo(sourceFolderPhotoPhy).Name;
+
+                    // Initialize variables for processing record office-wise export
                     int recoff = 0;
-                    List<DTODataExportsResponse> lst = new List<DTODataExportsResponse>();
-                    List<DTODataExportsResponse> csvlst = new List<DTODataExportsResponse>();
+                    List<DTODataExportsResponse> lst = new List<DTODataExportsResponse>(); // Temp list for JSON/CSV per record office
+                    List<DTODataExportsResponse> csvlst = new List<DTODataExportsResponse>(); // List for combined CSV
                     string recofffolder = "";
                     string recoffphotos = "";
                     string recoffsing = "";
                     int count = 0;
                     string arryRequestId = "";
 
+                    // Process each record for export
                     foreach (var data in retdata)
                     {
                         count++;
+
+                        // If moving to a new RecordOffice, finalize previous folder
                         if (recoff != data.RecordOfficeId)
                         {
                             if (recoff != 0)
                             {
+                                // Serialize and save JSON for previous record office
                                 var jsonString = JsonConvert.SerializeObject(lst);
                                 var jsonde = JsonConvert.DeserializeObject(jsonString);
                                 System.IO.File.WriteAllText(recofffolder + "/Data.json", jsonString);
 
+                                // Generate CSV for previous record office
                                 CsvService csvService = new CsvService();
                                 string csvData = csvService.GenerateCsv(lst);
                                 System.IO.File.WriteAllText(recofffolder + "/Data.csv", csvData);
                             }
 
+                            // Clear temp list for new record office
                             lst.Clear();
+
+                            // Create new folders for photos and signatures for the new record office
                             recofffolder = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice));
                             recoffphotos = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Photos/"));
                             recoffsing = Convert.ToString(CreateFolder(sourceFolderPhotoPhy + "/" + data.RecordOffice + "/Signature"));
-
                         }
 
-                        //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo") + "/" + data.PhotoImagePath, recoffphotos + "/" + data.ServiceNo + ".png", true);
-                        //System.IO.File.Copy(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature") + "/" + data.SignatureImagePath, recoffsing + "/" + data.ServiceNo + ".png", true);
+                        // Determine file extensions after removing ".enc" suffix
                         string temp = data.PhotoImagePath.Replace(".enc", string.Empty);
                         string[] parts = temp.Split('.');
                         string extenstionImage = parts[parts.Length - 1];
@@ -2836,12 +2854,18 @@ namespace Web.Controllers
                         parts = temp.Split('.');
                         string extenstionSign = parts[parts.Length - 1];
 
+                        // Decrypt photo and signature images to respective folders
                         await imageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", data.PhotoImagePath), recoffphotos + "/" + data.ServiceNo + "." + extenstionImage);
                         await imageEncryptAndDecrypt.DecryptImageFile(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", data.SignatureImagePath), recoffsing + "/" + data.ServiceNo + "." + extenstionSign);
 
+                        // Add record to temp lists
                         lst.Add(data);
                         csvlst.Add(data);
+
+                        // Update current RecordOfficeId
                         recoff = data.RecordOfficeId;
+
+                        // If last record, finalize JSON and CSV for the last record office
                         if (count == retdata.Count())
                         {
                             var jsonString = JsonConvert.SerializeObject(lst);
@@ -2851,14 +2875,16 @@ namespace Web.Controllers
                             CsvService csvService = new CsvService();
                             string csvData = csvService.GenerateCsv(lst);
                             System.IO.File.WriteAllText(recofffolder + "/Data.csv", csvData);
-
                         }
+
+                        // Build comma-separated request IDs
                         if (count == 1)
                             arryRequestId = data.ApplId + "";
                         else
                             arryRequestId = arryRequestId + "," + data.ApplId;
-
                     }
+
+                    // Generate combined CSV for all records
                     if (count != 0 && count == retdata.Count())
                     {
                         CsvService csvService = new CsvService();
@@ -2866,27 +2892,29 @@ namespace Web.Controllers
                         System.IO.File.WriteAllText(sourceFolderPhotoPhy + "/" + lastFolderName + ".csv", csvData);
                     }
 
-                    //CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
-
+                    // Optionally encrypt and zip the export folder based on DataExportType
                     if (Data.DataExportType == 1)
                     {
                         string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp");
-                        // Check if directory exists
+
+                        // Ensure directory exists
                         if (!Directory.Exists(sourceFolder))
                         {
-                            // If directory does not exist, create it
                             Directory.CreateDirectory(sourceFolder);
                         }
 
                         string tempZipFilePath = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell", "Temp"));
 
-                        ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip", tempZipFilePath, Data.publicKey); // Encrypt and zip folder
+                        // Encrypt and zip folder using public key
+                        ZipEncrypt.EncryptAndZip(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip", tempZipFilePath, Data.publicKey);
                     }
                     else
                     {
+                        // Create zip without encryption
                         CreateZipFromFolder(sourceFolderPhotoPhy, sourceFolderPhotoPhy + ".zip");
                     }
 
+                    // Log export in database
                     var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     DTODataExported dTODataExported = new DTODataExported();
                     dTODataExported.AspNetUsersId = userId;
@@ -2897,10 +2925,12 @@ namespace Web.Controllers
                     dTODataExported.RequestId = arryRequestId;
                     await _iTrnLoginLogBL.AddDataExport(dTODataExported);
 
+                    // Return last folder name to caller
                     return Json(lastFolderName);
                 }
                 else
                 {
+                    // Return internal server error if no data found
                     return Json(KeyConstants.InternalServerError);
                 }
             }
@@ -2910,6 +2940,9 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
+
+
 
         public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
         {
