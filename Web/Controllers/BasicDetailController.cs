@@ -5244,10 +5244,18 @@ namespace Web.Controllers
         #endregion ICard Printing
 
         #region DestructionCard
+        /// <summary>
+        /// Displays the Destruction Card view.
+        /// </summary>
+        /// <returns>
+        /// Returns the Destruction Card view to the client.
+        /// </returns>
         public async Task<ViewResult> DestructionCardAsync()
         {
+            // Simply return the view associated with Destruction Card
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetAllDestruction(DTODataTablesRequest dTO)
