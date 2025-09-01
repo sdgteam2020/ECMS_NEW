@@ -5591,29 +5591,43 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles the dispatch of cards based on user role and session data.
+        /// This method validates the dispatch request, generates CSV with remarks,
+        /// uploads valid records, and returns summary information.
+        /// </summary>
+        /// <param name="dTO">The DTO containing dispatch request data from the form.</param>
+        /// <returns>
+        /// JSON result containing dispatch summary, file information, or error messages.
+        /// </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<ActionResult> DispatchOut([FromForm] DTODispatchOutRequest dTO)
-        {           
+        {
+            // Retrieve temporary session object for DispatchLot
             DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
+
             if (dTOTempSession1 != null)
             {
                 DtoSession? dtoSession = new DtoSession();
                 DTOGenericResponse<DTOCardDispatchCheckResponse> response = new DTOGenericResponse<DTOCardDispatchCheckResponse>();
                 DTOCardDispatchCheckResponse ret = new DTOCardDispatchCheckResponse();
+
+                // Get the main user session token if available
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
                 }
 
                 if (dtoSession != null)
                 {
+                    // Get the current user's ID from claims
                     int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
                     byte ClaimValue = 0;
 
+                    // Set timestamps and metadata for the dispatch
                     dTO.OutDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                     dTO.FromAspNetUsersId = AspNetUsersId;
                     dTO.FromUserId = dtoSession.UserId;
@@ -5625,8 +5639,10 @@ namespace Web.Controllers
 
                     if (ModelState.IsValid)
                     {
-                        // UserManager service GetClaimsAsync method gets all the current claims of the user
+                        // Get all claims of the current user
                         var UserClaims = await userManager.GetClaimsAsync(user);
+
+                        // Determine claim type and set corresponding step value
                         if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                         {
                             dTO.Step = 1;
@@ -5644,21 +5660,23 @@ namespace Web.Controllers
                         }
                         else
                         {
+                            // Unauthorized user
                             response.Result = false;
                             response.Message = "Unauthorized User.";
                             response.Value = ret;
                             return Ok(response);
                         }
 
-
-
+                        // Generate a timestamped CSV file name
                         string fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
                         try
                         {
                             var records = new List<DTOCardDispatchCheckRequest>();
 
+                            // Validate dispatch data based on claim value and session data
                             var validateResult = await basicDetailBL.ValidateCardDispatchData(dTOTempSession1.RequestIds, ClaimValue, dTO);
 
+                            // Set summary statistics
                             ret.TotalRecords = validateResult.Count();
                             ret.ValidRecords = validateResult.Where(x => x.IsValid).Count();
                             ret.DbInValidRecords = validateResult.Where(x => x.Status == "DbInvalid").Count();
@@ -5669,6 +5687,7 @@ namespace Web.Controllers
                             if (ret.ValidRecords > 0)
                             {
                                 #region Upload File With Remarks
+                                // Define folder to save CSV files with remarks
                                 var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CardDispatchCSVs", "CSVWithRemarks");
                                 if (!Directory.Exists(uploadsFolder))
                                 {
@@ -5676,6 +5695,7 @@ namespace Web.Controllers
                                 }
                                 var filePath = Path.Combine(uploadsFolder, fileName);
 
+                                // Write validated records to CSV
                                 using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
                                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                                 {
@@ -5694,10 +5714,14 @@ namespace Web.Controllers
                                     }
                                 }
                                 #endregion Upload User File
+
                                 dTO.UploadFilePath = fileName;
                                 ret.FileName = fileName;
+
                                 DTOGenericResponse<string> response1 = new DTOGenericResponse<string>();
                                 var ValidRecords = validateResult.Where(x => x.IsValid).ToList();
+
+                                // Upload valid records to database
                                 response1 = await basicDetailBL.CardDispatchCSVUpload(ValidRecords, dTO);
                                 if (response1.Result == true)
                                 {
@@ -5705,6 +5729,8 @@ namespace Web.Controllers
                                     response.Result = response1.Result;
                                     response.Message = response1.Message;
                                     response.Value = ret;
+
+                                    // Remove temporary session
                                     HttpContext.Session.Remove("DispatchLot");
                                     return Ok(response);
                                 }
@@ -5718,6 +5744,7 @@ namespace Web.Controllers
                             }
                             else
                             {
+                                // No valid records found
                                 response.Result = false;
                                 response.Message = "There are no valid records!";
                                 response.Value = ret;
@@ -5731,15 +5758,15 @@ namespace Web.Controllers
                         }
                     Returnstm:
                         return Json(response);
-
                     }
                     else
                     {
-                        //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                        // Gather ModelState validation errors
                         var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                        .SelectMany(x => x.Value!.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
+                            .SelectMany(x => x.Value!.Errors)
+                            .Select(e => e.ErrorMessage)
+                            .ToList();
+
                         if (errors.Any())
                         {
                             response.Message = string.Join("; ", errors); // Concatenate all error messages
@@ -5750,6 +5777,7 @@ namespace Web.Controllers
                 }
                 else
                 {
+                    // Session expired or token missing
                     response.Result = false;
                     response.Message = "Session Timeout.";
                     response.Value = ret;
@@ -5758,11 +5786,13 @@ namespace Web.Controllers
             }
             else
             {
+                // DispatchLot session is invalid
                 TempData["error"] = "Invalid Session / Session Timeout.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
         public async Task<IActionResult> DispatchCard()
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
