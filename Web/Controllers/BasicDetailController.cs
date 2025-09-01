@@ -4359,95 +4359,63 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves I-Card request status based on the provided IC number and card type.
+        /// </summary>
+        /// <param name="ICNumber">The service number of the user.</param>
+        /// <param name="lCardType">The type of card requested (1 = First time, 5 = Lost card, 4 = Reissue, etc.).</param>
+        /// <returns>Returns a JSON response indicating whether the I-Card request is pending or can be placed.</returns>
         [HttpPost]
         public async Task<IActionResult> GetData(string ICNumber, byte lCardType)
         {
-            #region Old Code
-            //DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-            //if (ICNumber != null)
-            //{
-            //    BasicDetail? basicDetail = await basicDetailBL.FindServiceNo(ICNumber);
-            //    if (basicDetail != null)
-            //    {
-            //        bool result = await iTrnICardRequestBL.GetRequestPending(basicDetail.BasicDetailId);
-            //        if (result)
-            //        {
-
-            //            dTOApiDataResponse.Status = false;
-            //            dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
-            //            return Ok(dTOApiDataResponse);
-            //        }
-            //        else
-            //        {
-            //            if (lCardType == 1)
-            //            {
-            //                dTOApiDataResponse.Message = "You didn't Select First time Smart card";
-            //                dTOApiDataResponse.Status = false;
-            //            }
-            //            else
-            //            {
-            //                dTOApiDataResponse.Status = true;
-            //            }
-
-            //            return Ok(dTOApiDataResponse);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (lCardType == 1 || lCardType == 4)
-            //        {
-            //            dTOApiDataResponse.Status = true;
-            //        }
-            //        else
-            //        {
-            //            dTOApiDataResponse.Message = "Please Select First time Smart card";
-            //            dTOApiDataResponse.Status = false;
-            //        }
-            //        return Ok(dTOApiDataResponse);
-            //    }
-            //}
-            //else
-            //{
-            //    dTOApiDataResponse.Status = false;
-            //    dTOApiDataResponse.Message = "Service no required.";
-            //    return Ok(dTOApiDataResponse);
-            //}
-            #endregion
+            // Create a new DTO object to hold the response data
             DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
+
+            // Check if the ICNumber is provided
             if (ICNumber != null)
             {
+                // Get the maximum BasicDetailId for the given ICNumber
                 int? BasicDetailId = await basicDetailBL.MaxBasicDetailId(ICNumber);
+
+                // If a BasicDetailId exists
                 if (BasicDetailId != null)
                 {
+                    // Check if there is already a pending I-Card request
                     bool result = await iTrnICardRequestBL.GetRequestPending((int)BasicDetailId);
                     if (result)
                     {
+                        // I-Card request is still under process
                         dTOApiDataResponse.Status = false;
                         dTOApiDataResponse.Message = "Your I-Card is under process. Please wait.";
                         return Ok(dTOApiDataResponse);
                     }
                     else
                     {
+                        // Handle first-time smart card request
                         if (lCardType == 1)
                         {
                             dTOApiDataResponse.Message = "You didn't Select First time Smart card";
                             dTOApiDataResponse.Status = false;
                         }
+                        // Handle lost card scenario
                         else if (lCardType == 5)
                         {
                             bool check = await _lostCardBL.CheckServiceNoRequestInLost(ICNumber);
                             if (check)
                             {
+                                // Loss reported, can proceed with I-Card request
                                 dTOApiDataResponse.Status = true;
                             }
                             else
                             {
+                                // Loss not reported yet
                                 dTOApiDataResponse.Message = "First, report the loss and then place an I-Card request.";
                                 dTOApiDataResponse.Status = false;
                             }
                         }
                         else
                         {
+                            // Other card types can proceed
                             dTOApiDataResponse.Status = true;
                         }
 
@@ -4456,12 +4424,15 @@ namespace Web.Controllers
                 }
                 else
                 {
+                    // No BasicDetailId found
                     if (lCardType == 1 || lCardType == 4)
                     {
+                        // First-time or reissue card request allowed
                         dTOApiDataResponse.Status = true;
                     }
                     else
                     {
+                        // Other card types require first-time smart card selection
                         dTOApiDataResponse.Message = "Please Select First time Smart card";
                         dTOApiDataResponse.Status = false;
                     }
@@ -4470,11 +4441,13 @@ namespace Web.Controllers
             }
             else
             {
+                // ICNumber not provided
                 dTOApiDataResponse.Status = false;
                 dTOApiDataResponse.Message = "Service no required.";
                 return Ok(dTOApiDataResponse);
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> SearchAllServiceNo([FromForm] DTOSearchArmyNoRequest dto)
