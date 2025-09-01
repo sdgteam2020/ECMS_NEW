@@ -4602,10 +4602,17 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves the movement history of an I-Card for a specific request.
+        /// </summary>
+        /// <param name="RequestId">The request identifier for which the card movement history is fetched.</param>
+        /// <returns>Returns a JSON object containing the card movement history details.</returns>
         public async Task<IActionResult> GetCardMovementHistory(int RequestId)
         {
+            // Fetch the card movement history from the business layer and return as JSON
             return Json(await basicDetailBL.GetCardMovementHistory(RequestId));
         }
+
 
         [HttpPost]
         public async Task<JsonResult> GetRegimentalListByArmedId(byte ArmedId)
