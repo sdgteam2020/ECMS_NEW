@@ -3946,10 +3946,16 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Returns the Lost Card Request view for the user to submit new requests.
+        /// </summary>
+        /// <returns>The Lost Card Request view.</returns>
         public async Task<ActionResult> LostCardRequestAsync()
         {
+            // Simply returns the LostCardRequest view
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
