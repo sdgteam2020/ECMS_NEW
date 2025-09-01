@@ -4630,19 +4630,30 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves the list of Record Offices (RO) based on the given armed forces ID.
+        /// </summary>
+        /// <param name="ArmedId">The ID of the armed force for which record offices are fetched.</param>
+        /// <returns>Returns an HTTP 200 response with the list of record offices in JSON format, or null if none found.</returns>
         [HttpPost]
         public async Task<IActionResult> GetROListByArmedId(byte ArmedId)
         {
+            // Call the business layer to fetch record office list for the given ArmedId
             List<MRecordOffice>? mRecordOffices = await basicDetailBL.GetROListByArmedId(ArmedId);
+
+            // Check if any record offices were retrieved
             if (mRecordOffices != null)
             {
+                // Return the list as HTTP 200 OK with JSON
                 return Ok(mRecordOffices);
             }
             else
             {
+                // Return null if no record offices found
                 return Ok(null);
             }
         }
+
 
         public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
         {
