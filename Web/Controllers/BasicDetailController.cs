@@ -6280,13 +6280,25 @@ namespace Web.Controllers
             return Json(response);
         }
 
+        /// <summary>
+        /// Exports the Dispatch Card data to a CSV file for download.
+        /// The CSV file is created under the "WriteReadData/Dispatchexports" folder in wwwroot.
+        /// </summary>
+        /// <param name="Data">The request object containing filters and parameters for export.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the file name of the generated CSV.</returns>
         [HttpPost]
         public async Task<IActionResult> ExportCsvForDispatch(DTOExportDispatch Data)
         {
+            // Get the current user's ID from the authentication claims
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Retrieve the user object from the UserManager service
             var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+
+            // Get all claims associated with the current user
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Determine the claim value based on user permissions
             byte ClaimValue;
             if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
             {
@@ -6304,39 +6316,48 @@ namespace Web.Controllers
             {
                 ClaimValue = 0;
             }
+
+            // Create a unique file name for the CSV
             string fileName = $"UploadForDispatch_{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
+
+            // Fetch the data to export from the business layer
             var ret = await basicDetailBL.GetDispatchCardStatusListForExport(ClaimValue, Data);
+
+            // Initialize a StringBuilder to construct the CSV content
             var csv = new StringBuilder();
 
-            // Header
+            // Add CSV header row
             csv.AppendLine("Name,ServiceNo,ChipNo,ApplId");
 
-            // Data rows
+            // Add CSV data rows
             foreach (var item in ret.data)
             {
+                // Combine rank and name, and wrap other fields in quotes
                 csv.AppendLine($"{item.RankName + " " + item.NameAsPerRecord},\"{item.ServiceNo}\",\"{item.ChipNo}\",\"{item.RequestId}\"");
             }
 
-            // Convert to byte array
+            // Convert the CSV string into a byte array for writing to disk
             var bytes = Encoding.UTF8.GetBytes(csv.ToString());
 
-            // var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Dispatchexports");
+            // Define the folder path to save the CSV
             var folderPath = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Dispatchexports");
-            // Create folder if not exists
+
+            // Create the folder if it does not exist
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
 
+            // Combine folder path and file name to get full file path
             var fullPath = Path.Combine(folderPath, fileName);
 
-            // Write the bytes to file
+            // Write the CSV byte array to the file
             System.IO.File.WriteAllBytes(fullPath, bytes);
+
+            // Return the generated file name as JSON
             return Json(fileName);
-
-
-
         }
+
         #endregion
 
         #region Set Session and Get Session
