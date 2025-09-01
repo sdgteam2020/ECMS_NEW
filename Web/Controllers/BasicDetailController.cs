@@ -5440,13 +5440,24 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves dispatch-to data based on category and regiment ID.
+        /// </summary>
+        /// <param name="CategeryId">The category ID for the dispatch.</param>
+        /// <param name="RecordRegimentId">The regiment ID for the dispatch record.</param>
+        /// <returns>JSON containing a generic response with dispatch-to details.</returns>
         public async Task<IActionResult> GetDispatchToData(byte CategeryId, byte RecordRegimentId)
         {
+            // Initialize the generic response object
             DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
 
+            // Call the business layer to get dispatch-to details
             response = await basicDetailBL.GetDispatchToData(CategeryId, RecordRegimentId);
+
+            // Return the result as HTTP 200 OK with JSON payload
             return Ok(response);
         }
+
 
         public async Task<IActionResult> GetddlRecordRegiment(int ToUnitId)
         {
