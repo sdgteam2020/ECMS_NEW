@@ -3632,11 +3632,22 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves all hotlisted card records based on the DataTables request parameters.
+        /// This method returns data in JSON format suitable for client-side DataTables consumption.
+        /// </summary>
+        /// <param name="dTO">The DataTables request containing paging, filtering, and sorting information.</param>
+        /// <returns>A JSON result containing the filtered, sorted, and paginated list of hotlisted cards.</returns>
         [HttpPost]
         public async Task<IActionResult> GetAllHotlist(DTODataTablesRequest dTO)
         {
-            return Json(await _hotlistCardBL.GetAllHotlist(dTO));
+            // Calls the business layer to get all hotlist records based on the DataTables request
+            var hotlistData = await _hotlistCardBL.GetAllHotlist(dTO);
+
+            // Returns the result as JSON for DataTables on the client side
+            return Json(hotlistData);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> HotlistDataExport([FromBody] DTOHotlistCardsExportRequest req)
