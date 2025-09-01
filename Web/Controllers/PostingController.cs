@@ -237,103 +237,144 @@ namespace Web.Controllers
 
 
 
+        /// <summary>
+        /// This method is responsible for saving or updating posting out records.
+        /// It checks if the posting out record exists and updates it, or adds a new one.
+        /// </summary>
+        /// <param name="dTO">The `TrnPostingOut` object containing the data to be saved or updated.</param>
+        /// <returns>
+        /// Returns a JSON result indicating success or failure of the operation.
+        /// - Returns `KeyConstants.Update` if the record is updated successfully.
+        /// - Returns `KeyConstants.Save` if a new record is created successfully.
+        /// - Returns `KeyConstants.IncorrectData` if the data is incorrect.
+        /// </returns>
         public async Task<IActionResult> SavePoasingOut(TrnPostingOut dTO)
         {
             try
             {
+                // Set default values for the TrnPostingOut object
                 dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                dTO.UpdatedOn = DateTime.Now;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));  // Get the current user ID
+                dTO.UpdatedOn = DateTime.Now;  // Set the updated timestamp
 
+                // Check if the model is valid
                 if (ModelState.IsValid)
                 {
+                    // If the record already exists (Id > 0), update it
                     if (dTO.Id > 0)
                     {
-                        await _iPostingBL.Update(dTO);
-                            return Json(KeyConstants.Update);
+                        await _iPostingBL.Update(dTO);  // Update the existing record
+                        return Json(KeyConstants.Update);  // Return success response for update
                     }
                     else
                     {
-                        //await _iPostingBL.Add(dTO);
-                        //adding and update both done by UpdateForPosting
-                        bool result = await _iPostingBL.UpdateForPosting(dTO);
+                        // If it's a new record, use UpdateForPosting method (this handles both add and update)
+                        bool result = await _iPostingBL.UpdateForPosting(dTO);  // Attempt to add or update the record
                         if (result == true)
                         {
-                            return Json(KeyConstants.Save);
+                            return Json(KeyConstants.Save);  // Return success response for save
                         }
                         else
                         {
-                            return Json(KeyConstants.IncorrectData);
+                            return Json(KeyConstants.IncorrectData);  // Return failure response for incorrect data
                         }
                     }
                 }
                 else
                 {
+                    // If the model state is invalid, return validation errors
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur and return an internal server error response
+                return Json(KeyConstants.InternalServerError);
+            }
         }
 
-
+        /// <summary>
+        /// This method handles saving the dispatch details of a posting out record.
+        /// It checks if the dispatch details already exist; if not, it saves them.
+        /// </summary>
+        /// <param name="dTO">The `DTODispatchDetailsSaveRequest` object containing dispatch details.</param>
+        /// <returns>
+        /// Returns a JSON result indicating success or failure of the operation.
+        /// - Returns `Result = true` and success message if the record is saved.
+        /// - Returns a message indicating if the dispatch details already exist or if there are validation errors.
+        /// </returns>
         public async Task<IActionResult> SavePostingOutDispatchDetails(DTODispatchDetailsSaveRequest dTO)
         {
-            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
+            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();  // Initialize response object
+
             try
             {
+                // Decrypt the encrypted ID (encId) and validate it
                 var encId = _protector.Unprotect(dTO.encId);
                 if (int.TryParse(encId, out int Id))
                 {
                     if (ModelState.IsValid)
                     {
+                        // Fetch the posting out details based on the Id
                         var postingOutDetails = await _iPostingBL.Get(Id);
 
+                        // If dispatch details already exist, return a message
                         if (postingOutDetails.DispatchedOn.HasValue)
                         {
                             dTOResponse.Message = "Dispatch details already exists!";
                         }
                         else
                         {
+                            // If dispatch details do not exist, set them and save the record
                             postingOutDetails.DispatchedOn = dTO.DispatchedOn;
                             postingOutDetails.RefNo = dTO.RefNo;
-                            postingOutDetails.DispatchUpdatedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            postingOutDetails.DispatchUpdatedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));  // Get current user ID
                             postingOutDetails.DispatchUpdatedOn = DateTime.Now;
-                            await _iPostingBL.Update(postingOutDetails);
+                            await _iPostingBL.Update(postingOutDetails);  // Update the record in the database
                             dTOResponse.Result = true;
-                            dTOResponse.Message = "Record Saved!";
+                            dTOResponse.Message = "Record Saved!";  // Success message
                         }
                     }
                     else
                     {
+                        // If validation fails, return all error messages
                         var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
                         .SelectMany(x => x.Value!.Errors)
                         .Select(e => e.ErrorMessage)
                         .ToList();
                         if (errors.Any())
                         {
-                            dTOResponse.Message = string.Join("; ", errors); // Concatenate all error messages
+                            dTOResponse.Message = string.Join("; ", errors);  // Concatenate all error messages
                         }
                     }
                 }
                 else
                 {
+                    // If the encrypted ID is invalid, log an error and return a failure message
                     _logger.LogError(1001, $"Invalid Id -: {dTO.encId}", "Posting->SavePostingOutDispatchDetails");
                     dTOResponse.Message = "Technical Error!";
                 }
             }
             catch (Exception ex)
             {
+                // Handle any exceptions and return an internal server error message
                 _logger.LogError(1001, ex, "Posting->SavePostingOutDispatchDetails");
                 dTOResponse.Message = "Internal Server Error!";
             }
 
-            return Json(dTOResponse);
+            return Json(dTOResponse);  // Return the response
         }
 
+        /// <summary>
+        /// This method returns the application close view.
+        /// </summary>
+        /// <returns>
+        /// Returns the view for application closure.
+        /// </returns>
         public async Task<IActionResult> ApplicationClose()
         {
-            return View();  
+            return View();  // Return the view for closing the application
         }
         public async Task<IActionResult> SaveApplicationClose(TrnApplClose dTO)
         {
