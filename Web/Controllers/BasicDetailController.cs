@@ -4141,11 +4141,17 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves all distributed card records based on the given DataTables request parameters.
+        /// </summary>
+        /// <param name="dTO">The DataTables request object containing paging, sorting, and filter information.</param>
+        /// <returns>A JSON result containing the list of distributed cards.</returns>
         [HttpPost]
         public async Task<IActionResult> GetAllDistribute(DTODataTablesRequest dTO)
         {
             return Json(await _distributeCardBL.GetAllDistribute(dTO));
         }
+
 
         [HttpPost]
         public async Task<IActionResult> DistributeDataExport([FromBody] DTOHotlistCardsExportRequest req)
