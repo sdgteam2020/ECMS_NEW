@@ -4449,28 +4449,38 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Searches all service numbers based on the provided criteria in DTOSearchArmyNoRequest.
+        /// </summary>
+        /// <param name="dto">The search criteria including TypeId and optional filters.</param>
+        /// <returns>Returns an Ok response with the search results including encrypted images or a BadRequest if invalid.</returns>
         [HttpPost]
         public async Task<IActionResult> SearchAllServiceNo([FromForm] DTOSearchArmyNoRequest dto)
         {
             try
             {
+                // Set the current logged-in user's ID
                 dto.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dto.MapUnitId = 0;
 
+                // Retrieve session data
                 DtoSession? dtoSession = new DtoSession();
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
+                    // Deserialize session token to DtoSession object
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
                 }
                 dto.MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
 
+                // Determine claim value based on TypeId and user claims
                 if (dto.TypeId == KeyConstants.FaultyCardRequest)
                 {
                     var user = await userManager.FindByIdAsync(dto.AspNetUsersId.ToString());
 
-                    // UserManager service GetClaimsAsync method gets all the current claims of the user
+                    // Get all claims of the current user
                     var UserClaims = await userManager.GetClaimsAsync(user);
+
+                    // Determine claim type based on user's claims
                     if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                     {
                         dto.Claim = 1;
@@ -4493,13 +4503,13 @@ namespace Web.Controllers
                     dto.Claim = 0;
                 }
 
-
+                // If the model state is valid, proceed with search
                 if (ModelState.IsValid)
                 {
-
                     var Ret = await basicDetailBL.SearchAllServiceNo(dto);
                     if (Ret != null)
                     {
+                        // Encrypt each user's photo and convert it to Base64 for transmission
                         foreach (var item in Ret)
                         {
                             string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
@@ -4511,17 +4521,22 @@ namespace Web.Controllers
                             }
                         }
 
+                        // Return the search results
                         return Ok(Ret);
                     }
                 }
+
+                // Return bad request if model state invalid or no results
                 return BadRequest();
             }
             catch (Exception ex)
             {
+                // Log the exception for debugging and maintenance
                 _logger.LogError(1001, ex, "BasicDetailController=>SearchAllServiceNo.");
                 return BadRequest();
             }
         }
+
         public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
             BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
