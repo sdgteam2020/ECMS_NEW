@@ -5793,33 +5793,53 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Determines the dispatch card view based on the current user's claims.
+        /// Sets a ClaimValue in ViewBag according to the user's permissions.
+        /// </summary>
+        /// <returns>
+        /// Returns the DispatchCard view with the appropriate ClaimValue.
+        /// </returns>
         public async Task<IActionResult> DispatchCard()
         {
+            // Get the current logged-in user's ID from claims
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Fetch the user object from UserManager using the retrieved ID
             var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+
+            // Retrieve all claims associated with the current user
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Check if the user has the "ICard Export Data" claim
             if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
             {
+                // User has export rights; set ClaimValue = 1
                 ViewBag.ClaimValue = 1;
                 return View();
             }
+            // Check if user has both "Dispatch Card" and "Appl Approver" claims
             else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
             {
+                // User is a dispatch card approver; set ClaimValue = 2
                 ViewBag.ClaimValue = 2;
                 return View();
             }
+            // Check if user has only "Dispatch Card" claim
             else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
             {
+                // User can dispatch cards but not approve; set ClaimValue = 3
                 ViewBag.ClaimValue = 3;
                 return View();
             }
             else
             {
+                // User has no relevant claims; set ClaimValue = 0
                 ViewBag.ClaimValue = 0;
                 return View();
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
         {
