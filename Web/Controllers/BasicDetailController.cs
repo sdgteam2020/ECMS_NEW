@@ -3649,42 +3649,76 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Exports selected hotlist card data to a CSV file and returns the temporary file name.
+        /// This endpoint accepts a list of request IDs and generates a CSV using CsvHelper.
+        /// </summary>
+        /// <param name="req">DTO containing request IDs for hotlist cards to export.</param>
+        /// <returns>
+        /// JSON containing a DTOCommonSaveResponse with:
+        /// - Result: true if export succeeded, false otherwise.
+        /// - Message: filename of the CSV if successful, or an error message.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> HotlistDataExport([FromBody] DTOHotlistCardsExportRequest req)
         {
+            // Response object to return status and message
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
+
             try
             {
+                // Create a temporary file with .csv extension
                 var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
+
+                // Fetch hotlist card records by request IDs from the business layer
                 var records = await _hotlistCardBL.GetDetailsByRequestIds(req);
+
+                // Using StreamWriter and CsvWriter to write CSV
                 using (var writer = new StreamWriter(tempFileName, false, Encoding.UTF8))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
-                    csv.Context.RegisterClassMap(new CsvClassMap<DTOHotlistCardExportResponse>(true, CsvClassMapTypeEnum.HotlistExport));
+                    // Register a custom CSV mapping class for DTOHotlistCardExportResponse
+                    csv.Context.RegisterClassMap(
+                        new CsvClassMap<DTOHotlistCardExportResponse>(
+                            true,
+                            CsvClassMapTypeEnum.HotlistExport
+                        )
+                    );
+
                     try
                     {
+                        // Write all records to the CSV asynchronously
                         await csv.WriteRecordsAsync(records);
                     }
                     catch (Exception ee)
                     {
+                        // Log any exceptions during CSV writing
                         _logger.LogError(1001, ee, "BasicDetail->HotlistDataExport");
+
                         dTOFaulty.Result = false;
                         dTOFaulty.Message = "Internal Server Error!";
-                        goto ReturnSt;
+                        goto ReturnSt; // Jump to return statement
                     }
                 }
+
+                // Export successful
                 dTOFaulty.Result = true;
-                dTOFaulty.Message = Path.GetFileName(tempFileName);
+                dTOFaulty.Message = Path.GetFileName(tempFileName); // Return filename
             }
             catch (Exception ex)
             {
+                // Log any exceptions during file creation or data fetching
                 _logger.LogError(1001, ex, "BasicDetail->HotlistDataExport");
+
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = "Internal Server Error!";
             }
+
         ReturnSt:
+            // Return JSON response
             return Json(dTOFaulty);
         }
+
 
         [HttpGet]
         public IActionResult DownloadCsv(string fileName, string fileStoreName)
