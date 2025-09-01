@@ -6391,31 +6391,36 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// This method retrieves session data from the current HTTP session. It attempts to fetch a `DTOEncypteDecryptedColumnRequest` 
-        /// object from the session with the key "DataSet". If the data is found, it returns the data along with a success message. 
-        /// If the session data is not found or an error occurs, it returns a failure message and an empty `DTOEncypteDecryptedColumnRequest` object.
+        /// Retrieves session data from the current HTTP session.
+        /// This method attempts to fetch a `DTOEncypteDecryptedColumnRequest` object stored in the session under the key "DataSet".
         /// </summary>
         /// <returns>
-        /// Returns a `DTOGenericResponse<DTOEncypteDecryptedColumnRequest>` containing the result of the session fetch. 
-        /// - `Result` will be `true` if the session data was found and successfully fetched.
-        /// - `Message` provides the status message, either success or error details.
-        /// - `Value` contains the retrieved session data or an empty object if not found.
+        /// Returns a `DTOGenericResponse<DTOEncypteDecryptedColumnRequest>` containing:
+        /// - `Result`: true if session data was successfully found, false otherwise
+        /// - `Message`: provides a success or failure message
+        /// - `Value`: the retrieved session data if available; otherwise, an empty `DTOEncypteDecryptedColumnRequest` object
         /// </returns>
         [HttpPost]
         public ActionResult DataRecForGetSession()
         {
+            // Initialize response object
             var response = new DTOGenericResponse<DTOEncypteDecryptedColumnRequest>();
+
             try
             {
+                // Attempt to retrieve the DTO object from session
                 var dTOEncypte = SessionHeplers.GetObject<DTOEncypteDecryptedColumnRequest>(HttpContext.Session, "DataSet");
+
                 if (dTOEncypte != null)
                 {
+                    // Session data found, return success
                     response.Result = true;
                     response.Message = "Fetch Value";
                     response.Value = dTOEncypte;
                 }
                 else
                 {
+                    // Session data not found, return failure with empty DTO
                     response.Result = false;
                     response.Message = "Session not found.";
                     response.Value = new DTOEncypteDecryptedColumnRequest();
@@ -6423,13 +6428,19 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log any exceptions for debugging
                 _logger.LogError(1001, ex, "BasicDetail->DataRecForGetSession");
+
+                // Return failure response with empty DTO
                 response.Result = false;
                 response.Message = "Session not found.";
                 response.Value = new DTOEncypteDecryptedColumnRequest();
             }
+
+            // Return JSON response
             return Json(response);
         }
+
         #endregion
     }
 }
