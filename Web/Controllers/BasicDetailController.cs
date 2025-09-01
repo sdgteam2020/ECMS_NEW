@@ -5272,42 +5272,64 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Exports destruction card data for the given request IDs into a CSV file.
+        /// </summary>
+        /// <param name="req">DTO containing the request IDs to export.</param>
+        /// <returns>
+        /// Returns a JSON object with the result status and the CSV file name if successful.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> DestructionDataExport([FromBody] DTOHotlistCardsExportRequest req)
         {
+            // Response object to return status and message
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
+                // Create a temporary CSV file path
                 var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
+
+                // Fetch destruction card records based on the provided request IDs
                 var records = await _destructionCardBL.GetDetailsByRequestIds(req);
+
+                // Write the records to CSV file
                 using (var writer = new StreamWriter(tempFileName, false, Encoding.UTF8))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
+                    // Register class map for proper CSV column mapping
                     csv.Context.RegisterClassMap(new CsvClassMap<DTODestructionCardExportResponse>(true, CsvClassMapTypeEnum.HotlistExport));
                     try
                     {
+                        // Write all records asynchronously to CSV
                         await csv.WriteRecordsAsync(records);
                     }
                     catch (Exception ee)
                     {
+                        // Log error and set response in case of CSV writing failure
                         _logger.LogError(1001, ee, "BasicDetail->DestructionDataExport");
                         dTOFaulty.Result = false;
                         dTOFaulty.Message = "Internal Server Error!";
                         goto ReturnSt;
                     }
                 }
+
+                // Set success response with generated file name
                 dTOFaulty.Result = true;
                 dTOFaulty.Message = Path.GetFileName(tempFileName);
             }
             catch (Exception ex)
             {
+                // Log any general exception and set response
                 _logger.LogError(1001, ex, "BasicDetail->DestructionDataExport");
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = "Internal Server Error!";
             }
+
         ReturnSt:
+            // Return the response as JSON
             return Json(dTOFaulty);
         }
+
         public async Task<ActionResult> DestructionCardRequestAsync()
         {
             return View();
