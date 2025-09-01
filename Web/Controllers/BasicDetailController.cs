@@ -3884,43 +3884,67 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Exports lost card data based on the provided request IDs to a CSV file.
+        /// The CSV file is created in the temporary folder and the file name is returned in the JSON response.
+        /// </summary>
+        /// <param name="req">Request object containing the IDs of lost card records to export.</param>
+        /// <returns>JSON response containing the status and temporary CSV file name.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LostDataExport([FromBody] DTOHotlistCardsExportRequest req)
         {
+            // Response object to store result and message
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
+                // Generate temporary CSV file name
                 var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
+
+                // Fetch records from business layer based on request IDs
                 var records = await _lostCardBL.GetDetailsByRequestIds(req);
+
+                // Write records to CSV using CsvHelper
                 using (var writer = new StreamWriter(tempFileName, false, Encoding.UTF8))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
+                    // Register mapping for DTO to CSV columns
                     csv.Context.RegisterClassMap(new CsvClassMap<DTOLostCardExportResponse>(true, CsvClassMapTypeEnum.HotlistExport));
+
                     try
                     {
+                        // Write records asynchronously to the CSV file
                         await csv.WriteRecordsAsync(records);
                     }
                     catch (Exception ee)
                     {
+                        // Log error if writing fails
                         _logger.LogError(1001, ee, "BasicDetail->LostDataExport");
+
                         dTOFaulty.Result = false;
                         dTOFaulty.Message = "Internal Server Error!";
                         goto ReturnSt;
                     }
                 }
+
+                // If CSV creation succeeds
                 dTOFaulty.Result = true;
                 dTOFaulty.Message = Path.GetFileName(tempFileName);
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetail->HotlistDataExport");
+                // Log unexpected errors
+                _logger.LogError(1001, ex, "BasicDetail->LostDataExport");
+
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = "Internal Server Error!";
             }
+
         ReturnSt:
+            // Return the JSON response with result and file name
             return Json(dTOFaulty);
         }
+
 
         public async Task<ActionResult> LostCardRequestAsync()
         {
