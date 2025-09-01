@@ -3108,16 +3108,25 @@ namespace Web.Controllers
 
         #region FaultyCard
 
+        /// <summary>
+        /// Retrieves remarks data for the given comma-separated list of remark IDs.
+        /// </summary>
+        /// <param name="RemarksIds">Comma-separated string of remark IDs (e.g., "1,2,3").</param>
+        /// <returns>
+        /// Returns a <see cref="JsonResult"/> containing the remarks data fetched from the database.
+        /// </returns>
         public async Task<IActionResult> GetRemarksData(string RemarksIds)
         {
-            // Split into string array
+            // Step 1: Split the comma-separated string into a string array
             string[] strArray = RemarksIds.Split(',');
 
-            // Convert to int array
+            // Step 2: Convert the string array to an integer array
             int[] intArray = Array.ConvertAll(strArray, int.Parse);
 
+            // Step 3: Fetch remarks data from the business layer and return as JSON
             return Json(await faultyCardBL.GetRemarksData(intArray));
         }
+
         public async Task<ViewResult> FaultyCardAsync()
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
