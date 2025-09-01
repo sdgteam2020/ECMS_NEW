@@ -4824,18 +4824,31 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Displays the I-Card requests currently on hold for the logged-in user.
+        /// Secured with the "ViewFlaggedICardApplPolicy" authorization policy.
+        /// </summary>
+        /// <returns>Returns the ICardRequestHold view populated with the user's claims.</returns>
         [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
         [HttpGet]
         public async Task<IActionResult> ICardRequestHold()
         {
+            // Retrieve the currently logged-in user's ID from claims
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Fetch the user object using the UserManager service
             var user = await userManager.FindByIdAsync(userId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Retrieve all claims associated with this user
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Store the claims in ViewBag to make them available to the view
             ViewBag.UserClaims = UserClaims;
+
+            // Return the ICardRequestHold view
             return View();
         }
+
 
         [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
         [HttpPost]
