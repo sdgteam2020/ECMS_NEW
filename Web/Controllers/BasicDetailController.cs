@@ -4300,26 +4300,38 @@ namespace Web.Controllers
 
         #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
 
+        /// <summary>
+        /// Checks whether the provided Army Number exists or is valid.
+        /// </summary>
+        /// <param name="ArmyNo">The Army Number to validate.</param>
+        /// <returns>
+        /// A JSON response with `true` if the Army Number is valid, otherwise `false`.
+        /// </returns>
         public async Task<IActionResult> CheckArmyNO(string ArmyNo)
         {
             try
             {
+                // Check if the input Army Number is not null or empty
                 if (!ArmyNo.IsNullOrEmpty())
                 {
+                    // Call business layer to check validity and return the result as JSON
                     return Json(await basicDetailBL.CheckArmyNO(ArmyNo));
                 }
                 else
                 {
+                    // Return false if the Army Number is empty
                     return Json(false);
                 }
-
             }
             catch (Exception ex)
             {
+                // Log any exceptions that occur
                 _logger.LogError(1001, ex, "BasicDetail->CheckArmyNO");
+                // Return false in case of an error
                 return Json(false);
             }
         }
+
         private string GetSessionValue()
         {
             DtoSession? dtoSession = new DtoSession();
