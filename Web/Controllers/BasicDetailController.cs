@@ -4131,10 +4131,15 @@ namespace Web.Controllers
         #endregion HotlistCard
 
         #region DistributeCard
+        /// <summary>
+        /// Returns the view for the card distribution page.
+        /// </summary>
+        /// <returns>A <see cref="ViewResult"/> representing the Distribute Card view.</returns>
         public async Task<ViewResult> DistributeCardAsync()
         {
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetAllDistribute(DTODataTablesRequest dTO)
