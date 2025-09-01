@@ -5532,36 +5532,50 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Loads the Dispatch Out page based on session data and user claims.
+        /// </summary>
+        /// <returns>View with appropriate ClaimValue or redirects to error page if session/user invalid.</returns>
         public async Task<ActionResult> DispatchOut()
         {
-            DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
+            // Retrieve session object containing previous search/filter parameters
+            DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 =
+                SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
+
             if (dTOTempSession1 != null)
             {
+                // Pass search/filter parameters to the view
                 ViewBag.SearchField = dTOTempSession1.SearchField;
                 ViewBag.SearchText = dTOTempSession1.SearchText;
 
+                // Get currently logged-in user's ID
                 int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
 
-                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                // Get all claims associated with the user
                 var UserClaims = await userManager.GetClaimsAsync(user);
+
+                // Check user claims and set appropriate ClaimValue for the view
                 if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                 {
-                    ViewBag.ClaimValue = 1;
+                    ViewBag.ClaimValue = 1; // User can export ICard data
                     return View();
                 }
-                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                else if (UserClaims.Count > 0 &&
+                         UserClaims.Any(i => i.Value == "Dispatch Card") &&
+                         UserClaims.Any(i => i.Value == "Appl Approver"))
                 {
-                    ViewBag.ClaimValue = 2;
+                    ViewBag.ClaimValue = 2; // User is Dispatch Card + Application Approver
                     return View();
                 }
                 else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
                 {
-                    ViewBag.ClaimValue = 3;
+                    ViewBag.ClaimValue = 3; // User is Dispatch Card only
                     return View();
                 }
                 else
                 {
+                    // User does not have required claims, redirect to ContactUs with error
                     TempData["error"] = "Invalid User.";
                     TempData.Keep("error");
                     return RedirectToAction("ContactUs", "Home");
@@ -5569,12 +5583,13 @@ namespace Web.Controllers
             }
             else
             {
+                // Session has expired or not available, redirect to ContactUs with error
                 TempData["error"] = "Invalid Session.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
-
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
