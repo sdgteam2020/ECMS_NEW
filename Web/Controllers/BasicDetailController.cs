@@ -5840,56 +5840,69 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves all dispatch cards for the current user based on their claims and session data.
+        /// Populates the ClaimValue, UnitId, and TrnDomainMappingId before querying the business layer.
+        /// </summary>
+        /// <param name="dTO">The DataTables request containing filters, paging, and sorting parameters.</param>
+        /// <returns>
+        /// Returns a JSON response containing the dispatch card list, total records, and filtered records.
+        /// If the session is invalid or an exception occurs, returns an empty list response.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
         {
             try
             {
+                // Initialize a DTO for session data
                 DtoSession? dtoSession = new DtoSession();
+
+                // Check if session token exists and retrieve session object
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
                 }
 
+                // If session is valid, proceed
                 if (dtoSession != null)
                 {
+                    // Get current logged-in user ID from claims
                     int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                    // Fetch user details from UserManager
                     var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
 
-                    // UserManager service GetClaimsAsync method gets all the current claims of the user
+                    // Retrieve all claims associated with the user
                     var UserClaims = await userManager.GetClaimsAsync(user);
+
+                    // Determine ClaimValue based on user's claims
                     if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                     {
-                        dTO.ClaimValue = 1;
-                        dTO.UnitId = dtoSession.UnitId;
-                        dTO.TDMId = dtoSession.TrnDomainMappingId;
-                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                        dTO.ClaimValue = 1; // User has export permissions
                     }
                     else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
                     {
-                        dTO.ClaimValue = 2;
-                        dTO.UnitId = dtoSession.UnitId;
-                        dTO.TDMId = dtoSession.TrnDomainMappingId;
-                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                        dTO.ClaimValue = 2; // User can approve dispatch cards
                     }
                     else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
                     {
-                        dTO.ClaimValue = 3;
-                        dTO.UnitId = dtoSession.UnitId;
-                        dTO.TDMId = dtoSession.TrnDomainMappingId;
-                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                        dTO.ClaimValue = 3; // User can dispatch cards only
                     }
                     else
                     {
-                        dTO.ClaimValue = 0;
-                        dTO.UnitId = dtoSession.UnitId;
-                        dTO.TDMId = dtoSession.TrnDomainMappingId;
-                        return Json(await basicDetailBL.GetAllDispatchCard(dTO));
+                        dTO.ClaimValue = 0; // No relevant claims
                     }
+
+                    // Populate session-related properties
+                    dTO.UnitId = dtoSession.UnitId;
+                    dTO.TDMId = dtoSession.TrnDomainMappingId;
+
+                    // Call business layer to get dispatch card data and return JSON response
+                    return Json(await basicDetailBL.GetAllDispatchCard(dTO));
                 }
                 else
                 {
+                    // Session is invalid or expired: return empty data response
                     List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
                     var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
                     {
@@ -5903,6 +5916,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log any exceptions and return empty response to avoid breaking front-end
                 List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
                 var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
                 {
@@ -5915,6 +5929,7 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
