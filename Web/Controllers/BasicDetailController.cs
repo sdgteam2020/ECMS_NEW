@@ -3957,6 +3957,20 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles the creation of a lost card request.
+        /// </summary>
+        /// <param name="model">The lost card request data transfer object containing user inputs and optional supporting file.</param>
+        /// <returns>A JSON response indicating success, failure, or validation errors.</returns>
+        /// <remarks>
+        /// This method performs the following steps:
+        /// 1. Validates the model state.
+        /// 2. Uploads the supporting document if provided.
+        /// 3. Maps the DTO to the entity model <see cref="TrnLostCard"/>.
+        /// 4. Checks for duplicate requests in the database.
+        /// 5. Saves the record and triggers any related post-save logic.
+        /// 6. Returns a <see cref="DTOCommonSaveResponse"/> with the result, message, and metadata.
+        /// </remarks>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveLostCardRequest([FromForm] DTOLostCardAddRequest model)
@@ -3965,32 +3979,41 @@ namespace Web.Controllers
             try
             {
                 var trnLostCard = new TrnLostCard();
+
                 if (ModelState.IsValid)
                 {
                     #region Upload Supporting Document
                     string fileName = string.Empty;
                     if (model.File != null)
                     {
-                        fileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}.pdf";
+                        /// Generate unique filename using timestamp
+                        fileName = $"{DateTime.Now:yyyyMMddHHmmss}.pdf";
                         var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "LostCardSupportingDoc");
+
+                        // Ensure folder exists
                         if (!Directory.Exists(uploadsFolder))
                         {
                             Directory.CreateDirectory(uploadsFolder);
                         }
+
                         var filePath = Path.Combine(uploadsFolder, fileName);
 
+                        // Save uploaded file to server
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await model.File.CopyToAsync(stream);
                         }
                     }
-                    #endregion Upload Supporting Document
+                    #endregion
 
+                    // Retrieve user session
                     DtoSession? dtoSession = new DtoSession();
                     if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                     {
                         dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                     }
+
+                    // Map DTO to entity
                     trnLostCard.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
                     trnLostCard.RequestId = model.RequestId;
                     trnLostCard.Remark = model.Remark;
@@ -4001,6 +4024,8 @@ namespace Web.Controllers
                     trnLostCard.IsActive = true;
                     trnLostCard.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     trnLostCard.UpdatedOn = DateTime.Now;
+
+                    // Check for duplicate requests
                     bool checkduplicate = await _lostCardBL.FindAnyRequestId(model.RequestId);
                     if (checkduplicate)
                     {
@@ -4009,8 +4034,10 @@ namespace Web.Controllers
                     }
                     else
                     {
+                        // Save entity and trigger related business logic
                         var result = await _lostCardBL.AddWithReturn(trnLostCard);
-                        await HotlistLostCard(trnLostCard);
+                        await HotlistLostCard(trnLostCard); // Optional post-save processing
+
                         dTOResponse.Result = true;
                         dTOResponse.Message = "Record created!";
                         dTOResponse.CurrentTime = result.UpdatedOn.GetValueOrDefault();
@@ -4019,13 +4046,14 @@ namespace Web.Controllers
                 }
                 else
                 {
+                    // Collect and return model validation errors
                     var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                    .SelectMany(x => x.Value!.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
+                                           .SelectMany(x => x.Value!.Errors)
+                                           .Select(e => e.ErrorMessage)
+                                           .ToList();
                     if (errors.Any())
                     {
-                        dTOResponse.Message = string.Join("; ", errors); // Concatenate all error messages
+                        dTOResponse.Message = string.Join("; ", errors);
                     }
                     dTOResponse.Result = false;
                 }
@@ -4033,6 +4061,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log exception and return generic error message
                 _logger.LogError(1001, ex, "BasicDetail->SaveHotlistCardRequest");
                 dTOResponse.Result = false;
                 dTOResponse.Message = "Internal Server Error!";
@@ -4040,6 +4069,7 @@ namespace Web.Controllers
 
             return Json(dTOResponse);
         }
+
 
         private async Task HotlistLostCard(TrnLostCard lostCard)
         {
