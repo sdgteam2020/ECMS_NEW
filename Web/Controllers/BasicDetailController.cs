@@ -5970,21 +5970,40 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles the "Dispatch Card In" action for a given dispatch card.
+        /// Sets the receipt date, marks the card as complete, and processes the dispatch card step.
+        /// Returns a <see cref="DTOGenericResponse{string}"/> with the result of the operation.
+        /// </summary>
+        /// <param name="dTO">The DTO containing Dispatch Card Id, remarks, and other metadata from the form.</param>
+        /// <returns>An <see cref="ActionResult"/> containing a JSON response with success/failure and messages.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DispatchCardIn([FromForm] DTODispatchInRequest dTO)
         {
+            // Initialize the response object
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
 
-            dTO.ReceiptDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+            // Set the receipt date to current India Standard Time
+            dTO.ReceiptDate = TimeZoneInfo.ConvertTimeFromUtc(
+                DateTime.UtcNow,
+                TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")
+            );
+
+            // Mark the dispatch as complete
             dTO.IsComplete = true;
+
+            // Validate the incoming model
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Fetch the dispatch card from the database using the provided DispatchCardId
                     TrnDispatchCard? trnDispatchCard = await dispatchCardBL.Get(dTO.DispatchCardId);
+
                     if (trnDispatchCard != null)
                     {
+                        // Check if the action has already been performed
                         if (trnDispatchCard.IsComplete == true && trnDispatchCard.ReceiptDate != null)
                         {
                             response.Result = false;
@@ -5993,6 +6012,7 @@ namespace Web.Controllers
                         }
                         else
                         {
+                            // Determine the step ID based on the current step of the dispatch card
                             byte StepId = 0;
                             if (trnDispatchCard.Step == 1)
                             {
@@ -6002,14 +6022,26 @@ namespace Web.Controllers
                             {
                                 StepId = 14;
                             }
+
+                            // Retrieve all related dispatch card requests for processing
                             List<DTODispatchCardInRequest> dTODispatchCards = new List<DTODispatchCardInRequest>();
                             dTODispatchCards.AddRange(await dispatchCardMappingBL.GetRequestIds(trnDispatchCard.DispatchCardId));
-                            response = await basicDetailBL.DispatchCardIn(dTODispatchCards, StepId, dTO.DispatchCardId, dTO.ToRemark);
+
+                            // Process the dispatch card using the business logic layer
+                            response = await basicDetailBL.DispatchCardIn(
+                                dTODispatchCards,
+                                StepId,
+                                dTO.DispatchCardId,
+                                dTO.ToRemark
+                            );
+
+                            // Clear the Value field in the response
                             response.Value = string.Empty;
                         }
                     }
                     else
                     {
+                        // Dispatch card ID is invalid
                         response.Result = false;
                         response.Message = "Invalid Id";
                         response.Value = string.Empty;
@@ -6017,25 +6049,34 @@ namespace Web.Controllers
                 }
                 catch (Exception ex)
                 {
+                    // Log any unexpected exceptions
                     _logger.LogError(1001, ex, "BasicDetail->DispatchCardIn");
                     response.Message = "Internal Server Error!";
                 }
             }
             else
             {
-                var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                .SelectMany(x => x.Value!.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
+                // Extract validation errors from ModelState
+                var errors = ModelState
+                    .Where(x => x.Value?.Errors?.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
                 if (errors.Any())
                 {
-                    response.Message = string.Join("; ", errors); // Concatenate all error messages
+                    // Concatenate all validation error messages
+                    response.Message = string.Join("; ", errors);
                 }
+
                 response.Result = false;
                 response.Value = string.Empty;
             }
+
+            // Return the response as an HTTP 200 OK with JSON content
             return Ok(response);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetDispatchCardStatusListForDialog([FromBody] DTODataTablesRequestForCardStatusList dTO)
