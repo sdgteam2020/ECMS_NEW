@@ -3857,10 +3857,17 @@ namespace Web.Controllers
         #endregion HotlistCard
 
         #region LostCard
+        /// <summary>
+        /// Returns the Lost Card view page.
+        /// This is typically the page where users can view or submit lost card requests.
+        /// </summary>
+        /// <returns>The LostCard view.</returns>
         public async Task<ViewResult> LostCardAsync()
         {
+            // Simply return the view associated with Lost Card
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
