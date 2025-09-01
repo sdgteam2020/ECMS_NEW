@@ -4537,25 +4537,40 @@ namespace Web.Controllers
             }
         }
 
-        public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
-        {
-            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
-            if (basicDetailCrtAndUpdVM != null)
-            {
-                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+       /// <summary>
+/// Retrieves the basic detail of a user based on the provided RequestId,
+/// including decrypted photo and signature in Base64 format.
+/// </summary>
+/// <param name="RequestId">The request identifier used to fetch the user's basic details.</param>
+/// <returns>Returns a JSON object with the user's details including encrypted images, or null if not found.</returns>
+public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
+{
+    // Fetch the basic detail data for the given request ID
+    BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
 
-                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
-                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+    if (basicDetailCrtAndUpdVM != null)
+    {
+        // Set the physical path to the storage folder for images
+        string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
-                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
-                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
-                return Json(basicDetailCrtAndUpdVM);
-            }
-            else
-            {
-                return Json(null);
-            }
-        }
+        // Construct full path for the photo and decrypt it to Base64
+        string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+        basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+        // Construct full path for the signature and decrypt it to Base64
+        string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+        basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+        // Return the JSON object with decrypted images
+        return Json(basicDetailCrtAndUpdVM);
+    }
+    else
+    {
+        // Return null if no basic detail found for the request ID
+        return Json(null);
+    }
+}
+
 
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
