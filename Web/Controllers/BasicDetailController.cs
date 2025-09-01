@@ -4071,24 +4071,44 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles the creation of a hotlist entry when a lost card is reported.
+        /// </summary>
+        /// <param name="lostCard">The lost card entity containing request details and metadata.</param>
+        /// <remarks>
+        /// The method performs the following actions:
+        /// 1. Checks the current status of the card using <see cref="basicDetailBL.CheckCardStatus"/>.
+        /// 2. If the card status is 1 (active), updates it to 3 (lost) using <see cref="basicDetailBL.UpdateCardStatus"/>.
+        /// 3. If the card is not already hotlisted:
+        ///     a. Checks for an existing hotlist record using <see cref="_hotlistCardBL.FindRequestId"/>.
+        ///     b. Creates a new <see cref="TrnHotlistCard"/> record using data from the lost card.
+        ///     c. Saves the hotlist record via <see cref="_hotlistCardBL.Add"/>.
+        /// 4. Logs any exceptions encountered during processing.
+        /// </remarks>
         private async Task HotlistLostCard(TrnLostCard lostCard)
         {
             try
             {
+                // Check the current status of the card
                 var cardStatus = await basicDetailBL.CheckCardStatus(lostCard.RequestId);
+
                 if (cardStatus == 1)
                 {
+                    // Card is active, update status to 'lost'
                     await basicDetailBL.UpdateCardStatus(lostCard.RequestId, 3);
                 }
                 else
                 {
+                    // Check if a hotlist entry already exists for this request
                     var isHotlistExists = await _hotlistCardBL.FindRequestId(lostCard.RequestId);
+
                     if (!isHotlistExists)
                     {
+                        // Create new hotlist entry based on lost card details
                         TrnHotlistCard trnHotlistCard = new TrnHotlistCard()
                         {
                             RequestId = lostCard.RequestId,
-                            RemarksIds = "65",
+                            RemarksIds = "65", // Fixed remark code for lost card
                             Remark = lostCard.Remark,
                             IsActive = lostCard.IsActive,
                             Updatedby = lostCard.Updatedby,
@@ -4096,15 +4116,18 @@ namespace Web.Controllers
                             UpdatedOn = lostCard.UpdatedOn
                         };
 
+                        // Add new hotlist entry
                         await _hotlistCardBL.Add(trnHotlistCard);
                     }
                 }
             }
             catch (Exception ex)
             {
+                // Log exceptions for troubleshooting
                 _logger.LogError(1001, ex, "BasicDetail->HotlistLostCard");
             }
         }
+
         #endregion HotlistCard
 
         #region DistributeCard
