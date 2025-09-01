@@ -4332,17 +4332,32 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves the role name of the currently logged-in user from the session.
+        /// </summary>
+        /// <returns>
+        /// Returns the user's role as a <see cref="string"/>. 
+        /// Returns an empty string if no session or role is found.
+        /// </returns>
         private string GetSessionValue()
         {
+            // Initialize a new session object
             DtoSession? dtoSession = new DtoSession();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
+            // Check if the session token exists
+            string? sessionToken = HttpContext.Session.GetString("Token");
+            if (!string.IsNullOrEmpty(sessionToken))
+            {
+                // Deserialize the session token to get the DtoSession object
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
             }
-            string role = dtoSession != null ? dtoSession.RoleName : "";
+
+            // Extract the RoleName from the session object, fallback to empty string if null
+            string role = dtoSession?.RoleName ?? string.Empty;
+
             return role;
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetData(string ICNumber, byte lCardType)
