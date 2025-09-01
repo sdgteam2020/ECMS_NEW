@@ -376,6 +376,17 @@ namespace Web.Controllers
         {
             return View();  // Return the view for closing the application
         }
+        /// <summary>
+        /// This method handles the saving of application close data.
+        /// It checks whether the application close record already exists and saves or updates it accordingly.
+        /// </summary>
+        /// <param name="dTO">The `TrnApplClose` object containing the application close data.</param>
+        /// <returns>
+        /// Returns a JSON result indicating the success or failure of the operation.
+        /// - `KeyConstants.Save` if the record is successfully saved.
+        /// - `KeyConstants.IncorrectData` if the data is incorrect.
+        /// - `KeyConstants.Exists` if the application close record already exists.
+        /// </returns>
         public async Task<IActionResult> SaveApplicationClose(TrnApplClose dTO)
         {
             try
@@ -384,62 +395,65 @@ namespace Web.Controllers
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
                 }
+
+                // Set the user and timestamp for the record
                 dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
                 dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
+                // Validate the model before saving
                 if (ModelState.IsValid)
                 {
-
-                    //if (dTO.Id > 0)
-                    //{
-                    //    await _iApplCloseBL.Update(dTO);
-                    //    return Json(KeyConstants.Update);
-                    //}
-                    //else
-                    //{
-                    if(!await _iApplCloseBL.RequestIdExists(dTO))
+                    // Check if the application close record already exists
+                    if (!await _iApplCloseBL.RequestIdExists(dTO))
                     {
-                        //await _iApplCloseBL.Add(dTO);
-                        //await _iTrnICardRequestBL.UpdateStatus(dTO.RequestId);
+                        // Save the application close record
                         bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(dTO);
                         if (reuslt == true)
                         {
-                            return Json(KeyConstants.Save);
+                            return Json(KeyConstants.Save);  // Return success message
                         }
                         else
                         {
-                            return Json(KeyConstants.IncorrectData);
+                            return Json(KeyConstants.IncorrectData);  // Return failure message for incorrect data
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        return Json(KeyConstants.Exists);  // Return message if record already exists
                     }
-                       
-
-
-                    //}
-
-
                 }
                 else
                 {
-
+                    // Return validation errors if model state is invalid
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur and return an internal server error
+                return Json(KeyConstants.InternalServerError);
+            }
         }
+
+        /// <summary>
+        /// This method returns the list of application closed records based on provided Id and jcoor parameters.
+        /// It decodes the Id from Base64 and determines the corresponding closed applications.
+        /// </summary>
+        /// <param name="Id">The ID of the closed application, encoded in Base64 format.</param>
+        /// <param name="jcoor">The optional parameter for the type of application closure.</param>
+        /// <returns>
+        /// Returns a view containing the list of closed applications based on the parameters.
+        /// </returns>
         public async Task<ActionResult> AppCloseList(string Id, string jcoor)
         {
             int retint = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
+            // Validate the input parameters
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
                 TempData["error"] = "Invalid Input.";
@@ -462,10 +476,10 @@ namespace Web.Controllers
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
                 }
                 int UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
 
+                // Decode the ID from Base64
                 if (!string.IsNullOrEmpty(Id))
                 {
                     var base64EncodedBytes = Convert.FromBase64String(Id);
@@ -473,11 +487,13 @@ namespace Web.Controllers
                     retint = Convert.ToInt32(decodedString);
                 }
 
+                // Set the view title based on the decoded ID
                 if (retint == 1)
                 {
                     ViewBag.Title = "List of Closed Appl";
                 }
 
+                // Fetch the list of closed applications based on jcoor value
                 if (string.IsNullOrEmpty(jcoor))
                 {
                     var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 1));
@@ -491,6 +507,7 @@ namespace Web.Controllers
             }
             catch (FormatException ex)
             {
+                // Handle invalid Base64 format exception and return an error message
                 _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id} & jcoor: {jcoor} ", Id, jcoor);
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
@@ -498,11 +515,13 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log any other exceptions and return an error message
                 _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
     }
 }
