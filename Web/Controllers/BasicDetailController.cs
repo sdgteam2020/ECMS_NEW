@@ -4774,21 +4774,30 @@ namespace Web.Controllers
         }
 
 
-        //[Authorize(Roles = "DteAdmin")]
+        /// <summary>
+        /// Retrieves the basic detail record for a given RequestId.
+        /// Secured with the "FlagICardApplPolicy" authorization policy.
+        /// </summary>
+        /// <param name="RequestId">The RequestId of the I-Card request.</param>
+        /// <returns>Returns JSON containing the basic detail record, or internal server error on exception.</returns>
         [Authorize(Policy = "FlagICardApplPolicy")]
         public async Task<IActionResult> GetBDetailByRequestId(int RequestId)
         {
             try
             {
+                // Call business layer to get the basic detail by RequestId and return as JSON
                 return Json(await basicDetailBL.GetBDetailByRequestId(RequestId));
             }
             catch (Exception ex)
             {
+                // Log any exception with an error code and context
                 _logger.LogError(1001, ex, "BasicDetail->GetBDetailByRequestId");
+
+                // Return a generic internal server error key as JSON
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
 
         //[Authorize(Roles = "DteAdmin")]
         [Authorize(Policy = "FlagICardApplPolicy")]
