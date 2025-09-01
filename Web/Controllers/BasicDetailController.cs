@@ -3127,21 +3127,38 @@ namespace Web.Controllers
             return Json(await faultyCardBL.GetRemarksData(intArray));
         }
 
+        /// <summary>
+        /// Displays the Faulty Card view and sets the user's claim for "ICard Export Data".
+        /// </summary>
+        /// <returns>
+        /// Returns a <see cref="ViewResult"/> for the Faulty Card page with a ViewBag property indicating claim status.
+        /// </returns>
         public async Task<ViewResult> FaultyCardAsync()
         {
+            // Step 1: Get the current user's ID from the claims
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Step 2: Retrieve the user object from UserManager
             var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
             bool Claim = false;
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Step 3: Get all claims for the current user
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Step 4: Check if user has the "ICard Export Data" claim
             if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
             {
                 Claim = true;
             }
+
+            // Step 5: Pass claim status to the view using ViewBag
             ViewBag.Claim = Claim;
+
+            // Step 6: Return the Faulty Card view
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> GetAllFaulty(DTODataTablesRequestForFaultyCard dTO)
         {
