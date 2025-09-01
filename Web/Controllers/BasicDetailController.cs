@@ -4850,29 +4850,41 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves all I-Card requests that are currently on hold, based on the DataTables request parameters.
+        /// Secured with the "ViewFlaggedICardApplPolicy" authorization policy.
+        /// </summary>
+        /// <param name="dTO">The DataTables request object containing paging, sorting, and filtering parameters.</param>
+        /// <returns>Returns a JSON result containing the list of I-Card requests on hold, formatted for DataTables.</returns>
         [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
         [HttpPost]
         public async Task<IActionResult> GetAllICardRequestHold(DTODataTablesRequest dTO)
         {
             try
             {
+                // Call the business layer to get all I-Card requests on hold based on the DataTables request
                 return Json(await basicDetailBL.GetAllICardRequestHold(dTO));
             }
             catch (Exception ex)
             {
+                // In case of an exception, create an empty response for DataTables
                 List<DTOICardRequestHoldResponse> dTODispatchCardLists = new List<DTOICardRequestHoldResponse>();
                 var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
                 {
-                    draw = 0,
-                    recordsTotal = 0,
-                    recordsFiltered = 0,
-                    data = dTODispatchCardLists
+                    draw = 0,                 // Draw counter for DataTables
+                    recordsTotal = 0,         // Total records count
+                    recordsFiltered = 0,      // Filtered records count
+                    data = dTODispatchCardLists // Empty data list
                 };
+
+                // Log the exception with an error code and method context
                 _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
+
+                // Return the empty response as JSON
                 return Json(responseData);
             }
-
         }
+
 
         #endregion
 
