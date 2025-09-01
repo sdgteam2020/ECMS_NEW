@@ -3244,26 +3244,41 @@ namespace Web.Controllers
             return Json(detail);
         }
 
+        /// <summary>
+        /// Displays the Faulty Card Request page for a specific faulty card transaction.
+        /// Decrypts the provided ID, validates it, and checks if the current user has the required claim.
+        /// </summary>
+        /// <param name="Id">The encrypted ID of the faulty card transaction (nullable).</param>
+        /// <returns>
+        /// Returns the Faulty Card Request view with decrypted ID and claim information.
+        /// If the ID is invalid or tampered with, redirects to ContactUs page with error message.
+        /// </returns>
         public async Task<ActionResult> FaultyCardRequestAsync(string? Id)
         {
             bool Claim = false;
+
+            // Step 1: Get the current logged-in user's Id
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
 
             string decryptedId = string.Empty;
             int decryptedIntId = 0;
 
+            // Step 2: Decrypt the provided ID if it exists
             if (Id != null)
             {
                 try
                 {
-                    // Decrypt the  id using Unprotect method
-                    decryptedId = protector.Unprotect(Id);
+                    decryptedId = protector.Unprotect(Id); // Decrypt the ID
 
-                    // Validate decrypted Id
+                    // Validate that the decrypted ID is a valid integer
                     if (!int.TryParse(decryptedId, out decryptedIntId))
                     {
-                        _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, AspNetUsersId);
+                        _logger.LogWarning(
+                            "Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}",
+                            decryptedId,
+                            AspNetUsersId
+                        );
                         TempData["error"] = "Invalid Request.";
                         TempData.Keep("error");
                         return RedirectToAction("ContactUs", "Home");
@@ -3271,6 +3286,7 @@ namespace Web.Controllers
                 }
                 catch (System.Security.Cryptography.CryptographicException ex)
                 {
+                    // Log cryptographic errors if decryption fails
                     _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
                     TempData["error"] = "Invalid or tampered request.";
                     TempData.Keep("error");
@@ -3278,25 +3294,28 @@ namespace Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
+                    // Log any other unexpected errors
+                    _logger.LogError(1001, ex, "This error occurred because Id: {Id} value was changed by user.", Id);
                     TempData["error"] = ex.Message;
                     TempData.Keep("error");
                     return RedirectToAction("ContactUs", "Home");
                 }
             }
 
-
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Step 3: Check if the current user has the "ICard Export Data" claim
             var UserClaims = await userManager.GetClaimsAsync(user);
             if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
             {
                 Claim = true;
             }
 
+            // Step 4: Pass claim and decrypted ID to the view
             ViewBag.Claim = Claim;
             ViewBag.TrnFaultyCardId = decryptedIntId;
+
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(int RequestId)
