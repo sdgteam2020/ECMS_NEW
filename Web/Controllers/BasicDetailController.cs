@@ -3776,61 +3776,84 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Handles saving a new hotlist card request.  
+        /// Validates the input model, checks for duplicate request IDs, and saves the record if valid.  
+        /// Returns a JSON response with the operation result.
+        /// </summary>
+        /// <param name="model">The hotlist card request model submitted by the user.</param>
+        /// <returns>A JSON object containing the result, message, and relevant metadata.</returns>
         public async Task<IActionResult> SaveHotlistCardRequest(TrnHotlistCard model)
         {
+            // Initialize response object
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
+
             try
             {
+                // Retrieve current session data if available
                 DtoSession? dtoSession = new DtoSession();
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                 }
-                model.IsActive = true;
-                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
-                model.UpdatedOn = DateTime.Now;
 
+                // Set common audit fields
+                model.IsActive = true; // Mark record as active
+                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); // Current ASP.NET user ID
+                model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0; // Session user ID if available
+                model.UpdatedOn = DateTime.Now; // Timestamp of update
+
+                // Check model validation state
                 if (ModelState.IsValid)
                 {
+                    // Check if a record with the same RequestId already exists
                     bool checkduplicate = await _hotlistCardBL.FindRequestId(model.RequestId);
                     if (checkduplicate)
                     {
+                        // Duplicate found, return failure response
                         dTOFaulty.Result = false;
                         dTOFaulty.Message = "The hotlist request already exists!";
                     }
                     else
                     {
+                        // Save the record and return success response
                         var result = await _hotlistCardBL.AddWithReturn(model);
                         dTOFaulty.Result = true;
                         dTOFaulty.Message = "Record created!";
-                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
-                        dTOFaulty.Id = result.HotlistCardId.ToString();
+                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault(); // Return saved record timestamp
+                        dTOFaulty.Id = result.HotlistCardId.ToString(); // Return saved record ID
                     }
                 }
                 else
                 {
-                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                    .SelectMany(x => x.Value!.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
+                    // If ModelState is invalid, extract all validation errors
+                    var errors = ModelState
+                        .Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
                     if (errors.Any())
                     {
-                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                        // Concatenate all error messages into one string
+                        dTOFaulty.Message = string.Join("; ", errors);
                     }
-                    dTOFaulty.Result = false;
-                }
 
+                    dTOFaulty.Result = false; // Validation failed
+                }
             }
             catch (Exception ex)
             {
+                // Log unexpected errors and return a generic failure message
                 _logger.LogError(1001, ex, "BasicDetail->SaveHotlistCardRequest");
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = "Internal Server Error!";
             }
 
+            // Return final result as JSON
             return Json(dTOFaulty);
         }
+
         #endregion HotlistCard
 
         #region LostCard
