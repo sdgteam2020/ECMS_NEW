@@ -3317,24 +3317,41 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves basic details for a partial view by RequestId.
+        /// Decrypts the photo and signature images and converts them to Base64 strings for display.
+        /// </summary>
+        /// <param name="RequestId">The ID of the request to fetch details for.</param>
+        /// <returns>
+        /// Returns a PartialView "_BasicDetail_ParitalView" populated with DTOBasicDetailForParitalViewResponse.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
+            // Step 1: Fetch basic details from business layer
             DTOBasicDetailForParitalViewResponse data = await basicDetailBL.GetBasicDetailForParitalViewByRequestId(RequestId);
+
+            // Step 2: Construct physical paths for photo and signature images
             string sourceFolderPathPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
             string sourcePathPhoto = Path.Combine(sourceFolderPathPhy, "Photo", data.PhotoImagePath);
             string sourcePathSignature = Path.Combine(sourceFolderPathPhy, "Signature", data.SignatureImagePath);
 
+            // Step 3: Decrypt and convert photo image to Base64 if it exists
             if (System.IO.File.Exists(sourcePathPhoto))
             {
                 data.PhotoImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
             }
+
+            // Step 4: Decrypt and convert signature image to Base64 if it exists
             if (System.IO.File.Exists(sourcePathSignature))
             {
                 data.SignatureImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
             }
+
+            // Step 5: Return the partial view with populated data
             return PartialView("_BasicDetail_ParitalView", data);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "ICardExportDataPolicy")]
