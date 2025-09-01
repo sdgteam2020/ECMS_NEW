@@ -3067,13 +3067,27 @@ namespace Web.Controllers
             return xmlDoc3.OuterXml;
         }
 
-        // Method to generate JSON response when XML signing data is unavailable
+        /// <summary>
+        /// Generates a JSON response when XML signing data is unavailable or empty.
+        /// </summary>
+        /// <param name="xmldata">The original XML log data object, can be null.</param>
+        /// <param name="Data">The data export request containing the list of IDs to process.</param>
+        /// <returns>
+        /// Returns a <see cref="JsonResult"/> containing either a structured update object
+        /// with ID and JSON data or a plain JSON object when xmldata is null.
+        /// </returns>
         private async Task<IActionResult> GenerateJsonResponse(DTOXmlFilesFwdLogRequest xmldata, DTODataExportRequest Data)
         {
+            // Step 1: Fetch the digital XML sign data as a fallback when original XML is missing
             var retData = await basicDetailBL.GetDataDigitalXmlSign(Data);
+
+            // Step 2: Serialize the retrieved data to JSON string
             var jsonString = JsonConvert.SerializeObject(retData);
+
+            // Step 3: Deserialize JSON string back to object for proper JSON formatting in response
             var jsonResponse = JsonConvert.DeserializeObject(jsonString);
 
+            // Step 4: If original XML data exists, wrap it into DTOXmlFilesForUpdate object
             if (xmldata != null)
             {
                 DTOXmlFilesForUpdate updateResponse = new DTOXmlFilesForUpdate
@@ -3081,9 +3095,12 @@ namespace Web.Controllers
                     Id = xmldata.Id,
                     jsonfile = jsonResponse
                 };
+
+                // Return the structured JSON response
                 return Json(updateResponse);
             }
 
+            // Step 5: If xmldata is null, return plain JSON response
             return Json(jsonResponse);
         }
 
