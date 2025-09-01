@@ -2944,36 +2944,60 @@ namespace Web.Controllers
 
 
 
+        /// <summary>
+        /// Handles the digital XML signing process for a set of data export requests.
+        /// </summary>
+        /// <param name="Data">DTO containing the list of record IDs to be digitally signed.</param>
+        /// <returns>
+        /// Returns a JSON object with merged XML files for digital signing if data exists,
+        /// otherwise generates a JSON response indicating the absence of XML data.
+        /// </returns>
         public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
         {
             try
             {
+                // Step 1: Initialize the return object which will hold the ID and merged XML files
                 DTOXmlFilesFwdLogRequest ret = new DTOXmlFilesFwdLogRequest();
 
-                // Fetch XML data for digital sign
+                // Step 2: Fetch existing XML data from the database based on provided IDs
+                // The BL (Business Layer) returns an object containing XML files if they exist
                 var xmldata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(Data.Ids);
+
+                // Step 3: Check if any XML data was retrieved
                 if (xmldata != null && !string.IsNullOrEmpty(xmldata.XmlFiles))
                 {
+                    // Step 3a: Assign the database record ID to the return object
                     ret.Id = xmldata.Id;
 
-                    // Create XML structure
+                    // Step 3b: Generate XML for the last record in the provided IDs list
+                    // This is likely the most recent data that needs to be added to existing XML
                     string xml = await GenerateLastRecordXml(Data.Ids[0]);
+
+                    // Step 3c: Merge the existing XML from the database with the newly generated XML
+                    // Ensures that the final XML contains all historical and latest records
                     ret.XmlFiles = MergeXmlDocuments(xmldata.XmlFiles, xml);
 
+                    // Step 3d: Return the merged XML as a JSON response to the frontend
                     return Json(ret);
                 }
                 else
                 {
-                    // If xmldata.XmlFiles is empty or null, prepare JSON response
+                    // Step 4: If no XML data exists, generate a JSON response appropriately
+                    // This may include a message like "No data found" or an empty XML structure
                     return await GenerateJsonResponse(xmldata, Data);
                 }
             }
             catch (Exception ex)
             {
+                // Step 5a: Log the exception using a unique code (1001) for easier identification
+                // This helps in tracing which method the error occurred in during debugging
                 _logger.LogError(1001, ex, "BasicDetails=>DataDigitalXmlSign.");
+
+                // Step 5b: Redirect the user to a generic error page to prevent crashing the app
                 return RedirectToAction("Error", "Error");
             }
         }
+
 
         // Method to serialize last record to XML
         private async Task<string> GenerateLastRecordXml(int id)
