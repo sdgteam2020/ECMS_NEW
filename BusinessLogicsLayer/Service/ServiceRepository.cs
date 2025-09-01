@@ -37,6 +37,18 @@ namespace BusinessLogicsLayer.Service
             RankOptions.Insert(0, ddfirst);
             return new SelectList(RankOptions, "Value", "Text");
         }
+
+        /// <summary>
+        /// Retrieves a list of armed types from the database, ordered by name, 
+        /// and prepares them as <see cref="SelectListItem"/> objects for use in dropdown lists.
+        /// </summary>
+        /// <remarks>
+        /// - Adds a default first item with text "Please Select" and null value.
+        /// - Returns an <see cref="IEnumerable{SelectListItem}"/> that can be bound to a Razor view dropdown.
+        /// </remarks>
+        /// <returns>
+        /// A collection of <see cref="SelectListItem"/> representing armed types, including a default "Please Select" option.
+        /// </returns>
         public IEnumerable<SelectListItem> GetArmedType()
         {
             var ArmedOptions = context.MArmedType.OrderBy(o => o.ArmedName)

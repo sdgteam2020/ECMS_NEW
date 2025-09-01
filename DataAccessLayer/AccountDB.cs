@@ -2108,6 +2108,21 @@ namespace DataAccessLayer
             }
 
         }
+        /// <summary>
+        /// Saves a unit along with its mapping information in the database.
+        /// </summary>
+        /// <param name="dTO">A <see cref="DTOSaveUnitWithMappingRequest"/> object containing details of the unit and mapping to be saved.</param>
+        /// <returns>
+        /// Returns <c>true</c> if the unit and mapping were successfully saved, <c>null</c> if an error occurred.
+        /// </returns>
+        /// <remarks>
+        /// - Creates a new record in <c>TrnUnregdUser</c> for the user associated with the unit.
+        /// - If <c>UnitId</c> is 0, a new <c>MUnit</c> record is created; otherwise, updates existing unit mapping.
+        /// - Creates a corresponding <c>MapUnit</c> record to map the unit to various organizational entities (Comd, Corps, Div, Bde, etc.).
+        /// - Uses a database transaction to ensure atomicity; commits on success and rolls back on any exception.
+        /// - Timestamps are saved in India Standard Time (IST).
+        /// - Errors are logged using the application's logger.
+        /// </remarks>
         public async Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO)
         {
             using (var transaction = _context.Database.BeginTransaction())
@@ -2178,6 +2193,21 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves all user claims from the database, grouped by claim type, and returns them in a format suitable for DataTables.
+        /// </summary>
+        /// <remarks>
+        /// The method supports server-side pagination, sorting, and filtering for DataTables.
+        /// In case of an exception, an empty response is returned and the error is logged.
+        /// </remarks>
+        /// <param name="request">A <see cref="DTODataTablesRequest"/> object containing paging, sorting, and draw parameters from the client.</param>
+        /// <returns>
+        /// Returns a <see cref="DTODataTablesResponse{DTOClaimsStoreResponse}"/> containing:
+        /// - <c>draw</c>: The draw counter from the client request.
+        /// - <c>recordsTotal</c>: Total number of records without filtering.
+        /// - <c>recordsFiltered</c>: Total number of records after applying filtering.
+        /// - <c>data</c>: The paginated and optionally sorted list of claims grouped by claim type.
+        /// </returns>
         public async Task<DTODataTablesResponse<DTOClaimsStoreResponse>> GetAllClaimsOrderBy(DTODataTablesRequest request)
         {
             try
@@ -2234,6 +2264,27 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves all users associated with a specific claim type and returns them in a format suitable for DataTables.
+        /// </summary>
+        /// <remarks>
+        /// The method performs the following operations:
+        /// 1. Joins multiple tables (_ClaimsStore, UserClaims, Users, TrnDomainMapping, UserProfile, MRank, MAppointment, MUnit) to get comprehensive user details.
+        /// 2. Filters users based on the specified <see cref="DTODataTablesRequest.Choice"/> claim type.
+        /// 3. Applies optional search filtering on the ArmyNo field.
+        /// 4. Supports sorting and server-side pagination for DataTables.
+        /// 5. Returns a structured <see cref="DTODataTablesResponse{DTOUsersByClaim}"/>.
+        /// 
+        /// In case of an exception, an empty response is returned and the error is logged.
+        /// </remarks>
+        /// <param name="request">A <see cref="DTODataTablesRequest"/> object containing draw, search, pagination, and sorting parameters.</param>
+        /// <returns>
+        /// A <see cref="DTODataTablesResponse{DTOUsersByClaim}"/> object containing:
+        /// - <c>draw</c>: The draw counter from the client request.
+        /// - <c>recordsTotal</c>: Total number of records without filtering.
+        /// - <c>recordsFiltered</c>: Total number of records after applying search filtering.
+        /// - <c>data</c>: The paginated list of users associated with the claim type.
+        /// </returns>
         public async Task<DTODataTablesResponse<DTOUsersByClaim>> GetAllUsersByClaim(DTODataTablesRequest request)
         {
             try

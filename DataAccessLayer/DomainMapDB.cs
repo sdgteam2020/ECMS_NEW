@@ -57,32 +57,20 @@ namespace DataAccessLayer
                       }).FirstOrDefaultAsync();
             return  ret;
         }
+
+        /// <summary>
+        /// Retrieves the first domain mapping record along with related user and profile data for a given DomainId and Role.
+        /// </summary>
+        /// <param name="DomainId">The unique identifier of the domain to query.</param>
+        /// <param name="Role">The role name to filter associated user roles.</param>
+        /// <returns>
+        /// Returns a <see cref="TrnDomainMapping"/> object with related <see cref="ApplicationUser"/>, 
+        /// <see cref="MUserProfile"/>, role, and rank information. Returns <c>null</c> if no matching record is found or an error occurs.
+        /// </returns>
         public async Task<TrnDomainMapping?> GetAllRelatedDataByDomainId(string DomainId,string Role)
         {
             try
             {
-                //var result = await (from au in _context.Users.Where(x=>x.DomainId == DomainId)
-                //                    join ur in _context.UserRoles on au.Id equals ur.UserId into uur_jointable
-                //                    from xur in uur_jointable.DefaultIfEmpty()
-                //                    join r in _context.Roles on xur.RoleId equals r.Id into xurr_jointable
-                //                    from xr in xurr_jointable.DefaultIfEmpty()
-                //                    join tdm in _context.TrnDomainMapping on au.Id equals tdm.AspNetUsersId into autdm_jointable
-                //                    from xtdm in autdm_jointable.DefaultIfEmpty()
-                //                    join up in _context.UserProfile on xtdm.UserId equals up.UserId into tdmup_jointable
-                //                    from xup in tdmup_jointable.DefaultIfEmpty()
-                //                    select new TrnDomainMapping
-                //                    {
-                //                        Id = xtdm != null? xtdm.Id:0,
-                //                        UnitId = xtdm != null ? xtdm.UnitId : 0,
-                //                        MapUnit = xtdm != null ? xtdm.MapUnit : null,
-                //                        ApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
-                //                        AspNetUsersId = au != null ? au.Id:0,
-                //                        UserId = xup != null ? xup.UserId : null,
-                //                        ApplicationUser = au != null ? au : null,
-                //                        MUserProfile = xup != null ? xup : null,
-                //                        Role  = xr != null ? (xr.Name.ToUpper() == Role.ToUpper() ? true:false):false
-                //                    }).FirstOrDefaultAsync();
-
                 var result = await (from au in _context.Users.Where(x => x.DomainId == DomainId)
                                     join tdm in _context.TrnDomainMapping on au.Id equals tdm.AspNetUsersId into autdm_jointable
                                     from xtdm in autdm_jointable.DefaultIfEmpty()

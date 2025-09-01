@@ -360,6 +360,20 @@ namespace DataAccessLayer
 
             
         }
+
+        /// <summary>
+        /// Retrieves all related user, rank, unit, appointment, and domain mapping data for a given Army number.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number of the user whose data is being queried.</param>
+        /// <returns>
+        /// Returns a <see cref="DTOAllRelatedDataByArmyNoResponse"/> object containing:
+        /// - User personal details (Name, ArmyNo, UserId)
+        /// - Rank details (RankId, RankName)
+        /// - Domain mapping and unit information (TrnDomainMappingId, UnitId, UnitName, IsIO, IsCO, IsRO, IsORO, DialingCode, Extension)
+        /// - Appointment details (ApptId, AppointmentName)
+        /// - Domain info and admin messages (DomainId, AdminMsg)
+        /// Returns <c>null</c> if no matching record is found or an exception occurs.
+        /// </returns>
         public async Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo)
         {
             try

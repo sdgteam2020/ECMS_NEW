@@ -32,6 +32,23 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _context = context;
         }
+        /// <summary>
+        /// Checks whether a unit is already mapped in the <c>MapUnit</c> table based on the given SUS number.
+        /// Performs a LEFT JOIN between <c>MUnit</c> and <c>MapUnit</c> and returns the mapping status.
+        /// </summary>
+        /// <param name="SUSNo">The concatenated SUS number and suffix (e.g., "12345A") to check for mapping.</param>
+        /// <returns>
+        /// An instance of <see cref="DTOCheckUnitMappedInMapUnitResponse"/> containing:
+        /// - <c>UnitId</c>: The ID of the unit in <c>MUnit</c>.
+        /// - <c>IsVerify</c>: Indicates whether the unit has been verified.
+        /// - <c>UnitMapId</c>: The ID of the mapping in <c>MapUnit</c>, or null if not mapped.
+        /// Returns null if no matching unit is found.
+        /// </returns>
+        /// <remarks>
+        /// - Uses Dapper to execute a SQL query asynchronously.
+        /// - Query concatenates <c>Sus_no</c> and uppercased <c>Suffix</c> to match the input <paramref name="SUSNo"/>.
+        /// - Intended for use before saving a unit mapping to prevent duplicates.
+        /// </remarks>
         public async Task<DTOCheckUnitMappedInMapUnitResponse?> CheckUnitMappedInMapUnit(string SUSNo)
         {
             string query = "Select MUnit.UnitId,MUnit.IsVerify,MapUnit.UnitMapId from MUnit " +
