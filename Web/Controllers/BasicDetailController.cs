@@ -3227,11 +3227,23 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves detailed information for a specific faulty card record.
+        /// </summary>
+        /// <param name="TrnFaultyCardId">The ID of the faulty card transaction to fetch details for.</param>
+        /// <returns>
+        /// Returns a JSON response containing the faulty card details.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetTrnFaultyCardDetail(int TrnFaultyCardId)
         {
-            return Json(await faultyCardBL.GetTrnFaultyCardDetail(TrnFaultyCardId));
+            // Step 1: Call business layer to fetch the details for the given faulty card ID
+            var detail = await faultyCardBL.GetTrnFaultyCardDetail(TrnFaultyCardId);
+
+            // Step 2: Return the result as JSON
+            return Json(detail);
         }
+
         public async Task<ActionResult> FaultyCardRequestAsync(string? Id)
         {
             bool Claim = false;
