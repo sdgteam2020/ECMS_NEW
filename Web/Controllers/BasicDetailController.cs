@@ -4889,6 +4889,12 @@ namespace Web.Controllers
         #endregion
 
         #region CreateFolder:-GetCreateMyFolder/GetCreateMyFolder/ForCreateFolderrandom/CreateFolder/CreateZipFromFolder
+        /// <summary>
+        /// Creates a folder hierarchy based on the current date inside the specified base folder.
+        /// Format: baseFolder/yyyy/MMMM/dd
+        /// </summary>
+        /// <param name="baseFolder">The root folder in which the date-based folder structure will be created.</param>
+        /// <returns>Returns a <see cref="DirectoryInfo"/> object representing the created folder.</returns>
         public static DirectoryInfo GetCreateMyFolder(string baseFolder)
         {
             var now = DateTime.Now;
@@ -4896,14 +4902,18 @@ namespace Web.Controllers
             var monthName = now.ToString("MMMM");
             var dayName = now.ToString("dd");
 
-            var folder =
-                        Path.Combine(baseFolder,
-                           Path.Combine(yearName,
-                             Path.Combine(monthName,
-                               dayName)));
+            // Build the full folder path: baseFolder/yyyy/MMMM/dd
+            var folder = Path.Combine(baseFolder, Path.Combine(yearName, Path.Combine(monthName, dayName)));
 
+            // Create the folder (if it already exists, returns the existing DirectoryInfo)
             return Directory.CreateDirectory(folder);
         }
+
+        /// <summary>
+        /// Creates a folder hierarchy based on the current date in the current working directory.
+        /// Format: yyyy/MMMM/dd
+        /// </summary>
+        /// <returns>Returns a <see cref="DirectoryInfo"/> object representing the created folder.</returns>
         public static DirectoryInfo GetCreateMyFolder()
         {
             var now = DateTime.Now;
@@ -4911,14 +4921,20 @@ namespace Web.Controllers
             var monthName = now.ToString("MMMM");
             var dayName = now.ToString("dd");
 
-            var folder =
+            // Build the folder path: yyyy/MMMM/dd
+            var folder = Path.Combine(yearName, Path.Combine(monthName, dayName));
 
-                           Path.Combine(yearName,
-                             Path.Combine(monthName,
-                               dayName));
-
+            // Create the folder
             return Directory.CreateDirectory(folder);
         }
+
+        /// <summary>
+        /// Creates a uniquely named folder based on the current date, time, and domain ID.
+        /// Format: baseFolder/ddMMyyyy_HHmmss_DoaminId
+        /// </summary>
+        /// <param name="baseFolder">The root folder in which the folder will be created.</param>
+        /// <param name="DoaminId">A domain identifier to append to the folder name.</param>
+        /// <returns>Returns a <see cref="DirectoryInfo"/> object representing the created folder.</returns>
         public static DirectoryInfo ForCreateFolderrandom(string baseFolder, string DoaminId)
         {
             var now = DateTime.Now;
@@ -4928,20 +4944,36 @@ namespace Web.Controllers
             var hh = now.ToString("HH");
             var mm = now.ToString("mm");
             var ss = now.ToString("ss");
-            var folder =
-                        Path.Combine(baseFolder,
-                           Path.Combine(dayName + "" + monthName + "" + yearName + "_" + hh + "" + mm + "" + ss + "_" + DoaminId));
 
+            // Build folder name: ddMMyyyy_HHmmss_DoaminId
+            var folder = Path.Combine(baseFolder, $"{dayName}{monthName}{yearName}_{hh}{mm}{ss}_{DoaminId}");
+
+            // Create the folder
             return Directory.CreateDirectory(folder);
         }
+
+        /// <summary>
+        /// Creates a folder at the specified path.
+        /// </summary>
+        /// <param name="baseFolder">The full path of the folder to create.</param>
+        /// <returns>Returns a <see cref="DirectoryInfo"/> object representing the created folder.</returns>
         public static DirectoryInfo CreateFolder(string baseFolder)
         {
             return Directory.CreateDirectory(baseFolder);
         }
+
+        /// <summary>
+        /// Creates a ZIP archive from the specified folder.
+        /// </summary>
+        /// <param name="sourceFolder">The folder whose contents will be zipped.</param>
+        /// <param name="zipFilePath">The full path (including filename) of the ZIP archive to create.</param>
+        /// <exception cref="DirectoryNotFoundException">Thrown when the source folder does not exist.</exception>
         public void CreateZipFromFolder(string sourceFolder, string zipFilePath)
         {
             if (Directory.Exists(sourceFolder))
             {
+                // Create a ZIP archive from the folder with fastest compression
+                // includeBaseDirectory = true to include the root folder inside the ZIP
                 ZipFile.CreateFromDirectory(sourceFolder, zipFilePath, CompressionLevel.Fastest, true);
             }
             else
@@ -4949,6 +4981,7 @@ namespace Web.Controllers
                 throw new DirectoryNotFoundException($"Source folder not found: {sourceFolder}");
             }
         }
+
         #endregion
 
         #region Card Distribution
