@@ -3509,38 +3509,62 @@ namespace Web.Controllers
 
 
 
+        /// <summary>
+        /// Handles the saving of a new faulty card request.
+        /// This method validates the incoming DTO, checks for duplicate requests,
+        /// verifies user claims for "ICard Export Data", and returns a standardized JSON response.
+        /// </summary>
+        /// <param name="dTO">DTOFaultyCardRequest object containing the faulty card data submitted from the client.</param>
+        /// <returns>JSON response indicating success or failure with relevant message.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveFaultyCardRequest([FromBody] DTOFaultyCardRequest dTO)
         {
+            // Initialize forwarding entity
             MTrnFwd? mTrnFwd = new MTrnFwd();
+
+            // Initialize session object
             DtoSession? dtoSession = new DtoSession();
+
+            // Retrieve user session token from HTTP session if available
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
+
+            // Set the user ID from session into the DTO; fallback to 0 if session is null
             dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
 
+            // Response DTO to return success/failure
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
+
             try
             {
+                // Check if the current user has the "ICard Export Data" claim
                 bool Claim = false;
                 int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch user from UserManager
                 var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
-                // UserManager service GetClaimsAsync method gets all the current claims of the user
+
+                // Retrieve all claims of the user
                 var UserClaims = await userManager.GetClaimsAsync(user);
+
+                // If the user has the required claim, set Claim flag to true
                 if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                 {
                     Claim = true;
                 }
 
+                // Mark the request as active and record update metadata
                 dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                dTO.Updatedby = AspNetUsersId;
                 dTO.UpdatedOn = DateTime.Now;
 
+                // Validate the incoming model
                 if (ModelState.IsValid)
                 {
+                    // If this is an attempt to edit an existing faulty card, reject it
                     if (dTO.TrnFaultyCardId > 0)
                     {
                         dTOFaulty.Result = false;
@@ -3549,6 +3573,7 @@ namespace Web.Controllers
                     }
                     else
                     {
+                        // Check for duplicate request based on RequestId
                         bool checkduplicate = await faultyCardBL.FindRequestId(dTO.RequestId);
                         if (checkduplicate)
                         {
@@ -3558,6 +3583,7 @@ namespace Web.Controllers
                         }
                         else
                         {
+                            // Save the new faulty card request
                             dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }
@@ -3565,14 +3591,14 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    // If model validation failed, collect all errors
                     var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                    .SelectMany(x => x.Value!.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
+                                           .SelectMany(x => x.Value!.Errors)
+                                           .Select(e => e.ErrorMessage)
+                                           .ToList();
                     if (errors.Any())
                     {
-                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
+                        dTOFaulty.Message = string.Join("; ", errors); // Combine all errors
                     }
                     dTOFaulty.Result = false;
                     return Json(dTOFaulty);
@@ -3581,11 +3607,13 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Catch any unexpected exceptions and return a failure response
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = ex.Message;
                 return Json(dTOFaulty);
             }
         }
+
 
         #endregion
 
