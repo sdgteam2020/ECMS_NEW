@@ -456,28 +456,55 @@ namespace Web.Controllers
             }
         }
 
-        public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId,int UnitId, int ISRO,int IsORO)
+        /// <summary>
+        /// This method retrieves data for forwarding based on provided parameters.
+        /// It fetches data based on StepId, UnitId, Name, TypeId, ISRO, and IsORO, 
+        /// along with the user's DomainMapId.
+        /// </summary>
+        /// <param name="Name">The name associated with the data retrieval.</param>
+        /// <param name="TypeId">The type ID for filtering data.</param>
+        /// <param name="StepId">The step ID to filter data.</param>
+        /// <param name="UnitId">The unit ID for filtering data.</param>
+        /// <param name="ISRO">Filter flag for ISRO.</param>
+        /// <param name="IsORO">Filter flag for ORO.</param>
+        /// <returns>Returns a JSON response with the retrieved data or an error message.</returns>
+        public async Task<IActionResult> GetDataForFwd(string Name, int TypeId, int StepId, int UnitId, int ISRO, int IsORO)
         {
             try
             {
+                // Retrieve the user's DomainMapId from claims
                 int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                //if(TypeId == 0 )
-                //UnitId=SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
 
+                // Call the method to get data for forwarding based on the provided parameters
                 return Json(await _userProfileBL.GetDataForFwd(StepId, UnitId, Name, TypeId, ISRO, IsORO, DomainMapId));
             }
             catch (Exception ex)
             {
+                // Log the error and return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
-        public async Task<IActionResult> GetOffrsByUnitMapId(int id,int UnitId, int IsRO,int IsORO,int IsAfsacCell, int BasicDetailsId)
+
+        /// <summary>
+        /// This method retrieves officers by UnitMapId based on various filters.
+        /// The filters include UnitId, IsRO, IsORO, IsAfsacCell, and BasicDetailsId.
+        /// </summary>
+        /// <param name="id">The ID of the officer (not used in this method).</param>
+        /// <param name="UnitId">The UnitId for filtering officers.</param>
+        /// <param name="IsRO">Filter flag for RO.</param>
+        /// <param name="IsORO">Filter flag for ORO.</param>
+        /// <param name="IsAfsacCell">Filter flag for AfsacCell.</param>
+        /// <param name="BasicDetailsId">BasicDetailsId for filtering.</param>
+        /// <returns>Returns a JSON response with the officer data or an error message.</returns>
+        public async Task<IActionResult> GetOffrsByUnitMapId(int id, int UnitId, int IsRO, int IsORO, int IsAfsacCell, int BasicDetailsId)
         {
             try
             {
+                // Retrieve the user's DomainMapId from claims
                 int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                if(UnitId==0)
+
+                // If UnitId is 0, retrieve it from the session
+                if (UnitId == 0)
                 {
                     UnitId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").UnitId;
                     return Json(await _userProfileBL.GetOffrsByUnitMapId(UnitId, IsRO, IsORO, IsAfsacCell, BasicDetailsId, DomainMapId));
@@ -489,71 +516,104 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log the error and return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
+        /// <summary>
+        /// This method retrieves user profile details by ArmyNo.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number for fetching the user profile.</param>
+        /// <returns>Returns a JSON response with the user profile data.</returns>
         public async Task<IActionResult> GetByMasterArmyNo(string ArmyNo)
         {
             try
             {
+                // Retrieve the user ID from claims
                 int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                return Json(await _userProfileBL.GetByMArmyNo(ArmyNo, userid));
 
+                // Fetch user profile by ArmyNo
+                return Json(await _userProfileBL.GetByMArmyNo(ArmyNo, userid));
             }
             catch (Exception ex)
             {
+                // Log the error and return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
+        /// <summary>
+        /// This method retrieves the domain mapping by AspNetUserId.
+        /// </summary>
+        /// <param name="Data">The domain mapping data that contains the AspNetUserId.</param>
+        /// <returns>Returns a JSON response with the domain mapping data.</returns>
         public async Task<IActionResult> GetByAspnetUserIdBy(TrnDomainMapping Data)
         {
             try
             {
-               
+                // Fetch domain mapping by AspNetUserId
                 return Json(await _iDomainMapBL.GetByAspnetUserIdBy(Data.AspNetUsersId));
-
             }
             catch (Exception ex)
             {
+                // Log the error and return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
+        /// <summary>
+        /// This method retrieves the user profile based on RequestId.
+        /// </summary>
+        /// <param name="RequestId">The RequestId associated with the user profile.</param>
+        /// <returns>Returns a JSON response with the user profile data.</returns>
         public async Task<IActionResult> GetByRequestId(int RequestId)
         {
             try
             {
-               
+                // Fetch user profile by RequestId
                 return Json(await _userProfileBL.GetByRequestId(RequestId));
-
             }
             catch (Exception ex)
             {
+                // Log the error and return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
+        /// <summary>
+        /// This method checks if the given ArmyNo exists in the user profile.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number to be checked in the user profile.</param>
+        /// <returns>Returns a JSON response indicating whether the ArmyNo exists in the profile.</returns>
         public async Task<IActionResult> CheckArmyNoInUserProfile(string ArmyNo)
         {
+            // Retrieve the user ID from claims
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Check if ArmyNo exists in the user profile
             DTOProfileResponse dTOProfileResponse = await _userProfileBL.CheckArmyNoInUserProfile(ArmyNo, userid);
+
             return Json(dTOProfileResponse);
         }
+
+        /// <summary>
+        /// This method retrieves the top profile by ArmyNo.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number for retrieving the profile.</param>
+        /// <returns>Returns a JSON response with the top profile data.</returns>
         public async Task<IActionResult> GetTopByArmyNo(string ArmyNo)
         {
             try
             {
+                // Fetch the top profile by ArmyNo
                 return Json(await _userProfileBL.GetTopByArmyNo(ArmyNo));
             }
             catch (Exception ex)
             {
+                // Log the error and return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
-        }
-
-
+        } 
     }
 }
