@@ -354,65 +354,108 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// This method retrieves all user profiles associated with the current domain.
+        /// It fetches the profiles based on the DomainId and returns the result as JSON.
+        /// </summary>
+        /// <param name="Id">The identifier for the domain (unused in the method body but expected as part of the signature).</param>
+        /// <returns>Returns a JSON response containing a list of user profiles.</returns>
         public async Task<IActionResult> GetAll(string Id)
         {
             try
             {
+                // Retrieve the current user's DomainId from the claims
                 int DomainId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch the user profiles based on DomainId
                 return Json(await _userProfileBL.GetAll(DomainId, 0));
             }
             catch (Exception ex)
             {
+                // In case of an exception, return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
-        public async Task<IActionResult> GetByArmyNoOrAspnetuserId(string ArmyNo,int userid)
+
+        /// <summary>
+        /// This method retrieves a user profile by ArmyNo or UserId.
+        /// If the UserId is not provided, it defaults to the current logged-in user's Id.
+        /// </summary>
+        /// <param name="ArmyNo">The army number to look for.</param>
+        /// <param name="userid">The optional UserId to look for. If it's zero, the current user's Id is used.</param>
+        /// <returns>Returns a JSON response containing the user profile or an error message.</returns>
+        public async Task<IActionResult> GetByArmyNoOrAspnetuserId(string ArmyNo, int userid)
         {
             try
             {
-                if(userid==0)
-                 userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                // If no UserId is passed, use the current user's Id
+                if (userid == 0)
+                    userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch the user profile by ArmyNo and UserId
                 DTOUserProfileResponse dTOUserProfileResponse = await _userProfileBL.GetByArmyNo(ArmyNo, userid);
+
+                // Add the role name to the response using the session value
                 dTOUserProfileResponse.RoleName = GetSessionValue();
+
+                // Return the user profile as JSON
                 return Json(dTOUserProfileResponse);
             }
             catch (Exception ex)
             {
+                // In case of an exception, return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
+        /// <summary>
+        /// This method retrieves a user profile for users who do not have a token applied.
+        /// It fetches the profile based on the user's ID and returns the result.
+        /// </summary>
+        /// <param name="ArmyNo">The army number of the user (not used in this implementation).</param>
+        /// <returns>Returns a JSON response containing the user profile.</returns>
         public async Task<IActionResult> GetByArmyNoIsWithoutTokenApply(string ArmyNo)
         {
             try
             {
-                
+                // Retrieve the current user's ID from the claims
                 int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch the user profile for users who have not applied for a token
                 MUserProfile dTOUserProfileResponse = await _userProfileBL.GetByIsWithoutTokenApply(userid);
-                
+
+                // Return the profile as JSON
                 return Json(dTOUserProfileResponse);
             }
             catch (Exception ex)
             {
+                // In case of an exception, return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
+        /// <summary>
+        /// This method retrieves the profile of a user based on their UserId.
+        /// It requires the user to be authorized to access this endpoint.
+        /// </summary>
+        /// <param name="UserId">The UserId of the profile to retrieve.</param>
+        /// <returns>Returns a JSON response containing the user profile or an error message.</returns>
         [Authorize]
         public async Task<IActionResult> GetProfileByUserId(int UserId)
         {
             try
             {
+                // Fetch the user profile by UserId
                 return Json(await _userProfileBL.GetProfileByUserId(UserId));
             }
             catch (Exception ex)
             {
+                // Log any exceptions that occur and return an internal server error response
                 _logger.LogError(1001, ex, "UserProfile->GetProfileByUserId");
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
         public async Task<IActionResult> GetDataForFwd(string Name,int TypeId, int StepId,int UnitId, int ISRO,int IsORO)
         {
             try
