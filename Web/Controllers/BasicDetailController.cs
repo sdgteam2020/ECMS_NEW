@@ -4799,20 +4799,30 @@ namespace Web.Controllers
         }
 
 
-        //[Authorize(Roles = "DteAdmin")]
+        /// <summary>
+        /// Retrieves the top (latest) Army Number entry from I-Card requests for the given ArmyNo.
+        /// Secured with the "FlagICardApplPolicy" authorization policy.
+        /// </summary>
+        /// <param name="ArmyNo">The Army Number to search for in I-Card requests.</param>
+        /// <returns>Returns JSON containing the top Army Number entry, or internal server error on exception.</returns>
         [Authorize(Policy = "FlagICardApplPolicy")]
         public async Task<IActionResult> GetTopArmyNoFromICardRequest(string ArmyNo)
         {
             try
             {
+                // Call business layer to get the latest ArmyNo from I-Card requests and return as JSON
                 return Json(await basicDetailBL.GetTopArmyNoFromICardRequest(ArmyNo));
             }
             catch (Exception ex)
             {
+                // Log any exception with an error code and context
                 _logger.LogError(1001, ex, "BasicDetail->GetTopArmyNoFromICardRequest");
+
+                // Return a generic internal server error key as JSON
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
 
         [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
         [HttpGet]
