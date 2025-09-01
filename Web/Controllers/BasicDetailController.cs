@@ -5330,10 +5330,16 @@ namespace Web.Controllers
             return Json(dTOFaulty);
         }
 
+        /// <summary>
+        /// Returns the view for destruction card requests.
+        /// </summary>
+        /// <returns>ViewResult containing the Destruction Card Request page.</returns>
         public async Task<ActionResult> DestructionCardRequestAsync()
         {
+            // Simply return the view associated with destruction card requests
             return View();
         }
+
 
         public async Task<IActionResult> SaveDestructionCardRequest(TrnDestructionCard model)
         {
