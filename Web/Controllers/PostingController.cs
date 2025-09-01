@@ -6,15 +6,11 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting.Internal;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
 
@@ -65,18 +61,40 @@ namespace Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Retrieves and returns the posting information for a given Army Number (ArmyNo).
+        /// It fetches relevant data and decrypts the associated image for display purposes.
+        /// </summary>
+        /// <param name="ArmyNo">
+        /// The Army Number used to retrieve the relevant posting data.
+        /// </param>
+        /// <returns>
+        /// Returns a <see cref="JsonResult"/> containing the posting data, including a decrypted photo image.
+        /// </returns>
         public async Task<IActionResult> GetPostingIn(string ArmyNo)
         {
+            // Fetch posting information based on Army Number (ArmyNo)
             DTOPostingInResponse data = await _iPostingBL.GetArmyDataForPostingOut(ArmyNo);
+
+            // Define the folder path for photos and signatures
             string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+            // Define the full path for the photo image based on the stored file path
             string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", data.PhotoImagePath);
 
+            // Check if the photo file exists
             if (System.IO.File.Exists(sourcePathPhoto))
             {
+                // If the file exists, decrypt the image and assign it to the data's PhotoImagePath property
                 data.PhotoImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
             }
+
+            // Return the data as a JSON response, including the decrypted photo image
             return Json(data);
         }
+
+
+
         public async Task<IActionResult> GetAllPostingOut()
         {
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
