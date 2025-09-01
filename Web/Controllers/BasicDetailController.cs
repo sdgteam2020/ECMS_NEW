@@ -3763,10 +3763,18 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Serves the Hotlist Card Request view page.
+        /// This action is responsible for returning the view where users can submit or view hotlist card requests.
+        /// </summary>
+        /// <returns>Returns a ViewResult rendering the Hotlist Card Request page.</returns>
         public async Task<ActionResult> HotListCardRequestAsync()
         {
+            // Simply return the view for Hotlist Card Request.
+            // No data fetching is performed here; the view may call other endpoints (e.g., via AJAX) for data.
             return View();
         }
+
 
         public async Task<IActionResult> SaveHotlistCardRequest(TrnHotlistCard model)
         {
