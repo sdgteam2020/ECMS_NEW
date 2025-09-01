@@ -157,7 +157,7 @@ namespace Web.Controllers
             _destructionCardBL = destructionCardBL;
             this.dispatchCardBL = dispatchCardBL;
             this.dispatchCardMappingBL = dispatchCardMappingBL;
-            this.imageEncryptAndDecrypt= imageEncryptAndDecrypt;
+            this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
             this.encryptionSettingBL = encryptionSettingBL;
         }
 
@@ -1521,7 +1521,7 @@ namespace Web.Controllers
                                 if (System.IO.File.Exists(path))
                                 {
                                     System.IO.File.Delete(path);
-                                } 
+                                }
 
                                 mTrnUpload.PhotoImagePath = GetCreateMyFolder() + "/" + FileName + ".enc";
                             }
@@ -1531,7 +1531,7 @@ namespace Web.Controllers
                             mTrnUpload.PhotoImagePath = model.ExistingPhotoImagePath;
                         }
 
-                        
+
                         // --- Handle Signature upload: encrypt new file, delete old one if exists ---
                         string sourceFolderSignaturePhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature")));
                         if (!Directory.Exists(sourceFolderSignaturePhy))
@@ -1570,7 +1570,7 @@ namespace Web.Controllers
                                         System.IO.File.Delete(ExitImagePath);
                                     }
                                 }
-                                
+
                                 // Encrypt and replace
                                 await imageEncryptAndDecrypt.EncryptImageFile(path, destinationPath);
                                 if (System.IO.File.Exists(path))
@@ -4537,55 +4537,70 @@ namespace Web.Controllers
             }
         }
 
-       /// <summary>
-/// Retrieves the basic detail of a user based on the provided RequestId,
-/// including decrypted photo and signature in Base64 format.
-/// </summary>
-/// <param name="RequestId">The request identifier used to fetch the user's basic details.</param>
-/// <returns>Returns a JSON object with the user's details including encrypted images, or null if not found.</returns>
-public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
-{
-    // Fetch the basic detail data for the given request ID
-    BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+        /// <summary>
+        /// Retrieves the basic detail of a user based on the provided RequestId,
+        /// including decrypted photo and signature in Base64 format.
+        /// </summary>
+        /// <param name="RequestId">The request identifier used to fetch the user's basic details.</param>
+        /// <returns>Returns a JSON object with the user's details including encrypted images, or null if not found.</returns>
+        public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
+        {
+            // Fetch the basic detail data for the given request ID
+            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
 
-    if (basicDetailCrtAndUpdVM != null)
-    {
-        // Set the physical path to the storage folder for images
-        string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+            if (basicDetailCrtAndUpdVM != null)
+            {
+                // Set the physical path to the storage folder for images
+                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
-        // Construct full path for the photo and decrypt it to Base64
-        string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
-        basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                // Construct full path for the photo and decrypt it to Base64
+                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
 
-        // Construct full path for the signature and decrypt it to Base64
-        string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
-        basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                // Construct full path for the signature and decrypt it to Base64
+                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
 
-        // Return the JSON object with decrypted images
-        return Json(basicDetailCrtAndUpdVM);
-    }
-    else
-    {
-        // Return null if no basic detail found for the request ID
-        return Json(null);
-    }
-}
+                // Return the JSON object with decrypted images
+                return Json(basicDetailCrtAndUpdVM);
+            }
+            else
+            {
+                // Return null if no basic detail found for the request ID
+                return Json(null);
+            }
+        }
 
 
+        /// <summary>
+        /// Retrieves the I-Card request history for a given RequestId,
+        /// including pending or completed card history based on the card status.
+        /// </summary>
+        /// <param name="RequestId">The request identifier for which the history is fetched.</param>
+        /// <returns>Returns a JSON object containing the I-Card history details.</returns>
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
+            // Initialize the response object for card history
             ICardHistoryResponseAll? cardHistoryResponses = new ICardHistoryResponseAll();
+
+            // Check the current status of the card for the given request
             var cardStatus = await basicDetailBL.CheckCardStatus(RequestId);
+
             if (cardStatus.GetValueOrDefault() == 1)
             {
+                // If card is pending, fetch pending card history
                 cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
             }
             else if (cardStatus.GetValueOrDefault() == 2)
             {
+                // If card is completed, fetch completed card history
                 cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
             }
+
+            // Return the card history as JSON
             return Json(cardHistoryResponses);
         }
+
 
         public async Task<IActionResult> GetCardMovementHistory(int RequestId)
         {
@@ -5533,7 +5548,7 @@ public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
                                 }
                                 #endregion Upload User File
                                 dTO.UploadFilePath = fileName;
-                                ret.FileName= fileName;
+                                ret.FileName = fileName;
                                 DTOGenericResponse<string> response1 = new DTOGenericResponse<string>();
                                 var ValidRecords = validateResult.Where(x => x.IsValid).ToList();
                                 response1 = await basicDetailBL.CardDispatchCSVUpload(ValidRecords, dTO);
@@ -5862,7 +5877,7 @@ public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
             try
             {
                 dTOs = await basicDetailBL.ExportCsvFileForDispatchCard(RequestIds);
-                
+
                 using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
@@ -5878,9 +5893,9 @@ public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
                 _logger.LogError(1001, ex, "BasicDetail->ExportCsvFileForDispatchCard");
                 response.Result = false;
                 response.Message = "Internal Server Error!";
-                response.Value =string.Empty;
+                response.Value = string.Empty;
             }
-            return Json(response);  
+            return Json(response);
         }
         [HttpPost]
         public IActionResult BeforeProceedToDispatchCheck([FromBody] DTOBeforeProceedToDispatchCheckRequest dTO)
@@ -5888,7 +5903,7 @@ public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
             try
             {
-                if(ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
                     if (dTOTempSession1 != null)
@@ -5918,7 +5933,7 @@ public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
             return Json(response);
         }
         [HttpPost]
-        public async Task<IActionResult> ExportCsvForDispatch(DTOExportDispatch Data )
+        public async Task<IActionResult> ExportCsvForDispatch(DTOExportDispatch Data)
         {
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
@@ -5951,13 +5966,13 @@ public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
             // Data rows
             foreach (var item in ret.data)
             {
-                csv.AppendLine($"{item.RankName +" "+ item.NameAsPerRecord},\"{item.ServiceNo}\",\"{item.ChipNo}\",\"{item.RequestId}\"");
+                csv.AppendLine($"{item.RankName + " " + item.NameAsPerRecord},\"{item.ServiceNo}\",\"{item.ChipNo}\",\"{item.RequestId}\"");
             }
 
             // Convert to byte array
             var bytes = Encoding.UTF8.GetBytes(csv.ToString());
-           
-           // var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Dispatchexports");
+
+            // var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Dispatchexports");
             var folderPath = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Dispatchexports");
             // Create folder if not exists
             if (!Directory.Exists(folderPath))
@@ -5971,8 +5986,8 @@ public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
             System.IO.File.WriteAllBytes(fullPath, bytes);
             return Json(fileName);
 
-            
-            
+
+
         }
         #endregion
 
