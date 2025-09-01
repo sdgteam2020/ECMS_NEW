@@ -4986,18 +4986,36 @@ namespace Web.Controllers
 
         #region Card Distribution
 
+        /// <summary>
+        /// Displays the I-Card Distribution page to users who meet the "ViewFlaggedICardApplPolicy" policy.
+        /// </summary>
+        /// <remarks>
+        /// This action method retrieves the currently logged-in user's claims
+        /// and passes them to the view via ViewBag for role-based UI rendering or permissions handling.
+        /// </remarks>
+        /// <returns>
+        /// Returns the ICardDistribution view along with the user's claims.
+        /// </returns>
         [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
         [HttpGet]
         public async Task<IActionResult> ICardDistribution()
         {
+            // Get the currently logged-in user's ID from the claims principal
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Retrieve the user object from UserManager based on userId
             var user = await userManager.FindByIdAsync(userId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Get all claims assigned to the user (permissions, roles, etc.)
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Pass the retrieved claims to the view using ViewBag
             ViewBag.UserClaims = UserClaims;
+
+            // Return the ICardDistribution view
             return View();
         }
+
 
         //[Authorize(Policy = "ViewFlaggedICardApplPolicy")]
         //[HttpPost]
