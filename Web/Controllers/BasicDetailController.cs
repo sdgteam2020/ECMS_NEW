@@ -5459,11 +5459,23 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves a dropdown list of record regiments for a given ToUnitId based on user claims and session.
+        /// </summary>
+        /// <param name="ToUnitId">The target unit ID for which regiments are fetched.</param>
+        /// <returns>JSON containing a generic response with regiment and unit details.</returns>
         public async Task<IActionResult> GetddlRecordRegiment(int ToUnitId)
         {
+            // Initialize the session object
             DtoSession? dtoSession = new DtoSession();
+
+            // Initialize the generic response object
             DTOGenericResponse<DTOOROWithRegimentAndUnitResponse> response = new DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>();
+
+            // Initialize a default return object
             DTOOROWithRegimentAndUnitResponse ret = new DTOOROWithRegimentAndUnitResponse();
+
+            // Check if session token exists and fetch it
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
@@ -5471,26 +5483,38 @@ namespace Web.Controllers
 
             if (dtoSession != null)
             {
+                // Get current logged-in user's ID
                 int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch user object using UserManager
                 var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
                 byte ClaimValue;
 
-                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                // Get all claims associated with the user
                 var UserClaims = await userManager.GetClaimsAsync(user);
+
+                // Check if user has both "Dispatch Card" and "Appl Approver" claims
                 if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
                 {
                     ClaimValue = 2;
+
+                    // Call business layer to fetch record regiments
                     response = await basicDetailBL.GetddlRecordRegiment(ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId, ToUnitId);
                     return Ok(response);
                 }
+                // Check if user has only "Dispatch Card" claim
                 else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
                 {
                     ClaimValue = 3;
+
+                    // Call business layer to fetch record regiments
                     response = await basicDetailBL.GetddlRecordRegiment(ClaimValue, dtoSession.TrnDomainMappingId, dtoSession.UnitId, ToUnitId);
                     return Ok(response);
                 }
                 else
                 {
+                    // User does not have required claims; return error response
                     response.Result = false;
                     response.Message = "An error occurred while fetching data.";
                     response.Value = ret;
@@ -5499,12 +5523,14 @@ namespace Web.Controllers
             }
             else
             {
+                // Session token not found; return error response
                 response.Result = false;
                 response.Message = "An error occurred while fetching data.";
                 response.Value = ret;
                 return Ok(response);
             }
         }
+
 
         public async Task<ActionResult> DispatchOut()
         {
