@@ -5187,33 +5187,60 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Uploads the valid I-Card printing records stored in session to the database.
+        /// Updates the CSV import record to mark it as processed in the DB.
+        /// </summary>
+        /// <returns>
+        /// Returns a JSON response containing the upload result and messages.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> ICardPrintValidRecordsUpload()
         {
+            // Initialize response object
             DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
+
             try
             {
+                // Retrieve valid records from session
                 var records = SessionHeplers.GetObject<List<DTOCardPriningRequest>>(HttpContext.Session, "ValidRecordsCardUpload");
+
                 if (records?.Count() > 0)
                 {
+                    // Upload valid records using business logic layer
                     response = await basicDetailBL.CardPrinitngCSVUpload(records);
                 }
                 else
                 {
+                    // No valid records found in session
                     response.Message = "There are no valid records!";
                 }
+
+                // Retrieve CSV import ID from session
                 var csvImportId = SessionHeplers.GetObject<int>(HttpContext.Session, "CsvImportId");
+
+                // Fetch CSV import details from DB
                 var getCsvDetById = await _iCSVImportBL.Get(csvImportId);
+
+                // Mark the CSV import as processed
                 getCsvDetById.DBUpdated = true;
+
+                // Update CSV import record in DB
                 await _iCSVImportBL.Update(getCsvDetById);
             }
             catch (Exception ee)
             {
+                // Log any errors that occur during upload
                 _logger.LogError(1001, ee, "BasicDetail->ICardPrintValidRecordsUpload");
+
+                // Set response message to indicate error
                 response.Message = "Internal Server Error!";
             }
+
+            // Return JSON response to client
             return Json(response);
         }
+
         #endregion ICard Printing
 
         #region DestructionCard
