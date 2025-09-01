@@ -4667,53 +4667,73 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Creates a CSV file based on the provided export request model.
+        /// Determines whether to use RequestId or TrnFwdId based on user claims.
+        /// Saves the CSV to the server and returns the temporary file name as JSON.
+        /// </summary>
+        /// <param name="model">DTO containing parameters for CSV export.</param>
+        /// <returns>Returns JSON containing the temporary CSV file name or an error message.</returns>
         public async Task<IActionResult> CreateCSV(DTOCSVExportRequest model)
         {
             try
             {
+                // Get the current logged-in user's ID
                 var UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                // Retrieve the user object from UserManager
                 var user = await userManager.FindByIdAsync(UserId);
 
-                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                // Get all claims for the current user
                 var UserClaims = await userManager.GetClaimsAsync(user);
 
                 if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Internal Wk Distr"))
                 {
-                    //Ids is TrnFwdId.
+                    // If user has "Internal Wk Distr" claim, the Ids refer to TrnFwdId
                     model.IdsTypeRequestIdOrTrnFwdId = true;
                 }
                 else
                 {
-                    //Ids is RequestId.
+                    // Otherwise, the Ids refer to RequestId
                     model.IdsTypeRequestIdOrTrnFwdId = false;
                 }
 
+                // Generate CSV string from the business layer
                 string? csvData = await basicDetailBL.GetCSVString(model);
                 if (csvData != null)
                 {
+                    // Generate a temporary file name using a GUID
                     string TempFileName = Guid.NewGuid().ToString();
+
+                    // Define the folder path for saving CSV files
                     string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CSVFile");
-                    // Check if directory exists
+
+                    // Check if directory exists; if not, create it
                     if (!Directory.Exists(sourceFolder))
                     {
-                        // If directory does not exist, create it
                         Directory.CreateDirectory(sourceFolder);
                     }
 
+                    // Write the CSV data to a file in the folder
                     System.IO.File.WriteAllText(sourceFolder + "/" + TempFileName + ".csv", csvData);
+
+                    // Return the temporary file name as JSON
                     return Json(TempFileName);
                 }
                 else
                 {
+                    // If CSV data generation failed, return an internal server error constant
                     return Json(KeyConstants.InternalServerError);
                 }
             }
             catch (Exception ex)
             {
+                // Log any exceptions and return an internal server error
                 _logger.LogError(1001, ex, "BasicDetails=>CreateCSV.");
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
 
         public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
         {
