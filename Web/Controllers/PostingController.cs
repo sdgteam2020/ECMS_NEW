@@ -134,67 +134,107 @@ namespace Web.Controllers
 
 
 
-        public async Task<IActionResult> GetPostingOutWithType(string Type,string PostingType)
+        /// <summary>
+        /// This method handles the retrieval of posting out records based on the provided base64-encoded `Type` and `PostingType`.
+        /// It validates the input, decodes the base64 strings, and sets the corresponding session values for `PostingType` and `Type`.
+        /// If any input is invalid, the user is redirected to the ContactUs page with an error message.
+        /// </summary>
+        /// <param name="Type">A base64 encoded string representing the type.</param>
+        /// <param name="PostingType">A base64 encoded string representing the posting type.</param>
+        /// <returns>
+        /// Returns a view with the decoded values for `Type` and `PostingType` as ViewBag properties.
+        /// </returns>
+        public async Task<IActionResult> GetPostingOutWithType(string Type, string PostingType)
         {
+            // Check if Type or PostingType are null, empty or invalid base64-encoded
             if (string.IsNullOrEmpty(Type) || !service.IsValidBase64(Type) || string.IsNullOrEmpty(PostingType) || !service.IsValidBase64(PostingType))
             {
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
+                TempData["error"] = "Invalid Input.";  // Store error message in TempData
+                TempData.Keep("error");  // Retain the error message across redirects
+                return RedirectToAction("ContactUs", "Home");  // Redirect to the ContactUs page if input is invalid
             }
+
             try
             {
+                // Decode the base64-encoded Type and PostingType strings
                 var base64EncodedBytes = Convert.FromBase64String(Type);
-                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
-                var PostingTy = Encoding.UTF8.GetString(Convert.FromBase64String(PostingType));
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);  // Decode the Type string
+                var PostingTy = Encoding.UTF8.GetString(Convert.FromBase64String(PostingType));  // Decode the PostingType string
+
+                // Convert the decoded Type string to an integer
                 int t = Convert.ToInt32(decodedString);
+
+                // Store the decoded values in the session for future use
                 SessionHeplers.SetObject(HttpContext.Session, "PostingType", PostingTy);
                 SessionHeplers.SetObject(HttpContext.Session, "Type", t);
+
+                // Pass the decoded values to the view using ViewBag
                 ViewBag.Type = t;
                 ViewBag.PostingType = PostingTy;
-                return View();
+
+                return View();  // Return the view with the ViewBag data
             }
             catch (Exception ex)
             {
+                // Log any exceptions that occur during decoding and session handling
                 _logger.LogError(1001, ex, "PostingController=>GetPostingOutWithType.");
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
+                TempData["error"] = "Invalid Input.";  // Store error message in TempData
+                TempData.Keep("error");  // Retain the error message across redirects
+                return RedirectToAction("ContactUs", "Home");  // Redirect to the ContactUs page if an exception occurs
             }
         }
 
+        /// <summary>
+        /// This method retrieves all posting out records based on the provided `DTODataTablesRequest` and session data for `PostingType` and `Type`.
+        /// It fetches the posting out data using the `GetPostingOutWithType` method from the business logic layer and returns the result in JSON format.
+        /// </summary>
+        /// <param name="dTO">The data table request object containing parameters for filtering and pagination.</param>
+        /// <returns>
+        /// Returns a JSON response with the posting out records matching the provided filters and session data.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetAllPostingOutWithType(DTODataTablesRequest dTO)
         {
+            // Initialize an empty list of DTOPostingOutDetilsResponse to store the results
             List<DTOPostingOutDetilsResponse> dTOPostingOutDetilsResponses = new List<DTOPostingOutDetilsResponse>();
             var responseData = new DTODataTablesResponse<DTOPostingOutDetilsResponse>
             {
                 draw = 0,
                 recordsTotal = 0,
                 recordsFiltered = 0,
-                data = dTOPostingOutDetilsResponses
+                data = dTOPostingOutDetilsResponses  // Set the initial empty list of data
             };
+
             try
             {
+                // Retrieve session information
                 DtoSession? dtoSession = new DtoSession();
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
                 }
+
+                // Get unit ID and other session-based values
                 int MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 string PostingType = SessionHeplers.GetObject<string>(HttpContext.Session, "PostingType");
                 int Type = SessionHeplers.GetObject<int>(HttpContext.Session, "Type");
+
+                // Get the user ID from the current logged-in user
                 int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch the posting out details using the business logic layer
                 responseData = await _iPostingBL.GetPostingOutWithType(dTO, userid, MapUnitId, Type, PostingType);
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during the execution of the method
                 _logger.LogError(1001, ex, "Posting->GetAllPostingOutWithType");
             }
 
+            // Return the response data as a JSON result
             return Json(responseData);
         }
+
 
 
         public async Task<IActionResult> SavePoasingOut(TrnPostingOut dTO)
