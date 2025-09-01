@@ -4153,20 +4153,32 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Exports distributed card data to a CSV file based on the provided request IDs.
+        /// </summary>
+        /// <param name="req">The export request object containing the IDs of records to export.</param>
+        /// <returns>A JSON result indicating success or failure, with the temporary CSV file name on success.</returns>
         [HttpPost]
         public async Task<IActionResult> DistributeDataExport([FromBody] DTOHotlistCardsExportRequest req)
         {
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
             try
             {
+                // Generate a temporary CSV file path
                 var tempFileName = Path.GetTempFileName().Replace(".tmp", ".csv");
+
+                // Fetch the records to export
                 var records = await _distributeCardBL.GetDetailsByRequestIds(req);
+
                 using (var writer = new StreamWriter(tempFileName, false, Encoding.UTF8))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
+                    // Register CSV mapping
                     csv.Context.RegisterClassMap(new CsvClassMap<DTODistributeCardExportResponse>(true, CsvClassMapTypeEnum.DistributeCard));
+
                     try
                     {
+                        // Write records to CSV
                         await csv.WriteRecordsAsync(records);
                     }
                     catch (Exception ee)
@@ -4177,6 +4189,7 @@ namespace Web.Controllers
                         goto ReturnSt;
                     }
                 }
+
                 dTOFaulty.Result = true;
                 dTOFaulty.Message = Path.GetFileName(tempFileName);
             }
@@ -4186,9 +4199,11 @@ namespace Web.Controllers
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = "Internal Server Error!";
             }
+
         ReturnSt:
             return Json(dTOFaulty);
         }
+
 
         public async Task<ActionResult> DistributeCardRequestAsync()
         {
