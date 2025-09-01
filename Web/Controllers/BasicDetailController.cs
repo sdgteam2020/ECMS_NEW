@@ -4735,26 +4735,44 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves the I-Card print preview details for a given RequestId.
+        /// Decrypts the associated photo and signature images to Base64 strings for frontend display.
+        /// </summary>
+        /// <param name="RequestId">The RequestId of the I-Card request.</param>
+        /// <returns>Returns JSON containing the BasicDetailCrtAndUpdVM with decrypted images, or null if not found.</returns>
         public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
         {
+            // Retrieve the basic detail record for the given RequestId
             BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+
             if (basicDetailCrtAndUpdVM != null)
             {
+                // Define the root physical folder where images are stored
                 string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
+                // Build the full path for the photo image
                 string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+
+                // Decrypt the photo image and assign it to the VM
                 basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
 
+                // Build the full path for the signature image
                 string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+
+                // Decrypt the signature image and assign it to the VM
                 basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
 
+                // Return the VM as JSON
                 return Json(basicDetailCrtAndUpdVM);
             }
             else
             {
+                // Return null if no record was found for the given RequestId
                 return Json(null);
             }
         }
+
 
         //[Authorize(Roles = "DteAdmin")]
         [Authorize(Policy = "FlagICardApplPolicy")]
