@@ -2999,17 +2999,34 @@ namespace Web.Controllers
         }
 
 
-        // Method to serialize last record to XML
+        /// <summary>
+        /// Generates an XML string representation of the last forwarded record for a given ID.
+        /// </summary>
+        /// <param name="id">The ID of the record to fetch and serialize.</param>
+        /// <returns>
+        /// Returns a string containing the XML representation of the last record, suitable for digital signing.
+        /// </returns>
         private async Task<string> GenerateLastRecordXml(int id)
         {
+            // Step 1: Fetch the last record from the business layer (ICard forwarding context)
+            // This typically retrieves the latest record associated with the provided ID
             var lastRec = await basicDetailBL.ICardFwdLastRec(id);
+
+            // Step 2: Initialize an XmlSerializer to convert the DTO object into XML
+            // The type parameter is DTOFwdLastRecForDigitalSign which defines the XML schema
             XmlSerializer serializer = new XmlSerializer(typeof(DTOFwdLastRecForDigitalSign));
+
+            // Step 3: Use a StringWriter to write the XML content into a string
             using (StringWriter writer = new StringWriter())
             {
+                // Step 3a: Serialize the last record object into XML format
                 serializer.Serialize(writer, lastRec);
+
+                // Step 3b: Return the serialized XML string to the caller
                 return writer.ToString();
             }
         }
+
 
         // Method to merge two XML documents
         private string MergeXmlDocuments(string xmlData, string lastRecordXml)
