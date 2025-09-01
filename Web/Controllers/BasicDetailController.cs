@@ -4205,10 +4205,15 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Returns the view for creating a new Distribute Card request.
+        /// </summary>
+        /// <returns>The DistributeCardRequest view.</returns>
         public async Task<ActionResult> DistributeCardRequestAsync()
         {
             return View();
         }
+
 
         public async Task<IActionResult> SaveDistributeCardRequest(TrnDistributeCard model)
         {
