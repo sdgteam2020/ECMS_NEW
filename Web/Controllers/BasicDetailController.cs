@@ -5931,27 +5931,44 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves dispatch card data specifically for a dialog (modal/pop-up) based on the DataTables request.
+        /// Calls the business layer method to fetch paginated, filtered, and sorted dispatch card data.
+        /// </summary>
+        /// <param name="dTO">The DataTables request object containing pagination, search, and filter criteria.</param>
+        /// <returns>
+        /// Returns a JSON response containing the dispatch card data for dialog. 
+        /// If an exception occurs, returns an empty list with draw, recordsTotal, and recordsFiltered set to 0.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
         {
             try
             {
+                // Call business layer to retrieve dispatch card data for dialog
                 return Json(await basicDetailBL.GetDispatchCardDataForDialog(dTO));
             }
             catch (Exception ex)
             {
+                // If an exception occurs, return an empty response to avoid breaking the UI
                 List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
+
                 var responseData = new DTODataTablesResponse<DTOCardDispatchDialogResponse>
                 {
-                    draw = 0,
-                    recordsTotal = 0,
-                    recordsFiltered = 0,
-                    data = dTOCards
+                    draw = 0,               // DataTables draw counter (0 since error)
+                    recordsTotal = 0,       // Total records (0 since error)
+                    recordsFiltered = 0,    // Filtered records (0 since error)
+                    data = dTOCards         // Empty list of data
                 };
+
+                // Log the exception for debugging and tracking
                 _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
+
+                // Return JSON with empty data
                 return Json(responseData);
             }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
