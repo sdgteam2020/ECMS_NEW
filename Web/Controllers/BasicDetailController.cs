@@ -6144,51 +6144,84 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Exports the selected dispatch card data as a CSV file.
+        /// Creates a temporary CSV file in the server and returns the file name.
+        /// </summary>
+        /// <param name="requestIdsWrapper">An object containing the list of request IDs to export.</param>
+        /// <returns>An <see cref="IActionResult"/> containing a JSON response with the CSV file name or error message.</returns>
         [HttpPost]
         public async Task<IActionResult> ExportCsvFileForDispatchCard([FromBody] DTORequestIdForCSVRequest requestIdsWrapper)
         {
+            // Initialize the list of DTOs that will hold CSV data
             List<DTODispatchCardForCSVResponse> dTOs = new List<DTODispatchCardForCSVResponse>();
+
+            // Initialize a generic response object to return status and messages
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+
+            // Extract the array of request IDs from the wrapper
             int[]? RequestIds = requestIdsWrapper.RequestIds;
 
+            // Check if request IDs are provided
             if (RequestIds == null || RequestIds.Length == 0)
             {
                 response.Result = false;
                 response.Message = "No request IDs provided.";
                 response.Value = string.Empty;
-                return Json(response);
+                return Json(response); // Return early if no IDs
             }
 
+            // Generate a unique CSV file name based on current timestamp
             string fileName = $"CSVForDispatch_{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
+
+            // Define the folder path where the CSV will be temporarily stored
             var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "DispatchExports", "Temp");
+
+            // Create the folder if it doesn't exist
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
             }
+
+            // Combine folder path and file name to get full file path
             var filePath = Path.Combine(uploadsFolder, fileName);
+
             try
             {
+                // Fetch the dispatch card data for the given request IDs from the business layer
                 dTOs = await basicDetailBL.ExportCsvFileForDispatchCard(RequestIds);
 
+                // Write data to CSV using CsvHelper
                 using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
+                    // Register the class map for CSV export configuration
                     csv.Context.RegisterClassMap(new CsvClassMap<DTODispatchCardForCSVResponse>(true, CsvClassMapTypeEnum.CSVExport));
+
+                    // Write all records asynchronously to the CSV
                     await csv.WriteRecordsAsync(dTOs);
                 }
+
+                // Update response object to indicate success
                 response.Result = true;
                 response.Message = "Ok";
-                response.Value = Path.GetFileName(fileName);
+                response.Value = Path.GetFileName(fileName); // Return only file name
             }
             catch (Exception ex)
             {
+                // Log any exception that occurs during processing
                 _logger.LogError(1001, ex, "BasicDetail->ExportCsvFileForDispatchCard");
+
+                // Set response as failed
                 response.Result = false;
                 response.Message = "Internal Server Error!";
                 response.Value = string.Empty;
             }
+
+            // Return the JSON response with result status, message, and CSV file name (if successful)
             return Json(response);
         }
+
         [HttpPost]
         public IActionResult BeforeProceedToDispatchCheck([FromBody] DTOBeforeProceedToDispatchCheckRequest dTO)
         {
