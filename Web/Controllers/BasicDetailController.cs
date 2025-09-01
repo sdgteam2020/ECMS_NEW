@@ -3618,10 +3618,19 @@ namespace Web.Controllers
         #endregion
 
         #region HotlistCard
+        /// <summary>
+        /// Returns the Hotlist Card view to the user.
+        /// This method is asynchronous to support future enhancements if data fetching is required,
+        /// although currently it simply renders the view.
+        /// </summary>
+        /// <returns>A ViewResult representing the Hotlist Card page.</returns>
         public async Task<ViewResult> HotlistCardAsync()
         {
+            // Currently no data is fetched; simply returns the view.
+            // Async keyword is kept for potential future asynchronous operations.
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetAllHotlist(DTODataTablesRequest dTO)
