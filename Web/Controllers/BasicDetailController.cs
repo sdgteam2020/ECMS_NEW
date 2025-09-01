@@ -6222,41 +6222,64 @@ namespace Web.Controllers
             return Json(response);
         }
 
+        /// <summary>
+        /// Stores or updates the DispatchLot session object before proceeding with dispatch operations.
+        /// Ensures that any previous session data is removed before setting the new data.
+        /// </summary>
+        /// <param name="dTO">The request object containing dispatch check data.</param>
+        /// <returns>An <see cref="IActionResult"/> containing a JSON response indicating success or failure.</returns>
         [HttpPost]
         public IActionResult BeforeProceedToDispatchCheck([FromBody] DTOBeforeProceedToDispatchCheckRequest dTO)
         {
+            // Initialize the generic response object
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
             try
             {
+                // Check if the incoming model is valid
                 if (ModelState.IsValid)
                 {
-                    DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
+                    // Retrieve any existing DispatchLot session object
+                    DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 =
+                        SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
+
+                    // Remove the existing session object if it exists
                     if (dTOTempSession1 != null)
                     {
                         HttpContext.Session.Remove("DispatchLot");
                     }
+
+                    // Store the new DispatchLot object in session
                     SessionHeplers.SetObject(HttpContext.Session, "DispatchLot", dTO);
+
+                    // Update response to indicate success
                     response.Result = true;
                     response.Message = "Ok";
                     response.Value = string.Empty;
                 }
                 else
                 {
+                    // Model is invalid, set response accordingly
                     response.Result = false;
                     response.Message = "No request IDs provided.";
                     response.Value = string.Empty;
-                    return Json(response);
+                    return Json(response); // Return early if model validation fails
                 }
             }
             catch (Exception ex)
             {
+                // Log any exceptions that occur during session handling
                 _logger.LogError(1001, ex, "BasicDetail->BeforeProceedToDispatchCheck");
+
+                // Update response to indicate failure
                 response.Result = false;
                 response.Message = "Internal Server Error!";
                 response.Value = string.Empty;
             }
+
+            // Return JSON response to the client
             return Json(response);
         }
+
         [HttpPost]
         public async Task<IActionResult> ExportCsvForDispatch(DTOExportDispatch Data)
         {
