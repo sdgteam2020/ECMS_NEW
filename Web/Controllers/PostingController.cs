@@ -95,21 +95,42 @@ namespace Web.Controllers
 
 
 
+        /// <summary>
+        /// Retrieves the posting out records for the current user.
+        /// This method calls the business logic layer to fetch all posting history for the user.
+        /// </summary>
+        /// <returns>
+        /// Returns the <see cref="IActionResult"/> which will render the posting out records view.
+        /// </returns>
         public async Task<IActionResult> GetAllPostingOut()
         {
+            // Retrieve the user ID from the current logged-in user's claims
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Call the business logic layer to fetch the posting history for the current user
             var data = await _iPostingBL.GetAllPostingHistory(userid);
-           
-            return View(data);
+
+            return View(data);  // Return the fetched posting history data to the view
         }
 
+        /// <summary>
+        /// Retrieves the posting out details for the current user.
+        /// This method fetches detailed posting history for the user from the business logic layer.
+        /// </summary>
+        /// <returns>
+        /// Returns the <see cref="IActionResult"/> which will render the posting out details view.
+        /// </returns>
         public async Task<IActionResult> GetPostingOutDetails()
         {
+            // Retrieve the user ID from the current logged-in user's claims
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Call the business logic layer to fetch the detailed posting history for the user
             var data = await _iPostingBL.GetAllPostingHistory(userid);
 
-            return View(data);
+            return View(data);  // Return the fetched posting history details to the view
         }
+
 
 
 
