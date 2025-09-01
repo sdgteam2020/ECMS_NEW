@@ -3027,29 +3027,43 @@ namespace Web.Controllers
             }
         }
 
-
-        // Method to merge two XML documents
+        /// <summary>
+        /// Merges two XML documents into a single XML structure suitable for digital signing.
+        /// </summary>
+        /// <param name="xmlData">The existing XML data as a string.</param>
+        /// <param name="lastRecordXml">The XML string of the last record to be merged.</param>
+        /// <returns>
+        /// Returns a string containing the merged XML, with a root element <c>RecForDigitalSign</c>.
+        /// </returns>
         private string MergeXmlDocuments(string xmlData, string lastRecordXml)
         {
+            // Step 1: Load the first XML document (existing XML data)
             XmlDocument xmlDoc1 = new XmlDocument();
             xmlDoc1.LoadXml(xmlData);
 
+            // Step 2: Load the second XML document (last record XML)
             XmlDocument xmlDoc2 = new XmlDocument();
             xmlDoc2.LoadXml(lastRecordXml);
 
+            // Step 3: Create a new XML document that will hold the merged content
             XmlDocument xmlDoc3 = new XmlDocument();
+
+            // Step 3a: Create the root element "RecForDigitalSign"
             XmlElement rootElement = xmlDoc3.CreateElement("RecForDigitalSign");
             xmlDoc3.AppendChild(rootElement);
 
+            // Step 4: Import all child nodes from the last record XML into the new document
             foreach (XmlNode node in xmlDoc2.DocumentElement.ChildNodes)
             {
-                XmlNode importedNode = xmlDoc3.ImportNode(node, true);
+                XmlNode importedNode = xmlDoc3.ImportNode(node, true); // Deep copy
                 rootElement.AppendChild(importedNode);
             }
 
-            XmlNode importedRoot = xmlDoc3.ImportNode(xmlDoc1.DocumentElement, true);
+            // Step 5: Import the existing XML document's root element into the new document
+            XmlNode importedRoot = xmlDoc3.ImportNode(xmlDoc1.DocumentElement, true); // Deep copy
             rootElement.AppendChild(importedRoot);
 
+            // Step 6: Return the merged XML as a string
             return xmlDoc3.OuterXml;
         }
 
