@@ -3352,29 +3352,41 @@ namespace Web.Controllers
             return PartialView("_BasicDetail_ParitalView", data);
         }
 
+        /// <summary>
+        /// Handles the saving of a faulty card request. 
+        /// This method processes both new requests and updates to existing faulty card records. 
+        /// It supports rejection flow, checks for user claims, validates model state, 
+        /// handles duplicates, and returns a standard response object with success/failure message.
+        /// </summary>
+        /// <param name="dTO">DTOFaultyCardRequest object containing the faulty card data submitted from the client.</param>
+        /// <returns>Returns a JSON response indicating success or failure along with relevant messages.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> SaveFaultyCard([FromBody] DTOFaultyCardRequest dTO)
         {
+            // Initialize forwarding entity and response DTO
             MTrnFwd? mTrnFwd = new MTrnFwd();
             DtoSession? dtoSession = new DtoSession();
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
 
+            // Retrieve session token if available and extract user session information
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
+
+            // Assign the user ID from session to the DTO (or 0 if session is null)
             dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
-            //Reject Case
+
+            // Handle rejection scenario (Choice == 3)
             if (dTO.Choice == 3)
             {
                 mTrnFwd.RequestId = dTO.RequestId;
                 mTrnFwd.FromUserId = dtoSession != null ? dtoSession.UserId : 0;
                 mTrnFwd.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 mTrnFwd.Remark = dTO.ToRemark;
-                mTrnFwd.FwdStatusId = Convert.ToByte(3); //Reject
+                mTrnFwd.FwdStatusId = Convert.ToByte(3); // Reject status
                 mTrnFwd.TypeId = Convert.ToByte(1);
                 mTrnFwd.StepId = Convert.ToByte(9);
                 mTrnFwd.IsComplete = false;
@@ -3384,10 +3396,13 @@ namespace Web.Controllers
                 mTrnFwd.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 mTrnFwd.IsActive = true;
 
+                // Fetch domain mapping for the request
                 TrnDomainMapping Domain = new TrnDomainMapping();
                 Domain = await iDomainMapBL.GetByRequestId(dTO.RequestId);
+
                 if (Domain != null)
                 {
+                    // Check if domain is mapped to a user
                     if (Domain.UserId.GetValueOrDefault() == 0)
                     {
                         dTOFaulty.Message = "Profile is not mapped with domain Id!";
@@ -3396,6 +3411,7 @@ namespace Web.Controllers
                     }
                     else
                     {
+                        // Assign the target user and AspNetUser IDs for forwarding
                         mTrnFwd.ToAspNetUsersId = Domain.AspNetUsersId;
                         mTrnFwd.ToUserId = Convert.ToInt32(Domain.UserId);
                     }
@@ -3404,26 +3420,33 @@ namespace Web.Controllers
 
             try
             {
+                // Mark DTO as active and set updated metadata
                 dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
-
-
+                // Validate the incoming model
                 if (ModelState.IsValid)
                 {
                     bool Claim = false;
                     int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                    // Retrieve the user and their claims
                     var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
-                    // UserManager service GetClaimsAsync method gets all the current claims of the user
                     var UserClaims = await userManager.GetClaimsAsync(user);
+
+                    // Check if the user has the "ICard Export Data" claim
                     if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                     {
                         Claim = true;
                     }
+
+                    // Handle update of an existing faulty card
                     if (dTO.TrnFaultyCardId > 0)
                     {
                         TrnFaultyCard? trnFaultyCard = await faultyCardBL.Get(dTO.TrnFaultyCardId);
+
+                        // Prevent duplicate edit action
                         if (trnFaultyCard != null && trnFaultyCard.IsEditAction)
                         {
                             dTOFaulty.Result = false;
@@ -3437,12 +3460,14 @@ namespace Web.Controllers
                                 dTO.TrnFwdId = trnFaultyCard.TrnFwdId ?? 0;
                             }
 
+                            // Save the faulty card and return response
                             dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }
                     }
                     else
                     {
+                        // Check for duplicate requests before saving new record
                         bool checkduplicate = await faultyCardBL.FindRequestId(dTO.RequestId);
                         if (checkduplicate)
                         {
@@ -3452,6 +3477,7 @@ namespace Web.Controllers
                         }
                         else
                         {
+                            // Save new faulty card request
                             dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd, Claim);
                             return Json(dTOFaulty);
                         }
@@ -3459,11 +3485,11 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    // Collect all model validation errors
                     var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                    .SelectMany(x => x.Value!.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
+                                           .SelectMany(x => x.Value!.Errors)
+                                           .Select(e => e.ErrorMessage)
+                                           .ToList();
                     if (errors.Any())
                     {
                         dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
@@ -3471,15 +3497,18 @@ namespace Web.Controllers
                     dTOFaulty.Result = false;
                     return Json(dTOFaulty);
                 }
-
             }
             catch (Exception ex)
             {
+                // Handle unexpected exceptions
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = ex.Message;
                 return Json(dTOFaulty);
             }
         }
+
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveFaultyCardRequest([FromBody] DTOFaultyCardRequest dTO)
