@@ -5422,13 +5422,23 @@ namespace Web.Controllers
         #endregion DestructionCard
 
         #region Dispatch
+        /// <summary>
+        /// Retrieves the user details including ID and name for a given ASP.NET Users ID.
+        /// </summary>
+        /// <param name="AspNetUsersId">The ID of the ASP.NET user.</param>
+        /// <returns>JSON containing a generic response with user details.</returns>
         public async Task<IActionResult> GetUserIdWithName(int AspNetUsersId)
         {
+            // Initialize the generic response object
             DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
 
+            // Call the business layer to get user details by ID
             response = await basicDetailBL.GetUserIdWithName(AspNetUsersId);
+
+            // Return the result as HTTP 200 OK with JSON payload
             return Ok(response);
         }
+
 
         public async Task<IActionResult> GetDispatchToData(byte CategeryId, byte RecordRegimentId)
         {
