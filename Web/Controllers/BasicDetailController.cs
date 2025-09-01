@@ -4614,12 +4614,21 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves the list of regimental units based on the given armed forces ID.
+        /// </summary>
+        /// <param name="ArmedId">The ID of the armed force for which regimental units are fetched.</param>
+        /// <returns>Returns a JSON object containing the list of regimentals.</returns>
         [HttpPost]
         public async Task<JsonResult> GetRegimentalListByArmedId(byte ArmedId)
         {
+            // Call the service layer to get the list of regimental units for the given ArmedId
             var regimentals = await service.GetRegimentalListByArmedId(ArmedId);
+
+            // Return the result as JSON to the client
             return Json(regimentals);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetROListByArmedId(byte ArmedId)
