@@ -6362,29 +6362,34 @@ namespace Web.Controllers
 
         #region Set Session and Get Session
         /// <summary>
-        /// This method is responsible for setting the session data with the provided DTO.
-        /// It receives a `DTOEncypteDecryptedColumnRequest` object, and if the data is successfully set, it returns `true`. 
-        /// Otherwise, it returns `false` if there is any error.
+        /// Sets the session data with the provided DTO object.
+        /// This method receives a `DTOEncypteDecryptedColumnRequest` object and stores it in the session under the key "DataSet".
         /// </summary>
-        /// <param name="Data">The `DTOEncypteDecryptedColumnRequest` object containing the data to be set in the session.</param>
+        /// <param name="Data">The `DTOEncypteDecryptedColumnRequest` object containing data to be stored in session.</param>
         /// <returns>
-        /// Returns `true` if the session data was successfully set, otherwise `false` in case of an error.
+        /// Returns `true` if the session data was successfully set, otherwise returns `false` in case of any exception.
         /// </returns>
-
         [HttpPost]
         public ActionResult DataSendForSetSession([FromBody] DTOEncypteDecryptedColumnRequest Data)
         {
             try
             {
+                // Store the provided DTO object in the session with key "DataSet"
                 SessionHeplers.SetObject(HttpContext.Session, "DataSet", Data);
+
+                // Return true to indicate the session data was successfully set
                 return Json(true);
             }
             catch (Exception ex)
             {
+                // Log the exception with a unique event ID for troubleshooting
                 _logger.LogError(1001, ex, "BasicDetail->DataSendForSetSession");
+
+                // Return false to indicate failure in setting session data
                 return Json(false);
             }
         }
+
         /// <summary>
         /// This method retrieves session data from the current HTTP session. It attempts to fetch a `DTOEncypteDecryptedColumnRequest` 
         /// object from the session with the key "DataSet". If the data is found, it returns the data along with a success message. 
