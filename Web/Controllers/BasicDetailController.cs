@@ -4215,27 +4215,41 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Saves a new Distribute Card request.
+        /// Handles session info, duplicate check, and card history validation before saving.
+        /// </summary>
+        /// <param name="model">The TrnDistributeCard model containing the request details.</param>
+        /// <returns>
+        /// A JSON response indicating the result of the operation and any relevant messages.
+        /// </returns>
         public async Task<IActionResult> SaveDistributeCardRequest(TrnDistributeCard model)
         {
             DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
             try
             {
+                // Retrieve user session information
                 DtoSession? dtoSession = new DtoSession();
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                 }
+
+                // Set audit and status fields
                 model.IsActive = true;
                 model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
                 model.UpdatedOn = DateTime.Now;
                 model.DistributedOn = DateTime.Now;
 
+                // Validate model state
                 if (ModelState.IsValid)
                 {
+                    // Check whether the card can be distributed based on previous card status
                     var checkCardBeforeDist = await basicDetailBL.CheckBeforeDistribution(model.RequestId);
                     if (checkCardBeforeDist.Result)
                     {
+                        // Check for duplicate distribution requests
                         bool checkduplicate = await _distributeCardBL.FindRequestId(model.RequestId);
                         if (checkduplicate)
                         {
@@ -4244,21 +4258,25 @@ namespace Web.Controllers
                         }
                         else
                         {
+                            // Fetch card history to record distribution details
                             ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
+                            // Save the distribution record and get the response
                             dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
                         }
                     }
                     else
                     {
+                        // Inform user if previous card entry is missing
                         dTOResponse.Message = $"Please create a {checkCardBeforeDist.Message} entry for previous card!";
                     }
                 }
                 else
                 {
+                    // Gather all model validation errors
                     var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                    .SelectMany(x => x.Value!.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
+                                           .SelectMany(x => x.Value!.Errors)
+                                           .Select(e => e.ErrorMessage)
+                                           .ToList();
                     if (errors.Any())
                     {
                         dTOResponse.Message = string.Join("; ", errors); // Concatenate all error messages
@@ -4269,6 +4287,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log and return internal server error
                 _logger.LogError(1001, ex, "BasicDetail->SaveDistributeCardRequest");
                 dTOResponse.Result = false;
                 dTOResponse.Message = "Internal Server Error!";
@@ -4276,9 +4295,10 @@ namespace Web.Controllers
 
             return Json(dTOResponse);
         }
+
         #endregion DistributeCard
 
-      #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
+        #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
 
         public async Task<IActionResult> CheckArmyNO(string ArmyNo)
         {
