@@ -156,50 +156,63 @@ namespace Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// This method is responsible for saving or updating a user's profile.
+        /// It checks if the user profile exists based on the ArmyNo and performs the save or update accordingly.
+        /// If the user profile already exists, it returns an "Exists" message, otherwise, it saves or updates the profile.
+        /// </summary>
+        /// <param name="dTO">The user profile data to be saved or updated.</param>
+        /// <returns>Returns a JSON response indicating the result of the operation.</returns>
         public async Task<IActionResult> SaveUserProfile(MUserProfile dTO)
         {
             try
             {
+                // Check if the RankId is valid (non-zero)
                 if (dTO.RankId != 0)
                 {
-                    dTO.IsActive = true;
-                    dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    dTO.UpdatedOn = DateTime.Now;
+                    dTO.IsActive = true; // Set the profile to active
+                    dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); // Set the user who updated the profile
+                    dTO.UpdatedOn = DateTime.Now; // Set the updated time
+
                     int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
                     if (ModelState.IsValid)
                     {
+                        // If UserId is greater than 0, check if the ArmyNo is already used by the user
                         if (dTO.UserId > 0)
                         {
                             bool? result = await _userProfileBL.FindByArmyNoWithUserId(dTO.ArmyNo, dTO.UserId);
                             if (result != null)
                             {
-                                if (result == true)
+                                if (result == true) // If the ArmyNo is already registered with the user
                                 {
-                                    return Json(KeyConstants.Exists);
+                                    return Json(KeyConstants.Exists); // Return message "Exists"
                                 }
                                 else
                                 {
-                                    await _userProfileBL.Update(dTO);
-                                    return Json(KeyConstants.Update);
+                                    await _userProfileBL.Update(dTO); // Update the user profile if the ArmyNo is not taken
+                                    return Json(KeyConstants.Update); // Return success message "Update"
                                 }
                             }
                             else
                             {
-                                return Json(KeyConstants.InternalServerError);
+                                return Json(KeyConstants.InternalServerError); // Return error message
                             }
                         }
                         else
                         {
+                            // Check if the ArmyNo is already used by any user
                             bool? result = await _userProfileBL.FindByArmyNo(dTO.ArmyNo);
                             if (result != null)
                             {
                                 if (result == true)
                                 {
-                                    return Json(KeyConstants.Exists);
+                                    return Json(KeyConstants.Exists); // Return message "Exists"
                                 }
                                 else
                                 {
-                                    dTO = await _userProfileBL.AddWithReturn(dTO);
+                                    dTO = await _userProfileBL.AddWithReturn(dTO); // Add the new user profile
+                                                                                   // Add the domain mapping after saving the profile
                                     TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
                                     trnDomainMapping.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                                     trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
@@ -208,123 +221,139 @@ namespace Web.Controllers
                                         trnDomainMapping.UserId = dTO.UserId;
                                         await _iDomainMapBL.Update(trnDomainMapping);
                                     }
-                                    return Json(KeyConstants.Save);
+                                    return Json(KeyConstants.Save); // Return success message "Save"
                                 }
                             }
                             else
                             {
-                                return Json(KeyConstants.InternalServerError);
+                                return Json(KeyConstants.InternalServerError); // Return error message
                             }
                         }
                     }
                     else
                     {
-
-                        return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                        return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); // Return validation errors
                     }
                 }
                 else
                 {
-                    return Json(KeyConstants.IncorrectData);
+                    return Json(KeyConstants.IncorrectData); // Return error message for invalid RankId
                 }
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError); // Return error message if an exception occurs
+            }
         }
+
+        /// <summary>
+        /// This method updates the user profile with additional domain mapping information.
+        /// It retrieves the domain mapping based on the user and updates the profile accordingly.
+        /// </summary>
+        /// <param name="dTO">The update profile data with mapping to be saved.</param>
+        /// <returns>Returns a JSON response indicating the result of the operation.</returns>
         public async Task<IActionResult> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
         {
             try
             {
+                // Get the userId from the current logged-in user's claim
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Retrieve the domain mapping for the current user
                 TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(dTO.Updatedby);
                 if (trnDomainMapping != null)
                 {
+                    // Set the mapping details in the DTO
                     dTO.TDMId = trnDomainMapping.Id;
                     dTO.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
                 }
                 else
                 {
+                    // If no domain mapping is found, set the default values
                     dTO.TDMId = 0;
                     dTO.UserId = 0;
                 }
 
-                if (dTO.UserId > 0 && dTO.TDMId>0)
+                // Ensure valid UserId and TDMId before proceeding
+                if (dTO.UserId > 0 && dTO.TDMId > 0)
                 {
+                    dTO.UpdatedOn = DateTime.Now; // Set the updated time
 
-                    dTO.UpdatedOn = DateTime.Now;
                     if (ModelState.IsValid)
                     {
+                        // Attempt to update the user profile with mapping
                         bool? result = await _userProfileBL.UpdateProfileWithMapping(dTO);
                         if (result != null)
                         {
                             if (result == true)
                             {
-                                return Json(KeyConstants.Update);
+                                return Json(KeyConstants.Update); // Return success message "Update"
                             }
                             else
                             {
-                                return Json(KeyConstants.InternalServerError);
+                                return Json(KeyConstants.InternalServerError); // Return error message
                             }
                         }
                         else
                         {
-                            return Json(KeyConstants.InternalServerError);
+                            return Json(KeyConstants.InternalServerError); // Return error message if result is null
                         }
                     }
                     else
                     {
-
-                        return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                        return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); // Return validation errors
                     }
                 }
                 else
                 {
-                    return Json(KeyConstants.IncorrectData);
+                    return Json(KeyConstants.IncorrectData); // Return error message if UserId or TDMId is invalid
                 }
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError); // Return error message if an exception occurs
+            }
         }
+
+        /// <summary>
+        /// This method maps a profile to the specified unit and updates or saves the mapping.
+        /// It handles both new mappings and updates for existing profiles.
+        /// </summary>
+        /// <param name="dTO">The profile data to be mapped to the unit.</param>
+        /// <returns>Returns a JSON response indicating the result of the operation.</returns>
         public async Task<IActionResult> MappingIOGSOUNIT(MMappingProfile dTO)
         {
             try
             {
-                dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                dTO.UpdatedOn = DateTime.Now;
-                
+                dTO.IsActive = true; // Set the mapping as active
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); // Set the user who is updating the mapping
+                dTO.UpdatedOn = DateTime.Now; // Set the updated time
+
                 if (ModelState.IsValid)
                 {
-                    //if (!await _userProfileBL.GetByArmyNo(dTO))
-                    //{
-                        if (dTO.Id > 0)
-                        {
+                    if (dTO.Id > 0) // If the mapping already exists, update it
+                    {
                         await _userProfileMappingBL.Update(dTO);
-                            return Json(KeyConstants.Update);
-                        }
-                        else
-                        {
-
-                            await _userProfileMappingBL.Add(dTO);
-                            return Json(KeyConstants.Save);
-
-
-                        }
-                    //}
-                    //else
-                    //{
-                    //    return Json(KeyConstants.Exists);
-                    //}
-
+                        return Json(KeyConstants.Update); // Return success message "Update"
+                    }
+                    else
+                    {
+                        // If the mapping does not exist, save a new one
+                        await _userProfileMappingBL.Add(dTO);
+                        return Json(KeyConstants.Save); // Return success message "Save"
+                    }
                 }
                 else
                 {
-
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); // Return validation errors
                 }
-
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
-
+            catch (Exception ex)
+            {
+                return Json(KeyConstants.InternalServerError); // Return error message if an exception occurs
+            }
         }
+
         public async Task<IActionResult> GetAll(string Id)
         {
             try
