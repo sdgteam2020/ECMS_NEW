@@ -20,18 +20,20 @@ using Web.WebHelpers;
 
 namespace Web.Controllers
 {
-    [Authorize]
- 
+    /// <summary>
+    /// This controller manages posting operations including posting in, posting out, and application closure.
+    /// </summary>
+    [Authorize] 
     public class PostingController : Controller
     {
-        private readonly IPostingBL _iPostingBL;
-        private readonly IApplCloseBL _iApplCloseBL;
-        private readonly ITrnICardRequestBL _iTrnICardRequestBL;
-        private readonly IService service;
-        private readonly ILogger<PostingController> _logger;
-        private readonly IWebHostEnvironment hostingEnvironment;
-        private readonly IDataProtector _protector;
-        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;
+        private readonly IPostingBL _iPostingBL;// Interface for posting business logic
+        private readonly IApplCloseBL _iApplCloseBL;// Interface for application closure business logic
+        private readonly ITrnICardRequestBL _iTrnICardRequestBL;// Interface for ICard request business logic
+        private readonly IService service;// Interface for general services
+        private readonly ILogger<PostingController> _logger;// Logger for logging information and errors
+        private readonly IWebHostEnvironment hostingEnvironment;// Hosting environment for accessing web root path
+        private readonly IDataProtector _protector;// Data protector for securing sensitive data
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// Interface for image encryption and decryption
         public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings, IImageEncryptAndDecrypt imageEncryptAndDecrypt)
         {
             _iPostingBL = postingBL;
@@ -44,10 +46,25 @@ namespace Web.Controllers
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
         }
+
+        /// <summary>
+        /// Handles the posting in process.
+        /// Returns the PostingIn view.
+        /// Optionally accepts an encrypted identifier (EncId) for additional context.
+        /// </summary>
+        /// <param name="EncId">
+        /// Optional encrypted identifier that can be used to fetch or filter data in the view.
+        /// </param>
+        /// <returns>
+        /// Returns an <see cref="IActionResult"/> that renders the PostingIn view.
+        /// </returns>
         public async Task<IActionResult> PostingIn(string? EncId)
         {
+            // Currently, this method just returns the PostingIn view.
+            // EncId can be used in future to fetch specific data or perform additional logic.
             return View();
         }
+
         public async Task<IActionResult> GetPostingIn(string ArmyNo)
         {
             DTOPostingInResponse data = await _iPostingBL.GetArmyDataForPostingOut(ArmyNo);
