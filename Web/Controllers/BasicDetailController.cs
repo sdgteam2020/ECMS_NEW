@@ -5341,31 +5341,48 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Saves a destruction card request. Validates the model, checks for duplicates,
+        /// and inserts the record if valid. Returns the operation result as JSON.
+        /// </summary>
+        /// <param name="model">The destruction card model to save.</param>
+        /// <returns>JSON containing the result, messages, record ID, and timestamp.</returns>
         public async Task<IActionResult> SaveDestructionCardRequest(TrnDestructionCard model)
         {
+            // Initialize the response object for front-end
             DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
+
             try
             {
+                // Initialize session DTO
                 DtoSession? dtoSession = new DtoSession();
+
+                // Retrieve session token if available
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                 }
+
+                // Set audit fields on the model
                 model.IsActive = true;
                 model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
                 model.UpdatedOn = DateTime.Now;
 
+                // Check if the model passed server-side validation
                 if (ModelState.IsValid)
                 {
+                    // Check for duplicate destruction request by RequestId
                     bool checkduplicate = await _destructionCardBL.FindAnyRequestId(model.RequestId);
                     if (checkduplicate)
                     {
+                        // Duplicate found, return error
                         dTOFaulty.Result = false;
                         dTOFaulty.Message = "The destruction request already exists!";
                     }
                     else
                     {
+                        // Add the new destruction card and return success response
                         var result = await _destructionCardBL.AddWithReturn(model);
                         dTOFaulty.Result = true;
                         dTOFaulty.Message = "Record created!";
@@ -5375,27 +5392,33 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                    .SelectMany(x => x.Value!.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
+                    // Collect and return all model validation errors
+                    var errors = ModelState
+                        .Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
                     if (errors.Any())
                     {
                         dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
                     }
+
                     dTOFaulty.Result = false;
                 }
-
             }
             catch (Exception ex)
             {
+                // Log exception and return generic error response
                 _logger.LogError(1001, ex, "BasicDetail->SaveDestructionCardRequest");
                 dTOFaulty.Result = false;
                 dTOFaulty.Message = "Internal Server Error!";
             }
 
+            // Return JSON response to the client
             return Json(dTOFaulty);
         }
+
         #endregion DestructionCard
 
         #region Dispatch
