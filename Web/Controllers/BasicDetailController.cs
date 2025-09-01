@@ -3159,37 +3159,57 @@ namespace Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Retrieves all faulty card records for the DataTables frontend, taking into account the user's unit and claims.
+        /// </summary>
+        /// <param name="dTO">The DataTables request DTO containing paging, search, and filter parameters.</param>
+        /// <returns>
+        /// Returns a JSON response with faulty card records, including total and filtered counts for DataTables.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetAllFaulty(DTODataTablesRequestForFaultyCard dTO)
         {
+            // Step 1: Get current user's ID from claims
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
             int MapUnitId = 0;
             DtoSession? dtoSession = new DtoSession();
+
+            // Step 2: Retrieve session data if available
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
+
+            // Step 3: Determine mapped unit ID from session
             MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
 
-
+            // Step 4: Retrieve user object from UserManager
             var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
             bool Claim = false;
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Step 5: Get all claims for the current user
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Step 6: Check if user has the "ICard Export Data" claim
             if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
             {
                 Claim = true;
             }
+
             try
             {
+                // Step 7: Set claim and unit mapping info in DTO for business layer
                 dTO.Claim = Claim;
                 dTO.UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+
+                // Step 8: Fetch faulty card data from business layer and return as JSON
                 return Json(await faultyCardBL.GetAllFaulty(dTO));
             }
             catch (Exception ex)
             {
+                // Step 9: Prepare empty response in case of error to satisfy DataTables format
                 List<DTOFaultyCardListResponse> dTOUserRegnResponses = new List<DTOFaultyCardListResponse>();
                 var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
                 {
@@ -3198,10 +3218,15 @@ namespace Web.Controllers
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
                 };
+
+                // Step 10: Log the exception for debugging
                 _logger.LogError(1001, ex, "Master->GetAllFaulty");
+
+                // Step 11: Return empty JSON response
                 return Json(responseData);
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> GetTrnFaultyCardDetail(int TrnFaultyCardId)
         {
