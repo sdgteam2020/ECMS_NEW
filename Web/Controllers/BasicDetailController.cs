@@ -6078,37 +6078,54 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves the dispatch card status list for the dialog based on the current user's claims.
+        /// Determines the claim value of the user and fetches the corresponding dispatch card statuses.
+        /// </summary>
+        /// <param name="dTO">The data tables request object containing paging, filtering, and sorting parameters.</param>
+        /// <returns>An <see cref="IActionResult"/> containing a JSON response with the dispatch card status list.</returns>
         [HttpPost]
         public async Task<IActionResult> GetDispatchCardStatusListForDialog([FromBody] DTODataTablesRequestForCardStatusList dTO)
         {
             try
             {
+                // Get the current logged-in user's ASP.NET Identity Id
                 int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch the user object from UserManager
                 var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
-                // UserManager service GetClaimsAsync method gets all the current claims of the user
+
+                // Retrieve all claims associated with the user
                 var UserClaims = await userManager.GetClaimsAsync(user);
+
+                // Determine the claim value based on user's permissions
                 byte ClaimValue;
                 if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                 {
-                    ClaimValue = 1;
+                    ClaimValue = 1; // User can export ICard data
                 }
                 else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
                 {
-                    ClaimValue = 2;
+                    ClaimValue = 2; // User is Dispatch Card and Application Approver
                 }
                 else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
                 {
-                    ClaimValue = 3;
+                    ClaimValue = 3; // User is only Dispatch Card role
                 }
                 else
                 {
-                    ClaimValue = 0;
+                    ClaimValue = 0; // User has no relevant claims
                 }
+
+                // Call the business layer to get the dispatch card status list based on the claim value
                 return Json(await basicDetailBL.GetDispatchCardStatusListForDialog(dTO, ClaimValue));
             }
             catch (Exception ex)
             {
+                // Initialize an empty list of responses in case of an exception
                 List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
+
+                // Create a response object with zeroed metadata
                 var responseData = new DTODataTablesForDispatchCardStatusListResponse<DTODispatchCardStatusResponse>
                 {
                     draw = 0,
@@ -6117,10 +6134,15 @@ namespace Web.Controllers
                     data = dTOCards,
                     selectedIds = null
                 };
+
+                // Log the exception with a specific event id for easier tracing
                 _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
+
+                // Return the empty response as JSON
                 return Json(responseData);
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> ExportCsvFileForDispatchCard([FromBody] DTORequestIdForCSVRequest requestIdsWrapper)
