@@ -3720,24 +3720,48 @@ namespace Web.Controllers
         }
 
 
+        /// <summary>
+        /// Downloads a CSV file from the server's temporary folder.
+        /// This endpoint takes the temporary file name and a custom file store name
+        /// and returns the CSV file as a download to the client.
+        /// </summary>
+        /// <param name="fileName">Temporary CSV file name stored on the server.</param>
+        /// <param name="fileStoreName">Custom name to use for the downloaded file.</param>
+        /// <returns>
+        /// Returns a PhysicalFileResult if the file exists, otherwise returns NotFound or BadRequest.
+        /// </returns>
         [HttpGet]
         public IActionResult DownloadCsv(string fileName, string fileStoreName)
         {
             try
             {
+                // Build the full path to the temporary file
                 var filePath = Path.Combine(Path.GetTempPath(), fileName);
+
+                // Check if file exists; if not, return 404
                 if (!System.IO.File.Exists(filePath))
                     return NotFound();
 
+                // Define MIME type for CSV
                 var mimeType = "text/csv";
-                return PhysicalFile(filePath, mimeType, $"E-ISAC_{fileStoreName}ExportData.csv");
+
+                // Return the file to the client with a custom download filename
+                return PhysicalFile(
+                    filePath,
+                    mimeType,
+                    $"E-ISAC_{fileStoreName}ExportData.csv"
+                );
             }
             catch (Exception ex)
             {
+                // Log any unexpected errors
                 _logger.LogError(1001, ex, "BasicDetail->DownloadCsv");
+
+                // Return 400 Bad Request on exception
                 return BadRequest();
             }
         }
+
 
         public async Task<ActionResult> HotListCardRequestAsync()
         {
