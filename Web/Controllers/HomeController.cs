@@ -752,35 +752,72 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Action method for the Request page. It retrieves the current user's claims and role,
+        /// and passes them to the view for display.
+        /// </summary>
+        /// <returns>The Request view with the user's claims and role passed in ViewBag.</returns>
         public async Task<IActionResult> Request()
         {
+            // Retrieve the user ID from the claims
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await userManager.FindByIdAsync(userId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Get all claims associated with the user
             var UserClaims = await userManager.GetClaimsAsync(user);
             ViewBag.UserClaims = UserClaims;
 
+            // Retrieve the user's role from the session
             string role = GetSessionValue();
             ViewBag.Role = role;
+
+            // Return the Request view
             return View();
         }
 
+        /// <summary>
+        /// Action method to retrieve the registration data based on the "ApplyFor" property.
+        /// It fetches data from the registration business logic layer (BL).
+        /// </summary>
+        /// <param name="Data">The registration data containing the "ApplyFor" property.</param>
+        /// <returns>A JSON response containing the data fetched based on the "ApplyFor" value.</returns>
         public async Task<IActionResult> GetRegistrationApplyfor(MRegistration Data)
         {
+            // Fetch the registration data based on the "ApplyFor" property
             return Json(await _registrationBL.GetByApplyFor(Data));
-
         }
+
+        /// <summary>
+        /// Action method to retrieve the card details based on the provided data.
+        /// It retrieves user ID from the session and uses it to fetch the corresponding card details.
+        /// </summary>
+        /// <param name="Data">The data containing information to fetch the card details.</param>
+        /// <returns>A JSON response containing the card details for the current user.</returns>
         public async Task<IActionResult> GetApplyCardDetails(DTOApplyCardDetailsRequest Data)
         {
+            // Retrieve the current user's ID from the claims
             Data.UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return Json(await _registrationBL.GetApplyCardDetails(Data));
 
+            // Fetch the card details based on the provided data
+            return Json(await _registrationBL.GetApplyCardDetails(Data));
         }
-        public async Task<IActionResult> GetTaskCountICardRequest(int Id,int applyForId)
+
+        /// <summary>
+        /// Action method to retrieve the task count for the I-Card request based on the provided Id and applyForId.
+        /// It fetches the task count from the business logic layer (BL) and returns the result as JSON.
+        /// </summary>
+        /// <param name="Id">The ID of the request.</param>
+        /// <param name="applyForId">The ID of the applyFor field used to filter the task count.</param>
+        /// <returns>A JSON response containing the task count for the I-Card request.</returns>
+        public async Task<IActionResult> GetTaskCountICardRequest(int Id, int applyForId)
         {
+            // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Fetch the I-Card task count based on the user ID, request ID, and applyForId
             DTOICardTaskCountResponse? dTOICardTaskCountResponse = await _basicDetailBL.GetTaskCountICardRequest(userId, Id, applyForId);
+
+            // Return the task count as a JSON response, or null if no data is found
             if (dTOICardTaskCountResponse != null)
             {
                 return Json(dTOICardTaskCountResponse);
@@ -790,6 +827,7 @@ namespace Web.Controllers
                 return Json(null);
             }
         }
+
         public async Task<IActionResult> SaveNotification(MTrnNotification Data)
         {
             try
