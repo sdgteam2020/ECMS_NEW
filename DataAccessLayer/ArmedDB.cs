@@ -47,26 +47,37 @@ namespace DataAccessLayer
             return ret;
         }
 
+        /// <summary>
+        /// Retrieves all armed types and their associated category information, mapping the data to a list of DTOArmedResponse objects.
+        /// The method performs a join between the MArmedType and MArmedCats tables to fetch the related category details.
+        /// </summary>
+        /// <returns>
+        /// A list of DTOArmedResponse objects containing the details of all armed types and their corresponding categories, ordered by ArmedId in descending order.
+        /// </returns>
         public Task<List<DTOArmedResponse>> GetALLArmed()
         {
+            // LINQ query to fetch armed types along with their associated category details by joining MArmedType and MArmedCats.
+            // The results are mapped to DTOArmedResponse objects, which include ArmedId, ArmedName, Abbreviation, FlagInf, and category details.
             var GetALL = (from A in _context.MArmedType
                           join F in _context.MArmedCats
-                          on A.ArmedCatId equals F.ArmedCatId
-
+                          on A.ArmedCatId equals F.ArmedCatId  // Join MArmedType and MArmedCats on ArmedCatId
                           select new DTOArmedResponse
                           {
-                              ArmedId = A.ArmedId,
-                              ArmedName = A.ArmedName,
-                              Abbreviation = A.Abbreviation,
-                              FlagInf = A.FlagInf,
-                              Inf = A.FlagInf == true ? "Yes" : "No",
-                              ArmedCatId = F.ArmedCatId,
-                              Name = F.Name,
-                          }).OrderByDescending(x => x.ArmedId).ToList();
+                              ArmedId = A.ArmedId,  // Selects the ArmedId from MArmedType
+                              ArmedName = A.ArmedName,  // Selects the ArmedName from MArmedType
+                              Abbreviation = A.Abbreviation,  // Selects the Abbreviation from MArmedType
+                              FlagInf = A.FlagInf,  // Selects the FlagInf (Flag information) from MArmedType
+                              Inf = A.FlagInf == true ? "Yes" : "No",  // Maps FlagInf boolean to "Yes" or "No"
+                              ArmedCatId = F.ArmedCatId,  // Selects the ArmedCatId from MArmedCats
+                              Name = F.Name,  // Selects the Name from MArmedCats (Armed Category name)
+                          })
+                          .OrderByDescending(x => x.ArmedId)  // Orders the results by ArmedId in descending order
+                          .ToList();  // Executes the query and converts the results to a list
 
-
+            // Returns the result as a Task (simulating asynchronous behavior).
             return Task.FromResult(GetALL);
         }
+
         public async Task<DTOArmedIdCheckInFKTableResponse?> ArmedIdCheckInFKTable(byte ArmedId)
         {
             try
