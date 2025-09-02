@@ -1090,28 +1090,42 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Action method to retrieve the dashboard user management count based on the provided UnitId and current user's session.
+        /// It calls the business logic layer to get the user management count for the dashboard.
+        /// </summary>
+        /// <param name="UnitId">The UnitId used to filter the user management count data.</param>
+        /// <returns>A JSON response containing the dashboard user management count.</returns>
         [HttpPost]
         public async Task<IActionResult> GetDashboardUserMgtCount(int UnitId)
         {
             try
             {
+                // Retrieve the user ID from the claims
                 int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch the dashboard user management count from the business logic layer
                 return Json(await _home.GetDashboardUserMgtCount(UnitId, UserId));
             }
             catch (Exception ex)
             {
+                // Log any exceptions and return an internal server error
                 _logger.LogError(1001, ex, "Home->GetDashboardUserMgtCount");
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
+        /// <summary>
+        /// Action method to retrieve visitor stats, including total visitors, today's count, this week's count, and this month's count.
+        /// It checks the visitor's IP address, user-agent, and session status to update or load stats.
+        /// </summary>
+        /// <returns>A JSON response containing the visitor stats.</returns>
         public JsonResult VisitorStats()
         {
             var model = new DTOVisitorCounterResponse();
             var userIP = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
             var userAgent = _httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
             var currentTime = DateTime.UtcNow;
-
 
             // Check if the IP is in the ignored list
             if (IgnoredIPs.Contains(userIP))
@@ -1126,6 +1140,7 @@ namespace Web.Controllers
                 // Initialize session hit count
                 _httpContextAccessor.HttpContext.Session.SetString(SessionKey, "true");
 
+                // Check if the counter file exists and initialize or update the stats accordingly
                 if (!System.IO.File.Exists(CounterFilePath))
                 {
                     InitializeCounterFile(currentTime, userIP);
@@ -1136,9 +1151,16 @@ namespace Web.Controllers
                 }
             }
 
+            // Load the updated stats from the file
             LoadStatsFromFile(model);
             return Json(model);
         }
+
+        /// <summary>
+        /// Initializes the counter file with stats for the day, week, month, and year, as well as tracking the visitor's IP and timestamp.
+        /// </summary>
+        /// <param name="currentTime">The current UTC time used to initialize the stats.</param>
+        /// <param name="userIP">The visitor's IP address used to log the visit.</param>
         private void InitializeCounterFile(DateTime currentTime, string userIP)
         {
             var data = $"{currentTime.DayOfYear}:1||0:0||{GetIso8601WeekOfYear(currentTime)}:1||{currentTime.Month}:1||{currentTime.Year}:1||1||1||{currentTime.Ticks}\n" +
@@ -1147,6 +1169,11 @@ namespace Web.Controllers
             System.IO.File.WriteAllText(CounterFilePath, data);
         }
 
+        /// <summary>
+        /// Updates the counter file with the new visitor's stats and adds the visitor's IP and timestamp.
+        /// </summary>
+        /// <param name="currentTime">The current UTC time used to update the stats.</param>
+        /// <param name="userIP">The visitor's IP address used to log the visit.</param>
         private void UpdateCounterFile(DateTime currentTime, string userIP)
         {
             var lines = System.IO.File.ReadAllLines(CounterFilePath);
@@ -1165,6 +1192,12 @@ namespace Web.Controllers
             System.IO.File.WriteAllLines(CounterFilePath, lines);
         }
 
+        /// <summary>
+        /// Updates the stats with new data for the day, week, month, and total visitors.
+        /// </summary>
+        /// <param name="stats">The current stats array to update.</param>
+        /// <param name="currentTime">The current time used to calculate the updated stats.</param>
+        /// <returns>An updated stats array.</returns>
         private string[] UpdateStats(string[] stats, DateTime currentTime)
         {
             var todayStats = stats[0].Split(':');
@@ -1224,6 +1257,10 @@ namespace Web.Controllers
             return stats;
         }
 
+        /// <summary>
+        /// Loads the visitor stats from the file and populates the model with the data for today, this week, this month, and the total visitors.
+        /// </summary>
+        /// <param name="model">The DTO model to store the loaded stats.</param>
         private void LoadStatsFromFile(DTOVisitorCounterResponse model)
         {
             var lines = System.IO.File.ReadAllLines(CounterFilePath);
@@ -1240,6 +1277,11 @@ namespace Web.Controllers
             model.Total = int.Parse(stats[5]);
         }
 
+        /// <summary>
+        /// Retrieves the ISO 8601 week number for a given date.
+        /// </summary>
+        /// <param name="time">The date for which the week number is to be calculated.</param>
+        /// <returns>The ISO 8601 week number.</returns>
         private static int GetIso8601WeekOfYear(DateTime time)
         {
             var day = (int)time.DayOfWeek;
@@ -1248,6 +1290,7 @@ namespace Web.Controllers
                 System.Globalization.CalendarWeekRule.FirstFourDayWeek,
                 DayOfWeek.Monday);
         }
-    
+
+
     }
 }
