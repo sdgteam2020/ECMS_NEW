@@ -8,6 +8,7 @@ namespace DataTransferObject.Response
 {
     public class DTODestructionCardGetResponse
     {
+        public int TotalFilteredRecords { get; set; }
         public string NameAsPerRecord { get; set; } = string.Empty;
         public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
