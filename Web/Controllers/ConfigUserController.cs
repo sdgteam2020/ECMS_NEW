@@ -14,13 +14,18 @@ using Web.WebHelpers;
 
 namespace Web.Controllers
 {
+    /// <summary>
+    /// Controller for handling user configuration and mapping actions. and view for user configuration.
+    /// </summary>
     public class ConfigUserController : Controller
     {
-        public readonly iGetTokenBL _iGetTokenBL; 
-        private readonly IUserProfileBL _userProfileBL;
-        private readonly UserManager<ApplicationUser> userManager;
-        public readonly IDomainMapBL _iDomainMapBL;
-        public readonly IMapUnitBL _IMapUnitBL;
+        public readonly iGetTokenBL _iGetTokenBL; //Interface for token business logic layer
+        private readonly IUserProfileBL _userProfileBL;//Interface for user profile business logic layer
+        private readonly UserManager<ApplicationUser> userManager;//User manager for handling user-related operations
+        public readonly IDomainMapBL _iDomainMapBL;//Interface for domain mapping business logic layer
+        public readonly IMapUnitBL _IMapUnitBL;//Interface for map unit business logic layer
+
+        //constructor to initialize dependencies and configuration settings and user manager.
         public ConfigUserController(iGetTokenBL iGetTokenBL, IUserProfileBL userProfileBL, UserManager<ApplicationUser> userManager, IDomainMapBL domainMapBL, IMapUnitBL mapUnitBL)
         {
             _iGetTokenBL=iGetTokenBL;
@@ -29,52 +34,67 @@ namespace Web.Controllers
             _iDomainMapBL=domainMapBL;
             _IMapUnitBL=mapUnitBL;
         }
+        /// <summary>
+        /// Action method for the index page. This method retrieves user-specific domain mapping information,
+        /// updates session details, and redirects to the home page based on user data.
+        /// </summary>
+        /// <returns>A redirect to the Home page or the current view based on the domain mapping data.</returns>
         public async Task<IActionResult> IndexAsync()
         {
-            //this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-
+            // Retrieve the domain name and role of the logged-in user from the claims
             ViewBag.DomainId = this.User.FindFirstValue(ClaimTypes.Name);
             ViewBag.Role = this.User.FindFirstValue(ClaimTypes.Role);
+
+            // Create a DTO object to store the domain mapping data
             TrnDomainMapping? dTO = new TrnDomainMapping();
             dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Fetch the domain mapping by the logged-in user's ID
             dTO = await _iDomainMapBL.GetByAspnetUserIdBy(dTO.AspNetUsersId);
-            if (dTO==null)
+
+            // If no domain mapping is found, return the view without further processing
+            if (dTO == null)
             {
                 return View();
             }
-            else if(dTO != null && dTO.UserId == null)
+            // If domain mapping exists but has no associated user, fetch the unit data
+            else if (dTO != null && dTO.UserId == null)
             {
+                // Retrieve map unit details based on the unit ID from domain mapping
                 DTOMapUnitResponse dTOMapUnitResponse = await _IMapUnitBL.GetALLByUnitById(dTO.UnitId);
+                // Pass the map unit response to the view
                 ViewBag.TrnDomain = dTOMapUnitResponse;
                 return View();
             }
-            else 
+            else
             {
-                
+                // Fetch user profile data based on the user ID from domain mapping
                 var army = await _userProfileBL.Get(Convert.ToInt32(dTO.UserId));
                 DtoSession dtoSession = new DtoSession();
-                if (army!=null)
+
+                // If the user profile is found, set up session data for the user
+                if (army != null)
                 {
                     dtoSession.ICNO = army.ArmyNo;
                     dtoSession.Name = army.Name;
                     dtoSession.UserId = army.UserId;
-                    dtoSession.UnitId=dTO.UnitId;
+                    dtoSession.UnitId = dTO.UnitId;
 
+                    // Retrieve the domain mapping for the user and set the session ID
                     TrnDomainMapping? trnDomainMapping = new TrnDomainMapping();
                     trnDomainMapping.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping.AspNetUsersId);
                     dtoSession.TrnDomainMappingId = trnDomainMapping.Id;
                 }
+
+                // Set the session data for token and user details
                 SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
-                //SessionHeplers.SetObject(HttpContext.Session, "ArmyNo", dtoSession.ICNO);
-                // var data=  await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
+
+                // Redirect to the Home page after setting session data
                 return RedirectToActionPermanent("Index", "Home");
             }
-
-
-
         }
+
         [HttpPost]
         public async Task<IActionResult> CheckProfileExist(int Id)
         {
