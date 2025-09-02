@@ -128,20 +128,32 @@ namespace Web.Controllers
             }
         }
 
-        //public async Task<IActionResult> XmlFileDigitalSignFromData(int RequestId)
-        //{
-        //    return Json(await _iTrnLoginLogBL.XmlFileDigitalSignFromData(RequestId));
-        //}
-        // public async Task<IActionResult> CreatePDF
+
+        /// <summary>
+        /// Action method to save a digitally signed PDF. It receives a base64-encoded PDF string and saves it to a specified directory.
+        /// The PDF is saved with a filename based on the service number and request ID.
+        /// </summary>
+        /// <param name="RequestId">The ID of the request associated with the PDF.</param>
+        /// <param name="base64">The base64-encoded string representing the PDF content to be saved.</param>
+        /// <returns>A JSON response containing the filename of the saved PDF.</returns>
         public async Task<IActionResult> DigitalpdfsignatureSave(int RequestId, string base64)
         {
+            // Retrieve the basic details of the request based on the RequestId
             BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
+
+            // Define the file path where the PDF will be saved
             var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\" + db.ServiceNo + "_" + RequestId + ".pdf");
 
+            // Convert the base64 string to a byte array representing the PDF
             byte[] pdfBytes = Convert.FromBase64String(base64);
+
+            // Write the PDF bytes to the specified file path
             System.IO.File.WriteAllBytes(filePath1, pdfBytes);
+
+            // Return the filename of the saved PDF in the response
             return Json(db.ServiceNo + "_" + RequestId + ".pdf");
         }
+
         public async Task<IActionResult> CreateXmlAsync(int RequestId)
         {
             try
