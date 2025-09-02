@@ -1,26 +1,25 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using DataAccessLayer.Logger;
-using Dapper;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// Data Access Layer for MAppointment entity, providing database operations.
+    /// and implements the IApptDB interface.
+    /// and inherits from GenericRepositoryDL for basic CRUD operations.
+    /// </summary>
     public class ApptDB : GenericRepositoryDL<MAppointment>, IApptDB
     {
-        protected new readonly ApplicationDbContext _context;
-        private readonly DapperContext _contextDP;
-        private readonly ILogger<MAppointment> _logger;
+        protected new readonly ApplicationDbContext _context;// For Entity Framework operations
+        private readonly DapperContext _contextDP;// For Dapper operations
+        private readonly ILogger<MAppointment> _logger;// For logging
+
+        //constructor to initialize the ApptDB with necessary contexts and logger.and calls the base class constructor for basic CRUD operations.
         public ApptDB(ApplicationDbContext context, ILogger<MAppointment> logger, DapperContext contextDP) : base(context)
         {
             _context = context;
@@ -28,11 +27,26 @@ namespace DataAccessLayer
             _logger = logger;
         }
 
+        /// <summary>
+        /// Asynchronously checks if any appointment exists with the same AppointmentName but a different ApptId.
+        /// This ensures that there are no duplicate appointment names, while excluding the current appointment's own ApptId.
+        /// </summary>
+        /// <param name="Data">The MAppointment object containing the AppointmentName to check and the ApptId to exclude from the check.</param>
+        /// <returns>
+        /// Returns true if an appointment with the same AppointmentName but a different ApptId exists, otherwise false.
+        /// </returns>
         public async Task<bool> GetByName(MAppointment Data)
         {
-            var ret = await _context.MAppointment.AnyAsync(p => p.AppointmentName.ToUpper() == Data.AppointmentName.ToUpper()  && p.ApptId != Data.ApptId);
-             return ret;
+            // LINQ query using AnyAsync() to check if there is any record in the MAppointment table
+            // where the AppointmentName matches the provided Data.AppointmentName (case-insensitive),
+            // and the ApptId is different from the current appointment's ApptId (i.e., excluding the current record).
+            var ret = await _context.MAppointment
+                                    .AnyAsync(p => p.AppointmentName.ToUpper() == Data.AppointmentName.ToUpper() && p.ApptId != Data.ApptId);
+
+            // Return true if a matching appointment is found, otherwise false.
+            return ret;
         }
+
 
         public async Task<List<DTOAppointmentResponse>> GetALLAppt()
         {
