@@ -129,19 +129,32 @@ namespace Web.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Action method that handles exceptions globally. It logs the exception details and displays a generic error view to the user.
+        /// </summary>
+        /// <returns>A view displaying a generic error message.</returns>
         [Route("Error")]
         public IActionResult Error()
         {
+            // Get the exception feature from the HTTP context
             var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-            //LogError() method logs the exception under Error categoy in the log
+
+            // If an exception has been caught, log the error details
             if (exceptionHandlerPathFeature != null)
             {
-                logger.LogError(1984, exceptionHandlerPathFeature.Error, $"The path {exceptionHandlerPathFeature.Path}" + $" threw an excepation {exceptionHandlerPathFeature.Error}");
-                //ViewBag.ExceptionPath = exceptionHandlerPathFeature.Path;
-                //ViewBag.ExceptionMessage = exceptionHandlerPathFeature.Error.Message;
-                //ViewBag.StackTrace = exceptionHandlerPathFeature.Error.StackTrace;
+                // Log the exception details, including the path and exception message
+                logger.LogError(1984, exceptionHandlerPathFeature.Error,
+                    $"The path {exceptionHandlerPathFeature.Path} threw an exception: {exceptionHandlerPathFeature.Error}");
+
+                // Optionally, you can pass exception details to the view (this part is commented out)
+                // ViewBag.ExceptionPath = exceptionHandlerPathFeature.Path;
+                // ViewBag.ExceptionMessage = exceptionHandlerPathFeature.Error.Message;
+                // ViewBag.StackTrace = exceptionHandlerPathFeature.Error.StackTrace;
             }
+
+            // Return the error view
             return View("Error");
         }
+
     }
 }
