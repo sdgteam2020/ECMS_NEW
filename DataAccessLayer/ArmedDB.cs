@@ -78,26 +78,41 @@ namespace DataAccessLayer
             return Task.FromResult(GetALL);
         }
 
+        /// <summary>
+        /// Asynchronously checks if the given ArmedId exists in the foreign key relationships in the BasicDetails and MRecordOffice tables.
+        /// The method performs a SQL query to count the distinct occurrences of BasicDetailId and RecordOfficeId for the given ArmedId.
+        /// </summary>
+        /// <param name="ArmedId">The ArmedId to check for in the BasicDetails and MRecordOffice tables.</param>
+        /// <returns>
+        /// A DTOArmedIdCheckInFKTableResponse object containing the counts of distinct BasicDetailId and RecordOfficeId, or null if an error occurs.
+        /// </returns>
         public async Task<DTOArmedIdCheckInFKTableResponse?> ArmedIdCheckInFKTable(byte ArmedId)
         {
             try
             {
-                string query = "Select count(distinct bd.BasicDetailId) as TotalBD, count(mrec.RecordOfficeId)as TotalRO from MArmedType marm" +
-                                " left join BasicDetails bd on bd.ArmedId = marm.ArmedId " +
-                                " left join MRecordOffice mrec on mrec.ArmedId = marm.ArmedId " +
-                                " where marm.ArmedId=@ArmedId";
+                // SQL query to count the distinct BasicDetailId and RecordOfficeId for the given ArmedId.
+                string query = "Select count(distinct bd.BasicDetailId) as TotalBD, count(mrec.RecordOfficeId) as TotalRO from MArmedType marm " +
+                               "left join BasicDetails bd on bd.ArmedId = marm.ArmedId " +
+                               "left join MRecordOffice mrec on mrec.ArmedId = marm.ArmedId " +
+                               "where marm.ArmedId = @ArmedId";
 
+                // Using a database connection to execute the query asynchronously.
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    // Execute the query and retrieve the result as a DTOArmedIdCheckInFKTableResponse object.
                     var ret = await connection.QueryAsync<DTOArmedIdCheckInFKTableResponse>(query, new { ArmedId });
+
+                    // Return the first (and only) result, or null if no records are found.
                     return ret.FirstOrDefault();
                 }
             }
             catch (Exception ex)
             {
+                // Logs the exception in case of an error.
                 _logger.LogError(1001, ex, "ArmedDB->ArmedIdCheckInFKTable");
-                return null;
+                return null;  // Return null in case of an exception.
             }
         }
+
     }
 }
