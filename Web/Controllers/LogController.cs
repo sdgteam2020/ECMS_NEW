@@ -154,10 +154,18 @@ namespace Web.Controllers
             return Json(db.ServiceNo + "_" + RequestId + ".pdf");
         }
 
+        /// <summary>
+        /// Action method to create an XML file based on the provided request ID. It generates an XML file
+        /// and saves it in a specific directory with a filename that includes the service number, request ID,
+        /// and the current timestamp (year, month, day, hour, minute, second).
+        /// </summary>
+        /// <param name="RequestId">The ID of the request used to generate the XML file.</param>
+        /// <returns>A JSON response containing the filename of the saved XML file, or 0 in case of an error.</returns>
         public async Task<IActionResult> CreateXmlAsync(int RequestId)
         {
             try
             {
+                // Generate date components for naming the file
                 var now = DateTime.Now;
                 var yearName = now.ToString("yyyy");
                 var monthName = now.ToString("MMMM");
@@ -166,40 +174,51 @@ namespace Web.Controllers
                 var mm = now.ToString("mm");
                 var ss = now.ToString("ss");
 
-                int[] d;
-                d = new int[1];
+                // Initialize the array for the request ID and fetch the XML data
+                int[] d = new int[1];
                 d[0] = RequestId;
                 var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
+
+                // Replace any ampersand symbols with the proper XML encoding
                 string XmlFilesRemoveAndChar = sata.XmlFiles.Replace("&", "&amp;");
+
+                // Parse the cleaned-up XML data into an XDocument
                 XDocument document = XDocument.Parse(Convert.ToString(XmlFilesRemoveAndChar));
 
+                // Retrieve basic details of the request for naming the XML file
                 BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
 
+                // Define the directory where the XML file will be saved
                 string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "DigitallysignatureXml");
-                // Check if directory exists
+
+                // Check if the directory exists, and create it if it does not
                 if (!Directory.Exists(sourceFolder))
                 {
-                    // If directory does not exist, create it
                     Directory.CreateDirectory(sourceFolder);
                 }
 
+                // Generate the XML file name based on the request details and current timestamp
                 string xmlname = db.ServiceNo + "_" + RequestId + "_" + yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss + ".xml";
                 var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignatureXml\\" + xmlname);
 
+                // Save the XML document to the specified file path
                 document.Save(filePath1);
 
+                // Return the filename of the saved XML file as a JSON response
                 return Json(xmlname);
             }
             catch (System.IO.DirectoryNotFoundException ex)
             {
+                // Return an error response if the directory is not found
                 return Json(0);
             }
             catch (Exception ex)
             {
+                // Return a generic error response for other exceptions
                 return Json(0);
             }
-
         }
+
         public async Task<IActionResult> CreatePdfAsync(int RequestId)
         {
             try
