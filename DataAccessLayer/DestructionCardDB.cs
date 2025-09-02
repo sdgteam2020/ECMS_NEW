@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
@@ -12,13 +6,8 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Data;
 
 namespace DataAccessLayer
 {
@@ -39,22 +28,51 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
 
+        /// <summary>
+        /// Checks if any record with the specified RequestId exists in the DestructionCards table.
+        /// </summary>
+        /// <param name="RequestId">The RequestId to search for in the DestructionCards table.</param>
+        /// <returns>
+        /// Returns <c>true</c> if a record with the specified RequestId exists, otherwise returns <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// This method queries the `TrnDestructionCards` table to determine if any record has the provided `RequestId`.
+        /// If a matching record is found, it returns <c>true</c>. If no record is found, it returns <c>false</c>.
+        /// This can be used to verify the existence of a RequestId before performing further operations.
+        /// </remarks>
         public async Task<bool> FindAnyRequestId(int RequestId)
         {
             try
             {
+                // Querying the DestructionCards table to check if the provided RequestId exists
                 return await _context.TrnDestructionCards
-                                .AnyAsync(f => f.RequestId == RequestId);
+                                    .AnyAsync(f => f.RequestId == RequestId);
             }
             catch (Exception ex)
             {
+                // Logging the exception if any error occurs while querying the database
                 _logger.LogError(1001, ex, "DestructionCardDB->FindAnyRequestId");
                 return false;
             }
         }
 
+
+        /// <summary>
+        /// Retrieves a paginated list of destruction card records based on the provided search term and sorting criteria.
+        /// </summary>
+        /// <param name="dTO">The DataTables request object containing pagination, search, and sorting information.</param>
+        /// <returns>
+        /// A DTODataTablesResponse containing a list of DTODestructionCardGetResponse objects, representing the destruction card records.
+        /// The response includes pagination information such as total records and filtered records.
+        /// </returns>
+        /// <remarks>
+        /// This method builds a dynamic SQL query to fetch destruction card records from the database, including related data such as 
+        /// service numbers, names, ranks, unit information, remarks, and destruction dates. It applies filtering, sorting, and pagination 
+        /// based on the parameters passed in the DTODataTablesRequest object.
+        /// </remarks>
         public async Task<DTODataTablesResponse<DTODestructionCardGetResponse>> GetAllDestruction(DTODataTablesRequest dTO)
         {
+            // Initialize the response object with default values
             List<DTODestructionCardGetResponse> dTODestructionCardGetResponses = new List<DTODestructionCardGetResponse>();
             var responseData = new DTODataTablesResponse<DTODestructionCardGetResponse>
             {
@@ -80,8 +98,11 @@ namespace DataAccessLayer
 
                 var sortOrder = dTO.sortDirection;
 
-                string query = "";
-                    query = @"appl.Name ApplyFor,
+                // Base query for fetching data
+                string selectFields = "";
+                string fromJoinClause = "";
+                string whereClause = "";
+                selectFields = @"appl.Name ApplyFor,
                                 req.RequestId,tdc.DestructedCardId,
                                 bas.ServiceNo,ranks.RankAbbreviation RankName,
                                 bas.FName,bas.LName,
@@ -96,8 +117,8 @@ namespace DataAccessLayer
                                 bas.ServiceNo
                                 END AS ModifiedServiceNo,tdc.DestructedOn,
                                 (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(tdc.RemarksIds,','))) RemarksNameList,
-                                tdc.RemarksIds
-                                from TrnDestructionCards tdc
+                                tdc.RemarksIds";
+                fromJoinClause = @"from TrnDestructionCards tdc
                                 inner join TrnICardRequest req on req.RequestId = tdc.RequestId
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
@@ -105,29 +126,32 @@ namespace DataAccessLayer
                                 inner join MapUnit uni on uni.UnitMapId=bas.UnitId
                                 inner join MUnit Muni on Muni.UnitId=uni.UnitId
                                 inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                                left join MRegimental regi on regi.RegId=bas.RegimentalId
-                                Where bas.ServiceNo like '%' + @SearchTerm + '%' ";
+                                left join MRegimental regi on regi.RegId=bas.RegimentalId";
+                whereClause = @"Where bas.ServiceNo like '%' + @SearchTerm + '%' ";
 
-                var multiQuery = query = $@"
-                            WITH RecordCTE AS (
-                                select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
-                            )
-                            SELECT * FROM RecordCTE
-                            WHERE RowNum BETWEEN @Offset AND @Limit;
-
-                            Select Count(*) from TrnDestructionCards;
-                        ";
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryMultipleAsync(query, new { Offset = dTO.Start, Limit = dTO.Length, SearchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? "" : dTO.searchValue });
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTODestructionCardGetResponse>()).ToList();
-                    var totalRecords = (await ret.ReadAsync<int>()).Single();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
                     responseData = new DTODataTablesResponse<DTODestructionCardGetResponse>
                     {
                         draw = dTO.Draw,
-                        recordsTotal = totalRecords, // Total records without filtering
-                        recordsFiltered = records.Count(), // Total records after filtering
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
                         data = (from e in records
                                 select new DTODestructionCardGetResponse()
                                 {
