@@ -227,25 +227,42 @@ namespace DataAccessLayer
         //{
         //    this.configuration = configuration;
         //}
+        /// <summary>
+        /// Asynchronously checks if a given ApptId exists in the foreign key relationship in the TrnDomainMapping table.
+        /// The method performs a SQL query to count the distinct occurrences of the ApptId in the TrnDomainMapping table,
+        /// and returns the result as a DTOApptIdCheckInFKTableResponse object.
+        /// </summary>
+        /// <param name="ApptId">The ApptId to check for in the TrnDomainMapping table.</param>
+        /// <returns>
+        /// A DTOApptIdCheckInFKTableResponse object containing the count of distinct ApptId found in the TrnDomainMapping table.
+        /// Returns null if an error occurs or no record is found.
+        /// </returns>
         public async Task<DTOApptIdCheckInFKTableResponse?> ApptIdCheckInFKTable(short ApptId)
         {
             try
             {
-                string query = "Select count(distinct tdm.ApptId)as TotalTDM from MAppointment mapp" +
-                                " left join TrnDomainMapping tdm on tdm.ApptId = mapp.ApptId " +
-                                " where mapp.ApptId =@ApptId";
+                // SQL query to check if the given ApptId exists in the TrnDomainMapping table and counts the distinct ApptId values.
+                string query = "Select count(distinct tdm.ApptId) as TotalTDM from MAppointment mapp " +
+                               "left join TrnDomainMapping tdm on tdm.ApptId = mapp.ApptId " +
+                               "where mapp.ApptId = @ApptId";
 
+                // Using a database connection to execute the query asynchronously.
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    // Execute the query and retrieve the result as a DTOApptIdCheckInFKTableResponse object.
                     var ret = await connection.QueryAsync<DTOApptIdCheckInFKTableResponse>(query, new { ApptId });
+                    // Return the first (and only) result or null if no records were found.
                     return ret.FirstOrDefault();
                 }
             }
             catch (Exception ex)
             {
+                // Logs the exception in case of an error.
                 _logger.LogError(1001, ex, "ApptDB->ApptIdCheckInFKTable");
+                // Return null in case of an exception.
                 return null;
             }
         }
+
     }
 }
