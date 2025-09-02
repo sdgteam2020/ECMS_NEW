@@ -65,26 +65,38 @@ namespace Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Action method to retrieve the request history based on the provided tracking ID.
+        /// It fetches the card history associated with the given tracking ID and returns it as a JSON response.
+        /// </summary>
+        /// <param name="TrackingId">The tracking ID used to fetch the card history data.</param>
+        /// <returns>A JSON response containing the card history or null if no data is found or an exception occurs.</returns>
         public async Task<IActionResult> GetRequestHistoryByTrackingId(string TrackingId)
         {
             try
             {
+                // Retrieve the card history for the provided tracking ID
                 List<ICardHistoryResponse>? cardHistoryResponses = await _basicDetailBL.ICardHistoryByTrackingId(TrackingId);
+
+                // Check if any card history data is returned
                 if (cardHistoryResponses != null)
                 {
-                    return Json(await _basicDetailBL.ICardHistoryByTrackingId(TrackingId));
+                    // If data exists, return it as a JSON response
+                    return Json(cardHistoryResponses);
                 }
                 else
                 {
+                    // If no data is found, return null in the JSON response
                     return Json(null);
                 }
             }
             catch (Exception ex)
             {
+                // In case of an exception, return null in the JSON response
                 return Json(null);
             }
-
         }
+
         public async Task<IActionResult> GetBasicDetailByRequestId(int Id)
         {
             return Json(await _basicDetailBL.GetBasicDetailByRequestId(Id));
