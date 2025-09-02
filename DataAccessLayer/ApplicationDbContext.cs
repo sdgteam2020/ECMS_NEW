@@ -1,22 +1,19 @@
-﻿using DataAccessLayer.ExtensionsClass;
-using DataTransferObject.Domain;
+﻿using DataTransferObject.Domain;
 using DataTransferObject.Domain.Error;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
-using DataTransferObject.Response.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// Application database context class for Entity Framework Core, integrating ASP.NET Core Identity.
+    /// implements IdentityDbContext with custom ApplicationUser and ApplicationRole entities using int as the primary key type.
+    /// and includes DbSet properties for various domain models.
+    /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
