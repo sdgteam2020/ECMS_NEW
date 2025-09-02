@@ -5,30 +5,51 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// Data Access Layer for AfsacCellMapping entity, providing database operations.
+    /// And implements the IAfsacCellMappingDB interface.
+    /// </summary>
     public class AfsacCellMappingDB : GenericRepositoryDL<AfsacCellMapping>, IAfsacCellMappingDB
     {
-        protected new readonly ApplicationDbContext _context;
-        private readonly DapperContext _contextDP;
-        private readonly ILogger<AfsacCellMappingDB> _logger;
+        protected new readonly ApplicationDbContext _context;// For Entity Framework operations
+        private readonly DapperContext _contextDP;// For Dapper operations
+        private readonly ILogger<AfsacCellMappingDB> _logger;// For logging
+
+        /// <summary>
+        /// Constructor to initialize the AfsacCellMappingDB with necessary contexts and logger.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="contextDP"></param>
+        /// <param name="logger"></param>
         public AfsacCellMappingDB(ApplicationDbContext context, DapperContext contextDP, ILogger<AfsacCellMappingDB> logger) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
             _logger = logger;
         }
+
+
+        /// <summary>
+        /// Asynchronously checks if any record in the AfsacCellMapping table exists with a different AfsacCellMappingId 
+        /// than the one provided in the Dto parameter.
+        /// </summary>
+        /// <param name="Dto">The Data Transfer Object containing the AfsacCellMappingId to be checked against.</param>
+        /// <returns>Returns true if a record exists with a different AfsacCellMappingId, otherwise false.</returns>
         public async Task<bool> GetByName(AfsacCellMapping Dto)
         {
-            var ret = await _context.AfsacCellMapping.AnyAsync(x => x.AfsacCellMappingId != Dto.AfsacCellMappingId);
+            // LINQ query using AnyAsync() to check if there are any records in the AfsacCellMapping table 
+            // where the AfsacCellMappingId is not equal to the one in the provided Dto.
+            // This query returns a boolean indicating whether any such record exists.
+            var ret = await _context.AfsacCellMapping
+                                    .AnyAsync(x => x.AfsacCellMappingId != Dto.AfsacCellMappingId);
+
+            // Return the result of the query.
             return ret;
         }
+
         public async Task<List<DTOAfsacCellMappingResponse>?> GetAllAfsacCellMapping()
         {
             try
