@@ -237,14 +237,22 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Action method to set the Army number in the session for the current user.
+        /// This method stores the provided IC number in the session and returns a JSON response indicating success.
+        /// </summary>
+        /// <param name="ICNO">The IC number (ArmyNo) to be stored in the session.</param>
+        /// <returns>A JSON response indicating success (1).</returns>
         [HttpPost]
         public async Task<IActionResult> GotoDashboard(string ICNO)
         {
-
+            // Store the provided IC number (ArmyNo) in the session for later use
             SessionHeplers.SetObject(HttpContext.Session, "ArmyNo", ICNO);
+
+            // Return a JSON response indicating success
             return Json(1);
-           
         }
+
         [HttpPost]
         public async Task<IActionResult> GetTokenArmyNo(string Id)
         {
