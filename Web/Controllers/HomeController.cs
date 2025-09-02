@@ -126,34 +126,63 @@ namespace Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Action method to display the "Register User" page. It retrieves the user's session data
+        /// (specifically the UnitId) and passes it to the view.
+        /// </summary>
+        /// <returns>The "Register User" view with the UnitId passed in ViewBag.</returns>
         [Authorize]
         public IActionResult RegisterUser()
         {
+            // Initialize a new DtoSession object
             DtoSession? dtoSession = new DtoSession();
+
+            // Check if the session contains a valid "Token"
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
+                // Retrieve the session object "Token" and deserialize it into the dtoSession object
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
+
+            // Retrieve the UnitId from the session or default to 0 if not available
             int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+
+            // Pass the UnitId to the view using ViewBag
             ViewBag.UnitId = UnitId;
+
+            // Return the RegisterUser view
             return View();
         }
+
+        /// <summary>
+        /// Action method for the Dashboard page. It retrieves the user's role, claims, and user information
+        /// and passes them to the view for display.
+        /// </summary>
+        /// <returns>The Dashboard view with role and user claims passed in ViewBag.</returns>
         public async Task<IActionResult> Dashboard()
         {
+            // Retrieve the user's role from the session
             string role = GetSessionValue();
 
+            // Pass the role to the view using ViewBag
             ViewBag.Role = role;
-            
+
+            // Retrieve the user ID from the claims of the current user
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Fetch the user from the UserManager service using the user ID
             var user = await userManager.FindByIdAsync(userId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Retrieve all claims associated with the user
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Pass the user claims to the view using ViewBag
             ViewBag.UserClaims = UserClaims;
 
+            // Return the Dashboard view
             return View();
         }
+
         #region Report Return
         public async Task<IActionResult> Report()
         {
