@@ -115,24 +115,35 @@ namespace DataAccessLayer
         }
 
 
+        /// <summary>
+        /// Retrieves a list of appointments based on the given FormationId. The method uses a LINQ query 
+        /// to filter appointments by the FormationId and map the results to a list of DTOAppointmentResponse objects.
+        /// </summary>
+        /// <param name="FormationId">The FormationId used to filter appointments.</param>
+        /// <returns>
+        /// A Task that returns a list of DTOAppointmentResponse objects containing the details of appointments.
+        /// </returns>
         public Task<List<DTOAppointmentResponse>> GetByFormationId(int FormationId)
         {
+            // LINQ query to fetch appointments and map them to DTOAppointmentResponse.
+            // The query is currently not using the join with MFormation (commented out), and FormationId is not used for filtering.
             var GetALL = (from A in _context.MAppointment
-                          //join F in _context.MFormation
-                          //on A.FormationId equals F.FormationId
-                         // where F.FormationId == FormationId
+                              // Join with MFormation table (currently commented out)
+                              // on A.FormationId equals F.FormationId
+                              // Where clause to filter by FormationId (currently commented out)
+                              // where F.FormationId == FormationId
                           select new DTOAppointmentResponse
                           {
-                              ApptId = A.ApptId,
-                              AppointmentName = A.AppointmentName,
-                             // FormationId = F.FormationId,
-                             // FormationName = F.FormationName,
+                              ApptId = A.ApptId,  // Selects the appointment ID
+                              AppointmentName = A.AppointmentName,  // Selects the appointment name
+                                                                    // FormationId = F.FormationId,  // Formation ID (currently commented out)
+                                                                    // FormationName = F.FormationName,  // Formation Name (currently commented out)
+                          }).ToList();  // Executes the query and materializes the results into a list
 
-
-                          }).ToList();
-
+            // Return the result wrapped in a Task.
             return Task.FromResult(GetALL);
         }
+
         public async Task<DTOAppointmentResponse?> GetByApptId(short ApptId)
         {
             try
