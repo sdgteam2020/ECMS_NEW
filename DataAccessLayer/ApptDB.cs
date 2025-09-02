@@ -144,25 +144,37 @@ namespace DataAccessLayer
             return Task.FromResult(GetALL);
         }
 
+        /// <summary>
+        /// Asynchronously retrieves an appointment by its ApptId and maps the data to a DTOAppointmentResponse object.
+        /// </summary>
+        /// <param name="ApptId">The ApptId of the appointment to retrieve.</param>
+        /// <returns>
+        /// A DTOAppointmentResponse object containing the details of the appointment if found, otherwise null.
+        /// </returns>
         public async Task<DTOAppointmentResponse?> GetByApptId(short ApptId)
         {
             try
             {
+                // LINQ query to find the first appointment matching the provided ApptId.
+                // Filters the MAppointment table to find the record with the specified ApptId.
                 var GetAppt = await (from app in _context.MAppointment.Where(x => x.ApptId == ApptId)
-                               select new DTOAppointmentResponse
-                               {
-                                   ApptId = app.ApptId,
-                                   AppointmentName = app.AppointmentName,
-                               }).FirstOrDefaultAsync();
+                                     select new DTOAppointmentResponse
+                                     {
+                                         ApptId = app.ApptId,  // Selects the appointment ID
+                                         AppointmentName = app.AppointmentName,  // Selects the appointment name
+                                     }).FirstOrDefaultAsync();  // Retrieves the first matching record asynchronously
 
+                // Return the result (either the found appointment or null if no match is found).
                 return GetAppt;
             }
             catch (Exception ex)
             {
+                // Logs the exception in case of an error.
                 _logger.LogError(1001, ex, "ApptDB->GetByApptId");
-                return null;
+                return null;  // Return null in case of an exception.
             }
         }
+
 
         //public async Task<bool> GetByName(MCorps Data)
         //{
