@@ -50,18 +50,37 @@ namespace DataAccessLayer
             return ret;
         }
 
+        /// <summary>
+        /// Asynchronously retrieves all records from the AfsacCellMapping table and its related tables 
+        /// (TrnDomainMapping, AspNetUsers, UserProfile, MRank, MapUnit, and MUnit), mapping the result to 
+        /// a list of DTOAfsacCellMappingResponse objects.
+        /// </summary>
+        /// <returns>
+        /// A list of DTOAfsacCellMappingResponse objects representing the retrieved records, or null if an error occurs.
+        /// </returns>
         public async Task<List<DTOAfsacCellMappingResponse>?> GetAllAfsacCellMapping()
         {
             try
             {
+                // SQL query to fetch data from AfsacCellMapping and its related tables.
+                // The query retrieves fields from AfsacCellMapping, TrnDomainMapping, AspNetUsers, UserProfile,
+                // MRank, MapUnit, and MUnit, joining them using LEFT JOINs.
+                // The results are ordered by AfsacCellMappingId in descending order.
                 string query = "";
-                query = "Select acmap.AfsacCellMappingId,acmap.TDMId,acmap.UnitId,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name, munit.Sus_no,munit.Suffix,munit.UnitName from AfsacCellMapping acmap" +
-                        " left join TrnDomainMapping trndomain on trndomain.Id=acmap.TDMId" +
-                        " left join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
-                        " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-                        " left join MRank ra on ra.RankId=usep.RankId " +
-                        " left join MapUnit mapunit on mapunit.UnitMapId = acmap.UnitId " +
-                        " left join MUnit munit on munit.UnitId =mapunit.UnitId order by acmap.AfsacCellMappingId desc";
+                query = "Select acmap.AfsacCellMappingId, acmap.TDMId, acmap.UnitId, users.DomainId, usep.ArmyNo, ra.RankAbbreviation, " +
+                        "usep.Name, munit.Sus_no, munit.Suffix, munit.UnitName " +
+                        "from AfsacCellMapping acmap " +
+                        "left join TrnDomainMapping trndomain on trndomain.Id = acmap.TDMId " +
+                        "left join AspNetUsers users on users.Id = trndomain.AspNetUsersId " +
+                        "left join UserProfile usep on usep.UserId = trndomain.UserId " +
+                        "left join MRank ra on ra.RankId = usep.RankId " +
+                        "left join MapUnit mapunit on mapunit.UnitMapId = acmap.UnitId " +
+                        "left join MUnit munit on munit.UnitId = mapunit.UnitId " +
+                        "order by acmap.AfsacCellMappingId desc";
+
+                // Using the database connection to execute the SQL query asynchronously.
+                // QueryAsync is used to fetch the result into a collection of DTOAfsacCellMappingResponse.
+                // The results are converted to a list and returned.
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var allrecord = await connection.QueryAsync<DTOAfsacCellMappingResponse>(query);
@@ -70,10 +89,11 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
+                // Logging any exceptions that occur during the database operation.
                 _logger.LogError(1001, ex, "AfsacCellMappingDB->GetAllAfsacCellMapping");
-                return null;
+                return null;  // Returning null in case of an error.
             }
-
         }
+
     }
 }
