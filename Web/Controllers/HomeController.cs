@@ -486,9 +486,15 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Validates the provided month/year input in the "MM/yyyy" format.
+        /// The method checks if the input is a valid date and falls within the range of the last 2 years and the current month.
+        /// </summary>
+        /// <param name="input">The month/year input to validate in "MM/yyyy" format.</param>
+        /// <returns>True if the input is valid and within the allowed range, false otherwise.</returns>
         public static bool IsValidMonthYear(string input)
         {
-            // Try parse as MM/yyyy
+            // Try to parse the input as a date with format "dd/MM/yyyy"
             if (!DateTime.TryParseExact("01/" + input, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime selectedDate))
             {
                 return false; // Invalid format
@@ -496,42 +502,68 @@ namespace Web.Controllers
 
             DateTime today = DateTime.Today;
 
-            // Calculate min date as 2 years ago (Jan of that year)
+            // Calculate the minimum valid date (2 years ago, January 1st)
             DateTime minDate = new DateTime(today.Year - 2, 1, 1);
-            DateTime maxDate = new DateTime(today.Year, today.Month, 1); // Current month only
 
-            // Truncate selected date to month/year
+            // Calculate the maximum valid date (current month)
+            DateTime maxDate = new DateTime(today.Year, today.Month, 1);
+
+            // Truncate the selected date to the start of the month (for comparison)
             DateTime selectedMonthStart = new DateTime(selectedDate.Year, selectedDate.Month, 1);
 
+            // Return whether the selected month is within the valid range
             return selectedMonthStart >= minDate && selectedMonthStart <= maxDate;
         }
-        #endregion
+
+        /// <summary>
+        /// Action method to display the sub-dashboard. It retrieves the user's role and passes it to the view.
+        /// </summary>
+        /// <returns>The SubDashboard view with the user's role passed in ViewBag.</returns>
         public async Task<IActionResult> SubDashboard()
         {
+            // Retrieve the user's role from the session
             string role = GetSessionValue();
 
+            // Pass the role to the view
             ViewBag.Role = role;
+
+            // Return the SubDashboard view
             return View();
         }
+
+        /// <summary>
+        /// Action method for the Dashboard User Management page. It retrieves session data, checks the user's role,
+        /// and performs a lookup to determine if the user has access to the specified record office (RO).
+        /// </summary>
+        /// <returns>The DashboardUserMgt view with appropriate session and role data passed in ViewBag.</returns>
         public async Task<IActionResult> DashboardUserMgt()
         {
+            // Retrieve the user's role from the session
             string role = GetSessionValue();
+
+            // Initialize the DTO session object
             DtoSession? dtoSession = new DtoSession();
+
+            // Retrieve the session data if available
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
-            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
-            int TDMId = dtoSession!=null? dtoSession.TrnDomainMappingId : 0;
-            int UserId = dtoSession!=null?dtoSession.UserId:0;
 
+            // Retrieve relevant session information such as UnitId, TrnDomainMappingId, and UserId
+            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+            int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+            int UserId = dtoSession != null ? dtoSession.UserId : 0;
+
+            // Retrieve the Record Office data based on the TrnDomainMappingId
             DTOGetROByTDMIdResponse? dTOGetROByUserIdResponse = await _recordOfficeBL.GetROByTDMId(TDMId);
-            if(dTOGetROByUserIdResponse== null)
+
+            // Check if the user has access to the Record Office
+            if (dTOGetROByUserIdResponse == null)
             {
                 ViewBag.ROFound = 0;
             }
-            else if(dTOGetROByUserIdResponse.IsRO==true || dTOGetROByUserIdResponse.IsORO ==true || dTOGetROByUserIdResponse.TDMId == TDMId)
+            else if (dTOGetROByUserIdResponse.IsRO == true || dTOGetROByUserIdResponse.IsORO == true || dTOGetROByUserIdResponse.TDMId == TDMId)
             {
                 ViewBag.ROFound = 1;
             }
@@ -540,15 +572,27 @@ namespace Web.Controllers
                 ViewBag.ROFound = 0;
             }
 
+            // Pass the UnitId and Role to the view
             ViewBag.UnitId = UnitId;
             ViewBag.Role = role;
+
+            // Return the DashboardUserMgt view
             return View();
         }
+
+        /// <summary>
+        /// Action method to initiate a new request. It retrieves the user's role and passes it to the view.
+        /// </summary>
+        /// <returns>The InitiateRequest view with the user's role passed in ViewBag.</returns>
         public IActionResult InitiateRequest()
         {
+            // Pass the user's role to the view
             ViewBag.Role = GetSessionValue();
+
+            // Return the InitiateRequest view
             return View();
         }
+
         public async Task<IActionResult> RequestDashboard(string Id)
         {
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
