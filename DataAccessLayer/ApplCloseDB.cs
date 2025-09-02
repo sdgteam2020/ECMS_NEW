@@ -69,47 +69,64 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Asynchronously inserts a record into the TrnApplClose table and updates the status of the corresponding 
+        /// RequestId in the TrnICardRequest table within a transaction. If any operation fails, the transaction is rolled back.
+        /// </summary>
+        /// <param name="Data">The TrnApplClose object containing the data to be inserted and used for updating the status.</param>
+        /// <returns>
+        /// Returns true if the insert and update operations succeed, otherwise returns false.
+        /// </returns>
         public async Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data)
         {
+            // Creating a connection and transaction for database operations.
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
 
             try
             {
-                var insertSql = " INSERT INTO TrnApplClose (BasicDetailId, ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby,UserId)" +
-                                " VALUES (@BasicDetailId, @ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby,@UserId);";
+                // SQL query to insert a new record into the TrnApplClose table.
+                var insertSql = "INSERT INTO TrnApplClose (BasicDetailId, ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId) " +
+                                "VALUES (@BasicDetailId, @ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId);";
+
+                // Creating dynamic parameters for the insert query.
                 var parameters = new DynamicParameters();
                 parameters.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@ReasonId", Data.ReasonId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@Authority", Data.Authority, DbType.String, ParameterDirection.Input, 50);
-                parameters.Add("@Remarks", Data.Remarks, DbType.String, ParameterDirection.Input,50);
+                parameters.Add("@Remarks", Data.Remarks, DbType.String, ParameterDirection.Input, 50);
                 parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
                 parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@UserId", Data.UserId, DbType.Int32, ParameterDirection.Input);
 
+                // Execute the insert query asynchronously with transaction.
                 await db.ExecuteAsync(insertSql, parameters, transaction: transaction);
 
-                string query1 = " UPDATE TrnICardRequest set StatusId=3 where RequestId=@RequestId ";
+                // SQL query to update the status of the RequestId in the TrnICardRequest table.
+                string query1 = "UPDATE TrnICardRequest SET StatusId = 3 WHERE RequestId = @RequestId";
+
+                // Execute the update query asynchronously with transaction.
                 var query1_parameters = new { RequestId = Data.RequestId };
                 await db.ExecuteAsync(query1, query1_parameters, transaction: transaction);
 
-                // Commit the transaction if all operations succeed
+                // Commit the transaction if both operations succeed.
                 transaction.Commit();
                 return true;
             }
             catch (Exception ex)
             {
-                // Rollback the transaction if any operation fails
+                // Rollback the transaction if any operation fails.
                 transaction.Rollback();
                 _logger.LogError(1001, ex, "ApplCloseDB->ApplCloseWithUpdateStatus");
                 return false;
             }
             finally
             {
-                // Dispose of the connection
+                // Dispose of the connection to free up resources.
                 db.Dispose();
             }
         }
+
     }
 }
