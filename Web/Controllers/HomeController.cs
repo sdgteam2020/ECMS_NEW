@@ -56,7 +56,7 @@ namespace Web.Controllers
         //constructor to initialize dependencies and configuration settings.
         public HomeController(IRegistrationBL registrationBL, IUserProfileBL userProfileBL,
             IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
-            IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, 
+            IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor,
             IReportReturnBL reportReturnBL, IService service, IConfiguration configuration, IMapUnitBL mapUnitBL
             )
@@ -514,7 +514,7 @@ namespace Web.Controllers
             // Return whether the selected month is within the valid range
             return selectedMonthStart >= minDate && selectedMonthStart <= maxDate;
         }
-
+        #endregion
         /// <summary>
         /// Action method to display the sub-dashboard. It retrieves the user's role and passes it to the view.
         /// </summary>
@@ -1248,6 +1248,6 @@ namespace Web.Controllers
                 System.Globalization.CalendarWeekRule.FirstFourDayWeek,
                 DayOfWeek.Monday);
         }
-
+    
     }
 }
