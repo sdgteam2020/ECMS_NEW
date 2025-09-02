@@ -108,7 +108,6 @@ namespace Web.Controllers
 
         #region Domain Regn.
 
-        /// <summary>Displays the Domain Registration management page.</summary>
         /// <returns>The <c>DomainRegn</c> view.</returns>
         /// <remarks>Accessible only to users in the <c>admin</c> role.</remarks>
         [Authorize(Roles = "admin")]

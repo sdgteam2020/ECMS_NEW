@@ -45,34 +45,79 @@ namespace Web.Controllers
         }
 
         #region Command Page
+
+        /// <summary>
+        /// Displays the Command view for users with the "admin" role.
+        /// </summary>
+        /// <remarks>
+        /// This action method is restricted to users in the "admin" role.
+        /// It retrieves the role of the currently authenticated user and returns the corresponding view.
+        /// Currently, the retrieved role is stored in a local variable for potential use in the view or future logic.
+        /// </remarks>
+        /// <returns>
+        /// An <see cref="IActionResult"/> that renders the Command view.
+        /// </returns>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Command()
         {
+            // Retrieve the role of the currently authenticated user from their claims
             string role = this.User.FindFirstValue(ClaimTypes.Role);
+
+            // Return the Command view to the client
             return View();
         }
+
+        
+        /// <summary>
+        /// <remarks>
+        /// This action method is restricted to users in the "admin" role. 
+        /// It performs the following steps:
+        /// 1. Sets default properties for the command, including <c>IsActive</c>, <c>UpdatedBy</c>, and <c>UpdatedOn</c>.
+        /// 2. Trims and formats the command name and abbreviation.
+        /// 3. Validates the model state before saving.
+        /// 4. Checks if a command with the same name already exists.
+        /// 5. Updates the record if <c>ComdId &gt; 0</c>, otherwise adds a new record with the next order value.
+        /// 6. Returns appropriate JSON responses for save, update, existence check, or validation errors.
+        /// 7. Logs any exceptions and returns a generic internal server error message.
+        /// </remarks>
+        /// <param name="dTO">The <see cref="MComd"/> object containing command details to be saved or updated.</param>
+        /// <returns>
+        /// A <see cref="JsonResult"/> containing:
+        /// - <c>KeyConstants.Save</c> if a new record is added successfully,
+        /// - <c>KeyConstants.Update</c> if an existing record is updated successfully,
+        /// - <c>KeyConstants.Exists</c> if the command already exists,
+        /// - Model state errors if validation fails,
+        /// - <c>KeyConstants.InternalServerError</c> in case of an exception.
+        /// </returns>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveCommand(MComd dTO)
         {
             try
             {
+                // Set default active status and audit information
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
+
+                // Trim and format input strings
                 dTO.ComdName = dTO.ComdName.Trim();
                 dTO.ComdAbbreviation= dTO.ComdAbbreviation.Trim().ToUpper();
 
+                // Validate model state
                 if (ModelState.IsValid)
                 {
+                    // Check if a command with the same name already exists
                     if (!await unitOfWork.Comds.GetByName(dTO))
                     {
                         if (dTO.ComdId > 0)
                         {
+                            // Update existing record
                             await unitOfWork.Comds.Update(dTO);
                             return Json(KeyConstants.Update);
                         }
                         else
                         {
+                            // Assign order for new record and add to database
                             dTO.Orderby=await unitOfWork.Comds.GetByMaxOrder();
                             await unitOfWork.Comds.Add(dTO);
                             return Json(KeyConstants.Save);
@@ -80,27 +125,44 @@ namespace Web.Controllers
                     }
                     else
                     {
+                        // Command with same name already exists
                         return Json(KeyConstants.Exists);
                     }
                 }
                 else
                 {
+                    // Return model validation errors
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
             catch (Exception ex) 
             {
+                // Log exception and return internal server error response
                 _logger.LogError(1001, ex, "Master->SaveCommand");
                 return Json(KeyConstants.InternalServerError); 
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves all commands (MComd) sorted by their order in the database. This method is only accessible by users with the "admin" role.
+        /// </summary>
+        /// <param name="Id">An array of command IDs, though it is not utilized in this method as the query fetches all commands sorted by order.</param>
+        /// <returns>
+        /// Returns a JSON result with the list of commands ordered by their position in the database. If an error occurs, an internal server error message is returned.
+        /// </returns>
+        /// <remarks>
+        /// This method is used to fetch and return all commands sorted by their order from the database. It is protected with the "admin" role authorization.
+        /// In case of any exceptions, an internal server error is logged, and the client receives an appropriate error response.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllCommand(int[] Id)
         {
             try
             {
+                // Fetches all commands ordered by their position in the database using the unitOfWork.Comds.GetAllByorder method
                 return Json(await unitOfWork.Comds.GetAllByorder());
             }
             catch (Exception ex)
@@ -110,102 +172,203 @@ namespace Web.Controllers
             }
 
         }
+
+        /// <summary>
+        /// Deletes a command (MComd) from the system after checking if it is referenced in any foreign key relationships.
+        /// </summary>
+        /// <param name="dTO">The MComd object containing the details of the command to be deleted.</param>
+        /// <returns>
+        /// Returns a JSON response indicating the result of the deletion operation:
+        /// - <see cref="KeyConstants.Success"/> if the command was successfully deleted.
+        /// - 5 if the command is referenced in one or more foreign key relationships (e.g., Corps, Bde, Div, MapUnit).
+        /// - <see cref="KeyConstants.InternalServerError"/> if an error occurred during the process.
+        /// </returns>
+        /// <remarks>
+        /// This method checks whether the command (MComd) is referenced in any related tables (such as Corps, Bde, Div, MapUnit) using the `ComdIdCheckInFKTable` function.
+        /// If any references are found, the deletion is prevented and a specific response is returned.
+        /// Otherwise, the command is deleted from the database.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCommand(MComd dTO)
         {
             try
             {
+                // Check if the command is referenced in any foreign key relationships
                 DTOComdIdCheckInFKTableResponse? dTOComdIdCheckInFKTableResponse = await unitOfWork.Comds.ComdIdCheckInFKTable(dTO.ComdId);
                 if(dTOComdIdCheckInFKTableResponse != null && (dTOComdIdCheckInFKTableResponse.TotalCorps >0 || dTOComdIdCheckInFKTableResponse.TotalBde >0 || dTOComdIdCheckInFKTableResponse.TotalDiv >0 || dTOComdIdCheckInFKTableResponse.TotalMapUnit >0))
                 {
-                    return Json(5);
+                    return Json(5);// Command is referenced and cannot be deleted
                 }
                 else
                 {
+                    // If the command is not referenced, proceed with deletion
                     await unitOfWork.Comds.Delete(dTO);
-                    return Json(KeyConstants.Success);
+                    return Json(KeyConstants.Success);// Return success response
                 }
 
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during the operation
                 _logger.LogError(1001, ex, "Master->DeleteCommand");
                 return Json(KeyConstants.InternalServerError);
             }
-
-
         }
+
+        /// <summary>
+        /// Handles the request to change the order of a command (MComd) in the system.
+        /// </summary>
+        /// <param name="dTO">The <see cref="MComd"/> object containing the updated order information for the command.</param>
+        /// <returns>
+        /// A <see cref="JsonResult"/> indicating the result of the operation:
+        /// - <c>KeyConstants.Success</c> if the order change is successful.
+        /// - <c>KeyConstants.InternalServerError</c> if an exception occurs during the process.
+        /// </returns>
+        /// <remarks>
+        /// This method updates the order of the specified command (MComd) based on the provided <paramref name="dTO"/> object.
+        /// It calls the <see cref="unitOfWork.Comds.OrderByChange"/> method to perform the actual update in the database.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> OrderByChange(MComd dTO)
         {
             try
             {
+                // Call the unitOfWork method to update the order of the command
                 await unitOfWork.Comds.OrderByChange(dTO);
+                
+                // Return success response if the order change is successful
                 return Json(KeyConstants.Success);
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during the process
                 _logger.LogError(1001, ex, "Master->OrderByChange");
+
+                // Return error response in case of an exception
                 return Json(KeyConstants.InternalServerError);
             }
-
-
         }
+
+
+        /// <summary>
+        /// Deletes multiple commands based on the provided list of command IDs.
+        /// </summary>
+        /// <param name="ints">An array of command IDs (<see cref="MComd.ComdId"/>) to delete from the database.</param>
+        /// <returns>
+        /// A <see cref="JsonResult"/> indicating success or failure of the operation.
+        /// Returns <see cref="KeyConstants.Success"/> on successful deletion, or <see cref="KeyConstants.InternalServerError"/> if an error occurs.
+        /// </returns>
+        /// <remarks>
+        /// This method loops through the provided command IDs (<paramref name="ints"/>), creates a new <see cref="MComd"/> object for each ID,
+        /// and deletes the corresponding record from the database using the <see cref="unitOfWork.Comds.Delete"/> method.
+        /// The deletion process is handled one record at a time for each command ID in the array.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCommandMultiple(int[] ints)
         {
             try
             {
-                MComd dto = new MComd();
-                foreach (byte i in ints)
+                MComd dto = new MComd(); // Create a new MComd object to represent each command to be deleted
+                foreach (byte i in ints) // Iterate through the array of command IDs
                 {
-                    dto.ComdId = i;
-                    await unitOfWork.Comds.Delete(dto);
+                    dto.ComdId = i; // Set the command ID for the current iteration
+                    await unitOfWork.Comds.Delete(dto);  // Delete the command with the given ID
                 }
 
-                return Json(KeyConstants.Success);
+                return Json(KeyConstants.Success); // Return success if all deletions were successful
             }
-            catch (Exception ex)
+            catch (Exception ex) // Catch any exceptions during the deletion process
             {
-                _logger.LogError(1001, ex, "Master->DeleteCommandMultiple");
-                return Json(KeyConstants.InternalServerError);
+                _logger.LogError(1001, ex, "Master->DeleteCommandMultiple"); // Log the error if something goes wrong
+                return Json(KeyConstants.InternalServerError); // Return internal server error if an exception occurs
             }
         }
+
+
+        /// <summary>
+        /// Retrieves the binary tree structure for a given command ID.
+        /// </summary>
+        /// <param name="Id">The ID of the command for which the binary tree structure is requested. This ID corresponds to the <see cref="MComd.ComdId"/>.</param>
+        /// <returns>
+        /// A <see cref="JsonResult"/> containing the binary tree structure. Returns the binary tree data if successful, or <see cref="KeyConstants.InternalServerError"/> if an error occurs.
+        /// </returns>
+        /// <remarks>
+        /// This method fetches the binary tree representation of a command (and its related nodes) from the database using the provided <paramref name="Id"/>. 
+        /// It calls the <see cref="unitOfWork.Comds.GetBinaryTree"/> method to retrieve the data and returns it as a JSON result.
+        /// If an exception occurs during the retrieval, the method logs the error and returns an internal server error response.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetBinaryTree(int Id)
         {
             try
             {
+                // Retrieve the binary tree for the given command ID
                 var ret = Json(await unitOfWork.Comds.GetBinaryTree(Id));
-                return ret;
+                return ret; // Return the binary tree data as JSON
             }
-            catch (Exception ex)
+            catch (Exception ex) // Handle any exceptions that occur during the process
             {
-                _logger.LogError(1001, ex, "Master->GetAllCommand");
-                return Json(KeyConstants.InternalServerError);
+                _logger.LogError(1001, ex, "Master->GetAllCommand"); // Log the error
+                return Json(KeyConstants.InternalServerError); // Return an internal server error response
             }
-
         }
+
+
         #endregion Command
 
         #region Corps 
+
+        /// <summary>
+        /// Displays the Corps management page for administrators.
+        /// </summary>
+        /// <remarks>
+        /// This action is used to render the view where the administrator can manage and view the details of various corps. 
+        /// The action is restricted to users who have the "admin" role, ensuring that only authorized personnel can access this page.
+        /// </remarks>
+        /// <returns>
+        /// Returns a view representing the Corps management page for the administrator.
+        /// </returns>
         [Authorize(Roles = "admin")]
         public IActionResult Corps()
         {
             return View();
         }
+
+
+        /// <summary>
+        /// Saves or updates the Corps information for the admin user. 
+        /// This action either adds a new Corps entry or updates an existing one based on the provided data.
+        /// </summary>
+        /// <param name="dTO">The DTO containing the Corps data to be saved or updated.</param>
+        /// <returns>
+        /// A JSON result indicating the success or failure of the operation. Returns:
+        /// - KeyConstants.Save: When a new Corps is successfully saved.
+        /// - KeyConstants.Update: When an existing Corps is successfully updated.
+        /// - KeyConstants.Exists: If a Corps with the same name already exists.
+        /// - KeyConstants.InternalServerError: If an error occurs during the process.
+        /// </returns>
+        /// <remarks>
+        /// This method checks whether the Corps already exists in the database by calling the GetByName method.
+        /// If the Corps exists, it returns an "Exists" response. Otherwise, it either updates the Corps if it already exists (using the Update method)
+        /// or adds a new Corps record (using the Add method). Additionally, if the Corps is updated, it updates the corresponding command using the 
+        /// UpdateChageComdByCorps method. The method ensures that only an admin user can access it.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveCorps(MCorps dTO)
         {
+            // Set the IsActive flag to true and capture the user who is updating the Corps.
             dTO.IsActive = true;
             dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             dTO.UpdatedOn = DateTime.Now;
             dTO.CorpsName = dTO.CorpsName.Trim();
 
+            // Check if the model is valid
             if (ModelState.IsValid)
             {
+                // Check if a Corps with the same name already exists
                 if (!await unitOfWork.Corps.GetByName(dTO))
                 {
+                    // If updating an existing Corps
                     if (dTO.CorpsId > 0)
                     {
                         //this Corps update using UpdateChageComdByCorps method
@@ -217,6 +380,8 @@ namespace Web.Controllers
                         dat.CorpsId = dTO.CorpsId;
                         dat.ComdId = dTO.ComdId;
                         bool result = await changeHierarchyMaster.UpdateChageComdByCorps(dat);
+                        
+                        // Return success or error message based on the update result
                         if (result)
                         {
                             return Json(KeyConstants.Update);
@@ -229,97 +394,179 @@ namespace Web.Controllers
                     }
                     else
                     {
+                        // If adding a new Corps
                         await unitOfWork.Corps.Add(dTO);
                         return Json(KeyConstants.Save);
                     }
                 }
                 else
                 {
-                    return Json(KeyConstants.Exists);
+                    return Json(KeyConstants.Exists); // Corps with the same name already exists
                 }
             }
             else
             {
+                // Return validation errors if the model is not valid
                 return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves all Corps records from the database.
+        /// This action is only accessible by users with the "admin" role and returns a JSON result containing a list of all Corps records.
+        /// </summary>
+        /// <param name="Id">The identifier used to fetch all Corps records. Although the parameter is not directly used in the method, it can be leveraged for future filtering or validation.</param>
+        /// <returns>
+        /// A JSON result containing:
+        /// - A list of Corps records retrieved from the database.
+        /// - KeyConstants.InternalServerError if an error occurs while fetching the data.
+        /// </returns>
+        /// <remarks>
+        /// This method calls the GetALLCorps method from the unitOfWork.Corps service, which interacts with the database to fetch all Corps records.
+        /// If an exception occurs during the data retrieval process, the exception is logged, and an internal server error message is returned.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllCorps(int Id)
         {
             try
             {
+                // Fetch all Corps data from the database using the GetALLCorps method of unitOfWork.Corps
                 return Json(await unitOfWork.Corps.GetALLCorps());
             }
             catch (Exception ex)
             {
+                // Log the exception with an error message for debugging purposes
                 _logger.LogError(1001, ex, "Master->GetAllCorps");
+
+                // Return an internal server error response
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+        
+
+        /// Deletes a Corps record from the database after checking for foreign key references.
+        /// </summary>
+        /// <param name="dTO">The <see cref="MCorps"/> object containing the CorpsId to delete.</param>
+        /// <returns>
+        /// Returns a <see cref="JsonResult"/>:
+        /// - 5 if the Corps is referenced in Brigade, Division, or MapUnit tables and cannot be deleted.
+        /// - <see cref="KeyConstants.Success"/> if the Corps is deleted successfully.
+        /// - <see cref="KeyConstants.InternalServerError"/> if an exception occurs.
+        /// </returns>
+        /// <remarks>
+        /// This method first checks if the specified Corps is referenced in any Brigade, Division, or MapUnit records.
+        /// If references exist, deletion is prevented and a specific code (5) is returned.
+        /// Otherwise, the Corps is deleted and a success code is returned.
+        /// Any exceptions are logged and an internal server error code is returned.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCorps(MCorps dTO)
         {
             try
             {
-                DTOCorpsIdCheckInFKTableResponse? dTOCorpsIdCheckIn = await unitOfWork.Corps.CorpsIdCheckInFKTable(dTO.CorpsId);
-                if (dTOCorpsIdCheckIn != null && (dTOCorpsIdCheckIn.TotalBde > 0 || dTOCorpsIdCheckIn.TotalDiv > 0 || dTOCorpsIdCheckIn.TotalMapUnit > 0))
+                DTOCorpsIdCheckInFKTableResponse? dTOCorpsIdCheckIn = await unitOfWork.Corps.CorpsIdCheckInFKTable(dTO.CorpsId);// Check for foreign key references
+                if (dTOCorpsIdCheckIn != null && (dTOCorpsIdCheckIn.TotalBde > 0 || dTOCorpsIdCheckIn.TotalDiv > 0 || dTOCorpsIdCheckIn.TotalMapUnit > 0))// If references exist, prevent deletion
                 {
-                    return Json(5);
+                    return Json(5);// Return code indicating deletion is not allowed
                 }
                 else
                 {
-                    await unitOfWork.Corps.Delete(dTO);
-                    return Json(KeyConstants.Success);
+                    await unitOfWork.Corps.Delete(dTO);// Delete the Corps if no references exist
+                    return Json(KeyConstants.Success);// Return success code
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Master->DeleteCorps");
-                return Json(KeyConstants.InternalServerError);
+                _logger.LogError(1001, ex, "Master->DeleteCorps");// Log any exceptions that occur during the operation
+                return Json(KeyConstants.InternalServerError);// Return internal server error code in case of an exception
             }
 
         }
+        
+        
+        /// Deletes multiple Corps records based on the provided array of Corps IDs.
+        /// </summary>
+        /// <param name="ints">An array of Corps IDs to delete.</param>
+        /// <returns>
+        /// A <see cref="JsonResult"/> indicating the result of the operation:
+        /// - <see cref="KeyConstants.Success"/> if all deletions succeed.
+        /// - <see cref="KeyConstants.InternalServerError"/> if an exception occurs.
+        /// </returns>
+        /// <remarks>
+        /// Iterates through the provided Corps IDs, deletes each corresponding Corps record.
+        /// Logs any exceptions and returns an appropriate error response.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCorpsMultiple(int[] ints)
         {
             try
             {
                 MCorps dto = new MCorps();
-                foreach (byte i in ints)
+                foreach (byte i in ints)// Iterate through the array of Corps IDs
                 {
                     dto.CorpsId = i;
-                    await unitOfWork.Corps.Delete(dto);
+                    await unitOfWork.Corps.Delete(dto);// Delete each Corps by ID
                 }
 
-                return Json(KeyConstants.Success);
+                return Json(KeyConstants.Success);// Return success if all deletions were successful
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Master->DeleteCorpsMultiple");
-                return Json(KeyConstants.InternalServerError);
+                _logger.LogError(1001, ex, "Master->DeleteCorpsMultiple");//    Log any exceptions that occur during the operation
+                return Json(KeyConstants.InternalServerError);//    Return internal server error code in case of an exception
             }
         }
+
+
         #endregion End Corps
 
         #region Div  
+
+
+        /// <summary>
+        /// Displays the Div management page for users with the "admin" role.
+        /// This action is authorized only for users with the "admin" role.
+        /// </summary>
+        /// <returns>
+        /// A view for managing Div data.
+        /// </returns>
         [Authorize(Roles = "admin")]
         public IActionResult Div()
         {
             return View();
         }
+
+
+        /// <summary>
+        /// Saves or updates the Div information.
+        /// This method is used to either add a new Div or update an existing one based on the provided data.
+        /// </summary>
+        /// <param name="dTO">The Div data transfer object (DTO) containing the information to be saved or updated.</param>
+        /// <returns>
+        /// A JSON result indicating the outcome of the operation:
+        /// - `KeyConstants.Save` for successful save operation.
+        /// - `KeyConstants.Update` for successful update operation.
+        /// - `KeyConstants.Exists` if the Div name already exists.
+        /// - `ModelState errors` if validation fails.
+        /// - `KeyConstants.InternalServerError` if an exception occurs.
+        /// </returns>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveDiv(MDiv dTO)
         {
             try
             {
+                // Mark the division as active and set the updated information
                 dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));// Get the current user
                 dTO.UpdatedOn = DateTime.Now;
-                dTO.DivName = dTO.DivName.Trim();
+                dTO.DivName = dTO.DivName.Trim(); // Trim any leading/trailing whitespace from the division name
+
+                // Check if the model is valid before proceeding
                 if (ModelState.IsValid)
                 {
+                    // Check if a division with the same name already exists
                     if (!await unitOfWork.Div.GetByName(dTO))
                     {
                         if (dTO.DivId > 0)
@@ -328,25 +575,28 @@ namespace Web.Controllers
                             //await unitOfWork.Div.Update(dTO);
 
                             /////update Commd By CorpsId
+                            // If it's an existing division, update the associated command and corps
                             MapUnit dat = new MapUnit();
                             dat.Div = dTO;
                             dat.CorpsId = dTO.CorpsId;
                             dat.ComdId = dTO.ComdId;
                             dat.DivId=dTO.DivId;
+
+                            // Update command and corps hierarchy based on the division
                             bool result = await changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
                             if (result) 
                             {
-                                return Json(KeyConstants.Update);
+                                return Json(KeyConstants.Update); // Return success message for update
                             }
                             else
                             {
-                                return Json(KeyConstants.InternalServerError);
+                                return Json(KeyConstants.InternalServerError); // Return error message if update fails
                             }
                             ////////End Code //////////////
                         }
                         else
                         {
-                            await unitOfWork.Div.Add(dTO);
+                            await unitOfWork.Div.Add(dTO);// Add a new DIV if DivId is 0
                             return Json(KeyConstants.Save);
                         }
                     }
@@ -357,7 +607,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());// Return validation errors if the model is not valid
                 }
 
             }
@@ -368,43 +618,102 @@ namespace Web.Controllers
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves all DIV (MDiv) from the database and returns them in JSON format.
+        /// This method is only accessible to users with the "admin" role, and it handles any exceptions 
+        /// that may occur during the process, logging errors if necessary.
+        /// </summary>
+        /// <param name="Id">The identifier (ID) of the command to which the DIVs are related. This ID is used to filter the data.</param>
+        /// <returns>
+        /// Returns a JSON response containing the list of DIVs. In case of an error, a JSON response 
+        /// with an internal server error message is returned.
+        /// </returns>
+        /// <remarks>
+        /// The method fetches all DIV (MDiv) data using the unit of work pattern and the `GetALLDiv` method of the `Div` repository.
+        /// If an error occurs during the retrieval process, an exception is caught and logged, and an error response is returned.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllDiv(int Id)
         {
             try
             {
+                // Fetch all DIV (MDiv) related to the provided ID
                 return Json(await unitOfWork.Div.GetALLDiv());
             }
             catch (Exception ex)
             {
+                // Log any exceptions that occur during the process
                 _logger.LogError(1001, ex, "Master->GetAllDiv");
+
+                // Return an error response in case of failure
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
+
+        /// <summary>
+        /// Deletes a DIV (MDiv) from the database after verifying it is not referenced in any foreign key tables.
+        /// If the division is referenced in the `MBde` or `MapUnit` tables, the deletion is blocked.
+        /// </summary>
+        /// <param name="dTO">The `MDiv` object containing the DIV to be deleted.</param>
+        /// <returns>
+        /// - JSON result: 
+        ///   - **5** if the DIV is referenced in other tables and cannot be deleted.
+        ///   - **KeyConstants.Success** if the DIV is successfully deleted.
+        /// </returns>
+        /// <remarks>
+        /// The method performs the following steps:
+        /// 1. Checks if the DIV is referenced in any foreign key tables (e.g., `MBde`, `MapUnit`) using the `DivIdCheckInFKTable` method.
+        /// 2. If referenced, the method prevents the deletion and returns a value of 5.
+        /// 3. If not referenced, deletes the DIV from the `MDiv` table and returns a success message.
+        /// 4. Any errors are logged, and an internal server error message is returned if an exception occurs.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteDiv(MDiv dTO)
         {
             try
             {
+                // Check if the division is referenced in other tables (MBde, MapUnit)
                 DTODivIdCheckInFKTableResponse? dTODivIdCheckIn = await unitOfWork.Div.DivIdCheckInFKTable(dTO.DivId);
                 if (dTODivIdCheckIn != null && (dTODivIdCheckIn.TotalBde > 0 || dTODivIdCheckIn.TotalMapUnit > 0))
                 {
-                    return Json(5);
+                    return Json(5);// Division cannot be deleted because it's in use by other tables
                 }
                 else
                 {
+                    // Proceed to delete the division if it's not referenced
                     await unitOfWork.Div.Delete(dTO);
-                    return Json(KeyConstants.Success);
+                    return Json(KeyConstants.Success);// Return success if deletion is successful
                 }
 
             }
             catch (Exception ex)
             {
+                // Log any errors during the process
                 _logger.LogError(1001, ex, "Master->DeleteDiv");
-                return Json(KeyConstants.InternalServerError);
+                return Json(KeyConstants.InternalServerError);  // Return error if an exception occurs
             }
         }
+
+
+        /// <summary>
+        /// Deletes multiple DIVs (MDiv) based on the provided array of DIV IDs.
+        /// This method is intended for bulk deletion of DIVs by their IDs.
+        /// </summary>
+        /// <param name="ints">An array of DIV IDs to be deleted.</param>
+        /// <returns>
+        /// Returns a JSON response with a success or error status:
+        /// - **Success**: If all specified DIVs are successfully deleted.
+        /// - **InternalServerError**: If an exception occurs during the deletion process.
+        /// </returns>
+        /// <remarks>
+        /// The method performs the following actions:
+        /// 1. Iterates through the provided array of DIV IDs.
+        /// 2. For each DIV ID, it creates a new `MDiv` object, sets the `DivId` to the current ID, and deletes the DIV using the `Delete` method of the `unitOfWork.Div`.
+        /// 3. If an exception occurs, it logs the error and returns a failure response indicating the error.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteDivMultiple(int[] ints)
         {
@@ -414,26 +723,65 @@ namespace Web.Controllers
                 foreach (byte i in ints)
                 {
                     dto.DivId = i;
-                    await unitOfWork.Div.Delete(dto);
+                    await unitOfWork.Div.Delete(dto);   // Deletes the DIV by its ID
                 }
 
-                return Json(KeyConstants.Success);
+                return Json(KeyConstants.Success); // Return success if all deletions were successful
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Master->DeleteDivMultiple");
-                return Json(KeyConstants.InternalServerError);
+                _logger.LogError(1001, ex, "Master->DeleteDivMultiple");  // Log any errors that occur
+                return Json(KeyConstants.InternalServerError);  // Return error response in case of an exception
             }
         }
+
+
         #endregion End Bde
 
         #region Bde  
+
+
+        /// <summary>
+        /// Displays the view for managing the BDE (Brigade) data.
+        /// This action is accessible only to users with the "admin" role.
+        /// </summary>
+        /// <returns>
+        /// Returns the view for managing BDEs (Brigades).
+        /// The view allows the user to perform actions such as adding, editing, or deleting BDE data.
+        /// </returns>
+        /// <remarks>
+        /// This method does not perform any business logic but simply returns the view that provides 
+        /// the interface for the user to manage BDE data. Access is restricted to admin users through 
+        /// the [Authorize] attribute, ensuring that only authorized personnel can interact with this page.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public IActionResult Bde()
         {
 
             return View();
         }
+
+
+        /// <summary>
+        /// Saves or updates a BDE (Brigade) record.
+        /// This method is responsible for adding a new BDE record or updating an existing one based on the input.
+        /// The action is accessible only to users with the "admin" role.
+        /// </summary>
+        /// <param name="dTO">The DTO (Data Transfer Object) containing the BDE data to be saved or updated.</param>
+        /// <returns>
+        /// Returns a JSON response indicating whether the operation was successful or not. 
+        /// Possible responses include:
+        /// - <see cref="KeyConstants.Save"/> if the new BDE was successfully added.
+        /// - <see cref="KeyConstants.Update"/> if the existing BDE was successfully updated.
+        /// - <see cref="KeyConstants.Exists"/> if a BDE with the same name already exists.
+        /// - <see cref="KeyConstants.InternalServerError"/> in case of an error.
+        /// </returns>
+        /// <remarks>
+        /// The method checks if the BDE already exists by calling the <see cref="unitOfWork.Bde.GetByName"/> method. 
+        /// If the BDE exists, it will return a message indicating that the BDE already exists.
+        /// If the BDE does not exist, it will either update the existing record or add a new one based on the <paramref name="dTO"/>.
+        /// The update process also handles any necessary changes in related records, like updating the associated division and command.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveBde(MBde dTO)
         {
@@ -445,7 +793,7 @@ namespace Web.Controllers
                 dTO.BdeName = dTO.BdeName.Trim();
                 if (ModelState.IsValid)
                 {
-                    bool? result = await unitOfWork.Bde.GetByName(dTO);
+                    bool? result = await unitOfWork.Bde.GetByName(dTO); // Check if BDE with the same name already exists
                     if (result != null)
                     {
                         if (result == true)
@@ -456,17 +804,14 @@ namespace Web.Controllers
                         {
                             if (dTO.BdeId > 0)
                             {
-                                //this Bde update using UpdateComdCorpsByDivs method
-                                //await unitOfWork.Bde.Update(dTO);
-
-                                /////update Commd By CorpsId
+                                // Update Brigade using UpdateComdCorpsByDivs method
                                 MapUnit dat = new MapUnit();
                                 dat.Bde = dTO;
                                 dat.CorpsId = dTO.CorpsId;
                                 dat.ComdId = dTO.ComdId;
                                 dat.DivId = dTO.DivId;
                                 dat.BdeId = dTO.BdeId;
-                                bool result1 = await changeHierarchyMaster.UpdateComdCorpsDivsBybdes(dat);
+                                bool result1 = await changeHierarchyMaster.UpdateComdCorpsDivsBybdes(dat); // Update command, corps, and division hierarchy based on the brigade
                                 if (result1)
                                 {
                                     return Json(KeyConstants.Update);
@@ -480,7 +825,7 @@ namespace Web.Controllers
                             }
                             else
                             {
-                                await unitOfWork.Bde.Add(dTO);
+                                await unitOfWork.Bde.Add(dTO);// Add a new BDE if BdeId is 0
                                 return Json(KeyConstants.Save);
                             }
                         }
@@ -492,7 +837,7 @@ namespace Web.Controllers
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());// Return validation errors if the model is not valid
                 }
 
             }
@@ -503,12 +848,28 @@ namespace Web.Controllers
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves a list of all Brigade (BDE) categories from the database.
+        /// This method fetches all the Brigade data and returns it in JSON format.
+        /// It is accessible only by users with the "admin" role, ensuring secure access.
+        /// </summary>
+        /// <param name="Id">The ID used to filter the data. The exact usage of this parameter depends on the underlying implementation.</param>
+        /// <returns>
+        /// A JSON response containing a list of all Brigade (BDE) categories retrieved from the database.
+        /// In case of an error, an internal server error message is returned.
+        /// </returns>
+        /// <remarks>
+        /// This method utilizes the `unitOfWork.Bde.GetALLBdeCat()` method to fetch the Brigade data.
+        /// If an error occurs during the data retrieval, it logs the error and returns a failure response.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllBde(int Id)
         {
             try
             {
-                return Json(await unitOfWork.Bde.GetALLBdeCat());
+                return Json(await unitOfWork.Bde.GetALLBdeCat());// Fetch all Brigade (BDE) categories from the database
             }
             catch (Exception ex)
             {
@@ -517,71 +878,147 @@ namespace Web.Controllers
             }
 
         }
+
+
+        /// <summary>
+        /// Deletes a Brigade (BDE) after checking if there are any foreign key references in the `MapUnit` table.
+        /// If there are foreign references, the deletion is not allowed, and an error message is returned.
+        /// </summary>
+        /// <param name="dTO">The `MBde` object representing the Brigade to be deleted, containing the `BdeId`.</param>
+        /// <returns>
+        /// A JSON response indicating the success or failure of the operation:
+        /// - `5` if the Brigade has foreign key references and cannot be deleted.
+        /// - `KeyConstants.Success` if the deletion is successful.
+        /// - `KeyConstants.InternalServerError` if an error occurs during the process.
+        /// </returns>
+        /// <remarks>
+        /// This method first checks if the provided `BdeId` exists in the `MapUnit` table (foreign key references).
+        /// If references are found, the method prevents deletion and returns an error.
+        /// Otherwise, the Brigade is deleted, and the success status is returned.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteBde(MBde dTO)
         {
             try
             {
-                DTOBdeIdCheckInFKTableResponse? dTOBdeIdCheckIn = await unitOfWork.Bde.BdeIdCheckInFKTable(dTO.BdeId);
+                // Check if there are any foreign key references to the Brigade (BDE) in the MapUnit table.
+                DTOBdeIdCheckInFKTableResponse? dTOBdeIdCheckIn = await unitOfWork.Bde.BdeIdCheckInFKTable(dTO.BdeId); // Check for foreign key references
+
                 if (dTOBdeIdCheckIn != null && (dTOBdeIdCheckIn.TotalMapUnit > 0))
                 {
+                    // If there are references, return an error indicating the Brigade cannot be deleted
                     return Json(5);
                 }
                 else
                 {
+                    // If no references are found, proceed with deletion of the Brigade (BDE)
                     await unitOfWork.Bde.Delete(dTO);
                     return Json(KeyConstants.Success);
                 }
-
-
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during the execution of the method
                 _logger.LogError(1001, ex, "Master->DeleteBde");
+
+                // Return an error response if something goes wrong
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
+
+
+        /// <summary>
+        /// Deletes multiple Brigades (BDEs) based on the provided array of `BdeId`s.
+        /// The method iterates over each `BdeId`, performs the deletion, and returns a success message if all deletions are successful.
+        /// </summary>
+        /// <param name="ints">An array of `BdeId` values representing the Brigades to be deleted.</param>
+        /// <returns>
+        /// A JSON response indicating the success or failure of the operation:
+        /// - `KeyConstants.Success` if all deletions are successful.
+        /// - `KeyConstants.InternalServerError` if an error occurs during the process.
+        /// </returns>
+        /// <remarks>
+        /// This method iterates over each Brigade ID (`BdeId`) in the input array and attempts to delete each corresponding Brigade. 
+        /// If any error occurs during the deletion process, an error message is logged and the method returns an internal server error.
+        /// </remarks>
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteBdeMultiple(int[] ints)
         {
             try
             {
                 MBde dto = new MBde();
+                // Iterate through each BdeId in the array and delete the corresponding Brigade (BDE)
                 foreach (byte i in ints)
                 {
                     dto.BdeId = i;
+                    // Deleting the Brigade with the current BdeId
                     await unitOfWork.Bde.Delete(dto);
                 }
 
+                // Return success message after successfully deleting all selected Brigades
                 return Json(KeyConstants.Success);
             }
             catch (Exception ex)
             {
+                // Log the error if any exception occurs during the deletion process
                 _logger.LogError(1001, ex, "Master->DeleteBdeMultiple");
+
+                // Return an internal server error if an exception was caught
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
+
         #endregion End Bde
 
         #region MapUnit  
 
+        /// <summary>
+        /// Displays the MapUnit view for managing or viewing unit mappings.
+        /// </summary>
+        /// <returns>
+        /// The view for displaying the MapUnit page.
+        /// </returns>
+        /// <remarks>
+        /// This action method is used to render the MapUnit page where users can manage unit mappings,
+        /// such as linking specific units to their respective command, corps, and division.
+        /// </remarks>
         public IActionResult MapUnit()
         {
             return View();
         }
+
+
+        /// <summary>
+        /// Retrieves the top unit information based on the provided SUSNo.
+        /// </summary>
+        /// <param name="SUSNo">The SUSNo (Service Unit Serial Number) used to query the unit data.</param>
+        /// <returns>
+        /// A JSON response containing the top unit information that matches the provided SUSNo.
+        /// If an error occurs, a JSON response with an internal server error is returned.
+        /// </returns>
+        /// <remarks>
+        /// This action method is used to fetch the unit details based on the provided SUSNo.
+        /// It queries the database using the unitOfWork pattern to return the top matching unit information.
+        /// </remarks>
         [AllowAnonymous]
         public async Task<IActionResult> GetTopBySUSNo(string SUSNo)
         {
             try
             {
+                // Fetch and return the top unit information by SUSNo using the unitOfWork
                 return Json(await unitOfWork.Unit.GetTopBySUSNo(SUSNo));
             }
             catch (Exception ex)
             {
+                // Log the error and return an internal server error response
                 _logger.LogError(1001, ex, "Master->GetTopBySUSNo");
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
+        
 
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO)
@@ -664,6 +1101,9 @@ namespace Web.Controllers
             }
 
         }
+        
+        
+        
         public async Task<IActionResult> SaveMapUnit(MapUnit dTO)
         {
             try
@@ -705,6 +1145,9 @@ namespace Web.Controllers
             }
 
         }
+        
+        
+
         public async Task<IActionResult> GetAllMapUnit(DTODataTablesRequestForMapUnit dTO)
         {
             try
@@ -734,6 +1177,9 @@ namespace Web.Controllers
             }
 
         }
+        
+        
+
         [AllowAnonymous]
         public async Task<IActionResult> GetALLByUnitName(string UnitName)
         {
@@ -748,6 +1194,9 @@ namespace Web.Controllers
             }
 
         }
+        
+        
+        
         [AllowAnonymous]
         public async Task<IActionResult> GetALLByUnitMapId(int UnitMapId)
         {
@@ -762,6 +1211,9 @@ namespace Web.Controllers
             }
 
         }
+        
+        
+        
         public async Task<IActionResult> GetALLByUnitMapWonUnit(int UnitMapId)
         {
             try
@@ -781,6 +1233,9 @@ namespace Web.Controllers
             }
 
         }
+        
+        
+        
         public async Task<IActionResult> GetALLByUnitById(int UnitId)
         {
             try
@@ -794,6 +1249,8 @@ namespace Web.Controllers
             }
 
         }
+        
+        
         
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteMapUnit(int UnitMapId)
@@ -818,6 +1275,8 @@ namespace Web.Controllers
             }
         }
         
+
+
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteMapUnitMultiple(int[] ints)
         {
@@ -839,6 +1298,8 @@ namespace Web.Controllers
             }
         }
 
+
+
         public async Task<IActionResult> GetUnitByHierarchy(DTOMHierarchyRequest Data)
         {
             try
@@ -852,6 +1313,8 @@ namespace Web.Controllers
             }
 
         }
+        
+        
         #endregion End Unit
 
         #region Map Unit Change Request
