@@ -935,25 +935,33 @@ namespace Web.Controllers
             return Json(await _INotificationBL.UpdateRead(Data));
         }
 
+        /// <summary>
+        /// Action method to retrieve the task board count based on the user's session and claims.
+        /// It retrieves session data, user claims, and then calls the business logic layer to fetch the task count data.
+        /// </summary>
+        /// <returns>A JSON response containing the task board count data.</returns>
         public async Task<IActionResult> GetTaskBoardCount()
         {
+            // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(userId.ToString());
+
+            // Initialize necessary variables
             int MapUnitId = 0;
             int TDMId = 0;
             byte ClaimValue = 0;
 
-
+            // Retrieve session data
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Retrieve user claims using UserManager
             var UserClaims = await userManager.GetClaimsAsync(user);
 
+            // Set the session data based on user claims
             if (dtoSession != null)
             {
                 MapUnitId = dtoSession.UnitId;
@@ -976,15 +984,22 @@ namespace Web.Controllers
                 }
             }
 
+            // Fetch task board count from the business logic layer
             return Json(await _home.GetTaskBoardCount(MapUnitId, ClaimValue, TDMId));
         }
+
+        /// <summary>
+        /// Action method to retrieve the dashboard count based on the user's configuration settings and session data.
+        /// It validates configuration values and then calls the business logic layer to get the dashboard count data.
+        /// </summary>
+        /// <returns>A JSON response containing the dashboard count data.</returns>
         public async Task<IActionResult> GetDashboardCount()
         {
+            // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
+            // Retrieve configuration values for ArmedIdForORO and ApplFwdCondition
             short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
-            //if (ArmedIdForORO == 0) ArmedIdForORO = 56;
-
             DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
             {
                 MPRSO = new MPRSO(),
@@ -992,57 +1007,89 @@ namespace Web.Controllers
                 MP6A = new MP6A()
             };
 
+            // Validate the configuration values
             if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
                 string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
                 string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name) || dTOApplFwdCondition.MP6A.RankOrderby == 0 || ArmedIdForORO == 0)
             {
+                // If configuration values are invalid, return an error
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return Json(KeyConstants.InternalServerError);
             }
 
+            // Fetch dashboard count from the business logic layer
             return Json(await _home.GetDashBoardCount(userId, dTOApplFwdCondition, ArmedIdForORO));
         }
+
+        /// <summary>
+        /// Action method to retrieve the request dashboard count based on the provided Id and session data.
+        /// </summary>
+        /// <param name="Id">The ID used to retrieve the request dashboard count data.</param>
+        /// <returns>A JSON response containing the request dashboard count data.</returns>
         public async Task<IActionResult> GetRequestDashboardCount(string Id)
         {
+            // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Retrieve session data
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
+
+            // Retrieve UnitMapId from the session data
             int UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+
+            // Fetch request dashboard count from the business logic layer
             return Json(await _home.GetRequestDashboardCount(userId, Id, UnitMapId));
         }
+
+        /// <summary>
+        /// Action method to retrieve the sub-dashboard count based on the user's session data.
+        /// </summary>
+        /// <returns>A JSON response containing the sub-dashboard count data.</returns>
         public async Task<IActionResult> GetSubDashboardCount()
         {
+            // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Retrieve session data
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
+
+            // Retrieve UnitId from the session data
             int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
 
+            // Fetch sub-dashboard count from the business logic layer
             return Json(await _home.GetSubDashboardCount(userId, UnitId));
         }
 
+        /// <summary>
+        /// Action method to retrieve all registered users based on the provided UnitId.
+        /// </summary>
+        /// <param name="UnitId">The UnitId used to retrieve registered users.</param>
+        /// <returns>A JSON response containing the list of registered users.</returns>
         [HttpPost]
         public async Task<IActionResult> GetAllRegisterUser(int UnitId)
         {
             try
             {
+                // Fetch all registered users based on the provided UnitId
                 return Json(await _home.GetAllRegisterUser(UnitId));
             }
             catch (Exception ex)
             {
+                // Log any exceptions and return an error response
                 _logger.LogError(1001, ex, "Home->GetAllRegisterUser");
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
+
         [HttpPost]
         public async Task<IActionResult> GetDashboardUserMgtCount(int UnitId)
         {
