@@ -95,33 +95,45 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Action method to check if a profile exists for a user based on their role. 
+        /// Admin or Super Admin users will receive a default response, while other users will get their domain data based on their session.
+        /// </summary>
+        /// <param name="Id">The ID of the user whose profile existence is being checked.</param>
+        /// <returns>A JSON response indicating profile existence or data based on user role.</returns>
         [HttpPost]
         public async Task<IActionResult> CheckProfileExist(int Id)
         {
             try
             {
+                // Check if the logged-in user has Admin or Super Admin role
                 if (this.User.FindFirstValue(ClaimTypes.Role) == "Admin" || this.User.FindFirstValue(ClaimTypes.Role) == "Super Admin")
                 {
+                    // For Admin or Super Admin, return a default DTO object
                     TrnDomainMapping dTO = new TrnDomainMapping();
-                    dTO.UserId = 1;
-                    return Json(dTO); 
+                    dTO.UserId = 1;  // Setting a default UserId
+                    return Json(dTO); // Return the default DTO as JSON
                 }
                 else
                 {
+                    // For non-admin users, fetch domain mapping by AspNetUsersId from session claims
                     TrnDomainMapping dTO = new TrnDomainMapping();
                     dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                    // Fetch the domain mapping data based on the unit ID associated with the user
                     var data = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
+
+                    // Return the domain mapping data as JSON response
                     return Json(data);
                 }
-
-               
             }
             catch (Exception ex)
             {
+                // In case of an exception, return null as a JSON response
                 return Json(null);
             }
-           
         }
+
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public IActionResult GetTokenDetails(DTOTokenResponse Data)
