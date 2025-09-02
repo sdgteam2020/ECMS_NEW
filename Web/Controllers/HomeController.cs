@@ -184,72 +184,118 @@ namespace Web.Controllers
         }
 
         #region Report Return
+        /// <summary>
+        /// Action method to display the report page. It retrieves the user's role, claims, and other session data
+        /// and passes them to the view for display.
+        /// </summary>
+        /// <returns>The Report view with role and user claims passed in ViewBag.</returns>
         public async Task<IActionResult> Report()
         {
+            // Retrieve the user's role from the session
             string role = GetSessionValue();
 
+            // Pass the role to the view using ViewBag
             ViewBag.Role = role;
 
+            // Retrieve the user ID from the claims of the current user
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Fetch the user from the UserManager service using the user ID
             var user = await userManager.FindByIdAsync(userId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Retrieve all claims associated with the user
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Pass the user claims to the view using ViewBag
             ViewBag.UserClaims = UserClaims;
+
+            // Return the Report view
             return View();
         }
+
+        /// <summary>
+        /// Action method to display the "Report and Return" page. It retrieves the user's claims
+        /// and passes them to the view for display.
+        /// </summary>
+        /// <returns>The ReportAndReturn view with user claims passed in ViewBag.</returns>
         public async Task<IActionResult> ReportAndReturn()
         {
+            // Retrieve the user ID from the claims of the current user
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Fetch the user from the UserManager service using the user ID
             var user = await userManager.FindByIdAsync(userId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Retrieve all claims associated with the user
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Pass the user claims to the view using ViewBag
             ViewBag.UserClaims = UserClaims;
+
+            // Return the ReportAndReturn view
             return View();
         }
 
+        /// <summary>
+        /// Action method to retrieve the report return count based on the provided data.
+        /// It performs validation and retrieves the report return count based on hardcoded configuration values.
+        /// </summary>
+        /// <param name="Data">The data used to retrieve the report return count.</param>
+        /// <returns>A JSON response containing the report return count or an error message.</returns>
         public async Task<IActionResult> GetReportReturnCount(DTOMHierarchyRequest Data)
         {
             try
             {
+                // Retrieve the user ID from the claims of the current user
                 int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
+                // Get the hardcoded value for ArmedIdForORO from the configuration
                 short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
-                //if (ArmedIdForORO == 0) ArmedIdForORO = 56;
 
+                // Check if the ArmedIdForORO is valid (non-zero)
                 if (ArmedIdForORO == 0)
                 {
+                    // Set an error message in TempData and return an internal server error
                     TempData["error"] = "Invalid Input.";
                     TempData.Keep("error");
                     return Json(KeyConstants.InternalServerError);
                 }
 
-
-                var ret =await _reportReturnBL.GetMstepCount(Data, ArmedIdForORO);
+                // Retrieve the report return count based on the provided data and ArmedIdForORO
+                var ret = await _reportReturnBL.GetMstepCount(Data, ArmedIdForORO);
                 return Json(ret);
             }
             catch (Exception ex)
             {
+                // Log any exceptions and return an internal server error
                 _logger.LogError(1001, ex, "Home->GetReportReturnCount");
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
+        /// <summary>
+        /// Action method to retrieve the record history based on the provided data.
+        /// It processes the request and returns the record history data as a JSON response.
+        /// </summary>
+        /// <param name="dTORecord">The record history data to retrieve history for.</param>
+        /// <returns>A JSON response containing the record history or an error message.</returns>
         [HttpPost]
         public async Task<IActionResult> GetRecordHistory([FromBody] DTORecordHistory dTORecord)
         {
             try
             {
+                // Retrieve the record history based on the provided data
                 var ret = await _reportReturnBL.GetRecordHistory(dTORecord);
                 return Json(ret);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
+                // Log any exceptions and return an internal server error
                 _logger.LogError(1001, ex, "Home->GetRecordHistory");
-                return Json(KeyConstants.InternalServerError); 
+                return Json(KeyConstants.InternalServerError);
             }
-            
         }
+
         public async Task<IActionResult> GetReportDashboardCount([FromBody] DTOMHierarchyRequest dTORecord)
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
