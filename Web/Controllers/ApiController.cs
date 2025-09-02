@@ -8,6 +8,9 @@ using Web.Healpers;
 
 namespace Web.Controllers
 {
+    /// <summary>
+    /// This controller handles API-related operations, including user authentication and data retrieval for officers and JCOs.
+    /// </summary>
     [Authorize]
     public class ApiController : Controller
     {
