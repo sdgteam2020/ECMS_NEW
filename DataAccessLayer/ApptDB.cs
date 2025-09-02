@@ -77,27 +77,43 @@ namespace DataAccessLayer
             return GetALL;  // Return the list of appointment responses
         }
 
+        /// <summary>
+        /// Asynchronously retrieves a list of appointments whose names contain the provided AppointmentName, 
+        /// and are approved. Limits the result to 5 appointments.
+        /// </summary>
+        /// <param name="AppointmentName">The name (or part of the name) of the appointment to filter by.</param>
+        /// <returns>
+        /// A list of up to 5 DTOAppointmentResponse objects containing the details of appointments whose names
+        /// contain the specified AppointmentName and are approved.
+        /// </returns>
         public async Task<List<DTOAppointmentResponse>> GetALLByAppointmentName(string AppointmentName)
         {
             try
             {
+                // LINQ query to fetch appointments where the AppointmentName contains the provided AppointmentName
+                // and where the appointment is approved (Approved = 1).
+                // It limits the result to the top 5 records.
                 var GetALL = (from A in _context.MAppointment
-                              where A.AppointmentName.Contains(AppointmentName)
-                              && A.Approved == 1
+                              where A.AppointmentName.Contains(AppointmentName)  // Filters appointments by AppointmentName
+                              && A.Approved == 1  // Ensures the appointment is approved
                               select new DTOAppointmentResponse
                               {
-                                  ApptId = A.ApptId,
-                                  AppointmentName = A.AppointmentName,
-                              }).Take(5).ToList();
+                                  ApptId = A.ApptId,  // Selects the appointment ID
+                                  AppointmentName = A.AppointmentName,  // Selects the appointment name
+                              }).Take(5)  // Limits the results to 5 records
+                              .ToList();  // Executes the query and materializes the results into a list
+
+                // Wrap the result in Task.FromResult to simulate async behavior
                 return await Task.FromResult(GetALL);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                // Logs the exception if an error occurs during the operation
                 _logger.LogError(1001, ex, "ApptDB->GetALLByAppointmentName");
-                return new List<DTOAppointmentResponse>();
+                return new List<DTOAppointmentResponse>();  // Returns an empty list in case of an error
             }
-
         }
+
 
         public Task<List<DTOAppointmentResponse>> GetByFormationId(int FormationId)
         {
