@@ -97,9 +97,17 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Action method to retrieve basic details associated with the given request ID.
+        /// It fetches and returns the basic details as a JSON response.
+        /// </summary>
+        /// <param name="Id">The request ID used to fetch the basic details.</param>
+        /// <returns>A JSON response containing the basic details associated with the provided request ID.</returns>
         public async Task<IActionResult> GetBasicDetailByRequestId(int Id)
         {
+            // Fetch and return the basic details for the provided request ID as a JSON response
             return Json(await _basicDetailBL.GetBasicDetailByRequestId(Id));
         }
+
     }
 }
