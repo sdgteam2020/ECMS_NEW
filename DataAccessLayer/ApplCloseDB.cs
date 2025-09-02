@@ -15,32 +15,60 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// Data Access Layer for ApplClose entity, providing database operations.
+    /// And implements the IApplCloseDB interface.
+    /// And inherits from GenericRepositoryDL for basic CRUD operations.
+    /// </summary>
     public class ApplCloseDB : GenericRepositoryDL<TrnApplClose>, IApplCloseDB
     {
-        private readonly DapperContext _contextDP;
-        private readonly ILogger<TrnApplClose> _logger;
+        private readonly DapperContext _contextDP;// For Dapper operations
+        private readonly ILogger<TrnApplClose> _logger;// For logging
+
+        /// <summary>
+        /// Constructor to initialize the ApplCloseDB with necessary contexts and logger.
+        /// And calls the base class constructor
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="contextDP"></param>
+        /// <param name="logger"></param>
         public ApplCloseDB(ApplicationDbContext context, DapperContext contextDP, ILogger<TrnApplClose> logger) : base(context)
         {
             _contextDP = contextDP;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Asynchronously checks if a record with the given RequestId exists in the TrnApplClose table.
+        /// </summary>
+        /// <param name="DTo">The TrnApplClose DTO object containing the RequestId to be checked.</param>
+        /// <returns>
+        /// Returns true if a record with the given RequestId exists, otherwise false.
+        /// </returns>
         public async Task<bool> RequestIdExists(TrnApplClose DTo)
         {
-            string query = "select count(*) from TrnApplClose where RequestId=@RequestId";
+            // SQL query to count the number of records in the TrnApplClose table where the RequestId matches the provided value.
+            string query = "select count(*) from TrnApplClose where RequestId = @RequestId";
+
+            // Using the database connection to execute the query and retrieve the count of matching records.
             using (var connection = _contextDP.CreateConnection())
             {
+                // Execute the query asynchronously and get the count of matching records.
                 int chk = await connection.QueryFirstAsync<int>(query, new { DTo.RequestId });
+
+                // If the count is greater than 0, return true indicating the RequestId exists.
                 if (chk > 0)
                 {
                     return true;
                 }
                 else
                 {
+                    // If no matching records are found, return false.
                     return false;
                 }
             }
         }
+
         public async Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data)
         {
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
