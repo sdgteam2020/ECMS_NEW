@@ -28,11 +28,11 @@ namespace Web.Controllers
         //constructor to initialize dependencies and configuration settings and user manager.
         public ConfigUserController(iGetTokenBL iGetTokenBL, IUserProfileBL userProfileBL, UserManager<ApplicationUser> userManager, IDomainMapBL domainMapBL, IMapUnitBL mapUnitBL)
         {
-            _iGetTokenBL=iGetTokenBL;
-            _userProfileBL=userProfileBL;
-            this.userManager=userManager;
-            _iDomainMapBL=domainMapBL;
-            _IMapUnitBL=mapUnitBL;
+            _iGetTokenBL = iGetTokenBL;
+            _userProfileBL = userProfileBL;
+            this.userManager = userManager;
+            _iDomainMapBL = domainMapBL;
+            _IMapUnitBL = mapUnitBL;
         }
         /// <summary>
         /// Action method for the index page. This method retrieves user-specific domain mapping information,
@@ -253,22 +253,35 @@ namespace Web.Controllers
             return Json(1);
         }
 
+        /// <summary>
+        /// Action method to retrieve the token session details along with the user's IP address.
+        /// This method fetches the session data stored for the current user and adds the IP address to the session object before returning it as a JSON response.
+        /// </summary>
+        /// <param name="Id">The ID used to identify the request (not used in this implementation but can be extended).</param>
+        /// <returns>A JSON response containing the session data along with the user's IP address, or 0 in case of an error.</returns>
         [HttpPost]
         public async Task<IActionResult> GetTokenArmyNo(string Id)
         {
             try
             {
-
+                // Create a new session DTO object to store the session data
                 DtoSession dtoSession = new DtoSession();
-               
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                dtoSession.IpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                return Json(dtoSession);
 
+                // Retrieve the session object "Token" from the session storage
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                // Add the user's IP address to the session object
+                dtoSession.IpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+
+                // Return the updated session data as a JSON response
+                return Json(dtoSession);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
+                // In case of an exception, return 0 to indicate failure
                 return Json(0);
-             }
+            }
         }
-       }
+
+    }
 }
