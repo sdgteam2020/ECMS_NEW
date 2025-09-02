@@ -593,21 +593,37 @@ namespace Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Action method to display the Request Dashboard based on the provided base64-encoded Id.
+        /// The method validates the Id, decodes it, and determines the appropriate view based on the decoded value.
+        /// </summary>
+        /// <param name="Id">The base64-encoded Id used to determine the dashboard type.</param>
+        /// <returns>A view for the Request Dashboard with the corresponding role and previous link.</returns>
         public async Task<IActionResult> RequestDashboard(string Id)
         {
+            // Validate the base64 encoded Id and check if it's valid
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
+                // Set an error message if the Id is invalid
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
+
             try
             {
+                // Retrieve the user's role from the session
                 string role = GetSessionValue();
+
+                // Decode the base64-encoded Id
                 var base64EncodedBytes = Convert.FromBase64String(Id);
                 var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+
+                // Pass the decoded string (dashboard type) and role to the view
                 ViewBag.Type = decodedString;
                 ViewBag.Role = role;
+
+                // Set the previous link based on the decoded dashboard type
                 if (decodedString == "Posting Out" || decodedString == "Posting In")
                 {
                     ViewBag.PreviousLink = "DashboardUserMgt";
@@ -616,10 +632,12 @@ namespace Web.Controllers
                 {
                     ViewBag.PreviousLink = "SubDashboard";
                 }
+
                 return View();
             }
             catch (FormatException ex)
             {
+                // Log any exceptions related to invalid base64 string and return an error
                 _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
@@ -627,58 +645,90 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log any other exceptions and return an error
                 _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
                 TempData["error"] = ex.Message;
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
+        /// <summary>
+        /// Action method to display the Task page. It retrieves the user's role and claims, then passes them to the view.
+        /// </summary>
+        /// <returns>The Task view with the user's role and claims passed in ViewBag.</returns>
         public async Task<IActionResult> Task()
         {
+            // Retrieve the user's role from the session
             string role = GetSessionValue();
             ViewBag.Role = role;
 
+            // Retrieve the user ID from the claims
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await userManager.FindByIdAsync(userId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Get the user's claims using UserManager
             var UserClaims = await userManager.GetClaimsAsync(user);
             ViewBag.UserClaims = UserClaims;
 
             return View();
         }
-      
-      
+
+        /// <summary>
+        /// Action method to retrieve the I-Card process report based on the provided request data.
+        /// </summary>
+        /// <param name="Data">The request data used to fetch the report.</param>
+        /// <returns>A JSON response containing the I-Card process report data.</returns>
         public async Task<IActionResult> GetICardProcessReport(DTOMHierarchyRequest Data)
         {
             try
             {
+                // Retrieve the report based on the provided data
                 var ret = await _reportReturnBL.GetReportForm11(Data);
                 return Json(ret);
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
-
+            catch (Exception ex)
+            {
+                // Return an internal server error response if any exception occurs
+                return Json(KeyConstants.InternalServerError);
+            }
         }
+
+        /// <summary>
+        /// Action method to display the MyTask page based on the provided base64-encoded Id.
+        /// The method validates the Id, decodes it, and retrieves the user's role and claims before returning the view.
+        /// </summary>
+        /// <param name="Id">The base64-encoded Id used to determine the task type.</param>
+        /// <returns>A view for the MyTask page with the corresponding role and user claims.</returns>
         public async Task<IActionResult> MyTask(string Id)
         {
+            // Validate the base64 encoded Id and check if it's valid
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
+                // Set an error message if the Id is invalid
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToActionPermanent("ContactUs", "Home");
             }
+
             try
             {
+                // Retrieve the user's role from the session
                 string role = GetSessionValue();
+
+                // Decode the base64-encoded Id
                 var base64EncodedBytes = Convert.FromBase64String(Id);
                 var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+
+                // Pass the decoded string (task type) and role to the view
                 ViewBag.Type = decodedString;
                 ViewBag.Role = role;
 
+                // Retrieve the user ID from the claims
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var user = await userManager.FindByIdAsync(userId);
 
-                // UserManager service GetClaimsAsync method gets all the current claims of the user
+                // Get the user's claims using UserManager
                 var UserClaims = await userManager.GetClaimsAsync(user);
                 ViewBag.UserClaims = UserClaims;
 
@@ -686,6 +736,7 @@ namespace Web.Controllers
             }
             catch (FormatException ex)
             {
+                // Log any exceptions related to invalid base64 string and return an error
                 _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
@@ -693,12 +744,14 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log any other exceptions and return an error
                 _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
                 TempData["error"] = ex.Message;
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
         public async Task<IActionResult> Request()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
