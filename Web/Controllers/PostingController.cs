@@ -6,32 +6,30 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting.Internal;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
 
 namespace Web.Controllers
 {
-    [Authorize]
- 
+    /// <summary>
+    /// This controller manages posting operations including posting in, posting out, and application closure.
+    /// </summary>
+    [Authorize] 
     public class PostingController : Controller
     {
-        private readonly IPostingBL _iPostingBL;
-        private readonly IApplCloseBL _iApplCloseBL;
-        private readonly ITrnICardRequestBL _iTrnICardRequestBL;
-        private readonly IService service;
-        private readonly ILogger<PostingController> _logger;
-        private readonly IWebHostEnvironment hostingEnvironment;
-        private readonly IDataProtector _protector;
-        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;
+        private readonly IPostingBL _iPostingBL;// Interface for posting business logic
+        private readonly IApplCloseBL _iApplCloseBL;// Interface for application closure business logic
+        private readonly ITrnICardRequestBL _iTrnICardRequestBL;// Interface for ICard request business logic
+        private readonly IService service;// Interface for general services
+        private readonly ILogger<PostingController> _logger;// Logger for logging information and errors
+        private readonly IWebHostEnvironment hostingEnvironment;// Hosting environment for accessing web root path
+        private readonly IDataProtector _protector;// Data protector for securing sensitive data
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// Interface for image encryption and decryption
         public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings, IImageEncryptAndDecrypt imageEncryptAndDecrypt)
         {
             _iPostingBL = postingBL;
@@ -44,201 +42,351 @@ namespace Web.Controllers
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
         }
+
+        /// <summary>
+        /// Handles the posting in process.
+        /// Returns the PostingIn view.
+        /// Optionally accepts an encrypted identifier (EncId) for additional context.
+        /// </summary>
+        /// <param name="EncId">
+        /// Optional encrypted identifier that can be used to fetch or filter data in the view.
+        /// </param>
+        /// <returns>
+        /// Returns an <see cref="IActionResult"/> that renders the PostingIn view.
+        /// </returns>
         public async Task<IActionResult> PostingIn(string? EncId)
         {
+            // Currently, this method just returns the PostingIn view.
+            // EncId can be used in future to fetch specific data or perform additional logic.
             return View();
         }
+
+        /// <summary>
+        /// Retrieves and returns the posting information for a given Army Number (ArmyNo).
+        /// It fetches relevant data and decrypts the associated image for display purposes.
+        /// </summary>
+        /// <param name="ArmyNo">
+        /// The Army Number used to retrieve the relevant posting data.
+        /// </param>
+        /// <returns>
+        /// Returns a <see cref="JsonResult"/> containing the posting data, including a decrypted photo image.
+        /// </returns>
         public async Task<IActionResult> GetPostingIn(string ArmyNo)
         {
+            // Fetch posting information based on Army Number (ArmyNo)
             DTOPostingInResponse data = await _iPostingBL.GetArmyDataForPostingOut(ArmyNo);
+
+            // Define the folder path for photos and signatures
             string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+            // Define the full path for the photo image based on the stored file path
             string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", data.PhotoImagePath);
 
+            // Check if the photo file exists
             if (System.IO.File.Exists(sourcePathPhoto))
             {
+                // If the file exists, decrypt the image and assign it to the data's PhotoImagePath property
                 data.PhotoImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
             }
+
+            // Return the data as a JSON response, including the decrypted photo image
             return Json(data);
         }
+
+
+
+        /// <summary>
+        /// Retrieves the posting out records for the current user.
+        /// This method calls the business logic layer to fetch all posting history for the user.
+        /// </summary>
+        /// <returns>
+        /// Returns the <see cref="IActionResult"/> which will render the posting out records view.
+        /// </returns>
         public async Task<IActionResult> GetAllPostingOut()
         {
+            // Retrieve the user ID from the current logged-in user's claims
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Call the business logic layer to fetch the posting history for the current user
             var data = await _iPostingBL.GetAllPostingHistory(userid);
-           
-            return View(data);
+
+            return View(data);  // Return the fetched posting history data to the view
         }
 
+        /// <summary>
+        /// Retrieves the posting out details for the current user.
+        /// This method fetches detailed posting history for the user from the business logic layer.
+        /// </summary>
+        /// <returns>
+        /// Returns the <see cref="IActionResult"/> which will render the posting out details view.
+        /// </returns>
         public async Task<IActionResult> GetPostingOutDetails()
         {
+            // Retrieve the user ID from the current logged-in user's claims
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Call the business logic layer to fetch the detailed posting history for the user
             var data = await _iPostingBL.GetAllPostingHistory(userid);
 
-            return View(data);
+            return View(data);  // Return the fetched posting history details to the view
         }
 
 
 
-        public async Task<IActionResult> GetPostingOutWithType(string Type,string PostingType)
+
+        /// <summary>
+        /// This method handles the retrieval of posting out records based on the provided base64-encoded `Type` and `PostingType`.
+        /// It validates the input, decodes the base64 strings, and sets the corresponding session values for `PostingType` and `Type`.
+        /// If any input is invalid, the user is redirected to the ContactUs page with an error message.
+        /// </summary>
+        /// <param name="Type">A base64 encoded string representing the type.</param>
+        /// <param name="PostingType">A base64 encoded string representing the posting type.</param>
+        /// <returns>
+        /// Returns a view with the decoded values for `Type` and `PostingType` as ViewBag properties.
+        /// </returns>
+        public async Task<IActionResult> GetPostingOutWithType(string Type, string PostingType)
         {
+            // Check if Type or PostingType are null, empty or invalid base64-encoded
             if (string.IsNullOrEmpty(Type) || !service.IsValidBase64(Type) || string.IsNullOrEmpty(PostingType) || !service.IsValidBase64(PostingType))
             {
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
+                TempData["error"] = "Invalid Input.";  // Store error message in TempData
+                TempData.Keep("error");  // Retain the error message across redirects
+                return RedirectToAction("ContactUs", "Home");  // Redirect to the ContactUs page if input is invalid
             }
+
             try
             {
+                // Decode the base64-encoded Type and PostingType strings
                 var base64EncodedBytes = Convert.FromBase64String(Type);
-                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
-                var PostingTy = Encoding.UTF8.GetString(Convert.FromBase64String(PostingType));
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);  // Decode the Type string
+                var PostingTy = Encoding.UTF8.GetString(Convert.FromBase64String(PostingType));  // Decode the PostingType string
+
+                // Convert the decoded Type string to an integer
                 int t = Convert.ToInt32(decodedString);
+
+                // Store the decoded values in the session for future use
                 SessionHeplers.SetObject(HttpContext.Session, "PostingType", PostingTy);
                 SessionHeplers.SetObject(HttpContext.Session, "Type", t);
+
+                // Pass the decoded values to the view using ViewBag
                 ViewBag.Type = t;
                 ViewBag.PostingType = PostingTy;
-                return View();
+
+                return View();  // Return the view with the ViewBag data
             }
             catch (Exception ex)
             {
+                // Log any exceptions that occur during decoding and session handling
                 _logger.LogError(1001, ex, "PostingController=>GetPostingOutWithType.");
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
+                TempData["error"] = "Invalid Input.";  // Store error message in TempData
+                TempData.Keep("error");  // Retain the error message across redirects
+                return RedirectToAction("ContactUs", "Home");  // Redirect to the ContactUs page if an exception occurs
             }
         }
 
+        /// <summary>
+        /// This method retrieves all posting out records based on the provided `DTODataTablesRequest` and session data for `PostingType` and `Type`.
+        /// It fetches the posting out data using the `GetPostingOutWithType` method from the business logic layer and returns the result in JSON format.
+        /// </summary>
+        /// <param name="dTO">The data table request object containing parameters for filtering and pagination.</param>
+        /// <returns>
+        /// Returns a JSON response with the posting out records matching the provided filters and session data.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> GetAllPostingOutWithType(DTODataTablesRequest dTO)
         {
+            // Initialize an empty list of DTOPostingOutDetilsResponse to store the results
             List<DTOPostingOutDetilsResponse> dTOPostingOutDetilsResponses = new List<DTOPostingOutDetilsResponse>();
             var responseData = new DTODataTablesResponse<DTOPostingOutDetilsResponse>
             {
                 draw = 0,
                 recordsTotal = 0,
                 recordsFiltered = 0,
-                data = dTOPostingOutDetilsResponses
+                data = dTOPostingOutDetilsResponses  // Set the initial empty list of data
             };
+
             try
             {
+                // Retrieve session information
                 DtoSession? dtoSession = new DtoSession();
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
                 }
+
+                // Get unit ID and other session-based values
                 int MapUnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 string PostingType = SessionHeplers.GetObject<string>(HttpContext.Session, "PostingType");
                 int Type = SessionHeplers.GetObject<int>(HttpContext.Session, "Type");
+
+                // Get the user ID from the current logged-in user
                 int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch the posting out details using the business logic layer
                 responseData = await _iPostingBL.GetPostingOutWithType(dTO, userid, MapUnitId, Type, PostingType);
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during the execution of the method
                 _logger.LogError(1001, ex, "Posting->GetAllPostingOutWithType");
             }
 
+            // Return the response data as a JSON result
             return Json(responseData);
         }
 
 
+
+        /// <summary>
+        /// This method is responsible for saving or updating posting out records.
+        /// It checks if the posting out record exists and updates it, or adds a new one.
+        /// </summary>
+        /// <param name="dTO">The `TrnPostingOut` object containing the data to be saved or updated.</param>
+        /// <returns>
+        /// Returns a JSON result indicating success or failure of the operation.
+        /// - Returns `KeyConstants.Update` if the record is updated successfully.
+        /// - Returns `KeyConstants.Save` if a new record is created successfully.
+        /// - Returns `KeyConstants.IncorrectData` if the data is incorrect.
+        /// </returns>
         public async Task<IActionResult> SavePoasingOut(TrnPostingOut dTO)
         {
             try
             {
+                // Set default values for the TrnPostingOut object
                 dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                dTO.UpdatedOn = DateTime.Now;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));  // Get the current user ID
+                dTO.UpdatedOn = DateTime.Now;  // Set the updated timestamp
 
+                // Check if the model is valid
                 if (ModelState.IsValid)
                 {
+                    // If the record already exists (Id > 0), update it
                     if (dTO.Id > 0)
                     {
-                        await _iPostingBL.Update(dTO);
-                            return Json(KeyConstants.Update);
+                        await _iPostingBL.Update(dTO);  // Update the existing record
+                        return Json(KeyConstants.Update);  // Return success response for update
                     }
                     else
                     {
-                        //await _iPostingBL.Add(dTO);
-                        //adding and update both done by UpdateForPosting
-                        bool result = await _iPostingBL.UpdateForPosting(dTO);
+                        // If it's a new record, use UpdateForPosting method (this handles both add and update)
+                        bool result = await _iPostingBL.UpdateForPosting(dTO);  // Attempt to add or update the record
                         if (result == true)
                         {
-                            return Json(KeyConstants.Save);
+                            return Json(KeyConstants.Save);  // Return success response for save
                         }
                         else
                         {
-                            return Json(KeyConstants.IncorrectData);
+                            return Json(KeyConstants.IncorrectData);  // Return failure response for incorrect data
                         }
                     }
                 }
                 else
                 {
+                    // If the model state is invalid, return validation errors
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur and return an internal server error response
+                return Json(KeyConstants.InternalServerError);
+            }
         }
 
-
+        /// <summary>
+        /// This method handles saving the dispatch details of a posting out record.
+        /// It checks if the dispatch details already exist; if not, it saves them.
+        /// </summary>
+        /// <param name="dTO">The `DTODispatchDetailsSaveRequest` object containing dispatch details.</param>
+        /// <returns>
+        /// Returns a JSON result indicating success or failure of the operation.
+        /// - Returns `Result = true` and success message if the record is saved.
+        /// - Returns a message indicating if the dispatch details already exist or if there are validation errors.
+        /// </returns>
         public async Task<IActionResult> SavePostingOutDispatchDetails(DTODispatchDetailsSaveRequest dTO)
         {
-            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
+            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();  // Initialize response object
+
             try
             {
+                // Decrypt the encrypted ID (encId) and validate it
                 var encId = _protector.Unprotect(dTO.encId);
                 if (int.TryParse(encId, out int Id))
                 {
                     if (ModelState.IsValid)
                     {
+                        // Fetch the posting out details based on the Id
                         var postingOutDetails = await _iPostingBL.Get(Id);
 
+                        // If dispatch details already exist, return a message
                         if (postingOutDetails.DispatchedOn.HasValue)
                         {
                             dTOResponse.Message = "Dispatch details already exists!";
                         }
                         else
                         {
+                            // If dispatch details do not exist, set them and save the record
                             postingOutDetails.DispatchedOn = dTO.DispatchedOn;
                             postingOutDetails.RefNo = dTO.RefNo;
-                            postingOutDetails.DispatchUpdatedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            postingOutDetails.DispatchUpdatedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));  // Get current user ID
                             postingOutDetails.DispatchUpdatedOn = DateTime.Now;
-                            await _iPostingBL.Update(postingOutDetails);
+                            await _iPostingBL.Update(postingOutDetails);  // Update the record in the database
                             dTOResponse.Result = true;
-                            dTOResponse.Message = "Record Saved!";
+                            dTOResponse.Message = "Record Saved!";  // Success message
                         }
                     }
                     else
                     {
+                        // If validation fails, return all error messages
                         var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
                         .SelectMany(x => x.Value!.Errors)
                         .Select(e => e.ErrorMessage)
                         .ToList();
                         if (errors.Any())
                         {
-                            dTOResponse.Message = string.Join("; ", errors); // Concatenate all error messages
+                            dTOResponse.Message = string.Join("; ", errors);  // Concatenate all error messages
                         }
                     }
                 }
                 else
                 {
+                    // If the encrypted ID is invalid, log an error and return a failure message
                     _logger.LogError(1001, $"Invalid Id -: {dTO.encId}", "Posting->SavePostingOutDispatchDetails");
                     dTOResponse.Message = "Technical Error!";
                 }
             }
             catch (Exception ex)
             {
+                // Handle any exceptions and return an internal server error message
                 _logger.LogError(1001, ex, "Posting->SavePostingOutDispatchDetails");
                 dTOResponse.Message = "Internal Server Error!";
             }
 
-            return Json(dTOResponse);
+            return Json(dTOResponse);  // Return the response
         }
 
+        /// <summary>
+        /// This method returns the application close view.
+        /// </summary>
+        /// <returns>
+        /// Returns the view for application closure.
+        /// </returns>
         public async Task<IActionResult> ApplicationClose()
         {
-            return View();  
+            return View();  // Return the view for closing the application
         }
+        /// <summary>
+        /// This method handles the saving of application close data.
+        /// It checks whether the application close record already exists and saves or updates it accordingly.
+        /// </summary>
+        /// <param name="dTO">The `TrnApplClose` object containing the application close data.</param>
+        /// <returns>
+        /// Returns a JSON result indicating the success or failure of the operation.
+        /// - `KeyConstants.Save` if the record is successfully saved.
+        /// - `KeyConstants.IncorrectData` if the data is incorrect.
+        /// - `KeyConstants.Exists` if the application close record already exists.
+        /// </returns>
         public async Task<IActionResult> SaveApplicationClose(TrnApplClose dTO)
         {
             try
@@ -247,62 +395,65 @@ namespace Web.Controllers
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
                 }
+
+                // Set the user and timestamp for the record
                 dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
                 dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
+                // Validate the model before saving
                 if (ModelState.IsValid)
                 {
-
-                    //if (dTO.Id > 0)
-                    //{
-                    //    await _iApplCloseBL.Update(dTO);
-                    //    return Json(KeyConstants.Update);
-                    //}
-                    //else
-                    //{
-                    if(!await _iApplCloseBL.RequestIdExists(dTO))
+                    // Check if the application close record already exists
+                    if (!await _iApplCloseBL.RequestIdExists(dTO))
                     {
-                        //await _iApplCloseBL.Add(dTO);
-                        //await _iTrnICardRequestBL.UpdateStatus(dTO.RequestId);
+                        // Save the application close record
                         bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(dTO);
                         if (reuslt == true)
                         {
-                            return Json(KeyConstants.Save);
+                            return Json(KeyConstants.Save);  // Return success message
                         }
                         else
                         {
-                            return Json(KeyConstants.IncorrectData);
+                            return Json(KeyConstants.IncorrectData);  // Return failure message for incorrect data
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        return Json(KeyConstants.Exists);  // Return message if record already exists
                     }
-                       
-
-
-                    //}
-
-
                 }
                 else
                 {
-
+                    // Return validation errors if model state is invalid
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
 
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur and return an internal server error
+                return Json(KeyConstants.InternalServerError);
+            }
         }
+
+        /// <summary>
+        /// This method returns the list of application closed records based on provided Id and jcoor parameters.
+        /// It decodes the Id from Base64 and determines the corresponding closed applications.
+        /// </summary>
+        /// <param name="Id">The ID of the closed application, encoded in Base64 format.</param>
+        /// <param name="jcoor">The optional parameter for the type of application closure.</param>
+        /// <returns>
+        /// Returns a view containing the list of closed applications based on the parameters.
+        /// </returns>
         public async Task<ActionResult> AppCloseList(string Id, string jcoor)
         {
             int retint = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
+            // Validate the input parameters
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
             {
                 TempData["error"] = "Invalid Input.";
@@ -325,10 +476,10 @@ namespace Web.Controllers
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
                 }
                 int UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
 
+                // Decode the ID from Base64
                 if (!string.IsNullOrEmpty(Id))
                 {
                     var base64EncodedBytes = Convert.FromBase64String(Id);
@@ -336,11 +487,13 @@ namespace Web.Controllers
                     retint = Convert.ToInt32(decodedString);
                 }
 
+                // Set the view title based on the decoded ID
                 if (retint == 1)
                 {
                     ViewBag.Title = "List of Closed Appl";
                 }
 
+                // Fetch the list of closed applications based on jcoor value
                 if (string.IsNullOrEmpty(jcoor))
                 {
                     var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 1));
@@ -354,6 +507,7 @@ namespace Web.Controllers
             }
             catch (FormatException ex)
             {
+                // Handle invalid Base64 format exception and return an error message
                 _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id} & jcoor: {jcoor} ", Id, jcoor);
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
@@ -361,11 +515,13 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                // Log any other exceptions and return an error message
                 _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+
     }
 }

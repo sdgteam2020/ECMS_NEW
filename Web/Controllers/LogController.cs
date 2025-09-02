@@ -30,14 +30,19 @@ using Path = System.IO.Path;
 
 namespace Web.Controllers
 {
+    /// <summary>
+    /// Controller for handling log-related actions and views. Authorized access is required.
+    /// </summary>
     [Authorize]
     public class LogController : Controller
     {
-        private readonly ITrnLoginLogBL _iTrnLoginLogBL;
-        private readonly IBasicDetailBL BasicDetailBL;
-        private readonly IWebHostEnvironment hostingEnvironment;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;
+        private readonly ITrnLoginLogBL _iTrnLoginLogBL;//Interface for login log business logic layer
+        private readonly IBasicDetailBL BasicDetailBL;//Interface for basic detail business logic layer
+        private readonly IWebHostEnvironment hostingEnvironment;//Interface for accessing web hosting environment details
+        private readonly IHttpContextAccessor _httpContextAccessor;//Interface for accessing HTTP context details
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;//Interface for image encryption and decryption operations
+
+        //constructor to initialize dependencies and configuration settings.
         public LogController(ITrnLoginLogBL iTrnLoginLogBL, IWebHostEnvironment hostingEnvironment, IBasicDetailBL BasicDetailBL, IHttpContextAccessor httpContextAccessor, IImageEncryptAndDecrypt imageEncryptAndDecrypt)
         {
             _iTrnLoginLogBL = iTrnLoginLogBL;
@@ -46,70 +51,121 @@ namespace Web.Controllers
             _httpContextAccessor = httpContextAccessor;
             this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
         }
+        /// <summary>
+        /// Action method to retrieve and display login logs based on the user's session.
+        /// The method checks if the session contains a valid token and retrieves the login logs
+        /// for all users belonging to the same unit ID as the current user.
+        /// </summary>
+        /// <returns>A view displaying login logs for the user's unit or null if the session is invalid.</returns>
         public async Task<IActionResult> LoginLog()
         {
+            // Get the referer header from the request
             string referer = HttpContext.Request.Headers["Referer"].ToString();
 
+            // Retrieve the session data
             DtoSession dtoSession = new DtoSession();
             dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-             if (dtoSession != null )
+
+            // If the session is valid, retrieve and display the login logs for the user's unit
+            if (dtoSession != null)
             {
                 var data = await _iTrnLoginLogBL.GetAllUserByUnitId(dtoSession.UnitId);
-
                 return View(data);
             }
-             else
-            { 
-                return View(null); }  
-           
+            else
+            {
+                // If session is invalid, return a view with no data
+                return View(null);
+            }
         }
-        public async Task<IActionResult> LoginLogByAspNetUsersId(int AspNetUsersId,DateTime? FmDate,DateTime? ToDate)
+
+        /// <summary>
+        /// Action method to retrieve login logs for a specific user based on their AspNetUserId
+        /// and an optional date range (From and To dates). It returns the logs as a JSON response.
+        /// </summary>
+        /// <param name="AspNetUsersId">The ID of the user whose login logs are being requested.</param>
+        /// <param name="FmDate">The optional start date for filtering the logs.</param>
+        /// <param name="ToDate">The optional end date for filtering the logs.</param>
+        /// <returns>A JSON response containing the login logs or 0 in case of an error.</returns>
+        public async Task<IActionResult> LoginLogByAspNetUsersId(int AspNetUsersId, DateTime? FmDate, DateTime? ToDate)
         {
             try
             {
+                // Retrieve the login logs based on the user ID and date range
                 return Json(await _iTrnLoginLogBL.GetLoginLogByUserId(AspNetUsersId, FmDate, ToDate));
             }
             catch (Exception ex)
             {
+                // Return an error response in case of an exception
                 return Json(0);
             }
-            
         }
+
+        /// <summary>
+        /// Action method to handle the digital signing of an XML file for forwarding logs.
+        /// It updates the data with the current timestamp and the ID of the logged-in user
+        /// and returns the result as a JSON response.
+        /// </summary>
+        /// <param name="Data">The request data containing the XML file information to be digitally signed.</param>
+        /// <returns>A JSON response indicating the success or failure of the operation.</returns>
         public async Task<IActionResult> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data)
         {
-
             try
             {
+                // Update the request data with the current timestamp and user ID
                 Data.UpdatedOn = DateTime.Now;
-                Data.Updatedby= Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                Data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 Data.IsActive = 1;
                 Data.Id = Data.Id;
 
+                // Call the business logic layer to digitally sign the XML file and return the result
                 return Json(await _iTrnLoginLogBL.XmlFileDigitalSign(Data));
             }
             catch (Exception ex)
             {
+                // Return an error response in case of an exception
                 return Json(0);
             }
         }
-        //public async Task<IActionResult> XmlFileDigitalSignFromData(int RequestId)
-        //{
-        //    return Json(await _iTrnLoginLogBL.XmlFileDigitalSignFromData(RequestId));
-        //}
-       // public async Task<IActionResult> CreatePDF
+
+
+        /// <summary>
+        /// Action method to save a digitally signed PDF. It receives a base64-encoded PDF string and saves it to a specified directory.
+        /// The PDF is saved with a filename based on the service number and request ID.
+        /// </summary>
+        /// <param name="RequestId">The ID of the request associated with the PDF.</param>
+        /// <param name="base64">The base64-encoded string representing the PDF content to be saved.</param>
+        /// <returns>A JSON response containing the filename of the saved PDF.</returns>
         public async Task<IActionResult> DigitalpdfsignatureSave(int RequestId, string base64)
         {
+            // Retrieve the basic details of the request based on the RequestId
             BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
+
+            // Define the file path where the PDF will be saved
             var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\" + db.ServiceNo + "_" + RequestId + ".pdf");
 
+            // Convert the base64 string to a byte array representing the PDF
             byte[] pdfBytes = Convert.FromBase64String(base64);
+
+            // Write the PDF bytes to the specified file path
             System.IO.File.WriteAllBytes(filePath1, pdfBytes);
+
+            // Return the filename of the saved PDF in the response
             return Json(db.ServiceNo + "_" + RequestId + ".pdf");
         }
+
+        /// <summary>
+        /// Action method to create an XML file based on the provided request ID. It generates an XML file
+        /// and saves it in a specific directory with a filename that includes the service number, request ID,
+        /// and the current timestamp (year, month, day, hour, minute, second).
+        /// </summary>
+        /// <param name="RequestId">The ID of the request used to generate the XML file.</param>
+        /// <returns>A JSON response containing the filename of the saved XML file, or 0 in case of an error.</returns>
         public async Task<IActionResult> CreateXmlAsync(int RequestId)
         {
             try
             {
+                // Generate date components for naming the file
                 var now = DateTime.Now;
                 var yearName = now.ToString("yyyy");
                 var monthName = now.ToString("MMMM");
@@ -118,39 +174,51 @@ namespace Web.Controllers
                 var mm = now.ToString("mm");
                 var ss = now.ToString("ss");
 
-                int[] d;
-                d = new int[1];
+                // Initialize the array for the request ID and fetch the XML data
+                int[] d = new int[1];
                 d[0] = RequestId;
                 var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
+
+                // Replace any ampersand symbols with the proper XML encoding
                 string XmlFilesRemoveAndChar = sata.XmlFiles.Replace("&", "&amp;");
+
+                // Parse the cleaned-up XML data into an XDocument
                 XDocument document = XDocument.Parse(Convert.ToString(XmlFilesRemoveAndChar));
 
+                // Retrieve basic details of the request for naming the XML file
                 BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
 
+                // Define the directory where the XML file will be saved
                 string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "DigitallysignatureXml");
-                // Check if directory exists
+
+                // Check if the directory exists, and create it if it does not
                 if (!Directory.Exists(sourceFolder))
                 {
-                    // If directory does not exist, create it
                     Directory.CreateDirectory(sourceFolder);
                 }
 
+                // Generate the XML file name based on the request details and current timestamp
                 string xmlname = db.ServiceNo + "_" + RequestId + "_" + yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss + ".xml";
-                var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignatureXml\\"+ xmlname);
+                var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignatureXml\\" + xmlname);
 
+                // Save the XML document to the specified file path
                 document.Save(filePath1);
 
+                // Return the filename of the saved XML file as a JSON response
                 return Json(xmlname);
             }
             catch (System.IO.DirectoryNotFoundException ex)
             {
+                // Return an error response if the directory is not found
                 return Json(0);
             }
-            catch (Exception ex) { 
+            catch (Exception ex)
+            {
+                // Return a generic error response for other exceptions
                 return Json(0);
             }
-           
         }
+
         public async Task<IActionResult> CreatePdfAsync(int RequestId)
         {
             try
@@ -167,7 +235,7 @@ namespace Web.Controllers
                 LevelMessage levelMessage2 = new LevelMessage()
                 {
                     ID = 2,
-                    Name = "2nd Level"  
+                    Name = "2nd Level"
                 };
                 LevelMessage levelMessage3 = new LevelMessage()
                 {
@@ -304,7 +372,7 @@ namespace Web.Controllers
                 string sourceFolder = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "DigitallysignaturePdf"));
                 if (!Directory.Exists(sourceFolder))
                     Directory.CreateDirectory(sourceFolder);
-                
+
                 string pdfname = db.ServiceNo + "_" + RequestId + "_" + yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss + ".pdf";
                 var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\" + pdfname);
                 //if (!System.IO.File.Exists(filePath1))
@@ -315,7 +383,7 @@ namespace Web.Controllers
                 Document document = new Document(pdf);
                 document.SetMargins(36, 36, 36, 36);
                 document.SetFontSize(12f);
-                
+
                 // Add header and footer event
                 pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new HeaderFooterHandler());
 
@@ -337,7 +405,7 @@ namespace Web.Controllers
                 //String imphotoFile = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\WriteReadData\\Photo\\" + db.PhotoImagePath);
                 //ImageData dataphoto = ImageDataFactory.Create(imphotoFile);
 
-                String sourcePathPhoto = System.IO.Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo" , db.PhotoImagePath);
+                String sourcePathPhoto = System.IO.Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", db.PhotoImagePath);
                 string base64Image = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
                 // Decode Base64 string to byte array
                 string base64Data = base64Image.Split(',')[1]; // Remove data:image/jpeg;base64, prefix
