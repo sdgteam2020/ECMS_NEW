@@ -151,80 +151,92 @@ namespace Web.Controllers
             return Json(data);
         }
 
+        /// <summary>
+        /// Action method to save or update a domain mapping based on the provided data.
+        /// This method processes the domain mapping object and handles the logic for adding or updating the mapping.
+        /// It also updates session details and returns appropriate responses based on success or failure.
+        /// </summary>
+        /// <param name="dTO">The domain mapping data object containing the mapping details.</param>
+        /// <param name="ICNO">The IC number used to associate the mapping with the user.</param>
+        /// <returns>A JSON response indicating whether the mapping was successfully saved or updated.</returns>
         [HttpPost]
-        public async Task<IActionResult> SaveMapping(TrnDomainMapping dTO,string ICNO)
+        public async Task<IActionResult> SaveMapping(TrnDomainMapping dTO, string ICNO)
         {
-
+            // Set the current user's ID (from the claims) for the domain mapping
             dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
             try
             {
-                // dTO.IsActive = true;
-                // dTO.Updatedby = 1;
-                //dTO.UpdatedOn = DateTime.Now;
-              
+                // Initialize session DTO object to store token-related data
                 DtoSession dtoSession = new DtoSession();
-               
                 dtoSession.ICNO = ICNO;
                 dtoSession.UnitId = dTO.UnitId;
-                
+
+                // Validate the model state
                 if (ModelState.IsValid)
                 {
+                    // Check if a domain mapping already exists for the provided data
                     if (!await _iDomainMapBL.GetByDomainId(dTO))
                     {
+                        // If the ID is greater than 0, update the existing mapping
                         if (dTO.Id > 0)
                         {
                             _iDomainMapBL.Update(dTO);
-                            return Json(KeyConstants.Update);
+                            return Json(KeyConstants.Update); // Return update response
                         }
                         else
                         {
-
+                            // If no mapping exists, add a new mapping
                             await _iDomainMapBL.Add(dTO);
+
+                            // Retrieve the domain mapping for the current user and update session details
                             TrnDomainMapping? trnDomainMapping1 = new TrnDomainMapping();
                             trnDomainMapping1.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                             trnDomainMapping1 = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping1.AspNetUsersId);
                             if (trnDomainMapping1 != null)
                                 dtoSession.TrnDomainMappingId = trnDomainMapping1.Id;
 
+                            // Save session data
                             SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
 
-
-                            return Json(KeyConstants.Save);
-
-
+                            return Json(KeyConstants.Save); // Return save response
                         }
                     }
                     else
                     {
+                        // If domain mapping already exists, update the existing mapping with the new data
                         TrnDomainMapping trnDomainMapping = new TrnDomainMapping();
-                        trnDomainMapping =await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
+                        trnDomainMapping = await _iDomainMapBL.GetByDomainIdbyUnit(dTO);
                         trnDomainMapping.UnitId = dTO.UnitId;
-                        trnDomainMapping.UserId = dTO.UserId!=null? dTO.UserId : null;
+                        trnDomainMapping.UserId = dTO.UserId != null ? dTO.UserId : null;
                         await _iDomainMapBL.Update(trnDomainMapping);
 
-
+                        // Retrieve the domain mapping for the current user and update session details
                         TrnDomainMapping? trnDomainMapping1 = new TrnDomainMapping();
                         trnDomainMapping1.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                         trnDomainMapping1 = await _iDomainMapBL.GetByAspnetUserIdBy(trnDomainMapping1.AspNetUsersId);
                         if (trnDomainMapping1 != null)
                             dtoSession.TrnDomainMappingId = trnDomainMapping1.Id;
 
+                        // Save session data
                         SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
-                        return Json(KeyConstants.Update);
-                    }
 
+                        return Json(KeyConstants.Update); // Return update response
+                    }
                 }
                 else
                 {
-
+                    // If the model state is invalid, return the validation errors as JSON
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
-
             }
-            catch (Exception ex) { return Json(KeyConstants.InternalServerError); }
-
-           // return Json(1);
+            catch (Exception ex)
+            {
+                // In case of an exception, return an internal server error response
+                return Json(KeyConstants.InternalServerError);
+            }
         }
+
         [HttpPost]
         public async Task<IActionResult> GotoDashboard(string ICNO)
         {
