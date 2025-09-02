@@ -28,27 +28,32 @@ using Web.WebHelpers;
 
 namespace Web.Controllers
 {
+    /// <summary>
+    /// Controller for handling home-related actions and views.
+    /// </summary>
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly IRegistrationBL _registrationBL;
-        private readonly IBasicDetailBL _basicDetailBL;
-        private readonly INotificationBL _INotificationBL;
-        private readonly IUserProfileBL _userProfileBL;
-        private readonly ITrnICardRequestBL _ITrnICardRequestBL;
-        private readonly IHomeBL _home;
-        private readonly IRecordOfficeBL _recordOfficeBL;
-        private readonly SignInManager<ApplicationUser> signInManager;
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<HomeController> _logger;
-        private readonly IService service;
-        public readonly IReportReturnBL _reportReturnBL;
-        private readonly IMapUnitBL _mapUnitBL;
-        private const string CounterFilePath = "wwwroot/counter.txt";
-        private const string SessionKey = "SessionHit";
+        private readonly IRegistrationBL _registrationBL;//Interface for registration business logic layer
+        private readonly IBasicDetailBL _basicDetailBL;//Interface for basic detail business logic layer
+        private readonly INotificationBL _INotificationBL;//Interface for notification business logic layer
+        private readonly IUserProfileBL _userProfileBL;//Interface for user profile business logic layer
+        private readonly ITrnICardRequestBL _ITrnICardRequestBL;//Interface for ICard request business logic layer
+        private readonly IHomeBL _home;//Interface for home business logic layer
+        private readonly IRecordOfficeBL _recordOfficeBL;//Interface for record office business logic layer
+        private readonly SignInManager<ApplicationUser> signInManager;//Service for managing user sign-in operations
+        private readonly UserManager<ApplicationUser> userManager;//Service for managing user-related operations
+        private readonly IHttpContextAccessor _httpContextAccessor;//Service for accessing the current HTTP context
+        private readonly ILogger<HomeController> _logger;//Logger instance for logging information and errors
+        private readonly IService service;//Interface for general service operations
+        public readonly IReportReturnBL _reportReturnBL;//Interface for report return business logic layer
+        private readonly IMapUnitBL _mapUnitBL;//Interface for map unit business logic layer
+        private const string CounterFilePath = "wwwroot/counter.txt";// File path for storing the visitor counter
+        private const string SessionKey = "SessionHit";// Session key for tracking user sessions
         private readonly string[] IgnoredIPs = { "127.0.0.2", "127.0.0.3" }; // Add IPs to ignore
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration;//Configuration interface for accessing application settings
+
+        //constructor to initialize dependencies and configuration settings.
         public HomeController(IRegistrationBL registrationBL, IUserProfileBL userProfileBL,
             IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
             IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager, 
@@ -71,28 +76,56 @@ namespace Web.Controllers
             _configuration = configuration;
             _mapUnitBL = mapUnitBL;
         }
+
+        /// <summary>
+        /// Retrieves the role of the user from the session.
+        /// If the session contains a valid token, it retrieves the role name from the session object.
+        /// </summary>
+        /// <returns>The role name from the session, or an empty string if no valid session is found.</returns>
         private string GetSessionValue()
         {
+            // Initialize a new DtoSession object
             DtoSession? dtoSession = new DtoSession();
+
+            // Check if the session contains a valid "Token"
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
+                // Retrieve the session object "Token" and deserialize it into the dtoSession object
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
+
+            // Retrieve the role name from the session, or return an empty string if not available
             string role = dtoSession != null ? dtoSession.RoleName : "";
             return role;
         }
+
+        /// <summary>
+        /// Action method that displays the "Contact Us" page.
+        /// </summary>
+        /// <returns>The "Contact Us" view.</returns>
         public IActionResult ContactUs()
         {
+            // Return the ContactUs view
             return View();
         }
+
+        /// <summary>
+        /// Action method for the Index page. It retrieves the user's role from the session
+        /// and passes it to the view through the ViewBag.
+        /// </summary>
+        /// <returns>The Index view, with the user's role passed in ViewBag.</returns>
         public IActionResult Index()
         {
+            // Retrieve the user's role from the session
             string role = GetSessionValue();
+
+            // Pass the role to the view through ViewBag
             ViewBag.Role = role;
-            
+
+            // Return the Index view
             return View();
         }
+
         [Authorize]
         public IActionResult RegisterUser()
         {
