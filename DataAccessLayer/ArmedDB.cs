@@ -3,45 +3,50 @@ using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// Data Access Layer for ArmedType entity, providing database operations.
+    /// and implements the IArmedDB interface.
+    /// for basic CRUD operations.
+    /// </summary>
     public class ArmedDB : GenericRepositoryDL<MArmedType>, IArmedDB
     {
-        protected new readonly ApplicationDbContext _context;
-        private readonly DapperContext _contextDP;
-        private readonly ILogger<ArmedDB> _logger;
+        protected new readonly ApplicationDbContext _context;// For Entity Framework operations
+        private readonly DapperContext _contextDP;// For Dapper operations
+        private readonly ILogger<ArmedDB> _logger;// For logging
         public ArmedDB(ApplicationDbContext context, ILogger<ArmedDB> logger, DapperContext contextDP) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
             _logger = logger;
         }
-      
 
-      
-        //public UserDB(IConfiguration configuration)
-        //{
-        //    this.configuration = configuration;
-        //}
+        /// <summary>
+        /// Asynchronously checks if any armed type exists with the same ArmedName or Abbreviation but a different ArmedId.
+        /// This ensures that there are no duplicates in either ArmedName or Abbreviation, while excluding the current armed type's own ArmedId.
+        /// </summary>
+        /// <param name="DTo">The MArmedType object containing the ArmedName, Abbreviation, and ArmedId to check.</param>
+        /// <returns>
+        /// Returns true if a record with the same ArmedName or Abbreviation but a different ArmedId exists, otherwise false.
+        /// </returns>
+        public async Task<bool> GetByName(MArmedType DTo)
+        {
+            // LINQ query using AnyAsync() to check if there is any record in the MArmedType table
+            // where the ArmedName or Abbreviation matches the provided DTo values (case-insensitive),
+            // and the ArmedId is different from the current armed type's ArmedId (i.e., excluding the current record).
+            var ret = await _context.MArmedType
+                                    .AnyAsync(x => (x.ArmedName.ToUpper() == DTo.ArmedName.ToUpper() ||
+                                                     x.Abbreviation.ToUpper() == DTo.Abbreviation.ToUpper()) &&
+                                                     x.ArmedId != DTo.ArmedId);
 
-       
-
-         public async Task<bool> GetByName(MArmedType DTo)
-         {
-            var ret = await _context.MArmedType.AnyAsync(x=>(x.ArmedName.ToUpper() == DTo.ArmedName.ToUpper() || x.Abbreviation.ToUpper() == DTo.Abbreviation.ToUpper()) && x.ArmedId != DTo.ArmedId);
+            // Return true if a matching armed type is found, otherwise false.
             return ret;
         }
+
         public Task<List<DTOArmedResponse>> GetALLArmed()
         {
             var GetALL = (from A in _context.MArmedType
@@ -53,11 +58,11 @@ namespace DataAccessLayer
                               ArmedId = A.ArmedId,
                               ArmedName = A.ArmedName,
                               Abbreviation = A.Abbreviation,
-                              FlagInf=A.FlagInf,
-                              Inf= A.FlagInf==true?"Yes":"No",
+                              FlagInf = A.FlagInf,
+                              Inf = A.FlagInf == true ? "Yes" : "No",
                               ArmedCatId = F.ArmedCatId,
                               Name = F.Name,
-                          }).OrderByDescending(x=>x.ArmedId).ToList();
+                          }).OrderByDescending(x => x.ArmedId).ToList();
 
 
             return Task.FromResult(GetALL);
