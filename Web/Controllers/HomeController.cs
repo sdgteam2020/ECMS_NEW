@@ -296,34 +296,48 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Action method to retrieve the report dashboard count based on the provided data.
+        /// It validates the session and user claims, then fetches the required report dashboard data.
+        /// </summary>
+        /// <param name="dTORecord">The request data for the report dashboard count.</param>
+        /// <returns>A JSON response containing the dashboard count data or an error message.</returns>
         public async Task<IActionResult> GetReportDashboardCount([FromBody] DTOMHierarchyRequest dTORecord)
         {
+            // Retrieve the current user's ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(userId.ToString());
 
+            // Initialize the DTO session object and retrieve session data
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
+
+            // Retrieve the MapUnitId from the session data
             int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
             if (MapUnitId == null)
             {
                 return BadRequest(new { message = "Session expired." });
             }
+
+            // Fetch the map unit details based on the MapUnitId
             DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Retrieve the user's claims using UserManager
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Conditional logic based on the user's claims to modify the request data
             if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
             {
-
+                // If user has "Army Level Reports" claim, do not modify the request data
             }
             else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Fmn Level Reports"))
             {
                 dTORecord.UnitType = dTOMap.UnitType;
 
+                // Modify the request data based on unit type
                 if (dTOMap.UnitType == 1)
                 {
                     dTORecord.ComdId = (byte?)dTOMap.ComdId;
@@ -341,6 +355,7 @@ namespace Web.Controllers
             }
             else
             {
+                // Modify request data based on unit type
                 if (MapUnitId != null)
                 {
                     dTORecord.UnitType = dTOMap.UnitType;
@@ -355,37 +370,53 @@ namespace Web.Controllers
                 }
             }
 
+            // Return the report dashboard count data as a JSON response
             return Json(await _reportReturnBL.GetReportDashboardCount(dTORecord));
         }
+
+        /// <summary>
+        /// Action method to retrieve the report data based on the provided filter criteria.
+        /// It validates the session, claims, and input data before fetching the report data.
+        /// </summary>
+        /// <param name="dTORecord">The request data for the report.</param>
+        /// <returns>A JSON response containing the report data or an error message.</returns>
         [HttpPost]
         public async Task<IActionResult> GetReportData([FromBody] DTODataTablesRequestForReport dTORecord)
         {
+            // Retrieve the current user's ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(userId.ToString());
 
+            // Initialize the DTO session object and retrieve session data
             DtoSession? dtoSession = new DtoSession();
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
             {
                 dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
             }
+
+            // Retrieve the MapUnitId from the session data
             int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
             if (MapUnitId == null)
             {
                 return BadRequest(new { message = "Session expired." });
             }
+
+            // Fetch the map unit details based on the MapUnitId
             DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
 
-            // UserManager service GetClaimsAsync method gets all the current claims of the user
+            // Retrieve the user's claims using UserManager
             var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Conditional logic based on the user's claims to modify the request data
             if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
             {
-
+                // If user has "Army Level Reports" claim, do not modify the request data
             }
             else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Fmn Level Reports"))
             {
                 dTORecord.UnitType = dTOMap.UnitType;
 
+                // Modify the request data based on unit type
                 if (dTOMap.UnitType == 1)
                 {
                     dTORecord.ComdId = (byte?)dTOMap.ComdId;
@@ -395,7 +426,7 @@ namespace Web.Controllers
                     dTORecord.ComdId = (byte?)dTOMap.ComdId;
                     dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
                 }
-                else if(dTOMap.UnitType == 3)
+                else if (dTOMap.UnitType == 3)
                 {
                     dTORecord.PsoId = (byte?)dTOMap.PsoId;
                     dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
@@ -403,6 +434,7 @@ namespace Web.Controllers
             }
             else
             {
+                // Modify request data based on unit type
                 if (MapUnitId != null)
                 {
                     dTORecord.UnitType = dTOMap.UnitType;
@@ -417,10 +449,10 @@ namespace Web.Controllers
                 }
             }
 
-        
+            // If the user selected "MonthlyProcessed", validate the MonthYear input and retrieve the report data
             if (dTORecord.Choice == "MonthlyProcessed")
             {
-                if (!String.IsNullOrEmpty( dTORecord.MonthYear))
+                if (!String.IsNullOrEmpty(dTORecord.MonthYear))
                 {
                     bool isValid = IsValidMonthYear(dTORecord.MonthYear);
 
@@ -432,15 +464,15 @@ namespace Web.Controllers
                     else
                     {
                         return BadRequest(new { message = "Invalid input: Month and Year are required." });
-
                     }
                 }
                 else
                 {
                     return BadRequest(new { message = "Month and Year are required." });
                 }
-
             }
+
+            // If no errors, retrieve the report data
             try
             {
                 var ret = await _reportReturnBL.GetReportData(dTORecord);
@@ -448,11 +480,12 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Home->GetRecordHistory");
+                // Log any exceptions and return an internal server error
+                _logger.LogError(1001, ex, "Home->GetReportData");
                 return BadRequest(new { message = "Internal Server Error" });
             }
-
         }
+
         public static bool IsValidMonthYear(string input)
         {
             // Try parse as MM/yyyy
