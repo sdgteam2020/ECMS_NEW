@@ -48,25 +48,35 @@ namespace DataAccessLayer
         }
 
 
+        /// <summary>
+        /// Asynchronously retrieves all approved appointments from the MAppointment table, 
+        /// and maps the data to a list of DTOAppointmentResponse objects.
+        /// </summary>
+        /// <returns>
+        /// A list of DTOAppointmentResponse objects containing the details of all approved appointments.
+        /// </returns>
         public async Task<List<DTOAppointmentResponse>> GetALLAppt()
         {
+            // LINQ query to fetch all appointments from the MAppointment table where Approved = 1.
+            // The query selects specific fields and maps them to a DTOAppointmentResponse object.
             var GetALL = await (from A in _context.MAppointment
-                                where A.Approved == 1
-                                //join F in _context.MFormation
-                                //on A.FormationId equals F.FormationId
-
+                                where A.Approved == 1  // Filters appointments that are approved
+                                                       // Join with MFormation table (commented out for now)
+                                                       // on A.FormationId equals F.FormationId
                                 select new DTOAppointmentResponse
-                         {
-                             ApptId=A.ApptId,
-                             AppointmentName=A.AppointmentName,
-                             AppointmentAbbreviation=A.AppointmentAbbreviation,
-                             //FormationId=F.FormationId,
-                             //FormationName=F.FormationName, 
-                         }).OrderByDescending(x=>x.ApptId).ToListAsync();
+                                {
+                                    ApptId = A.ApptId,  // Selects the appointment ID
+                                    AppointmentName = A.AppointmentName,  // Selects the appointment name
+                                    AppointmentAbbreviation = A.AppointmentAbbreviation,  // Selects the appointment abbreviation
+                                                                                          // FormationId = F.FormationId,  // Formation ID from MFormation table (currently commented out)
+                                                                                          // FormationName = F.FormationName,  // Formation Name from MFormation table (currently commented out)
+                                })
+                                .OrderByDescending(x => x.ApptId)  // Orders the appointments by ApptId in descending order
+                                .ToListAsync();  // Executes the query asynchronously and returns the result as a list
 
-
-            return GetALL;
+            return GetALL;  // Return the list of appointment responses
         }
+
         public async Task<List<DTOAppointmentResponse>> GetALLByAppointmentName(string AppointmentName)
         {
             try
