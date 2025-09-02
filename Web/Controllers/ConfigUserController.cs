@@ -134,14 +134,23 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Action method to retrieve token details based on the provided token data.
+        /// This method processes the incoming data and returns the corresponding token details as a JSON response.
+        /// </summary>
+        /// <param name="Data">The token data to retrieve details for.</param>
+        /// <returns>A JSON response containing the token details retrieved from the backend.</returns>
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken] // Uncomment to enable anti-forgery token validation for the request
         public IActionResult GetTokenDetails(DTOTokenResponse Data)
         {
-
+            // Call the service to fetch token details based on the provided token data
             var data = _iGetTokenBL.GetTokenDetails(Data);
+
+            // Return the fetched token details as a JSON response
             return Json(data);
         }
+
         [HttpPost]
         public async Task<IActionResult> SaveMapping(TrnDomainMapping dTO,string ICNO)
         {
