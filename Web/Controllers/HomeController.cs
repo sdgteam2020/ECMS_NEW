@@ -828,35 +828,61 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Action method to save a notification. It updates any previous notifications and adds a new one for both the sender and receiver.
+        /// </summary>
+        /// <param name="Data">The notification data to be saved.</param>
+        /// <returns>A JSON response indicating success (1) or failure (0).</returns>
         public async Task<IActionResult> SaveNotification(MTrnNotification Data)
         {
             try
             {
+                // Retrieve the user ID from the claims
                 int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 Data.SentAspNetUsersId = userId;
-               
+
+                // Update the previous notification data
                 await _INotificationBL.UpdatePrevious(Data);
 
+                // Add the new notification
                 await _INotificationBL.Add(Data);
 
+                // Retrieve the user ID associated with the request
                 int requestUserId = await _ITrnICardRequestBL.GetUserIdByRequestId(Data.RequestId);
+
+                // Prepare notification data for the receiver and set the receiver and sender IDs
                 Data.NotificationId = 0;
                 Data.SentAspNetUsersId = requestUserId;
                 Data.ReciverAspNetUsersId = requestUserId;
 
+                // Add the notification for the receiver
                 await _INotificationBL.Add(Data);
+
+                // Return a success response
                 return Json(1);
             }
             catch (Exception ex)
             {
+                // Return failure if an exception occurs
                 return Json(0);
             }
-
         }
+
+        /// <summary>
+        /// Action method to retrieve notifications based on the provided type and applyForId.
+        /// </summary>
+        /// <param name="TypeId">The notification type ID used to filter the notifications.</param>
+        /// <param name="applyForId">The applyForId used to filter the notifications.</param>
+        /// <returns>A JSON response containing a list of notifications or null if no notifications are found.</returns>
         public async Task<IActionResult> GetNotification(int TypeId, int applyForId)
         {
+            // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Fetch the notifications based on the user ID, TypeId, and applyForId
             List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotification(userId, TypeId, applyForId);
+
+            // Return the notifications as a JSON response, or null if no notifications are found
             if (dTONotificationResponses != null)
             {
                 return Json(dTONotificationResponses);
@@ -866,10 +892,22 @@ namespace Web.Controllers
                 return Json(null);
             }
         }
-        public async Task<IActionResult> GetNotificationRequestId(int TypeId,int applyForId)
+
+        /// <summary>
+        /// Action method to retrieve notifications based on the request ID, type, and applyForId.
+        /// </summary>
+        /// <param name="TypeId">The notification type ID used to filter the notifications.</param>
+        /// <param name="applyForId">The applyForId used to filter the notifications.</param>
+        /// <returns>A JSON response containing a list of notifications related to the request ID or null if no notifications are found.</returns>
+        public async Task<IActionResult> GetNotificationRequestId(int TypeId, int applyForId)
         {
+            // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Fetch the notifications based on the user ID, TypeId, and applyForId
             List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotificationRequestId(userId, TypeId, applyForId);
+
+            // Return the notifications as a JSON response, or null if no notifications are found
             if (dTONotificationResponses != null)
             {
                 return Json(dTONotificationResponses);
@@ -878,15 +916,25 @@ namespace Web.Controllers
             {
                 return Json(null);
             }
-        } 
+        }
+
+        /// <summary>
+        /// Action method to update a notification as read based on the provided notification data.
+        /// </summary>
+        /// <param name="Data">The notification data to be updated.</param>
+        /// <returns>A JSON response indicating the success or failure of the update operation.</returns>
         public async Task<IActionResult> UpdateNotification(MTrnNotification Data)
         {
+            // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-          
-            Data.SentAspNetUsersId = userId;
-            return Json(await _INotificationBL.UpdateRead(Data));
 
+            // Set the sender ID for the notification
+            Data.SentAspNetUsersId = userId;
+
+            // Update the notification status to "read" and return the result as JSON
+            return Json(await _INotificationBL.UpdateRead(Data));
         }
+
         public async Task<IActionResult> GetTaskBoardCount()
         {
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
