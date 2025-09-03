@@ -1,49 +1,41 @@
-﻿using Azure;
-using Dapper;
+﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Healpers;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
+using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
-using EntityFramework.Exceptions.Common;  
+using EntityFramework.Exceptions.Common;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.Data;
-using Azure.Core;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Linq.Expressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using DataTransferObject.Constants;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http;
-using static Dapper.SqlMapper;
-using DataTransferObject.Response.User;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using DataTransferObject.Domain.Identitytable;
-using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using System.Transactions;
-using Microsoft.Extensions.DependencyInjection;
-using System.Data.SqlClient;
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// Data Access Layer for BasicDetail entity, providing database operations.
+    /// and implements the IBasicDetailDB interface.
+    /// for basic CRUD operations.
+    /// </summary>
     public class BasicDetailDB : GenericRepositoryDL<BasicDetail>, IBasicDetailDB
     {
-        protected new readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly DapperContext _contextDP;
-        private readonly IDataProtector protector;
-        private readonly ILogger<BasicDetailDB> _logger;
-        private readonly IServiceProvider _serviceProvider;
+        protected new readonly ApplicationDbContext _context;// For Entity Framework operations
+        private readonly UserManager<ApplicationUser> userManager;//    For user management
+        private readonly DapperContext _contextDP;// For Dapper operations
+        private readonly IDataProtector protector;// For data protection
+        private readonly ILogger<BasicDetailDB> _logger;// For logging
+        private readonly IServiceProvider _serviceProvider;// For accessing services
+
+        //constants for dispatch card status and pending
         public BasicDetailDB(ApplicationDbContext context, DapperContext contextDP, IServiceProvider serviceProvider, IDataProtectionProvider dataProtectionProvider, ILogger<BasicDetailDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings, UserManager<ApplicationUser> userManager) : base(context)
         {
             _context = context;
@@ -55,39 +47,61 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.userManager = userManager;
         }
+        /// <summary>
+        /// Asynchronously exports the dispatch card data for a list of RequestIds and returns it as a list of DTODispatchCardForCSVResponse objects.
+        /// This method retrieves data from the TrnICardRequest, BasicDetails, and MRank tables and formats it for CSV export.
+        /// </summary>
+        /// <param name="RequestIds">An array of RequestIds for which the dispatch card data is to be retrieved.</param>
+        /// <returns>
+        /// A list of DTODispatchCardForCSVResponse objects containing the dispatch card data for the provided RequestIds.
+        /// </returns>
         public async Task<List<DTODispatchCardForCSVResponse>> ExportCsvFileForDispatchCard(int[] RequestIds)
         {
+            // List to hold the results that will be returned as CSV response
             List<DTODispatchCardForCSVResponse> dTOs = new List<DTODispatchCardForCSVResponse>();
-            string query = @"SELECT req.RequestId as ApplId,ranks.RankAbbreviation as RankName,basi.FName,basi.LName,basi.ServiceNo,req.ChipNo,req.CardSerialNo
-                            from TrnICardRequest req
-                            INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
-                            INNER JOIN MRank ranks on ranks.RankId=basi.RankId
-                            WHERE req.RequestId IN (SELECT RequestId FROM @RequestIds)";
+
+            // SQL query to select dispatch card data based on the provided RequestIds
+            string query = @"SELECT req.RequestId as ApplId,
+                            ranks.RankAbbreviation as RankName,
+                            basi.FName, basi.LName, basi.ServiceNo,
+                            req.ChipNo, req.CardSerialNo
+                         from TrnICardRequest req
+                         INNER JOIN BasicDetails basi on req.BasicDetailId = basi.BasicDetailId
+                         INNER JOIN MRank ranks on ranks.RankId = basi.RankId
+                         WHERE req.RequestId IN (SELECT RequestId FROM @RequestIds)";  // Use parameterized query for RequestIds
+
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    // Create a table-valued parameter for the RequestIds
+                    // Create a DataTable to hold the RequestIds for the query
                     var table = new DataTable();
                     table.Columns.Add("RequestId", typeof(int));
 
+                    // Add each RequestId from the array into the DataTable
                     foreach (var id in RequestIds)
                     {
                         table.Rows.Add(id);
                     }
 
+                    // Create a DynamicParameters object to pass the table-valued parameter
                     var parameters = new DynamicParameters();
-                    parameters.Add("@RequestIds", table.AsTableValuedParameter("RequestIdList"));
+                    parameters.Add("@RequestIds", table.AsTableValuedParameter("RequestIdList"));  // Pass table as a TVP
 
+                    // Execute the query asynchronously and map the results to DTODispatchCardForCSVResponse objects
                     dTOs = (await connection.QueryAsync<DTODispatchCardForCSVResponse>(query, parameters)).ToList();
                 }
             }
             catch (Exception ex)
             {
+                // Log any exceptions that occur during the query execution
                 _logger.LogError(1001, ex, "BasicDetailDB->ExportCsvFileForDispatchCard");
             }
+
+            // Return the list of dispatch card data
             return dTOs;
         }
+
         public async Task<DTODataTablesForDispatchCardStatusListResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequestForCardStatusList dTO, byte ClaimValue)
         {
             string selectFields = "";
