@@ -18,7 +18,6 @@ using BusinessLogicsLayer.DispatchCardMapping;
 using BusinessLogicsLayer.DispatchMode;
 using BusinessLogicsLayer.DistributeCard;
 using BusinessLogicsLayer.Div;
-using BusinessLogicsLayer.EncryptBySql;
 using BusinessLogicsLayer.EncryptionSetting;
 using BusinessLogicsLayer.FaultyCard;
 using BusinessLogicsLayer.FaultyStage;
@@ -174,9 +173,6 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IHomeBL, HomeBL>();
             services.AddTransient<IHomeDB, HomeDB>();
-
-            services.AddTransient<IEncryptsqlDB, EncryptsqlDB>();
-            services.AddTransient<IEncryptsqlBL, EncryptsqlBL>();
 
             services.AddTransient<IReportReturnDB, ReportReturnDB>();
             services.AddTransient<IReportReturnBL, ReportReturnBL>();

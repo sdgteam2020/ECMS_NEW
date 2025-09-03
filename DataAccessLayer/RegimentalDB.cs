@@ -3,16 +3,8 @@ using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DataAccessLayer
 {
@@ -27,7 +19,12 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
-      
+
+        /// <summary>
+        /// Checks if a regimental name or abbreviation already exists in the database, excluding the current record.
+        /// </summary>
+        /// <param name="Dto">The regimental data to check.</param>
+        /// <returns>Returns <c>true</c> if a matching record exists; otherwise, <c>false</c>.</returns>
         public async Task<bool> GetByName(MRegimental Dto)
         {
             List<MRegimental> mRegimentals = await _context.MRegimental.AsNoTracking().ToListAsync();
@@ -35,6 +32,12 @@ namespace DataAccessLayer
             return ret;
         }
 
+
+        /// <summary>
+        /// Retrieves a list of regimentals for a specific armed type by its ArmedId.
+        /// </summary>
+        /// <param name="ArmedId">The ArmedId to filter the regimentals.</param>
+        /// <returns>Returns a list of <see cref="DTORegimentalResponse"/> objects for the specified ArmedId.</returns>
         public async Task<List<DTORegimentalResponse>> GetByArmedId(byte ArmedId)
         {
             var data = await (from a in _context.MArmedType.AsNoTracking()
@@ -49,6 +52,12 @@ namespace DataAccessLayer
             return data;
         }
 
+
+        /// <summary>
+        /// Retrieves all regimental data including regiment name, location, abbreviation, and associated unit details.
+        /// </summary>
+        /// <returns>Returns a list of <see cref="DTORegimentalResponse"/> containing all regimental records.</returns>
+        /// <exception cref="Exception">Throws an exception if there is an error during the database query execution.</exception>
         public async Task<List<DTORegimentalResponse>> GetAllData()
         {
             try

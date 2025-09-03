@@ -1,20 +1,10 @@
-﻿using Azure.Core;
-using Dapper;
+﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccessLayer
 {
@@ -27,6 +17,15 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
+
+
+        /// <summary>
+        /// Retrieves the Mstep count based on the provided hierarchy and ApplyForId.
+        /// </summary>
+        /// <param name="Data">The data that contains the hierarchy request parameters (e.g., ComdId, CorpsId, DivId, BdeId, etc.).</param>
+        /// <param name="ApplyForId">The ApplyForId used to filter the MStepCount data.</param>
+        /// <returns>A list of DTOReportReturnCount objects that represent the MStep count.</returns>
+        /// <exception cref="Exception">Throws exception if there is an error during the database operation.</exception>
         public async Task<List<DTOReportReturnCount>> GetMstepCount(DTOMHierarchyRequest Data, int ApplyForId)
         {
             #region Old Code by Kapoor Sir
@@ -280,6 +279,14 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves Mstep count specifically for approved and rejected status.
+        /// </summary>
+        /// <param name="Data">The data that contains the hierarchy request parameters.</param>
+        /// <param name="ApplyForId">The ApplyForId used to filter the MStepCount data.</param>
+        /// <returns>A list of DTOReportReturnCount objects representing the approved and rejected Mstep counts.</returns>
+        /// <exception cref="Exception">Throws exception if there is an error during the database operation.</exception>
         public async Task<List<DTOReportReturnCount>> GetMstepCountApprovedReject(DTOMHierarchyRequest Data, int ApplyForId)
         {
             try
@@ -340,13 +347,24 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Fetches the count of records for the "Mstep" process.
+        /// </summary>
+        /// <param name="Data">The input data for hierarchical request.</param>
+        /// <param name="ApplyForId">The ApplyForId for filtering the records.</param>
+        /// <returns>Returns a list of DTOReportReturnCount based on the count for Mstep.</returns>
+        /// <exception cref="NotImplementedException">Thrown if the method is not yet implemented.</exception>
         public Task<List<DTOReportReturnCount>> GetMstepCountApprovedRejectJco(DTOMHierarchyRequest Data, int ApplyForId)
         {
             throw new NotImplementedException();
         }
 
 
-
+        /// <summary>
+        /// Retrieves a list of Record Office Offers based on ArmedId.
+        /// </summary>
+        /// <param name="ArmedIdForORO">The ArmedId used to filter record office offers.</param>
+        /// <returns>Returns a list of DTOReportReturnCount representing Record Office offers.</returns>
         public async Task<List<DTOReportReturnCount>> GetRecordOffOffers(short ArmedIdForORO)
         {
             string query = "select RecordOfficeId,Name from MRecordOffice where ArmedId=@ArmedIdForORO";
@@ -365,6 +383,12 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves the count of record office offers with various filtering based on Data.
+        /// </summary>
+        /// <param name="Data">The input data for hierarchical request.</param>
+        /// <returns>Returns a list of DTOReportReturnCount representing counts of record office offers.</returns>
         public async Task<List<DTOReportReturnCount>> GetRecordOffOffersCount(DTOMHierarchyRequest Data)
         {
             #region Old code
@@ -423,6 +447,13 @@ namespace DataAccessLayer
                 return new List<DTOReportReturnCount>();
             }
         }
+
+        
+        /// <summary>
+        /// Retrieves a list of Record Offices excluding those with a specific ArmedId.
+        /// </summary>
+        /// <param name="ArmedIdForORO">The ArmedId used to exclude certain record offices.</param>
+        /// <returns>Returns a list of DTOReportReturnCount representing excluded record offices.</returns>
         public async Task<List<DTOReportReturnCount>> GetRecordJco(short ArmedIdForORO)
         {
             string query = "select RecordOfficeId ,Name from MRecordOffice where ArmedId!=@ArmedIdForORO";
@@ -441,6 +472,14 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves the count of record offices based on request data, completion status, and ArmedId exclusion.
+        /// </summary>
+        /// <param name="Data">The input data for hierarchical request.</param>
+        /// <param name="IsComplete">Flag indicating whether the process is complete.</param>
+        /// <param name="ArmedIdForORO">The ArmedId used to filter record offices.</param>
+        /// <returns>Returns a list of DTOReportReturnCount representing the filtered count of record offices.</returns>
         public async Task<List<DTOReportReturnCount>> GetRecordJcoCount(DTOMHierarchyRequest Data, int IsComplete, short ArmedIdForORO)
         {
             #region Old Code
@@ -511,6 +550,12 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves a paginated history of records based on the request parameters and sorting options.
+        /// </summary>
+        /// <param name="dTORecord">The input data for record history and pagination.</param>
+        /// <returns>Returns a paginated list of DTOReportReturnListResponse with sorted and filtered results.</returns>
         public async Task<DTODataTablesResponse<DTOReportReturnListResponse>> GetRecordHistory(DTORecordHistory dTORecord)
         {
             // Map allowed sort columns to DB fields
@@ -743,6 +788,15 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+        
+        /// <summary>
+        /// Retrieves report data based on the provided filter and sorting options.
+        /// This method fetches filtered and sorted data from multiple tables like `TrnStepCounter`, `MApplyFor`, `MStepCounterStep`, `TrnICardRequest`, and more.
+        /// </summary>
+        /// <param name="dTO">The request object containing filter, sort, and pagination details.</param>
+        /// <returns>A response object containing the filtered and paginated report data.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during data retrieval.</exception>
         public async Task<DTODataTablesResponse<DTOReportResponse>> GetReportData(DTODataTablesRequestForReport dTO)
         {
             string query = "";
@@ -1004,6 +1058,13 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+        
+        /// <summary>
+        /// Retrieves the dashboard count for reports based on the provided hierarchy request.
+        /// </summary>
+        /// <param name="dTO">The hierarchy request containing filter parameters such as UnitMapId, UnitType, ComdId, etc.</param>
+        /// <returns>Returns a <see cref="DTOReportDashboardCountResponse"/> object with counts for requisitions, lost cases, monthly processed, and non-functional cards.</returns>
         public async Task<DTOReportDashboardCountResponse> GetReportDashboardCount(DTOMHierarchyRequest dTO)
         {
             string query = @"declare @TotRequisition int=0
@@ -1156,6 +1217,13 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+        
+        /// <summary>
+        /// Retrieves a list of report form entries (Form 11) based on the provided hierarchy request.
+        /// </summary>
+        /// <param name="Data">The hierarchy request containing filter parameters such as ComdId, CorpsId, DivId, etc.</param>
+        /// <returns>Returns a list of <see cref="DTOReportReturnListResponse"/> objects for the requested report form.</returns>
         public async Task<List<DTOReportReturnListResponse>> GetReportForm11(DTOMHierarchyRequest Data)
         {
             string query = " select " +

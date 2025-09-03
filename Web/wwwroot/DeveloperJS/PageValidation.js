@@ -12,10 +12,24 @@
             alert('Back navigation is disabled!');
         });
     });
-
-
 });
-function ChkSfx() {
+async function handleSubmit(event, isNewUser) {
+    try {
+        const result = await SubmitsEncry1(isNewUser);
+        if (!result) {
+            event.preventDefault();  // Prevent form submission if the result is false
+            return false; // Return false to ensure the button does not trigger the default form submit action
+        }
+    } catch (error) {
+        console.error("Error in submission:", error);
+        event.preventDefault();  // Prevent form submission in case of an error
+        return false; // Handle the error by preventing the form submission
+    }
+}
+async function ChkSfx() {
+    // Simulating an asynchronous check (no external fetch needed)
+    await new Promise(resolve => resolve()); // The 'await' here is just for structure
+
     let ArmyNo = document.getElementById('ICNo').value;
     const isFirstTwoAlpha = /^[A-Za-z]{2}/.test(ArmyNo);
 
@@ -105,17 +119,14 @@ function ChkSfx() {
                 break;
             }
     }
-    //var txtcalsfx = document.getElementById('ICNo');
-    //txtcalsfx.value = Sfx;
-    //if (txt.toUpperCase() == Sfx) {
+    if (txt.toUpperCase() === Sfx) {
         return true;
-    //}
-    //else {
-    //    alert("Suffix Mismatch.Expected suffix is " + Sfx);
-    //    return false;
-    //}
+    }
+    else {
+            return false;
+    }
 }
-function SubmitsEncry1(result) {
+async function SubmitsEncry1(result) {
    
     if (result) {
         // Get the password value
@@ -126,7 +137,9 @@ function SubmitsEncry1(result) {
             alert('Please enter Army No / Password / ConfirmPassword.');
             return false;
         }
-        if (!ChkSfx()) {
+        let result = await ChkSfx();
+        if (!result) {
+            alert("Invalid Army No.");
             return false; // Stop submission if suffix check fails
         }
         if ($('#Password').val() == $('#ConfirmPassword').val()) {
@@ -165,7 +178,9 @@ function SubmitsEncry1(result) {
             return false;
         }
         else {
-            if (!ChkSfx()) {
+            let result = await ChkSfx();
+            if (!result) {
+                alert("Invalid Army No.");
                 return false; // Stop submission if suffix check fails
             }
             var key = CryptoJS.enc.Utf8.parse(skey);

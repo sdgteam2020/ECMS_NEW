@@ -1,19 +1,13 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
@@ -32,6 +26,12 @@ namespace DataAccessLayer
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
+
+        /// <summary>
+        /// Checks if the specified UnitMapId has any incomplete change requests.
+        /// </summary>
+        /// <param name="UnitMapId">The UnitMapId to check for pending change requests.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is true if there are any incomplete requests, false otherwise.</returns>
         public async Task<bool> FindUnitIdMapped(int UnitMapId)
         {
             try
@@ -44,6 +44,13 @@ namespace DataAccessLayer
                 return false;
             }
         }
+
+        /// <summary>
+        /// Updates the unit change request with the specified details.
+        /// </summary>
+        /// <param name="dTO">The DTO containing the details for updating the unit change request.</param>
+        /// <param name="trnMapUnit">The existing unit change request entity to update.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a DTO response indicating the success or failure of the operation.</returns>
         public async Task<DTOCommonSaveResponse> UpdateMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO, TrnMapUnitChangeRequest trnMapUnit)
         {
             DTOCommonSaveResponse saveResponse = new DTOCommonSaveResponse();
@@ -53,7 +60,7 @@ namespace DataAccessLayer
 
             try
             {
-                //Accept
+                // Accept the change request if the choice is 2
                 if (dTO.Choice == 2)
                 {
                     update1 = @"UPDATE MapUnit set UnitType = @UnitType,ComdId = @ComdId,CorpsId = @CorpsId, DivId = @DivId, BdeId = @BdeId, FmnBranchID = @FmnBranchID, PsoId =@PsoId, SubDteId = @SubDteId  WHERE UnitMapId=@UnitMapId";
@@ -69,9 +76,11 @@ namespace DataAccessLayer
                     parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
 
+                    // Execute the update command
                     await db.ExecuteAsync(update1, parameters, transaction: transaction);
                 }
 
+                // Update the request status and other fields for the MapUnitChangeRequest entity
                 update2 = @"UPDATE TrnMapUnitChangeRequest set AdminRemark = @AdminRemark, IsComplete = @IsComplete, IsEditAction = @IsEditAction, RequestStatus =@RequestStatus, AdminUpdatedby = @AdminUpdatedby, AdminUpdatedOn = @AdminUpdatedOn, AdminUserId = @AdminUserId  WHERE MapUnitChangeRequestId = @MapUnitChangeRequestId";
                 var parameters2 = new DynamicParameters();
                 parameters2.Add("@MapUnitChangeRequestId", dTO.MapUnitChangeRequestId, DbType.Int32, ParameterDirection.Input);
@@ -83,8 +92,10 @@ namespace DataAccessLayer
                 parameters2.Add("@AdminUpdatedOn", trnMapUnit.AdminUpdatedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters2.Add("@AdminUserId", trnMapUnit.AdminUserId, DbType.Int32, ParameterDirection.Input);
 
+                // Execute the second update command
                 await db.ExecuteAsync(update2, parameters2, transaction: transaction);
 
+                // Set response data
                 saveResponse.Id = dTO.MapUnitChangeRequestId.ToString();
                 saveResponse.Message = "Data Updated";
 
@@ -109,6 +120,12 @@ namespace DataAccessLayer
                 db.Dispose();
             }
         }
+
+        /// <summary>
+        /// Retrieves the history of unit move requests for a given MapUnitChangeRequestId.
+        /// </summary>
+        /// <param name="dTO">The DTO containing the details for retrieving the unit move history.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the unit move history details.</returns>
         public async Task<DTOMapUnitDetailsResponse> GetUnitMoveHistory(DTOMapUnitDetailsResponse dTO)
         {
             string query = "";
@@ -151,6 +168,11 @@ namespace DataAccessLayer
                 return new DTOMapUnitDetailsResponse();
             }
         }
+
+        /// <summary>
+        /// Retrieves a paginated list of unit change requests for the specified parameters.
+        /// </summary>
+        /// <param name="request">The request object containing parameters for filtering, sorting, and pagination.</param>
         public async Task<DTODataTablesResponse<DTOMapUnitChangeResponse>> GetAllMapUnitChange(DTODataTablesRequestForMapUnitChange request)
         {
             try
@@ -187,6 +209,8 @@ namespace DataAccessLayer
                                          FromArmyNo = upfrom.ArmyNo,
                                          FromName = upfrom.Name,
                                      }).AsQueryable();
+
+                // Filter by UnitMapId if the role is not admin
                 if (request.RoleName != "admin")
                 {
                     queryableData = queryableData.Where(x => x.UnitMapId == request.UnitMapId);

@@ -5,7 +5,6 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace DataAccessLayer

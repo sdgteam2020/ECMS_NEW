@@ -1,11 +1,11 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Logger;
-using Dapper;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccessLayer
 {
@@ -61,7 +61,7 @@ namespace DataAccessLayer
         public async Task<bool> FindSusNo(string Sus_no)
         {
             // Perform a case-insensitive check to see if any unit's Sus_no concatenated with its Suffix matches the provided SUS number.
-            var ret = _context.MUnit.Any(x => (x.Sus_no.ToUpper() + x.Suffix.ToUpper()) == Sus_no.ToUpper());
+            var ret = await _context.MUnit.AnyAsync(x => (x.Sus_no.ToUpper() + x.Suffix.ToUpper()) == Sus_no.ToUpper());
 
             // Return true if the SUS number exists, otherwise false.
             return ret;

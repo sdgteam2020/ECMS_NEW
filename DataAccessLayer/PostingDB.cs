@@ -1,22 +1,12 @@
-﻿using Azure.Core;
-using Dapper;
+﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -33,6 +23,12 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
 
+        /// <summary>
+        /// Retrieves all posting history for a specific AspNetUserId.
+        /// </summary>
+        /// <param name="AspNetUsersId">The AspNetUsersId to filter the posting history by.</param>
+        /// <returns>A list of <see cref="DTOPostingOutDetilsResponse"/> containing the posting history details.</returns>
+        /// <exception cref="Exception">Throws exception if any error occurs while retrieving the posting history.</exception>
         public async Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId)
         {
             try
@@ -72,6 +68,12 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves posting detail by Id.
+        /// </summary>
+        /// <param name="Id">The posting Id to retrieve details for.</param>
+        /// <returns>A <see cref="DTOPostingOutDetailByIdResponse"/> object containing the posting details.</returns>
+        /// <exception cref="Exception">Throws exception if any error occurs while retrieving the posting details.</exception>
         public async Task<DTOPostingOutDetailByIdResponse> GetPostingDetailById(string Id)
         {
             var response = new DTOPostingOutDetailByIdResponse();
@@ -101,6 +103,16 @@ namespace DataAccessLayer
             return response;
         }
 
+        /// <summary>
+        /// Retrieves a list of posting out details with additional filtering and sorting options.
+        /// </summary>
+        /// <param name="dTO">The data transfer object containing pagination, search, and sorting options.</param>
+        /// <param name="AspNetUsersId">The AspNetUsersId to filter the posting history by.</param>
+        /// <param name="UnitMapId">The UnitMapId to filter the posting history by.</param>
+        /// <param name="Type">The type of posting to filter.</param>
+        /// <param name="PostingTy">The posting type, either "PostingIn" or "PostingOut".</param>
+        /// <returns>A <see cref="DTODataTablesResponse{DTOPostingOutDetilsResponse}"/> containing the filtered posting details.</returns>
+        /// <exception cref="Exception">Throws exception if any error occurs while retrieving the filtered posting out details.</exception>
         public async Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO, int AspNetUsersId,int UnitMapId,int Type, string PostingTy)
         {
             List<DTOPostingOutDetilsResponse> dTOPostingOutDetilsResponses = new List<DTOPostingOutDetilsResponse>();
@@ -160,7 +172,16 @@ namespace DataAccessLayer
                         ";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryMultipleAsync(query, new { Offset = dTO.Start, Limit = dTO.Length, SearchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? "" : dTO.searchValue, MapUnitId = UnitMapId, Type = Type });
+                    // Parameters for SQL query
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@MapUnitId", UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Type", Type, DbType.Int32, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(query, parameters);
                     var records = (await ret.ReadAsync<DTOPostingOutDetilsResponse>()).Select(
                         record => new DTOPostingOutDetilsResponse(){ 
                             Id = _protector.Protect(record.Id.ToString()),
@@ -201,6 +222,13 @@ namespace DataAccessLayer
             return responseData;
         }
 
+
+        /// <summary>
+        /// Retrieves army data for a specific posting request based on the Army Number.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number to retrieve posting data for.</param>
+        /// <returns>A <see cref="DTOPostingInResponse"/> object containing the army data for posting out.</returns>
+        /// <exception cref="Exception">Throws an exception if an error occurs during the database query execution.</exception>
         public async Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo)
         {
             #region Old code by Kapoor Sir
@@ -298,59 +326,25 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Updates posting details for a specific posting request.
+        /// </summary>
+        /// <param name="Data">The <see cref="TrnPostingOut"/> data to update in the database.</param>
+        /// <returns><c>true</c> if the update was successful; otherwise, <c>false</c>.</returns>
+        /// <exception cref="Exception">Throws an exception if an error occurs during the update process.</exception>
         public async Task<bool> UpdateForPosting(TrnPostingOut Data)
         {
-            #region Old code write by Kapoor Sir
-            //string query = " select StepId from TrnStepCounter where RequestId=@RequestId" +
-            //   " if ((select StepId from TrnStepCounter where RequestId=2)<=2) begin" +
-            //   " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
-            //    " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and Status=0)" +
-            //   " update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
-            //   " update TrnFwds set FwdStatusId=2 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0" +
-            //   " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
-            //   " end" +
-            //   " Else begin" +
-            //    " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
-            //     " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)" +
-            //    //" update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
-            //    //" update TrnFwds set Status=0 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0";
-            //    " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
-            //    " End";
-
-            //string query = " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId " +
-            //   " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and StatusId=1)" +
-            //  //" update TrnStepCounter set StepId=1 where RequestId=@RequestId" +
-            //  //" update TrnFwds set FwdStatusId=2 ,IsComplete=1,Remark='Posting Out' ,ToAspNetUsersId=@ToAspNetUsersId where RequestId=@RequestId and IsComplete=0" +
-            //  " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0" +
-            //  " if exists (select top 1 * from TrnFwds where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId)" +
-            //  " begin" +
-            //  " update TrnFwds set ToAspNetUsersId=@ToAspNetUsersId where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId " +
-            //  " end";
-
-
-            //int ToAspNetUsersId = Data.ToAspNetUsersId;
-            //int RequestId = Data.RequestId;
-            //int ToUnitID = Data.ToUnitID;
-            //int Id = Data.Id;
-
-            //using (var connection = _contextDP.CreateConnection())
-            //{
-            //    connection.Execute(query, new { ToAspNetUsersId, RequestId, ToUnitID, Id });//,ToUnitID
-
-            //    return true;
-
-            //}
-            #endregion
-
             int ToAspNetUsersId = Data.ToAspNetUsersId;
             int RequestId = Data.RequestId;
             int ToUnitID = Data.ToUnitID;
             //int Id=Data.Id;
-
+            
+            // Initialize transaction for multiple database operations
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
 
             try
             {
+                // Insert new posting record
                 var insertSql = @$" INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, BasicDetailId, RequestId, TrnFwdId,DispatchUpdatedBy,DispatchUpdatedOn,DispatchedOn,RefNo)
                                 OUTPUT INSERTED.Id 
                                 VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @BasicDetailId, @RequestId, @TrnFwdId,{(Data.DispatchedOn.HasValue ? "@Updatedby"  : "null")},{(Data.DispatchedOn.HasValue ? "@UpdatedOn" : "null")},@DispatchedOn,@RefNo );";
@@ -374,12 +368,14 @@ namespace DataAccessLayer
                 parameters.Add("@DispatchedOn", Data.DispatchedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@RefNo", Data.RefNo, DbType.String, ParameterDirection.Input);
 
-                //var parameters = new { ReasonId = Data.ReasonId, Authority = Data.Authority , FromAspNetUsersId = Data.FromAspNetUsersId, FromUnitID = Data.FromUnitID, FromUserID = Data.FromUserID, ToAspNetUsersId = Data.ToAspNetUsersId, ToUnitID = Data.ToUnitID, ToUserID = Data.ToUserID, IsActive= Data.IsActive, UpdatedOn = Data.UpdatedOn, Updatedby = Data.Updatedby, SOSDate = Data.SOSDate, BasicDetailId = Data.BasicDetailId, RequestId = Data.RequestId };
+                // Insert the new posting record and get its ID
                 var Id = await db.QuerySingleAsync<int>(insertSql, parameters, transaction:transaction);
 
+                // Update related TrnICardRequest with the new mapping
                 string query1 = " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId ";
                 await db.ExecuteAsync(query1, new { ToAspNetUsersId, RequestId },transaction:transaction);
 
+                // Update BasicDetails with the new unit ID
                 string query2 = " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and StatusId=1) ";
                 await db.ExecuteAsync(query2, new { RequestId, ToUnitID }, transaction: transaction);
 
@@ -414,6 +410,15 @@ namespace DataAccessLayer
                 db.Dispose();
             }
         }
+
+
+        /// <summary>
+        /// Retrieves a list of closed application records for a specific unit map and apply type.
+        /// </summary>
+        /// <param name="UnitMapId">The unit map ID to filter the closed applications by.</param>
+        /// <param name="apply">The apply type ID to filter the closed applications by.</param>
+        /// <returns>A list of <see cref="DTOAppClosedListResponse"/> objects representing the closed applications.</returns>
+        /// <exception cref="Exception">Throws an exception if an error occurs while retrieving the closed applications.</exception>
         public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int UnitMapId, int apply)
         {
             try

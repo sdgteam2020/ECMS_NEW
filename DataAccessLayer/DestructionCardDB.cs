@@ -86,7 +86,7 @@ namespace DataAccessLayer
                 // Map allowed sort columns to DB fields
                 var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ModifiedServiceNo"] = "bas.ServiceNo",
+                    ["ServiceNo"] = "bas.ServiceNo",
                     ["UpdatedOn"] = "tdc.UpdatedOn",
                     ["RequestId"] = "req.RequestId",
                     ["Remark"] = "tdc.Remark"
@@ -110,12 +110,7 @@ namespace DataAccessLayer
                                 tdc.UpdatedOn,tdc.Remark,tdc.IsActive,
                                 bas.NameAsPerRecord,
                                 regi.Abbreviation RegimentalName,
-                                CASE
-                                WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
-                                CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
-                                ELSE
-                                bas.ServiceNo
-                                END AS ModifiedServiceNo,tdc.DestructedOn,
+                                tdc.DestructedOn,
                                 (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(tdc.RemarksIds,','))) RemarksNameList,
                                 tdc.RemarksIds";
                 fromJoinClause = @"from TrnDestructionCards tdc
@@ -160,7 +155,6 @@ namespace DataAccessLayer
                                     FName = e.FName,
                                     LName = e.LName,
                                     ServiceNo = e.ServiceNo,
-                                    ModifiedServiceNo = e.ModifiedServiceNo,
                                     UnitName = e.UnitName,
                                     UnitAbbreviation = e.UnitAbbreviation,
                                     RankName = e.RankName,
@@ -185,11 +179,23 @@ namespace DataAccessLayer
             return responseData;
         }
 
+        /// <summary>
+        /// Retrieves the destruction card details for the given list of request IDs.
+        /// This method is used for exporting data related to destruction cards, including associated details such as Army number, rank, unit, serial number, chip number, and reasons for destruction.
+        /// </summary>
+        /// <param name="Data">An object containing a list of request IDs to filter the destruction card records.</param>
+        /// <returns>A list of DTODestructionCardExportResponse objects containing the destruction card details.</returns>
+        /// <remarks>
+        /// The query fetches data related to destruction cards from multiple tables, including BasicDetails, MRank, MUnit, and MRemarks. 
+        /// It aggregates the reasons for destruction from the MRemarks table, and it only includes records where the request ID matches those provided in the input.
+        /// The results are then returned as a list of DTODestructionCardExportResponse objects.
+        /// </remarks>
         public async Task<List<DTODestructionCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data)
         {
             var records = new List<DTODestructionCardExportResponse>();
             try
             {
+                // SQL query to retrieve destruction card details along with related information
                 string query = @"select req.RequestId,tdc.DestructedCardId,bas.ServiceNo as ArmyNo,
 	                                ranks.RankAbbreviation,bas.FName,bas.LName,Muni.Abbreviation Unit,
 	                                tdc.UpdatedOn as DateAndTime,tdc.Remark,tdc.IsActive as IsActiveBool,
@@ -202,8 +208,12 @@ namespace DataAccessLayer
 	                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
 	                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
                                   Where req.RequestId in @Ids";
+
+                // Create parameters for the query
                 var parameters = new DynamicParameters();
                 parameters.Add("@Ids", Data.Ids);
+
+                // Execute the query and map the results to DTODestructionCardExportResponse
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTODestructionCardExportResponse>(query, parameters);
@@ -212,6 +222,7 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during query execution
                 _logger.LogError(1001, ex, "DestructionCardDB->GetDetailsByRequestIds");
             }
             return records;

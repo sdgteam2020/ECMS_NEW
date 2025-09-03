@@ -2,11 +2,6 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
@@ -19,6 +14,13 @@ namespace DataAccessLayer
             _contextDB2 = contextDB2;
             _context = context;
         }
+
+        /// <summary>
+        /// Adds a new log entry to the TrnMappingUnMapping_Log table.
+        /// This log tracks the mapping/unmapping activities of users in the system.
+        /// </summary>
+        /// <param name="Data">An object of type TrnMappingUnMapping_Log containing the log details to be inserted.</param>
+        /// <returns>Returns a Task representing the asynchronous operation, with a boolean result indicating success (true) or failure (false).</returns>
         public Task<bool> Add(TrnMappingUnMapping_Log Data)
         {
             using (var connection = _contextDB2.CreateConnection())

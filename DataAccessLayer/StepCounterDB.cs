@@ -1,15 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
-using DataTransferObject.Response.User;
-using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
@@ -21,6 +13,11 @@ namespace DataAccessLayer
             _contextDP = contextDP;
         }
 
+        /// <summary>
+        /// Updates the step counter for a given request and updates the BasicDetails if the step ID is 3.
+        /// </summary>
+        /// <param name="Data">The MStepCounter object containing the data to be updated.</param>
+        /// <returns>The updated MStepCounter object.</returns>
         public async Task<MStepCounter> UpdateStepCounter(MStepCounter Data)
         {
             string query = "";

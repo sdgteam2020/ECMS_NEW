@@ -2,28 +2,18 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
-using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Dapper.SqlMapper;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
     public class MapUnitDB : GenericRepositoryDL<MapUnit>, IMapUnitDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         protected readonly DapperContext _contextDP;
         private readonly ILogger<MapUnitDB> _logger;
         public MapUnitDB(ApplicationDbContext context, DapperContext contextDP, ILogger<MapUnitDB> logger) : base(context)
@@ -32,6 +22,9 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _context = context;
         }
+        
+        
+        
         /// <summary>
         /// Checks whether a unit is already mapped in the <c>MapUnit</c> table based on the given SUS number.
         /// Performs a LEFT JOIN between <c>MUnit</c> and <c>MapUnit</c> and returns the mapping status.
@@ -60,11 +53,25 @@ namespace DataAccessLayer
                 return ret.FirstOrDefault();
             }
         }
+
+        
+        /// <summary>
+        /// Checks if a unit with the given UnitId exists, excluding the current UnitMapId.
+        /// </summary>
+        /// <param name="Data">The MapUnit object containing the UnitId and UnitMapId to check.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is true if a matching unit exists, otherwise false.</returns>
         public async Task<bool> GetByName(MapUnit Data)
         {
-            var ret = _context.MapUnit.Any(p => p.UnitId == Data.UnitId && p.UnitMapId!=Data.UnitMapId);
+            var ret = await _context.MapUnit.AnyAsync(p => p.UnitId == Data.UnitId && p.UnitMapId!=Data.UnitMapId);
             return ret;
         }
+
+        
+        /// <summary>
+        /// Finds whether a unit with the given UnitId exists in the MapUnit table.
+        /// </summary>
+        /// <param name="UnitId">The UnitId to check for existence.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is a nullable boolean indicating the existence of the unit (null in case of an error).</returns>
         public async Task<bool?> FindUnitId(int UnitId)
         {
             try
@@ -79,6 +86,14 @@ namespace DataAccessLayer
             }
 
         }
+
+        
+        /// <summary>
+        /// Finds whether a unit with the given UnitId and UnitMapId exists in the MapUnit table, excluding the current mapping.
+        /// </summary>
+        /// <param name="UnitId">The UnitId to check for existence.</param>
+        /// <param name="UnitMapId">The UnitMapId to exclude in the search.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is a nullable boolean indicating the existence of the unit (null in case of an error).</returns>
         public async Task<bool?> FindUnitIdMapped(int UnitId,int UnitMapId)
         {
             try
@@ -92,6 +107,13 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+        
+        /// <summary>
+        /// Retrieves a paginated list of units with their corresponding hierarchy details.
+        /// </summary>
+        /// <param name="request">The DTO request containing pagination, sorting, and filtering information.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the response with the paginated data.</returns>
         public async Task<DTODataTablesResponse<DTOMapUnitResponse>> GetALLUnit(DTODataTablesRequestForMapUnit request)
         {
             try
@@ -191,6 +213,12 @@ namespace DataAccessLayer
 
         }
 
+        
+        /// <summary>
+        /// Retrieves a list of map unit responses based on the provided unit name.
+        /// </summary>
+        /// <param name="UnitName">The name of the unit to search for. The search is case-insensitive.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains a list of <see cref="DTOMapUnitResponse"/> objects.</returns>
         public Task<List<DTOMapUnitResponse>> GetALLByUnitName(string UnitName)
         {
             var Div = (from uni in _context.MapUnit
@@ -211,6 +239,12 @@ namespace DataAccessLayer
             return Task.FromResult(Div);
         }
 
+        
+        /// <summary>
+        /// Retrieves a unit by its UnitMapId.
+        /// </summary>
+        /// <param name="UnitMapId">The UnitMapId to search for.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the unit details if found, otherwise null.</returns>
         public Task<DTOMapUnitResponse> GetALLByUnitMapId(int UnitMapId)
         {
             //on new { Div.UnitId, a.Years_Months } equals new { c.UnitId, c.Years_Months }
@@ -260,6 +294,12 @@ namespace DataAccessLayer
 
             return Task.FromResult(Div);
         }
+
+        /// <summary>
+        /// Retrieves a unit by its UnitMapId.
+        /// </summary>
+        /// <param name="UnitMapId">The UnitMapId to search for.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the unit details if found, otherwise null.</returns>
         public async Task<DTOMapUnitResponse> GetALLByUnitById(int UnitId)
         {
 
@@ -313,6 +353,11 @@ namespace DataAccessLayer
             return (Div);
         }
 
+        /// <summary>
+        /// Saves or updates the unit mapping with the provided details, within a transaction.
+        /// </summary>
+        /// <param name="dTO">The DTO containing the unit mapping details to be saved or updated.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is true if the operation succeeded, false otherwise.</returns>
         public async Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO)
         {
             using (var transaction = _context.Database.BeginTransaction())
@@ -402,6 +447,12 @@ namespace DataAccessLayer
                 }
             }
         }
+
+        /// <summary>
+        /// Checks if a given UnitMapId is referenced in any foreign key tables.
+        /// </summary>
+        /// <param name="UnitMapId">The UnitMapId to check for foreign key references.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a DTO with counts of references in different tables, or null if an error occurred.</returns>
         public async Task<DTOUnitMapIdCheckInFKTableResponse?> UnitMapIdCheckInFKTable(int UnitMapId)
         {
             try
@@ -428,42 +479,13 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves a list of units based on their hierarchical relationship, filtered by provided unit parameters.
+        /// </summary>
+        /// <param name="dTO">The DTO containing filtering parameters such as UnitType, UnitMapId, ComdId, CorpsId, DivId, BdeId, etc.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is a list of DTOUnitResponse objects representing units matching the provided filters.</returns>
         public async Task<List<DTOUnitResponse>> GetUnitByHierarchy(DTOMHierarchyRequest dTO)
         {
-            #region Old code write by Kapoor Sir
-            //try
-            //{
-            //    string query = "SELECT Map.UnitMapId UnitId,unt.UnitName,unt.Suffix,unt.Sus_no FROM MapUnit Map " +
-            //                    " Inner join MUnit unt on Map.UnitId = unt.UnitId" +
-            //                    " where Map.ComdId = ISNULL(@ComdId,Map.ComdId)" +
-            //                    " AND Map.CorpsId = ISNULL(@CorpsId,Map.CorpsId)" +
-            //                    " AND Map.DivId = ISNULL(@DivId,Map.DivId)" +
-            //                    " AND Map.BdeId = ISNULL(@BdeId,Map.BdeId)";
-            //    //" AND Map.FmnBranchID = ISNULL(@FmnBranchID,Map.FmnBranchID)" +
-            //    //" AND Map.PsoId = ISNULL(@PsoId,Map.PsoId)" +
-            //    //" AND Map.SubDteId = ISNULL(@SubDteId,Map.SubDteId)";
-
-            //    using (var connection = _contextDP.CreateConnection())
-            //    {
-            //        var ret = await connection.QueryAsync<DTOUnitResponse>(query, new
-            //        {
-            //            Data.ComdId,
-            //            Data.CorpsId,
-            //            Data.DivId,
-            //            Data.BdeId,
-            //            Data.FmnBranchID,
-            //            Data.PsoId,
-            //            Data.SubDteId
-            //        });
-            //        return ret.ToList();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(1001, ex, "MapUnitDB->GetUnitByHierarchy");
-            //    return null;
-            //}
-            #endregion
             try
             {
                 string query = @"SELECT unit.UnitMapId as UnitId,unt.UnitName,unt.Suffix,unt.Sus_no FROM MapUnit unit
@@ -517,6 +539,11 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves a list of units for an Icard request, filtered by provided parameters.
+        /// </summary>
+        /// <param name="Data">The DTO containing filtering parameters such as ComdId, CorpsId, DivId, BdeId, and UnitMapId.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is a list of DTOUnitResponse objects representing units matching the provided filters.</returns>
         public async Task<List<DTOUnitResponse>> GetUnitByHierarchyForIcardRequest(DTOMHierarchyRequest Data)
         {
             try

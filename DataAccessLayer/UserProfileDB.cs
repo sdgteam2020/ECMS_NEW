@@ -2,22 +2,14 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain;
-using DataTransferObject.Domain.Identitytable;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-using System.Linq;
 using static Dapper.SqlMapper;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DataAccessLayer
 {
@@ -32,6 +24,8 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
+        
+        
         /// <summary>
         /// Checks if the specified UserId exists in any foreign key child tables.
         /// Returns counts of related records in TrnDomainMapping, MTrnICardHold, TrnPostingOut (To/From), and TrnFwds (To/From).
@@ -66,6 +60,12 @@ namespace DataAccessLayer
                 return new DTOProfileIdCheckInFKTableResponse();
             }
         }
+
+        /// <summary>
+        /// Deletes a user profile from the system.
+        /// </summary>
+        /// <param name="mUserProfile">The user profile to be deleted.</param>
+        /// <returns>Returns a response indicating whether the deletion was successful.</returns>
         public async Task<DTOProfileManageDeleteResponse> DeleteProfile(MUserProfile mUserProfile)
         {
             DTOProfileManageDeleteResponse response = new DTOProfileManageDeleteResponse();
@@ -104,6 +104,14 @@ namespace DataAccessLayer
             }
             return response;
         }
+
+
+        /// <summary>
+        /// Checks if a user profile with the given ArmyNo and UserId already exists.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number to search for.</param>
+        /// <param name="UserId">The UserId to exclude from the search.</param>
+        /// <returns>Returns true if the ArmyNo exists for another user; otherwise, false.</returns>
         public async Task<bool?> FindByArmyNoWithUserId(string ArmyNo, int UserId)
         {
             try
@@ -118,6 +126,13 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Checks if a user profile with the given ArmyNo exists.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number to search for.</param>
+        /// <returns>Returns true if the ArmyNo exists, otherwise false.</returns>
         public async Task<bool?> FindByArmyNo(string ArmyNo)
         {
             try
@@ -132,6 +147,13 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Updates a user's profile and domain mapping.
+        /// </summary>
+        /// <param name="dTO">The data transfer object containing the updated user and mapping information.</param>
+        /// <returns>Returns true if the update was successful; false otherwise.</returns>
         public async Task<bool?> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
         {
             using (var transaction = _context.Database.BeginTransaction())
@@ -187,11 +209,26 @@ namespace DataAccessLayer
                 }
             }
         }
+
+
+        /// <summary>
+        /// Retrieves user profiles by ArmyNo and UserId.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number to search for.</param>
+        /// <param name="UserId">The UserId to exclude from the search.</param>
+        /// <returns>A list of user profiles that match the ArmyNo.</returns>
         public async Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId)
         {
             var ret = await _context.UserProfile.Where(P=>P.ArmyNo.ToUpper().Contains(ArmyNo.ToUpper())).ToListAsync();
             return ret;
         }
+
+
+        /// <summary>
+        /// Retrieves a user's profile by ArmyNo.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number to search for.</param>
+        /// <returns>A DTO containing the user's profile information if found; otherwise, null.</returns>
         public async Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo)
         {
             DTOProfileResponse? dTOProfileResponse = new DTOProfileResponse();
@@ -207,6 +244,13 @@ namespace DataAccessLayer
             }
 
         }
+
+        /// <summary>
+        /// Checks if the ArmyNo is already associated with a user profile.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number to search for.</param>
+        /// <param name="AspNetUsersId">The ASP.NET user's Id to compare with the profile.</param>
+        /// <returns>A DTO containing status codes and messages depending on the ArmyNo status.</returns>
         public async Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId)
         {
             DTOProfileResponse? dTOProfileResponse = new DTOProfileResponse();
@@ -247,6 +291,8 @@ namespace DataAccessLayer
             }
 
         }
+        
+        
         /// <summary>
         /// Retrieves the user profile by the specified <paramref name="UserId"/> including related data 
         /// such as rank, domain mapping, and user details.
@@ -301,6 +347,17 @@ namespace DataAccessLayer
                 return null; 
             }
         }
+
+
+        /// <summary>
+        /// Retrieves user profile details based on the provided Army number or User ID.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number of the user whose profile is being retrieved.</param>
+        /// <param name="UserId">The User ID associated with the profile to retrieve.</param>
+        /// <returns>
+        /// A <see cref="DTOUserProfileResponse"/> containing the user's profile data, or null if no matching profile is found.
+        /// </returns>
+        /// <exception cref="Exception">Logs and returns null if an error occurs during the query execution.</exception>
         public async Task<DTOUserProfileResponse?> GetByArmyNo(string ArmyNo, int UserId)
         {
             try
@@ -361,6 +418,8 @@ namespace DataAccessLayer
             
         }
 
+
+
         /// <summary>
         /// Retrieves all related user, rank, unit, appointment, and domain mapping data for a given Army number.
         /// </summary>
@@ -373,6 +432,16 @@ namespace DataAccessLayer
         /// - Appointment details (ApptId, AppointmentName)
         /// - Domain info and admin messages (DomainId, AdminMsg)
         /// Returns <c>null</c> if no matching record is found or an exception occurs.
+        /// </returns>
+
+
+        /// <summary>
+        /// Retrieves all related data for a given ArmyNo.
+        /// </summary>
+        /// <param name="ArmyNo">The Army Number of the user to retrieve data for.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains 
+        /// the related data in a DTO response if found, or null if an error occurs.
         /// </returns>
         public async Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo)
         {
@@ -423,6 +492,16 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves the top 5 records related to a given ArmyNo.
+        /// </summary>
+        /// <param name="ArmyNo">The Army Number of the user to retrieve records for.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains 
+        /// a list of DTO responses for the top 5 records, or null if an error occurs.
+        /// </returns>
         public async Task<List<DTOAllRelatedDataByArmyNoResponse>?> GetTopByArmyNo(string ArmyNo)
         {
             try
@@ -464,6 +543,16 @@ namespace DataAccessLayer
             }
 
         }
+
+        /// <summary>
+        /// Retrieves all user profiles related to a given DomainId and UserId.
+        /// </summary>
+        /// <param name="DomainId">The Domain ID associated with the user profile.</param>
+        /// <param name="UserId">The User ID of the person requesting the data.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains 
+        /// a list of DTO user profile responses, or an empty list if an error occurs.
+        /// </returns>
         public async Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId)
         {
             // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
@@ -549,6 +638,16 @@ namespace DataAccessLayer
 
             //return Task.FromResult(ret);
         }
+
+
+        /// <summary>
+        /// Retrieves basic details for a given RequestId.
+        /// </summary>
+        /// <param name="RequestId">The Request ID to fetch related basic details.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains 
+        /// a list of basic detail view models related to the RequestId.
+        /// </returns>
         public async Task<List<BasicDetailVM>> GetByRequestId(int RequestId)
         {
             //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
@@ -596,6 +695,18 @@ namespace DataAccessLayer
                 return new List<BasicDetailVM>();
             }
         }
+
+        /// <summary>
+        /// Retrieves a list of forwarded ICARD responses based on multiple filtering criteria.
+        /// </summary>
+        /// <param name="StepId">The step ID to filter by.</param>
+        /// <param name="UnitId">The unit ID to filter by.</param>
+        /// <param name="Name">The name to filter the users by.</param>
+        /// <param name="TypeId">The type of search to perform (e.g., by Name, ArmyNo, etc.).</param>
+        /// <param name="RO">The Record Office flag.</param>
+        /// <param name="ORO">The ORO flag.</param>
+        /// <param name="DomainMapId">The domain mapping ID to exclude from the results.</param>
+        /// <returns>A list of DTOFwdICardResponse objects that match the search criteria.</returns>
         public async Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId, int UnitId, string Name, int TypeId,int RO,int ORO, int DomainMapId)
         {
             try
@@ -662,6 +773,17 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves a list of forwarded ICARD responses based on office and unit mapping conditions.
+        /// </summary>
+        /// <param name="UnitId">The unit ID to filter by.</param>
+        /// <param name="RO">The Record Office flag (1 for active Record Office users).</param>
+        /// <param name="ORO">The ORO flag (1 for active ORO users).</param>
+        /// <param name="IsAfsacCell">Indicates if it is an Afsac Cell user.</param>
+        /// <param name="BasicDetailsId">The BasicDetailsId to filter by.</param>
+        /// <param name="DomainMapId">The domain mapping ID to exclude from the results.</param>
+        /// <returns>A list of DTOFwdICardResponse objects that match the search conditions.</returns>
         public async Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int RO, int ORO, int IsAfsacCell, int BasicDetailsId, int DomainMapId)
         {
             #region Old Code 
@@ -947,6 +1069,11 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves the user profile's token application status based on the user ID.
+        /// </summary>
+        /// <param name="UserId">The ID of the user to fetch the profile for.</param>
+        /// <returns>The MUserProfile object containing token application details.</returns>
         public async Task<MUserProfile> GetByIsWithoutTokenApply(int UserId)
         {
             try { 

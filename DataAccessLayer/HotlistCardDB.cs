@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// Class for handling operations related to Hotlist Cards in the database.
+    /// </summary>
     public class HotlistCardDB : GenericRepositoryDL<TrnHotlistCard>, IHotlistCardDB
     {
         protected new readonly ApplicationDbContext _context;
@@ -21,6 +21,14 @@ namespace DataAccessLayer
         private readonly IDataProtector protector;
         private readonly ILogger<HotlistCardDB> _logger;
 
+        /// <summary>
+        /// Initializes the HotlistCardDB class with the provided context and services.
+        /// </summary>
+        /// <param name="context">ApplicationDbContext instance for interacting with the database.</param>
+        /// <param name="contextDP">DapperContext instance for executing raw SQL queries.</param>
+        /// <param name="dataProtectionProvider">Provider for creating data protectors.</param>
+        /// <param name="logger">Logger instance for logging errors and information.</param>
+        /// <param name="dataProtectionPurposeStrings">Strings for defining the purpose of data protection.</param>
         public HotlistCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<HotlistCardDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
@@ -31,12 +39,17 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
 
+        /// <summary>
+        /// Checks if any request with the specified RequestId exists in the database.
+        /// </summary>
+        /// <param name="RequestId">The RequestId to check for.</param>
+        /// <returns>True if the request exists, otherwise false.</returns>
         public async Task<bool> FindAnyRequestId(int RequestId)
         {
             try
             {
-                return _context.TrnHotlistCards
-                                .Any(f => f.RequestId == RequestId);
+                return await _context.TrnHotlistCards
+                                .AnyAsync(f => f.RequestId == RequestId);
             }
             catch (Exception ex)
             {
@@ -45,6 +58,12 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves a paginated list of hotlist cards based on the provided data request parameters.
+        /// </summary>
+        /// <param name="dTO">The data request parameters including sorting and filtering options.</param>
+        /// <returns>A DTODataTablesResponse object containing the paginated list of hotlist cards.</returns>
         public async Task<DTODataTablesResponse<DTOHotlistCardGetResponse>> GetAllHotlist(DTODataTablesRequest dTO)
         {
             List<DTOHotlistCardGetResponse> dTOHotlistCardGetResponses = new List<DTOHotlistCardGetResponse>();
@@ -60,64 +79,75 @@ namespace DataAccessLayer
                 // Map allowed sort columns to DB fields
                 var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ModifiedServiceNo"] = "bas.ServiceNo",
+                    ["ServiceNo"] = "bas.ServiceNo",
                     ["UpdatedOn"] = "hotlist.UpdatedOn",
                     ["RequestId"] = "req.RequestId",
                     ["Remark"] = "hotlist.Remark"
                 };
 
+                // Determine the column to sort by, default to "UpdatedOn"
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
                     ? allowedSortColumns[dTO.sortColumn!]
                     : "hotlist.UpdatedOn";
 
-                var sortOrder = dTO.sortDirection;
+                var sortOrder = dTO.sortDirection; // Ascending or descending order
 
-                string query = "";
-                    query = @"appl.Name ApplyFor,
-                                req.RequestId,hotlist.HotlistCardId,
-                                bas.ServiceNo,ranks.RankAbbreviation RankName,
-                                bas.FName,bas.LName,
-                                Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                                hotlist.UpdatedOn,hotlist.RemarksIds,hotlist.Remark,hotlist.IsActive,
-                                bas.NameAsPerRecord,
-                                regi.Abbreviation RegimentalName,
-                                CASE
-                                WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
-                                CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
-                                ELSE
-                                bas.ServiceNo
-                                END AS ModifiedServiceNo,
-                                (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(hotlist.RemarksIds,','))) RemarksNameList
-                                from TrnHotlistCards hotlist
-                                inner join TrnICardRequest req on req.RequestId = hotlist.RequestId
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                                inner join MRank ranks on ranks.RankId=bas.RankId
-                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
-                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                                left join MRegimental regi on regi.RegId=bas.RegimentalId
-                                Where bas.ServiceNo like '%' + @SearchTerm + '%' ";
+                // Define the select fields for the query
+                string selectFields = @"appl.Name ApplyFor,
+                                        req.RequestId,hotlist.HotlistCardId,
+                                        bas.ServiceNo,ranks.RankAbbreviation RankName,
+                                        bas.FName,bas.LName,
+                                        Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
+                                        hotlist.UpdatedOn,hotlist.RemarksIds,hotlist.Remark,hotlist.IsActive,
+                                        bas.NameAsPerRecord,
+                                        regi.Abbreviation RegimentalName,
+                                        (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(hotlist.RemarksIds,','))) RemarksNameList";
 
-                var multiQuery = query = $@"
-                            WITH RecordCTE AS (
-                                select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
-                            )
-                            SELECT * FROM RecordCTE
-                            WHERE RowNum BETWEEN @Offset AND @Limit;
-                            Select Count(*) from TrnHotlistCards;
-                        ";
+                // Join tables for the query
+                string fromJoinClause = @"from TrnHotlistCards hotlist
+                                        inner join TrnICardRequest req on req.RequestId = hotlist.RequestId
+                                        inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                                        inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+                                        inner join MRank ranks on ranks.RankId=bas.RankId
+                                        inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+                                        inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
+                                        left join MRegimental regi on regi.RegId=bas.RegimentalId";
+
+                // Filter clause for the search term
+                string whereClause = @"Where bas.ServiceNo like '%' + @SearchTerm + '%' ";
+
+                // SQL query to retrieve paginated results using a Common Table Expression (CTE)
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryMultipleAsync(query, new { Offset = dTO.Start, Limit = dTO.Length, SearchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? "" : dTO.searchValue });
+                    // Trim search value to avoid unnecessary spaces
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+
+                    // Prepare query parameters
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    // Execute the query and get the result
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+
+                    // Read the data
                     var records = (await ret.ReadAsync<DTOHotlistCardGetResponse>()).ToList();
-                    var totalRecords = (await ret.ReadAsync<int>()).Single();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    // Prepare the response object with filtered data
                     responseData = new DTODataTablesResponse<DTOHotlistCardGetResponse>
                     {
                         draw = dTO.Draw,
-                        recordsTotal = totalRecords, // Total records without filtering
-                        recordsFiltered = records.Count(), // Total records after filtering
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
                         data = (from e in records
                                 select new DTOHotlistCardGetResponse()
                                 {
@@ -126,7 +156,6 @@ namespace DataAccessLayer
                                     FName = e.FName,
                                     LName = e.LName,
                                     ServiceNo = e.ServiceNo,
-                                    ModifiedServiceNo = e.ModifiedServiceNo,
                                     UnitName = e.UnitName,
                                     UnitAbbreviation = e.UnitAbbreviation,
                                     RankName = e.RankName,
@@ -150,11 +179,18 @@ namespace DataAccessLayer
             return responseData;
         }
 
+
+        /// <summary>
+        /// Retrieves the detailed hotlist card data for the specified RequestIds.
+        /// </summary>
+        /// <param name="Data">The request data containing the list of RequestIds to retrieve details for.</param>
+        /// <returns>A list of <see cref="DTOHotlistCardExportResponse"/> containing the detailed information for each hotlist card.</returns>
         public async Task<List<DTOHotlistCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data)
         {
             var records = new List<DTOHotlistCardExportResponse>();
             try
             {
+                // Define the SQL query to fetch the detailed hotlist card data for the provided RequestIds
                 string query = @"select req.RequestId,hotlist.HotlistCardId,bas.ServiceNo as ArmyNo,
 	                                ranks.RankAbbreviation,bas.FName,bas.LName,Muni.Abbreviation Unit,
 	                                hotlist.UpdatedOn as DateAndTime,hotlist.Remark,hotlist.IsActive as IsActiveBool,
@@ -167,16 +203,23 @@ namespace DataAccessLayer
 	                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
 	                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
                                   Where req.RequestId in @Ids";
+
+                // Prepare parameters to pass into the SQL query
                 var parameters = new DynamicParameters();
                 parameters.Add("@Ids", Data.Ids);
+
+                // Open a database connection and execute the query
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTOHotlistCardExportResponse>(query, parameters);
+
+                    // Convert the result to a list
                     records = ret.ToList();
                 }
             }
             catch (Exception ex)
             {
+                // Log any exceptions that occur during the query execution
                 _logger.LogError(1001, ex, "HotlistCardDB->GetBesicdetailsByRequestId");
             }
             return records;

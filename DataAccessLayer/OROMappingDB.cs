@@ -1,16 +1,10 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
@@ -25,11 +19,24 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
+
+        /// <summary>
+        /// Gets a boolean value indicating whether there is any existing record in the OROMapping table
+        /// that has a different OROMappingId than the one specified in the DTO.
+        /// </summary>
+        /// <param name="Dto">The DTO object containing the OROMappingId to compare.</param>
+        /// <returns>A boolean value indicating whether a record exists with a different OROMappingId.</returns>
         public async Task<bool> GetByName(OROMapping Dto)
         {
             var ret =  await _context.OROMapping.AnyAsync(x => x.OROMappingId != Dto.OROMappingId);
             return ret;
         }
+
+        /// <summary>
+        /// Retrieves all OROMapping records along with related details like Rank, Record Office, and Unit information.
+        /// </summary>
+        /// <returns>A list of DTOOROMappingResponse objects containing OROMapping and related data.</returns>
+        /// <exception cref="Exception">Throws an exception if an error occurs during the database query.</exception>
         public async Task<List<DTOOROMappingResponse>?> GetAllOROMapping()
         {
             try
@@ -58,6 +65,12 @@ namespace DataAccessLayer
             }
 
         }
+
+        /// <summary>
+        /// Retrieves a list of all OROMapping records along with their associated Record Office names.
+        /// </summary>
+        /// <returns>A list of DTOAllOROResponse objects containing OROMappingId and RecordOffice details.</returns>
+        /// <exception cref="Exception">Throws an exception if an error occurs during the database query.</exception>
         public async Task<List<DTOAllOROResponse>> GetAllORO()
         {
             try

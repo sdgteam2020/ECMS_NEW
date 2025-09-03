@@ -1,22 +1,13 @@
-﻿using Azure.Core;
-using Dapper;
+﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -35,27 +26,74 @@ namespace DataAccessLayer
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
+
+        /// <summary>
+        /// Checks whether a request ID exists in the `TrnFaultyCard` table with the specified `RequestId` and the `IsComplete` flag set to `false`.
+        /// </summary>
+        /// <param name="RequestId">The request ID to check for existence in the `TrnFaultyCard` table.</param>
+        /// <returns>
+        /// Returns `true` if the specified `RequestId` exists in the `TrnFaultyCard` table with `IsComplete` set to `false`. 
+        /// Returns `false` if no matching records are found or if an exception occurs.
+        /// </returns>
+        /// <remarks>
+        /// This method uses the `AnyAsync` method to perform an asynchronous query to check if any record in the `TrnFaultyCard` table matches the `RequestId` 
+        /// and has the `IsComplete` flag set to `false`. If an exception occurs during the query, it is logged and `false` is returned.
+        /// </remarks>
         public async Task<bool> FindRequestId(int RequestId)
         {
             try
             {
+                // Query to check if there is any record in TrnFaultyCard with the given RequestId and IsComplete = false
                 return await _context.TrnFaultyCard.AnyAsync(f => f.RequestId == RequestId && f.IsComplete == false);
             }
             catch (Exception ex)
             {
+                // Log any exceptions that occur during the query
                 _logger.LogError(1001, ex, "FaultyCardDB->FindRequestId");
                 return false;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves a concatenated list of remarks from the `MRemarks` table based on the provided `RemarksIds`.
+        /// </summary>
+        /// <param name="RemarksIds">An array of `RemarksIds` used to filter and retrieve the remarks data.</param>
+        /// <returns>
+        /// A string containing all the remarks concatenated with a `#` separator. 
+        /// If no remarks are found for the provided `RemarksIds`, the method returns `null`.
+        /// </returns>
+        /// <remarks>
+        /// The method executes a SQL query that uses the `STRING_AGG` function to concatenate all remarks for the given `RemarksIds` with a `#` symbol as the separator.
+        /// </remarks>
         public async Task<string> GetRemarksData(int[] RemarksIds)
         {
+            // SQL query to retrieve and concatenate remarks for the provided RemarksIds
             string query = @"select STRING_AGG(Remarks,'#') AS RemarksNameList from MRemarks where RemarksId in @RemarksIds";
             using (var connection = _contextDP.CreateConnection())
             {
+                // Executes the SQL query and returns the concatenated remarks
                 var result = await connection.QueryFirstOrDefaultAsync<string>(query, new { RemarksIds });
-                return result;
+                return result; // Returns the concatenated string or null if no remarks found
             }
         }
+
+
+        /// <summary>
+        /// Retrieves a list of faulty cards, optionally filtered by the provided `MapUnitId`. 
+        /// It returns detailed information about each faulty card including associated metadata such as rank, service number, unit, and fault remarks.
+        /// </summary>
+        /// <param name="Claim">A boolean flag indicating whether to filter the cards based on claim status.</param>
+        /// <param name="MapUnitId">An optional parameter used to filter faulty cards by a specific MapUnitId.</param>
+        /// <returns>
+        /// A list of <see cref="DTOFaultyCardListResponse"/> containing the details of faulty cards.
+        /// If an error occurs, it returns null.
+        /// </returns>
+        /// <remarks>
+        /// If `Claim` is true, it retrieves all faulty cards without unit-based filtering.
+        /// If `Claim` is false, it filters the results by the provided `MapUnitId`.
+        /// The method also formats the service number and remarks for better presentation.
+        /// </remarks>
         public async Task<List<DTOFaultyCardListResponse>?> GetAllFaulty(bool Claim,int MapUnitId)
         {
             try
@@ -146,10 +184,27 @@ namespace DataAccessLayer
             }
 
         }
+
+        
+        /// <summary>
+        /// Retrieves a paginated and filtered list of faulty card data. The data includes service number, rank, unit, and fault details.
+        /// It also handles search, sorting, and filtering based on the provided parameters.
+        /// </summary>
+        /// <param name="request">An object containing the request parameters, including sorting, filtering, pagination, and claim status.</param>
+        /// <returns>
+        /// A DTODataTablesResponse containing a list of DTOFaultyCardListResponse objects, which represent the details of each faulty card.
+        /// If an error occurs, it returns an empty response with zero records.
+        /// </returns>
+        /// <remarks>
+        /// This method checks whether to apply unit-based filtering when `Claim` is false. It also handles the sorting of data
+        /// based on the specified column and direction. The method uses LINQ to filter and sort the data, and it paginates
+        /// the results before returning them.
+        /// </remarks>
         public async Task<DTODataTablesResponse<DTOFaultyCardListResponse>> GetAllFaulty(DTODataTablesRequestForFaultyCard request)
         {
             try
             {
+                // Creating the base query to get faulty card data
                 var queryableData = (from faulty in _context.TrnFaultyCard.OrderByDescending(x => x.TrnFaultyCardId)
                                      join mcat in _context.MCategory on faulty.CategoryId equals mcat.CategoryId
                                      join req in _context.TrnICardRequest on faulty.RequestId equals req.RequestId
@@ -243,10 +298,26 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves the details of a specific faulty card using the provided TrnFaultyCardId.
+        /// The method queries various related tables such as MCategory, TrnICardRequest, and BasicDetails to fetch relevant information about the faulty card, including the service number, rank, unit, remarks, and fault details.
+        /// </summary>
+        /// <param name="TrnFaultyCardId">The ID of the faulty card for which details are being requested.</param>
+        /// <returns>
+        /// A <see cref="DTOFaultyCardListResponse"/> object containing the details of the faulty card. If no matching card is found, it returns null.
+        /// </returns>
+        /// <remarks>
+        /// This method utilizes a SQL query to join multiple tables (MCategory, TrnICardRequest, BasicDetails, etc.) to gather the full details of a faulty card.
+        /// The results include the service number (with formatting), rank, unit, remarks, fault category, and other related details.
+        /// If an error occurs during the execution of the query, the method logs the error and returns null.
+        /// </remarks>
         public async Task<DTOFaultyCardListResponse?> GetTrnFaultyCardDetail(int TrnFaultyCardId)
         {
             try
             {
+                // SQL query to fetch faulty card details from multiple related tables
                 string query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,mcat.CategoryId,req.RequestId,faulty.TrnFaultyCardId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
                                 faulty.IsEditAction,faulty.UpdatedOn,faulty.RemarksIds,faulty.FromRemark,faulty.ToRemark,bas.NameAsPerRecord,regi.Abbreviation RegimentalName,
                                 CASE
@@ -271,21 +342,38 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    // Execute the query and return the first matching record
                     var allrecord = await connection.QueryAsync<DTOFaultyCardListResponse>(query, new { TrnFaultyCardId });
                     return allrecord.FirstOrDefault();
                 }
             }
             catch (Exception ex)
             {
+                // Log the error and return null if an exception occurs
                 _logger.LogError(1001, ex, "FaultyCardDB->GetTrnFaultyCardDetail");
                 return null;
             }
 
         }
+
+
+        /// <summary>
+        /// Saves or updates a faulty card record based on the provided data. If the `TrnFaultyCardId` is greater than 0, 
+        /// it updates the existing record; otherwise, it inserts a new record. 
+        /// Additionally, it handles "Accept" (Choice == 2) or "Reject" (Choice == 3) actions by performing related updates
+        /// on various tables like `TrnStepCounter`, `TrnFwds`, and `TrnICardRequest`.
+        /// </summary>
+        /// <param name="dTO">The DTO containing the data for the faulty card (e.g., remarks, status, request details).</param>
+        /// <param name="mTrnFwd">Optional parameter containing forwarding information (required when the card is rejected).</param>
+        /// <returns>A `DTOCommonSaveResponse` containing the status of the save operation, including success or failure message and the current time.</returns>
         public async Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd)
         {
             DTOCommonSaveResponse saveResponse = new DTOCommonSaveResponse();
+
+            // Open a database connection and start a transaction
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+
+            // SQL query strings for performing insert, update, and related queries
             string insert = "";
             string update = "";
             string query2 = "";
@@ -294,27 +382,33 @@ namespace DataAccessLayer
 
             try
             {
+                // If the TrnFaultyCardId is provided (existing record), update the record
                 if (dTO.TrnFaultyCardId > 0)
                 {
                     update = @"UPDATE TrnFaultyCard set ToRemark = @ToRemark,IsEditAction = @IsEditAction,IsComplete = @IsComplete WHERE TrnFaultyCardId=@TrnFaultyCardId";
-                    
+
+                    // Set parameters for the update query
                     var parameters = new DynamicParameters();
                     parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
                     parameters.Add("@IsEditAction", dTO.IsEditAction, DbType.Boolean, ParameterDirection.Input);
                     parameters.Add("@IsComplete", dTO.IsComplete, DbType.Boolean, ParameterDirection.Input);
 
+                    // Execute the update query
                     await db.ExecuteAsync(update, parameters, transaction: transaction);
-                    
+
+                    // Set response message for successful update
                     saveResponse.Id = dTO.TrnFaultyCardId.ToString();
                     saveResponse.Message = "Data Updated";
                 }
                 else
                 {
+                    // SQL query to insert a new faulty card record
                     insert = @"INSERT INTO TrnFaultyCard(RemarksIds,FromRemark,ToRemark,CategoryId,RequestId,IsActive,UserId,Updatedby,UpdatedOn,IsEditAction,TrnFwdId,IsComplete)
                                 OUTPUT INSERTED.TrnFaultyCardId
                                 VALUES(@RemarksIds,@FromRemark,@ToRemark,@CategoryId,@RequestId,@IsActive,@UserId,@Updatedby,@UpdatedOn,@IsEditAction,@TrnFwdId,@IsComplete)";
-                    
+
+                    // Set parameters for the insert query
                     var parameters = new DynamicParameters();
                     parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Output);
                     parameters.Add("@RemarksIds", dTO.RemarksIds, DbType.String, ParameterDirection.Input, 100);
@@ -330,32 +424,41 @@ namespace DataAccessLayer
                     parameters.Add("@TrnFwdId", dTO.TrnFwdId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@IsComplete", dTO.IsComplete, DbType.Boolean, ParameterDirection.Input);
 
+                    // Execute the insert query and retrieve the newly inserted record's ID
                     var Id = await db.QuerySingleAsync<int>(insert, parameters, transaction: transaction);
+
+                    // Set response message for successful insert
                     saveResponse.Id = Id.ToString();
                     saveResponse.Message = "Data has been saved";
 
                 }
-                //Accept
+                // Handle "Accept" action if Choice is 2
                 if (dTO.Choice == 2)
                 {
+                    // SQL query to update the step counter (StepId = 4 for acceptance)
                     query2 = @"UPDATE TrnStepCounter set StepId = 4 where RequestId=@RequestId ";
                     await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
 
+                    // SQL query to mark the forward as incomplete
                     query3 = @"UPDATE TrnFwds set IsComplete = 0 where TrnFwdId=@TrnFwdId ";
                     await db.ExecuteAsync(query3, new { dTO.TrnFwdId }, transaction: transaction);
 
+                    // SQL query to reset certain fields in the TrnICardRequest table
                     query4 = @"UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null where RequestId=@RequestId ";
                     await db.ExecuteAsync(query4, new { dTO.RequestId }, transaction: transaction);
 
                 }
-                //Reject
+                /// Handle "Reject" action if Choice is 3
                 else if (dTO.Choice == 3)
                 {
+                    // If forwarding information is provided, insert a new forward record
                     if (mTrnFwd != null)
                     {
                         insert = @"INSERT INTO TrnFwds(RequestId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,UnitId,Remark,TypeId,IsComplete,IsActive,Updatedby,UpdatedOn,RemarksIds,FwdStatusId,StepId)
                                 OUTPUT INSERTED.TrnFwdId
                                 VALUES(@RequestId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@UnitId,@Remark,@TypeId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@RemarksIds,@FwdStatusId,@StepId)";
+
+                        // Set parameters for the insert query
                         var parameters = new DynamicParameters();
                         parameters.Add("@TrnFwdId", mTrnFwd.TrnFwdId, DbType.Int32, ParameterDirection.Output);
                         parameters.Add("@RequestId", mTrnFwd.RequestId, DbType.Int32, ParameterDirection.Input);
@@ -373,15 +476,18 @@ namespace DataAccessLayer
                         parameters.Add("@RemarksIds", mTrnFwd.RemarksIds, DbType.String, ParameterDirection.Input, 100);
                         parameters.Add("@FwdStatusId", mTrnFwd.FwdStatusId, DbType.Byte, ParameterDirection.Input);
                         parameters.Add("@StepId", mTrnFwd.StepId, DbType.Byte, ParameterDirection.Input);
-                        
+
+                        // Execute the forward insertion query
                         var Id = await db.QuerySingleAsync<int>(insert, parameters, transaction: transaction);
                     }
+                    // SQL queries to reset the XmlFiles and update the step counter for rejection
                     query3 = @"UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles='' WHERE RequestId=@RequestId";
                     await db.ExecuteAsync(query3, new { dTO.RequestId }, transaction: transaction);
 
                     query2 = @"UPDATE TrnStepCounter set StepId = 9 where RequestId=@RequestId ";
                     await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
 
+                    // Reset card fields on rejection
                     query4 = @"UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null where RequestId=@RequestId ";
                     await db.ExecuteAsync(query4, new { dTO.RequestId }, transaction: transaction);
                 }
@@ -389,6 +495,8 @@ namespace DataAccessLayer
 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();
+
+                // Set response for successful transaction
                 saveResponse.CurrentTime = dTO.UpdatedOn ?? DateTime.Now;
                 saveResponse.Result = true;
                 return saveResponse;

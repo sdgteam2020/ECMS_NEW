@@ -125,8 +125,21 @@ function BindData() {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            //{ data: "RequestId", name: "RequestId" },
-            { data: "ModifiedServiceNo", name: "ModifiedServiceNo" },
+            {
+                title: "Army No",
+                data: "ServiceNo",
+                name: "ServiceNo",
+                render: function (data, type, row) {
+                    // Check if first two characters are alphabets
+                    if (/^[A-Za-z]{2}/.test(data)) {
+                        // Insert space after first two characters
+                        return data.slice(0, 2) + ' ' + data.slice(2);
+                    } else {
+                        // No space needed
+                        return data;
+                    }
+                }
+            },
             {
                 data: null,
                 name: null,

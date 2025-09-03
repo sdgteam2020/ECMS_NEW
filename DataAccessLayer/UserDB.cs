@@ -1,13 +1,6 @@
-﻿using Dapper;
-using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Response;
+﻿using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Response.User;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Text;
 
 namespace DataAccessLayer
 {
@@ -17,11 +10,18 @@ namespace DataAccessLayer
         {
 
         }
-        private readonly IConfiguration configuration;
         //public UserDB(IConfiguration configuration)
         //{
         //    this.configuration = configuration;
         //}
+
+        /// <summary>
+        /// Retrieves a list of roles for user selection.
+        /// </summary>
+        /// <returns>
+        /// A collection of <see cref="SelectListItem"/> objects representing the available roles.
+        /// The list includes a default "-- Select --" option and a "User" role.
+        /// </returns>
         public IEnumerable<SelectListItem> GetRole()
         {
             var roles = new List<SelectListItem>
@@ -31,6 +31,9 @@ namespace DataAccessLayer
             };
             return new SelectList(roles, "Value", "Text");
         }
+        
+        
+        
         public Task<UserM> GetByUserName(string UserName)
         {
             throw new NotImplementedException();

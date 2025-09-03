@@ -1,27 +1,17 @@
-﻿using Azure.Core;
-using Dapper;
+﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
-using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccessLayer
 {
     public class TrnFwnDB : GenericRepositoryDL<MTrnFwd>, ITrnFwnDB
     {
         private readonly DapperContext _contextDP;
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         private readonly ILogger<TrnFwnDB> _logger;
         public TrnFwnDB(ApplicationDbContext context, DapperContext contextDP, ILogger<TrnFwnDB> logger) : base(context)
         {
@@ -29,8 +19,13 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
-        private readonly IConfiguration configuration;
 
+
+        /// <summary>
+        /// Updates the "IsComplete" status for all records with the specified RequestId in the "TrnFwds" table.
+        /// </summary>
+        /// <param name="RequestId">The RequestId of the records to be updated.</param>
+        /// <returns>Returns true if the update was successful, otherwise false.</returns>
         public async Task<bool> UpdateAllBYRequestId(int RequestId)
         {
             using (var connection = _contextDP.CreateConnection())
@@ -39,6 +34,14 @@ namespace DataAccessLayer
                 return await Task.FromResult(true);
             }
         }
+
+
+        /// <summary>
+        /// Updates a specific field in the "TrnFwds" table based on the "TrnFwdId". It checks conditions for FwdStatusId 
+        /// and updates it accordingly while performing additional logic if needed.
+        /// </summary>
+        /// <param name="TrnFwdId">The ID of the record to be updated in the "TrnFwds" table.</param>
+        /// <returns>Returns true if the update was successful, otherwise false.</returns>
         public async Task<bool> UpdateFieldBYTrnFwdId(int TrnFwdId)
         {
             try
@@ -70,6 +73,14 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Saves internal forward information to the "TrnFwds" table. It involves updating existing records 
+        /// and inserting new ones based on the provided DTO.
+        /// </summary>
+        /// <param name="dTO">The data transfer object containing the internal forward information to be saved.</param>
+        /// <returns>Returns true if the save operation was successful, false if an error occurred, or null if an exception was thrown.</returns>
         public async Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO)
         {
             #region old code

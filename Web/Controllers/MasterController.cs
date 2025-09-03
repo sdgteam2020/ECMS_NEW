@@ -2,7 +2,6 @@
 using BusinessLogicsLayer.MapUnitChange;
 using BusinessLogicsLayer.Master;
 using DataAccessLayer;
-using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
@@ -24,18 +23,16 @@ namespace Web.Controllers
         private readonly IUserProfileBL userProfileBL;
         private readonly IChangeHierarchyMasterBL changeHierarchyMaster;
         private readonly ILogger<MasterController> _logger;
-        private readonly IEncryptsqlDB _iEncryptsqlDB;
         private readonly IMasterBL _IMasterBL;
         private readonly IConfiguration _configuration;
         private readonly IMapUnitChangeBL _mapUnitChangeBL;
         private readonly IDataProtector protector;
-        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IEncryptsqlDB iEncryptsqlDB, IMasterBL masterBL, IConfiguration configuration, IMapUnitChangeBL mapUnitChangeBL, DataProtectionPurposeStrings dataProtectionPurposeStrings, IDataProtectionProvider dataProtectionProvider)
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IMasterBL masterBL, IConfiguration configuration, IMapUnitChangeBL mapUnitChangeBL, DataProtectionPurposeStrings dataProtectionPurposeStrings, IDataProtectionProvider dataProtectionProvider)
         {
             this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
             this.changeHierarchyMaster = changeHierarchyMaster;
             _logger = logger; 
-            _iEncryptsqlDB = iEncryptsqlDB;
             _IMasterBL = masterBL;
             _configuration = configuration;
             _mapUnitChangeBL= mapUnitChangeBL;
@@ -1776,7 +1773,6 @@ namespace Web.Controllers
                 dTO.UnitName = dTO.UnitName.Trim();
                 dTO.Abbreviation = dTO.Abbreviation != null ? dTO.Abbreviation.Trim() : dTO.Abbreviation;
                 dTO.Suffix = dTO.Suffix.Trim();
-                //dTO.UnitDesc =  await _iEncryptsqlDB.GetEncryptString(ConnKeyConstants.EncryptByPassPhraseKey, dTO.UnitName);
                 if (ModelState.IsValid)
                 {
                     if (!await unitOfWork.Unit.GetByName(dTO))

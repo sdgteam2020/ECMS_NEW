@@ -1,21 +1,9 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using DataTransferObject.ViewModels;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -30,9 +18,12 @@ namespace DataAccessLayer
             _context = context;
             _logger = logger;
         }
-      
-        private readonly IConfiguration configuration;
 
+        /// <summary>
+        /// Retrieves the remarks based on the specified type IDs.
+        /// </summary>
+        /// <param name="Data">An instance of <see cref="DTORemarksRequest"/> containing the list of remark type IDs.</param>
+        /// <returns>A list of <see cref="DTORemarksResponse"/> containing remarks matching the given remark type IDs.</returns>
         public async Task<List<DTORemarksResponse>> GetRemarksByTypeId(DTORemarksRequest Data)
         {
             string query = "Select rem.RemarksId,rem.Remarks,remtype.RemarksType,remtype.RemarkTypeId from MRemarks rem" +
@@ -45,11 +36,14 @@ namespace DataAccessLayer
                 //data.MArmedType.Abbreviation
                 var ret = await connection.QueryAsync<DTORemarksResponse>(query, new { RemarkTypeId });
 
-
-
                 return ret.ToList();
             }
         }
+
+        /// <summary>
+        /// Retrieves the list of armed forces types.
+        /// </summary>
+        /// <returns>A list of <see cref="DTOArmsListResponse"/> representing the armed forces types.</returns>
         public async Task<List<DTOArmsListResponse>> GetArmsList()
         {
             string query = "Select marm.ArmedId,marm.ArmedName from MArmedType marm order by ArmedName";
@@ -61,6 +55,10 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves a list of active branches from MFmnBranches excluding the branch with FmnBranchID = 1.
+        /// </summary>
+        /// <returns>A list of <see cref="DTOMasterResponse"/> containing the branch IDs and names.</returns>
         public async Task<List<DTOMasterResponse>> GetMFmnBranches()
         {
             string query = "SELECT FmnBranchID Id,BranchName Name FROM MFmnBranches where IsActive=1 and FmnBranchID !=1";
@@ -72,6 +70,10 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves the list of active PSOs from the MPso table excluding the PSO with PsoId = 1.
+        /// </summary>
+        /// <returns>A list of <see cref="DTOMasterResponse"/> containing the PSO IDs and names.</returns>
         public async Task<List<DTOMasterResponse>> GetMPSO()
         {
             string query = "SELECT PsoId Id,PSOName Name FROM MPso where IsActive=1 and PsoId !=1";
@@ -83,6 +85,10 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves a list of active sub-department names from MSubDte, excluding SubDteId = 1.
+        /// </summary>
+        /// <returns>A list of <see cref="DTOMasterResponse"/> containing sub-department IDs and names.</returns>
         public async Task<List<DTOMasterResponse>> GetMSubDte()
         {
             string query = "SELECT SubDteId Id,SubDteName Name FROM MSubDte where IsActive=1 and SubDteId !=1";
@@ -94,6 +100,11 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves a list of posting reasons for the specified type ID.
+        /// </summary>
+        /// <param name="TypeId">The type ID for which the posting reasons are fetched.</param>
+        /// <returns>A list of <see cref="DTOMasterResponse"/> containing the posting reason IDs and names.</returns>
         public async Task<List<DTOMasterResponse>> GetPostingReason(int TypeId)
         {
             string query = "SELECT  Id, Reason Name FROM MPostingReason where Type=@TypeId";
@@ -104,6 +115,11 @@ namespace DataAccessLayer
                 return ret.ToList();
             }
         }
+
+        /// <summary>
+        /// Retrieves the counts of various master data entities for the dashboard.
+        /// </summary>
+        /// <returns>A <see cref="DTODashboardMasterCountResponse"/> object containing the total counts for each entity.</returns>
         public async Task<DTODashboardMasterCountResponse> GetDashboardMasterCount()
         {
             string query = " declare @TotComd int=0 declare @TotCorps int=0 declare @TotDiv int=0 declare @TotBde int=0  declare @TotMapUnit int=0 declare @TotMapUnitChangeRequest int=0 declare @TotRecordOffice int=0 " +
@@ -137,6 +153,13 @@ namespace DataAccessLayer
                 return ret.FirstOrDefault();
             }
         }
+
+        /// <summary>
+        /// Retrieves a list of mapped records for the given type ID and search criteria.
+        /// </summary>
+        /// <param name="TypeId">The type ID indicating which type of records to fetch.</param>
+        /// <param name="SearchName">The search term to filter the records by.</param>
+        /// <returns>A list of <see cref="DTOGetMappedForRecordResponse"/> containing the mapped records.</returns>
         public async Task<List<DTOGetMappedForRecordResponse>?> GetMappedForRecord(int TypeId, string SearchName)
         {
             #region using linq
@@ -253,6 +276,13 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves domain ID, rank abbreviation, name, and army number based on TDMId.
+        /// </summary>
+        /// <param name="TDMId">The TDMId used to fetch the corresponding domain and user details.</param>
+        /// <returns>An instance of <see cref="DTOGetDomainIdByTDMIdResponse"/> containing the domain and user details, or null if no data is found.</returns>
         public async Task<DTOGetDomainIdByTDMIdResponse?> GetDomainIdByTDMId(int TDMId)
         {
             try

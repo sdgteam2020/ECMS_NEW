@@ -14,7 +14,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<bool> GetByDomainId(TrnDomainMapping Data);
         public Task<TrnDomainMapping> GetByDomainIdbyUnit(TrnDomainMapping Data);
         //public Task<TrnDomainMapping> GetByAspnetUserIdBy(TrnDomainMapping Data);
-        public Task<TrnDomainMapping> GetByRequestId(int RequestId);
+        public Task<TrnDomainMapping?> GetByRequestId(int RequestId);
         public Task<TrnDomainMapping?> GetByAspnetUserIdBy(int AspNetUsersId);
         public Task<TrnDomainMapping?> GetAllRelatedDataByDomainId(string DomainId, string Role);
         public Task<TrnDomainMapping?> GetProfileDataByAspNetUserId(int Id);

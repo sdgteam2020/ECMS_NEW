@@ -21,6 +21,12 @@ namespace DataAccessLayer
             _logger = logger;
         }
 
+
+        /// <summary>
+        /// Checks if the provided record office name or abbreviation already exists, excluding the current record office.
+        /// </summary>
+        /// <param name="Dto">The MRecordOffice object containing the name and abbreviation to check against.</param>
+        /// <returns>1 if valid, 2 if a duplicate exists with the same name or abbreviation but a different RecordOfficeId.</returns>
         public async Task<int> GetByName(MRecordOffice Dto)
         {
             List<MRecordOffice> mRecordOffices = await _context.MRecordOffice.AsNoTracking().ToListAsync();
@@ -41,6 +47,14 @@ namespace DataAccessLayer
                 return 1;
             }
         }
+
+
+        /// <summary>
+        /// Checks if a RecordOffice with the given TDMId and UnitId already exists.
+        /// </summary>
+        /// <param name="UnitId">The unit ID to check.</param>
+        /// <param name="TDMId">The TDMId to check against.</param>
+        /// <returns>True if a record exists with the given TDMId and UnitId, otherwise false.</returns>
         public async Task<bool> GetByTDMId(int UnitId,int? TDMId)
         {
             List<MRecordOffice> mRecordOffices = await _context.MRecordOffice.AsNoTracking().ToListAsync();
@@ -56,6 +70,12 @@ namespace DataAccessLayer
             }
 
         }
+
+        /// <summary>
+        /// Retrieves the RecordOffice data based on the provided TDMId.
+        /// </summary>
+        /// <param name="TDMId">The TDMId to search for in the database.</param>
+        /// <returns>A DTO containing RecordOffice details or null if not found.</returns>
         public async Task<DTOGetROByTDMIdResponse?> GetROByTDMId(int TDMId)
         {
             try
@@ -78,6 +98,11 @@ namespace DataAccessLayer
             }
 
         }
+
+        /// <summary>
+        /// Retrieves all the RecordOffice data with related information like ArmedName, Rank, and Unit details.
+        /// </summary>
+        /// <returns>A list of DTO containing all RecordOffice data, or null if an error occurs.</returns>
         public async Task<List<DTORecordOfficeResponse>?> GetAllData()
         {
             try
@@ -104,6 +129,12 @@ namespace DataAccessLayer
             }
 
         }
+
+        /// <summary>
+        /// Retrieves the update data for a RecordOffice based on the RecordOfficeId.
+        /// </summary>
+        /// <param name="RecordOfficeId">The ID of the RecordOffice to update.</param>
+        /// <returns>A DTO containing the RecordOffice update details, or null if an error occurs.</returns>
         public async Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int RecordOfficeId)
         {
             try
@@ -126,6 +157,12 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+        /// <summary>
+        /// Retrieves all mapped records for the provided UnitMapId.
+        /// </summary>
+        /// <param name="UnitMapId">The ID of the UnitMap to search for.</param>
+        /// <returns>A list of DTOs containing mapped user information.</returns>
         public async Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId)
         {
             try
@@ -150,6 +187,12 @@ namespace DataAccessLayer
             }
 
         }
+
+        /// <summary>
+        /// Updates the values of a RecordOffice record.
+        /// </summary>
+        /// <param name="dTO">The DTO containing the updated RecordOffice data.</param>
+        /// <returns>True if the update is successful, false if the RecordOfficeId is not found, or null if an error occurs.</returns>
         public async Task<bool?> UpdateROValue(DTOUpdateROValueRequest dTO)
         {
             using (var transaction = _context.Database.BeginTransaction())

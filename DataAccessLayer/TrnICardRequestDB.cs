@@ -1,19 +1,9 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
-using DataTransferObject.Requests;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -29,6 +19,12 @@ namespace DataAccessLayer
             _logger = logger;
         }
 
+
+        /// <summary>
+        /// Retrieves a TrnICardRequest record based on the provided BasicDetailId.
+        /// </summary>
+        /// <param name="BasicDetailId">The ID of the BasicDetail record.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the TrnICardRequest record, or null if no matching record is found.</returns>
         public async Task<MTrnICardRequest?> GetRequestByBasicDetailId(int BasicDetailId)
         {
             string query = @"Select * from TrnICardRequest where BasicDetailId = @BasicDetailId";
@@ -54,10 +50,20 @@ namespace DataAccessLayer
                 return null;
             }
         }
+        
+        
+        
         public async Task<MTrnICardRequest> GetByAspNetUserBy(int AspnetuserId)
         {
             return null;// await _context.TrnICardRequest.Where(P => P.TrnDomainMappingId == AspnetuserId).ToListAsync();
         }
+
+
+        /// <summary>
+        /// Checks whether there is any pending TrnICardRequest for the given BasicDetailId.
+        /// </summary>
+        /// <param name="BasicDetailId">The ID of the BasicDetail record.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains true if there is a pending request, otherwise false.</returns>
         public async Task<bool> GetRequestPending(int BasicDetailId)
         {
             string query = "Select count(*) from BasicDetails bd " +
@@ -75,6 +81,13 @@ namespace DataAccessLayer
                 }
             }
         }
+
+
+        /// <summary>
+        /// Checks whether there are any pending TrnICardRequests for a list of BasicDetailIds.
+        /// </summary>
+        /// <param name="BasicDetailId">An array of BasicDetailIds.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains true if there is at least one pending request, otherwise false.</returns>
         public async Task<bool> GetRequestPendingUsingBasicDetailIds(int[] BasicDetailId)
         {
             string query = @"Select count(*) from TrnICardRequest tr where tr.BasicDetailId in @BasicDetailId and tr.StatusId =1";
@@ -92,6 +105,12 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves the UserId associated with a given RequestId, based on the active status.
+        /// </summary>
+        /// <param name="RequestId">The ID of the request.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the UserId associated with the given RequestId, or a default value if not found.</returns>
         public async Task<int> GetUserIdByRequestId(int RequestId)
         {
            string query = "Select AspNetUsersId from TrnICardRequest icard"+
@@ -110,6 +129,12 @@ namespace DataAccessLayer
             }
         }
 
+        
+        /// <summary>
+        /// Updates the status of a TrnICardRequest to a completed status (StatusId = 3) based on the provided RequestId.
+        /// </summary>
+        /// <param name="RequestId">The ID of the request to update.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is always true.</returns>
         public async Task<bool> UpdateStatus(int RequestId)
         {
 

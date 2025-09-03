@@ -4,17 +4,8 @@ using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DataAccessLayer
 {
@@ -29,6 +20,12 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
+
+        /// <summary>
+        /// Retrieves a list of MRegistration records based on the ApplyForId.
+        /// </summary>
+        /// <param name="Data">An instance of MRegistration containing the ApplyForId to filter the records.</param>
+        /// <returns>A list of MRegistration records that match the ApplyForId.</returns>
         public async Task<List<MRegistration>> GetByApplyFor(MRegistration Data)
         {
             try
@@ -44,6 +41,12 @@ namespace DataAccessLayer
 
         }
 
+
+        /// <summary>
+        /// Retrieves detailed apply card information for a specific user and registration.
+        /// </summary>
+        /// <param name="Data">An instance of DTOApplyCardDetailsRequest containing ApplyForId, RegistrationId, TypeId, and UserId to filter the query.</param>
+        /// <returns>A DTOApplyCardDetailsResponse object containing the detailed card information, or a default instance if not found or in case of an error.</returns>
         public async Task<DTOApplyCardDetailsResponse> GetApplyCardDetails(DTOApplyCardDetailsRequest Data)
         {
             try

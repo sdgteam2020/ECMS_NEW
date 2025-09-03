@@ -1,12 +1,6 @@
 ﻿using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
@@ -17,9 +11,17 @@ namespace DataAccessLayer
         {
             _context = context;
         }
+        /// <summary>
+        /// Checks whether a formation with the specified name exists in the database, case-insensitively.
+        /// </summary>
+        /// <param name="Dto">The `MFormation` DTO containing the formation name to search for.</param>
+        /// <returns>A boolean value indicating whether the formation name exists in the database.</returns>
         public async Task<bool> GetByName(MFormation Dto)
         {
-            var ret =await _context.MFormation.Select(p => p.FormationName.ToUpper() == Dto.FormationName.ToUpper()).FirstOrDefaultAsync();
+            // Use AnyAsync for efficiency, and perform a case-insensitive comparison directly in the query
+            var ret = await _context.MFormation
+                                    .AnyAsync(p => p.FormationName.Equals(Dto.FormationName, StringComparison.OrdinalIgnoreCase));
+
             return ret;
         }
     }

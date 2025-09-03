@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Azure.Core;
-using Dapper;
+﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// Repository class for handling Lost Card related operations.
+    /// Inherits from <see cref="GenericRepositoryDL{TrnLostCard}"/> to perform CRUD operations on Lost Cards.
+    /// </summary>
     public class LostCardDB : GenericRepositoryDL<TrnLostCard> , ILostCardDB
     {
         protected new readonly ApplicationDbContext _context;
@@ -23,6 +22,14 @@ namespace DataAccessLayer
         private readonly IDataProtector protector;
         private readonly ILogger<LostCardDB> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LostCardDB"/> class.
+        /// </summary>
+        /// <param name="context">The <see cref="ApplicationDbContext"/> to interact with the database.</param>
+        /// <param name="contextDP">The <see cref="DapperContext"/> for Dapper-based queries.</param>
+        /// <param name="dataProtectionProvider">The <see cref="IDataProtectionProvider"/> to create data protectors.</param>
+        /// <param name="logger">The <see cref="ILogger{LostCardDB}"/> for logging.</param>
+        /// <param name="dataProtectionPurposeStrings">The purpose strings for data protection.</param>
         public LostCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<LostCardDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
@@ -33,12 +40,17 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
 
+        /// <summary>
+        /// Checks if a Lost Card exists for a specific RequestId.
+        /// </summary>
+        /// <param name="RequestId">The RequestId to check.</param>
+        /// <returns>Returns <c>true</c> if a Lost Card with the given RequestId exists, otherwise <c>false</c>.</returns>
         public async Task<bool> FindAnyRequestId(int RequestId)
         {
             try
             {
-                return _context.TrnLostCards
-                                .Any(f => f.RequestId == RequestId);
+                return await _context.TrnLostCards
+                                .AnyAsync(f => f.RequestId == RequestId);
             }
             catch (Exception ex)
             {
@@ -46,6 +58,13 @@ namespace DataAccessLayer
                 return false;
             }
         }
+
+        
+        /// <summary>
+        /// Checks if a specific ServiceNo is already associated with a lost card request.
+        /// </summary>
+        /// <param name="ServiceNo">The ServiceNo to check.</param>
+        /// <returns>Returns <c>true</c> if the ServiceNo exists in the Lost Card records, otherwise <c>false</c>.</returns>
         public async Task<bool> CheckServiceNoRequestInLost(string ServiceNo)
         {
             try
@@ -78,6 +97,13 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves all Lost Card records based on the given DataTables request.
+        /// Supports filtering, sorting, and pagination.
+        /// </summary>
+        /// <param name="dTO">The data transfer object containing the search, sorting, and pagination parameters.</param>
+        /// <returns>A <see cref="DTODataTablesResponse{DTOLostCardGetResponse}"/> containing the paginated Lost Card records.</returns>
         public async Task<DTODataTablesResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequest dTO)
         {
             List<DTOLostCardGetResponse> dTOLostCardGetResponses = new List<DTOLostCardGetResponse>();
@@ -93,7 +119,7 @@ namespace DataAccessLayer
                 // Map allowed sort columns to DB fields
                 var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ModifiedServiceNo"] = "bas.ServiceNo",
+                    ["ServiceNo"] = "bas.ServiceNo",
                     ["UpdatedOn"] = "lost.UpdatedOn",
                     ["LostOn"] = "lost.LostOn",
                     ["Remark"] = "lost.Remark"
@@ -106,45 +132,51 @@ namespace DataAccessLayer
                 var sortOrder = dTO.sortDirection;
 
                 string query = "";
-                query = @"appl.Name ApplyFor,
-                            req.RequestId,lost.LostCardId,
-                            bas.ServiceNo,ranks.RankAbbreviation RankName,
-                            bas.FName,bas.LName,
-                            Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                            lost.UpdatedOn,lost.Remark,lost.IsActive,
-                            bas.NameAsPerRecord,lost.LostOn,
-                            regi.Abbreviation RegimentalName,
-                            lost.IsFIRLogged,lost.SupportDocName
-                            from TrnLostCards lost
-                            inner join TrnICardRequest req on req.RequestId = lost.RequestId
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                            inner join MRank ranks on ranks.RankId=bas.RankId
-                            inner join MapUnit uni on uni.UnitMapId=bas.UnitId
-                            inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                            inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId
-                            Where bas.ServiceNo like '%' + @SearchTerm + '%'";
 
-                var multiQuery = query = $@"
-                            WITH RecordCTE AS (
-                                select ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query}
-                            )
-                            SELECT * FROM RecordCTE
-                            WHERE RowNum BETWEEN @Offset AND @Limit;
-                            Select Count(*) from TrnLostCards;
-                        ";
+                string selectFields = @"appl.Name ApplyFor,
+                                        req.RequestId,lost.LostCardId,
+                                        bas.ServiceNo,ranks.RankAbbreviation RankName,
+                                        bas.FName,bas.LName,
+                                        Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
+                                        lost.UpdatedOn,lost.Remark,lost.IsActive,
+                                        bas.NameAsPerRecord,lost.LostOn,
+                                        regi.Abbreviation RegimentalName,
+                                        lost.IsFIRLogged,lost.SupportDocName";
+                string fromJoinClause = @"from TrnLostCards lost
+                                        inner join TrnICardRequest req on req.RequestId = lost.RequestId
+                                        inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                                        inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
+                                        inner join MRank ranks on ranks.RankId=bas.RankId
+                                        inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+                                        inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
+                                        left join MRegimental regi on regi.RegId=bas.RegimentalId";
+                string whereClause = @"Where bas.ServiceNo like '%' + @SearchTerm + '%'";
+
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryMultipleAsync(query, new { Offset = dTO.Start, Limit = dTO.Length, SearchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? "" : dTO.searchValue });
+                    // Parameters for SQL query
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(query, parameters);
                     var records = (await ret.ReadAsync<DTOLostCardGetResponse>()).ToList();
-                    var totalRecords = (await ret.ReadAsync<int>()).Single();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
                     responseData = new DTODataTablesResponse<DTOLostCardGetResponse>
                     {
                         draw = dTO.Draw,
-                        recordsTotal = totalRecords, // Total records without filtering
-                        recordsFiltered = records.Count(), // Total records after filtering
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
                         data = (from e in records
                                 select new DTOLostCardGetResponse()
                                 {
@@ -177,6 +209,13 @@ namespace DataAccessLayer
             return responseData;
         }
 
+
+        /// <summary>
+        /// Retrieves lost card details based on a list of Request IDs.
+        /// </summary>
+        /// <param name="Data">DTO containing the list of Request IDs for which lost card details need to be fetched.</param>
+        /// <returns>A list of <see cref="DTOLostCardExportResponse"/> containing the lost card details.</returns>
+        /// <exception cref="Exception">Throws an exception if an error occurs during the query execution.</exception>
         public async Task<List<DTOLostCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data)
         {
             var records = new List<DTOLostCardExportResponse>();
@@ -193,11 +232,18 @@ namespace DataAccessLayer
 	                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
 	                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
                                   Where req.RequestId in @Ids";
+
+                // Parameters for SQL query, adding the list of Request IDs
                 var parameters = new DynamicParameters();
                 parameters.Add("@Ids", Data.Ids);
+
+                // Open the connection, execute the query asynchronously, and map results to the DTO
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    // Execute query asynchronously and convert result to list of DTOLostCardExportResponse
                     var ret = await connection.QueryAsync<DTOLostCardExportResponse>(query, parameters);
+
+                    // Convert the results to a list
                     records = ret.ToList();
                 }
             }
@@ -205,6 +251,7 @@ namespace DataAccessLayer
             {
                 _logger.LogError(1001, ex, "LostCardDB->GetBesicdetailsByRequestId");
             }
+            // Return the list of records (could be empty if no matching records found)
             return records;
         }
     }

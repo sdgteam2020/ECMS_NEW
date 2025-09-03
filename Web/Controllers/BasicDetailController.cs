@@ -2570,7 +2570,7 @@ namespace Web.Controllers
                 data.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
 
                 // Retrieve domain mapping using the request ID
-                TrnDomainMapping Domain = new TrnDomainMapping();
+                TrnDomainMapping? Domain = new TrnDomainMapping();
                 Domain = await iDomainMapBL.GetByRequestId(data.RequestId);
 
                 if (Domain != null)
@@ -2643,7 +2643,7 @@ namespace Web.Controllers
                 if (mStepCounter.Flag == "R")
                 {
                     // Retrieve domain mapping using the request ID
-                    TrnDomainMapping Domain = new TrnDomainMapping();
+                    TrnDomainMapping? Domain = new TrnDomainMapping();
                     Domain = await iDomainMapBL.GetByRequestId(mStepCounter.RequestId);
 
                     // If the UserId from the domain mapping is 0, return an error response
@@ -3397,7 +3397,7 @@ namespace Web.Controllers
                 mTrnFwd.IsActive = true;
 
                 // Fetch domain mapping for the request
-                TrnDomainMapping Domain = new TrnDomainMapping();
+                TrnDomainMapping? Domain = new TrnDomainMapping();
                 Domain = await iDomainMapBL.GetByRequestId(dTO.RequestId);
 
                 if (Domain != null)

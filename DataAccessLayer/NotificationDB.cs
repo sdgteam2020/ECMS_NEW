@@ -1,34 +1,25 @@
 ﻿using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Domain.Master;
-using DataTransferObject.Requests;
-using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Dapper.SqlMapper;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
+using static Dapper.SqlMapper;
 
 namespace DataAccessLayer
 {
     public class NotificationDB : GenericRepositoryDL<MTrnNotification>, INotificationDB
     {
-        protected readonly ApplicationDbContext _context;
+        protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         public NotificationDB(ApplicationDbContext context, DapperContext contextDP) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
-
-
         }
-        private readonly IConfiguration configuration;
 
+        /// <summary>
+        /// Updates the "Read" status of a notification for a specific user and display ID.
+        /// </summary>
+        /// <param name="Data">The notification data containing UserId and DisplayId.</param>
+        /// <returns>Returns a boolean indicating if the operation was successful.</returns>
         public async Task<bool> UpdateRead(MTrnNotification Data)
         {
 
@@ -42,12 +33,16 @@ namespace DataAccessLayer
                 int DisplayId = Data.DisplayId;
                 var ret = await connection.QueryAsync<string>(query, new { UserId, DisplayId });
 
-
-
                 return true;
             }
         }
 
+
+        /// <summary>
+        /// Updates the "Read" status of a notification based on the RequestId.
+        /// </summary>
+        /// <param name="Data">The notification data containing RequestId.</param>
+        /// <returns>Returns a boolean indicating if the operation was successful.</returns>
         public async Task<bool> UpdatePrevious(MTrnNotification Data)
         {
 
@@ -58,8 +53,6 @@ namespace DataAccessLayer
               
                 int RequestId = Data.RequestId;
                 var ret = await connection.QueryAsync<string>(query, new { RequestId });
-
-
 
                 return true;
             }

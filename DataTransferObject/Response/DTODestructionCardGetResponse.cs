@@ -13,7 +13,6 @@ namespace DataTransferObject.Response
         public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
         public string ServiceNo { get; set; } = string.Empty;
-        public string? ModifiedServiceNo { get; set; }
         public string? RegimentalName { get; set; }
         public string UnitName { get; set; } = string.Empty;
         public string UnitAbbreviation { get; set; } = string.Empty;

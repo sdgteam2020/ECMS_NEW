@@ -3,25 +3,15 @@ using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
     public class HomeDB : IHomeDB
     {
-        protected new readonly ApplicationDbContext _context;
+        protected readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
         private readonly ILogger<HomeDB> _logger;
         public HomeDB(ApplicationDbContext context,DapperContext contextDP, ILogger<HomeDB> logger)
@@ -30,8 +20,20 @@ namespace DataAccessLayer
             _contextDP = contextDP;
             _logger = logger;
         }
+
+
+        /// <summary>
+        /// Asynchronously retrieves task board counts based on the provided parameters, including counts for dispatch cards, faulty cards, unit change requests, and more.
+        /// The method executes a complex SQL query with conditional logic based on the <paramref name="Claim"/> parameter, returning a <see cref="DTOTaskCountResponse"/> with the results.
+        /// </summary>
+        /// <param name="MapUnitId">The unit map ID for filtering the results related to the unit.</param>
+        /// <param name="Claim">The claim type used to conditionally modify the query (e.g., 1 for general, 2 for specific record office, etc.).</param>
+        /// <param name="TDM_Id">The TDM ID used for filtering based on the record office mapping when <paramref name="Claim"/> equals 2.</param>
+        /// <returns>A <see cref="DTOTaskCountResponse"/> containing counts for various task categories such as dispatch cards, hotlist cards, and unit change requests.</returns>
+        /// <exception cref="Exception">Throws an exception if there is an error during query execution.</exception>
         public async Task<DTOTaskCountResponse> GetTaskBoardCount(int MapUnitId, byte Claim, int TDM_Id)
         {
+            // SQL query to get task board counts for various categories
             string query = @"declare @TotHotlistCards int=0 declare @TotMisprintedCard int=0 declare @TotUnitChangeRequest int=0 declare @TotDistCards int=0 declare @TotDestCards int=0 declare @TotDispatchCards int=0
 
                             BEGIN 
@@ -78,6 +80,7 @@ namespace DataAccessLayer
 
             try
             {
+                // Use the connection to execute the query and return the first result
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
@@ -85,18 +88,33 @@ namespace DataAccessLayer
                     parameters.Add("@TDM_Id", TDM_Id, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Claim", Claim, DbType.Byte, ParameterDirection.Input);
 
+                    // Execute the query asynchronously and map the result to the response DTO
                     var ret = (await connection.QueryAsync<DTOTaskCountResponse>(query, parameters)).FirstOrDefault();
                     return ret;
                 }
             }
             catch (Exception ex)
             {
+                // Log the exception if there is an error during the query execution
                 _logger.LogError(1001, ex, "HomeDB->GetDashBoardCount");
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Asynchronously retrieves dashboard count data based on user, application forward condition, and armed ID for ORO. 
+        /// It performs complex SQL queries with conditional logic based on the user’s role and filtering conditions for requests, lost cards, 
+        /// inaccurate data, and observations raised. Returns a <see cref="DTODashboardCountResponse"/> containing the task counts.
+        /// </summary>
+        /// <param name="UserId">The user ID for filtering the task board data.</param>
+        /// <param name="dTOApplFwdCondition">The data transfer object containing the application forward condition, including details for filtering by ArmedAbbreviation, RankOrderby, etc.</param>
+        /// <param name="ArmedIdForORO">The Armed ID used for filtering in specific ORO mappings.</param>
+        /// <returns>A <see cref="DTODashboardCountResponse"/> containing counts for tasks such as requests, lost cards, and observations raised.</returns>
+        /// <exception cref="Exception">Throws an exception if there is an error during query execution.</exception>
         public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
         {
+            // SQL query to retrieve counts for different categories such as requests, lost cards, and observations
             string query = @"declare @TotReq int=0 declare @TotInaccurateData int=0 declare @TotLostCards int=0
                             select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id
@@ -160,6 +178,7 @@ namespace DataAccessLayer
 
             try
             {
+                // Create a connection to the database and execute the query
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
@@ -175,19 +194,34 @@ namespace DataAccessLayer
                     parameters.Add("@MP6A_RankOrderby", dTOApplFwdCondition.MP6A.RankOrderby);
                     parameters.Add("@MP6A_Name", dTOApplFwdCondition.MP6A.Name);
 
+                    // Execute the query and retrieve the result as a single response
                     var ret = (await connection.QueryAsync<DTODashboardCountResponse>(query, parameters)).FirstOrDefault();
                     return ret;
                 }
             }
             catch (Exception ex)
             {
+                // Log the error if any exception occurs during the query execution
                 _logger.LogError(1001, ex, "HomeDB->GetDashBoardCount");
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Asynchronously retrieves the request dashboard count data based on the specified user, type, and unit map ID.
+        /// The method executes a SQL query that dynamically builds the query based on the <paramref name="Type"/> parameter,
+        /// returning counts for various request states such as "Drafted", "Submitted", "Closed", "Completed", "Rejected", "Posting Out", and "Posting In".
+        /// </summary>
+        /// <param name="UserId">The user ID used to filter the task data.</param>
+        /// <param name="Type">The type of the request dashboard data to retrieve (e.g., "Drafted", "Submitted", "Completed", etc.).</param>
+        /// <param name="UnitMapId">The unit map ID used for filtering the task data based on the unit's map.</param>
+        /// <returns>A <see cref="DTORequestDashboardCountResponse"/> containing the counts for various request categories based on the type.</returns>
+        /// <exception cref="Exception">Thrown if there is an error executing the SQL query.</exception>
         public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId,string Type,int UnitMapId)
         {
             string query="";
+            // Build the query based on the Type parameter to get counts for various request categories
             switch (Type)
             {
                 case "Drafted":
@@ -269,20 +303,36 @@ namespace DataAccessLayer
 
             try
             {
+                // Create a connection to the database and execute the query asynchronously
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    // Execute the query and map the result to DTORequestDashboardCountResponse
                     var ret = await connection.QueryAsync<DTORequestDashboardCountResponse>(query, new { UserId, UnitMapId });
                     return ret.SingleOrDefault();
                 }
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during the query execution
                 _logger.LogError(1001, ex, "HomeDB->GetRequestDashboardCount");
                 return null;
             }
-        } 
+        }
+
+
+        /// <summary>
+        /// Asynchronously retrieves the sub-dashboard count data for the specified user and unit map ID.
+        /// The method calculates counts for various task categories, such as Drafted, Submitted, Rejected, Closed, and Completed requests, 
+        /// based on the user's ID and the unit map ID. The data is fetched through a complex SQL query that performs multiple counts with 
+        /// conditions based on the provided parameters.
+        /// </summary>
+        /// <param name="UserId">The user ID for filtering the data related to the user.</param>
+        /// <param name="UnitMapId">The unit map ID used to filter records related to a specific unit.</param>
+        /// <returns>A <see cref="DTORequestSubDashboardCountResponse"/> containing counts for various task categories (Drafted, Submitted, Rejected, Closed, Completed).</returns>
+        /// <exception cref="Exception">Throws an exception if there is an error during query execution.</exception>
         public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId,int UnitMapId)
         {
+            // SQL query to calculate counts for various request categories (Drafted, Submitted, Rejected, Closed, Completed)
             string query = @"declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare @TotClosed int=0 declare @TotCompleted int=0 
                             select @TotDrafted=COUNT(distinct req.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
@@ -306,20 +356,33 @@ namespace DataAccessLayer
                             select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotCompleted TotCompleted,@TotClosed TotClosed,@TotRejected TotRejected";
             try
             {
+                // Create a connection to the database and execute the query asynchronously
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    // Execute the query and map the result to DTORequestSubDashboardCountResponse
                     var ret = await connection.QueryAsync<DTORequestSubDashboardCountResponse>(query, new { UserId, UnitMapId });
                     return ret.SingleOrDefault();
                 }
             }
             catch (Exception ex)
             {
+                // Log any errors that occur during the query execution
                 _logger.LogError(1001, ex, "HomeDB->GetRequestDashboardCount");
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Asynchronously retrieves all registered users for a specific unit based on the provided unit ID.
+        /// The method fetches user details such as domain ID, appointment name, rank, army number, and user name 
+        /// by joining multiple tables: `TrnDomainMapping`, `Users`, `MAppointment`, and `UserProfile`.
+        /// </summary>
+        /// <param name="UnitId">The unit ID used to filter the registered users for a specific unit.</param>
+        /// <returns>A list of <see cref="DTORegisterUserResponse"/> objects containing the details of all registered users for the given unit.</returns>
         public async Task<List<DTORegisterUserResponse>> GetAllRegisterUser(int UnitId)
         {
+            // Perform an asynchronous query to retrieve the user details by joining multiple tables
             var allrecord = await (from tdm in _context.TrnDomainMapping.Where(x=>x.UnitId == UnitId)
                                    join u in _context.Users on tdm.AspNetUsersId  equals u.Id
                                    join app in _context.MAppointment on tdm.ApptId equals app.ApptId
@@ -334,10 +397,21 @@ namespace DataAccessLayer
                                        Rank = tdm.UserId!=null ? (from r in _context.MRank.Where(x=>x.RankId == xup.RankId) select r.RankName).FirstOrDefault():null,
                                        Name = xup != null ? xup.Name : null,
                                    }).ToListAsync();
-            return allrecord;
+            return allrecord; // Return the list of registered user responses
         }
+
+
+        /// <summary>
+        /// Asynchronously retrieves dashboard count data for user management in a specific unit.
+        /// The method calculates counts for registered users, posting-in, and posting-out records based on the provided unit ID.
+        /// </summary>
+        /// <param name="UnitId">The unit ID for filtering the records related to a specific unit.</param>
+        /// <param name="UserId">The user ID used for filtering user-related data (though it is not currently used in the query).</param>
+        /// <returns>A <see cref="DTORequestDashboardUserMgtCountResponse"/> containing counts for registered users, posting-in, and posting-out records.</returns>
+        /// <exception cref="Exception">Throws an exception if there is an error during query execution.</exception>
         public async Task<DTORequestDashboardUserMgtCountResponse> GetDashboardUserMgtCount(int UnitId, int UserId)
         {
+            // SQL query to calculate counts for registered users, posting-in, and posting-out records
             string query = "declare @TotRegisterUser int=0 declare @TotPostingIn int=0 declare @TotPostingOut int=0 " +
                             " select @TotRegisterUser=COUNT(Id) from TrnDomainMapping where UnitId=@UnitId " +
                             " select @TotPostingIn=COUNT(Id) from TrnPostingOut where ToUnitId=@UnitId " +
@@ -345,14 +419,17 @@ namespace DataAccessLayer
                             " select @TotRegisterUser TotRegisterUser,@TotPostingIn TotPostingIn,@TotPostingOut TotPostingOut";
             try
             {
+                // Open a database connection and execute the query asynchronously
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    // Execute the query and map the result to DTORequestDashboardUserMgtCountResponse
                     var ret = await connection.QueryAsync<DTORequestDashboardUserMgtCountResponse>(query, new { UnitId, UserId });
                     return ret.SingleOrDefault();
                 }
             }
             catch (Exception ex)
             {
+                // Log the error if any exception occurs during query execution
                 _logger.LogError(1001, ex, "HomeDB->GetRequestDashboardCount");
                 return null;
             }
