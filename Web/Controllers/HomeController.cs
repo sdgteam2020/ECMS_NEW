@@ -1,5 +1,4 @@
-﻿using BusinessLogicsLayer;
-using BusinessLogicsLayer.BasicDet;
+﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
@@ -14,11 +13,9 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.SqlServer.Management.Smo;
 using System.Data;
 using System.Globalization;
 using System.Security.Claims;

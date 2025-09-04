@@ -47,6 +47,8 @@ namespace DataAccessLayer
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.userManager = userManager;
         }
+        
+        
         /// <summary>
         /// Asynchronously exports the dispatch card data for a list of RequestIds and returns it as a list of DTODispatchCardForCSVResponse objects.
         /// This method retrieves data from the TrnICardRequest, BasicDetails, and MRank tables and formats it for CSV export.
@@ -102,8 +104,16 @@ namespace DataAccessLayer
             return dTOs;
         }
 
+
+        /// <summary>
+        /// Retrieves the Dispatch Card Status List based on Claim Value and dialog-specific filters.
+        /// </summary>
+        /// <param name="dTO">The DTO that holds the data for filtering and pagination.</param>
+        /// <param name="ClaimValue">The claim value that determines which query to execute.</param>
+        /// <returns>A response object containing a list of dispatch card statuses, along with pagination information.</returns>
         public async Task<DTODataTablesForDispatchCardStatusListResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequestForCardStatusList dTO, byte ClaimValue)
         {
+            // Declare the necessary variables for query construction
             string selectFields = "";
             string fromJoinClause = "";
             string whereClause = "";
@@ -114,6 +124,7 @@ namespace DataAccessLayer
 
             var sortOrder = dTO.sortDirection;
 
+            // Map the allowed sort columns to the DB fields for flexibility
             allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["ApplyForId"] = "mappl.ApplyForId",
@@ -127,6 +138,7 @@ namespace DataAccessLayer
                 ["CardSerialNo"] = "req.CardSerialNo",
                 ["SUSNo"] = "munit.Sus_no"
             };
+            // Depending on the ClaimValue, we adjust the SELECT, JOIN, and WHERE clauses
             if (ClaimValue == 1)
             {
                 selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo";
@@ -313,6 +325,13 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves a list of dispatch card status data for export based on claim value and filtering options.
+        /// </summary>
+        /// <param name="ClaimValue">The claim value to determine the step ID for filtering the dispatch status (1, 2, 3, or other values).</param>
+        /// <param name="Data">The data object containing filtering criteria for the export such as unchedRequestId, checkedRequestId, and Allstatus.</param>
+        /// <returns>A DTO response containing the filtered dispatch card status list.</returns>
         public async Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForExport(byte ClaimValue, DTOExportDispatch Data)
         {
             string query = "";
@@ -320,11 +339,12 @@ namespace DataAccessLayer
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
-            
 
-           
+
+            // Query construction based on ClaimValue (StepId logic)
             if (ClaimValue == 1)
             {
+                // Query for ClaimValue 1 (StepId = 6)
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 6 THEN 'Pending' 
@@ -347,6 +367,7 @@ namespace DataAccessLayer
             }
             else if (ClaimValue == 2 || ClaimValue == 3)
             {
+                // Query for ClaimValue 2 or 3 (StepId = 12)
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 12 THEN 'Pending' 
@@ -368,6 +389,7 @@ namespace DataAccessLayer
             }
             else
             {
+                // Query for other ClaimValues (StepId = 14)
                 query = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,mrec.Abbreviation as RecordOfficeName,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,concat(munit.Sus_no,munit.Suffix) as SUSNo,
                         CASE 
                             WHEN stepc.StepId = 14 THEN 'Pending' 
@@ -452,6 +474,12 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Retrieves the dispatch card data for the dialog based on the provided request parameters.
+        /// </summary>
+        /// <param name="dTO">The data transfer object containing the request parameters, including search terms, sorting, and pagination information.</param>
+        /// <returns>A <see cref="DTODataTablesResponse{DTOCardDispatchDialogResponse}"/> containing the dispatch card data, total records, and filtered records.</returns>
         public async Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
         {
             string query = "";
@@ -539,6 +567,14 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves all dispatch cards based on the claim value and search parameters.
+        /// </summary>
+        /// <param name="dTO">The DTO containing data table request parameters such as ClaimValue, SearchTerm, and pagination details.</param>
+        /// <returns>A DTO containing the response data including dispatch card details and pagination info.</returns>
+
         public async Task<DTODataTablesResponse<DTODispatchCardListResponse>> GetAllDispatchCard(DTODataTablesRequestForCardDispatch dTO)
         {
             string selectFields = "";
@@ -745,6 +781,15 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+
+        /// <summary>
+        /// Checks the dispatch card details for validity based on the request IDs and ClaimValue.
+        /// </summary>
+        /// <param name="RequestIds">An array of request IDs to be checked.</param>
+        /// <param name="ClaimValue">The claim value that determines the step and remarks for validation.</param>
+        /// <param name="dTO">The DTO containing dispatch request parameters like ApplyForId and RegId.</param>
+        /// <returns>A list of DTOCardDispatchCheckRequest containing the dispatch card check results.</returns>
         public async Task<List<DTOCardDispatchCheckRequest>> CardDispatchCSVCheck(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO)
         {
             #region Old Code
@@ -960,6 +1005,13 @@ namespace DataAccessLayer
             }
             return response;
         }
+
+
+        /// <summary>
+        /// Retrieves the user details including UserId, ArmyNo, Name, and RankAbbreviation based on the provided AspNetUsersId.
+        /// </summary>
+        /// <param name="AspNetUsersId">The ID of the user from the AspNetUsers table to fetch details for.</param>
+        /// <returns>A DTOGenericResponse containing the user details or an error message.</returns>
         public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId) 
         {
             DTODispatchToResponse? ret = new DTODispatchToResponse();
@@ -998,6 +1050,14 @@ namespace DataAccessLayer
                 return response;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves dispatch data based on the provided category ID and ID. The method performs different queries based on the CategoryId.
+        /// </summary>
+        /// <param name="CategeryId">The category ID used to determine which query to execute (1 for ORO Mapping, 2 for Regimental).</param>
+        /// <param name="Id">The ID used to filter the records (RecordOfficeId for CategoryId=1, RegId for CategoryId=2).</param>
+        /// <returns>A DTOGenericResponse containing the dispatch data or an error message.</returns>
         public async Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id)
         {
             DTODispatchToResponse? ret = new DTODispatchToResponse();
@@ -1138,6 +1198,16 @@ namespace DataAccessLayer
                 return response;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves the record office or regimental details along with unit information based on the provided parameters.
+        /// </summary>
+        /// <param name="ClaimValue">The claim value that determines which query to execute (2 for ORO Mapping, 3 for Regimental).</param>
+        /// <param name="TDMId">The TDMId used to filter the OROMapping record (only used when ClaimValue is 2).</param>
+        /// <param name="UnitId">The UnitId used to filter the MRegimental record (only used when ClaimValue is 3).</param>
+        /// <param name="ToUnitId">The UnitMapId for fetching unit information (used for both ClaimValue 2 and 3).</param>
+        /// <returns>A DTOGenericResponse containing the record office, regimental, and unit details, or an error message.</returns>
         public async Task<DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>> GetddlRecordRegiment(byte ClaimValue,int TDMId,int UnitId,int ToUnitId)
         {
             DTOOROWithRegimentAndUnitResponse ret = new DTOOROWithRegimentAndUnitResponse();
@@ -1192,6 +1262,17 @@ namespace DataAccessLayer
             }
             return response;
         }
+
+
+        /// <summary>
+        /// Retrieves the Record Office ID based on the provided ApplyForId, ServiceNo, ArmedId, RankId, and additional conditions from the DTO.
+        /// </summary>
+        /// <param name="ApplyForId">The ID indicating the type of application (e.g., 1 for military applications).</param>
+        /// <param name="ServiceNo">The service number used for querying specific records.</param>
+        /// <param name="ArmedId">The ID representing the armed forces type.</param>
+        /// <param name="RankId">The ID representing the rank of the individual.</param>
+        /// <param name="dTOApplFwdCondition">The DTO containing conditions for forwarding the application, including military prefix and rank info.</param>
+        /// <returns>The Record Office ID as a byte if found, otherwise null.</returns>
         public async Task<byte?> GetRecordOfficeId(byte ApplyForId,string ServiceNo,byte ArmedId,short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
             try
@@ -1308,10 +1389,25 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Checks whether the given Army No (Service No) exists in the BasicDetails table.
+        /// </summary>
+        /// <param name="ArmyNo">The Army No (Service No) to be checked for existence in the database.</param>
+        /// <returns>True if the Army No exists in the BasicDetails table, otherwise false.</returns>
         public async Task<bool> CheckArmyNO(string ArmyNo)
         {
             return await _context.BasicDetails.AnyAsync(x => x.ServiceNo == ArmyNo);
         }
+
+
+        /// <summary>
+        /// Uploads Chip Numbers and Card Serial Numbers for a list of records, updating the corresponding fields in the TrnICardRequest table.
+        /// The operation is wrapped in a transaction to ensure data integrity.
+        /// </summary>
+        /// <param name="Data">A list of DTOUploadChipAndSerialRequest objects containing the RequestId, CardSerialNo, and ChipNo to be updated.</param>
+        /// <returns>A DTOUploadChipAndSerialResponse indicating whether the operation was successful or not, along with a message.</returns>
         public async Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data)
         {
             int i = 0;
@@ -1354,6 +1450,14 @@ namespace DataAccessLayer
                 db.Dispose();
             }
         }
+
+
+        /// <summary>
+        /// Retrieves the top 5 records from the TrnICardRequest table where the ArmyNo matches the ServiceNo in the BasicDetails table, 
+        /// and the request status is active (StatusId == 1).
+        /// </summary>
+        /// <param name="ArmyNo">The Army No (Service No) to search for in the BasicDetails table.</param>
+        /// <returns>A list of DTOTopArmyNoFromICardRequestResponse objects representing the top matching records, or null if an error occurs.</returns>
         public async Task<List<DTOTopArmyNoFromICardRequestResponse>?> GetTopArmyNoFromICardRequest(string ArmyNo)
         {
             try
@@ -1376,6 +1480,12 @@ namespace DataAccessLayer
             }
 
         }
+
+        /// <summary>
+        /// Retrieves basic details (Rank, First Name, Last Name, and Unit Name) by the provided RequestId from the TrnICardRequest and related tables.
+        /// </summary>
+        /// <param name="RequestId">The RequestId used to filter and fetch the corresponding record from the TrnICardRequest table.</param>
+        /// <returns>A DTOBDetailByRequestIdResponse object containing the rank, first name, last name, and unit name, or null if not found or an error occurs.</returns>
         public async Task<DTOBDetailByRequestIdResponse?> GetBDetailByRequestId(int RequestId)
         {
             try
@@ -1402,6 +1512,12 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+        /// <summary>
+        /// Retrieves a paginated list of ICard request hold details based on the provided filter and sorting criteria.
+        /// </summary>
+        /// <param name="dTO">The data transfer object containing sorting, pagination, and search criteria.</param>
+        /// <returns>A DTODataTablesResponse containing a paginated list of ICard request hold details.</returns>
         public async Task<DTODataTablesResponse<DTOICardRequestHoldResponse>> GetAllICardRequestHold(DTODataTablesRequest dTO)
         {
             #region Old Code
@@ -1501,6 +1617,18 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+        /// <summary>
+        /// Saves or updates the basic details, address, identity information, upload data, ICard request, and step counter 
+        /// in the database, depending on whether the provided BasicDetailId is zero or an existing record.
+        /// </summary>
+        /// <param name="Data">The basic detail data to be saved or updated.</param>
+        /// <param name="address">The address data associated with the basic details.</param>
+        /// <param name="trnUpload">The upload data (e.g., signature and photo paths) associated with the basic details.</param>
+        /// <param name="mTrnIdentityInfo">The identity information for the individual associated with the basic details.</param>
+        /// <param name="mTrnICardRequest">The ICard request data to be saved or updated.</param>
+        /// <param name="mStepCounter">The step counter data related to the ICard request.</param>
+        /// <returns>A DTOBasicDetailsSaveResponse object indicating the success or failure of the operation, along with a message.</returns>
         public async Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter)
         {
             bool EFCoreOrDapper = true; // true mean EFCore
@@ -1890,6 +2018,13 @@ namespace DataAccessLayer
                 }
             }
         }
+
+
+        /// <summary>
+        /// Finds a BasicDetail record based on the provided ServiceNo.
+        /// </summary>
+        /// <param name="ServiceNo">The Service Number (ArmyNo) used to query the BasicDetails table.</param>
+        /// <returns>A BasicDetail object if a matching record is found, otherwise null.</returns>
         public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
         {
             string query = @"Select * from BasicDetails where ServiceNo = @ServiceNo ";
@@ -1916,6 +2051,13 @@ namespace DataAccessLayer
 
 
         }
+
+
+        /// <summary>
+        /// Retrieves the maximum BasicDetailId for a given ServiceNo from the BasicDetails table.
+        /// </summary>
+        /// <param name="ServiceNo">The Service Number (ArmyNo) used to find the corresponding BasicDetail records.</param>
+        /// <returns>The maximum BasicDetailId for the specified ServiceNo, or null if no records are found or an error occurs.</returns>
         public async Task<int?> MaxBasicDetailId(string ServiceNo)
         {
             const string query = @"SELECT MAX(BasicDetailId) AS MaxBasicDetailId FROM BasicDetails  WHERE ServiceNo = @ServiceNo";
@@ -1935,6 +2077,14 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Searches for service numbers based on the provided criteria and returns a list of matching records.
+        /// The query differs based on the request type (e.g., posting out, faulty cards, lost cards, etc.).
+        /// </summary>
+        /// <param name="dto">The data transfer object containing search criteria such as service number, type ID, and map unit ID.</param>
+        /// <returns>A list of DTOSmartSearch objects matching the search criteria, or null if no records are found or an error occurs.</returns>
         public async Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto)
         {
             string query = "";
@@ -2064,6 +2214,14 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves basic detail information for a specific request based on the provided RequestId.
+        /// This includes personal details, address, identity information, card request details, and more.
+        /// </summary>
+        /// <param name="RequestId">The unique identifier for the card request to fetch associated basic details.</param>
+        /// <returns>A DTOBasicDetailForParitalViewResponse object containing the basic details for the specified RequestId, or an empty response if not found or an error occurs.</returns>
         public async Task<DTOBasicDetailForParitalViewResponse> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
             try
@@ -2109,6 +2267,12 @@ namespace DataAccessLayer
                 return new DTOBasicDetailForParitalViewResponse();
             }
         }
+
+
+        /// <summary>
+        /// Retrieves a list of all ICard types available in the database.
+        /// </summary>
+        /// <returns>A list of DTOICardTypeRequest containing all available ICard types.</returns>
         public async Task<List<DTOICardTypeRequest>> GetAllICardType()
         {
             string query = "Select * from MICardType";
@@ -2135,6 +2299,13 @@ namespace DataAccessLayer
 
         }
 
+
+        /// <summary>
+        /// Retrieves a paginated list of BasicDetails with their ICard status, based on search parameters.
+        /// The results include details such as service number, request ID, apply-for status, and ICard type.
+        /// </summary>
+        /// <param name="dTO">The DTODataTablesRequestFor_BasicDetails_Index object containing the search and pagination parameters.</param>
+        /// <returns>A DTODataTablesResponse containing the paginated list of DTOBasicDetailIndexResponse, with total records and filtered records count.</returns>
         public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus(DTODataTablesRequestFor_BasicDetails_Index dTO)
         {
             int? applyfor = 0;
@@ -2386,6 +2557,14 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves a paginated list of Basic Details based on various filter conditions like step count, type, and search term.
+        /// </summary>
+        /// <param name="dTO">The data transfer object containing filtering parameters for the query, including step count, type, and search term.</param>
+        /// <returns>A DTODataTablesResponse object containing the list of filtered records along with pagination information (total records, filtered records, etc.).</returns>
+        /// <exception cref="Exception">Throws an exception if an error occurs during the query execution.</exception>
         public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLBasicDetail(DTODataTablesRequestFor_BasicDetails_Index dTO) //int UserId, int stepcount, int TypeId, int applyForId
         {
             string query = "";
@@ -2650,6 +2829,16 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves the basic details of an individual based on their RequestId.
+        /// </summary>
+        /// <param name="RequestId">The unique identifier of the request for which the basic details are to be fetched.</param>
+        /// <returns>
+        /// A <see cref="BasicDetailCrtAndUpdVM"/> object containing the requested basic details if found, or null if no details are found or an error occurs.
+        /// </returns>
+        /// <exception cref="Exception">Throws an exception if there is an error while executing the database query.</exception>
         public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId)
         {
             string query = "select bas.NameAsPerRecord,bas.FName,bas.LName,bas.ServiceNo,bas.DOB,bas.DateOfIssue,bas.DateOfCommissioning,bas.PlaceOfIssue," +
@@ -2691,6 +2880,16 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves the basic details of an individual based on their BasicDetailId.
+        /// </summary>
+        /// <param name="BasicDetailId">The unique identifier of the individual whose basic details are to be fetched.</param>
+        /// <returns>
+        /// A <see cref="BasicDetailCrtAndUpdVM"/> object containing the requested basic details if found, or null if no details are found or an error occurs.
+        /// </returns>
+        /// <exception cref="Exception">Throws an exception if there is an error while executing the database query.</exception>
         public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailById(int BasicDetailId)
         {
             string query = "select bas.*," +
@@ -2725,6 +2924,16 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves the basic details of an individual for editing, based on their BasicDetailId.
+        /// </summary>
+        /// <param name="BasicDetailId">The unique identifier of the individual whose details are to be fetched for editing.</param>
+        /// <returns>
+        /// A <see cref="BasicDetailCrtAndUpdVM"/> object containing the requested basic details if found, or null if no details are found or an error occurs.
+        /// </returns>
+        /// <exception cref="Exception">Throws an exception if there is an error while executing the database query.</exception>
         public async Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId)
         {
             string query = "select bas.*," +
@@ -2760,6 +2969,21 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves basic details for export based on the provided RequestIds and forwarding condition data.
+        /// Updates the related records in the database before retrieving the export data.
+        /// </summary>
+        /// <param name="Data">An instance of <see cref="DTODataExportRequest"/> containing the list of RequestIds and other export-related parameters.</param>
+        /// <param name="dTOApplFwdCondition">An instance of <see cref="DTOApplFwdConditionRequest"/> containing conditions to filter the forwarding data such as record office, armed forces, etc.</param>
+        /// <returns>
+        /// A list of <see cref="DTODataExportsResponse"/> objects that contain the requested basic details for the given RequestIds.
+        /// If no data is found or an error occurs during execution, an empty list is returned.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if an error occurs during the database query execution, including issues in executing transactions or retrieving data.
+        /// </exception>
         public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
             #region Old Code 
@@ -2966,6 +3190,20 @@ namespace DataAccessLayer
                 db.Dispose();
             }
         }
+
+
+        /// <summary>
+        /// Retrieves the necessary data for digital signing and prepares it in XML format.
+        /// This method retrieves detailed information about a request based on the provided `RequestIds` 
+        /// and processes the data for digital signing, including user profile and application details.
+        /// </summary>
+        /// <param name="Data">An instance of <see cref="DTODataExportRequest"/> containing the list of RequestIds to fetch the details for digital signing.</param>
+        /// <returns>
+        /// A <see cref="DTOXMLDigitalResponse"/> object that contains the digital sign response, including application details, profile details,
+        /// and the last record for forwarding with its step ID for digital signature processing.
+        /// If an error occurs or no data is found, an empty response will be returned.
+        /// </returns>
+        /// <exception cref="Exception">Throws an exception if there is an error while executing the database query or processing the data.</exception>
         public async Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
         {
             DTOXMLDigitalSignResponse dTOXMLDigitalSignResponse = new DTOXMLDigitalSignResponse();
@@ -3062,6 +3300,20 @@ namespace DataAccessLayer
                 return dTOXMLDigitalResponse;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves detailed basic information based on RequestIds or TrnFwdIds and generates a CSV string for export.
+        /// The method constructs a query depending on whether the provided IDs are `TrnFwdId` or `RequestId` and then processes the results into CSV format.
+        /// </summary>
+        /// <param name="Data">An instance of <see cref="DTOCSVExportRequest"/> containing the list of IDs (either `TrnFwdId` or `RequestId`) for which the data is fetched.</param>
+        /// <returns>
+        /// A CSV string representing the requested data. The CSV includes fields such as service number, name, date of birth, rank, and address information.
+        /// If an error occurs or no data is found, the method returns <c>null</c>.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if there is an error while executing the database query or processing the results into a CSV string.
+        /// </exception>
         public async Task<string?> GetCSVString(DTOCSVExportRequest Data)
         {
             string query = string.Empty;
@@ -3138,6 +3390,18 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Checks the status of the card for the specified RequestId.
+        /// Retrieves the card's status from the `TrnICardRequest` table based on the provided RequestId.
+        /// </summary>
+        /// <param name="RequestId">The unique identifier for the card request whose status is to be checked.</param>
+        /// <returns>
+        /// A <see cref="byte?"/> representing the status of the card. Returns `null` if the card is not found, otherwise returns the card's status.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if there is an error during database query execution. The exception is logged with an error message for debugging.
+        /// </exception>
         public async Task<byte?> CheckCardStatus(int RequestId)
         {
             byte? cardStatus = 0;
@@ -3153,6 +3417,18 @@ namespace DataAccessLayer
             return cardStatus;
         }
 
+
+        /// <summary>
+        /// Retrieves the completed card history for the specified RequestId.
+        /// This method fetches the completed card request from the `CompletedICardRequests` table based on the provided `RequestId` and deserializes the associated card request history into an object.
+        /// </summary>
+        /// <param name="RequestId">The unique identifier for the completed card request whose history is to be retrieved.</param>
+        /// <returns>
+        /// An instance of <see cref="ICardHistoryResponseAll"/> containing the deserialized card request history. If the card request is not found or the history is empty, an empty response object is returned.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if an error occurs during database query execution or during the deserialization of the card history. The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId)
         {
             ICardHistoryResponseAll cardStatus = new ICardHistoryResponseAll();
@@ -3160,7 +3436,7 @@ namespace DataAccessLayer
             {
                 var card = await _context.CompletedICardRequests.FirstOrDefaultAsync(req => req.RequestId == RequestId);
                 if (!string.IsNullOrEmpty(card?.CardRequestHistoryJson))
-                    cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(card.CardRequestHistoryJson);
+                    cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(card.CardRequestHistoryJson); 
             }
             catch (Exception ex)
             {
@@ -3169,6 +3445,26 @@ namespace DataAccessLayer
             return cardStatus;
         }
 
+
+
+        /// <summary>
+        /// Retrieves the complete history of a card request based on the provided RequestId.
+        /// This includes data related to forwarding, posting, faulty card information, and application closure.
+        /// The method queries multiple related tables and returns the data in a structured response object.
+        /// </summary>
+        /// <param name="RequestId">The unique identifier for the card request whose history is to be retrieved.</param>
+        /// <returns>
+        /// An instance of <see cref="ICardHistoryResponseAll"/> containing the full card history, including:
+        /// - Forwarding details (<see cref="ICardHistoryResponse"/>)
+        /// - Posting out information (<see cref="ICardHistoryPostingOutResponse"/>)
+        /// - Faulty card details (<see cref="ICardHistoryFaultyCardResponse"/>)
+        /// - Card closure information (<see cref="ICardApplCloseCardResponse"/>)
+        /// If no history is found or an error occurs, the method returns <c>null</c>.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if an error occurs while executing the database query or processing the results. 
+        /// The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<ICardHistoryResponseAll> ICardHistory(int RequestId)
         {
             #region Old Code
@@ -3276,6 +3572,21 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves the last record of a forwarded card based on the provided RequestId for digital signing.
+        /// This method checks if the card has passed step 2, and if so, it fetches the corresponding record from the `TrnStepCounter` table. 
+        /// If the card has not passed step 2, it fetches the most recent forwarding record from the `TrnFwds` table.
+        /// </summary>
+        /// <param name="RequestId">The unique identifier for the card request whose last forwarded record is to be retrieved.</param>
+        /// <returns>
+        /// An instance of <see cref="DTOFwdLastRecForDigitalSign"/> representing the last forwarded record details, including ArmyNo, DomainId, Rank, and the step ID.
+        /// If no record is found or an error occurs, an empty <see cref="DTOFwdLastRecForDigitalSign"/> object is returned.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if an error occurs during the execution of the SQL query or if there's an issue with the database connection. The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId)
         {
             string query = " if exists (select StepId from TrnStepCounter where RequestId=@RequestId and StepId=2)" +
@@ -3317,6 +3628,23 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves the complete history of a card request based on the provided TrackingId.
+        /// This method fetches all forwarding records for the specified `TrackingId` from the `TrnFwds` table, 
+        /// including details such as forwarding status, remarks, reason, authority, and unit name, 
+        /// along with associated user profile and rank information.
+        /// </summary>
+        /// <param name="TrackingId">The unique tracking identifier for the card request whose history is to be retrieved.</param>
+        /// <returns>
+        /// A list of <see cref="ICardHistoryResponse"/> objects representing the detailed forwarding history of the card request.
+        /// If no records are found or an error occurs, <c>null</c> is returned.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if an error occurs during the execution of the SQL query or when processing the results. 
+        /// The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId)
         {
             string query = " select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
@@ -3360,6 +3688,25 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves the task count for the card requests based on the provided UserId, Type, and ApplyForId.
+        /// This method queries the database for different task counts depending on the provided Type (1 for Submitted, 2 for Pending).
+        /// It counts the number of requests in various statuses such as Drafted, Submitted, Completed, and Rejected, as well as counts for each level of approval and export status.
+        /// </summary>
+        /// <param name="UserId">The unique identifier of the user for whom the task count is being fetched.</param>
+        /// <param name="Type">The type of task count to fetch: 
+        /// 1 for Submitted, 2 for Pending (including multiple levels of pending, approved, rejected tasks).</param>
+        /// <param name="applyForId">The identifier for the specific application type (e.g., ICard request type).</param>
+        /// <returns>
+        /// An instance of <see cref="DTOICardTaskCountResponse"/> containing the counts of tasks in various categories (Drafted, Submitted, Completed, Rejected, etc.).
+        /// Returns <c>null</c> if an error occurs or no data is found.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if there is an error executing the database query or processing the results.
+        /// The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId, int Type, int applyForId)
         {
             string query = "";
@@ -3476,6 +3823,25 @@ namespace DataAccessLayer
 
             }
         }
+
+
+        /// <summary>
+        /// Retrieves unread notifications for a specified user based on their UserId, Notification Type, and ApplyForId.
+        /// This method fetches notifications from the `TrnNotification` table that have not been marked as read and are related to the specified parameters.
+        /// The result includes details such as the rank, name, service number, tracking ID, photo image, and URL associated with the notification.
+        /// </summary>
+        /// <param name="UserId">The unique identifier of the user whose notifications are to be fetched.</param>
+        /// <param name="Type">The type of the notification (e.g., the category or purpose of the notification).</param>
+        /// <param name="applyForId">The application ID that the notification is associated with.</param>
+        /// <returns>
+        /// A list of <see cref="DTONotificationResponse"/> objects representing the unread notifications for the user.
+        /// Each notification contains the display ID, message, rank, name, service number, tracking ID, photo, and URL related to the notification.
+        /// Returns <c>null</c> if an error occurs or if no notifications are found.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if an error occurs during the execution of the SQL query or when processing the results. 
+        /// The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type, int applyForId)
         {
             string query = "select dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,tre.TrackingId,uplod.PhotoImagePath,dis.Url  from TrnNotification noti" +
@@ -3501,6 +3867,24 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves unread notifications related to a specific card request (RequestId) based on the provided UserId, Notification Type, and ApplyForId.
+        /// This method fetches notifications from the `TrnNotification` table and returns the associated details such as the request ID, display ID, span name, message, rank, name, service number, tracking ID, and image paths. 
+        /// Additionally, it checks the URL based on specific display IDs.
+        /// </summary>
+        /// <param name="UserId">The unique identifier of the user whose notifications are being fetched.</param>
+        /// <param name="Type">The type of the notification (e.g., the category or purpose of the notification).</param>
+        /// <param name="applyForId">The application ID associated with the request.</param>
+        /// <returns>
+        /// A list of <see cref="DTONotificationResponse"/> objects representing the unread notifications for the specified user. 
+        /// Returns <c>null</c> if no notifications are found or if an error occurs during the process.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if an error occurs during the execution of the SQL query or while processing the results. 
+        /// The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
             string query = "select Distinct tre.RequestId, dis.DisplayId,Spanname + 'self' Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,tre.TrackingId,uplod.PhotoImagePath,CASE WHEN dis.DisplayId in (7,8,9,10,17,18,19,20) THEN dis.Url ELSE '' END AS Url  from TrnNotification noti " +
@@ -3528,6 +3912,22 @@ namespace DataAccessLayer
             }
 
         }
+
+
+        /// <summary>
+        /// Retrieves a list of record offices (ROs) filtered by the provided ArmedId.
+        /// This method fetches all the `MRecordOffice` records where the `ArmedId` matches the specified value.
+        /// It returns a list of `MRecordOffice` objects containing details of the record offices.
+        /// </summary>
+        /// <param name="ArmedId">The unique identifier of the armed forces for which the record office list is to be fetched.</param>
+        /// <returns>
+        /// A list of <see cref="MRecordOffice"/> objects that match the specified `ArmedId`.
+        /// Returns <c>null</c> if an error occurs during the database query or if no records are found.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if there is an error executing the database query or processing the results.
+        /// The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId)
         {
             try
@@ -3540,6 +3940,25 @@ namespace DataAccessLayer
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Retrieves the history of an application based on the provided tracking ID.
+        /// This method fetches two sets of data:
+        /// 1. General application details such as rank, name, service number, and unit.
+        /// 2. Application tracking history, including forwarding status, step ID, and remarks associated with the application.
+        /// </summary>
+        /// <param name="ApplicationHistory">The tracking ID of the application whose history is to be fetched.</param>
+        /// <returns>
+        /// A <see cref="DTOApplicationTrack"/> object containing:
+        /// - <see cref="dTOApplicationDetails"/>: General details about the application (e.g., rank, name, service number, unit).
+        /// - <see cref="dTOTrackHistory"/>: The history of the application's progression through different steps, including forwarding status, remarks, and completion status.
+        /// Returns <c>null</c> if an error occurs while fetching or processing the data.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if there is an error executing the SQL query or processing the results.
+        /// The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<DTOApplicationTrack?> ApplicationHistory(string ApplicationHistory)
         {
             DTOApplicationTrack lst = new DTOApplicationTrack();
@@ -3592,6 +4011,23 @@ namespace DataAccessLayer
             }
         }
 
+
+        /// <summary>
+        /// Checks the validity of card printing requests by validating various attributes such as Application ID, Card Serial Number, Chip Number, 
+        /// Step Status, and Service Number. It processes the requests in chunks to ensure efficient handling of large datasets.
+        /// The method checks if the Application ID exists, if the Card Serial Number and Chip Number are unique, if the request is eligible for printing,
+        /// and if the associated Service Number is valid for the given application. It returns a list of <see cref="DTOCardPriningRequest"/> 
+        /// objects with the validity status and remarks for each request.
+        /// </summary>
+        /// <param name="requests">A list of <see cref="DTOCardPriningRequest"/> objects containing the card printing request details.</param>
+        /// <returns>
+        /// A list of <see cref="DTOCardPriningRequest"/> objects, each with a validity status and detailed remarks for each request.
+        /// The status indicates whether the request is valid or invalid, and the remarks explain the reason for invalidity if applicable.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if an error occurs during the processing of the requests or while interacting with the database. 
+        /// The exception is logged for debugging purposes.
+        /// </exception>
         public async Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests)
         {
             byte StepId = 5;
@@ -3634,6 +4070,22 @@ namespace DataAccessLayer
             return response;
         }
 
+
+        /// <summary>
+        /// Uploads a list of card printing requests by converting them into a DataTable and passing them to a stored procedure for processing.
+        /// This method processes the requests in chunks of 5000 and executes the `CardPriningCSVImport` stored procedure to import the data.
+        /// It returns a response indicating the result of the import operation, including any relevant messages or statuses.
+        /// </summary>
+        /// <param name="requests">A list of <see cref="DTOCardPriningRequest"/> objects representing the card printing requests to be uploaded.</param>
+        /// <returns>
+        /// A <see cref="DTOUploadChipAndSerialResponse"/> object containing the result of the upload operation.
+        /// This includes a message indicating success or failure, and any additional information related to the process.
+        /// Returns <c>null</c> if the upload fails or an error occurs during processing.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if there is an error during the chunking of requests, the creation of the DataTable, 
+        /// or the execution of the stored procedure. Any error is captured and the exception message is included in the response.
+        /// </exception>
         public async Task<DTOUploadChipAndSerialResponse> CardPrintingCSVUpload(List<DTOCardPriningRequest> requests)
         {
             DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
@@ -3660,6 +4112,26 @@ namespace DataAccessLayer
             }
             return response;
         }
+
+
+        /// <summary>
+        /// Uploads a list of card dispatch requests in CSV format and processes them in batches. 
+        /// This method inserts dispatch card information into the database, processes the data in chunks of 5000 records, 
+        /// and executes the `CardDispatchCSVImport` stored procedure to import the data into the system.
+        /// The method returns a response indicating the success or failure of the upload operation.
+        /// </summary>
+        /// <param name="requests">A list of <see cref="DTOCardDispatchCheckRequest"/> objects representing the card dispatch requests to be uploaded.</param>
+        /// <param name="dTODispatch">A <see cref="DTODispatchOutRequest"/> object containing the dispatch details such as step, apply for ID, 
+        /// record office ID, dispatch dates, and other relevant information for the dispatch operation.</param>
+        /// <returns>
+        /// A <see cref="DTOGenericResponse{string}"/> object containing the result of the upload operation. The `Value` property is set to "Success" 
+        /// on successful import, and `Message` contains the dispatch card ID. In case of failure, the `Result` is set to false, and the error message 
+        /// is logged and returned in the `Message` property.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if any error occurs during the upload process or while interacting with the database. 
+        /// The exception is logged, and the response `Message` is set accordingly.
+        /// </exception>
         public async Task<DTOGenericResponse<string>> CardDispatchCSVUpload(List<DTOCardDispatchCheckRequest> requests, DTODispatchOutRequest dTODispatch)
         {
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
@@ -3736,6 +4208,26 @@ namespace DataAccessLayer
             }
             return response;
         }
+
+
+        /// <summary>
+        /// Handles the process of dispatching cards into the system. It accepts a list of dispatch card requests, processes them in batches of 5000 records, 
+        /// and calls the stored procedure `CardDispatchIn` to insert the data into the database. The method also updates the status of the dispatch card 
+        /// by using the provided `StepId` and `ToRemark`.
+        /// </summary>
+        /// <param name="dTODispatch">A list of <see cref="DTODispatchCardInRequest"/> objects containing dispatch card information to be processed.</param>
+        /// <param name="StepId">The ID of the step in the dispatch process that the card is currently at.</param>
+        /// <param name="DispatchCardId">The ID of the dispatch card being updated.</param>
+        /// <param name="ToRemark">A string containing remarks that will be associated with the dispatch card during the update process.</param>
+        /// <returns>
+        /// A <see cref="DTOGenericResponse{string}"/> object that indicates the result of the dispatch card processing. 
+        /// The `Value` property will be set to "Success" on successful processing. If an error occurs, the `Result` will be set to `false`, 
+        /// and the `Message` property will contain the error details.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if any error occurs during the execution of the stored procedure or if there is an issue with the database connection.
+        /// The exception will be logged, and the response will indicate a failure.
+        /// </exception>
         public async Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId,string ToRemark)
         {
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
@@ -3771,6 +4263,22 @@ namespace DataAccessLayer
             return response;
         }
 
+
+        /// <summary>
+        /// Retrieves the complete movement history of an I-Card based on the provided request ID. 
+        /// This includes steps like card export, printing, loss, distribution, hotlisting, and destruction.
+        /// It fetches the movement history data from multiple sources and returns a consolidated list sorted by the reported date.
+        /// </summary>
+        /// <param name="requestId">The unique identifier of the I-Card request for which the movement history is being fetched.</param>
+        /// <returns>
+        /// A list of <see cref="DTOCardMovementHistoryResponse"/> objects representing the history of the card's movements. 
+        /// The list includes details such as step name, reported by, reported date, and any relevant remarks for each movement step.
+        /// The list is sorted by the date the movement was reported.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Logs an error if any issues occur while fetching the data from the database or processing the movement history.
+        /// The error will be logged with the message "BasicDetailDB->GetCardMovementHistory".
+        /// </exception>
         public async Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId)
         {
             var responseList = new List<DTOCardMovementHistoryResponse>();
@@ -3895,6 +4403,16 @@ namespace DataAccessLayer
             return responseList;
         }
 
+
+        /// <summary>
+        /// Updates the status of an I-Card request in the database based on the provided request ID and status.
+        /// This method executes an UPDATE SQL query to change the `StatusId` for a specific `RequestId` in the `TrnICardRequest` table.
+        /// </summary>
+        /// <param name="requestId">The unique identifier of the I-Card request that needs to be updated.</param>
+        /// <param name="status">The new status value to be assigned to the I-Card request. This value corresponds to the `StatusId` field in the database.</param>
+        /// <exception cref="Exception">
+        /// Logs any errors that occur during the update process. The exception is captured and logged with the message "BasicDetailDB->UpdateCardStatus".
+        /// </exception>
         public async Task UpdateCardStatus(int requestId, byte status)
         {
             try
@@ -3912,7 +4430,21 @@ namespace DataAccessLayer
             }
         }
 
-
+        /// <summary>
+        /// Checks the status of a card before distribution, based on the given request ID. This method determines whether the card
+        /// is eligible for distribution by checking its type and associated status in the database. It also handles specific cases
+        /// such as "Lost" or "Destruction" for different card types and checks the related records in the `TrnLostCards` and 
+        /// `TrnDestructionCards` tables.
+        /// </summary>
+        /// <param name="requestId">The unique identifier for the I-Card request to check.</param>
+        /// <returns>
+        /// A <see cref="DTOUploadChipAndSerialResponse"/> containing the result and message. The result indicates whether the 
+        /// card is eligible for distribution (1 for eligible, 0 for not eligible), and the message provides additional context 
+        /// (such as "Lost" or "Destruction") based on the card type.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Logs any exceptions encountered during the execution of the method, such as database query issues.
+        /// </exception>
         public async Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId)
         {
             #region Old Code

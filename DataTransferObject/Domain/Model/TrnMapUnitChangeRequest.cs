@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
-using DataTransferObject.Response.User;
-using DataTransferObject.Domain.Identitytable;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataTransferObject.Domain.Model
 {

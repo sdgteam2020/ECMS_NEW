@@ -1,10 +1,7 @@
 ﻿using BusinessLogicsLayer.AfsacCellMapp;
 using BusinessLogicsLayer.Appt;
 using BusinessLogicsLayer.ArmedCat;
-using BusinessLogicsLayer.BasicDet;
-using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
-using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.DispatchMode;
 using BusinessLogicsLayer.Div;
@@ -16,11 +13,6 @@ using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer
 { 

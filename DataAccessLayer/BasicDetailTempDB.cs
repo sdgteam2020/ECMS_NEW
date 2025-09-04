@@ -1,11 +1,10 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using Microsoft.AspNetCore.DataProtection;
-using Dapper;
 using Microsoft.Extensions.Logging;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Data;
 
 
@@ -26,6 +25,15 @@ namespace DataAccessLayer
             protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
         }
+
+        /// <summary>
+        /// Retrieves all basic details from the temporary table for a given user, based on their TypeId, and forwards condition.
+        /// </summary>
+        /// <param name="UserId">The ID of the user for which the data is to be fetched.</param>
+        /// <param name="TypeId">The type of the record (e.g., 1 for specific user details).</param>
+        /// <param name="dTOApplFwdCondition">Conditions for forwarding application.</param>
+        /// <param name="ArmedIdForORO">The armed ID for the ORO mapping.</param>
+        /// <returns>A list of DTOBasicDetailTempRequest containing the basic details of the user.</returns>
         public async Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, int TypeId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
         {
             try
@@ -321,6 +329,12 @@ namespace DataAccessLayer
 
         }
 
+        /// <summary>
+        /// Retrieves the detailed basic information for a specific BasicDetailTempId based on the UserId and BasicDetailId.
+        /// </summary>
+        /// <param name="UserId">The ID of the user requesting the details.</param>
+        /// <param name="BasicDetailId">The ID of the specific basic detail entry.</param>
+        /// <returns>A DTOBasicDetailTempRequest object containing the requested basic detail information.</returns>
         public async Task<DTOBasicDetailTempRequest?> GetALLBasicDetailTempByBasicDetailId(int UserId, int BasicDetailId)
         {
             //var BasicDetailTempList = _context.BasicDetailTemps.Where(x => x.Updatedby == UserId).ToList();
@@ -389,6 +403,11 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves a BasicDetailTemp entry based on the provided Army Number.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number for which the basic detail is fetched.</param>
+        /// <returns>A BasicDetailTemp object if found, otherwise null.</returns>
         public async Task<BasicDetailTemp?> GetByArmyNo(string ArmyNo)
         {
             var query = "SELECT * FROM BasicDetailTemps where ServiceNo=@ArmyNo";
@@ -407,6 +426,11 @@ namespace DataAccessLayer
             }
         }
 
+        /// <summary>
+        /// Marks a BasicDetailTemp entry as inactive based on the provided Army Number.
+        /// </summary>
+        /// <param name="ArmyNo">The Army number of the record to be updated.</param>
+        /// <returns>A boolean indicating if the update was successful.</returns>
         public async Task<bool> UpdateByArmyNo(string ArmyNo)
         {
             try

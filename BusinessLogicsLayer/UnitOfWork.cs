@@ -1,10 +1,7 @@
 ﻿using BusinessLogicsLayer.AfsacCellMapp;
 using BusinessLogicsLayer.Appt;
 using BusinessLogicsLayer.ArmedCat;
-using BusinessLogicsLayer.BasicDet;
-using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
-using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.BloodGroup;
 using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.DispatchMode;
@@ -18,16 +15,8 @@ using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
-using DataAccessLayer;
-using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer
 {
@@ -80,6 +69,11 @@ namespace BusinessLogicsLayer
         public ICategoryBL CategoryBL { get; }
         public IDispatchModeBL DispatchMode { get; }
 
+        /// <summary>
+        /// Retrieves a list of master records based on the provided filter data.
+        /// </summary>
+        /// <param name="Data">The request data containing filtering options such as id and ParentId.</param>
+        /// <returns>A list of <see cref="DTOMasterResponse"/> representing the master records.</returns>
         public async Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data)
         {
             List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
@@ -395,6 +389,13 @@ namespace BusinessLogicsLayer
             //Constants.MasterTbl.Command;
             return lst;
         }
+
+
+        /// <summary>
+        /// Retrieves a list of master records based on a parent entity.
+        /// </summary>
+        /// <param name="Data">The request data containing filtering options such as TableId and ParentId.</param>
+        /// <returns>A list of <see cref="DTOMasterResponse"/> representing the master records.</returns>
         public async Task<List<DTOMasterResponse>> GetAllMMasterByParent(DTOMHierarchyRequest Data)
             {
                 List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
@@ -464,7 +465,6 @@ namespace BusinessLogicsLayer
                 //Constants.MasterTbl.Command;
                 return lst;
             }
-
 
         }
     }

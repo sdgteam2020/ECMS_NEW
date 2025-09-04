@@ -25,7 +25,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="TrackingId">The tracking ID used to fetch application status details.</param>
         /// <returns>A view displaying the application status along with footer and client IP information.</returns>
-        public async Task<IActionResult> AppStatus(string TrackingId)
+        public IActionResult AppStatus(string TrackingId)
         {
             // Initialize the DTO object for storing application tracking data.
             //DTOApplicationTrack dTOApplicationTrack = new DTOApplicationTrack();

@@ -7,7 +7,6 @@ using BusinessLogicsLayer.ArmedCat;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
-using BusinessLogicsLayer.BdeCat;
 using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.BloodGroup;
 using BusinessLogicsLayer.Corps;
@@ -42,11 +41,7 @@ using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Domain.Identitytable;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.SqlServer.Management.Smo;
 
 namespace BusinessLogicsLayer
 {
