@@ -45,7 +45,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId);
         public Task<ICardHistoryResponseAll?> ICardHistory(int RequestId);
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
-        public Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId);
+        public Task<List<ICardHistoryResponse>?> ICardHistoryByRequestId(int RequestId);
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address,MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);
         public Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId, int Type,int applyForId);
         public Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type, int applyForId);
@@ -53,7 +53,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
-        public Task<DTOApplicationTrack?> ApplicationHistory(string RequestId);
+        public Task<DTOApplicationTrack?> ApplicationHistory(int RequestId);
         Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request);
         public Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO);
         Task<DTOUploadChipAndSerialResponse?> CardPrinitngCSVUpload(List<DTOCardPriningRequest> request);

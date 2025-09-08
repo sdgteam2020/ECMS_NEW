@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataTransferObject.Domain.Model;
+﻿using DataTransferObject.Validation;
 using Microsoft.AspNetCore.Http;
-using DataTransferObject.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataTransferObject.Requests
 {

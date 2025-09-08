@@ -1,24 +1,12 @@
-﻿using Azure;
-using BusinessLogicsLayer.BdeCate;
-using BusinessLogicsLayer.Master;
-using DataAccessLayer;
+﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
-using Microsoft.SqlServer.Management.Smo.Wmi;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.BasicDet
 {
@@ -147,10 +135,10 @@ namespace BusinessLogicsLayer.BasicDet
             
             return _iBasicDetailDB.ICardFwdLastRec(RequestId);
         }
-        public Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId)
+        public Task<List<ICardHistoryResponse>?> ICardHistoryByRequestId(int RequestId)
         {
             
-            return _iBasicDetailDB.ICardHistoryByTrackingId(TrackingId);
+            return _iBasicDetailDB.ICardHistoryByRequestId(RequestId);
         }
 
         public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus(DTODataTablesRequestFor_BasicDetails_Index dTO)
@@ -195,7 +183,7 @@ namespace BusinessLogicsLayer.BasicDet
             var data = await _iBasicDetailDB.GetROListByArmedId(ArmedId);
             return data;
         }
-        public async Task<DTOApplicationTrack?> ApplicationHistory(string RequestId)
+        public async Task<DTOApplicationTrack?> ApplicationHistory(int RequestId)
         {
             var data = await _iBasicDetailDB.ApplicationHistory(RequestId);
             return data;

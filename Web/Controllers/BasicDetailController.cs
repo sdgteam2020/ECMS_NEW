@@ -1842,8 +1842,6 @@ namespace Web.Controllers
                         mTrnICardRequest.StatusId = 1;
                         mTrnICardRequest.IsActive = true;
                         mTrnICardRequest.TypeId = model.TypeId;
-                        string tracid = model.DOB.Day.ToString("D2") + "" + model.DOB.Month.ToString("D2") + "" + model.DOB.Year + "" + Convert.ToInt32(model.AadhaarNo.Substring(model.AadhaarNo.Length - 3)).ToString("D4");
-                        mTrnICardRequest.TrackingId = Convert.ToInt64(tracid);
                         mTrnICardRequest.RegistrationId = model.RegistrationId;
                         mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                         mTrnICardRequest.UpdatedOn = DateTime.Now;

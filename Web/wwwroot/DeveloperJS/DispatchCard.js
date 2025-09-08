@@ -1458,7 +1458,7 @@ function updateSelectedIds() {
         }
     });
 
-    console.log("Updated selectedIds:", selectedIds);
+    //console.log("Updated selectedIds:", selectedIds);
 }
 function getSelectedIds() {
     let ids = [];

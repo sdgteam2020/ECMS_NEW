@@ -1847,16 +1847,15 @@ namespace DataAccessLayer
 
                         mTrnICardRequest.BasicDetailId = BasicDetailId;
 
-                        var insertTrnICardRequest = " INSERT INTO TrnICardRequest (BasicDetailId, TypeId, RegistrationId, TrnDomainMappingId, TrackingId, IsActive, Updatedby, UpdatedOn, StatusId, CardSerialNo, ChipNo)" +
+                        var insertTrnICardRequest = " INSERT INTO TrnICardRequest (BasicDetailId, TypeId, RegistrationId, TrnDomainMappingId, IsActive, Updatedby, UpdatedOn, StatusId, CardSerialNo, ChipNo)" +
                                                     " OUTPUT INSERTED.RequestId " +
-                                                    " VALUES (@BasicDetailId, @TypeId, @RegistrationId, @TrnDomainMappingId, @TrackingId, @IsActive, @Updatedby, @UpdatedOn, @StatusId, @CardSerialNo, @ChipNo);";
+                                                    " VALUES (@BasicDetailId, @TypeId, @RegistrationId, @TrnDomainMappingId, @IsActive, @Updatedby, @UpdatedOn, @StatusId, @CardSerialNo, @ChipNo);";
                         var parametersTrnICardRequest = new DynamicParameters();
                         //parametersTrnICardRequest.Add("@RequestId", mTrnICardRequest.RequestId, DbType.Int32, ParameterDirection.Output);
                         parametersTrnICardRequest.Add("@BasicDetailId", mTrnICardRequest.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@TypeId", mTrnICardRequest.TypeId, DbType.Byte, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@RegistrationId", mTrnICardRequest.RegistrationId, DbType.Byte, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@TrnDomainMappingId", mTrnICardRequest.TrnDomainMappingId, DbType.Int32, ParameterDirection.Input);
-                        parametersTrnICardRequest.Add("@TrackingId", mTrnICardRequest.TrackingId, DbType.Int64, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@IsActive", mTrnICardRequest.IsActive, DbType.Boolean, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@Updatedby", mTrnICardRequest.Updatedby, DbType.Int32, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@UpdatedOn", mTrnICardRequest.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
@@ -1945,14 +1944,13 @@ namespace DataAccessLayer
                         parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
                         await db.ExecuteAsync(updateIdentityInfo, parametersIdentityInfo, transaction: transaction);
 
-                        var updateTrnICardRequest = " UPDATE TrnICardRequest SET BasicDetailId=@BasicDetailId, TypeId=@TypeId, RegistrationId=@RegistrationId, TrnDomainMappingId=@TrnDomainMappingId, TrackingId=@TrackingId, IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, StatusId=@StatusId, CardSerialNo=@CardSerialNo, ChipNo=@ChipNo,RecordOfficeId=@RecordOfficeId WHERE RequestId=@RequestId";
+                        var updateTrnICardRequest = " UPDATE TrnICardRequest SET BasicDetailId=@BasicDetailId, TypeId=@TypeId, RegistrationId=@RegistrationId, TrnDomainMappingId=@TrnDomainMappingId, IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, StatusId=@StatusId, CardSerialNo=@CardSerialNo, ChipNo=@ChipNo,RecordOfficeId=@RecordOfficeId WHERE RequestId=@RequestId";
                         var parametersTrnICardRequest = new DynamicParameters();
                         parametersTrnICardRequest.Add("@RequestId", mTrnICardRequest.RequestId, DbType.Int32, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@BasicDetailId", mTrnICardRequest.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@TypeId", mTrnICardRequest.TypeId, DbType.Byte, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@RegistrationId", mTrnICardRequest.RegistrationId, DbType.Byte, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@TrnDomainMappingId", mTrnICardRequest.TrnDomainMappingId, DbType.Int32, ParameterDirection.Input);
-                        parametersTrnICardRequest.Add("@TrackingId", mTrnICardRequest.TrackingId, DbType.Int64, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@IsActive", mTrnICardRequest.IsActive, DbType.Boolean, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@Updatedby", mTrnICardRequest.Updatedby, DbType.Int32, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@UpdatedOn", mTrnICardRequest.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
@@ -3320,7 +3318,7 @@ namespace DataAccessLayer
             if (Data.IdsTypeRequestIdOrTrnFwdId == true)
             {
                 //Ids is TrnFwdId.
-                query = " Select B.ServiceNo,B.NameAsPerRecord,B.DOB,B.DateOfCommissioning,ran.RankAbbreviation,B.FName,B.LName,munit.UnitName,trnicrd.TrackingId,Afor.Name ApplyFor,ty.name ICardType,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode from BasicDetails B " +
+                query = " Select B.ServiceNo,B.NameAsPerRecord,B.DOB,B.DateOfCommissioning,ran.RankAbbreviation,B.FName,B.LName,munit.UnitName,Afor.Name ApplyFor,ty.name ICardType,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode from BasicDetails B " +
                         " inner join TrnAddress trnadd on trnadd.BasicDetailId = B.BasicDetailId " +
                         " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                         " inner join MRank ran on ran.RankId=B.RankId " +
@@ -3334,7 +3332,7 @@ namespace DataAccessLayer
             else
             {
                 //Ids is RequestId.
-                query = " Select B.ServiceNo,B.NameAsPerRecord,B.DOB,B.DateOfCommissioning,ran.RankAbbreviation,B.FName,B.LName,munit.UnitName,trnicrd.TrackingId,Afor.Name ApplyFor,ty.name ICardType,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode from BasicDetails B " +
+                query = " Select B.ServiceNo,B.NameAsPerRecord,B.DOB,B.DateOfCommissioning,ran.RankAbbreviation,B.FName,B.LName,munit.UnitName,Afor.Name ApplyFor,ty.name ICardType,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode from BasicDetails B " +
                         " inner join TrnAddress trnadd on trnadd.BasicDetailId = B.BasicDetailId " +
                         " inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId " +
                         " inner join MRank ran on ran.RankId=B.RankId " +
@@ -3364,7 +3362,6 @@ namespace DataAccessLayer
                                          FName = e.FName,
                                          LName = e.LName,
                                          UnitName = e.UnitName,
-                                         TrackingId = e.TrackingId,
                                          ApplyFor = e.ApplyFor,
                                          ICardType = e.ICardType,
                                          State = e.State,
@@ -3631,52 +3628,47 @@ namespace DataAccessLayer
 
 
         /// <summary>
-        /// Retrieves the complete history of a card request based on the provided TrackingId.
-        /// This method fetches all forwarding records for the specified `TrackingId` from the `TrnFwds` table, 
-        /// including details such as forwarding status, remarks, reason, authority, and unit name, 
-        /// along with associated user profile and rank information.
+        /// Gets the I-Card forwarding and approval history for the given request ID.
         /// </summary>
-        /// <param name="TrackingId">The unique tracking identifier for the card request whose history is to be retrieved.</param>
+        /// <param name="RequestId">The request ID to fetch history for.</param>
         /// <returns>
-        /// A list of <see cref="ICardHistoryResponse"/> objects representing the detailed forwarding history of the card request.
-        /// If no records are found or an error occurs, <c>null</c> is returned.
+        /// A list of <see cref="ICardHistoryResponse"/> records if found; otherwise, <c>null</c>.
         /// </returns>
         /// <exception cref="Exception">
-        /// Throws an exception if an error occurs during the execution of the SQL query or when processing the results. 
-        /// The exception is logged for debugging purposes.
+        /// Logged and returns <c>null</c> if any database error occurs.
         /// </exception>
-        public async Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId)
+        public async Task<List<ICardHistoryResponse>?> ICardHistoryByRequestId(int RequestId)
         {
-            string query = " select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, " +
-                            " usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ," +
-                            " CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status," +
-                            " fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark, " +
-                            " fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2, " +
-                            " reason.Reason,postind.Authority,initres.UnitName,req.RequestId " +
-                            " from TrnFwds fwd " +
-                            " inner join TrnICardRequest req on req.RequestId=fwd.RequestId " +
-                            " inner join TrnStepCounter step" +
-                            " on fwd.RequestId=step.RequestId" +
-                            " inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId" +
-                            " inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId" +
-                            " inner join TrnDomainMapping mapto on mapto.AspNetUsersId=fwd.ToAspNetUsersId" +
-                            " inner join AspNetUsers usersto on usersto.Id=mapto.AspNetUsersId" +
-                            " left join UserProfile profrom" +
-                            " on mapfrom.UserId=profrom.UserId" +
-                            " inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId" +
-                            " left join UserProfile proto" +
-                            " on mapto.UserId=proto.UserId" +
-                            " left join TrnPostingOut postind on postind.TrnFwdId=fwd.TrnFwdId" +
-                            " left join MPostingReason reason on reason.Id=postind.ReasonId" +
-                            " left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID" +
-                            " left join MUnit initres on initres.UnitId=Munitres.UnitId" +
-                            " inner join MRank ranlto on ranlto.RankId=proto.RankId where req.TrackingId=@TrackingId" +
-                            " order by fwd.TrnFwdId asc";
+            string query = @"select usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank, 
+                            usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,
+                            CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status,
+                            fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark, 
+                            fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2, 
+                            reason.Reason,postind.Authority,initres.UnitName,req.RequestId 
+                            from TrnFwds fwd 
+                            inner join TrnICardRequest req on req.RequestId=fwd.RequestId 
+                            inner join TrnStepCounter step
+                            on fwd.RequestId=step.RequestId
+                            inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=fwd.FromAspNetUsersId
+                            inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId
+                            inner join TrnDomainMapping mapto on mapto.AspNetUsersId=fwd.ToAspNetUsersId
+                            inner join AspNetUsers usersto on usersto.Id=mapto.AspNetUsersId
+                            left join UserProfile profrom
+                            on mapfrom.UserId=profrom.UserId
+                            inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId
+                            left join UserProfile proto
+                            on mapto.UserId=proto.UserId
+                            left join TrnPostingOut postind on postind.TrnFwdId=fwd.TrnFwdId
+                            left join MPostingReason reason on reason.Id=postind.ReasonId
+                            left join MapUnit Munitres on Munitres.UnitMapId=postind.ToUnitID
+                            left join MUnit initres on initres.UnitId=Munitres.UnitId
+                            inner join MRank ranlto on ranlto.RankId=proto.RankId where req.RequestId=@RequestId
+                            order by fwd.TrnFwdId asc";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var BasicDetailList = await connection.QueryAsync<ICardHistoryResponse>(query, new { TrackingId });
+                    var BasicDetailList = await connection.QueryAsync<ICardHistoryResponse>(query, new { RequestId });
 
                     return BasicDetailList.ToList();
                 }
@@ -3844,12 +3836,12 @@ namespace DataAccessLayer
         /// </exception>
         public async Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type, int applyForId)
         {
-            string query = "select dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,tre.TrackingId,uplod.PhotoImagePath,dis.Url  from TrnNotification noti" +
+            string query = "select dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,uplod.PhotoImagePath,dis.Url  from TrnNotification noti" +
                             " inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId" +
                             " inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId" +
                             " inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId " +
                             " inner join TrnICardRequest tre on tre.RequestId = noti.RequestId " +
-                             " inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId" +
+                            " inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId" +
                             " inner join MRank ranks on ranks.RankId=bas.RankId" +
                             " inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId" +
                             " where noti.ReciverAspNetUsersId=@UserId and NotificationTypeId=@Type and stepc.applyforId=@applyForId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
@@ -3887,7 +3879,7 @@ namespace DataAccessLayer
         /// </exception>
         public async Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
-            string query = "select Distinct tre.RequestId, dis.DisplayId,Spanname + 'self' Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,tre.TrackingId,uplod.PhotoImagePath,CASE WHEN dis.DisplayId in (7,8,9,10,17,18,19,20) THEN dis.Url ELSE '' END AS Url  from TrnNotification noti " +
+            string query = "select Distinct tre.RequestId, dis.DisplayId,Spanname + 'self' Spanname,Message,ranks.RankAbbreviation,bas.Name,bas.ServiceNo,uplod.PhotoImagePath,CASE WHEN dis.DisplayId in (7,8,9,10,17,18,19,20) THEN dis.Url ELSE '' END AS Url  from TrnNotification noti " +
                             " inner join TrnNotificationDisplay dis on noti.DisplayId = dis.DisplayId" +
                             " inner join AspNetUsers users on users.Id = noti.SentAspNetUsersId" +
                             " inner join TrnICardRequest tre on tre.RequestId = noti.RequestId" +
@@ -3943,12 +3935,12 @@ namespace DataAccessLayer
 
 
         /// <summary>
-        /// Retrieves the history of an application based on the provided tracking ID.
+        /// Retrieves the history of an application based on the provided RequestId.
         /// This method fetches two sets of data:
         /// 1. General application details such as rank, name, service number, and unit.
-        /// 2. Application tracking history, including forwarding status, step ID, and remarks associated with the application.
+        /// 2. Application RequestId history, including forwarding status, step ID, and remarks associated with the application.
         /// </summary>
-        /// <param name="ApplicationHistory">The tracking ID of the application whose history is to be fetched.</param>
+        /// <param name="ApplicationHistory">The RequestId of the application whose history is to be fetched.</param>
         /// <returns>
         /// A <see cref="DTOApplicationTrack"/> object containing:
         /// - <see cref="dTOApplicationDetails"/>: General details about the application (e.g., rank, name, service number, unit).
@@ -3959,7 +3951,7 @@ namespace DataAccessLayer
         /// Throws an exception if there is an error executing the SQL query or processing the results.
         /// The exception is logged for debugging purposes.
         /// </exception>
-        public async Task<DTOApplicationTrack?> ApplicationHistory(string ApplicationHistory)
+        public async Task<DTOApplicationTrack?> ApplicationHistory(int RequestId)
         {
             DTOApplicationTrack lst = new DTOApplicationTrack();
             try
@@ -3976,33 +3968,26 @@ namespace DataAccessLayer
                " inner join AspNetUsers users on map.AspNetUsersId=users.Id" +
                " inner join UserProfile pr on pr.UserId = map.UserId" +
                " inner join MRank ranfrom on pr.RankId=ranfrom.RankId" +
-               " where req.StatusId=1 and req.TrackingId=@TrackingId";
+               " where req.StatusId=1 and req.RequestId=@RequestId";
 
-                //" select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete" +
-                //" from TrnFwds fwd " +
-                //" inner join TrnICardRequest req on fwd.RequestId=req.RequestId" +
-                //" inner join MStepCounterStep step on fwd.StepId=step.StepId" +
-                //"  where fwd.RequestId=@RequestId" +
-                //" order by fwd.TrnFwdId asc";
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { ApplicationHistory });
-                    lst.dTOApplicationDetails = ret.FirstOrDefault() ?? new DTOApplicationDetails();
-                }
-                query = " select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete," +
+                string query2 = " select fwd.FwdStatusId,fwd.stepId,fwd.UpdatedOn,step.Name,fwd.IsComplete," +
                         " isnull(fwd.Remark,'') Remark," +
                         " (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remark2" +
                         " from TrnFwds fwd " +
                         " inner join TrnICardRequest req on fwd.RequestId=req.RequestId" +
                         " inner join MStepCounterStep step on fwd.StepId=step.StepId" +
-                        " where req.StatusId=1 and req.TrackingId=@TrackingId" +
+                        " where req.StatusId=1 and req.RequestId=@RequestId" +
                         " order by fwd.TrnFwdId asc";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret1 = await connection.QueryAsync<DTOTrackHistory>(query, new { ApplicationHistory });
+                    var ret = await connection.QueryAsync<DTOApplicationDetails>(query, new { RequestId });
+                    lst.dTOApplicationDetails = ret.FirstOrDefault() ?? new DTOApplicationDetails();
+
+                    var ret1 = await connection.QueryAsync<DTOTrackHistory>(query2, new { RequestId });
                     lst.dTOTrackHistory = ret1.ToList();
+
+                    return lst;
                 }
-                return lst;
             }
             catch (Exception ex)
             {

@@ -43,7 +43,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOBasicDetailForParitalViewResponse> GetBasicDetailForParitalViewByRequestId(int RequestId);
         public Task<ICardHistoryResponseAll?> ICardHistory(int RequestId);
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
-        public Task<List<ICardHistoryResponse>?> ICardHistoryByTrackingId(string TrackingId);
+        public Task<List<ICardHistoryResponse>?> ICardHistoryByRequestId(int RequestId);
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);
         public Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId,int Type, int applyForId);
         public Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type,int applyForId);
@@ -51,7 +51,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
-        public Task<DTOApplicationTrack?> ApplicationHistory(string RequestId);
+        public Task<DTOApplicationTrack?> ApplicationHistory(int RequestId);
         Task<DTOUploadChipAndSerialResponse> CardPrintingCSVUpload(List<DTOCardPriningRequest> requests);
         Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests);
         public Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId, string ToRemark);

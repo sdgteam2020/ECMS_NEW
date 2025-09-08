@@ -97,7 +97,7 @@
                 <div class="bg-white login-wrap align-items-center">
                     <div class="row">
                         <div class="col-md-12">
-                            <table>
+                            <table class="col-md-12">
                                 <thead>
                                     <tr>
                                         <th>
@@ -119,9 +119,8 @@
                                                             <div class="main-signup-header login-form">
                                                                 @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
 
-                                                                <p class="font-weight-bold font-weight-700 text-center mb-4 mt-1"><h4>Enter Appl TrackingId.</h4></p>
-                                                                <input type="text" class="form-control" value="160319600646" placeholder="Enter TrackingId" required maxlength="12" name="TrackingId" id="TrackingId" />
-                                                                <span>TrackingId Exm.: DOB(12012024) and  Last 4 Digit of AadharNo (120120241235)</span>
+                                                                <p class="font-weight-bold font-weight-700 text-center mb-4 mt-1"><h4>Enter Appl Id.</h4></p>
+                                                                <input type="text" class="form-control" placeholder="Enter Appl Id" required maxlength="12" name="ApplId" id="ApplId" />
                                                                 <input type="button" id="btnTracking" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" value="Track" />
 
                                                             </div>
@@ -132,11 +131,11 @@
                                                         <div class="ipaddress d-none">@ViewBag.IP</div>
                                                         <div class="watermark yes-print">@ViewBag.IP</div>
                                                         <div class="">
-                                                            <div class="row ">
-                                                                <div class="col-md-12 mb-4 mt-4 text-center d-print-none TrackingIdDetails d-none">
+                                                            <div class="row">
+                                                                <div class="col-md-12 mb-4 mt-4 text-center d-print-none ApplIdDetails d-none">
                                                                     <button class="btn btn-primary" id="btn-printtracking">Print</button>
                                                                 </div>
-                                                                <div class="col-md-12 TrackingIdDetails d-none">
+                                                                <div class="col-md-12 ApplIdDetails d-none">
                                                                     <div class="card divicardbg minheight">
                                                                         @*   <img class="imgicardbg" src="~/images/asset/icardbg.jpg" /> *@
                                                                         <div class="row p-4">
@@ -169,8 +168,8 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-sm-12 TrackingIdDetails d-none mt-2">
-                                                                    <div class="card divicardbg minheight ">
+                                                                <div class="col-sm-12 ApplIdDetails d-none mt-2">
+                                                                    <div class="card divicardbg minheight">
                                                                         @*   <img class="imgicardbg" src="~/images/asset/icardbg1.jpg" /> *@
                                                                         <div class="row p-4">
                                                                             <div class="col-sm-2 justify-content-center">
@@ -229,9 +228,9 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="card mt-2 TrackingIdHistory d-none page-break-before">
+                                                        <div class="card mt-2 ApplIdHistory d-none page-break-before">
                                                             <div class="card-body">
-                                                                <h5 class="text-center badge badge-success">TrackingId History</h5>
+                                                                <h5 class="text-center badge badge-success">ApplId History</h5>
                                                                 <div class="timeline timeline-xs" id="RequestHistoryTrackingId">
                                                                 </div>
                                                             </div>

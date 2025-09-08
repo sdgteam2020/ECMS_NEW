@@ -89,7 +89,15 @@ function BindData() {
                     },
                     body: new URLSearchParams(requestData).toString()
                 });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                if (!response.ok) {
+                    let userMessage = "Something went wrong while connecting to the server. Please try again later.";
+
+                    // Optionally append technical info for logs or developers
+                    console.error(`HTTP error! Status: ${response.status}`);
+
+                    throw new Error(userMessage);
+                }
 
                 let result = await response.json();
                 $("#lblTotal").html(result.recordsTotal);

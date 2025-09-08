@@ -1,6 +1,8 @@
 ﻿using BusinessLogicsLayer.BasicDet;
 using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Web.Healpers.BaseInterfaces;
 
 namespace Web.Controllers
 {
@@ -11,12 +13,18 @@ namespace Web.Controllers
     {
         private readonly IBasicDetailBL _basicDetailBL;//Interface for basic detail business logic layer
         private readonly IConfiguration _configuration;//Configuration interface for accessing application settings
+        private readonly IWebHostEnvironment hostingEnvironment;// For Hosting Environment
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// For Image Encrypt and Decrypt
+        private readonly ILogger<ApplicationStatusController> _logger;// For Logging
 
         //constructor to initialize dependencies and configuration settings.
-        public ApplicationStatusController(IBasicDetailBL basicDetailBL, IConfiguration configuration)
+        public ApplicationStatusController(IBasicDetailBL basicDetailBL, IConfiguration configuration, IWebHostEnvironment hostingEnvironment, IImageEncryptAndDecrypt imageEncryptAndDecrypt, ILogger<ApplicationStatusController> logger)
         {
             _configuration = configuration;
             _basicDetailBL = basicDetailBL;
+            this.hostingEnvironment = hostingEnvironment;
+            this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
+            _logger = logger;
         }
 
         /// <summary>
@@ -25,7 +33,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="TrackingId">The tracking ID used to fetch application status details.</param>
         /// <returns>A view displaying the application status along with footer and client IP information.</returns>
-        public IActionResult AppStatus(string TrackingId)
+        public IActionResult AppStatus(int RequestId)
         {
             // Initialize the DTO object for storing application tracking data.
             //DTOApplicationTrack dTOApplicationTrack = new DTOApplicationTrack();
@@ -66,17 +74,34 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// Action method to retrieve the request history based on the provided tracking ID.
-        /// It fetches the card history associated with the given tracking ID and returns it as a JSON response.
+        /// Retrieves the request history for a given request ID.
         /// </summary>
-        /// <param name="TrackingId">The tracking ID used to fetch the card history data.</param>
-        /// <returns>A JSON response containing the card history or null if no data is found or an exception occurs.</returns>
-        public async Task<IActionResult> GetRequestHistoryByTrackingId(string TrackingId)
+        /// <param name="RequestId">
+        /// The unique identifier of the request whose card history is to be fetched.
+        /// </param>
+        /// <returns>
+        /// A JSON result containing a list of <see cref="ICardHistoryResponse"/> objects 
+        /// if history data is found; otherwise, null.
+        /// </returns>
+        /// <remarks>
+        /// This method performs the following operations:
+        /// <list type="number">
+        ///   <item>Calls the business logic layer to fetch card history data for the given request ID.</item>
+        ///   <item>If data exists, it is returned as a JSON response.</item>
+        ///   <item>If no data exists, a JSON null result is returned.</item>
+        ///   <item>If an exception occurs, it is logged and a JSON null result is returned.</item>
+        /// </list>
+        /// </remarks>
+        /// <exception cref="Exception">
+        /// Thrown when an error occurs while retrieving card history. 
+        /// The exception is logged, and a null JSON result is returned.
+        /// </exception>
+        public async Task<IActionResult> GetRequestHistoryByRequestId(int RequestId)
         {
             try
             {
                 // Retrieve the card history for the provided tracking ID
-                List<ICardHistoryResponse>? cardHistoryResponses = await _basicDetailBL.ICardHistoryByTrackingId(TrackingId);
+                List<ICardHistoryResponse>? cardHistoryResponses = await _basicDetailBL.ICardHistoryByRequestId(RequestId);
 
                 // Check if any card history data is returned
                 if (cardHistoryResponses != null)
@@ -92,21 +117,73 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "ApplicationStatus->GetRequestHistoryByRequestId");
                 // In case of an exception, return null in the JSON response
                 return Json(null);
             }
         }
 
         /// <summary>
-        /// Action method to retrieve basic details associated with the given request ID.
-        /// It fetches and returns the basic details as a JSON response.
+        /// Retrieves the basic details for a given request ID, including 
+        /// photo and signature images decrypted into Base64 strings.
         /// </summary>
-        /// <param name="Id">The request ID used to fetch the basic details.</param>
-        /// <returns>A JSON response containing the basic details associated with the provided request ID.</returns>
-        public async Task<IActionResult> GetBasicDetailByRequestId(int Id)
+        /// <param name="RequestId">
+        /// The unique identifier of the request for which basic details are to be fetched.
+        /// </param>
+        /// <returns>
+        /// A JSON result containing a <see cref="BasicDetailCrtAndUpdVM"/> object with
+        /// basic details, photo, and signature (in Base64 format) if found; otherwise, null.
+        /// </returns>
+        /// <remarks>
+        /// This method performs the following steps:
+        /// <list type="number">
+        ///   <item>Fetches the basic details using the business logic layer.</item>
+        ///   <item>Builds the physical path for the photo and signature files.</item>
+        ///   <item>Decrypts the images and assigns them as Base64 strings to the view model.</item>
+        ///   <item>Returns the populated object as a JSON response.</item>
+        /// </list>
+        /// </remarks>
+        /// <exception cref="Exception">
+        /// Any exception encountered during fetching, path resolution, 
+        /// or decryption is logged, and a null JSON result is returned.
+        /// </exception>
+        public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
             // Fetch and return the basic details for the provided request ID as a JSON response
-            return Json(await _basicDetailBL.GetBasicDetailByRequestId(Id));
+            try
+            {
+                BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await _basicDetailBL.GetBasicDetailByRequestId(RequestId);
+                if (basicDetailCrtAndUpdVM != null)
+                {
+                    // Define the root physical folder where images are stored
+                    string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                    // Build the full path for the photo image
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+
+                    // Decrypt the photo image and assign it to the VM
+                    basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                    // Build the full path for the signature image
+                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+
+                    // Decrypt the signature image and assign it to the VM
+                    basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+                    return Json(basicDetailCrtAndUpdVM);
+                }
+                else
+                {
+                    return Json(null);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ApplicationStatus->GetBasicDetailByRequestId");
+                // In case of an exception, return null in the JSON response
+                return Json(null);
+            }
+
         }
 
     }

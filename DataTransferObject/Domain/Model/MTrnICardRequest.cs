@@ -33,7 +33,6 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MRecordOffice"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte RecordOfficeId { get; set; }
         public MRecordOffice? MRecordOffice { get; set; }
-        public long TrackingId { get; set; }
 
         [StringLength(30)]
         [Column(TypeName = "varchar(30)")]

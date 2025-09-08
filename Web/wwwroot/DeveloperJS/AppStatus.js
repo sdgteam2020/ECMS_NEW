@@ -1,29 +1,25 @@
-﻿$(document).ready(function () {
+﻿$(function () {
 
-    $(".TrackingIdDetails").addClass("d-none");
+    $(".ApplIdDetails").addClass("d-none");
    
     $("#btnTracking").on("click", function () {
-        
-        GetRequestHistoryByTrackingId($("#TrackingId").val());
+        GetRequestHistoryByApplId($("#ApplId").val());
     });
-    $("#btn-printtracking").click(function () {
+    $("#btn-printtracking").on("click",function () {
         var datef2 = new Date();
         $(".watermark").html($(".ipaddress").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
         window.print();
     });
 });
-function GetRequestHistoryByTrackingId(TrackingId) {
+function GetRequestHistoryByApplId(ApplId) {
    
     var userdata =
     {
-
-        "TrackingId": TrackingId,
-
-
+        "RequestId": ApplId,
     };
     var listItem = "";
     $.ajax({
-        url: '/ApplicationStatus/GetRequestHistoryByTrackingId',
+        url: '/ApplicationStatus/GetRequestHistoryByRequestId',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -31,8 +27,8 @@ function GetRequestHistoryByTrackingId(TrackingId) {
             if (response != "null" && response != null) {
                 if (response.length > 0) {
                     GetDataFromBasicDetails(response[0].RequestId)
-                    $(".TrackingIdDetails").removeClass("d-none");
-                    $(".TrackingIdHistory").removeClass("d-none");
+                    $(".ApplIdDetails").removeClass("d-none");
+                    $(".ApplIdHistory").removeClass("d-none");
                     for (var i = 0; i < response.length; i++) {
                         if (i == 0) {
                             listItem += '<div class="timeline-item">';
@@ -109,8 +105,8 @@ function GetRequestHistoryByTrackingId(TrackingId) {
                     }
                 }
                 else {
-                    $(".TrackingIdDetails").addClass("d-none");
-                    $(".TrackingIdHistory").removeClass("d-none");
+                    $(".ApplIdDetails").addClass("d-none");
+                    $(".ApplIdHistory").removeClass("d-none");
                     
                     listItem += '<div class="timeline-item">';
                     listItem += '<div class="timeline-item-marker">';
@@ -134,10 +130,10 @@ function GetRequestHistoryByTrackingId(TrackingId) {
 
     });
 }
-function GetDataFromBasicDetails(Id) {
+function GetDataFromBasicDetails(RequestId) {
     var userdata =
     {
-        "Id": Id,
+        "RequestId": RequestId,
 
 
     };
@@ -149,8 +145,8 @@ function GetDataFromBasicDetails(Id) {
 
         success: function (response) {
             if (response != "null" && response != null) {
-                $(".PhotoImagePath").attr('src', "/WriteReadData/photo/" + response.PhotoImagePath);
-                $(".SignaturePath").attr('src', "/WriteReadData/Signature/" + response.SignatureImagePath);
+                $(".PhotoImagePath").attr('src', response.ExistingPhotoInBase64);
+                $(".SignaturePath").attr('src', response.ExistingSignatureInBase64);
                 $(".FName").html(response.FName);
                 $(".LName").html(response.LName == null ? "&nbsp;" : response.LName);
                 $(".RankName").html(response.RankName);
