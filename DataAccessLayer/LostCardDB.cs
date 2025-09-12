@@ -131,7 +131,6 @@ namespace DataAccessLayer
 
                 var sortOrder = dTO.sortDirection;
 
-                string query = "";
 
                 string selectFields = @"appl.Name ApplyFor,
                                         req.RequestId,lost.LostCardId,
@@ -168,7 +167,7 @@ namespace DataAccessLayer
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
 
-                    var ret = await connection.QueryMultipleAsync(query, parameters);
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOLostCardGetResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 

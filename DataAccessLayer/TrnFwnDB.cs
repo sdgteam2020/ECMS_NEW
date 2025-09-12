@@ -140,10 +140,11 @@ namespace DataAccessLayer
             {
                 try
                 {
-                    foreach (int item in dTO.TrnFwdIds)
+                    foreach (int item in dTO.RequestIds)
                     {
-                        MTrnFwd? mTrnFwd = await _context.TrnFwds.FindAsync(item);
-                        if(mTrnFwd!=null)
+                        //MTrnFwd? mTrnFwd = await _context.TrnFwds.FindAsync(item);
+                        MTrnFwd? mTrnFwd = await _context.TrnFwds.Where(x=>x.RequestId == item && x.IsComplete==false).FirstOrDefaultAsync();
+                        if (mTrnFwd!=null)
                         {
                             mTrnFwd.IsComplete = true;
                             mTrnFwd.Updatedby = dTO.FromAspNetUsersId;

@@ -1,4 +1,4 @@
-﻿var table; // Declare table variable outside the function to preserve the instance
+﻿var table_Fwd; // Declare table variable outside the function to preserve the instance
 $(function () {
     let Type = parseInt($("#spnType").html());
     let StepCounter = parseInt($("#spnStepCounter").html());
@@ -7,11 +7,11 @@ $(function () {
     BindData(Type, StepCounter, JCOOR, VBId);
 });
 function BindData(Type, StepCounter, JCOOR, VBId) {
-    if ($.fn.DataTable.isDataTable("#tbldatatabledata")) {
-        $("#tbldatatabledata").DataTable().destroy();
+    if ($.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
+        $("#tbldatatabledata_Fwd").DataTable().destroy();
     }
  
-    table = $("#tbldatatabledata").DataTable({
+    table_Fwd = $("#tbldatatabledata_Fwd").DataTable({
         processing: true,
         serverSide: true,
         filter: true,
@@ -194,26 +194,26 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 }
             }],
         drawCallback: function (settings) {
-            $("#tbldatatabledata tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
-                var rowData = table.row($(this).closest("tr")).data();
+            $("#tbldatatabledata_Fwd tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
+                var rowData = table_Fwd.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     GetRequestHistory(rowData.RequestId);
                 }
             });
-            $("#tbldatatabledata tbody").off("click", ".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {
-                var rowData = table.row($(this).closest("tr")).data();
+            $("#tbldatatabledata_Fwd tbody").off("click", ".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {
+                var rowData = table_Fwd.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     GetMovementHistory(rowData.RequestId);
                 }
             });
-            $("#tbldatatabledata tbody").off("click", ".cls-btndownloadpdf").on("click", ".cls-btndownloadpdf", function () {
-                var rowData = table.row($(this).closest("tr")).data();
+            $("#tbldatatabledata_Fwd tbody").off("click", ".cls-btndownloadpdf").on("click", ".cls-btndownloadpdf", function () {
+                var rowData = table_Fwd.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     DownloadPdf(rowData.RequestId);
                 }
             });
             //$(".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {
-            //    var rowData = table.row($(this).closest("tr")).data();
+            //    var rowData = table_Fwd.row($(this).closest("tr")).data();
             //    if (rowData != null) {
             //        GetMovementHistory(rowData.RequestId);
             //    }

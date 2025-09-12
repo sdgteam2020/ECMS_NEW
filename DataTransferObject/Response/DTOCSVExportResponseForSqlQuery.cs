@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransferObject.Response
+﻿namespace DataTransferObject.Response
 {
     public class DTOCSVExportResponseForSqlQuery
     {
@@ -17,7 +11,7 @@ namespace DataTransferObject.Response
         public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
         public string UnitName { get; set; } = string.Empty;
-        public string TrackingId { get; set; } = string.Empty;
+        public int ApplId { get; set; }
         public string ApplyFor { get; set; } = string.Empty;
         public string ICardType { get; set; } = string.Empty;
         public string? State { get; set; }

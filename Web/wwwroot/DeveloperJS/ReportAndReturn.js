@@ -587,8 +587,8 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
                 }
             },
             {
-                data: 'TrackingId',
-                name: 'TrackingId',
+                data: 'RequestId',
+                name: 'RequestId',
                 render: function (data, type, row) {
                     return data ? `<span id='comdName'>${data}</span>` : '';
                 }

@@ -32,6 +32,15 @@ namespace BusinessLogicsLayer
                 options.AddPolicy("FmnLevelReportsPolicy",
                     policy => policy.RequireClaim("Fmn Level Reports"));
 
+                options.AddPolicy("ICardDispatchPolicy", policy =>
+                {
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Dispatch Card") ||
+                        context.User.HasClaim(c => c.Type == "ICard Export Data: AFSAC Cell") ||
+                        (context.User.HasClaim(c => c.Type == "Dispatch Card") && context.User.HasClaim(c => c.Type == "Appl Approver"))
+                    );
+                });
+
             });
         }
     }

@@ -3327,27 +3327,33 @@ namespace Web.Controllers
         public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
             // Step 1: Fetch basic details from business layer
-            DTOBasicDetailForParitalViewResponse data = await basicDetailBL.GetBasicDetailForParitalViewByRequestId(RequestId);
-
-            // Step 2: Construct physical paths for photo and signature images
-            string sourceFolderPathPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
-            string sourcePathPhoto = Path.Combine(sourceFolderPathPhy, "Photo", data.PhotoImagePath);
-            string sourcePathSignature = Path.Combine(sourceFolderPathPhy, "Signature", data.SignatureImagePath);
-
-            // Step 3: Decrypt and convert photo image to Base64 if it exists
-            if (System.IO.File.Exists(sourcePathPhoto))
+            DTOBasicDetailForParitalViewResponse? data = await basicDetailBL.GetBasicDetailForParitalViewByRequestId(RequestId);
+            if (data != null)
             {
-                data.PhotoImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-            }
+                // Step 2: Construct physical paths for photo and signature images
+                string sourceFolderPathPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+                string sourcePathPhoto = Path.Combine(sourceFolderPathPhy, "Photo", data.PhotoImagePath);
+                string sourcePathSignature = Path.Combine(sourceFolderPathPhy, "Signature", data.SignatureImagePath);
 
-            // Step 4: Decrypt and convert signature image to Base64 if it exists
-            if (System.IO.File.Exists(sourcePathSignature))
+                // Step 3: Decrypt and convert photo image to Base64 if it exists
+                if (System.IO.File.Exists(sourcePathPhoto))
+                {
+                    data.PhotoImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                }
+
+                // Step 4: Decrypt and convert signature image to Base64 if it exists
+                if (System.IO.File.Exists(sourcePathSignature))
+                {
+                    data.SignatureImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                }
+
+                // Step 5: Return the partial view with populated data
+                return PartialView("_BasicDetail_ParitalView", data);
+            }
+            else
             {
-                data.SignatureImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                return PartialView("_BasicDetail_ParitalView", null);
             }
-
-            // Step 5: Return the partial view with populated data
-            return PartialView("_BasicDetail_ParitalView", data);
         }
 
         /// <summary>
@@ -4674,28 +4680,66 @@ namespace Web.Controllers
         /// <returns>Returns JSON containing the temporary CSV file name or an error message.</returns>
         public async Task<IActionResult> CreateCSV(DTOCSVExportRequest model)
         {
+            #region Old Code
+            //try
+            //{
+            //    // Get the current logged-in user's ID
+            //    var UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            //    // Retrieve the user object from UserManager
+            //    var user = await userManager.FindByIdAsync(UserId);
+
+            //    // Get all claims for the current user
+            //    var UserClaims = await userManager.GetClaimsAsync(user);
+
+            //    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Internal Wk Distr"))
+            //    {
+            //        // If user has "Internal Wk Distr" claim, the Ids refer to TrnFwdId
+            //        model.IdsTypeRequestIdOrTrnFwdId = true;
+            //    }
+            //    else
+            //    {
+            //        // Otherwise, the Ids refer to RequestId
+            //        model.IdsTypeRequestIdOrTrnFwdId = false;
+            //    }
+
+            //    // Generate CSV string from the business layer
+            //    string? csvData = await basicDetailBL.GetCSVString(model);
+            //    if (csvData != null)
+            //    {
+            //        // Generate a temporary file name using a GUID
+            //        string TempFileName = Guid.NewGuid().ToString();
+
+            //        // Define the folder path for saving CSV files
+            //        string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CSVFile");
+
+            //        // Check if directory exists; if not, create it
+            //        if (!Directory.Exists(sourceFolder))
+            //        {
+            //            Directory.CreateDirectory(sourceFolder);
+            //        }
+
+            //        // Write the CSV data to a file in the folder
+            //        System.IO.File.WriteAllText(sourceFolder + "/" + TempFileName + ".csv", csvData);
+
+            //        // Return the temporary file name as JSON
+            //        return Json(TempFileName);
+            //    }
+            //    else
+            //    {
+            //        // If CSV data generation failed, return an internal server error constant
+            //        return Json(KeyConstants.InternalServerError);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Log any exceptions and return an internal server error
+            //    _logger.LogError(1001, ex, "BasicDetails=>CreateCSV.");
+            //    return Json(KeyConstants.InternalServerError);
+            //}
+            #endregion  Old Code
             try
             {
-                // Get the current logged-in user's ID
-                var UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                // Retrieve the user object from UserManager
-                var user = await userManager.FindByIdAsync(UserId);
-
-                // Get all claims for the current user
-                var UserClaims = await userManager.GetClaimsAsync(user);
-
-                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Internal Wk Distr"))
-                {
-                    // If user has "Internal Wk Distr" claim, the Ids refer to TrnFwdId
-                    model.IdsTypeRequestIdOrTrnFwdId = true;
-                }
-                else
-                {
-                    // Otherwise, the Ids refer to RequestId
-                    model.IdsTypeRequestIdOrTrnFwdId = false;
-                }
-
                 // Generate CSV string from the business layer
                 string? csvData = await basicDetailBL.GetCSVString(model);
                 if (csvData != null)
@@ -5534,6 +5578,7 @@ namespace Web.Controllers
         /// Loads the Dispatch Out page based on session data and user claims.
         /// </summary>
         /// <returns>View with appropriate ClaimValue or redirects to error page if session/user invalid.</returns>
+        [Authorize(Policy = "ICardDispatchPolicy")]
         public async Task<ActionResult> DispatchOut()
         {
             // Retrieve session object containing previous search/filter parameters
@@ -5600,7 +5645,7 @@ namespace Web.Controllers
         /// </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Policy = "ICardExportDataPolicy")]
+        [Authorize(Policy = "ICardDispatchPolicy")]
         public async Task<ActionResult> DispatchOut([FromForm] DTODispatchOutRequest dTO)
         {
             // Retrieve temporary session object for DispatchLot
@@ -5951,11 +5996,12 @@ namespace Web.Controllers
                 // If an exception occurs, return an empty response to avoid breaking the UI
                 List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
 
-                var responseData = new DTODataTablesResponse<DTOCardDispatchDialogResponse>
+                var responseData = new DTODataTablesWithSelectedIdsResponse<DTOCardDispatchDialogResponse>
                 {
                     draw = 0,               // DataTables draw counter (0 since error)
                     recordsTotal = 0,       // Total records (0 since error)
                     recordsFiltered = 0,    // Filtered records (0 since error)
+                    selectedIds = null,     // No selected IDs
                     data = dTOCards         // Empty list of data
                 };
 
@@ -6124,7 +6170,7 @@ namespace Web.Controllers
                 List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
 
                 // Create a response object with zeroed metadata
-                var responseData = new DTODataTablesForDispatchCardStatusListResponse<DTODispatchCardStatusResponse>
+                var responseData = new DTODataTablesWithSelectedIdsResponse<DTODispatchCardStatusResponse>
                 {
                     draw = 0,
                     recordsTotal = 0,
@@ -6170,7 +6216,7 @@ namespace Web.Controllers
             }
 
             // Generate a unique CSV file name based on current timestamp
-            string fileName = $"CSVForDispatch_{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
+            string fileName = $"CSVData_{DateTime.Now.ToString("yyyyMMddHHmmss")}.csv";
 
             // Define the folder path where the CSV will be temporarily stored
             var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "DispatchExports", "Temp");

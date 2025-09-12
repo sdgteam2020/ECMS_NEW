@@ -98,29 +98,7 @@
                         }
                     </div>
                     <div class="table-responsive">
-                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata">
-                            <thead>
-                                <tr>
-                                    <th class="noExport wd-30-f">
-                                        <div class="custom-control custom-checkbox small">
-                                            <input type="checkbox" class="custom-control-input" id="chkAll">
-                                            <label class="custom-control-label font-weight-bold" for="chkAll"></label>
-                                        </div>
-                                    </th>
-                                    <th>Sno</th>
-                                    <th>ServiceNo</th>
-                                    <th>Rank & Name</th>
-                                    <th>Unit</th>
-                                    <th>Regtl Centre</th>
-                                    <th>Appl Id </th>
-                                    <th>Type </th>
-                                    <th>Reason for Requisition</th>
-                                    <th class="noExport">History</th>
-                                    <th class="noExport">Print | Fwd</th>
-                                </tr>
-                            </thead>
-                            <tbody id="DetailBody">
-                            </tbody>
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata_Fwd">
                         </table>
                     </div>
                 </div>
@@ -131,6 +109,7 @@
 
 @section Scripts {
     <script asp-src-include="~/developerjs/ApprovalForIO_BasicDetails.js"></script>
+    <script asp-src-include="~/developerjs/CheckedFunction.js"></script>
     <script asp-src-include="~/js/CustomScript.js"></script>
     <script asp-src-include="~/developerjs/fwdrecord.js"></script>
     <script asp-src-include="~/developerjs/ICardPrint.js"></script>

@@ -562,7 +562,6 @@ namespace DataAccessLayer
             var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["ServiceNo"] = "ServiceNo",
-                ["TrackingId"] = "TrackingId",
                 ["UpdatedOn"] = "fwd.UpdatedOn",
                 ["StatusName"] = "fwdsts.Name",
             };
@@ -579,7 +578,7 @@ namespace DataAccessLayer
             {
                 if(dTORecord.StepId ==100)
                 {
-                    query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, 
+                    query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName, 
                             aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, 
                             aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status
                             ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   
@@ -609,7 +608,7 @@ namespace DataAccessLayer
                 }
                 else if (dTORecord.IsApproveId == 1)
                 {
-                    query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId,
+                    query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,
                             aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo,
                             aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom
                             ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  
@@ -641,7 +640,7 @@ namespace DataAccessLayer
                 {
                     if(dTORecord.StepId ==1)
                     {
-                        query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId,
+                        query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,
                                 aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo,
                                 aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom
                                 ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  
@@ -671,7 +670,7 @@ namespace DataAccessLayer
                     else
                     {
                         //Appl Status at ADC
-                        query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId,
+                        query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,
                                 aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo,
                                 aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom
                                 ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep  
@@ -703,7 +702,7 @@ namespace DataAccessLayer
             }
             else
             {
-                    query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName,TrackingId, 
+                    query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,ServiceNo,DOB,ranks.RankAbbreviation RankName, 
                             aspusersto.DomainId DomainIdTo,userto.ArmyNo ArmyNoTo ,userto.Name NameTo,ranksto.RankAbbreviation RankTo, 
                             aspusersfrom.DomainId DomainIdFrom,userfrom.ArmyNo ArmyNoFrom ,userfrom.Name NameFrom,ranksfrom.RankAbbreviation RankFrom,fwdsts.Name Status
                             ,fwd.UpdatedOn,fwdsts.Name StatusName from MStepCounterStep Mstep   
@@ -811,12 +810,11 @@ namespace DataAccessLayer
                 {
                     ["ServiceNo"] = "ServiceNo",
                     ["RequestId"] = "req.RequestId",
-                    ["TrackingId"] = "TrackingId",
                     ["StepId"] = "Mstep.StepId",
                     ["ArmedAbbreviation"] = "marmed.Abbreviation",
                     ["ApplyFor"] = "mappl.Name"
                 };
-                query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,
+                query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,
                             REPLACE(Mstep.Name, '</br>', '') as Status
                             from TrnStepCounter step
                             INNER JOIN MApplyFor mappl on mappl.ApplyForId=step.ApplyForId
@@ -958,12 +956,11 @@ namespace DataAccessLayer
                 {
                     ["ServiceNo"] = "ServiceNo",
                     ["RequestId"] = "req.RequestId",
-                    ["TrackingId"] = "TrackingId",
                     ["StepId"] = "Mstep.StepId",
                     ["ArmedAbbreviation"] = "marmed.Abbreviation",
                     ["ApplyFor"] = "mappl.Name"
                 };
-                query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,TrackingId,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,basi.UpdatedOn,
+                query = @"req.RequestId,Mstep.StepId,basi.FName,basi.LName,basi.NameAsPerRecord,ServiceNo,ranks.RankAbbreviation RankName,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mappl.Name as ApplyFor,basi.UpdatedOn,
                             REPLACE(Mstep.Name, '</br>', '') as Status
                             from TrnStepCounter step
                             INNER JOIN MApplyFor mappl on mappl.ApplyForId=step.ApplyForId
@@ -1231,8 +1228,7 @@ namespace DataAccessLayer
                            "   basi.FName,basi.LName, " +
                            "   ServiceNo, " +
                            "   DOB, " +
-                           "   ranks.RankAbbreviation RankName, " +
-                           "   TrackingId" +
+                           "   ranks.RankAbbreviation RankName " +
                            " from " +
                            "   MStepCounterStep Mstep " +
                            "   inner join TrnStepCounter step on Mstep.StepId = step.StepId " +

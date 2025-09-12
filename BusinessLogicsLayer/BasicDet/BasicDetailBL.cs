@@ -23,7 +23,7 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.ExportCsvFileForDispatchCard(RequestIds);
         }
-        public async Task<DTODataTablesForDispatchCardStatusListResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequestForCardStatusList dTO, byte ClaimValue)
+        public async Task<DTODataTablesWithSelectedIdsResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForDialog(DTODataTablesRequestForCardStatusList dTO, byte ClaimValue)
         {
             return await _iBasicDetailDB.GetDispatchCardStatusListForDialog(dTO, ClaimValue);
         }
@@ -31,7 +31,7 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetDispatchCardStatusListForExport(ClaimValue,Data);
         }
-        public async Task<DTODataTablesResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
+        public async Task<DTODataTablesWithSelectedIdsResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
         {
             return await _iBasicDetailDB.GetDispatchCardDataForDialog(dTO);
         }
@@ -87,7 +87,7 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetAllICardRequestHold(dTO);
         }
-        public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLBasicDetail(DTODataTablesRequestFor_BasicDetails_Index dTO)
+        public async Task<DTODataTablesWithSelectedIdsResponse<DTOBasicDetailIndexResponse>> GetALLBasicDetail(DTODataTablesRequestFor_BasicDetails_Index dTO)
         {
             return await _iBasicDetailDB.GetALLBasicDetail(dTO);
         }
@@ -107,7 +107,7 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.SearchAllServiceNo(dto);
         }
-        public async Task<DTOBasicDetailForParitalViewResponse> GetBasicDetailForParitalViewByRequestId(int RequestId)
+        public async Task<DTOBasicDetailForParitalViewResponse?> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
             return await _iBasicDetailDB.GetBasicDetailForParitalViewByRequestId(RequestId);
         }

@@ -4,14 +4,13 @@ var StepCounter = 0;
 var applyfor = 0;
 var xmlsign = 0;
 var lstmultifwdarr = new Array();
-var lstInternalFwd = new Array();
-var lstCSVDownload = new Array();
 var RegistrationApplyFor = 0;
 var IsToken = true;
 var IsWithTokenApply = true;
 var IsValid = 0;
 var IsDigitalSignReq = true;
 var DataExportType = 1;
+var spnStepId = 0;
 $(function () {
 
     $("#btntokenTofwd").on("click", async function () {
@@ -20,20 +19,14 @@ $(function () {
         await GetTokenvalidatepersid2fawiththumbprint($("#aspntokenarmyno").html(), "tokenmsgforfwd", "txtspnTokenArmyNo", "txtspnTokenthumbprint");
     });
     sessionStorage.removeItem('ArmyNo');
+
     $('#btnDataExports').on("click", function () {
-        var lst = new Array();
-
-        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-
-            memberTable.$('input[type="checkbox"]:checked').each(function () {
-
-
-                var id = $(this).attr("Id");
-                lst.push(id);
-                console.log(id);
-
+        if (selectedIds.length == 0) {
+            Swal.fire({
+                text: "Please select atleast 1 data to Export."
             });
-
+        }
+        else {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Export",
@@ -45,29 +38,20 @@ $(function () {
             }).then((result) => {
                 if (result.value) {
                     DataExportType = 0;
-                    DataExport(lst);
-
+                    DataExport();
                 }
-            });
-        } else {
-            Swal.fire({
-                text: "Please select atleast 1 data to Export."
             });
         }
     });
 
     $('#btnDataExportsEncry').on("click", function () {
-        var lst = new Array();
 
-        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-
-            memberTable.$('input[type="checkbox"]:checked').each(function () {
-
-
-                var id = $(this).attr("Id");
-                lst.push(id);
+        if (selectedIds.length == 0) {
+            Swal.fire({
+                text: "Please select atleast 1 data to Export."
             });
-
+        }
+        else {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Export",
@@ -79,40 +63,100 @@ $(function () {
             }).then((result) => {
                 if (result.value) {
                     DataExportType = 1;
-                    DataExport(lst);
+                    DataExport();
 
                 }
-            });
-        } else {
-            Swal.fire({
-                text: "Please select atleast 1 data to Export."
             });
         }
     });
 
-    var spnStepId = 0;
+    $("#btnInternalFwd").on("click", function () {
+
+        if (selectedIds.length == 0) {
+            Swal.fire({
+                text: "Please select atleast 1 request to Approval."
+            });
+        }
+        else {
+            GetAllOffsByUnitId("ddlfwdInternaloffrs", 0, 0, 0, 0, 0, 0);
+            $(".RemarksInternalFwd").removeClass("d-none");
+            var someNumbers = [1];
+            GetRemarks("ddlInternalRemarks", 0, someNumbers);
+            $("#FwdInternalRecord").modal('show');
+        }
+    });
+
+    $("#btnCSVDownload").on("click", function () {
+        if (selectedIds.length == 0) {
+            Swal.fire({
+                text: "Please select atleast 1 request to download CSV File."
+            });
+        }
+        else {
+            var userdata = {
+                "Ids": selectedIds,
+            };
+            $.ajax({
+                url: '/BasicDetail/CreateCSV',
+                contentType: 'application/x-www-form-urlencoded',
+                data: userdata,
+                type: 'POST',
+
+                success: function (response) {
+                    if (response != "null" && response != null) {
+                        if (response == InternalServerError) {
+                            Swal.fire({
+                                text: errormsg
+                            });
+                        } else {
+                            var url = "https://" + window.location.host + '/WriteReadData/CSVFile/' + response + ".csv";
+                            window.location.href = url;
+                        }
+                    }
+                },
+                error: function (result) {
+                    Swal.fire({
+                        text: errormsg002
+                    });
+                }
+            });
+        }
+    });
+
+
     $('.select2').select2({
         dropdownParent: $('#BasicDetails'),
         closeOnSelect: true
 
     });
+
     $('.select3').select2({
         dropdownParent: $('#FwdRecord'),
         closeOnSelect: true
     });
+
     $('.select4').select2({
         dropdownParent: $('#FwdInternalRecord'),
         closeOnSelect: true
     });
 
 
-    $(".historyRequest").on("click", function () {
-        GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
-    });
+    //$(".historyRequest").on("click", function () {
+    //    GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
+    //});
 
-    $(".historyMovement").on("click", function () {
-        GetMovementHistory($(this).closest("tr").find(".spnRequestId").html());
-    });
+    //$(".historyMovement").on("click", function () {
+    //    GetMovementHistory($(this).closest("tr").find(".spnRequestId").html());
+    //});
+
+    //$(".btndownloadpdf").on("click", function () {
+    //    var rowData = $(this).closest("tr").data();
+    //    DownloadPdf(rowData.RequestId);
+    //});
+
+    //$(".btndownloadxml").on("click", function () {
+    //    DownloadXml($(this).closest("tr").find(".spnRequestId").html())
+    //});
 
     $('#ddlfwdoffrs').on('change', function () {
         $("#spnFwdToAspNetUsersId").html(0);
@@ -128,6 +172,7 @@ $(function () {
 
         FwdData($('#ddlfwdoffrs').val());
     });
+
     $('#ddlfwdInternaloffrs').on('change', function () {
         const selectedValue = $(this).val();
 
@@ -150,6 +195,7 @@ $(function () {
         GetProfiledetailsByAspNetuseridForInternalFwd(selectedValue);
 
     });
+
     $('#ddlfwdInternaloffrs').on('click', function () {
         const val = $(this).val();
 
@@ -190,16 +236,9 @@ $(function () {
         $(".spnFAppName").html("");
 
     });
-    $(".btndownloadpdf").on("click", function () {
-        //DownloadPdf($(this).closest("tr").find(".spnRequestId").html())
-        var rowData = $(this).closest("tr").data();
-        DownloadPdf(rowData.RequestId);
-    });
-    $(".btndownloadxml").on("click", function () {
-        DownloadXml($(this).closest("tr").find(".spnRequestId").html())
-    });
-    $("#tbldatatabledata tbody").off("click", ".cls-fwdrecord").on("click", ".cls-fwdrecord", async function () {
-        var rowData = table.row($(this).closest("tr")).data();
+
+    $("#tbldatatabledata_Fwd tbody").off("click", ".cls-fwdrecord").on("click", ".cls-fwdrecord", async function () {
+        var rowData = table_Fwd.row($(this).closest("tr")).data();
         if (rowData != null) {
             Reset();
 
@@ -541,71 +580,6 @@ $(function () {
         })
     });
 
-    $("#btnInternalFwd").on("click", function () {
-        // Empty the array
-        lstInternalFwd.length = 0;
-        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-            GetAllOffsByUnitId("ddlfwdInternaloffrs", 0, 0, 0, 0, 0, 0);
-            $(".RemarksInternalFwd").removeClass("d-none");
-            var someNumbers = [1];
-            GetRemarks("ddlInternalRemarks", 0, someNumbers);
-            memberTable.$('input[type="checkbox"]:checked').each(function () {
-                var id = $(this).attr("Id");
-                lstInternalFwd.push(id);
-            });
-
-
-            $("#FwdInternalRecord").modal('show');
-        } else {
-            Swal.fire({
-                text: "Please select atleast 1 request to Approval."
-            });
-        }
-    });
-
-    $("#btnCSVDownload").on("click", function () {
-        // Empty the array
-        lstCSVDownload.length = 0;
-        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-            memberTable.$('input[type="checkbox"]:checked').each(function () {
-                var id = $(this).attr("Id");
-                lstCSVDownload.push(id);
-            });
-            var userdata = {
-                "Ids": lstCSVDownload,
-            };
-            $.ajax({
-                url: '/BasicDetail/CreateCSV',
-                contentType: 'application/x-www-form-urlencoded',
-                data: userdata,
-                type: 'POST',
-
-                success: function (response) {
-                    if (response != "null" && response != null) {
-                        if (response == InternalServerError) {
-                            Swal.fire({
-                                text: errormsg
-                            });
-                        } else {
-                            var url = "https://" + window.location.host + '/WriteReadData/CSVFile/' + response + ".csv";
-                            window.location.href = url;
-                        }
-                    }
-                },
-                error: function (result) {
-                    Swal.fire({
-                        text: errormsg002
-                    });
-                }
-            });
-        }
-        else {
-            Swal.fire({
-                text: "Please select atleast 1 request to download CSV File."
-            });
-        }
-    });
-
     $("#btnInternalFwdSubmit").on("click", function () {
         ProceedForInternalFwd();
     });
@@ -645,7 +619,7 @@ function ProceedForInternalFwd() {
 function SaveInternalFwd() {
     var remarks = "" + $("#ddlInternalRemarks").val() + "";
     var userdata = {
-        "TrnFwdIds": lstInternalFwd,
+        "RequestIds": selectedIds,
         "ToAspNetUsersId": $('#ddlfwdInternaloffrs').val(),
         "ToUserId": $("#spnFwdToInternalUsersId").html(),
         "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
@@ -703,6 +677,7 @@ function Reset() {
     $("#txtFwdName").val("");
     $(".serchfwd").addClass("d-none");
 }
+
 async function GetBasicDetailByRequestIdForFwd(RequestId) {
     let param = new URLSearchParams({ RequestId: RequestId });
 
@@ -1097,10 +1072,10 @@ function UpdateStepCounter(stepId, spnRequestId, Counter, Flag) {
 }
 
 
-function DataExport(Data) {
+function DataExport() {
 
     var userdata = {
-        "Ids": Data,
+        "Ids": selectedIds,
         "IsJco": $("#Isspnjcoor").html(),
         "DataExportType": DataExportType
 
@@ -1320,6 +1295,7 @@ function jsonToXml(json) {
     }
     return xml;
 }
+
 function DownloadXml(RequestId) {
     var userdata = {
         "RequestId": RequestId,

@@ -13,7 +13,7 @@ namespace DataTransferObject.Requests
     public class DTOSaveInternalFwdRequest
     {
         //[RegularExpression(@"^[\w\,\'' ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public required int[] TrnFwdIds { get; set; }
+        public required int[] RequestIds { get; set; }
         
         [RegularExpression(@"^[\d]+$", ErrorMessage = "ToUserId is number.")]
         public int ToUserId { get; set; }

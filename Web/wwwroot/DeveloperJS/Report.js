@@ -635,7 +635,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Request ID",
+                    title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
                 },
@@ -708,7 +708,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Request ID",
+                    title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
                 },
@@ -825,7 +825,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Request ID",
+                    title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
                 },
@@ -933,7 +933,7 @@ function getColumnsByChoice(choice) {
                     }
                 },
                 {
-                    title: "Request ID",
+                    title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
                 },

@@ -1,5 +1,5 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
-//var table2;
+var table2;
 $(function () {
     let cvalue = parseInt($("#spnClaimValue").html());
     BindData(cvalue, function () {
@@ -63,11 +63,7 @@ $(function () {
             toastr.error('Please Select at least one row.');
             return;
         }
-        else {
-            ExportCsvFile(selectedIds);
-        }
     });
-
     $("#exportRequestIds").on("click", function () {
         if (selectedIds.length == 0) {
             toastr.error('Please Select at least one row.');
@@ -77,7 +73,6 @@ $(function () {
             ExportCsvFile(selectedIds);
         }
     });
-
     $("#btnProceedToDispatch").on("click", function () {
         if (selectedIds.length == 0) {
             toastr.error('Please Select at least one row.');
@@ -98,38 +93,19 @@ $(function () {
             }
         }
     });
-
     $('#DataTableDialog').on('hidden.bs.modal', function () {
         resetSelectedFields(); // Reset selected fields when the modal is closed
     });
+        $("#btnDispatchStatus").on("click", function () {
+            $("#lblModelTitle").html('Details of Card Dispatch Status');
 
-    $('#DataTableDialogForLot').on('hidden.bs.modal', function () {
-        // Reset global variables as explained
-        selectedIds = [];
-        previousSearchText = "";
-        isFirstSelectAll = true;
-        searchChanged = false;
-        globalAllChecked = false;
+            $("#AdvSearch").removeClass("d-none");
+            // Show the modal first
+            $("#DataTableDialog").modal("show");
 
-        // Uncheck all checkboxes
-        $('#tbldatadialogLot tbody input[type="checkbox"].chkRequestId').prop('checked', false);
-
-        // Reset "Select All" checkbox
-        $('#chkAll_BindDialog').prop('checked', false);
-
-        console.log("Reset selectedIds and checkboxes.");
-    });
-
-    $("#btnDispatchStatus").on("click", function () {
-        $("#lblModelTitle").html('Details of Card Dispatch Status');
-
-        $("#AdvSearch").removeClass("d-none");
-        // Show the modal first
-        $("#DataTableDialog").modal("show");
-
-        // Then initialize the table
-        DispatchCardStatusListBindDialog(cvalue,function () {
-            // Callback to show modal after DataTable is ready
+            // Then initialize the table
+            DispatchCardStatusListBindDialog(cvalue,function () {
+                // Callback to show modal after DataTable is ready
         });
     });
 
@@ -214,7 +190,6 @@ function resetSelectedFields() {
 
     console.log("Reset selectedIds and checkboxes.");
 }
-
 async function Save() {
     try {
         var token = $('input[name="__RequestVerificationToken"]').val();
@@ -438,15 +413,10 @@ function BindData(cvalue, callback) {
     });
 }
 function BindDialog(rowData, cvalue, callback) {
-    var table2 = "";
-    selectedIds = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialogLot")) {
-        // Destroy the DataTable and clear the table content
-        $("#tbldatadialogLot").DataTable().clear().destroy(); // Clear and destroy DataTable properly
-        $("#tbldatadialogLot thead").empty(); // Clear old thead
-        $("#tbldatadialogLot tbody").empty(); // Clear old tbody
+        $("#tbldatadialogLot").DataTable().destroy();
+        $("#tbldatadialogLot").empty(); // Clear old thead/tbody
     }
-
     const columns = getColumnsByChoice(cvalue);
     table2 = $("#tbldatadialogLot").DataTable({
         autoWidth: false, // Let us handle width via CSS
@@ -454,42 +424,17 @@ function BindDialog(rowData, cvalue, callback) {
         processing: true,
         serverSide: true,
         filter: true,
-        stateSave: false,
+        stateSave: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
-
-            let searchStatus = getSearchStatusForBindDialog(data.search.value);
-
-            // Clear old selectedIds on search change, but keep globalAllChecked state
-            if (searchStatus.searchChanged) {
-                selectedIds = [];
-
-                // Mark for re-fetch if needed
-                if (globalAllChecked) {
-                    isFirstSelectAll = true;
-                }
-            }
-
-            // ✅ Determine if a fetch is needed
-            const shouldFetchSelectedIds =
-                globalAllChecked && (isFirstSelectAll || searchStatus.searchChanged) ||
-                (!globalAllChecked && searchStatus.searchChanged && isFirstSelectAll);
-
-            // If fetch is needed, manually set searchChanged to true
-            if (shouldFetchSelectedIds) {
-                searchStatus.searchChanged = true; // Manually set to true to ensure data fetch
-            }
-
             let requestData = {
                 draw: data.draw,
                 start: data.start,
                 length: data.length,
-                searchValue: searchStatus.currentSearchText,
+                searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                DispatchCardId: rowData.DispatchCardId,
-                searchTextChanged: searchStatus.searchChanged,
-                AllChecked: shouldFetchSelectedIds ? true : globalAllChecked
+                DispatchCardId: rowData.DispatchCardId
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardDataForDialog", {
@@ -501,32 +446,6 @@ function BindDialog(rowData, cvalue, callback) {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
-
-                // 🔁 If no data returned, always clear selection
-                if (result.data.length === 0) {
-                    selectedIds = [];
-                    console.log("No results. Cleared selectedIds.");
-                }
-
-                // Only update selectedIds if server returns new ones
-                if (shouldFetchSelectedIds) {
-                    if (result.selectedIds != null && result.selectedIds.length > 0) {
-                        //selectedIds = result.selectedIds;
-                        selectedIds = result.selectedIds.map(x => x.toString());
-                        console.log("Fetched selectedIds from server:", selectedIds);
-                        // If user hadn’t checked Select All, now we just load into selectedIds silently
-                        if (globalAllChecked) isFirstSelectAll = false;
-                    }
-                    else {
-                        //selectedIds = [];
-                        if (globalAllChecked) {
-                            globalAllChecked = false;
-                            $('#chkAll_BindDialog').prop('checked', false);
-                        }
-                        console.warn("⚠️ No valid Pending IDs found.");
-                    }
-                }
-
                 callback(result); // Sends data to DataTables
 
 
@@ -573,22 +492,7 @@ function BindDialog(rowData, cvalue, callback) {
             // Add tooltip to the search input box
             let searchBox = $('div.dataTables_filter input');
             searchBox.attr('title', 'Search Appl Id/Arm/Army No/Chip No/Card Serial No');
-        },
-        drawCallback: function (settings) {
-            updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog', selectedIds);
         }
-    });
-    $(document).on('change', '.chkRequestId', async function () {
-        await updateSelectedIds('#tbldatadialogLot', 'chkRequestId');
-        updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog', selectedIds); // Sync master checkbox state
-    });
-    $('#chkAll_BindDialog').on('change', function () {
-        selectedIds = [];
-        globalAllChecked = $(this).prop('checked');
-        if (globalAllChecked) {
-            isFirstSelectAll = true; // Force fresh fetch
-        }
-        table2.ajax.reload();
     });
 }
 function getColumnsForDispatchCard(choice) {
@@ -852,30 +756,6 @@ function getColumnsByChoice(choice) {
         case 1:
             columns = [
                 {
-                    title: `<div class="noExport wd-30-f"><div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_BindDialog">
-                    <label class="custom-control-label" for="chkAll_BindDialog"></label>
-                    </div></div>`,
-                    data: null,
-                    name: "Id",
-                    orderable: false, // Disable sorting for this column
-                    render: function (data, type, row, meta) {
-                        if ($("#chkAll_BindDialog").prop('checked')) {
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        } else {
-
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        }
-
-                    }
-                },
-                {
                     title: "S No",
                     data: null,
                     name: "SerialNumber",
@@ -947,30 +827,6 @@ function getColumnsByChoice(choice) {
         case 2:
         case 3:
             columns = [
-                {
-                    title: `<div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_BindDialog">
-                    <label class="custom-control-label" for="chkAll_BindDialog"></label>
-                    </div>`,
-                    data: null,
-                    name: "Id",
-                    orderable: false, // Disable sorting for this column
-                    render: function (data, type, row, meta) {
-                        if ($("#chkAll_BindDialog").prop('checked')) {
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        } else {
-
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        }
-
-                    }
-                },
                 {
                     title: "S No",
                     data: null,
@@ -1044,30 +900,6 @@ function getColumnsByChoice(choice) {
         default:
             columns = [
                 {
-                    title: `<div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_BindDialog">
-                    <label class="custom-control-label" for="chkAll_BindDialog"></label>
-                    </div>`,
-                    data: null,
-                    name: "Id",
-                    orderable: false, // Disable sorting for this column
-                    render: function (data, type, row, meta) {
-                        if ($("#chkAll_BindDialog").prop('checked')) {
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        } else {
-
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        }
-
-                    }
-                },
-                {
                     title: "S No",
                     data: null,
                     name: "SerialNumber",
@@ -1128,7 +960,7 @@ function getColumnsByChoice(choice) {
 
     return columns;
 }
-function DispatchCardStatusListBindDialog(cvalue, callback) {
+function DispatchCardStatusListBindDialog(cvalue,callback) {
     var table2;
     selectedIds = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
@@ -1264,6 +1096,9 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
             let searchBox = $('div.dataTables_filter input');
             searchBox.attr('title', 'Search ReqId/Arm/SUSNo/ORO/Regt/Army No/Chip No/Card Serial No');
         },
+        //drawCallback: function (settings) {
+        //    setTimeout(() => updateUICheckboxes(), 50);
+        //}
         drawCallback: function (settings) {
             updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll', selectedIds);
         }
@@ -1292,6 +1127,8 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
     $(document).on('change', '.chkRequestId', async function () {
         await updateSelectedIds('#tbldatadialog', 'chkRequestId');
         updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll', selectedIds); // Sync master checkbox state
+        //updateSelectedIds();
+        //updateUICheckboxes(); // Sync master checkbox state
     });
     // Restrict typing
     $('#searchText').on('keypress', function (e) {
@@ -1589,6 +1426,53 @@ function getColumnsForListBindDialog(choice) {
 
     return columns;
 }
+//function updateUICheckboxes() {
+//    let allCheckedOnPage = true;
+
+//    $('#tbldatadialog tbody input[type="checkbox"].chkRequestId').each(function () {
+//        const id = $(this).val().toString();
+
+//        if (selectedIds.includes(id)) {
+//            $(this).prop('checked', true);
+//        } else {
+//            $(this).prop('checked', false);
+//            allCheckedOnPage = false; // At least one unchecked
+//        }
+//    });
+
+//    // Update master checkbox (chkAll) based on all on-page checkboxes
+//    $('#chkAll').prop('checked', allCheckedOnPage);
+//}
+//function updateSelectedIds() {
+//    const idsOnPage = getAllIds();
+//    const idsChecked = getSelectedIds();
+
+//    // Remove unchecked
+//    selectedIds = selectedIds.filter(id => !idsOnPage.includes(id));
+
+//    // Add checked
+//    idsChecked.forEach(id => {
+//        if (!selectedIds.includes(id)) {
+//            selectedIds.push(id);
+//        }
+//    });
+
+//    //console.log("Updated selectedIds:", selectedIds);
+//}
+//function getSelectedIds() {
+//    let ids = [];
+//    $('#tbldatadialog tbody input.chkRequestId:checked').each(function () {
+//        ids.push($(this).val().toString());
+//    });
+//    return ids;
+//}
+//function getAllIds() {
+//    let all = [];
+//    $('#tbldatadialog tbody input.chkRequestId').each(function () {
+//        all.push($(this).val().toString());
+//    });
+//    return all;
+//}
 function getSearchStatus(cvalue) {
     const currentSearchText = (cvalue == 2 || cvalue == 3) ? $("#spnUnitMapId").html() : $('#searchText').val().trim();
     const currentSearchField = $('#searchField').val();
@@ -1668,20 +1552,4 @@ function ProceedToDispatch(selectedIds, searchField, searchText) {
                 reject(new Error("Proceed To Dispatch: " + error.message));
             });
     });
-}
-function getSearchStatusForBindDialog(search) {
-    const currentSearchText = search.trim();
-
-    // Ensure searchChanged is only true when the actual search field or text changes.
-    searchChanged = (
-        (currentSearchText !== previousSearchText )
-    );
-
-    // Update previous values after comparison
-    previousSearchText = currentSearchText;
-
-    return {
-        searchChanged: searchChanged,
-        currentSearchText
-    };
 }

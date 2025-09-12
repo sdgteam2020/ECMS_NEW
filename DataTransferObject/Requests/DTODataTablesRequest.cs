@@ -89,6 +89,8 @@ namespace DataTransferObject.Requests
         public int TypeId { get; set; }
         public int applyForId { get; set; }
         public string JCOOR { get; set; } = string.Empty;
+        public bool AllChecked { get; set; } = false;
+        public bool SearchTextChanged { get; set; } = false;
     }
     public class DTODataTablesRequestForCardDispatch : DTODataTablesRequest
     {
@@ -100,6 +102,8 @@ namespace DataTransferObject.Requests
     public class DTODataTablesRequestForCardDispatchDialog : DTODataTablesRequest
     {
         public int DispatchCardId { get; set; }
+        public bool AllChecked { get; set; } = false;
+        public bool SearchTextChanged { get; set; } = false;
     }
     public class DTODataTablesRequestForCardStatusList:DTODataTablesRequest
     {

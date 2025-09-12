@@ -17,7 +17,6 @@ namespace DataTransferObject.Response
         public string? ServiceNo { get; set; }
         public DateTime DOB { get; set; }
         public string? RankName { get; set; }
-        public string? TrackingId { get; set; }
         public string? ArmyNoTo { get; set; }
         public string? NameTo { get; set; }
         public string? RankTo { get; set; }
