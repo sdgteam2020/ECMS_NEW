@@ -4,7 +4,8 @@ $(function () {
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();
     let VBId = $("#spnVBId").html();
-    BindData(Type, StepCounter, JCOOR, VBId);
+    BindData(Type, StepCounter, JCOOR, VBId, function () {
+    });
 });
 function BindData(Type, StepCounter, JCOOR, VBId) {
     if ($.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
@@ -51,6 +52,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
         columns: [
             // Serial number column
             {
+                title: "Sno",
                 data: null,
                 name: "SerialNumber",
                 orderable: false, // Disable sorting for this column
@@ -65,6 +67,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 name: "ApplId",
             },
             {
+                title: "ServiceNo",
                 data: "ServiceNo",
                 name: "ServiceNo",
                 render: function (data, type, row) {
@@ -80,6 +83,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 }
             },
             {
+                title: "Rank & Name",
                 data: null,
                 name: "Name",
                 orderable: false,
@@ -100,10 +104,13 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 name: "ApplyFor"
             },
             {
+                title: "Reason for Requisition",
                 data: "ICardType",
                 name: "ICardType",
             },
             {
+                title: "Posting",
+                className: "noExport",
                 data: "IsPosting",
                 name: "IsPosting",
                 render: function (data, type, row) {
@@ -116,21 +123,29 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 }
             },
             {
+                title: "Application History",
                 data: null,
+                className: "noExport",
                 name: "Application History",
+                orderable: false,
                 render: function (data, type, row) {
                     return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" aria-hidden="true"></i></button>`
                 }
             },
             {
+                title: "Card History",
+                className: "noExport",
                 data: null,
                 name: "Card History",
+                orderable: false,
                 render: function (data, type, row) {
                     return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" aria-hidden="true"></i></button>`
                 }
             },
             // Additional column for Edit action
             {
+                title: "Print | Edit | Fwd",
+                className: "noExport",
                 data: null,
                 name: "Action",
                 orderable: false,
@@ -172,22 +187,22 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
             {
                 extend: 'copy',
                 exportOptions: {
-                    columns: "thead th:not(.noExport)"
+                    columns: ':visible:not(.noExport)'
                 }
             },
             {
                 extend: 'excel',
                 exportOptions: {
-                    columns: "thead th:not(.noExport)"
+                    columns: ':visible:not(.noExport)'
                 }
             },
             {
                 extend: 'pdfHtml5',
-                orientation: 'landscape',
-                pageSize: 'LEGAL',
-                title: 'E-IASC_MapUnitChange',
+                orientation: 'portrait',
+                pageSize: 'A4', //A3 , A5 , A6 , legal , letter
+                title: 'E-IASC_Appl',
                 exportOptions: {
-                    columns: "thead th:not(.noExport)"
+                    columns: ':visible:not(.noExport)'
                 },
                 customize: function (doc) {
                     WaterMarkOnPdf(doc)

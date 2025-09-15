@@ -920,6 +920,7 @@ function DateCalculateyearmonthago(fmDate) {
 function Pad(d) {
     return (d < 10) ? '0' + d.toString() : d.toString();
 }
+
 (function ($) {
     'use strict'
 

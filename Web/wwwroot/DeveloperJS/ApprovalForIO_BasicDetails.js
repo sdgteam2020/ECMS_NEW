@@ -31,7 +31,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
         serverSide: true,
         filter: true,
         stateSave: false,
-        order: [[1, 'desc']], // Default sorting on the first column
+        order: [[2, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
 
             let searchStatus = getSearchStatusForBindData(data.search.value);
@@ -126,22 +126,22 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
             {
                 extend: 'copy',
                 exportOptions: {
-                    columns: "thead th:not(.noExport)"
+                    columns: ':visible:not(.noExport)'
                 }
             },
             {
                 extend: 'excel',
                 exportOptions: {
-                    columns: "thead th:not(.noExport)"
+                    columns: ':visible:not(.noExport)'
                 }
             },
             {
                 extend: 'pdfHtml5',
-                orientation: 'landscape',
-                pageSize: 'LEGAL',
-                title: 'E-IASC_MapUnitChange',
+                orientation: 'portrait',
+                pageSize: 'A4', //A3 , A5 , A6 , legal , letter
+                title: 'E-IASC_Approved I-Card',
                 exportOptions: {
-                    columns: "thead th:not(.noExport)"
+                    columns: ':visible:not(.noExport)'
                 },
                 customize: function (doc) {
                     WaterMarkOnPdf(doc)
@@ -207,10 +207,11 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
         case "0":
             columns = [
                 {
-                    title: `<div class="noExport wd-30-f"><div class="custom-control custom-checkbox small">
+                    title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
                     <input type="checkbox" class="custom-control-input" id="chkAll_ApprovalForIO">
                     <label class="custom-control-label" for="chkAll_ApprovalForIO"></label>
                     </div></div>`,
+                    className: "noExport",
                     data: null,
                     name: "Id",
                     orderable: false, // Disable sorting for this column
@@ -296,7 +297,8 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     name: "ICardType",
                 },
                 {
-                    title: `<div class="noExport">History</div>`,
+                    title: `<div>History</div>`,
+                    className: "noExport",
                     data: null,
                     name: "History",
                     render: function (data, type, row) {
@@ -305,7 +307,8 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 // Additional column for Edit action
                 {
-                    title: `<div class="noExport">Print | Fwd</div>`,
+                    title: `<div>Print | Fwd</div>`,
+                    className: "noExport",
                     data: null,
                     name: "Action",
                     orderable: false,
@@ -330,10 +333,11 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
         default:
             columns = [
                 {
-                    title: `<div class="noExport wd-30-f"><div class="custom-control custom-checkbox small">
+                    title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
                     <input type="checkbox" class="custom-control-input" id="chkAll_ApprovalForIO">
                     <label class="custom-control-label" for="chkAll_ApprovalForIO"></label>
                     </div></div>`,
+                    className: "noExport",
                     data: null,
                     name: "Id",
                     orderable: false, // Disable sorting for this column
@@ -411,7 +415,8 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     name: "ICardType",
                 },
                 {
-                    title: `<div class="noExport">History</div>`,
+                    title: `<div>History</div>`,
+                    className: "noExport",
                     data: null,
                     name: "History",
                     render: function (data, type, row) {
@@ -420,7 +425,8 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 // Additional column for Edit action
                 {
-                    title: `<div class="noExport">Print | Fwd</div>`,
+                    title: `<div>Print | Fwd</div>`,
+                    className: "noExport",
                     data: null,
                     name: "Action",
                     orderable: false,
