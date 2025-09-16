@@ -59,27 +59,27 @@ $(function () {
         });
     }
     $("#exportLot").on("click", function () {
-        if (selectedIds.length == 0) {
+        if (globalThis.selectedIds.length == 0) {
             toastr.error('Please Select at least one row.');
             return;
         }
         else {
-            ExportCsvFile(selectedIds);
+            ExportCsvFile();
         }
     });
 
     $("#exportRequestIds").on("click", function () {
-        if (selectedIds.length == 0) {
+        if (globalThis.selectedIds.length == 0) {
             toastr.error('Please Select at least one row.');
             return;
         }
         else {
-            ExportCsvFile(selectedIds);
+            ExportCsvFile();
         }
     });
 
     $("#btnProceedToDispatch").on("click", function () {
-        if (selectedIds.length == 0) {
+        if (globalThis.selectedIds.length == 0) {
             toastr.error('Please Select at least one row.');
             return;
         }
@@ -94,7 +94,7 @@ $(function () {
                 toastr.error('Please Valid Search Input.');
             }
             else {
-                ProceedToDispatch(selectedIds, searchField, searchText);
+                ProceedToDispatch(searchField, searchText);
             }
         }
     });
@@ -105,11 +105,11 @@ $(function () {
 
     $('#DataTableDialogForLot').on('hidden.bs.modal', function () {
         // Reset global variables as explained
-        selectedIds = [];
-        previousSearchText = "";
-        isFirstSelectAll = true;
-        searchChanged = false;
-        globalAllChecked = false;
+        globalThis.selectedIds = [];
+        globalThis.previousSearchText = "";
+        globalThis.isFirstSelectAll = true;
+        globalThis.searchChanged = false;
+        globalThis.globalAllChecked = false;
 
         // Uncheck all checkboxes
         $('#tbldatadialogLot tbody input[type="checkbox"].chkRequestId').prop('checked', false);
@@ -196,12 +196,12 @@ $(function () {
 });
 function resetSelectedFields() {
     // Reset global variables as explained
-    selectedIds = [];
-    previousSearchText = "";
-    previousSearchField = "";
-    isFirstSelectAll = true;
-    searchChanged = false;
-    globalAllChecked = false;
+    globalThis.selectedIds = [];
+    globalThis.previousSearchText = "";
+    globalThis.previousSearchField = "";
+    globalThis.isFirstSelectAll = true;
+    globalThis.searchChanged = false;
+    globalThis.globalAllChecked = false;
 
     // Uncheck all checkboxes
     $('#tbldatadialog tbody input[type="checkbox"].chkRequestId').prop('checked', false);
@@ -439,7 +439,7 @@ function BindData(cvalue, callback) {
 }
 function BindDialog(rowData, cvalue, callback) {
     var table2 = "";
-    selectedIds = [];
+    globalThis.selectedIds = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialogLot")) {
         // Destroy the DataTable and clear the table content
         $("#tbldatadialogLot").DataTable().clear().destroy(); // Clear and destroy DataTable properly
@@ -462,18 +462,18 @@ function BindDialog(rowData, cvalue, callback) {
 
             // Clear old selectedIds on search change, but keep globalAllChecked state
             if (searchStatus.searchChanged) {
-                selectedIds = [];
+                globalThis.selectedIds = [];
 
                 // Mark for re-fetch if needed
-                if (globalAllChecked) {
-                    isFirstSelectAll = true;
+                if (globalThis.globalAllChecked) {
+                    globalThis.isFirstSelectAll = true;
                 }
             }
 
             // ✅ Determine if a fetch is needed
             const shouldFetchSelectedIds =
-                globalAllChecked && (isFirstSelectAll || searchStatus.searchChanged) ||
-                (!globalAllChecked && searchStatus.searchChanged && isFirstSelectAll);
+                globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) ||
+                (!globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
 
             // If fetch is needed, manually set searchChanged to true
             if (shouldFetchSelectedIds) {
@@ -504,7 +504,7 @@ function BindDialog(rowData, cvalue, callback) {
 
                 // 🔁 If no data returned, always clear selection
                 if (result.data.length === 0) {
-                    selectedIds = [];
+                    globalThis.selectedIds = [];
                     console.log("No results. Cleared selectedIds.");
                 }
 
@@ -512,15 +512,15 @@ function BindDialog(rowData, cvalue, callback) {
                 if (shouldFetchSelectedIds) {
                     if (result.selectedIds != null && result.selectedIds.length > 0) {
                         //selectedIds = result.selectedIds;
-                        selectedIds = result.selectedIds.map(x => x.toString());
-                        console.log("Fetched selectedIds from server:", selectedIds);
+                        globalThis.selectedIds = result.selectedIds.map(x => x.toString());
+                        console.log("Fetched selectedIds from server:", globalThis.selectedIds);
                         // If user hadn’t checked Select All, now we just load into selectedIds silently
-                        if (globalAllChecked) isFirstSelectAll = false;
+                        if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
                     }
                     else {
                         //selectedIds = [];
-                        if (globalAllChecked) {
-                            globalAllChecked = false;
+                        if (globalThis.globalAllChecked) {
+                            globalThis.globalAllChecked = false;
                             $('#chkAll_BindDialog').prop('checked', false);
                         }
                         console.warn("⚠️ No valid Pending IDs found.");
@@ -575,18 +575,18 @@ function BindDialog(rowData, cvalue, callback) {
             searchBox.attr('title', 'Search Appl Id/Arm/Army No/Chip No/Card Serial No');
         },
         drawCallback: function (settings) {
-            updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog', selectedIds);
+            updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog');
         }
     });
     $(document).on('change', '.chkRequestId', async function () {
         await updateSelectedIds('#tbldatadialogLot', 'chkRequestId');
-        updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog', selectedIds); // Sync master checkbox state
+        updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog'); // Sync master checkbox state
     });
     $('#chkAll_BindDialog').on('change', function () {
-        selectedIds = [];
+        globalThis.selectedIds = [];
         globalAllChecked = $(this).prop('checked');
-        if (globalAllChecked) {
-            isFirstSelectAll = true; // Force fresh fetch
+        if (globalThis.globalAllChecked) {
+            globalThis.isFirstSelectAll = true; // Force fresh fetch
         }
         table2.ajax.reload();
     });
@@ -1130,7 +1130,7 @@ function getColumnsByChoice(choice) {
 }
 function DispatchCardStatusListBindDialog(cvalue, callback) {
     var table2;
-    selectedIds = [];
+    globalThis.selectedIds = [];
     if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
         // Destroy the DataTable and clear the table content
         $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
@@ -1153,18 +1153,18 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
 
             // Clear old selectedIds on search change, but keep globalAllChecked state
             if (searchStatus.searchChanged) {
-                selectedIds = [];
+                globalThis.selectedIds = [];
 
                 // Mark for re-fetch if needed
-                if (globalAllChecked) {
-                    isFirstSelectAll = true;
+                if (globalThis.globalAllChecked) {
+                    globalThis.isFirstSelectAll = true;
                 }
             }
 
             // ✅ Determine if a fetch is needed
             const shouldFetchSelectedIds =
-                globalAllChecked && (isFirstSelectAll || searchStatus.searchChanged) ||
-                (!globalAllChecked && searchStatus.searchChanged && isFirstSelectAll);
+                globalThis.globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) ||
+                (!globalThis.globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
 
             // If fetch is needed, manually set searchChanged to true
             if (shouldFetchSelectedIds) {
@@ -1181,7 +1181,7 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
                 searchField: searchStatus.currentSearchField,
                 searchText: searchStatus.currentSearchText,
                 searchTextChanged: searchStatus.searchChanged,
-                AllChecked: shouldFetchSelectedIds ? true : globalAllChecked
+                AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
@@ -1196,7 +1196,7 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
 
                 // 🔁 If no data returned, always clear selection
                 if (result.data.length === 0) {
-                    selectedIds = [];
+                    globalThis.selectedIds = [];
                     console.log("No results. Cleared selectedIds.");
                 }
 
@@ -1204,15 +1204,15 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
                 if (shouldFetchSelectedIds) {
                     if (result.selectedIds != null && result.selectedIds.length > 0) {
                         //selectedIds = result.selectedIds;
-                        selectedIds = result.selectedIds.map(x => x.toString());
-                        console.log("Fetched selectedIds from server:", selectedIds);
+                        globalThis.selectedIds = result.selectedIds.map(x => x.toString());
+                        console.log("Fetched selectedIds from server:", globalThis.selectedIds);
                         // If user hadn’t checked Select All, now we just load into selectedIds silently
-                        if (globalAllChecked) isFirstSelectAll = false;
+                        if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
                     }
                     else {
                         //selectedIds = [];
-                        if (globalAllChecked) {
-                            globalAllChecked = false;
+                        if (globalThis.globalAllChecked) {
+                            globalThis.globalAllChecked = false;
                             $('#chkAll').prop('checked', false);
                         }
                         console.warn("⚠️ No valid Pending IDs found.");
@@ -1265,7 +1265,7 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
             searchBox.attr('title', 'Search ReqId/Arm/SUSNo/ORO/Regt/Army No/Chip No/Card Serial No');
         },
         drawCallback: function (settings) {
-            updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll', selectedIds);
+            updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll');
         }
     });
 
@@ -1291,7 +1291,7 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
     });
     $(document).on('change', '.chkRequestId', async function () {
         await updateSelectedIds('#tbldatadialog', 'chkRequestId');
-        updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll', selectedIds); // Sync master checkbox state
+        updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll'); // Sync master checkbox state
     });
     // Restrict typing
     $('#searchText').on('keypress', function (e) {
@@ -1350,10 +1350,10 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
         }
     });
     $('#chkAll').on('change', function () {
-        selectedIds = [];
-        globalAllChecked = $(this).prop('checked');
-        if (globalAllChecked) {
-            isFirstSelectAll = true; // Force fresh fetch
+        globalThis.selectedIds = [];
+        globalThis.globalAllChecked = $(this).prop('checked');
+        if (globalThis.globalAllChecked) {
+            globalThis.isFirstSelectAll = true; // Force fresh fetch
         }
         table2.ajax.reload();
     });
@@ -1595,25 +1595,25 @@ function getSearchStatus(cvalue) {
 
     // Ensure searchChanged is only true when the actual search field or text changes.
     // If currentSearchField is null (i.e., no field selected), treat it as no change.
-    searchChanged = (
-        (currentSearchText !== previousSearchText || currentSearchField !== previousSearchField) &&
+    globalThis.searchChanged = (
+        (currentSearchText !== globalThis.previousSearchText || currentSearchField !== globalThis.previousSearchField) &&
         (currentSearchField !== null)
     );
 
     // Update previous values after comparison
-    previousSearchText = currentSearchText;
-    previousSearchField = currentSearchField;
+    globalThis.previousSearchText = currentSearchText;
+    globalThis.previousSearchField = currentSearchField;
 
     return {
-        searchChanged: searchChanged,
+        searchChanged: globalThis.searchChanged,
         currentSearchText,
         currentSearchField
     };
 }
-function ExportCsvFile(selectedIds) {
+function ExportCsvFile() {
     return new Promise((resolve, reject) => {
         const requestData = {
-            RequestIds: selectedIds  //Passing the JavaScript array directly
+            RequestIds: globalThis.selectedIds  //Passing the JavaScript array directly
         };
         fetch('/BasicDetail/ExportCsvFileForDispatchCard', {
             method: 'POST',
@@ -1639,10 +1639,10 @@ function ExportCsvFile(selectedIds) {
             });
     });
 }
-function ProceedToDispatch(selectedIds, searchField, searchText) {
+function ProceedToDispatch(searchField, searchText) {
     return new Promise((resolve, reject) => {
         const requestData = {
-            RequestIds: selectedIds,  //Passing the JavaScript array directly
+            RequestIds: globalThis.selectedIds,  //Passing the JavaScript array directly
             SearchField: searchField, // Pass the search field
             SearchText: searchText // Pass the search text
         };
@@ -1673,15 +1673,15 @@ function getSearchStatusForBindDialog(search) {
     const currentSearchText = search.trim();
 
     // Ensure searchChanged is only true when the actual search field or text changes.
-    searchChanged = (
-        (currentSearchText !== previousSearchText )
+    globalThis.searchChanged = (
+        (currentSearchText !== globalThis.previousSearchText )
     );
 
     // Update previous values after comparison
-    previousSearchText = currentSearchText;
+    globalThis.previousSearchText = currentSearchText;
 
     return {
-        searchChanged: searchChanged,
+        searchChanged: globalThis.searchChanged,
         currentSearchText
     };
 }

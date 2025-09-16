@@ -1,14 +1,4 @@
-﻿using DataTransferObject.Domain.Master;
-using DataTransferObject.Localize;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataTransferObject.Validation;
-using Microsoft.AspNetCore.Http;
+﻿using DataTransferObject.Validation;
 
 namespace DataTransferObject.Response
 {

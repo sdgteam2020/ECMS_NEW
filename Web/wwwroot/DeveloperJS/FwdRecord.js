@@ -21,7 +21,7 @@ $(function () {
     sessionStorage.removeItem('ArmyNo');
 
     $('#btnDataExports').on("click", function () {
-        if (selectedIds.length == 0) {
+        if (globalThis.selectedIds.length == 0) {
             Swal.fire({
                 text: "Please select atleast 1 data to Export."
             });
@@ -46,7 +46,7 @@ $(function () {
 
     $('#btnDataExportsEncry').on("click", function () {
 
-        if (selectedIds.length == 0) {
+        if (globalThis.selectedIds.length == 0) {
             Swal.fire({
                 text: "Please select atleast 1 data to Export."
             });
@@ -72,7 +72,7 @@ $(function () {
 
     $("#btnInternalFwd").on("click", function () {
 
-        if (selectedIds.length == 0) {
+        if (globalThis.selectedIds.length == 0) {
             Swal.fire({
                 text: "Please select atleast 1 request to Approval."
             });
@@ -87,14 +87,14 @@ $(function () {
     });
 
     $("#btnCSVDownload").on("click", function () {
-        if (selectedIds.length == 0) {
+        if (globalThis.selectedIds.length == 0) {
             Swal.fire({
                 text: "Please select atleast 1 request to download CSV File."
             });
         }
         else {
             var userdata = {
-                "Ids": selectedIds,
+                "Ids": globalThis.selectedIds,
             };
             $.ajax({
                 url: '/BasicDetail/CreateCSV',
@@ -237,7 +237,7 @@ $(function () {
 
     });
 
-    $("#tbldatatabledata_Fwd tbody").off("click", ".cls-fwdrecord").on("click", ".cls-fwdrecord", async function () {
+    $("#tbldatatabledata_Fwd").on("click", ".cls-fwdrecord", async function () {
         var rowData = table_Fwd.row($(this).closest("tr")).data();
         if (rowData != null) {
             Reset();
@@ -619,7 +619,7 @@ function ProceedForInternalFwd() {
 function SaveInternalFwd() {
     var remarks = "" + $("#ddlInternalRemarks").val() + "";
     var userdata = {
-        "RequestIds": selectedIds,
+        "RequestIds": globalThis.selectedIds,
         "ToAspNetUsersId": $('#ddlfwdInternaloffrs').val(),
         "ToUserId": $("#spnFwdToInternalUsersId").html(),
         "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
@@ -1075,7 +1075,7 @@ function UpdateStepCounter(stepId, spnRequestId, Counter, Flag) {
 function DataExport() {
 
     var userdata = {
-        "Ids": selectedIds,
+        "Ids": globalThis.selectedIds,
         "IsJco": $("#Isspnjcoor").html(),
         "DataExportType": DataExportType
 
@@ -1329,8 +1329,6 @@ function DownloadXml(RequestId) {
 function DownloadPdf(RequestId) {
     var userdata = {
         "RequestId": RequestId,
-
-
     };
     $.ajax({
         url: '/Log/CreatePdf',

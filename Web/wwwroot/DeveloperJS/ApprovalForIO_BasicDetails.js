@@ -3,19 +3,18 @@ $(function () {
     let Type = parseInt($("#spnType").html());
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();
-    let VBId = $("#spnVBId").html();
     let cvalue = parseInt($("#spnClaim").html());
     BindData(Type, StepCounter, JCOOR, cvalue, function () {
         // Reset global variables as explained
-        selectedIds = [];
-        previousSearchText = "";
-        isFirstSelectAll = true;
-        searchChanged = false;
-        globalAllChecked = false;
+        globalThis.selectedIds = [];
+        globalThis.previousSearchText = "";
+        globalThis.isFirstSelectAll = true;
+        globalThis.searchChanged = false;
+        globalThis.globalAllChecked = false;
     });
 });
 function BindData(Type, StepCounter, JCOOR, cvalue) {
-    selectedIds = [];
+    globalThis.selectedIds = [];
 
     if ($.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
         // Destroy the DataTable and clear the table content
@@ -38,18 +37,18 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
 
             // Clear old selectedIds on search change, but keep globalAllChecked state
             if (searchStatus.searchChanged) {
-                selectedIds = [];
+                globalThis.selectedIds = [];
 
                 // Mark for re-fetch if needed
-                if (globalAllChecked) {
-                    isFirstSelectAll = true;
+                if (globalThis.globalAllChecked) {
+                    globalThis.isFirstSelectAll = true;
                 }
             }
 
             // ✅ Determine if a fetch is needed
             const shouldFetchSelectedIds =
-                globalAllChecked && (isFirstSelectAll || searchStatus.searchChanged) ||
-                (!globalAllChecked && searchStatus.searchChanged && isFirstSelectAll);
+                globalThis.globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) ||
+                (!globalThis.globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
 
             // If fetch is needed, manually set searchChanged to true
             if (shouldFetchSelectedIds) {
@@ -69,7 +68,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
                 TypeId: Type,
                 applyForId: 0,
                 JCOOR: JCOOR,
-                AllChecked: shouldFetchSelectedIds ? true : globalAllChecked,
+                AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked,
                 searchTextChanged: searchStatus.searchChanged
             };
             try {
@@ -85,7 +84,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
 
                 // 🔁 If no data returned, always clear selection
                 if (result.data.length === 0) {
-                    selectedIds = [];
+                    globalThis.selectedIds = [];
                     console.log("No results. Cleared selectedIds.");
                 }
 
@@ -93,15 +92,15 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
                 if (shouldFetchSelectedIds) {
                     if (result.selectedIds != null && result.selectedIds.length > 0) {
                         //selectedIds = result.selectedIds;
-                        selectedIds = result.selectedIds.map(x => x.toString());
-                        console.log("Fetched selectedIds from server:", selectedIds);
+                        globalThis.selectedIds = result.selectedIds.map(x => x.toString());
+                        console.log("Fetched selectedIds from server:", globalThis.selectedIds);
                         // If user hadn’t checked Select All, now we just load into selectedIds silently
-                        if (globalAllChecked) isFirstSelectAll = false;
+                        if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
                     }
                     else {
                         //selectedIds = [];
-                        if (globalAllChecked) {
-                            globalAllChecked = false;
+                        if (globalThis.globalAllChecked) {
+                            globalThis.globalAllChecked = false;
                             $('#chkAll_ApprovalForIO').prop('checked', false);
                         }
                         console.warn("⚠️ No valid Pending IDs found.");
@@ -155,7 +154,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
         },
         drawCallback: function (settings) {
 
-            updateUICheckboxes('#tbldatatabledata_Fwd', 'chkRequestId', '#chkAll_ApprovalForIO', selectedIds);
+            updateUICheckboxes('#tbldatatabledata_Fwd', 'chkRequestId', '#chkAll_ApprovalForIO');
 
             $("#tbldatatabledata_Fwd tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
                 var rowData = table_Fwd.row($(this).closest("tr")).data();
@@ -185,17 +184,26 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
                 }
                 event.preventDefault(); // Prevent default action
             });
+            $("#tbldatatabledata_Fwd tbody").off("click", ".cls-BasicDetail-PrintPreview").on("click", ".cls-BasicDetail-PrintPreview", function () {
+                var rowData = table_Fwd.row($(this).closest("tr")).data();
+                if (rowData && rowData.RequestId) {
+                    GetICardPrintPreviewByRequestId(rowData.RequestId);
+                }
+                else {
+                    console.error("RequestId not found in row data");
+                }
+            });
         }
     });
     $(document).on('change', '.chkRequestId', async function () {
         await updateSelectedIds('#tbldatatabledata_Fwd', 'chkRequestId');
-        updateUICheckboxes('#tbldatatabledata_Fwd', 'chkRequestId', '#chkAll_ApprovalForIO', selectedIds); // Sync master checkbox state
+        updateUICheckboxes('#tbldatatabledata_Fwd', 'chkRequestId', '#chkAll_ApprovalForIO'); // Sync master checkbox state
     });
     $('#chkAll_ApprovalForIO').on('change', function () {
-        selectedIds = [];
-        globalAllChecked = $(this).prop('checked');
-        if (globalAllChecked) {
-            isFirstSelectAll = true; // Force fresh fetch
+        globalThis.selectedIds = [];
+        globalThis.globalAllChecked = $(this).prop('checked');
+        if (globalThis.globalAllChecked) {
+            globalThis.isFirstSelectAll = true; // Force fresh fetch
         }
         table_Fwd.ajax.reload();
     });
@@ -314,7 +322,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     orderable: false,
                     render: function (data, type, row) {
                         // Always include the Print Preview button
-                        let html = `<button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-print mt-2"></i></button>`;
+                        let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-print mt-2"></i></button>`;
 
                         if (parseInt($("#spnVBId").html()) == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
                             html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
@@ -432,7 +440,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     orderable: false,
                     render: function (data, type, row) {
                         // Always include the Print Preview button
-                        let html = `<button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-print mt-2"></i></button>`;
+                        let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview"><i class="fa fa-print mt-2"></i></button>`;
 
                         if (parseInt($("#spnVBId").html()) == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
                             html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
@@ -454,15 +462,15 @@ function getSearchStatusForBindData(search) {
     const currentSearchText = search.trim();
 
     // Ensure searchChanged is only true when the actual search field or text changes.
-    searchChanged = (
-        (currentSearchText !== previousSearchText)
+    globalThis.searchChanged = (
+        (currentSearchText !== globalThis.previousSearchText)
     );
 
     // Update previous values after comparison
-    previousSearchText = currentSearchText;
+    globalThis.previousSearchText = currentSearchText;
 
     return {
-        searchChanged: searchChanged,
+        searchChanged: globalThis.searchChanged,
         currentSearchText
     };
 }

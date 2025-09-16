@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using DataTransferObject.Localize;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataTransferObject.Domain.Identitytable;
-using DataTransferObject.Localize;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataTransferObject.Requests
 {

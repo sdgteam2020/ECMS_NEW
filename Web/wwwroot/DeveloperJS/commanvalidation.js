@@ -13,6 +13,7 @@ $(function () {
         minDate: 0, // Disable past dates, allowing only today and future dates
         yearRange: '1900:2100' // Example year range
     });
+
     $(".ValidateArmyNo").on("blur", function () {
         let inputValue = $('#txtArmyNo').val();
 
@@ -135,6 +136,7 @@ $(function () {
     //    }
         
     });
+
     $('.form-space').on("keypress",function (e) {
         // Get the key code of the pressed key
         var keyCode = e.which;
@@ -147,6 +149,7 @@ $(function () {
             return true; // Allow the keypress
         }
     });
+
     $('.form-control-Alphabets').on("keypress",function (e) {
 
         // Get the key code of the pressed key
@@ -160,6 +163,7 @@ $(function () {
             return false; // Block the keypress
         }
     });
+
     $('.form-control').on("keypress",function (e) {
        
         // Get the key code of the pressed key
@@ -173,6 +177,7 @@ $(function () {
             return false; // Block the keypress
         }
     });
+
     $('.form-control-domainId').on("keypress",function (e) {
         // Get the key code of the pressed key
         var keyCode = e.which;
@@ -185,6 +190,7 @@ $(function () {
             return false; // Block the keypress
         }
     });
+
     $('.form-control-AllowedKey').on("keypress", function (e) {
         // Get the key code of the pressed key
         var keyCode = e.which;
@@ -196,6 +202,7 @@ $(function () {
             return false; // Block the keypress
         }
     });
+
     $('.Alphanumeric').on('change', function () {
         
         if ($('.Alphanumeric').val().match("^[a-zA-Z0-9 ]*$")) {
@@ -207,6 +214,7 @@ $(function () {
 
         }
     });
+
     $('.isNumerictxt').on("keypress",function (e) {
       
         if (isNumeric(e.key)) {
@@ -221,6 +229,7 @@ $(function () {
 
         }
     });
+
     $(".btnPrint").on("click",function () {
         //var now = new Date();
         //var jsDate = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear() + ' ' + now.getHours()+ ':' + now.getMinutes() + ':' + now.getSeconds();
@@ -342,9 +351,8 @@ $(function () {
             });
             memberTable.buttons().container().appendTo('#tbldatatabledata_wrapper .col-md-6:eq(0)');
         }
-
-
     }, 1000);
+
     $("#tbldatatabledata #chkAll").on("click",function () {
         if ($(this).is(':checked')) {
            let rows = memberTable.rows({ 'search': 'applied' }).nodes();

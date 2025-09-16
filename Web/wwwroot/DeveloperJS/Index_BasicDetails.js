@@ -9,7 +9,10 @@ $(function () {
 });
 function BindData(Type, StepCounter, JCOOR, VBId) {
     if ($.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
-        $("#tbldatatabledata_Fwd").DataTable().destroy();
+        // Destroy the DataTable and clear the table content
+        $("#tbldatatabledata_Fwd").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldatatabledata_Fwd thead").empty(); // Clear old thead
+        $("#tbldatatabledata_Fwd tbody").empty(); // Clear old tbody
     }
  
     table_Fwd = $("#tbldatatabledata_Fwd").DataTable({
@@ -227,6 +230,9 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     DownloadPdf(rowData.RequestId);
                 }
             });
+            //$("#tbldatatabledata_Fwd tbody").off("click", ".cls-fwdrecord").on("click", ".cls-fwdrecord", async function () {
+            //    alert(table_Fwd.row($(this).closest("tr")).data().RequestId);
+            //});
             //$(".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {
             //    var rowData = table_Fwd.row($(this).closest("tr")).data();
             //    if (rowData != null) {

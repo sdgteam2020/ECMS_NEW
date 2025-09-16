@@ -226,31 +226,14 @@ namespace Web.Controllers
                 // Retrieve client IP address
                 string ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
 
-                Dictionary<int, LevelMessage> dictionarLevel = new Dictionary<int, LevelMessage>();
-                LevelMessage levelMessage1 = new LevelMessage()
+                // Define levels and create dictionary in one step
+                var dictionarLevel = new Dictionary<int, LevelMessage>
                 {
-                    ID = 1,
-                    Name = "1st Level"
+                    { 1, new LevelMessage { ID = 1, Name = "1st Level" } },
+                    { 2, new LevelMessage { ID = 2, Name = "2nd Level" } },
+                    { 3, new LevelMessage { ID = 3, Name = "3rd Level" } },
+                    { 4, new LevelMessage { ID = 4, Name = "4th Level" } }
                 };
-                LevelMessage levelMessage2 = new LevelMessage()
-                {
-                    ID = 2,
-                    Name = "2nd Level"
-                };
-                LevelMessage levelMessage3 = new LevelMessage()
-                {
-                    ID = 3,
-                    Name = "3rd Level"
-                };
-                LevelMessage levelMessage4 = new LevelMessage()
-                {
-                    ID = 4,
-                    Name = "4th Level"
-                };
-                dictionarLevel.Add(levelMessage1.ID, levelMessage1);
-                dictionarLevel.Add(levelMessage2.ID, levelMessage2);
-                dictionarLevel.Add(levelMessage3.ID, levelMessage3);
-                dictionarLevel.Add(levelMessage4.ID, levelMessage4);
 
                 var now = DateTime.Now;
                 var yearName = now.ToString("yyyy");
@@ -265,7 +248,7 @@ namespace Web.Controllers
                 d[0] = RequestId;
                 var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
 
-                ////////////certificate//////
+                // Process certificates
                 List<X509Certificate2> certificates = new List<X509Certificate2>();
 
                 string XmlFilesRemoveAndChar = sata.XmlFiles.Replace("&", "&amp;");

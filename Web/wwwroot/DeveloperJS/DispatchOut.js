@@ -1,10 +1,10 @@
-﻿let ClaimValue;
-let Field;
-let SearchText;
-let CategoryId;
-let ToUnitId;
-let ToUserId;
-let RecordRegimentId;
+﻿var ClaimValue;
+var Field;
+var SearchText;
+var CategoryId;
+var ToUnitId;
+var ToUserId;
+var RecordRegimentId;
 $(async function () {
     const now = moment();                 // current date-time
     const max = moment().add(1, 'month'); // +1 month

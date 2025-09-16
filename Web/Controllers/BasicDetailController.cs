@@ -4785,34 +4785,64 @@ namespace Web.Controllers
         /// <returns>Returns JSON containing the BasicDetailCrtAndUpdVM with decrypted images, or null if not found.</returns>
         public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
         {
-            // Retrieve the basic detail record for the given RequestId
-            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
-
-            if (basicDetailCrtAndUpdVM != null)
+            // Initialize the generic response object
+            DTOGenericResponse<BasicDetailCrtAndUpdVM?> response = new DTOGenericResponse<BasicDetailCrtAndUpdVM?>();
+            try
             {
-                // Define the root physical folder where images are stored
-                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+                // Retrieve the basic detail record for the given RequestId
+                BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
 
-                // Build the full path for the photo image
-                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+                if (basicDetailCrtAndUpdVM != null)
+                {
+                    // Define the root physical folder where images are stored
+                    string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
-                // Decrypt the photo image and assign it to the VM
-                basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    // Build the full path for the photo image
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
 
-                // Build the full path for the signature image
-                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+                    // Decrypt the photo image and assign it to the VM
+                    basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
 
-                // Decrypt the signature image and assign it to the VM
-                basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                    // Build the full path for the signature image
+                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
 
-                // Return the VM as JSON
-                return Json(basicDetailCrtAndUpdVM);
+                    // Decrypt the signature image and assign it to the VM
+                    basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+                    // Return the VM as JSON
+                    response.Result = true;
+                    response.Message ="Success";
+                    response.Value= basicDetailCrtAndUpdVM;
+                    return Json(response);
+                }
+                else
+                {
+                    // Return null if no record was found for the given RequestId
+                    response.Result = false;
+                    response.Message = "RequestId not found.";
+                    response.Value = null;
+                    return Json(response);
+                }
             }
-            else
+            catch (FileNotFoundException ex)
             {
-                // Return null if no record was found for the given RequestId
-                return Json(null);
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetICardPrintPreviewByRequestId");
+                response.Result = false;
+                response.Message = "Photo and Signature not found.";
+                response.Value = null;
+                return Json(response);
             }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetICardPrintPreviewByRequestId");
+                response.Result = false;
+                response.Message = "Internal Error.";
+                response.Value = null;
+                return Json(response);
+            }
+
         }
 
 

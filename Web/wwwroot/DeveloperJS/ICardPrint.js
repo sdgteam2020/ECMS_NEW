@@ -24,25 +24,35 @@ function GetICardPrintPreviewByRequestId(RequestId) {
         type: 'POST',
 
         success: function (response) {
-            if (response != "null" && response != null) {
-                $(".PhotoImagePath_ICardPrint").attr('src', response.ExistingPhotoInBase64);
-                $(".SignaturePath_ICardPrint").attr('src', response.ExistingSignatureInBase64);
-                $("#FName_ICardPrint").html(response.FName);
-                $("#LName_ICardPrint").html(response.LName);
-                $("#RankName_ICardPrint").html(response.RankName);
-                $("#ArmedName_ICardPrint").html(response.ArmedName);
-                $("#ServiceNo_ICardPrint").html(response.ModifiedServiceNo);
-                $("#IdenMark1_ICardPrint").html(response.IdenMark1);
-                $("#DOB_ICardPrint").html(DateFormateMMMM_dd_yyyy(response.DOB));
-                $("#Height_ICardPrint").html(response.Height + ' CM');
-                $("#AadhaarNo_ICardPrint").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
-                $("#BloodGroup_ICardPrint").html(response.BloodGroup);
-                $("#PlaceOfIssue_ICardPrint").html(response.PlaceOfIssue);
-                $("#DateOfIssue_ICardPrint").html(response.DateOfIssue == null ? 'DEPENDS ON UNIT OF SECOND LEVEL APPROVER.' :  DateFormateMMMM_dd_yyyy(response.DateOfIssue));
-                $(".IssuingAuth_ICardPrint").html(response.IssuingAuthorityName);
-                $(".DateOfCommissioning_ICardPrint").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
+            if (response.Result === true) {
+                $(".PhotoImagePath_ICardPrint").attr('src', response.Value.ExistingPhotoInBase64);
+                $(".SignaturePath_ICardPrint").attr('src', response.Value.ExistingSignatureInBase64);
+                $("#FName_ICardPrint").html(response.Value.FName);
+                $("#LName_ICardPrint").html(response.Value.LName);
+                $("#RankName_ICardPrint").html(response.Value.RankName);
+                $("#ArmedName_ICardPrint").html(response.Value.ArmedName);
+                if (/^[A-Za-z]{2}/.test(response.Value.ServiceNo)) {
+                    // Insert space after first two characters
+                    let temp = response.Value.ServiceNo.slice(0, 2) + ' ' + response.Value.ServiceNo.slice(2);
+                    $("#ServiceNo_ICardPrint").html(temp);
+                } else {
+                    // No space needed
+                    $("#ServiceNo_ICardPrint").html(response.Value.ServiceNo);
+                }
+                $("#IdenMark1_ICardPrint").html(response.Value.IdenMark1);
+                $("#DOB_ICardPrint").html(DateFormateMMMM_dd_yyyy(response.Value.DOB));
+                $("#Height_ICardPrint").html(response.Value.Height + ' CM');
+                $("#AadhaarNo_ICardPrint").html(response.Value.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
+                $("#BloodGroup_ICardPrint").html(response.Value.BloodGroup);
+                $("#PlaceOfIssue_ICardPrint").html(response.Value.PlaceOfIssue);
+                $("#DateOfIssue_ICardPrint").html(response.Value.DateOfIssue == null ? 'DEPENDS ON UNIT OF SECOND LEVEL APPROVER.' : DateFormateMMMM_dd_yyyy(response.Value.DateOfIssue));
+                $(".IssuingAuth_ICardPrint").html(response.Value.IssuingAuthorityName);
+                $(".DateOfCommissioning_ICardPrint").html(DateFormateMMMM_dd_yyyy(response.Value.DateOfCommissioning));
                 $("#ICardPrint").modal('show');
                 //$("#lblfdaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
+            }
+            else {
+                toastr.error(response.Message);
             }
         }
     })

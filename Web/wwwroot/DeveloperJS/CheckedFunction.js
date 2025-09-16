@@ -1,17 +1,17 @@
 ﻿var selectedIds = [];
-let previousSearchText = "";
-let previousSearchField = "";
-let isFirstSelectAll = true;
-let searchChanged = false;
-let globalAllChecked = false;
-function updateUICheckboxes(tableSelector, checkboxClass, masterCheckboxSelector, selectedIds) {
+var previousSearchText = "";
+var previousSearchField = "";
+var isFirstSelectAll = true;
+var searchChanged = false;
+var globalAllChecked = false;
+function updateUICheckboxes(tableSelector, checkboxClass, masterCheckboxSelector) {
     return new Promise((resolve, reject) => {
         try {
             let allCheckedOnPage = true;
 
             $(`${tableSelector} tbody input[type="checkbox"].${checkboxClass}`).each(function () {
                 const id = $(this).val().toString();
-                if (selectedIds.includes(id)) {
+                if (globalThis.selectedIds.includes(id)) {
                     $(this).prop('checked', true);
                 } else {
                     $(this).prop('checked', false);
@@ -35,16 +35,16 @@ async function updateSelectedIds(tableSelector, checkboxClass) {
         const idsChecked = await getSelectedIds(tableSelector, checkboxClass);
 
         // Remove unchecked
-        selectedIds = selectedIds.filter(id => !idsOnPage.includes(id));
+        globalThis.selectedIds = globalThis.selectedIds.filter(id => !idsOnPage.includes(id));
 
         // Add checked
         idsChecked.forEach(id => {
-            if (!selectedIds.includes(id)) {
-                selectedIds.push(id);
+            if (!globalThis.selectedIds.includes(id)) {
+                globalThis.selectedIds.push(id);
             }
         });
 
-        console.log("Updated selectedIds:", selectedIds);
+        console.log("Updated selectedIds:", globalThis.selectedIds);
     } catch (error) {
         console.error("Error updating selectedIds:", error);
     }

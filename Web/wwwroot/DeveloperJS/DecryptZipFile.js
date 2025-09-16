@@ -84,15 +84,62 @@ function Save() {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
                     Swal.fire({
-                        text: "Data Not Export Internal Server Error"
+                        text: "Data Not Decrypt, Internal Server Error"
                     });
                 } else {
-                    //var url = "https://" + window.location.host + '/WriteReadData/ExportAFSACCell/Temp/' + response;
-                    //window.open(url, '_blank');
-                    window.location = "/WriteReadData/ExportAFSACCell/Temp/" + response;
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1000);
+                    //window.location = "/WriteReadData/ExportAFSACCell/Temp/" + response;
+                    //setTimeout(function () {
+                    //    location.reload();
+                    //}, 1000);
+
+                    let responseHtml = "Data Decrypt Successfully!";
+                    Swal.fire({
+                        title: responseHtml,
+                        text: "Please download Zip file.",
+                        icon: "success",
+                        showConfirmButton: false, // We'll create custom buttons
+                        showCancelButton: false,
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            const swal = Swal.getPopup();
+
+                            const btnGroup = document.createElement('div');
+                            btnGroup.style.display = 'flex';
+                            btnGroup.style.justifyContent = 'center';
+                            btnGroup.style.gap = '10px';
+
+                            const downloadBtn = document.createElement('button');
+                            downloadBtn.textContent = 'Download';
+                            downloadBtn.className = 'swal2-confirm swal2-styled';
+                            downloadBtn.style.backgroundColor = '#28a745'; // green
+                            downloadBtn.onclick = function () {
+                                const fileUrl = `/WriteReadData/ExportAFSACCell/Temp/${response}`;
+                                const link = document.createElement('a');
+                                link.href = fileUrl;
+                                link.download = response; // This will prompt the file to download instead of opening it in a new tab
+                                document.body.appendChild(link); // Append the link to the document
+                                link.click(); // Trigger the download
+                                document.body.removeChild(link); // Clean up by removing the link
+                            };
+
+                            const closedBtn = document.createElement('button');
+                            closedBtn.textContent = 'Close';
+                            closedBtn.className = 'swal2-cancel swal2-styled';
+                            closedBtn.style.backgroundColor = '#dc3545'; // red
+                            closedBtn.onclick = function () {
+                                Swal.close();
+                                location.reload();
+                            };
+
+                            btnGroup.appendChild(downloadBtn);
+                            btnGroup.appendChild(closedBtn);
+
+                            swal.appendChild(btnGroup);
+                        }
+                    });
+
+
+
                 }
             }
         },
