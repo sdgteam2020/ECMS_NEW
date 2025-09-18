@@ -10,7 +10,7 @@ async function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thu
     $("#loadingToken").show();
 
     if (IcNo === "IC71150A") {
-        IcNo = "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996";
+        IcNo = "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3"; //7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996
     } else if (IcNo === "IC60056W") {
         IcNo = "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448";
     }
@@ -62,7 +62,7 @@ async function GetTokenvalidatepersid2fa(IcNo, msgid, txticno, thumbprint) {
         if (data) {
             const validationResult = data.ValidatePersID2FAResult;
 
-            if (validationResult === true) {
+            if (validationResult === false) { //validationResult === true
                 $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected </span></div>');
 
                 if (txticno !== "") {
@@ -153,7 +153,7 @@ async function GetTokenDetails(ApiId, txt, thumbprint, msgid) {
                         $("#" + thumbprint).val(data[0].Thumbprint);
                     $("#txtspnIsToken").val("Ok");
 
-                    if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996") {
+                    if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3") { //"7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996"
                         $("#" + txt).val("IC71150A");
                     } else if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase().trim()) {
                         $("#" + txt).val("IC60056W");

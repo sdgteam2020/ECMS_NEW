@@ -362,45 +362,18 @@ namespace DataAccessLayer
         {
             try
             {
-                //var ret = await (from up in _context.UserProfile
-                //                 join rank in _context.MRank on up.RankId equals rank.RankId
-                //                 join map in _context.TrnDomainMapping on up.UserId equals map.UserId into upmap_jointable
-                //                 from xmap in upmap_jointable.DefaultIfEmpty()
-                //                 join mapunit in _context.MapUnit on xmap.UnitId equals mapunit.UnitId into xmapmapunit_jointable
-                //                 from xmapunit in xmapmapunit_jointable.DefaultIfEmpty()
-                //                 join munit in _context.MUnit on xmapunit.UnitId equals munit.UnitId into xmapunitmunit_jointable
-                //                 from xmunit in xmapunitmunit_jointable.DefaultIfEmpty()
-                //                 where up.ArmyNo == ArmyNo //&&  user.Updatedby == UserId
-                //                 select new DTOUserProfileResponse
-                //                 {
-
-                //                     ArmyNo = up.ArmyNo,
-                //                     UserId = up.UserId,
-                //                     Name = up.Name,
-                //                     IntOffr = up.IntOffr,
-                //                     IsIO = up.IsIO,
-                //                     IsCO = up.IsCO,
-                //                     Rank = rank.RankName,
-                //                     RankId = rank.RankId,
-                //                     UnitId = xmunit!=null?xmunit.UnitId:0,
-                //                     UnitName = xmunit!=null ? xmunit.UnitName:"No Unit",
-
-                //                 }
-                //                ).Distinct().FirstOrDefaultAsync();
-
-               
-                string query = "SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.MobileNo,trnd.Id as TDMId,trnd.DialingCode,trnd.Extension,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,prof.IsWithTokenApply,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId," +
-                                " appt.AppointmentName,trnd.MappedDate,usermodify.DomainId MappedBy,roles.Name RoleName from UserProfile prof "+
-                                " inner join MRank ran on prof.RankId = ran.RankId "+
-                                " inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId "+
-                                " inner join AspNetUserRoles maprole on maprole.UserId=trnd.AspNetUsersId"+
-                                " inner join AspNetRoles roles on roles.Id=maprole.RoleId"+
-                                " inner join MAppointment appt on appt.ApptId=trnd.ApptId"+
-                                " left join MapUnit mapu on mapu.UnitMapId = trnd.UnitId "+
-                                " left join MUnit munit on munit.UnitId = mapu.UnitId "+
-                                " left join AspNetUsers usermodify on usermodify.Id=trnd.MappedBy "+
-                                " left join AspNetUsers users on trnd.AspNetUsersId = users.Id"+
-                                " where prof.ArmyNo = @ArmyNo  OR trnd.AspNetUsersId=@UserId";
+                string query = @"SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.MobileNo,trnd.Id as TDMId,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,prof.IsWithTokenApply,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId,
+                                appt.AppointmentName,trnd.MappedDate,usermodify.DomainId MappedBy,roles.Name RoleName from UserProfile prof 
+                                inner join MRank ran on prof.RankId = ran.RankId 
+                                inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId 
+                                inner join AspNetUserRoles maprole on maprole.UserId=trnd.AspNetUsersId
+                                inner join AspNetRoles roles on roles.Id=maprole.RoleId
+                                inner join MAppointment appt on appt.ApptId=trnd.ApptId
+                                left join MapUnit mapu on mapu.UnitMapId = trnd.UnitId 
+                                left join MUnit munit on munit.UnitId = mapu.UnitId 
+                                left join AspNetUsers usermodify on usermodify.Id=trnd.MappedBy 
+                                left join AspNetUsers users on trnd.AspNetUsersId = users.Id
+                                where prof.ArmyNo = @ArmyNo  OR trnd.AspNetUsersId=@UserId";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { ArmyNo, UserId });

@@ -73,13 +73,18 @@
             $("#postingoutUnitName").val(i.item.label);
             $("#postingoutUnitId").html(i.item.value);
             
-            GetAllOffsByUnitId("ddlaspnetiserpostout", 0, i.item.value)
+            GetAllOffsByUnitId("ddlaspnetiserpostout", 0, i.item.value,0,0,0,0)
         },
         appendTo: '#suggesstion-box'
     });
 
-    $("#ddlaspnetiserpostout").on("change",function () {
-        GetByArmyNo($("#ddlaspnetiserpostout").val());
+    var $dropdown = $("#ddlaspnetiserpostout");
+
+    $dropdown.on("change", function () {
+        var selectedValue = $dropdown.val();  // Cache the value
+        if (selectedValue !== "") {  // Check if the value is not empty
+            GetByArmyNo(selectedValue);  // Call the function with the value
+        }
     });
 
     $("#btnPostingOut").on("click", function () {
@@ -256,10 +261,6 @@ function GetByArmyNo(userid) {
                 }
 
                 else {
-
-
-                  
-                    
                     $("#lbltoAppt").html(response.AppointmentName);
                    
                     $("#lblToName").html(response.Name);
@@ -298,7 +299,7 @@ function GetdataPostingData(ArmyNo) {
                 else
                     $("#lblStatusofInds").html('Complete');
 
-                $("#lblTracking").html(response.TrackingId);
+                $("#lblApplId").html(response.RequestId);
                 $("#pstimage").attr("src", response.PhotoImagePath);
                 $("#lblUnitname").html(response.UnitName + ' (' + response.Sus_no + '' + response.Suffix+')');
 

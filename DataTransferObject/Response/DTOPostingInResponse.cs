@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransferObject.Response
+﻿namespace DataTransferObject.Response
 {
     public class DTOPostingInResponse
     {
@@ -16,7 +10,6 @@ namespace DataTransferObject.Response
         public string? RankName { get; set; }
         public byte? ApplyForId { get; set; }
         public string? ApplyFor { get; set; }
-        public string? TrackingId { get; set; }
         public byte? StatusId { get; set; }
         public string PhotoImagePath { get; set; } = string.Empty;
         public string? UnitName { get; set; }
