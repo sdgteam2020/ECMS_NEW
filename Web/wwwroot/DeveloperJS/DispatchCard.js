@@ -472,8 +472,8 @@ function BindDialog(rowData, cvalue, callback) {
 
             // ✅ Determine if a fetch is needed
             const shouldFetchSelectedIds =
-                globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) ||
-                (!globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
+                globalThis.globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) ||
+                (!globalThis.globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
 
             // If fetch is needed, manually set searchChanged to true
             if (shouldFetchSelectedIds) {
@@ -489,7 +489,7 @@ function BindDialog(rowData, cvalue, callback) {
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                 DispatchCardId: rowData.DispatchCardId,
                 searchTextChanged: searchStatus.searchChanged,
-                AllChecked: shouldFetchSelectedIds ? true : globalAllChecked
+                AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
             };
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardDataForDialog", {
@@ -584,7 +584,7 @@ function BindDialog(rowData, cvalue, callback) {
     });
     $('#chkAll_BindDialog').on('change', function () {
         globalThis.selectedIds = [];
-        globalAllChecked = $(this).prop('checked');
+        globalThis.globalAllChecked = $(this).prop('checked');
         if (globalThis.globalAllChecked) {
             globalThis.isFirstSelectAll = true; // Force fresh fetch
         }
