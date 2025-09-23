@@ -10,6 +10,7 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -955,7 +956,7 @@ namespace DataAccessLayer
                                             select new DTOCardDispatchCheckRequest
                                             {
                                                 ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
-                                                RequestId = RequestIdExists?.RequestId ?? 0,
+                                                ApplId = RequestIdExists?.RequestId ?? 0,
                                                 IsValid = RequestIdExists != null && RequestIdExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null,
                                                 Status = RequestIdExists != null && RequestIdExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null ? "Valid" : "DbInvalid",
                                                 Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
@@ -975,7 +976,7 @@ namespace DataAccessLayer
                                             select new DTOCardDispatchCheckRequest
                                             {
                                                 ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
-                                                RequestId = RequestIdExists?.RequestId ?? 0,
+                                                ApplId = RequestIdExists?.RequestId ?? 0,
                                                 IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
                                                 Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
                                                 Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
@@ -996,7 +997,7 @@ namespace DataAccessLayer
                                         select new DTOCardDispatchCheckRequest
                                         {
                                             ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
-                                            RequestId = RequestIdExists?.RequestId ?? 0,
+                                            ApplId = RequestIdExists?.RequestId ?? 0,
                                             IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
                                             Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
                                             Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
@@ -3200,6 +3201,7 @@ namespace DataAccessLayer
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
             int[] Ids = Data.Ids;
             string query = "";
+            DateTime dateTime = DateTime.Now;    
             try
             {
                 string query1 = @"update TrnFwds set IsComplete=1 where RequestId in @Ids ";
@@ -3208,8 +3210,8 @@ namespace DataAccessLayer
                 string query2 = @"update TrnStepCounter set StepId=5 where RequestId in @Ids ";
                 await db.ExecuteAsync(query2, new { Ids }, transaction: transaction);
 
-                //string query3 = " update TrnICardRequest set StatusId=2 where  RequestId in @Ids ";
-                //await db.ExecuteAsync(query3, new { Ids }, transaction: transaction);
+                string query3 = @"update TrnICardRequest set CardExportedOn=@dateTime where  RequestId in @Ids ";
+                await db.ExecuteAsync(query3, new { Ids, dateTime }, transaction: transaction);
 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();
@@ -4405,9 +4407,21 @@ namespace DataAccessLayer
             var responseList = new List<DTOCardMovementHistoryResponse>();
             try
             {
-                var cardStep = _context.TrnStepCounter.Where(step => step.RequestId == requestId).FirstOrDefaultAsync().Result.StepId;
+                var cardStep = await _context.TrnStepCounter.Where(s => s.RequestId == requestId).Select(s => (byte?)s.StepId).FirstOrDefaultAsync() ?? 0;
 
-                if (cardStep == (byte)CardStepEnum.Exported || cardStep == (byte)CardStepEnum.Printed || cardStep == (byte)CardStepEnum.CardDistributed)
+                // Define allowed steps in a HashSet (O(1) lookup)
+                var allowedSteps = new HashSet<CardStepEnum>
+                {
+                    CardStepEnum.Exported,
+                    CardStepEnum.Printed,
+                    CardStepEnum.CardDispatchToRegimentObliqueORO,
+                    CardStepEnum.CardInRegimentObliqueORO,
+                    CardStepEnum.CardDispatchToUnit,
+                    CardStepEnum.CardDispatchInUnit,
+                    CardStepEnum.CardDistributed
+                };
+
+                if (allowedSteps.Contains((CardStepEnum)cardStep))
                 {
                     var exported = await (from request in _context.TrnICardRequest.AsNoTracking()
                                           where request.RequestId == requestId && request.CardExportedOn.HasValue
@@ -4419,6 +4433,10 @@ namespace DataAccessLayer
                                               Remark = "Card Exported"
                                           }).ToListAsync();
                     var printed = new List<DTOCardMovementHistoryResponse>();
+                    var CardDispatchToRegimentObliqueORO = new List<DTOCardMovementHistoryResponse>();
+                    var CardInRegimentObliqueORO = new List<DTOCardMovementHistoryResponse>();
+                    var CardDispatchToUnit = new List<DTOCardMovementHistoryResponse>();
+                    var CardDispatchInUnit = new List<DTOCardMovementHistoryResponse>();
                     var losted = new List<DTOCardMovementHistoryResponse>();
                     var distributed = new List<DTOCardMovementHistoryResponse>();
                     var hotlisted = new List<DTOCardMovementHistoryResponse>();
@@ -4451,9 +4469,105 @@ namespace DataAccessLayer
                                         {
                                             StepName = "I-Card Lost",
                                             ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
-                                            ReportedOn = lost.LostOn.Value,
+                                            ReportedOn = lost.UpdatedOn.Value,
                                             Remark = lost.Remark
                                         }).ToListAsync();
+                    }
+                    if (cardStep >= (byte)CardStepEnum.CardDispatchToRegimentObliqueORO)
+                    {
+                        byte step = 1;
+                        CardDispatchToRegimentObliqueORO = await (from dispatchC in _context.TrnDispatchCard.AsNoTracking()
+                                                           join dispatchMap in _context.TrnDispatchCardMapping.AsNoTracking()
+                                                               on new { dispatchC.DispatchCardId, Step = dispatchC.Step }
+                                                               equals new { DispatchCardId = dispatchMap.DispatchCardId, Step = step }   // AND in JOIN
+                                                           join aspu in _context.Users.AsNoTracking()
+                                                               on dispatchC.FromAspNetUsersId equals aspu.Id
+                                                           join up in _context.UserProfile.AsNoTracking()
+                                                               on dispatchC.FromUserId equals up.UserId
+                                                           join mr in _context.MRank.AsNoTracking()
+                                                               on up.RankId equals mr.RankId
+                                                           join mstepC in _context.MStepCounterStep.AsNoTracking()
+                                                               on (byte)CardStepEnum.CardDispatchToRegimentObliqueORO equals mstepC.StepId
+                                                                  where dispatchMap.RequestId == requestId
+                                                           select new DTOCardMovementHistoryResponse
+                                                           {
+                                                               StepName= mstepC.Name,
+                                                               ReportedBy = $"({aspu.DomainId}) { mr.RankAbbreviation } { up.Name }",
+                                                               ReportedOn = dispatchC.OutDate,
+                                                               Remark = dispatchC.FromRemark??string.Empty
+                                                           }).ToListAsync();
+                    }
+                    if (cardStep >= (byte)CardStepEnum.CardInRegimentObliqueORO)
+                    {
+                        byte step = 1;
+                        CardInRegimentObliqueORO =  await (from dispatchC in _context.TrnDispatchCard.AsNoTracking()
+                                                                  join dispatchMap in _context.TrnDispatchCardMapping.AsNoTracking()
+                                                                      on new { dispatchC.DispatchCardId, Step = dispatchC.Step }
+                                                                      equals new { DispatchCardId = dispatchMap.DispatchCardId, Step = step }   // AND in JOIN
+                                                                  join aspu in _context.Users.AsNoTracking()
+                                                                      on dispatchC.ToAspNetUsersId equals aspu.Id
+                                                                  join up in _context.UserProfile.AsNoTracking()
+                                                                      on dispatchC.ToUserId equals up.UserId
+                                                                  join mr in _context.MRank.AsNoTracking()
+                                                                      on up.RankId equals mr.RankId
+                                                                  join mstepC in _context.MStepCounterStep.AsNoTracking()
+                                                                      on (byte)CardStepEnum.CardInRegimentObliqueORO equals mstepC.StepId
+                                                                        where dispatchMap.RequestId == requestId
+                                                                  select new DTOCardMovementHistoryResponse
+                                                                  {
+                                                                      StepName = mstepC.Name,
+                                                                      ReportedBy = $"({aspu.DomainId}) {mr.RankAbbreviation} {up.Name}",
+                                                                      ReportedOn = dispatchC.ReceiptDate ?? DateTime.MinValue,
+                                                                      Remark = dispatchC.ToRemark ?? string.Empty
+                                                                  }).ToListAsync();
+                    }
+                    if (cardStep >= (byte)CardStepEnum.CardDispatchToUnit)
+                    {
+                        byte step = 2;
+                        CardDispatchToUnit = await (from dispatchC in _context.TrnDispatchCard.AsNoTracking()
+                                                                  join dispatchMap in _context.TrnDispatchCardMapping.AsNoTracking()
+                                                                      on new { dispatchC.DispatchCardId, Step = dispatchC.Step }
+                                                                      equals new { DispatchCardId = dispatchMap.DispatchCardId, Step = step }   // AND in JOIN
+                                                                  join aspu in _context.Users.AsNoTracking()
+                                                                      on dispatchC.FromAspNetUsersId equals aspu.Id
+                                                                  join up in _context.UserProfile.AsNoTracking()
+                                                                      on dispatchC.FromUserId equals up.UserId
+                                                                  join mr in _context.MRank.AsNoTracking()
+                                                                      on up.RankId equals mr.RankId
+                                                                  join mstepC in _context.MStepCounterStep.AsNoTracking()
+                                                                      on (byte)CardStepEnum.CardDispatchToUnit equals mstepC.StepId
+                                                                  where dispatchMap.RequestId == requestId
+                                                                  select new DTOCardMovementHistoryResponse
+                                                                  {
+                                                                      StepName = mstepC.Name,
+                                                                      ReportedBy = $"({aspu.DomainId}) {mr.RankAbbreviation} {up.Name}",
+                                                                      ReportedOn = dispatchC.OutDate,
+                                                                      Remark = dispatchC.FromRemark ?? string.Empty
+                                                                  }).ToListAsync();
+                    }
+                    if (cardStep >= (byte)CardStepEnum.CardDispatchInUnit)
+                    {
+                        byte step = 2;
+                        CardDispatchInUnit = await (from dispatchC in _context.TrnDispatchCard.AsNoTracking()
+                                                          join dispatchMap in _context.TrnDispatchCardMapping.AsNoTracking()
+                                                              on new { dispatchC.DispatchCardId, Step = dispatchC.Step }
+                                                              equals new { DispatchCardId = dispatchMap.DispatchCardId, Step = step }   // AND in JOIN
+                                                          join aspu in _context.Users.AsNoTracking()
+                                                              on dispatchC.ToAspNetUsersId equals aspu.Id
+                                                          join up in _context.UserProfile.AsNoTracking()
+                                                              on dispatchC.ToUserId equals up.UserId
+                                                          join mr in _context.MRank.AsNoTracking()
+                                                              on up.RankId equals mr.RankId
+                                                          join mstepC in _context.MStepCounterStep.AsNoTracking()
+                                                              on (byte)CardStepEnum.CardDispatchInUnit equals mstepC.StepId
+                                                                where dispatchMap.RequestId == requestId
+                                                          select new DTOCardMovementHistoryResponse
+                                                          {
+                                                              StepName = mstepC.Name,
+                                                              ReportedBy = $"({aspu.DomainId}) {mr.RankAbbreviation} {up.Name}",
+                                                              ReportedOn = dispatchC.ReceiptDate ?? DateTime.MinValue,
+                                                              Remark = dispatchC.ToRemark ?? string.Empty
+                                                          }).ToListAsync();
                     }
 
                     if (cardStep == (byte)CardStepEnum.CardDistributed)
@@ -4507,6 +4621,10 @@ namespace DataAccessLayer
 
                     responseList = exported
                             .Concat(printed)
+                            .Concat(CardDispatchToRegimentObliqueORO)
+                            .Concat(CardInRegimentObliqueORO)
+                            .Concat(CardDispatchToUnit)
+                            .Concat(CardDispatchInUnit)
                             .Concat(losted)
                             .Concat(distributed)
                             .Concat(hotlisted)

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransferObject.Response
+﻿namespace DataTransferObject.Response
 {
     public class DTOCardMovementHistoryResponse
     {
-        public string StepName {  get; set; }
-        public string ReportedBy {  get; set; }
-        public string Remark {  get; set; }
+        public string StepName { get; set; } = string.Empty;
+        public string ReportedBy {  get; set; } = string.Empty;
+        public string Remark {  get; set; } = string.Empty;
         public DateTime ReportedOn {  get; set; }
     }
 }

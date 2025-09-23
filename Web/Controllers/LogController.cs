@@ -22,11 +22,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static Web.Controllers.AccountController;
 using iTextImage = iText.Layout.Element.Image;
 using Path = System.IO.Path;
 
@@ -608,7 +605,7 @@ namespace Web.Controllers
                     return Json(0);
 
                 // Process forwarding details
-                var digitalSignPlusLogList = await ProcessForwardingDetails(xmlDoc, levelDictionary, digitalSignList, db);
+                var digitalSignPlusLogList = ProcessForwardingDetails(xmlDoc, levelDictionary, digitalSignList, db);
 
                 // Generate PDF
                 string pdfName = await GeneratePdfDocument(db, digitalSignPlusLogList, ipAddress, timestamp, RequestId);
@@ -670,7 +667,7 @@ namespace Web.Controllers
 
             return digitalSignList;
         }
-        private async Task<List<DTODigitalSignPlusLog>> ProcessForwardingDetails(XmlDocument xmlDoc,Dictionary<int, string> levelDictionary, List<DTOFwdLastRecForDigitalSign> digitalSignList,BasicDetailCrtAndUpdVM db)
+        private List<DTODigitalSignPlusLog> ProcessForwardingDetails(XmlDocument xmlDoc,Dictionary<int, string> levelDictionary, List<DTOFwdLastRecForDigitalSign> digitalSignList,BasicDetailCrtAndUpdVM db)
         {
             var result = new List<DTODigitalSignPlusLog>();
             XmlNodeList forwardDetails = xmlDoc.GetElementsByTagName("RecForDigitalSign");
@@ -724,16 +721,9 @@ namespace Web.Controllers
             // Ensure directory exists
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
-            // Pre-load images in parallel
-            var imageTasks = new[]
-            {
-                GetDecryptedImage(db.PhotoImagePath, "Photo", 60),
-                GetDecryptedImage(db.SignatureImagePath, "Signature", 80)
-            };
+            var photoImage = await GetDecryptedImage(db.PhotoImagePath, "Photo", 60);
+            var signatureImage = await GetDecryptedImage(db.SignatureImagePath, "Signature", 80);
 
-            await Task.WhenAll(imageTasks);
-            var photoImage = imageTasks[0].Result;
-            var signatureImage = imageTasks[1].Result;
 
             using (PdfWriter writer = new PdfWriter(filePath))
             using (PdfDocument pdf = new PdfDocument(writer))
@@ -748,7 +738,7 @@ namespace Web.Controllers
                 pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new BottomLeftDiagonalWatermarkHandler(ipAddress));
 
                 // Add content
-                await AddDocumentHeader(document);
+                AddDocumentHeader(document);
                 AddPersonalDetailsTable(document, db, photoImage, signatureImage);
                 AddDigitalSignatureTable(document, digitalSignPlusLogList);
             }
@@ -756,7 +746,7 @@ namespace Web.Controllers
             return pdfName;
         }
 
-        private async Task AddDocumentHeader(Document document)
+        private void AddDocumentHeader(Document document)
         {
             PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
@@ -769,7 +759,7 @@ namespace Web.Controllers
                 .SetFontSize(15));
         }
 
-        private async Task AddPersonalDetailsTable(Document document, BasicDetailCrtAndUpdVM db, iTextImage photoImage, iTextImage signatureImage)
+        private void AddPersonalDetailsTable(Document document, BasicDetailCrtAndUpdVM db, iTextImage photoImage, iTextImage signatureImage)
         {
             PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
             Table table = new Table(4);

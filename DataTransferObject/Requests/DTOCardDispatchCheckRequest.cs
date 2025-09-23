@@ -5,7 +5,7 @@ namespace DataTransferObject.Requests
     public class DTOCardDispatchCheckRequest
     {
         public string ChipNo { get; set; }=string.Empty;
-        public int RequestId { get; set; }
+        public int ApplId { get; set; }
 
         [Ignore]
         public bool IsValid { get; set; } = true;

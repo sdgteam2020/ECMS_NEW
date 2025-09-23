@@ -992,7 +992,7 @@ function getColumnsByChoice(choice) {
                     name: "ChipNo"
                 },
                 {
-                    title: "Request ID",
+                    title: "Appl Id",
                     data: 'RequestId',
                     name: 'RequestId',
                 },
@@ -1088,7 +1088,7 @@ function getColumnsByChoice(choice) {
                     name: "ChipNo"
                 },
                 {
-                    title: "Request ID",
+                    title: "Appl Id",
                     data: 'RequestId',
                     name: 'RequestId',
                 },

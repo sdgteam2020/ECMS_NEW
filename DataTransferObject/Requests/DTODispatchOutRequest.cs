@@ -1,16 +1,6 @@
-﻿using DataTransferObject.Domain.Identitytable;
-using DataTransferObject.Domain.Master;
-using DataTransferObject.Domain;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using DataTransferObject.Localize;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataTransferObject.Localize;
-using DataTransferObject.Validation;
-using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataTransferObject.Requests
 {

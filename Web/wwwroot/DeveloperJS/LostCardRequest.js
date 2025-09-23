@@ -14,41 +14,6 @@ $(async function () {
         closeOnSelect: false // Only needed for multi-select
     });
 
-    return new Promise((resolve, reject) => {
-        fetch('/BasicDetail/DataRecForGetSession', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', // Tell the server we are sending JSON
-            }
-        })
-            .then(response => response.json())
-            .then((response) => {
-                if (response.Result === true) {
-                    let ArmyNo = response.Value.ArmyNo;
-                    let RequestIdForFaulty = response.Value.RequestIdForFaulty;
-                    let MaxTrnFwdId = response.Value.MaxTrnFwdId
-
-                    // Updating UI elements with the received data
-                    $("#spnArmyNo").text(ArmyNo);
-                    $("#spnLostCardRequestId").text(RequestIdForFaulty);
-                    $("#spnMaxTrnFwdId").text(MaxTrnFwdId);
-                    $("#lblFaultyRequestId").text(RequestIdForFaulty);
-
-                    // Fetching additional details
-                    GetBasicDetailForParitalViewByRequestId(RequestIdForFaulty);
-
-                    resolve(response);
-                } else {
-                    toastr.error("Failed to Fetch Session Value: " + response.Message);
-                    reject(new Error(response.Message));
-                }
-            })
-            .catch((error) => {
-                toastr.error("Failed to Fetch Session Value : " + response.Message);
-                reject(new Error("Failed to Fetch Session Value : " + error.message));
-            });
-    });
-
     $("#btnSubmit").on("click", function () {
         Proceed();
     });
@@ -85,6 +50,41 @@ $(async function () {
 
     $("#btnBackDashboard").on("click", function () {
         window.location.href = '/BasicDetail/LostCard';
+    });
+
+    return new Promise((resolve, reject) => {
+        fetch('/BasicDetail/DataRecForGetSession', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Tell the server we are sending JSON
+            }
+        })
+            .then(response => response.json())
+            .then((response) => {
+                if (response.Result === true) {
+                    let ArmyNo = response.Value.ArmyNo;
+                    let RequestIdForFaulty = response.Value.RequestIdForFaulty;
+                    let MaxTrnFwdId = response.Value.MaxTrnFwdId
+
+                    // Updating UI elements with the received data
+                    $("#spnArmyNo").text(ArmyNo);
+                    $("#spnLostCardRequestId").text(RequestIdForFaulty);
+                    $("#spnMaxTrnFwdId").text(MaxTrnFwdId);
+                    $("#lblFaultyRequestId").text(RequestIdForFaulty);
+
+                    // Fetching additional details
+                    GetBasicDetailForParitalViewByRequestId(RequestIdForFaulty);
+
+                    resolve(response);
+                } else {
+                    toastr.error("Failed to Fetch Session Value: " + response.Message);
+                    reject(new Error(response.Message));
+                }
+            })
+            .catch((error) => {
+                toastr.error("Failed to Fetch Session Value : " + response.Message);
+                reject(new Error("Failed to Fetch Session Value : " + error.message));
+            });
     });
 });
 
