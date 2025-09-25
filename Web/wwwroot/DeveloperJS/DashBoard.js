@@ -1,11 +1,6 @@
 ﻿$(function () {
     GetDashboardCount();
 
-    document.getElementById("btnLostCard").addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        location.href = '/BasicDetail/LostCard';
-    });
-
     $('.btnAdd').on('click', function (event) {
         const type = $(this).data('type');
         event.stopPropagation();
@@ -46,7 +41,7 @@ function GetDashboardCount() {
                     $("#TotReq").html(response.TotReq);
                     $("#TotInaccurateData").html(response.TotInaccurateData);
                     $("#TotObservationRaised").html(response.TotObservationRaised);
-                    $("#TotLostCards").html(response.TotLostCards);
+
                    
                      $('.counter-value').each(function () {
                      $(this).prop('Counter', 0).animate({

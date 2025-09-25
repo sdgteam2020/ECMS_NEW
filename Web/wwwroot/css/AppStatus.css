@@ -41,13 +41,14 @@ body{
     }
     .watermark {
         position: fixed;
-        bottom:40%;
+        left:0%;
+        bottom: 40%; /* Start from the bottom of the page */
         transform: rotate(310deg);
-        opacity: 0.4;
-        font-size: 60px;
-        color: #ff0000;
-        z-index: 9999;
-        pointer-events: none;
-        white-space: nowrap;
+        opacity: 0.4; /* Make the watermark faint */
+        font-size: 80px; /* Adjust the font size as needed */
+        color: #ff0000; /* Red color for the watermark */
+        z-index: 9999; /* Ensure the watermark is on top */
+        pointer-events: none; /* Prevent the watermark from interfering with clicks */
+        white-space: nowrap; /* Ensure the watermark text stays on a single line */
     }
 }

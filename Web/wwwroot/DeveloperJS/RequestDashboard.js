@@ -26,16 +26,6 @@ function GetDashboardCount(type) {
                 }
 
                 else {
-                    $("#ToDraftedOffrs").html(response.ToDraftedOffrs);
-                    $("#ToDraftedJCO").html(response.ToDraftedJCO);
-                    $("#ToSubmittedOffrs").html(response.ToSubmittedOffrs);
-                    $("#ToSubmittedJCO").html(response.ToSubmittedJCO);
-                    $("#ToClosedOffrs").html(response.ToClosedOffrs);
-                    $("#ToClosedJCO").html(response.ToClosedJCO);
-                    $("#ToCompletedOffrs").html(response.ToCompletedOffrs);
-                    $("#ToCompletedJCO").html(response.ToCompletedJCO);
-                    $("#ToRejectedOffrs").html(response.ToRejectedOffrs);
-                    $("#ToRejectedJCO").html(response.ToRejectedJCO);
                     $("#ToPostingInOffrs").html(response.ToPostingInOffrs);
                     $("#ToPostingInJCO").html(response.ToPostingInJCO);
                     $("#ToPostingOutOffrs").html(response.ToPostingOutOffrs);

@@ -33,6 +33,11 @@
         event.preventDefault(); // Prevent anchor default behavior
         location.href = '/BasicDetail/DispatchCard';
     });
+
+    document.getElementById("btnLostCard").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent anchor default behavior
+        location.href = '/BasicDetail/LostCard';
+    });
     var btnAdd = document.getElementById('btnAddDispatchCard');
     if (btnAdd) {
         document.getElementById("btnAddDispatchCard").addEventListener("click", function (event) {
@@ -84,7 +89,7 @@ function GetDashboardCount() {
                     $("#TotDestCards").html(response.TotDestCards);
                     $("#TotDistCards").html(response.TotDistCards);
                     $("#TotDispatchCards").html(response.TotDispatchCards);
-
+                    $("#TotLostCards").html(response.TotLostCards);
 
                     $('.counter-value').each(function () {
                         $(this).prop('Counter', 0).animate({

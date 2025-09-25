@@ -6,9 +6,10 @@
         GetRequestHistoryByApplId($("#ApplId").val());
     });
     $("#btn-printtracking").on("click",function () {
-        var datef2 = new Date();
-        $(".watermark").html($(".ipaddress").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
-        window.print();
+        //var datef2 = new Date();
+        //$(".watermark").html($(".ipaddress").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
+        //window.print();
+        PrintAppStatusData("section-to-print-app-status");
     });
 });
 function GetRequestHistoryByApplId(ApplId) {
@@ -165,4 +166,62 @@ function GetDataFromBasicDetails(RequestId) {
             }
         }
     })
+}
+function PrintAppStatusData(div) {
+    var divContent = document.getElementById(div).innerHTML;
+
+    // List of stylesheets
+    var stylesheets = [
+        '/fonts/css/all.min.css',
+        '/css/nunito.css',
+        '/css/roboto.css',
+        '/bootstrap/css/bootstrap.min.css',
+        '/css/login.css',
+        '/sweetalert2/sweetalert2.min.css',
+        '/lib/jqueryui/themes/base/jquery-ui.min.css',
+        '/css/normalize.min.css',
+        '/css/feed.css',
+        '/css/main.css',
+        '/fonts/css/all.min.css',
+        '/fonts/feather/feather.min.js',
+        '/fonts/allfont/webfont.min.js',
+        '/css/horizontaltimeline.css',
+        '/css/appstatus.css',
+    ];
+
+    // Create a new window
+    var printWindow = window.open('', '', 'height=800,width=1200');
+
+    // Write the HTML structure of the new window
+    printWindow.document.write('<html><head><title>Print Content</title>');
+
+    // Loop through each stylesheet and add it to the document
+    stylesheets.forEach(function (stylesheet) {
+        printWindow.document.write('<link href="' + HostUrl + stylesheet + '" rel="stylesheet" />');
+    });
+
+    // Add watermark styles
+    printWindow.document.write('<style>.watermark {position: fixed; bottom: 40%;left:0%; transform: rotate(310deg); opacity: 0.4; font-size: 75px; color: #ff0000; z-index: 9999; pointer-events: none; white-space: nowrap;}</style>');
+
+    printWindow.document.write('</head><body>');
+
+    // Get the current date and format it
+    var datef2 = new Date();
+    var watermarkContent = $(".ipaddress").html() + ' <br> ' + DateFormateddMMyyyyhhmmss(datef2);
+
+    // Add watermark and div content
+    printWindow.document.write('<div class="watermark">' + watermarkContent + '</div>');
+    printWindow.document.write(divContent);
+
+    // Close the body and HTML tags
+    printWindow.document.write('</body></html>');
+
+    // Close the document to complete writing
+    printWindow.document.close();
+
+    // Wait for the content to be fully loaded, then trigger the print dialog   
+    printWindow.onload = function () {
+        printWindow.print();
+        printWindow.close();
+    };
 }

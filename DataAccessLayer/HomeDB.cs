@@ -34,7 +34,7 @@ namespace DataAccessLayer
         public async Task<DTOTaskCountResponse> GetTaskBoardCount(int MapUnitId, byte Claim, int TDM_Id)
         {
             // SQL query to get task board counts for various categories
-            string query = @"declare @TotHotlistCards int=0 declare @TotMisprintedCard int=0 declare @TotUnitChangeRequest int=0 declare @TotDistCards int=0 declare @TotDestCards int=0 declare @TotDispatchCards int=0
+            string query = @"declare @TotHotlistCards int=0 declare @TotMisprintedCard int=0 declare @TotUnitChangeRequest int=0 declare @TotDistCards int=0 declare @TotDestCards int=0 declare @TotDispatchCards int=0 declare @TotLostCards int=0
 
                             BEGIN 
                             IF @Claim=1
@@ -71,12 +71,12 @@ namespace DataAccessLayer
                             select @TotUnitChangeRequest=COUNT(MapUnitChangeRequestId) from TrnMapUnitChangeRequest
                             where UnitMapId=@MapUnitId
 
-
+                            select @TotLostCards=COUNT(LostCardId) from TrnLostCards
                             select @TotHotlistCards=COUNT(HotlistCardId) from TrnHotlistCards
                             select @TotDistCards=COUNT(DistributeCardId) from TrnDistributeCards
                             select @TotDestCards=COUNT(DestructedCardId) from TrnDestructionCards
 
-                            select @TotHotlistCards TotHotlistCards,@TotUnitChangeRequest TotUnitChangeRequest,@TotMisprintedCard TotMisprintedCard,@TotDistCards TotDistCards,@TotDestCards TotDestCards,@TotDispatchCards TotDispatchCards";
+                            select @TotLostCards TotLostCards,@TotHotlistCards TotHotlistCards,@TotUnitChangeRequest TotUnitChangeRequest,@TotMisprintedCard TotMisprintedCard,@TotDistCards TotDistCards,@TotDestCards TotDestCards,@TotDispatchCards TotDispatchCards";
 
             try
             {
@@ -115,7 +115,7 @@ namespace DataAccessLayer
         public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
         {
             // SQL query to retrieve counts for different categories such as requests, lost cards, and observations
-            string query = @"declare @TotReq int=0 declare @TotInaccurateData int=0 declare @TotLostCards int=0
+            string query = @"declare @TotReq int=0 declare @TotInaccurateData int=0 
                             select @TotReq=COUNT(distinct req.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id
                             where domain.AspNetUsersId=@UserId
@@ -124,7 +124,6 @@ namespace DataAccessLayer
                             select @TotInaccurateData=COUNT(BasicDetailTempId) from BasicDetailTemps
                             where Updatedby=@UserId AND IsActive=1 
 
-                            select @TotLostCards=COUNT(LostCardId) from TrnLostCards
 
                             declare @AspNetUsersId int=0 declare @ArmedId int=0 declare @Name varchar(25) declare @TotObservationRaised int=0 declare @TDMId int=0  
                             SELECT CASE WHEN ISNULL(RECO.TDMId,0) >0 THEN RECO.TDMId ELSE ORO.TDMId END TDMId, 
@@ -174,7 +173,7 @@ namespace DataAccessLayer
                             WHERE Temps.ApplyForId=1 AND ranks1.Orderby > @MP6A_RankOrderby AND SUBSTRING(UPPER(Temps.ServiceNo),1,2) != @MP6F_ArmyNoPrefix AND Temps.ArmedId in (select value from string_split(oro.ArmedIdList,','))  AND Temps.IsActive=1 
                             END 
                             END 
-                            select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised,@TotLostCards TotLostCards";
+                            select @TotReq TotReq,@TotInaccurateData TotInaccurateData,@TotObservationRaised TotObservationRaised";
 
             try
             {
@@ -209,95 +208,38 @@ namespace DataAccessLayer
 
 
         /// <summary>
-        /// Asynchronously retrieves the request dashboard count data based on the specified user, type, and unit map ID.
-        /// The method executes a SQL query that dynamically builds the query based on the <paramref name="Type"/> parameter,
-        /// returning counts for various request states such as "Drafted", "Submitted", "Closed", "Completed", "Rejected", "Posting Out", and "Posting In".
+        /// Retrieves the count of various request categories (Posting Out, Posting In) based on the provided type for a specific user and unit.
         /// </summary>
-        /// <param name="UserId">The user ID used to filter the task data.</param>
-        /// <param name="Type">The type of the request dashboard data to retrieve (e.g., "Drafted", "Submitted", "Completed", etc.).</param>
-        /// <param name="UnitMapId">The unit map ID used for filtering the task data based on the unit's map.</param>
-        /// <returns>A <see cref="DTORequestDashboardCountResponse"/> containing the counts for various request categories based on the type.</returns>
-        /// <exception cref="Exception">Thrown if there is an error executing the SQL query.</exception>
+        /// <param name="UserId">The unique identifier of the user for whom the request counts are to be retrieved.</param>
+        /// <param name="Type">The type of request to filter by, which can be either "Posting Out" or "Posting In".</param>
+        /// <param name="UnitMapId">The unique identifier of the unit mapping to filter the request counts.</param>
+        /// <returns>
+        /// A <see cref="DTORequestDashboardCountResponse"/> object containing the counts for the selected request type (either "Posting Out" or "Posting In").
+        /// </returns>
+        /// <exception cref="Exception">Throws an exception if there is any error during the database query execution.</exception>
         public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId,string Type,int UnitMapId)
         {
             string query="";
             // Build the query based on the Type parameter to get counts for various request categories
             switch (Type)
             {
-                case "Drafted":
-                    query = "declare @ToDraftedOffrs int=0 declare @ToDraftedJCO int=0" +
-                            " select @ToDraftedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 and req.StatusId=1 and trnstepcout.ApplyForId=1 " +
-                            
-                            " select @ToDraftedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 and req.StatusId=1 and trnstepcout.ApplyForId=2 " +
-                            " select @ToDraftedOffrs ToDraftedOffrs,@ToDraftedJCO ToDraftedJCO";
-                    break;
-                case "Submitted":
-                    query = "declare @ToSubmittedOffrs int=0 declare @ToSubmittedJCO int=0" +
-                            " select @ToSubmittedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=1 " +
-                            
-                            " select @ToSubmittedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=2 " +
-                            " select @ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO";
-                    break;
-                case "Closed":
-                    query = "declare @ToClosedOffrs int=0 declare @ToClosedJCO int=0" +
-                            " select @ToClosedOffrs=COUNT(appcl.Id) from TrnApplClose appcl" +
-                            " inner join BasicDetails bs on bs.BasicDetailId=appcl.BasicDetailId and bs.UnitId =@UnitMapId " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId and trnstepcout.ApplyForId=1" +
-
-                            " select @ToClosedJCO=COUNT(appcl.Id) from TrnApplClose appcl" +
-                            " inner join BasicDetails bs on bs.BasicDetailId=appcl.BasicDetailId and bs.UnitId =@UnitMapId " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId and trnstepcout.ApplyForId=2 " +
-                            " select @ToClosedOffrs ToClosedOffrs,@ToClosedJCO ToClosedJCO";
-                    break;
-                case "Completed":
-                    query = "declare @ToCompletedOffrs int=0 declare @ToCompletedJCO int=0" +
-                            " select @ToCompletedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=2 and trnstepcout.ApplyForId=1 " +
-                            
-                            " select @ToCompletedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=2 and trnstepcout.ApplyForId=2 " +
-                            " select @ToCompletedOffrs ToCompletedOffrs,@ToCompletedJCO ToCompletedJCO";
-                    break;
-                case "Rejected":
-                    query = "declare @ToRejectedOffrs int=0 declare @ToRejectedJCO int=0" +
-                            " select @ToRejectedOffrs=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
-                            " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=1 " +
-
-                            " select @ToRejectedJCO=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
-                            " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                            " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
-                            " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=2 " +
-                            " select @ToRejectedOffrs ToRejectedOffrs,@ToRejectedJCO ToRejectedJCO";
-                    break;
                 case "Posting Out":
-                    query = "declare @ToPostingOutOffrs int=0 declare @ToPostingOutJCO int=0 " + 
-                            " select @ToPostingOutOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout "+
-                            " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromUnitId=@UnitMapId and basic.ApplyForId=1 " +
-                            
-                            " select @ToPostingOutJCO=COUNT(distinct pout.Id) from TrnPostingOut pout "+
-                            " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromUnitId=@UnitMapId and basic.ApplyForId=2 " +
-                            " select @ToPostingOutOffrs ToPostingOutOffrs,@ToPostingOutJCO ToPostingOutJCO";
+                    query = @"declare @ToPostingOutOffrs int=0 declare @ToPostingOutJCO int=0  
+                            select @ToPostingOutOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout
+                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromUnitId=@UnitMapId and basic.ApplyForId=1 
+                          
+                            select @ToPostingOutJCO=COUNT(distinct pout.Id) from TrnPostingOut pout
+                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromUnitId=@UnitMapId and basic.ApplyForId=2 
+                            select @ToPostingOutOffrs ToPostingOutOffrs,@ToPostingOutJCO ToPostingOutJCO";
                     break;
                 case "Posting In":
-                    query = "declare @ToPostingInOffrs int=0 declare @ToPostingInJCO int=0 " +
-                            " select @ToPostingInOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout " +
-                            " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToUnitId=@UnitMapId and basic.ApplyForId=1 " +
-                            
-                            " select @ToPostingInJCO=COUNT(distinct pout.Id) from TrnPostingOut pout " +
-                            " inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToUnitId=@UnitMapId and basic.ApplyForId=2 " +
-                            " select @ToPostingInOffrs ToPostingInOffrs,@ToPostingInJCO ToPostingInJCO";
+                    query = @"declare @ToPostingInOffrs int=0 declare @ToPostingInJCO int=0 
+                            select @ToPostingInOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout 
+                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToUnitId=@UnitMapId and basic.ApplyForId=1 
+                          
+                            select @ToPostingInJCO=COUNT(distinct pout.Id) from TrnPostingOut pout 
+                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToUnitId=@UnitMapId and basic.ApplyForId=2 
+                            select @ToPostingInOffrs ToPostingInOffrs,@ToPostingInJCO ToPostingInJCO";
                     break;
             }
 
@@ -321,39 +263,77 @@ namespace DataAccessLayer
 
 
         /// <summary>
-        /// Asynchronously retrieves the sub-dashboard count data for the specified user and unit map ID.
-        /// The method calculates counts for various task categories, such as Drafted, Submitted, Rejected, Closed, and Completed requests, 
-        /// based on the user's ID and the unit map ID. The data is fetched through a complex SQL query that performs multiple counts with 
-        /// conditions based on the provided parameters.
+        /// Retrieves the count of various request categories (Drafted, Submitted, Rejected, Closed, Completed) 
+        /// for a specific user and unit mapping from the database.
         /// </summary>
-        /// <param name="UserId">The user ID for filtering the data related to the user.</param>
-        /// <param name="UnitMapId">The unit map ID used to filter records related to a specific unit.</param>
-        /// <returns>A <see cref="DTORequestSubDashboardCountResponse"/> containing counts for various task categories (Drafted, Submitted, Rejected, Closed, Completed).</returns>
-        /// <exception cref="Exception">Throws an exception if there is an error during query execution.</exception>
+        /// <param name="UserId">The unique identifier of the user for whom the request counts are to be retrieved.</param>
+        /// <param name="UnitMapId">The unique identifier of the unit mapping for which the counts are required.</param>
+        /// <returns>
+        /// A <see cref="DTORequestSubDashboardCountResponse"/> object containing the counts for the following categories:
+        /// - Drafted (for Officers and JCOs)
+        /// - Submitted (for Officers and JCOs)
+        /// - Closed (for Officers and JCOs)
+        /// - Completed (for Officers and JCOs)
+        /// - Rejected (for Officers and JCOs)
+        /// </returns>
+        /// <exception cref="Exception">Throws an exception if there is any error during the database query execution.</exception>
         public async Task<DTORequestSubDashboardCountResponse> GetSubDashboardCount(int UserId,int UnitMapId)
         {
             // SQL query to calculate counts for various request categories (Drafted, Submitted, Rejected, Closed, Completed)
-            string query = @"declare @TotDrafted int=0 declare @TotSubmitted int=0 declare @TotRejected int=0 declare @TotClosed int=0 declare @TotCompleted int=0 
-                            select @TotDrafted=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+            string query = @"
+                            --Drafted--
+                            declare @ToDraftedOffrs int=0 declare @ToDraftedJCO int=0
+                            select @ToDraftedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
-                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 and req.StatusId=1 
-
-                            select @TotSubmitted=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 and req.StatusId=1 and trnstepcout.ApplyForId=1 
+                          
+                            select @ToDraftedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
-                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 and req.StatusId=1 and trnstepcout.ApplyForId=2 
 
-                            select @TotClosed=COUNT(appclo.Id) from TrnApplClose appclo
-                            inner join BasicDetails bs on bs.BasicDetailId=appclo.BasicDetailId and bs.UnitId =@UnitMapId
+                            --Submitted--
+                            declare @ToSubmittedOffrs int=0 declare @ToSubmittedJCO int=0
+                            select @ToSubmittedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=1 
+                          
+                            select @ToSubmittedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=2 
 
-                            select @TotCompleted=COUNT(distinct req.RequestId) from TrnDomainMapping domain
-                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id where domain.AspNetUsersId=@UserId and req.StatusId=2 
+                            --Closed--
+                            declare @ToClosedOffrs int=0 declare @ToClosedJCO int=0
+                            select @ToClosedOffrs=COUNT(appcl.Id) from TrnApplClose appcl
+                            inner join BasicDetails bs on bs.BasicDetailId=appcl.BasicDetailId and bs.UnitId =@UnitMapId 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId and trnstepcout.ApplyForId=1
 
-                            select @TotRejected=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain
+                            select @ToClosedJCO=COUNT(appcl.Id) from TrnApplClose appcl
+                            inner join BasicDetails bs on bs.BasicDetailId=appcl.BasicDetailId and bs.UnitId =@UnitMapId 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= appcl.RequestId and trnstepcout.ApplyForId=2 
+
+                            --Completed--
+                            declare @ToCompletedOffrs int=0 declare @ToCompletedJCO int=0
+                            select @ToCompletedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=2 and trnstepcout.ApplyForId=1 
+                          
+                            select @ToCompletedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=2 and trnstepcout.ApplyForId=2 
+
+                            --Rejected--
+                            declare @ToRejectedOffrs int=0 declare @ToRejectedJCO int=0
+                            select @ToRejectedOffrs=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
                             inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId
-                            inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10)
+                            inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=1 
 
-                            select @TotDrafted TotDrafted,@TotSubmitted TotSubmitted,@TotCompleted TotCompleted,@TotClosed TotClosed,@TotRejected TotRejected";
+                            select @ToRejectedJCO=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId
+                            inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=2 
+
+                            select @ToDraftedOffrs ToDraftedOffrs,@ToDraftedJCO ToDraftedJCO ,@ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO,@ToClosedOffrs ToClosedOffrs,@ToClosedJCO ToClosedJCO ,@ToCompletedOffrs ToCompletedOffrs,@ToCompletedJCO ToCompletedJCO,@ToRejectedOffrs ToRejectedOffrs,@ToRejectedJCO ToRejectedJCO";
             try
             {
                 // Create a connection to the database and execute the query asynchronously

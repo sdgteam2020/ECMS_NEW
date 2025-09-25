@@ -27,14 +27,16 @@ function GetSubDashboardCount() {
                 }
 
                 else {
-
-                    $("#TotDrafted").html(response.TotDrafted);
-                    $("#TotSubmitted").html(response.TotSubmitted);
-                    $("#TotClosed").html(response.TotClosed);
-                    $("#TotCompleted").html(response.TotCompleted);
-                    $("#TotRaisedObsn").html(response.TotRaisedObsn);
-                    $("#TotRejected").html(response.TotRejected);
-
+                    $("#ToDraftedOffrs").html(response.ToDraftedOffrs);
+                    $("#ToDraftedJCO").html(response.ToDraftedJCO);
+                    $("#ToSubmittedOffrs").html(response.ToSubmittedOffrs);
+                    $("#ToSubmittedJCO").html(response.ToSubmittedJCO);
+                    $("#ToClosedOffrs").html(response.ToClosedOffrs);
+                    $("#ToClosedJCO").html(response.ToClosedJCO);
+                    $("#ToCompletedOffrs").html(response.ToCompletedOffrs);
+                    $("#ToCompletedJCO").html(response.ToCompletedJCO);
+                    $("#ToRejectedOffrs").html(response.ToRejectedOffrs);
+                    $("#ToRejectedJCO").html(response.ToRejectedJCO);
 
                     $('.counter-value').each(function () {
                         $(this).prop('Counter', 0).animate({

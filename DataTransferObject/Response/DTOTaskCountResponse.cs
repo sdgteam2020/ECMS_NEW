@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransferObject.Response
+﻿namespace DataTransferObject.Response
 {
     public  class DTOTaskCountResponse
     {
@@ -14,5 +8,6 @@ namespace DataTransferObject.Response
         public int TotHotlistCards { get; set; }
         public int TotMisprintedCard { get; set; }
         public int TotUnitChangeRequest { get; set; }
+        public int TotLostCards { get; set; }
     }
 }

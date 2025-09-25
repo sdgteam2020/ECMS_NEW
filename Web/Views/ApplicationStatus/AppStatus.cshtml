@@ -23,7 +23,6 @@
     <link asp-href-include="~/css/login.css" rel="stylesheet" />
 
     <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
     <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
     <link asp-href-include="~/css/normalize.min.css" rel="stylesheet" />
     @*   <link asp-href-include="~/css/swiper.min.css" rel="stylesheet" /> *@
@@ -112,24 +111,18 @@
                                     <tr>
                                         <td>
                                             <div class="card py-2 py-sm-4">
-                                                <div class="row card-body">
+                                                <div class="row card-body" id="section-to-print-app-status">
                                                     <div class="col-md-12">
                                                         <div class="card-sigin no-print">
-                                                            @* <form enctype="multipart/form-data" asp-controller="ApplicationStatus" asp-action="AppStatus" id="SaveForm" method="post" class=""> *@
                                                             <div class="main-signup-header login-form">
-                                                                @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
-
                                                                 <p class="font-weight-bold font-weight-700 text-center mb-4 mt-1"><h4>Enter Appl Id.</h4></p>
                                                                 <input type="text" class="form-control" placeholder="Enter Appl Id" required maxlength="12" name="ApplId" id="ApplId" />
                                                                 <input type="button" id="btnTracking" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2" value="Track" />
 
                                                             </div>
-                                                            @*  </form> *@
-
-
                                                         </div>
                                                         <div class="ipaddress d-none">@ViewBag.IP</div>
-                                                        <div class="watermark yes-print">@ViewBag.IP</div>
+                                                        @* <div class="watermark yes-print">@ViewBag.IP</div> *@
                                                         <div class="">
                                                             <div class="row">
                                                                 <div class="col-md-12 mb-4 mt-4 text-center d-print-none ApplIdDetails d-none">
@@ -275,3 +268,4 @@
 <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
 <script asp-src-include="~/developerjs/commanvalidation.js"></script>
 <script asp-src-include="~/developerjs/appstatus.js"></script>
+<script asp-src-include="~/developerjs/keyconstants.js"></script>
