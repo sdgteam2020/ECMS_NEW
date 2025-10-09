@@ -3,12 +3,14 @@ using BusinessLogicsLayer.MapUnitChange;
 using BusinessLogicsLayer.Master;
 using DataAccessLayer;
 using DataTransferObject.Constants;
+using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text;
@@ -27,7 +29,8 @@ namespace Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapUnitChangeBL _mapUnitChangeBL;
         private readonly IDataProtector protector;
-        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IMasterBL masterBL, IConfiguration configuration, IMapUnitChangeBL mapUnitChangeBL, DataProtectionPurposeStrings dataProtectionPurposeStrings, IDataProtectionProvider dataProtectionProvider)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IMasterBL masterBL, IConfiguration configuration, IMapUnitChangeBL mapUnitChangeBL, DataProtectionPurposeStrings dataProtectionPurposeStrings, IDataProtectionProvider dataProtectionProvider, UserManager<ApplicationUser> userManager)
         {
             this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
@@ -39,6 +42,7 @@ namespace Web.Controllers
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
+            _userManager = userManager;
         }
 
         #region Command Page
@@ -2236,15 +2240,24 @@ namespace Web.Controllers
         {
             try
             {
-                var claimvalue = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); // Get the user ID from claims
-                if (claimvalue == 0) // If the user is not authenticated
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user != null)
                 {
-                    dTO.Approved = 0;
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (!roles.Contains("admin"))
+                    {
+                        dTO.Approved = false;
+                    }
+                    dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 }
-                else {                    
-                    dTO.Updatedby = claimvalue;
+                else
+                {
+                    dTO.Approved = false;
+                    dTO.Updatedby = null;
                 }
-                dTO.IsActive = true;                
+                   
+                dTO.IsActive = true;
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.AppointmentName = dTO.AppointmentName.Trim();
                 
@@ -2406,7 +2419,7 @@ namespace Web.Controllers
         /// </remarks>
         /// <returns>The Rank management view.</returns>
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Rank()
+        public IActionResult Rank()
         {
             return View();
         }

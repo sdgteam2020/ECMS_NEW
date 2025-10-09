@@ -1,20 +1,13 @@
-$(document).ready(function () {
+$(function () {
     mMsater(0, "ddlCommand", 1, "");
     BindData()
-    //$("#btnAdd").click(function () {
-    //    Reset();
-    //    $("#AddNewM").modal('show');
 
-    //});
-    $("#btnReset").click(function () {
+    $("#btnReset").on("click", function () {
         Reset();
     });
 
-
-
-        $("#btnsave").click(function () {
+    $("#btnsave").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
-
             Swal.fire({
                 title: 'Are you sure?',
                 text: "",
@@ -31,7 +24,7 @@ $(document).ready(function () {
 
         } else {
             $("#SaveForm")[0].reportValidity();
-        }
+    }
 
 
 
@@ -39,8 +32,7 @@ $(document).ready(function () {
 
     });
   
-
-    $('#btnMultiDelete').click(function () {
+    $('#btnMultiDelete').on("click",function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
@@ -162,7 +154,7 @@ function BindData() {
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
 
                     var rows;
-                    $("#tbldata #chkAll").click(function () {
+                    $("#tbldata #chkAll").on("click",function () {
                         if ($(this).is(':checked')) {
                             rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);

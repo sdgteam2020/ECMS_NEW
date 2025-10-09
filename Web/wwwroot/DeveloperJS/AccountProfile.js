@@ -1,6 +1,5 @@
 ﻿$(document).ready(function () {
-    $("#btntokenrefresh").click(function () {
-
+    $("#btntokenrefresh").on("click",function () {
         GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo", "Thumbprint");
     });
     $('.form-control-Alphabets').keypress(function (e) {
@@ -26,14 +25,14 @@
         $('#ReasonTokenWaiver').val('');
         $("#ReasonTokenWaiver-error").html('');
     });
-    $("input[name='IsTokenWaiver']").click(function () {
+    $("input[name='IsTokenWaiver']").on("click",function () {
         $("#IsTokenWaiver-error").html("");
     });
 
-    $("input[name='IsIO']").click(function () {
+    $("input[name='IsIO']").on("click", function () {
         $("#IsIO-error").html("");
     });
-    $("input[name='IsCO']").click(function () {
+    $("input[name='IsCO']").on("click", function () {
         $("#IsCO-error").html("");
     });
     //$("input[name='IsRO']").click(function () {
@@ -43,7 +42,7 @@
     //    $("#IsORO-error").html("");
     //});
 
-    $("#btnUnitMapReset").click(function () {
+    $("#btnUnitMapReset").on("click", function () {
         Reset();
         ResetErrorMessage();
     });
@@ -339,7 +338,7 @@
 
     });
 
-    $('input[name="UnitTyperdi"]').click(function () {
+    $('input[name="UnitTyperdi"]').on("click", function () {
         var lst = '<option value="1">Please Select</option>';
         var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
         if (val == "1") {

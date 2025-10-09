@@ -1,14 +1,12 @@
-$(document).ready(function () {
+$(function () {
   
    
     BindData()
-    $("#btnReset").click(function () {
+    $("#btnReset").on("click",function () {
         Reset()();
-       
-
     });
    
-    $("#btnsave").click(function () {
+    $("#btnsave").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -35,7 +33,7 @@ $(document).ready(function () {
 
     });
 
-    $('#btnMultiDelete').click(function () {
+    $('#btnMultiDelete').on("click",function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
@@ -165,7 +163,7 @@ function BindData() {
                     memberTable.buttons().container().appendTo('#tblcommnd_wrapper .col-md-6:eq(0)');
 
                     var rows;
-                    $("#tblcommnd #chkAll").click(function () {
+                    $("#tblcommnd #chkAll").on("click",function () {
                         if ($(this).is(':checked')) {
                            let rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);

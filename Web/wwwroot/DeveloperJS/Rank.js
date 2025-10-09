@@ -170,8 +170,7 @@ function BindData() {
 
                     $("body").off("click").on("click", ".cls-btnorder", function () {
 
-                     
-                        OrderByChange($(this).closest("tr").find("#SRankId").html() ,$(this).closest("tr").find("#SOrderby").html());
+                       OrderByChange($(this).closest("tr").find("#SRankId").html() ,$(this).closest("tr").find("#SOrderby").html());
                         
                     });
                     $("body").on("click", ".cls-btnedit", function () {

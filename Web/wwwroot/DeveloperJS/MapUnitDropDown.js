@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
     mMsater(0, "ddlCommand", 1, "");
    
     $('#ddlCommand').on('change', function () {
@@ -15,8 +15,6 @@ $(document).ready(function () {
     $('#ddlDiv').on('change', function () {
 
         mMsaterByParent(0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0);///ComdId,CorpsId,DivId,BdeId
-       
-
     });
     //$('#ddlBde').on('change', function () {
        

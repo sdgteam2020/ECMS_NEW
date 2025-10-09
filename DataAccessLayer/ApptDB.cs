@@ -57,22 +57,16 @@ namespace DataAccessLayer
         /// </returns>
         public async Task<List<DTOAppointmentResponse>> GetALLAppt()
         {
-            // LINQ query to fetch all appointments from the MAppointment table where Approved = 1.
-            // The query selects specific fields and maps them to a DTOAppointmentResponse object.
             var GetALL = await (from A in _context.MAppointment
-                                where A.Approved == 1  // Filters appointments that are approved
-                                                       // Join with MFormation table (commented out for now)
-                                                       // on A.FormationId equals F.FormationId
                                 select new DTOAppointmentResponse
                                 {
-                                    ApptId = A.ApptId,  // Selects the appointment ID
-                                    AppointmentName = A.AppointmentName,  // Selects the appointment name
-                                    AppointmentAbbreviation = A.AppointmentAbbreviation,  // Selects the appointment abbreviation
-                                                                                          // FormationId = F.FormationId,  // Formation ID from MFormation table (currently commented out)
-                                                                                          // FormationName = F.FormationName,  // Formation Name from MFormation table (currently commented out)
+                                    ApptId = A.ApptId,  
+                                    AppointmentName = A.AppointmentName,  
+                                    AppointmentAbbreviation = A.AppointmentAbbreviation,  
+                                    Approved = A.Approved
                                 })
-                                .OrderByDescending(x => x.ApptId)  // Orders the appointments by ApptId in descending order
-                                .ToListAsync();  // Executes the query asynchronously and returns the result as a list
+                                .OrderByDescending(x => x.ApptId)  
+                                .ToListAsync();  
 
             return GetALL;  // Return the list of appointment responses
         }
@@ -91,17 +85,17 @@ namespace DataAccessLayer
             try
             {
                 // LINQ query to fetch appointments where the AppointmentName contains the provided AppointmentName
-                // and where the appointment is approved (Approved = 1).
+                // and where the appointment is approved (Approved = true).
                 // It limits the result to the top 5 records.
-                var GetALL = (from A in _context.MAppointment
+                var GetALL = await (from A in _context.MAppointment
                               where A.AppointmentName.Contains(AppointmentName)  // Filters appointments by AppointmentName
-                              && A.Approved == 1  // Ensures the appointment is approved
+                              && A.Approved == true  // Ensures the appointment is approved
                               select new DTOAppointmentResponse
                               {
                                   ApptId = A.ApptId,  // Selects the appointment ID
                                   AppointmentName = A.AppointmentName,  // Selects the appointment name
                               }).Take(5)  // Limits the results to 5 records
-                              .ToList();  // Executes the query and materializes the results into a list
+                              .ToListAsync();  // Executes the query and materializes the results into a list
 
                 // Wrap the result in Task.FromResult to simulate async behavior
                 return await Task.FromResult(GetALL);

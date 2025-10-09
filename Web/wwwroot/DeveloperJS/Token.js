@@ -3,7 +3,9 @@
     $("#btnfetchtoken").on("click", async function () {
         await GetTokenDetails("FetchUniqueTokenDetails", "txtArmyNo");
     });
-
+    $("#btnTokenFetchDetails").on("click", async function () {
+        await GetTokenDetails('FetchUniqueTokenDetails', 'ICNo', '', 'tokenmsg')
+    });
 });
 
 async function GetTokenvalidatepersid2fawiththumbprint(IcNo, msgid, txticno, thumbprint) {

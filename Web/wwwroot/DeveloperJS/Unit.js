@@ -4,7 +4,6 @@ $(function () {
     BindData()
     $("#txtSerachunit").on("keyup",function () {
         BindData()
-
     });
     $("#btnReset").on("click",function () {
         Reset();

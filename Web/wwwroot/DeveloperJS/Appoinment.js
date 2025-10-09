@@ -1,15 +1,9 @@
 $(function () {
     BindData()
-    //$("#btnAdd").click(function () {
-    //    Reset();
-    //    $("#AddNewM").modal('show');
 
-    //});
-    $("#btnReset").on("click",function () {
+    $("#btnReset").on("click", function () {
         Reset();
     });
-
-
 
     $("#btnsave").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
@@ -119,6 +113,11 @@ function BindData() {
                             listItem += "<td class='align-middle'><span id='appointmentAbbreviation'>" + response[i].AppointmentAbbreviation + "</span></td>";
                         else
                             listItem += "<td class='align-middle'><span id='appointmentAbbreviation'></span></td>";
+                        if (response[i].Approved == true)
+                            listItem += "<td class='align-middle'><span id='appointmentApproved' class='badge badge-success'>Yes</span></td>";
+                        else
+                            listItem += "<td class='align-middle'><span id='appointmentApproved' class='badge badge-danger'>No</span></td>";
+
                         listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
 
 
@@ -193,6 +192,13 @@ function BindData() {
                         {
                             $("#txtAbbreviation").val($(this).closest("tr").find("#appointmentAbbreviation").html());
                         }
+                        if ($(this).closest("tr").find("#appointmentApproved").html() == "Yes") {
+                            $("#ApprovedYes").prop("checked", true);
+                        }
+                        else {
+                            $("#ApprovedNo").prop("checked", true);
+                        }
+
                         $("#btnsave").val("Update");
                     });
 
@@ -249,7 +255,8 @@ function Save() {
         {
             "AppointmentName": $("#txtAppoinment").val().trim(),
             "AppointmentAbbreviation": $("#txtAbbreviation").val().trim() == "" ? null : $("#txtAbbreviation").val().trim(),
-            "ApptId": $("#spnapptId").html()
+            "ApptId": $("#spnapptId").html(),
+            "Approved": $('input[name="Approved"]:checked').val()
         }, //get the search string
         success: function (result) {
 
