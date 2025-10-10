@@ -1,8 +1,8 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     $("#btntokenrefresh").on("click",function () {
         GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo", "Thumbprint");
     });
-    $('.form-control-Alphabets').keypress(function (e) {
+    $('.form-control-Alphabets').on('keypress',function (e) {
 
         // Get the key code of the pressed key
         var keyCode = e.which;
@@ -287,8 +287,8 @@
         appendTo: '#suggesstion-box'
     });
 
-    $('#txtSusno').keyup(function (e) {
-        if (e.keyCode == 46 || e.keyCode == 8) {
+    $('#txtSusno').on('keyup',function (e) {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
             $("#spnUnitId").html('0');
             $("#txtUnit").prop('readOnly', false);
             //$("#txtSusno").val('');

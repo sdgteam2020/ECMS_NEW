@@ -16,10 +16,13 @@ using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting.Internal;
 using System.Data;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
+using Web.Healpers;
+using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
 
 
@@ -49,13 +52,15 @@ namespace Web.Controllers
         private const string SessionKey = "SessionHit";// Session key for tracking user sessions
         private readonly string[] IgnoredIPs = { "127.0.0.2", "127.0.0.3" }; // Add IPs to ignore
         private readonly IConfiguration _configuration;//Configuration interface for accessing application settings
+        private readonly IWebHostEnvironment hostingEnvironment;// For Hosting Environment
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// For Image Encrypt and Decrypt
 
         //constructor to initialize dependencies and configuration settings.
         public HomeController(IRegistrationBL registrationBL, IUserProfileBL userProfileBL,
             IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
             IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor,
-            IReportReturnBL reportReturnBL, IService service, IConfiguration configuration, IMapUnitBL mapUnitBL
+            IReportReturnBL reportReturnBL, IService service, IConfiguration configuration, IMapUnitBL mapUnitBL, IWebHostEnvironment hostingEnvironment, IImageEncryptAndDecrypt imageEncryptAndDecrypt
             )
         {
             _userProfileBL = userProfileBL;
@@ -72,6 +77,8 @@ namespace Web.Controllers
             this.service = service;
             _configuration = configuration;
             _mapUnitBL = mapUnitBL;
+            this.hostingEnvironment = hostingEnvironment;
+            this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
         }
 
         /// <summary>
@@ -878,10 +885,23 @@ namespace Web.Controllers
 
             // Fetch the notifications based on the user ID, TypeId, and applyForId
             List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotification(userId, TypeId, applyForId);
+            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
             // Return the notifications as a JSON response, or null if no notifications are found
             if (dTONotificationResponses != null)
             {
+                foreach (var basicDetailUpdVM in dTONotificationResponses)
+                {
+                    // Load existing photo and signature if files exist
+
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
+
+                    if (System.IO.File.Exists(sourcePathPhoto))
+                    {
+                        basicDetailUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    }
+                }
+
                 return Json(dTONotificationResponses);
             }
             else
@@ -903,10 +923,23 @@ namespace Web.Controllers
 
             // Fetch the notifications based on the user ID, TypeId, and applyForId
             List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotificationRequestId(userId, TypeId, applyForId);
+            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
             // Return the notifications as a JSON response, or null if no notifications are found
             if (dTONotificationResponses != null)
             {
+
+                foreach (var basicDetailUpdVM in dTONotificationResponses)
+                {
+                    // Load existing photo and signature if files exist
+
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
+
+                    if (System.IO.File.Exists(sourcePathPhoto))
+                    {
+                        basicDetailUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    }
+                }
                 return Json(dTONotificationResponses);
             }
             else

@@ -113,18 +113,12 @@ namespace DataAccessLayer
         /// <returns>A task that represents the asynchronous operation. The task result contains the UserId associated with the given RequestId, or a default value if not found.</returns>
         public async Task<int> GetUserIdByRequestId(int RequestId)
         {
-           string query = "Select AspNetUsersId from TrnICardRequest icard"+
-                        " inner join TrnDomainMapping map on icard.TrnDomainMappingId=map.Id"+
-                        " where RequestId=@RequestId and [StatusId]=1";
+           string query = @"Select AspNetUsersId from TrnICardRequest icard
+                            inner join TrnDomainMapping map on icard.TrnDomainMappingId=map.Id
+                            where RequestId=@RequestId and [StatusId]=1";
             using (var connection = _contextDP.CreateConnection())
             {
-                //data.MRank.RankAbbreviation
-                //data.MArmedType.Abbreviation
-              
                 var ret = await connection.QueryFirstAsync<int>(query, new { RequestId });
-
-
-
                 return Convert.ToInt32(ret);
             }
         }

@@ -327,11 +327,11 @@ function GetNotification(NotificationTypeId, ApplyForId) {
                         list += '<div class="preview-thumbnail ">';
                         list += '<div class="preview-icon p-2">';
                         list += '<i class="ti-bell1 mx-0"></i>';
-                        list += '<img id="notificationimg" src="/WriteReadData/photo/' + response[i].PhotoImagePath + '" alt="profile" width="65px">';
+                        list += '<img id="notificationimg" src="' + response[i].ExistingPhotoInBase64 + '" alt="profile" width="65px">';
                         list += '</div>';
                         list += '</div>';
                         list += ' <div class="preview-item-content">';
-                        list += '<h6 class="preview-subject font-weight-normal"> Appl No: ' + response[i].TrackingId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].Name + ' (' + response[i].ServiceNo + ') <br>' + response[i].Message + '</h6>';
+                        list += '<h6 class="preview-subject font-weight-normal"> Appl No: ' + response[i].ApplId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].LName != null ? response[i].FName + ' ' + response[i].LName : response[i].FName + ' (' + response[i].ServiceNo + ') <br>' + response[i].Message + '</h6>';
                         list += '<p class="font-weight-light small-text mb-0 text-muted">';
 
 
@@ -417,11 +417,11 @@ function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
                         list += '<div class="preview-thumbnail ">';
                         list += '<div class="preview-icon p-2">';
                         list += '<i class="ti-bell1 mx-0"></i>';
-                        list += '<img id="notificationimg" src="/WriteReadData/photo/' + response[i].PhotoImagePath + '" alt="profile" width="65px">';
+                        list += '<img id="notificationimg" src="' + response[i].ExistingPhotoInBase64 + '" alt="profile" width="65px">';
                         list += '</div>';
                         list += '</div>';
                         list += ' <div class="preview-item-content">';
-                        list += '<h6 class="preview-subject font-weight-normal"> Appl No: ' + response[i].TrackingId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].Name + ' (' + response[i].ServiceNo +') <br>' + response[i].Message+'</h6>';
+                        list += '<h6 class="preview-subject font-weight-normal"> Appl Id: ' + response[i].ApplId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].LName != null ? response[i].FName + ' ' + response[i].LName : response[i].FName + ' (' + response[i].ServiceNo +') <br>' + response[i].Message+'</h6>';
                         list += '<p class="font-weight-light small-text mb-0 text-muted">';
 
                         
