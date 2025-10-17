@@ -1,17 +1,8 @@
 ﻿using BusinessLogicsLayer.Bde;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
-using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.BdeCate
 {
@@ -24,6 +15,10 @@ namespace BusinessLogicsLayer.BdeCate
         public TrnFwnBL(ApplicationDbContext context, ITrnFwnDB iTrnFwnDB) : base(context)
         {
             _ITrnFwnDB = iTrnFwnDB;
+        }
+        public async Task<bool> AddTrnFwdWithIsCompleteUpdate(MTrnFwd data)
+        {
+            return await _ITrnFwnDB.AddTrnFwdWithIsCompleteUpdate(data);
         }
 
         public Task<bool> UpdateAllBYRequestId(int RequestId)

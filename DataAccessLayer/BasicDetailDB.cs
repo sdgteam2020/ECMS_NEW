@@ -3974,6 +3974,30 @@ namespace DataAccessLayer
         /// </exception>
         public async Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type, int applyForId)
         {
+            #region Old Code
+            //string query = @"select tre.RequestId as ApplId,dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,dis.Url  from TrnNotification noti
+            //                inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
+            //                inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId
+            //                inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId 
+            //                inner join TrnICardRequest tre on tre.RequestId = noti.RequestId 
+            //                inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId
+            //                inner join MRank ranks on ranks.RankId=bas.RankId
+            //                inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId
+            //                where noti.ReciverAspNetUsersId=@UserId and NotificationTypeId=@Type and stepc.applyforId=@applyForId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
+            //try
+            //{
+            //    using (var connection = _contextDP.CreateConnection())
+            //    {
+            //        var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type, applyForId });
+            //        return ret.ToList();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(1001, ex, "BasicDetailDB->GetNotification");
+            //    return null;
+            //}
+            #endregion
             string query = @"select tre.RequestId as ApplId,dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,dis.Url  from TrnNotification noti
                             inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
                             inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId
@@ -3982,7 +4006,7 @@ namespace DataAccessLayer
                             inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId
                             inner join MRank ranks on ranks.RankId=bas.RankId
                             inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId
-                            where noti.ReciverAspNetUsersId=@UserId and NotificationTypeId=@Type and stepc.applyforId=@applyForId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
+                            where noti.ReciverAspNetUsersId=@UserId and NotificationTypeId=@Type and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
@@ -4017,7 +4041,11 @@ namespace DataAccessLayer
         /// </exception>
         public async Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
-            string query = @"select Distinct tre.RequestId as ApplId, dis.DisplayId,Spanname + 'self' Spanname,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,CASE WHEN dis.DisplayId in (7,8,9,10,17,18,19,20) THEN dis.Url ELSE '' END AS Url  from TrnNotification noti 
+            string query = @"select Distinct tre.RequestId as ApplId, dis.DisplayId,Spanname + 'self' Spanname,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,
+                            CASE WHEN dis.DisplayId in (7,8,9,10,17,18,19,20) THEN 
+                            dis.Url 
+                            ELSE '' 
+                            END AS Url  from TrnNotification noti 
                             inner join TrnNotificationDisplay dis on noti.DisplayId = dis.DisplayId
                             inner join AspNetUsers users on users.Id = noti.SentAspNetUsersId
                             inner join TrnICardRequest tre on tre.RequestId = noti.RequestId

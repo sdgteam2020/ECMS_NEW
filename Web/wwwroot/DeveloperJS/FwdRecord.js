@@ -11,6 +11,8 @@ var IsValid = 0;
 var IsDigitalSignReq = true;
 var DataExportType = 1;
 var spnStepId = 0;
+var Counter_Notification = 0;
+var spnRequestId_Notification = 0;
 $(function () {
 
     $("#btntokenTofwd").on("click", async function () {
@@ -955,8 +957,6 @@ function ForwardTo(RequestId, HType) {
         type: 'POST',
         success: function (response) {
             if (response != "null" && response != null) {
-
-                // if ($("#txtspnTokenArmyNo").val() != "") {
                 if (HType == 2 || HType == 3 || HType == 4 || HType == 5) {
                     var lsts = new Array();
                     var ids = $("#spnCurrentspnRequestId").html();
@@ -965,22 +965,14 @@ function ForwardTo(RequestId, HType) {
 
                         DataSignDigitaly(lsts, "tokenmsgforfwd", response.RequestId, HType);
 
-
-                        //   DownloadPdf(RequestId);
                     } else {
                         DataSignDigitaly(lsts, "tokenmsgforfwd", response.RequestId, HType);
-                        //setTimeout(function () {
-                        //    location.reload();
-                        //}, 2000);
                     }
-
-
-                    // }
-                    //else {
-                    //    setTimeout(function () {
-                    //        location.reload();
-                    //    }, 2000);
-                    //}
+                    if (applyfor == 1) {
+                        SaveNotification(1, Counter_Notification, $("#spnFwdToAspNetUsersId").html(), spnRequestId_Notification)
+                    } else {
+                        SaveNotification(1, (parseInt(Counter_Notification) + 10), $("#spnFwdToAspNetUsersId").html(), spnRequestId_Notification)
+                    }
                 } else {
                     setTimeout(function () {
                         location.reload();
@@ -997,8 +989,8 @@ function RejecteTo(RequestId, HType) {
     var userdata = {
         "TrnFwdId": 0,
         "RequestId": RequestId,
-        "ToAspNetUsersId": $("#spnFwdToAspNetUsersId").html(),
-        "ToUserId": $("#spnFwdToUsersId").html(),
+        //"ToAspNetUsersId": $("#spnFwdToAspNetUsersId").html(),
+        //"ToUserId": $("#spnFwdToUsersId").html(),
         /*"FromUserId": $("#spnFrom").html(),*/
         // "ToUserId": $("#spnForwardTo").html(),
         /* "SusNo": $("#spnFwssusno").html(),*/
@@ -1015,10 +1007,18 @@ function RejecteTo(RequestId, HType) {
         data: userdata,
         type: 'POST',
         success: function (response) {
-            if (response != "null" && response != null) {
+            if (response.Result === true) {
+                if (applyfor == 1) {
+                    SaveNotification(1, Counter_Notification, response.Value.ToAspNetUsersId, spnRequestId_Notification)
+                } else {
+                    SaveNotification(1, (parseInt(Counter_Notification) + 10), response.Value.ToAspNetUsersId, spnRequestId_Notification)
+                }
                 setTimeout(function () {
                     location.reload();
                 }, 2000);
+            }
+            else {
+                toastr.error(response.Message);
             }
         }
 
@@ -1052,11 +1052,14 @@ function UpdateStepCounter(stepId, spnRequestId, Counter, Flag) {
                     } else {
                         ForwardTo(spnRequestId, Counter);
                     }
-                    if (applyfor == 1) {
-                        SaveNotification(1, Counter, $("#spnFwdToAspNetUsersId").html(), spnRequestId)
-                    } else {
-                        SaveNotification(1, (parseInt(Counter) + 10), $("#spnFwdToAspNetUsersId").html(), spnRequestId)
-                    }
+                    Counter_Notification = Counter;
+                    spnRequestId_Notification = spnRequestId;
+                    //This SaveNotification method call in ForwardTo and RejecteTo function
+                    //if (applyfor == 1) {
+                    //    SaveNotification(1, Counter, $("#spnFwdToAspNetUsersId").html(), spnRequestId)
+                    //} else {
+                    //    SaveNotification(1, (parseInt(Counter) + 10), $("#spnFwdToAspNetUsersId").html(), spnRequestId)
+                    //}
                 }
                 else {
                     Swal.fire({

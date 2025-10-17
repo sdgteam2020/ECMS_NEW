@@ -839,6 +839,39 @@ namespace Web.Controllers
         /// <returns>A JSON response indicating success (1) or failure (0).</returns>
         public async Task<IActionResult> SaveNotification(MTrnNotification Data)
         {
+            #region Old code
+            //try
+            //{
+            //    // Retrieve the user ID from the claims
+            //    int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //    Data.SentAspNetUsersId = userId;
+
+            //    // Update the previous notification data
+            //    await _INotificationBL.UpdatePrevious(Data);
+
+            //    // Add the new notification
+            //    await _INotificationBL.Add(Data);
+
+            //    // Retrieve the user ID associated with the request
+            //    int requestUserId = await _ITrnICardRequestBL.GetUserIdByRequestId(Data.RequestId);
+
+            //    // Prepare notification data for the receiver and set the receiver and sender IDs
+            //    Data.NotificationId = 0;
+            //    Data.SentAspNetUsersId = requestUserId;
+            //    Data.ReciverAspNetUsersId = requestUserId;
+
+            //    // Add the notification for the receiver
+            //    await _INotificationBL.Add(Data);
+
+            //    // Return a success response
+            //    return Json(1);
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Return failure if an exception occurs
+            //    return Json(0);
+            //}
+            #endregion Old code
             try
             {
                 // Retrieve the user ID from the claims
@@ -849,17 +882,6 @@ namespace Web.Controllers
                 await _INotificationBL.UpdatePrevious(Data);
 
                 // Add the new notification
-                await _INotificationBL.Add(Data);
-
-                // Retrieve the user ID associated with the request
-                int requestUserId = await _ITrnICardRequestBL.GetUserIdByRequestId(Data.RequestId);
-
-                // Prepare notification data for the receiver and set the receiver and sender IDs
-                Data.NotificationId = 0;
-                Data.SentAspNetUsersId = requestUserId;
-                Data.ReciverAspNetUsersId = requestUserId;
-
-                // Add the notification for the receiver
                 await _INotificationBL.Add(Data);
 
                 // Return a success response

@@ -5,6 +5,7 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DataAccessLayer
 {
@@ -18,6 +19,58 @@ namespace DataAccessLayer
             _context = context;
             _contextDP = contextDP;
             _logger = logger;
+        }
+
+
+        public async Task<bool> AddTrnFwdWithIsCompleteUpdate(MTrnFwd data)
+        {
+            // Initialize transaction for multiple database operations
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+            try
+            {
+                // Update related TrnICardRequest with the new mapping
+                string query1 = "UPDATE TrnFwds set IsComplete=1 where RequestId=@RequestId";
+                await db.ExecuteAsync(query1, new { data.RequestId }, transaction: transaction);
+
+                // Insert new posting record
+                var insertSql = @$"INSERT INTO TrnFwds(RequestId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,UnitId,Remark,TypeId,IsComplete,IsActive,Updatedby,UpdatedOn,RemarksIds,FwdStatusId,StepId)
+                                VALUES (@RequestId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@UnitId,@Remark,@TypeId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@RemarksIds,@FwdStatusId,@StepId);";
+                var parameters = new DynamicParameters();
+                parameters.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUserId", data.ToUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromUserId", data.FromUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromAspNetUsersId", data.FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToAspNetUsersId", data.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UnitId", data.UnitId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@Remark", data.Remark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@TypeId", data.TypeId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@IsComplete", data.IsComplete, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@IsActive", data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@Updatedby", data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@RemarksIds", data.RemarksIds, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@FwdStatusId", data.FwdStatusId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@StepId", data.StepId, DbType.Byte, ParameterDirection.Input);
+
+                // Insert the new TrnFwds record
+                await db.ExecuteAsync(insertSql, parameters, transaction: transaction);
+
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Rollback the transaction if any operation fails
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "PostingDB->UpdateForPosting");
+                return false;
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
+            }
         }
 
 
@@ -73,6 +126,7 @@ namespace DataAccessLayer
             }
 
         }
+
 
 
         /// <summary>

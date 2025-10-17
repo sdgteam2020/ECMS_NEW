@@ -222,11 +222,11 @@ namespace Web.Controllers
             {
                 case 0:
                 case 1:  // Request from Dashboard
-                    stepcounter = retint;
+                    stepcounter = 1;
                     break;
 
                 case 11: // Request from Task Board → maps to Dashboard (1)
-                    stepcounter = retint = 1;
+                    stepcounter = 1;
                     break;
 
                 case 2:
@@ -2550,72 +2550,165 @@ namespace Web.Controllers
         /// </returns>
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {
+            #region Old Code
+            //try
+            //{
+            //    // Create response object
+            //    DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
+
+            //    // Retrieve session data for user ID and unit ID
+            //    DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            //    // Set values for the forward data object using session data and user information
+            //    data.FromUserId = sessiondata.UserId;
+            //    data.UnitId = sessiondata.UnitId;
+            //    data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //    data.UpdatedOn = DateTime.Now;
+            //    data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //    data.IsActive = true;
+            //    data.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
+
+            //    // Retrieve domain mapping using the request ID
+            //    TrnDomainMapping? Domain = new TrnDomainMapping();
+            //    Domain = await iDomainMapBL.GetByRequestId(data.RequestId);
+
+            //    if (Domain != null)
+            //    {
+            //        // Set the recipient user ID and AspNetUsersId for the rejection
+            //        data.ToAspNetUsersId = Domain.AspNetUsersId;
+            //        data.ToUserId = Domain.UserId.GetValueOrDefault();
+
+            //        // Update all records by request ID
+            //        if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
+            //        {
+            //            // Add the rejection record
+            //            await iTrnFwnBL.Add(data);
+
+            //            // Process digital sign XML files for the rejection
+            //            int[] d = new int[1];
+            //            d[0] = data.RequestId;
+            //            var dataret = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
+
+            //            if (dataret != null)
+            //            {
+            //                dataret.XmlFiles = ""; // Clear the XML files after processing
+            //            }
+
+            //            // Save the processed XML digital sign
+            //            await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
+
+            //            // Return the updated rejection data as JSON
+            //            return Ok(data);
+            //        }
+            //        else
+            //        {
+            //            // Return a bad request if update fails
+            //            return BadRequest();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // Return a bad request if domain mapping is not found
+            //        return BadRequest();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Log any exceptions and return a bad request response
+            //    _logger.LogError(1001, ex, "BasicDetails=>IcardRejecte.");
+            //    return BadRequest();
+            //}
+            #endregion Old Code
+            // Initialize the generic response object
+            DTOGenericResponse<DTOApplicationRejecteResponse?> response = new DTOGenericResponse<DTOApplicationRejecteResponse?>();
+            DTOApplicationRejecteResponse dTOApplication = new DTOApplicationRejecteResponse();
             try
             {
-                // Create response object
-                DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
+                DtoSession? dtoSession = new DtoSession();
 
-                // Retrieve session data for user ID and unit ID
-                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-                // Set values for the forward data object using session data and user information
-                data.FromUserId = sessiondata.UserId;
-                data.UnitId = sessiondata.UnitId;
-                data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                data.UpdatedOn = DateTime.Now;
-                data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                data.IsActive = true;
-                data.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
-
-                // Retrieve domain mapping using the request ID
-                TrnDomainMapping? Domain = new TrnDomainMapping();
-                Domain = await iDomainMapBL.GetByRequestId(data.RequestId);
-
-                if (Domain != null)
+                //Retrieve session data if available
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
-                    // Set the recipient user ID and AspNetUsersId for the rejection
-                    data.ToAspNetUsersId = Domain.AspNetUsersId;
-                    data.ToUserId = Domain.UserId.GetValueOrDefault();
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
-                    // Update all records by request ID
-                    if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
+                    // Set values for the forward data object using session data and user information
+                    data.FromUserId = dtoSession.UserId;
+                    data.UnitId = dtoSession.UnitId;
+                    data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    data.UpdatedOn = DateTime.Now;
+                    data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    data.IsActive = true;
+                    data.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
+                    data.FwdStatusId = 3; // Set the status to 3 for rejection
+                    data.IsComplete = false;
+
+                    // Retrieve domain mapping using the request ID
+                    TrnDomainMapping? Domain = new TrnDomainMapping();
+                    Domain = await iDomainMapBL.GetByRequestId(data.RequestId);
+
+                    if (Domain != null && Domain.UserId != null)
                     {
-                        // Add the rejection record
-                        await iTrnFwnBL.Add(data);
+                        dTOApplication.ToAspNetUsersId = Domain.AspNetUsersId;
 
-                        // Process digital sign XML files for the rejection
-                        int[] d = new int[1];
-                        d[0] = data.RequestId;
-                        var dataret = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
+                        // Set the recipient user ID and AspNetUsersId for the rejection
+                        data.ToAspNetUsersId = Domain.AspNetUsersId;
+                        data.ToUserId = Domain.UserId.GetValueOrDefault();
 
-                        if (dataret != null)
+                        bool result = await iTrnFwnBL.AddTrnFwdWithIsCompleteUpdate(data);
+
+                        if (result)
                         {
-                            dataret.XmlFiles = ""; // Clear the XML files after processing
+                            // Process digital sign XML files for the rejection
+                            int[] d = new int[1];
+                            d[0] = data.RequestId;
+                            var dataret = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
+
+                            if (dataret != null)
+                            {
+                                dataret.XmlFiles = ""; // Clear the XML files after processing
+
+                                // Save the processed XML digital sign
+                                await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
+                            }
+
+                            response.Result = true;
+                            response.Message = "Reject Application successfully.";
+                            response.Value = dTOApplication;
+                            return Json(response);
+                        }
+                        else
+                        {
+                            response.Result = false;
+                            response.Message = "Reject Application failed.";
+                            response.Value = dTOApplication;
+                            return Json(response);
                         }
 
-                        // Save the processed XML digital sign
-                        await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
-
-                        // Return the updated rejection data as JSON
-                        return Ok(data);
                     }
                     else
                     {
-                        // Return a bad request if update fails
-                        return BadRequest();
+                        response.Result = false;
+                        response.Message = "At this time, the application was not rejected because Profile is not mapped with domain Id."; 
+                        response.Value = dTOApplication;
+                        return Json(response);
                     }
                 }
                 else
                 {
-                    // Return a bad request if domain mapping is not found
-                    return BadRequest();
+                    // Session has expired or not available, redirect to ContactUs with error
+                    TempData["error"] = "Invalid Session.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
                 }
             }
             catch (Exception ex)
             {
                 // Log any exceptions and return a bad request response
                 _logger.LogError(1001, ex, "BasicDetails=>IcardRejecte.");
-                return BadRequest();
+                response.Result = false;
+                response.Message = "failed";
+                response.Value = dTOApplication;
+                return Json(response);
             }
         }
 

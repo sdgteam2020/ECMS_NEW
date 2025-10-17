@@ -100,6 +100,7 @@ $(function () {
             toastr.error("Please Enter Army No");
         }
     });
+
     $("#txtarmynosearchAll").autocomplete({
         source: function (request, response) {
             if (request.term.length > 1) {
@@ -169,6 +170,8 @@ $(function () {
         },
         appendTo: '#suggesstion-box'
     });
+
+    GetNotification(1, 1);
 
     fetch('/Home/VisitorStats?_=' + new Date().getTime()) // cache busting
         .then(response => {
@@ -291,8 +294,6 @@ function SaveNotification(NotificationTypeId, DisplayId, ReciverAspNetUsersId, R
 }
 
 function GetNotification(NotificationTypeId, ApplyForId) {
-    var listItem = "";
-    var tot = "0";
     var userdata =
     {
         "TypeId": NotificationTypeId,
@@ -306,66 +307,31 @@ function GetNotification(NotificationTypeId, ApplyForId) {
 
         success: function (response) {
             if (response != "null" && response != null) {
-                if (response.length >0) {
-                    //alert("Notofication Sent")
-                    var countIo = 0;
+                if (response.length > 0) {
+                    $("#Totalnotification").html(response.length);
                     var list = "";
                     for (var i = 0; i < response.length; i++) {
                         if ($("." + response[i].Spanname).html() == "")
                             $("." + response[i].Spanname).html(0);
-                        //if (response[i].DisplayId == 2) {
+
                         $("." + response[i].Spanname).html(parseInt($("." + response[i].Spanname).html()) + 1);
 
-                       // var tot = $("#Totalnotification").html();
-                        if (tot == "")
-                            tot = 0;
-
-                        // $("#Totalnotification").html(parseInt(tot) + parseInt($("." + response[i].Spanname).html()));
-                        $("#Totalnotification").html(parseInt($("#Totalnotification").html()) + 1);
-                        list += '<div class="border border-1 p-1 mt-2">';
-                        list += '<a class="dropdown-item preview-item" href="' + response[i].Url + '">';
-                        list += '<div class="preview-thumbnail ">';
-                        list += '<div class="preview-icon p-2">';
-                        list += '<i class="ti-bell1 mx-0"></i>';
-                        list += '<img id="notificationimg" src="' + response[i].ExistingPhotoInBase64 + '" alt="profile" width="65px">';
-                        list += '</div>';
-                        list += '</div>';
-                        list += ' <div class="preview-item-content">';
-                        list += '<h6 class="preview-subject font-weight-normal"> Appl No: ' + response[i].ApplId + '<br> Applicant Name:-' + response[i].RankAbbreviation + ' ' + response[i].LName != null ? response[i].FName + ' ' + response[i].LName : response[i].FName + ' (' + response[i].ServiceNo + ') <br>' + response[i].Message + '</h6>';
-                        list += '<p class="font-weight-light small-text mb-0 text-muted">';
-
-
-                        list += ' </p>';
-                        list += '</div>';
-
-                        list += ' </a>';
-
-                        list += '</div>';
-                       // }
-
-                        //if (response[i].DisplayId == 2 || response[i].DisplayId == 3 || response[i].DisplayId == 7) {
-                        //    var SpnIOself = 0;
-                        //    var SpnGSOself = 0;
-                        //    var SpnIORejectself = 0;
-                        //    if ($(".SpnIOself").html() == "")
-                        //        SpnIOself = 0;
-                        //    else
-                        //        SpnIOself = $(".SpnIOself").html();
-                        //    if ($(".SpnGSOself").html() == "")
-                        //        SpnGSOself = 0;
-                        //    else
-                        //        SpnGSOself = $(".SpnGSOself").html();
-                        //    if ($(".SpnIORejectself").html() == "")
-                        //        SpnIORejectself = 0;
-                        //    else
-                        //        SpnIORejectself = $(".SpnIORejectself").html();
-
-                        //    $("#IOTotal").html(parseInt(SpnIOself) + parseInt(SpnGSOself) + parseInt(SpnIORejectself));
-
-                        //    if ($("#IOTotal").html() == 0)
-                        //        $("#IOTotal").html("");
-
-                        //}
+                        list += `<div class="border border-1 p-1 mt-2">
+                                    <a class="dropdown-item preview-item" href="${response[i].Url}">
+                                        <div class="preview-thumbnail">
+                                            <div class="preview-icon p-2">
+                                                <i class="ti-bell1 mx-0"></i>
+                                                <img id="notificationimg" src="${response[i].ExistingPhotoInBase64}" alt="profile" width="65px">
+                                            </div>
+                                        </div>
+                                        <div class="preview-item-content">
+                                            <h6 class="preview-subject font-weight-normal"> Appl No: ${response[i].ApplId} <br> Applicant Name:-${response[i].RankAbbreviation}  ${response[i].LName != null ? response[i].FName + ' ' + response[i].LName : response[i].FName} (${response[i].ServiceNo}) <br> ${response[i].Message}</h6>
+                                            <p class="font-weight-light small-text mb-0 text-muted">
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                                `;
                     }
                     $(".preview-list").append(list);
                 }
