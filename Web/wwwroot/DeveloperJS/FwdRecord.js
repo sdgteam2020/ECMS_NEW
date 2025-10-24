@@ -968,11 +968,11 @@ function ForwardTo(RequestId, HType) {
                     } else {
                         DataSignDigitaly(lsts, "tokenmsgforfwd", response.RequestId, HType);
                     }
-                    if (applyfor == 1) {
-                        SaveNotification(1, Counter_Notification, $("#spnFwdToAspNetUsersId").html(), spnRequestId_Notification)
-                    } else {
-                        SaveNotification(1, (parseInt(Counter_Notification) + 10), $("#spnFwdToAspNetUsersId").html(), spnRequestId_Notification)
-                    }
+                    //if (applyfor == 1) {
+                    //    SaveNotification(1, Counter_Notification, $("#spnFwdToAspNetUsersId").html(), spnRequestId_Notification)
+                    //} else {
+                    //    SaveNotification(1, (parseInt(Counter_Notification) + 10), $("#spnFwdToAspNetUsersId").html(), spnRequestId_Notification)
+                    //}
                 } else {
                     setTimeout(function () {
                         location.reload();
@@ -1008,11 +1008,11 @@ function RejecteTo(RequestId, HType) {
         type: 'POST',
         success: function (response) {
             if (response.Result === true) {
-                if (applyfor == 1) {
-                    SaveNotification(1, Counter_Notification, response.Value.ToAspNetUsersId, spnRequestId_Notification)
-                } else {
-                    SaveNotification(1, (parseInt(Counter_Notification) + 10), response.Value.ToAspNetUsersId, spnRequestId_Notification)
-                }
+                //if (applyfor == 1) {
+                //    SaveNotification(1, Counter_Notification, response.Value.ToAspNetUsersId, spnRequestId_Notification)
+                //} else {
+                //    SaveNotification(1, (parseInt(Counter_Notification) + 10), response.Value.ToAspNetUsersId, spnRequestId_Notification)
+                //}
                 setTimeout(function () {
                     location.reload();
                 }, 2000);

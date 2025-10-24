@@ -1,77 +1,23 @@
 ﻿@inject IHttpContextAccessor HttpContextAccessor
 @model DTOTokenRequest
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" type="image/x-icon" asp-href-include="/images/AFSAC.png">
-    <title> E-ISAC </title>
-    @*  <link asp-href-include="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
-
-    <link asp-href-include="~/css/style.css" rel="stylesheet" />
-    <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
-    <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
-    <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-
-    <link asp-href-include="~/css/login.css" rel="stylesheet" />
-
-    <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
-
-    <link asp-href-include="~/css/normalize.min.css" rel="stylesheet" />
-    @*   <link asp-href-include="~/css/swiper.min.css" rel="stylesheet" /> *@
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
-    <link asp-href-include="~/css/main.css" rel="stylesheet" />
-    @*     <link asp-href-include="~/css/sliders/style.css" rel="stylesheet" /> *@
-    <style>
-        .swal2-confirm, .swal2-styled {
-            background: #D97924 !important;
-        }
-
-        .login-wrap {
-             margin-top: 100px;
-            margin-left: 33%;
-            margin-right: 33%;
-            /*margin-bottom: 100px;*/
-            /*    margin-left: -50px;*/
-            /*  border: 7px double #242c6d;*/
-            width: 33%;
-            
-        }
-
-       
-        .form-group .labeltoken {
-            font-size: 16px;
-            font-weight: 700;
-            
-        }
-
-        body {
-            /*   background-image: url('/images/logo-white.jpg'); */
-            background-size: cover;
-            background-color: lightskyblue;
-            background-repeat: no-repeat;
-            /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
-        }
-
-        .bg-white {
-            background: #fff !important;
-        }
-
-        .logoheader {
-            background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%);
-        }
-      /*   img {
-            width: 500px;
-        } */
-    </style>
-</head>
+<style>
+    .login-wrap {
+        margin-top: 100px;
+        margin-left: 33%;
+        margin-right: 33%;
+        /*margin-bottom: 100px;*/
+        /*    margin-left: -50px;*/
+        /*  border: 7px double #242c6d;*/
+        width: 33%;
+    }
+    .form-group .labeltoken {
+        font-size: 16px;
+        font-weight: 700;
+    }
+</style>
 @{
     DTOTempSession? dTOTempSession = new DTOTempSession();
     StringBuilder m1 = new StringBuilder();
@@ -93,108 +39,90 @@
         m2.Append(",<br/> ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTDMUnitMapId);
     }
 }
-<body>
-@*     <div class="watermark">
-        <div>
-            <img src="/Images/dgislogo.png" alt="Watermark" loading="lazy">
-        </div>
-    </div> *@
-    <div class="page">
-        <div class="container-fluid">
-            <div class="row logoheader">
-                <div class="mb-1 d-flex flex-column justify-content-between">
-                    <div>
-                        @* <img src="~/Images/ia.png" onerror="this.style.display='none';" alt="Image Not Found" height="115px" class="p-3" /> *@
-                    </div>
-                    <div class="align-self-center">
-                        <img src="~/Images/EISAC.png" width="100%" height="100px">
-                    </div>
-                    <div>
-                        @* <img src="~/Images/dgislogo.png" onerror="this.style.display='none';" alt="Image Not Found" height="115px" class="p-1" /> *@
-                    </div>
-                </div>
-            </div>
+<div class="page">
+    <div class="container-fluid">
+        <partial name="~/Views/Shared/_CommonHeader.cshtml" />
+        <div class="row">
+            <div class="bg-white login-wrap align-items-center">
+                <div class="login py-2 py-sm-4">
+                    <div class="row">
+                        <div class="col-md-10 col-lg-10 col-xl-9 mx-auto">
+                            <div class="card-sigin">
+                                <div class="main-signup-header login-form">
+                                    @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
+                                    <span id="spnhdns" class="d-none">@ViewBag.hdns</span>
+                                    <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1 ">Kindly Validate your IC Number here.</p>
+                                    <div class="pb-3 mt-3">
+                                        <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">
+                                            <div class="form-group">
+                                                <label class="labeltoken">Army No</label>
+                                                @if (dTOTempSession.IsToken == true)
+                                                {
+                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" readonly /> @* value="@dTOTempSession.ICNO" *@
+                                                }
+                                                else
+                                                {
+                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" oninput="this.value = this.value.toUpperCase();" value="@dTOTempSession.ICNO" />
+                                                }
 
-            <div class="row">
-                <div class="bg-white login-wrap align-items-center">
-                    <div class="login py-2 py-sm-4">
-                        <div class="row">
-                            <div class="col-md-10 col-lg-10 col-xl-9 mx-auto">
-                                <div class="card-sigin">
-                                    <div class="main-signup-header login-form">
-                                        @* <h1 class="font-weight-bold text-center mb-0 mt-3 logo"><color style="color: #D97904">Login</color></h1>*@
-                                        <span id="spnhdns" class="d-none">@ViewBag.hdns</span>
-                                        <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1 ">Kindly Validate your IC Number here.</p>
-                                        <div class="pb-3 mt-3">
-                                            <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">
-                                                <div class="form-group">
-                                                    <label class="labeltoken">Army No</label>
-                                                    @if (dTOTempSession.IsToken==true)
-                                                    {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" readonly /> @* value="@dTOTempSession.ICNO" *@
-                                                    }
-                                                    else
-                                                    {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" oninput="this.value = this.value.toUpperCase();" value="@dTOTempSession.ICNO" />
-                                                    }
-
-                                                    <span asp-validation-for="ICNo" class="text-danger"></span>
-                                                    <label id="tokenmsg"></label>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label asp-for="Password" class="form-label fs-6"></label>
-                                                    <input asp-for="Password" class="form-control" placeholder="Password" value="Admin123#" />
-                                                    <span asp-validation-for="Password" class="text-danger"></span>
-                                                </div>
-                                                @if (dTOTempSession!=null){
+                                                <span asp-validation-for="ICNo" class="text-danger"></span>
+                                                <label id="tokenmsg"></label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="Password" class="form-label fs-6"></label>
+                                                <input asp-for="Password" class="form-control" placeholder="Password" value="Admin123#" />
+                                                <span asp-validation-for="Password" class="text-danger"></span>
+                                            </div>
+                                            @if (dTOTempSession != null)
+                                            {
+                                                if (dTOTempSession.NewUser == true)
+                                                {
+                                                    <div class="form-group">
+                                                        <label asp-for="ConfirmPassword"></label>
+                                                        <input asp-for="ConfirmPassword" class="form-control" required />
+                                                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    @* <input hidden asp-for="ConfirmPassword" /> *@
+                                                }
+                                            }
+                                            <div class="text-center">
+                                                @if (dTOTempSession != null && dTOTempSession.IsToken == true)
+                                                {
+                                                    <button type="button" class="btn btn-primary mt-2" id="btnTokenFetchDetails">Refresh To Fetch Token Details</button>
+                                                }
+                                                @if (dTOTempSession != null)
+                                                {
                                                     if (dTOTempSession.NewUser == true)
                                                     {
-                                                        <div class="form-group">
-                                                            <label asp-for="ConfirmPassword"></label>
-                                                            <input asp-for="ConfirmPassword" class="form-control" required />
-                                                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                                                        </div>
+                                                        <button type="submit" class="btn btn-primary mt-2" onclick="return handleSubmit(event, true)">Proceed</button>
                                                     }
                                                     else
                                                     {
-                                                        @* <input hidden asp-for="ConfirmPassword" /> *@
-                                                    } 
+                                                        <button type="submit" class="btn btn-primary mt-2" onclick="return handleSubmit(event, false)">Proceed</button>
+                                                    }
                                                 }
-                                                <div class="text-center" >
-                                                    @if (dTOTempSession != null && dTOTempSession.IsToken == true)
-                                                    {
-                                                        <button type="button" class="btn btn-primary mt-2" id="btnTokenFetchDetails">Refresh To Fetch Token Details</button>
-                                                    }
-                                                    @if (dTOTempSession != null)
-                                                    {
-                                                        if (dTOTempSession.NewUser == true)
-                                                        {
-                                                            <button type="submit" class="btn btn-primary mt-2" onclick="return handleSubmit(event, true)">Proceed</button>
-                                                        }
-                                                        else
-                                                        {
-                                                            <button type="submit" class="btn btn-primary mt-2" onclick="return handleSubmit(event, false)">Proceed</button>
-                                                        }
-                                                    }
-                                                     <a class="btn btn-warning" href="/ApplicationStatus/AppStatus">Check Appl Status</a>
+                                                <a class="btn btn-warning" href="/ApplicationStatus/AppStatus">Check Appl Status</a>
+                                            </div>
+
+                                            @if (TempData["success"] != null)
+                                            {
+                                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                    <span class="text-success">@Html.Raw(@TempData["success"])</span>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                 </div>
-                                                
-                                                @if (TempData["success"] != null)
-                                                {
-                                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                                        <span class="text-success">@Html.Raw(@TempData["success"])</span>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                                    </div>
-                                                }
-                                                @if (TempData["error"] != null)
-                                                {
-                                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                        <span class="text-danger">@Html.Raw(@TempData["error"])</span>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                                    </div>
-                                                }
-                                              
-@*                                                 @if (dTOTempSession!=null)
+                                            }
+                                            @if (TempData["error"] != null)
+                                            {
+                                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                    <span class="text-danger">@Html.Raw(@TempData["error"])</span>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            }
+
+                                            @*                                                 @if (dTOTempSession!=null)
                                                 {
                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
                                                         <span class="text-info text-break">@Html.Raw(@m1)</span>
@@ -205,8 +133,7 @@
                                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
                                                 }  *@
-                                            </form>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -216,44 +143,22 @@
             </div>
         </div>
     </div>
-    <div id="loadingToken" class="loader">
-        <div class="loader-container">
-            <img src="/Images/load.gif" width="100">
-            <div>
-                <h4 style="margin-top: -20px;" id="tokenmess"></h4>
-                <span>Please wait. Read Token....... This may take few seconds.</span>
-            </div>
+</div>
+<div id="loadingToken" class="loader">
+    <div class="loader-container">
+        <img src="/Images/load.gif" width="100">
+        <div>
+            <h4 style="margin-top: -20px;" id="tokenmess"></h4>
+            <span>Please wait. Read Token....... This may take few seconds.</span>
         </div>
     </div>
-    <footer class="fixed-bottom">
-        <section class="page_copyright ls section_padding_25">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12 text-center">
-                        <div class="footer-content">
-                            @if (ViewBag.Footer != null)
-                            {
-                                @ViewBag.Footer
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </footer>
-    <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+</div>
+@section Scripts {
     <script asp-src-include="~/developerjs/KeyConstants.js"></script>
     <script asp-src-include="~/developerjs/Token.js"></script>
     <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
     @* <script src="~/fonts/feather/feather.min.js"></script> *@
-    <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/js/aes.js"></script>
     <script asp-src-include="~/js/aesimpscript.js"></script>
     <script asp-src-include="~/developerjs/pagevalidation.js"></script>
-</body>
-</html>
-
-@section Scripts{
 }

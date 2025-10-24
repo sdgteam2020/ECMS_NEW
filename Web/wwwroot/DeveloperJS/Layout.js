@@ -171,7 +171,7 @@ $(function () {
         appendTo: '#suggesstion-box'
     });
 
-    GetNotification(1, 1);
+    //GetNotification(1, 1);
 
     fetch('/Home/VisitorStats?_=' + new Date().getTime()) // cache busting
         .then(response => {
