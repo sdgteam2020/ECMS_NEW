@@ -837,7 +837,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The notification data to be saved.</param>
         /// <returns>A JSON response indicating success (1) or failure (0).</returns>
-        public async Task<IActionResult> SaveNotification(MTrnNotification Data)
+        public async Task<IActionResult> SaveNotification(DTOTrnNotificationRequest Data)
         {
             #region Old code
             //try
@@ -878,11 +878,19 @@ namespace Web.Controllers
                 int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 Data.SentAspNetUsersId = userId;
 
-                // Update the previous notification data
-                await _INotificationBL.UpdatePrevious(Data);
+                if (Data.StepId ==5) //Export
+                {
+                    // Update the previous notification data
+                    await _INotificationBL.UpdatePrevious(Data);
+                }
+                else
+                {
+                    // Update the previous notification data
+                    await _INotificationBL.UpdatePrevious(Data);
 
-                // Add the new notification
-                await _INotificationBL.Add(Data);
+                    // Add the new notification
+                    await _INotificationBL.AddNotification(Data);
+                }
 
                 // Return a success response
                 return Json(1);
@@ -900,13 +908,13 @@ namespace Web.Controllers
         /// <param name="TypeId">The notification type ID used to filter the notifications.</param>
         /// <param name="applyForId">The applyForId used to filter the notifications.</param>
         /// <returns>A JSON response containing a list of notifications or null if no notifications are found.</returns>
-        public async Task<IActionResult> GetNotification(int TypeId, int applyForId)
+        public async Task<IActionResult> GetNotification()
         {
             // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             // Fetch the notifications based on the user ID, TypeId, and applyForId
-            List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotification(userId, TypeId, applyForId);
+            List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotification(userId);
             string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
             // Return the notifications as a JSON response, or null if no notifications are found

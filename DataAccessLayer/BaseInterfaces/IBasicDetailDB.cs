@@ -3,12 +3,6 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.BaseInterfaces
 {
@@ -46,7 +40,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<ICardHistoryResponse>?> ICardHistoryByRequestId(int RequestId);
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);
         public Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId,int Type, int applyForId);
-        public Task<List<DTONotificationResponse>?> GetNotification(int UserId, int Type,int applyForId);
+        public Task<List<DTONotificationResponse>?> GetNotification(int UserId);
         public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId);
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);

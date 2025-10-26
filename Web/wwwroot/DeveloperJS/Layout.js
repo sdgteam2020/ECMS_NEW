@@ -171,7 +171,7 @@ $(function () {
         appendTo: '#suggesstion-box'
     });
 
-    //GetNotification(1, 1);
+    GetNotification();
 
     fetch('/Home/VisitorStats?_=' + new Date().getTime()) // cache busting
         .then(response => {
@@ -263,16 +263,16 @@ function Getaspntokenarmyno() {
         }
     });
 }
-function SaveNotification(NotificationTypeId, DisplayId, ReciverAspNetUsersId, RequestId) {
+function SaveNotification(StepId, DisplayId, ReciverAspNetUsersId, RequestIds) {
     var listItem = "";
     var userdata =
     {
-        "NotificationTypeId": NotificationTypeId,
+        "StepId": StepId,
         "Read": false,
         "DisplayId": DisplayId,
         "ReciverAspNetUsersId": ReciverAspNetUsersId,
         "Url": "",
-        "RequestId": RequestId
+        "RequestIds": RequestIds
     };
     $.ajax({
         url: '/Home/SaveNotification',
@@ -293,16 +293,10 @@ function SaveNotification(NotificationTypeId, DisplayId, ReciverAspNetUsersId, R
     });
 }
 
-function GetNotification(NotificationTypeId, ApplyForId) {
-    var userdata =
-    {
-        "TypeId": NotificationTypeId,
-        "applyForId": ApplyForId
-    };
+function GetNotification() {
     $.ajax({
         url: '/Home/GetNotification',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
 
         success: function (response) {

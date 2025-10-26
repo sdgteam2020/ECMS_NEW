@@ -1,6 +1,9 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
+using System.Data;
 using static Dapper.SqlMapper;
 
 namespace DataAccessLayer
@@ -43,19 +46,53 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="Data">The notification data containing RequestId.</param>
         /// <returns>Returns a boolean indicating if the operation was successful.</returns>
-        public async Task<bool> UpdatePrevious(MTrnNotification Data)
+        public async Task<bool> UpdatePrevious(DTOTrnNotificationRequest Data)
         {
 
             string query = "UPDATE TrnNotification set [Read]=1 where RequestId=@RequestId";
 
             using (var connection = _contextDP.CreateConnection())
             {
-              
-                int RequestId = Data.RequestId;
-                var ret = await connection.QueryAsync<string>(query, new { RequestId });
-
+                foreach (var requestId in Data.RequestIds)
+                {
+                    int RequestId = requestId;
+                    var ret = await connection.QueryAsync<string>(query, new { RequestId });
+                }
                 return true;
             }
+        }
+        public async Task<bool> AddNotification(DTOTrnNotificationRequest Data)
+        {
+            try
+            {
+                string query = @"INSERT INTO TrnNotification(Read,DisplayId,SentAspNetUsersId,ReciverAspNetUsersId,Url,RequestId,StepId)
+                             VALUES(@Read,@DisplayId,@SentAspNetUsersId,@ReciverAspNetUsersId,@Url,@RequestId,@StepId)";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    foreach (var requestId in Data.RequestIds)
+                    {
+                        int RequestId = requestId;
+
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@Read", Data.Read, DbType.Boolean, ParameterDirection.Input);
+                        parameters.Add("@DisplayId", Data.DisplayId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@SentAspNetUsersId", Data.SentAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@ReciverAspNetUsersId", Data.ReciverAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@Url", Data.Url, DbType.String, ParameterDirection.Input);
+                        parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@RequestId", Data.StepId, DbType.Byte, ParameterDirection.Input);
+
+                        await connection.QuerySingleAsync(query, parameters);
+                    }
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
     }
 }

@@ -2,6 +2,7 @@
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 
 namespace BusinessLogicsLayer.BdeCate
 {
@@ -16,7 +17,7 @@ namespace BusinessLogicsLayer.BdeCate
             _iNotificationDB = iNotificationDB;
         }
 
-        public async Task<bool> UpdatePrevious(MTrnNotification Data)
+        public async Task<bool> UpdatePrevious(DTOTrnNotificationRequest Data)
         {
             return await _iNotificationDB.UpdatePrevious(Data);
         }
@@ -24,6 +25,10 @@ namespace BusinessLogicsLayer.BdeCate
         public async Task<bool> UpdateRead(MTrnNotification Data)
         {
             return await _iNotificationDB.UpdateRead(Data);
+        }
+        public async Task<bool> AddNotification(DTOTrnNotificationRequest Data)
+        {
+            return await _iNotificationDB.AddNotification(Data);
         }
     }
 }
