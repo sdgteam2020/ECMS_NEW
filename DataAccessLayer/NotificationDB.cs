@@ -48,24 +48,30 @@ namespace DataAccessLayer
         /// <returns>Returns a boolean indicating if the operation was successful.</returns>
         public async Task<bool> UpdatePrevious(DTOTrnNotificationRequest Data)
         {
-
-            string query = "UPDATE TrnNotification set [Read]=1 where RequestId=@RequestId";
-
-            using (var connection = _contextDP.CreateConnection())
+            try
             {
-                foreach (var requestId in Data.RequestIds)
+                string query = "UPDATE TrnNotification set [Read]=1 where RequestId=@RequestId";
+
+                using (var connection = _contextDP.CreateConnection())
                 {
-                    int RequestId = requestId;
-                    var ret = await connection.QueryAsync<string>(query, new { RequestId });
+                    foreach (var requestId in Data.RequestIds)
+                    {
+                        int RequestId = requestId;
+                        await connection.ExecuteAsync(query, new { RequestId });
+                    }
+                    return true;
                 }
-                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
         public async Task<bool> AddNotification(DTOTrnNotificationRequest Data)
         {
             try
             {
-                string query = @"INSERT INTO TrnNotification(Read,DisplayId,SentAspNetUsersId,ReciverAspNetUsersId,Url,RequestId,StepId)
+                string query = @"INSERT INTO TrnNotification([Read],DisplayId,SentAspNetUsersId,ReciverAspNetUsersId,Url,RequestId,StepId)
                              VALUES(@Read,@DisplayId,@SentAspNetUsersId,@ReciverAspNetUsersId,@Url,@RequestId,@StepId)";
 
                 using (var connection = _contextDP.CreateConnection())
@@ -81,9 +87,9 @@ namespace DataAccessLayer
                         parameters.Add("@ReciverAspNetUsersId", Data.ReciverAspNetUsersId, DbType.Int32, ParameterDirection.Input);
                         parameters.Add("@Url", Data.Url, DbType.String, ParameterDirection.Input);
                         parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
-                        parameters.Add("@RequestId", Data.StepId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@StepId", Data.StepId, DbType.Byte, ParameterDirection.Input);
 
-                        await connection.QuerySingleAsync(query, parameters);
+                        await connection.ExecuteAsync(query, parameters);
                     }
                     return true;
                 }
