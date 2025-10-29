@@ -3,6 +3,7 @@ using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using Microsoft.Extensions.Logging;
 using System.Data;
 using static Dapper.SqlMapper;
 
@@ -12,10 +13,12 @@ namespace DataAccessLayer
     {
         protected new readonly ApplicationDbContext _context;
         private readonly DapperContext _contextDP;
-        public NotificationDB(ApplicationDbContext context, DapperContext contextDP) : base(context)
+        private readonly ILogger<NotificationDB> _logger;
+        public NotificationDB(ApplicationDbContext context, DapperContext contextDP, ILogger<NotificationDB> logger) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
+            _logger = logger;
         }
 
         /// <summary>
@@ -64,15 +67,16 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(1001, ex, "NotificationDB->UpdatePrevious");
+                return false;
             }
         }
         public async Task<bool> AddNotification(DTOTrnNotificationRequest Data)
         {
             try
             {
-                string query = @"INSERT INTO TrnNotification([Read],DisplayId,SentAspNetUsersId,ReciverAspNetUsersId,Url,RequestId,StepId)
-                             VALUES(@Read,@DisplayId,@SentAspNetUsersId,@ReciverAspNetUsersId,@Url,@RequestId,@StepId)";
+                string query = @"INSERT INTO TrnNotification([Read],DisplayId,SentAspNetUsersId,ReciverAspNetUsersId,Url,RequestId,StepId,UpdatedOn)
+                             VALUES(@Read,@DisplayId,@SentAspNetUsersId,@ReciverAspNetUsersId,@Url,@RequestId,@StepId,@UpdatedOn)";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -88,6 +92,7 @@ namespace DataAccessLayer
                         parameters.Add("@Url", Data.Url, DbType.String, ParameterDirection.Input);
                         parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
                         parameters.Add("@StepId", Data.StepId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
 
                         await connection.ExecuteAsync(query, parameters);
                     }
@@ -96,7 +101,8 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(1001, ex, "NotificationDB->AddNotification");
+                return false;
             }
 
         }

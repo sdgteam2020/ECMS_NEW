@@ -4006,7 +4006,7 @@ namespace DataAccessLayer
                             inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId
                             inner join MRank ranks on ranks.RankId=bas.RankId
                             inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId
-                            where noti.ReciverAspNetUsersId=@UserId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
+                            where noti.ReciverAspNetUsersId=@UserId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId order by noti.UpdatedOn";
             try
             {
                 using (var connection = _contextDP.CreateConnection())

@@ -637,11 +637,7 @@ function SaveInternalFwd() {
             if (response == true) {
                 toastr.success('Fwd successfully.');
 
-                if (applyfor == 1) {
-                    SaveNotification(3, 3, $('#ddlfwdInternaloffrs').val(), globalThis.selectedIds)
-                } else {
-                    SaveNotification(3, 13, $('#ddlfwdInternaloffrs').val(), globalThis.selectedIds)
-                }
+                SaveNotification(3, 13, $('#ddlfwdInternaloffrs').val(), globalThis.selectedIds)
 
                 $("#FwdInternalRecord").modal('hide');
                 setTimeout(function () {
@@ -1082,10 +1078,11 @@ function UpdateStepCounter(stepId, spnRequestId, Counter, Flag) {
 
 
 function DataExport() {
+    const ispn = Number($('#Isspnjcoor').text().trim()); // -> 1
 
     var userdata = {
         "Ids": globalThis.selectedIds,
-        "IsJco": $("#Isspnjcoor").html(),
+        "IsJco": ispn,
         "DataExportType": DataExportType
 
     };
@@ -1102,7 +1099,15 @@ function DataExport() {
                         text: "Data Not Export Internal Server Error"
                     });
                 } else {
+
+                    if (ispn === 1) {
+                        SaveNotification(5, 5, null, globalThis.selectedIds)
+                    } else {
+                        SaveNotification(5, 15, null, globalThis.selectedIds)
+                    }
+
                     let responseHtml = "Data Exported Successfully!";
+                    
                     Swal.fire({
                         title: responseHtml,
                         text: "Please download Zip file.",

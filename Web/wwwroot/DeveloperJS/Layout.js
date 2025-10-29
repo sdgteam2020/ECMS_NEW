@@ -302,7 +302,13 @@ function GetNotification() {
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response.length > 0) {
-                    $("#Totalnotification").html(response.length);
+                    if (response.length > 99) {
+                        $("#Totalnotification").html("99+");
+                    }
+                    else {
+                        $("#Totalnotification").html(response.length);
+                    }
+                   
                     var list = "";
                     for (var i = 0; i < response.length; i++) {
                         if ($("." + response[i].Spanname).html() == "")

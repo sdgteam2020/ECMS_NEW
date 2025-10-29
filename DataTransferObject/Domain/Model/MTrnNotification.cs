@@ -34,6 +34,9 @@ namespace DataTransferObject.Domain.Model
         public MTrnICardRequest? MTrnICardRequest { get; set; }
         public string? Url { get; set; }
 
-
+        [Required]
+        [DataType(DataType.Date)]
+        [Column(TypeName = "datetime")]
+        public DateTime UpdatedOn { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
     }
 }

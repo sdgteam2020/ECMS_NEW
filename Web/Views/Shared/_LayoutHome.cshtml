@@ -17,7 +17,7 @@
     <title> E-ISAC </title>
         <!-- Development: Load normal JS -->
     <environment include="Development">
-@*         <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" /> *@
+        <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
         <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
         <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
         <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" />
@@ -30,7 +30,8 @@
         <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
         
 @*         <link asp-href-include="~/css/cssStyle.css" rel="stylesheet" /> *@
-
+        <script asp-src-include="~/fonts/feather/feather.min.js"></script>
+        <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
         <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
@@ -40,7 +41,7 @@
     
     <!-- Production: Load minified JS -->
     <environment exclude="Development">
-@*         <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" /> *@
+        <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
         <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
         <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
         <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" />
@@ -52,7 +53,8 @@
         <link asp-href-include="~/css/typography.css" rel="stylesheet" />
        
 @*         <link asp-href-include="~/css/cssstyle.min.css" rel="stylesheet" /> *@
-
+        <script asp-src-include="~/fonts/feather/feather.min.js"></script>
+        <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
         <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
@@ -201,108 +203,9 @@
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
     <div class="d-none" id="spnPostedOffrsfornoti"></div>
-    @* <span id="spnroleId" class="d-none">@User.Claims.First(c => c.Type.Contains("roleId")).Value</span>
-    <span id="spnarmyno" class="d-none">@User.Claims.First(c => c.Type.Contains("armyNo")).Value</span>
-    <span id="spnsunno" class="d-none1">@User.Claims.First(c => c.Type.Contains("SUSNo")).Value</span> *@
 
-    <!-- partial:partials/_navbar.html -->
-    <nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
-         <a class="navbar-brand" href="#"><img src="~/Images/dgis_ico.png"></a>
-        <div class="ml-4 text-center tagline"><img src="~/Images/EISAC.png" width="63%"></div>
-        @* <div class="text-start"><img src="~/Images/ia.png" onerror="this.style.display='none';" alt="Image Not Found" height="115px" class="p-3" /></div> *@
-       @*  <div class="text-center tagline"><img src="~/Images/EISAC.png" width="100%" height="100px"></div> *@
-        @* <span class="tagline ml-4 text-center"> Enterprise - Independent Active Secure Access Card (E-IASAC)</span> *@
-       @*  <a class="navbar-brand" href="#"><img src="~/Images/EISAC.png"></a> *@
+    <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" />
 
-        @*    <span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
-        <ul class="navbar-nav align-items-center ml-auto">
-            <!--<li class="mr-3">-->
-            @*<a class="p-2 f13 mr-1 rounded-pill shadow-sm mr-1">
-            <label id="" class="mb-0">Academic Session : </label>
-            <label id="session_month" class="text-pink font-weight-500 mb-0"></label>
-            <label id="session_year" class="text-pink font-weight-500 mb-0"></label>
-            </a>
-            <a class="p-2 f13 mr-1 rounded-pill shadow-sm">
-            <label id="" class="mb-0">Supervisor Session : </label>
-            <label id="session_monthSup" class="text-pink font-weight-500 mb-0"></label>
-            <label id="session_yearSup" class="text-pink font-weight-500 mb-0"></label>
-            </a>
-            <a class="p-2 f13 rounded-pill shadow-sm">
-            <label id="" class="mb-0">Staff Session : </label>
-            <label id="session_monthStaff" class="text-pink font-weight-500 mb-0"></label>
-            <label id="session_yearStaff" class="text-pink font-weight-500 mb-0"></label>
-            </a>*@
-
-            <!--<span id="session_yearID" class="d-none"></span>
-                <span id="session_monthID" class="d-none"></span>
-            </li>-->
-
-            <li class="nav-item dropdown no-caret mr-2 dropdown-user">
-                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="d-flex justify-content-end">
-                        <div class="mr-2">
-                            <div class="text-white ProfileName font-weight-500">WELCOME</div>
-                            <div class="text-white ProfileName font-weight-500"><span class="text-white ProfileName font-weight-500" id="aspntokenarmyno"></span></div>
-                            <div class="text-white ProfileName font-weight-500"><span class="text-white ProfileName font-weight-500 mr-2" id="ProfileRankName"></span><span id="ProfileName" class="font-weight-500 text-white ProfileName"></span></div>
-                        </div>
-                        <img class="" src="/Images/user4.png" />
-                    </div>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
-
-                    <h6 class="dropdown-header d-flex align-items-center">
-                        <img class="dropdown-user-img" src="/Images/user4.png" />
-                        <div class="dropdown-user-details">
-                            <div class="dropdown-user-details-name">
-                                @user.UserName
-                            </div>
-                    </h6>
-                    <a class="dropdown-item" href="/UserProfile/Profile">
-                        <i class="ti-settings text-primary"></i>
-                        Edit Profile
-                        <span class="d-none" id="aspndomainUnitID"></span>
-                    </a>
-
-                    @foreach (var item in RoleList)
-                    {
-                        @if (RoleName == item)
-                        {
-                            <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
-                                <button type="submit" class="dropdown-item disabled" style="opacity: 0.6;cursor: not-allowed;color:blue;"><i class="ti-settings text-primary"></i><span class="fw-bold">@(user.UserName + " (" + item + ")")</span></button>
-                            </form>
-                        }
-                        else
-                        {
-                            <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
-                                <button type="submit" class="dropdown-item"><i class="ti-settings text-primary"></i><span>@(user.UserName + " (" + item + ")")</span></button>
-                            </form>
-                        }
-                    }
-                    @if (ClaimsList.Count > 0)
-                    {
-                        <div class="text-center fw-bold">Allowed feature</div>
-                        <ul>
-                            @foreach (var item in ClaimsList)
-                            {
-                                <li><div class="dropdown-item">@item.Type</div></li>
-                            }
-                        </ul>
-                    }
-                    <div class="dropdown-divider"></div>
-                    @*  <a class="dropdown-item" href="#" id="btnChangePassword">
-                    <div class="dropdown-item-icon"><i class="fa fa-key" aria-hidden="true"></i></div>
-
-                    </a> *@
-                    @*<div class="dropdown-divider"></div>*@
-                    <a class="dropdown-item active" style="background-color: #0d6efd" href="/Account/Logout" id="btnLogout">
-                        <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
-                        Logout
-                    </a>
-                </div>
-            </li>
-        </ul>
-        <div class="text-start ml-5"><img src="~/Images/dgislogo.png" onerror="this.style.display='none';" alt="Image Not Found" height="115px" class="p-2" /></div>
-    </nav>
     <!-- partial -->
     <div class="page-body-wrapper">
 

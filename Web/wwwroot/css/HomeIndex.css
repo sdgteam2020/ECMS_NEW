@@ -63,17 +63,6 @@
     z-index: 5;
 }
 
-.fa {
-    display: inline-block;
-    line-height: 50px;
-    background-color: rgba(0,0,0, .3);
-    width: 50px;
-    height: 56px;
-    color: white;
-    text-align: center;
-    vertical-align: bottom;
-}
-
 #dir-control-left {
     left: 0;
     margin-left: 30px;

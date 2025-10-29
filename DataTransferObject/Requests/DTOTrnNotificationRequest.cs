@@ -21,8 +21,9 @@ namespace DataTransferObject.Requests
         public int SentAspNetUsersId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "SentAspNetUsersId is number.")]
-        public int ReciverAspNetUsersId { get; set; }
+        public int? ReciverAspNetUsersId { get; set; }
         public required int[] RequestIds { get; set; }
         public string? Url { get; set; }
+        public DateTime UpdatedOn { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
     }
 }
