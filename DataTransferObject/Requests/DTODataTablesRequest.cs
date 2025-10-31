@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DataTransferObject.Requests
 {
@@ -113,5 +108,10 @@ namespace DataTransferObject.Requests
         public string? SearchText { get; set; }
         public bool AllChecked { get; set; } = false;
         public bool SearchTextChanged { get; set; } = false;
+    }
+    public class DTODataTablesRequestForNotification : DTODataTablesRequest
+    {
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "SentAspNetUsersId is number.")]
+        public int ReciverAspNetUsersId { get; set; }
     }
 }

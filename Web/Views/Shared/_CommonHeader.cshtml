@@ -1,4 +1,4 @@
-﻿<div class="row logoheader">
+﻿@* <div class="row logoheader">
     <div class="d-flex justify-content-between align-items-center mb-1">
         <div>
             <img src="~/Images/dgis_ico.png" onerror="this.style.display='none';" alt="Image Not Found" height="115px" />
@@ -10,4 +10,336 @@
             <img src="~/Images/dgislogo.png" onerror="this.style.display='none';" alt="Image Not Found" height="115px" />
         </div>
     </div>
-</div>
+</div> *@
+
+<! Style 2-->
+
+<style>
+    /* ======= Base Header Style ======= */
+    .eisac-header {
+        background: linear-gradient(90deg, #00b4ff 0%, #0076e3 50%, #005fba 100%);
+        height: 120px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* ======= Layout Container ======= */
+    .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 95%;
+        max-width: 1920px;
+        height: 100%;
+        padding: 0 20px;
+    }
+
+    /* ======= Logos ======= */
+    .header-logo {
+        flex: 0 0 auto;
+        text-align: center;
+    }
+
+    .logo-img {
+        height: 95px;
+        width: auto;
+        transition: transform 0.3s ease;
+    }
+
+        .logo-img:hover {
+            transform: scale(1.08);
+        }
+
+    /* ======= Title ======= */
+    .header-title {
+        text-align: center;
+        color: white;
+        flex: 1;
+    }
+
+    /* STRONGER, DARKER, MORE LEGIBLE */
+    .title-text {
+        font-size: 34px;
+        font-weight: 900;
+        font-family: "Cinzel", "Trajan Pro", serif;
+        margin: 0;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        /* deeper gradient for contrast */
+        background: linear-gradient(to right, #2e7d32 0%, #c1120c 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        /* dark stroke + stacked shadows = crisp edges on any BG */
+        -webkit-text-stroke: 1px rgba(0, 0, 0, 0.35);
+        text-shadow: 0 2px 3px rgba(0,0,0,.35), /* depth */
+        -1px 0 0 rgba(0,0,0,.28), /* outline left  */
+        1px 0 0 rgba(0,0,0,.28), /* outline right */
+        0 -1px 0 rgba(0,0,0,.28), /* outline top   */
+        0 1px 0 rgba(0,0,0,.28); /* outline bottom */
+    }
+
+    /* subtitle a bit brighter, with subtle shadow */
+    .subtitle {
+        font-size: 15px;
+        color: #ffffff;
+        margin-top: 3px;
+        letter-spacing: 0.5px;
+        text-shadow: 0 1px 2px rgba(0,0,0,.35);
+        opacity: .95;
+    }
+
+    /* optional: bump size on large screens */
+    @@media (min-width: 1400px) {
+        .title-text
+
+    {
+        font-size: 38px;
+    }
+
+    }
+
+
+    /* ======= Underline ======= */
+    .title-underline {
+        width: 80px;
+        height: 3px;
+        background: white;
+        border-radius: 5px;
+        margin: 6px auto 0;
+        opacity: 0.8;
+    }
+
+    /* ======= Responsive ======= */
+    @@media (max-width: 992px) {
+        .title-text
+
+    {
+        font-size: 26px;
+    }
+
+    .logo-img {
+        height: 75px;
+    }
+
+    }
+
+    @@media (max-width: 768px) {
+        .header-container
+
+    {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .eisac-header {
+        height: auto;
+        padding: 10px 0;
+    }
+
+    .title-text {
+        font-size: 22px;
+    }
+
+    }
+</style>
+<header class="eisac-header">
+    <div class="header-container">
+        <!-- Left Logo -->
+        <div class="header-logo">
+            <img src="~/Images/dgis_ico.png" alt="Army Logo" class="logo-img" />
+        </div>
+
+        <!-- Center Title -->
+        <div class="header-title">
+            <h1 class="title-text">ENTERPRISE IA SECURE ACCESS CARD (E-ISAC)</h1>
+            <p class="subtitle">Secure Identity &amp; Access Portal</p>
+            <div class="title-underline"></div>
+        </div>
+
+        <!-- Right Logo -->
+        <div class="header-logo">
+            <img src="~/Images/dgislogo.png" alt="DGIS Logo" class="logo-img" />
+        </div>
+    </div>
+</header>
+
+
+<! Style 3-->
+@* <style>
+    /* Background: Navy glass gradient with glow */
+    .eisac-header {
+        background: radial-gradient(circle at 50% 20%, #0a192f 0%, #091629 40%, #08142b 100%);
+        border-bottom: 2px solid rgba(255,255,255,0.2);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+
+    .eisac-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        max-width: 1920px;
+        margin: 0 auto;
+        min-height: 120px;
+    }
+
+    /* Logos */
+    .brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 160px;
+    }
+
+    .brand-img {
+        height: 90px;
+        width: 90px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.08), transparent);
+        outline: 3px solid rgba(255,255,255,0.5);
+        box-shadow: 0 0 10px rgba(255,255,255,0.1);
+        transition: transform 0.2s ease, outline-color 0.2s ease;
+    }
+
+        .brand-img:hover {
+            transform: scale(1.05);
+            outline-color: #ffffff;
+        }
+
+    /* Center Section */
+    .center {
+        flex: 1;
+        text-align: center;
+    }
+
+    .title-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 0.6rem 1.2rem;
+        border-radius: 16px;
+        backdrop-filter: blur(8px);
+        box-shadow: inset 0 1px 6px rgba(255,255,255,0.2);
+    }
+
+    /* SVG Icon */
+    .eisac-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 auto;
+        filter: drop-shadow(0 0 4px rgba(0,188,255,0.6));
+    }
+
+    /* Title */
+    .title {
+        color: #eaf4ff;
+        text-transform: uppercase;
+        font-family: "Cinzel", "Trajan Pro", serif;
+        font-weight: 800;
+        font-size: clamp(22px, 2.3vw, 42px);
+        letter-spacing: 0.8px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+
+    /* Underline (glow + tricolor) */
+    .underline {
+        height: 3px;
+        width: 160px;
+        margin: 0.7rem auto 0;
+        border-radius: 10px;
+    }
+
+        .underline.tri {
+            background: linear-gradient(90deg, #ff671f 0%, #ffffff 50%, #046a38 100%);
+            box-shadow: 0 0 8px rgba(255,255,255,0.4);
+        }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .brand
+
+    {
+        width: 120px;
+    }
+
+    .brand-img {
+        height: 70px;
+        width: 70px;
+    }
+
+    .title {
+        font-size: clamp(18px, 2vw, 34px);
+    }
+
+    }
+    @@media (max-width: 768px) {
+        .eisac-wrap
+
+    {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .title-chip {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .eisac-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    }
+</style>
+
+<header class="eisac-header" role="banner" aria-label="E-ISAC header">
+    <div class="eisac-wrap">
+        <!-- Left Logo -->
+        <a class="brand" href="#">
+            <img src="~/Images/dgis_ico.png" alt="Army Emblem" class="brand-img">
+        </a>
+
+        <!-- Center -->
+        <div class="center">
+            <div class="title-chip">
+                <svg class="eisac-icon" viewBox="0 0 200 200" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#00BFFF" />
+                            <stop offset="100%" stop-color="#0076E3" />
+                        </linearGradient>
+                    </defs>
+                    <g fill="url(#blueGradient)">
+                        <circle cx="100" cy="45" r="20" />
+                        <circle cx="50" cy="65" r="18" />
+                        <circle cx="150" cy="65" r="18" />
+                        <path d="M40 115c0-18 20-28 30-28s30 10 30 28v15H40v-15z" />
+                        <path d="M100 130v-15c0-18 20-28 30-28s30 10 30 28v15h-60z" />
+                    </g>
+                    <path fill="url(#blueGradient)" d="M100 85l40 13v35c0 26-17 48-40 56-23-8-40-30-40-56v-35l40-13z" />
+                    <rect x="77" y="110" width="46" height="30" rx="3" fill="none" stroke="#fff" stroke-width="3" />
+                    <circle cx="90" cy="125" r="5" fill="#fff" />
+                    <line x1="100" y1="118" x2="116" y2="118" stroke="#fff" stroke-width="2" />
+                    <line x1="100" y1="125" x2="116" y2="125" stroke="#fff" stroke-width="2" />
+                    <line x1="100" y1="132" x2="116" y2="132" stroke="#fff" stroke-width="2" />
+                    <path d="M100 107 l5 -10 h-10 z" fill="#fff" />
+                </svg>
+                <h1 class="title">ENTERPRISE IA SECURE ACCESS CARD (E-ISAC)</h1>
+            </div>
+            <div class="underline tri"></div>
+        </div>
+
+        <!-- Right Logo -->
+        <a class="brand" href="#">
+            <img src="~/Images/dgislogo.png" alt="DGIS Emblem" class="brand-img">
+        </a>
+    </div>
+</header> *@

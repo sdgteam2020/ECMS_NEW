@@ -300,44 +300,68 @@ function GetNotification() {
         type: 'POST',
 
         success: function (response) {
-            if (response != "null" && response != null) {
-                if (response.length > 0) {
-                    if (response.length > 99) {
-                        $("#Totalnotification").html("99+");
-                    }
-                    else {
-                        $("#Totalnotification").html(response.length);
-                    }
-                   
-                    var list = "";
-                    for (var i = 0; i < response.length; i++) {
-                        if ($("." + response[i].Spanname).html() == "")
-                            $("." + response[i].Spanname).html(0);
 
-                        $("." + response[i].Spanname).html(parseInt($("." + response[i].Spanname).html()) + 1);
+            // Clear and handle empty/null safely
+            $(".preview-list").html("");
 
-                        list += `<div class="border border-1 p-1 mt-2">
-                                    <a class="dropdown-item preview-item" href="${response[i].Url}">
+            if (response && response.TotalCount > 0) {
+
+                if (response.TotalCount > 99) {
+                    $("#Totalnotification").html("99+");
+                }
+                else {
+                    $("#Totalnotification").html(response.TotalCount);
+                }
+
+                // Header
+
+                var list = `<h6 class="dropdown-header text-uppercase text-muted fw-bold">Pending Action</h6>`;
+
+                // Items
+
+                for (var i = 0; i < response.Items.length; i++) {
+                    if ($("." + response.Items[i].Spanname).html() == "")
+                        $("." + response.Items[i].Spanname).html(0);
+
+                    $("." + response.Items[i].Spanname).html(parseInt($("." + response.Items[i].Spanname).html()) + 1);
+
+                    list += `<div class="border border-1 p-1 mt-2">
+                                    <a class="dropdown-item preview-item" href="${response.Items[i].Url}">
                                         <div class="preview-thumbnail">
                                             <div class="preview-icon p-2">
                                                 <i class="ti-bell1 mx-0"></i>
-                                                <img id="notificationimg" src="${response[i].ExistingPhotoInBase64}" alt="profile" width="65px">
+                                                <img id="notificationimg" src="${response.Items[i].ExistingPhotoInBase64}" alt="profile" width="65px">
                                             </div>
                                         </div>
                                         <div class="preview-item-content">
-                                            <h6 class="preview-subject font-weight-normal"> Appl No: ${response[i].ApplId} <br> Applicant Name:-${response[i].RankAbbreviation}  ${response[i].LName != null ? response[i].FName + ' ' + response[i].LName : response[i].FName} (${response[i].ServiceNo}) <br> ${response[i].Message}</h6>
+                                            <h6 class="preview-subject font-weight-normal">
+                                                Appl No: ${response.Items[i].ApplId} <br>
+                                                Applicant Name:-${response.Items[i].RankAbbreviation}  ${response.Items[i].LName != null ? response.Items[i].FName + ' ' + response.Items[i].LName : response.Items[i].FName} (${response.Items[i].ServiceNo}) <br>
+                                                ${response.Items[i].Message}</h6>
                                             <p class="font-weight-light small-text mb-0 text-muted">
                                             </p>
                                         </div>
                                     </a>
                                 </div>
                                 `;
-                    }
-                    $(".preview-list").append(list);
                 }
+                // "View more" footer only if server says more exist than shown
+                var remaining = (response.TotalCount || 0) - ((response.Items || []).length);
+                if (remaining > 0) {
+                    list += `
+                    <div class="dropdown-footer text-uppercase text-center p-2">
+                        <a href="/Home/Notification">View ${remaining} more notification${remaining > 1 ? 's' : ''}</a>
+                    </div>`;
+                }
+                $(".preview-list").append(list);
 
-            } else {
-
+            }
+            else {
+                $("#Totalnotification").html("0");
+                $(".preview-list").html(`
+                        <h6 class="dropdown-header text-uppercase text-muted fw-bold">Pending Action</h6>
+                        <div class="text-center p-2 small text-muted">No new notifications</div>
+                    `);
             }
         }
     });

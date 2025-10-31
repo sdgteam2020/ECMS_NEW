@@ -1,0 +1,58 @@
+﻿<link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
+<style>
+    .modal.left .modal-dialog, .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 700px;
+        height: 100%;
+        text-align: left;
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+</style>
+<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div><a href="/Home/Index" class="mr-2">Home</a> > Notification
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        @ViewBag.Title
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="min-height:150px;">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata_Notification">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div><!-- Row End -->
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-src-include="~/developerjs/Notification.js"></script>
+    <partial name="~/Views/Shared/_DataTableJS.cshtml" />
+}

@@ -3,6 +3,7 @@ using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.BdeCate
 {
@@ -29,6 +30,10 @@ namespace BusinessLogicsLayer.BdeCate
         public async Task<bool> AddNotification(DTOTrnNotificationRequest Data)
         {
             return await _iNotificationDB.AddNotification(Data);
+        }
+        public async Task<DTODataTablesResponse<DTONotificationResponse>> GetAllNotificationData(DTODataTablesRequestForNotification dTO)
+        {
+            return await _iNotificationDB.GetAllNotificationData(dTO);
         }
     }
 }

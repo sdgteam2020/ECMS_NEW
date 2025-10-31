@@ -16,12 +16,10 @@ using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting.Internal;
 using System.Data;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
-using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
 
@@ -111,6 +109,40 @@ namespace Web.Controllers
         {
             // Return the ContactUs view
             return View();
+        }
+        public IActionResult Notification()
+        {
+            return View();
+        }
+        public async Task<IActionResult> GetAllNotificationData([FromBody] DTODataTablesRequestForNotification dTORecord)
+        {
+            // Retrieve current userId from claims and assign it into the DTO
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTORecord.ReciverAspNetUsersId = userId;
+            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+            try
+            {
+                DTODataTablesResponse<DTONotificationResponse> dTODataTablesResponse = new DTODataTablesResponse<DTONotificationResponse>();
+
+
+                dTODataTablesResponse = await _INotificationBL.GetAllNotificationData(dTORecord);
+                foreach (var item in dTODataTablesResponse.data)
+                {
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", item.PhotoImagePath);
+
+                    if (System.IO.File.Exists(sourcePathPhoto))
+                    {
+                        item.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    }
+                }
+                return Json(dTODataTablesResponse);
+            }
+            catch (Exception ex)
+            {
+                // Log exception with event id 1001 and return 400 Bad Request
+                _logger.LogError(1001, ex, "Home->GetAllNotificationData");
+                return BadRequest(new { message = "Internal Server Error" });
+            }
         }
 
         /// <summary>
@@ -914,13 +946,13 @@ namespace Web.Controllers
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             // Fetch the notifications based on the user ID, TypeId, and applyForId
-            List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotification(userId);
+            DTONotificationResult dTONotificationResponses = await _basicDetailBL.GetNotification(userId);
             string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
             // Return the notifications as a JSON response, or null if no notifications are found
-            if (dTONotificationResponses != null)
+            if (dTONotificationResponses.Items != null)
             {
-                foreach (var basicDetailUpdVM in dTONotificationResponses)
+                foreach (var basicDetailUpdVM in dTONotificationResponses.Items)
                 {
                     // Load existing photo and signature if files exist
 
@@ -936,7 +968,7 @@ namespace Web.Controllers
             }
             else
             {
-                return Json(null);
+                return Json(dTONotificationResponses);
             }
         }
 

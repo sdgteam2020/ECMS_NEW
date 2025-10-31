@@ -156,9 +156,9 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.GetTaskCountICardRequest(UserId, Type, applyForId);
         }
 
-        public Task<List<DTONotificationResponse>?> GetNotification(int UserId)
+        public async Task<DTONotificationResult> GetNotification(int UserId)
         {
-            return _iBasicDetailDB.GetNotification(UserId);
+            return await _iBasicDetailDB.GetNotification(UserId);
         }
 
         public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId)

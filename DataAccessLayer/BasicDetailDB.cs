@@ -10,7 +10,6 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -3972,7 +3971,7 @@ namespace DataAccessLayer
         /// Throws an exception if an error occurs during the execution of the SQL query or when processing the results. 
         /// The exception is logged for debugging purposes.
         /// </exception>
-        public async Task<List<DTONotificationResponse>?> GetNotification(int UserId)
+        public async Task<DTONotificationResult> GetNotification(int UserId)
         {
             #region Old Code
             //string query = @"select tre.RequestId as ApplId,dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,dis.Url  from TrnNotification noti
@@ -3998,27 +3997,44 @@ namespace DataAccessLayer
             //    return null;
             //}
             #endregion
-            string query = @"select tre.RequestId as ApplId,dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,dis.Url  from TrnNotification noti
-                            inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
-                            inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId
-                            inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId 
-                            inner join TrnICardRequest tre on tre.RequestId = noti.RequestId 
-                            inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId
-                            inner join MRank ranks on ranks.RankId=bas.RankId
-                            inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId
-                            where noti.ReciverAspNetUsersId=@UserId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId order by noti.UpdatedOn";
+            string selectFields = @"select TOP 5 tre.RequestId as ApplId,dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,dis.Url";
+            string fromJoinClause = @"from TrnNotification noti
+                                    inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
+                                    inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId
+                                    inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId 
+                                    inner join TrnICardRequest tre on tre.RequestId = noti.RequestId 
+                                    inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId
+                                    inner join MRank ranks on ranks.RankId=bas.RankId
+                                    inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId";
+            string whereClause = @"where noti.ReciverAspNetUsersId=@UserId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
+
+            string sql = $@" {selectFields} {fromJoinClause} {whereClause} order by noti.UpdatedOn
+                          SELECT COUNT(1) from TrnNotification noti {whereClause}";
+
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId });
-                    return ret.ToList();
+                    using var grid = await connection.QueryMultipleAsync(sql, new { UserId = UserId });
+
+                    var items = (await grid.ReadAsync<DTONotificationResponse>()).ToList();
+                    var total = await grid.ReadSingleAsync<int>();
+
+                    return new DTONotificationResult
+                    {
+                        Items = items,
+                        TotalCount = total
+                    };
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->GetNotification");
-                return null;
+                return new DTONotificationResult
+                {
+                    Items = new List<DTONotificationResponse>(),
+                    TotalCount = 0
+                };
             }
         }
 

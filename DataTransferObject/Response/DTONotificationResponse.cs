@@ -1,7 +1,8 @@
 ﻿namespace DataTransferObject.Response
 {
     public class DTONotificationResponse
-    { 
+    {
+        public int TotalFilteredRecords { get; set; }
         public int DisplayId { get; set; }
         public string Spanname { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
@@ -14,6 +15,11 @@
         public string ExistingPhotoInBase64 { get; set; } = string.Empty;
         public string ApplId { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
-
+        public DateTime UpdatedOn { get; set; }
+    }
+    public class DTONotificationResult
+    {
+        public int TotalCount { get; set; }
+        public List<DTONotificationResponse> Items { get; set; } = new();
     }
 }
