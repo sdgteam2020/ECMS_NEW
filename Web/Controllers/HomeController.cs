@@ -14,6 +14,7 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -126,15 +127,15 @@ namespace Web.Controllers
 
 
                 dTODataTablesResponse = await _INotificationBL.GetAllNotificationData(dTORecord);
-                foreach (var item in dTODataTablesResponse.data)
-                {
-                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", item.PhotoImagePath);
+                //foreach (var item in dTODataTablesResponse.data)
+                //{
+                //    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", item.PhotoImagePath);
 
-                    if (System.IO.File.Exists(sourcePathPhoto))
-                    {
-                        item.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-                    }
-                }
+                //    if (System.IO.File.Exists(sourcePathPhoto))
+                //    {
+                //        item.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                //    }
+                //}
                 return Json(dTODataTablesResponse);
             }
             catch (Exception ex)
@@ -960,7 +961,9 @@ namespace Web.Controllers
 
                     if (System.IO.File.Exists(sourcePathPhoto))
                     {
-                        basicDetailUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                        string resultB64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                        //basicDetailUpdVM.ExistingPhotoInBase64 = resultB64;
+                        basicDetailUpdVM.ExistingPhotoInBase64 = imageEncryptAndDecrypt.CompressBase64(resultB64, maxWidth: 65, jpegQuality: 10,true);
                     }
                 }
 

@@ -27,13 +27,30 @@
         position: relative;
         overflow: hidden;
     }
+    /* Center Section */
+    .center {
+        flex: 1;
+        text-align: center;
+    }
+
+    .title-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 0.6rem 1.2rem;
+        border-radius: 16px;
+        backdrop-filter: blur(8px);
+        box-shadow: inset 0 1px 6px rgba(255,255,255,0.2);
+    }
 
     /* ======= Layout Container ======= */
     .header-container {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 95%;
+        width: 100%;
         max-width: 1920px;
         height: 100%;
         padding: 0 20px;
@@ -73,7 +90,7 @@
         /* deeper gradient for contrast */
         background: linear-gradient(to right, #2e7d32 0%, #c1120c 100%);
         -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        -webkit-text-fill-color: #fff;
         /* dark stroke + stacked shadows = crisp edges on any BG */
         -webkit-text-stroke: 1px rgba(0, 0, 0, 0.35);
         text-shadow: 0 2px 3px rgba(0,0,0,.35), /* depth */
@@ -155,11 +172,17 @@
         </div>
 
         <!-- Center Title -->
-        <div class="header-title">
-            <h1 class="title-text">ENTERPRISE IA SECURE ACCESS CARD (E-ISAC)</h1>
-            <p class="subtitle">Secure Identity &amp; Access Portal</p>
-            <div class="title-underline"></div>
+        <div class="center">
+            <div class="title-chip">
+                <img src="~/Images/Header-Logo.png" alt="Army Logo" class="logo-img" />
+                <div class="header-title">
+                    <h1 class="title-text">ENTERPRISE IA SECURE ACCESS CARD (E-ISAC)</h1>
+                    <p class="subtitle">Secure Identity &amp; Access Portal</p>
+                    <div class="title-underline"></div>
+                </div>
+            </div>
         </div>
+
 
         <!-- Right Logo -->
         <div class="header-logo">
@@ -182,7 +205,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px 20px;
+        padding: 12px 0px;
         max-width: 1920px;
         margin: 0 auto;
         min-height: 120px;
@@ -201,7 +224,7 @@
         width: 90px;
         border-radius: 50%;
         background: radial-gradient(circle, rgba(255,255,255,0.08), transparent);
-        outline: 3px solid rgba(255,255,255,0.5);
+/*         outline: 3px solid rgba(255,255,255,0.5); */
         box-shadow: 0 0 10px rgba(255,255,255,0.1);
         transition: transform 0.2s ease, outline-color 0.2s ease;
     }
@@ -223,7 +246,7 @@
         gap: 10px;
         background: rgba(255,255,255,0.08);
         border: 1px solid rgba(255,255,255,0.2);
-        padding: 0.6rem 1.2rem;
+/*         padding: 0.6rem 1.2rem; */
         border-radius: 16px;
         backdrop-filter: blur(8px);
         box-shadow: inset 0 1px 6px rgba(255,255,255,0.2);

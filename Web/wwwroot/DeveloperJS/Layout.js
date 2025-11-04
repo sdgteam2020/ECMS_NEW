@@ -315,7 +315,7 @@ function GetNotification() {
 
                 // Header
 
-                var list = `<h6 class="dropdown-header text-uppercase text-muted fw-bold">Pending Action</h6>`;
+                var list = `<h6 class="dropdown-header text-muted fw-bold">Pending Action</h6>`;
 
                 // Items
 
@@ -337,7 +337,7 @@ function GetNotification() {
                                             <h6 class="preview-subject font-weight-normal">
                                                 Appl No: ${response.Items[i].ApplId} <br>
                                                 Applicant Name:-${response.Items[i].RankAbbreviation}  ${response.Items[i].LName != null ? response.Items[i].FName + ' ' + response.Items[i].LName : response.Items[i].FName} (${response.Items[i].ServiceNo}) <br>
-                                                ${response.Items[i].Message}</h6>
+                                                ${response.Items[i].Message} (${response.Items[i].DomainId})</h6>
                                             <p class="font-weight-light small-text mb-0 text-muted">
                                             </p>
                                         </div>

@@ -3997,7 +3997,7 @@ namespace DataAccessLayer
             //    return null;
             //}
             #endregion
-            string selectFields = @"select TOP 5 tre.RequestId as ApplId,dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,dis.Url";
+            string selectFields = @"select TOP 5 tre.RequestId as ApplId,dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,dis.Url,users.DomainId as DomainId";
             string fromJoinClause = @"from TrnNotification noti
                                     inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
                                     inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId

@@ -56,12 +56,11 @@ function BindData() {
                 }
             },
             {
-                title: "Image",
-                data: "ExistingPhotoInBase64",
-                name: "ExistingPhotoInBase64",
-                orderable: false, // Disable sorting for this column
-                render: function (data, type, row, meta) {
-                    return `<img id="notificationimg" src="${data}" alt="profile" width="65px">`;
+                title: "Date",
+                data: "UpdatedOn",
+                name: "UpdatedOn",
+                render: function (data, type, row) {
+                    return DateFormateddMMyyyyhhmmss(data);
                 }
             },
             {
@@ -94,11 +93,6 @@ function BindData() {
                     let fullName = `${row.RankAbbreviation || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
                     return (fullName);
                 }
-            },
-            {
-                title: "Date",
-                data: "UpdatedOn",
-                name: "UpdatedOn"
             },
             {
                 title: "Message",

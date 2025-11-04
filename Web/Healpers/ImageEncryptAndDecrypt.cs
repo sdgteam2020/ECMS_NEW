@@ -1,13 +1,20 @@
 ﻿using BusinessLogicsLayer.EncryptionSetting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Runtime.Versioning;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using Web.Healpers.BaseInterfaces;
 
 namespace Web.Healpers
 {
     public class ImageEncryptAndDecrypt : IImageEncryptAndDecrypt
     {
+        private static readonly Regex s_dataUri = new(@"^data:(?<mime>[^;]+);base64,(?<data>.+)$",RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private readonly IEncryptionSettingBL encryptionSettingBL;
 
         #region Key and IV Initialization
@@ -216,6 +223,119 @@ namespace Web.Healpers
                     // Add the content type as a prefix
                     return $"data:{contentType};base64,{Convert.ToBase64String(decryptedBytes)}";
                 }
+            }
+        }
+        [SupportedOSPlatform("windows")]
+        public string CompressBase64(string base64,int maxWidth = 1024,long jpegQuality = 75,bool returnDataUri = true)
+        {
+            if (string.IsNullOrWhiteSpace(base64))
+                throw new ArgumentException("Base64 input is null or empty.", nameof(base64));
+
+            // Strip data: header if present
+            string? mime = null;
+            string raw = base64;
+            var m = s_dataUri.Match(base64);
+            if (m.Success)
+            {
+                mime = m.Groups["mime"].Value;
+                raw = m.Groups["data"].Value;
+            }
+
+            if (!TryFromBase64String(raw, out var inputBytes))
+                throw new ArgumentException("Input is not valid Base64.", nameof(base64));
+
+            using var input = new MemoryStream(inputBytes, writable: false);
+
+            // Validate image stream (throws on invalid)
+            using var src = Image.FromStream(input, useEmbeddedColorManagement: false, validateImageData: true);
+
+            // Strip metadata (minor size win; ignore failures for non-existent items)
+            foreach (var id in src.PropertyIdList)
+            {
+                try { src.RemovePropertyItem(id); } catch { /* ignore */ }
+            }
+
+            using var work = ResizeIfNeeded(src, maxWidth);
+
+            bool hasAlpha =
+                work.PixelFormat.HasFlag(PixelFormat.Alpha) ||
+                work.PixelFormat.HasFlag(PixelFormat.PAlpha) ||
+                (mime is not null && mime.Contains("png", StringComparison.OrdinalIgnoreCase));
+
+            using var output = new MemoryStream();
+
+            if (hasAlpha)
+            {
+                work.Save(output, ImageFormat.Png);
+                var b64 = Convert.ToBase64String(output.ToArray());
+                return returnDataUri ? $"data:image/png;base64,{b64}" : b64;
+            }
+            else
+            {
+                var enc = GetEncoder(ImageFormat.Jpeg) ?? throw new InvalidOperationException("JPEG encoder not found.");
+                using var encParams = new EncoderParameters(1);
+                encParams.Param[0] = new EncoderParameter(Encoder.Quality, Clamp(jpegQuality, 0L, 100L));
+                work.Save(output, enc, encParams);
+
+                var b64 = Convert.ToBase64String(output.ToArray());
+                return returnDataUri ? $"data:image/jpeg;base64,{b64}" : b64;
+            }
+        }
+
+        [SupportedOSPlatform("windows")]
+        private static Image ResizeIfNeeded(Image src, int maxWidth)
+        {
+            if (maxWidth <= 0 || src.Width <= maxWidth)
+                return (Image)src.Clone();
+
+            int newW = maxWidth;
+            int newH = (int)Math.Round(src.Height * (newW / (double)src.Width));
+
+            // 32bppArgb avoids indexed/palette surprises and preserves alpha if present.
+            var dest = new Bitmap(newW, newH, PixelFormat.Format32bppArgb);
+
+            using (var g = Graphics.FromImage(dest))
+            {
+                g.CompositingMode = CompositingMode.SourceCopy;
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                var rect = new Rectangle(0, 0, newW, newH);
+                g.DrawImage(src, rect, 0, 0, src.Width, src.Height, GraphicsUnit.Pixel);
+            }
+
+            return dest;
+        }
+
+        [SupportedOSPlatform("windows")]
+        private static ImageCodecInfo? GetEncoder(ImageFormat format)
+        {
+            var encoders = ImageCodecInfo.GetImageDecoders();
+            for (int i = 0; i < encoders.Length; i++)
+            {
+                if (encoders[i].FormatID == format.Guid)
+                    return encoders[i];
+            }
+            return null;
+        }
+
+        private static long Clamp(long value, long min, long max)
+            => value < min ? min : (value > max ? max : value);
+
+        // Avoid throwing FormatException for analyzers that prefer Try* patterns.
+        private static bool TryFromBase64String(string s, [NotNullWhen(true)] out byte[]? bytes)
+        {
+            try
+            {
+                bytes = Convert.FromBase64String(s);
+                return true;
+            }
+            catch
+            {
+                bytes = null;
+                return false;
             }
         }
     }
