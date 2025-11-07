@@ -1420,56 +1420,6 @@ namespace DataAccessLayer
 
 
         /// <summary>
-        /// Uploads Chip Numbers and Card Serial Numbers for a list of records, updating the corresponding fields in the TrnICardRequest table.
-        /// The operation is wrapped in a transaction to ensure data integrity.
-        /// </summary>
-        /// <param name="Data">A list of DTOUploadChipAndSerialRequest objects containing the RequestId, CardSerialNo, and ChipNo to be updated.</param>
-        /// <returns>A DTOUploadChipAndSerialResponse indicating whether the operation was successful or not, along with a message.</returns>
-        public async Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data)
-        {
-            int i = 0;
-            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
-            DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
-            try
-            {
-                foreach (var item in Data)
-                {
-                    if (item.IsValid == true)
-                    {
-                        string query = " UPDATE TrnICardRequest set CardSerialNo=@CardSerialNo, ChipNo=@ChipNo where RequestId=@RequestId ";
-
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@RequestId", item.RequestId, DbType.Int32, ParameterDirection.Input);
-                        parameters.Add("@CardSerialNo", item.CardSerialNo, DbType.String, ParameterDirection.Input, 30);
-                        parameters.Add("@ChipNo", item.ChipNo, DbType.String, ParameterDirection.Input, 30);
-
-                        await db.ExecuteAsync(query, parameters, transaction: transaction);
-                    }
-                }
-                // Commit the transaction if all operations succeed
-                transaction.Commit();
-                response.Result = true;
-                response.Message = "Data processed successfully!";
-                return response;
-            }
-            catch (Exception ex)
-            {
-                // Rollback the transaction if any operation fails
-                transaction.Rollback();
-                _logger.LogError(1001, ex, "BasicDetailDB->UploadChipAndSerial");
-                response.Result = false;
-                response.Message = ex.Message;
-                return response;
-            }
-            finally
-            {
-                // Dispose of the connection
-                db.Dispose();
-            }
-        }
-
-
-        /// <summary>
         /// Retrieves the top 5 records from the TrnICardRequest table where the ArmyNo matches the ServiceNo in the BasicDetails table, 
         /// and the request status is active (StatusId == 1).
         /// </summary>

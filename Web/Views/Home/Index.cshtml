@@ -7,15 +7,30 @@
         height: 180px !important;
         width: 200px !important;
     }
+
+    .hero {
+        /* path to your image */
+        background-image: url("/Images/HomePage/2.png");
+        /* make it fill nicely */
+        background-size: cover; /* cover entire div */
+        background-position: top;
+        background-repeat: no-repeat;
+        /* optional: fixed parallax feel */
+        background-attachment: fixed;
+        /* size of the div */
+        min-height: 100vh; /* or a fixed height like 500px */
+        width: 100%;
+    }
 </style>
 <link asp-href-include="~/css/homeindex.css" rel="stylesheet" />
 
-<div class="wrap">
-    @*     <div id="dir-control-left" class="dir-control">
+<div class="hero">
+    <div class="wrap">
+        @*     <div id="dir-control-left" class="dir-control">
         <i class="fa fa-angle-left fa-5x" aria-hidden="true"></i>
     </div> *@
-    <div id="slider">
-        @*<div class="slide slide1">
+        <div id="slider">
+            @*<div class="slide slide1">
             <div class="slide-content">
             </div>
         </div>
@@ -31,115 +46,94 @@
             <div class="slide-content">
             </div>
         </div>*@
-    </div>
-    @*     <div id="dir-control-right" class="dir-control">
+        </div>
+        @*     <div id="dir-control-right" class="dir-control">
         <i class="fa fa-angle-right fa-5x" id="Next" aria-hidden="true"></i>
     </div> *@
 
-    <div class="row">
-        <div class="col-md-2 col-sm-6">
-        </div>
-        <div class="col-md-8 col-sm-6 text-center">
-            <div class="a-box mr-2">
-                <a href="/Home/Dashboard" class="clickable">
-                    <div class="img-container">
-                        <div class="img-inner">
-                            <div class="inner-skew">
-                                <img src="~/images/asset/dashboard.png" />
+        <div class="row">
+            <div class="col-md-2 col-sm-6">
+            </div>
+            <div class="col-md-8 col-sm-6 text-center">
+                <div class="a-box mr-2">
+                    <a href="/Home/Dashboard" class="clickable">
+                        <div class="img-container">
+                            <div class="img-inner">
+                                <div class="inner-skew">
+                                    <img src="~/images/asset/dashboard.png" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-container">
-                        <h3>Dashboard</h3>
-                        <div>
-                            Dashboard contains all pending requests for approval
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-
-            <div class="a-box mr-2">
-                <a href="/Home/Request" class="clickable">
-                    <div class="img-container">
-                        <div class="img-inner">
-                            <div class="inner-skew">
-                                <img src="~/images/asset/request.png" />
+                        <div class="text-container">
+                            <h3>Dashboard</h3>
+                            <div>
+                                Dashboard contains all pending requests for approval
                             </div>
                         </div>
-                    </div>
-                    <div class="text-container">
-                        <h3>Initiate Request</h3>
-                        <div>
-                            Guides to the link to Initiate I-Card Requests
-                        </div>
-                    </div>
-                </a>
-            </div>
+                    </a>
+                </div>
 
 
-            <div class="a-box">
-                <a href="/Home/Task" class="clickable">
-                    <div class="img-container">
-                        <div class="img-inner">
-                            <div class="inner-skew">
-                                <img src="~/images/asset/task-100.png" />
+                <div class="a-box mr-2">
+                    <a href="/Home/Request" class="clickable">
+                        <div class="img-container">
+                            <div class="img-inner">
+                                <div class="inner-skew">
+                                    <img src="~/images/asset/request.png" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-container">
-                        <h3>Task</h3>
-                        <div class="">
-                            Contains role based activity
-                            <br />.
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="a-box">
-                <a href="/Home/ContactUs" class="clickable">
-                    <div class="img-container">
-                        <div class="img-inner">
-                            <div class="inner-skew">
-                                <img src="~/images/asset/contact-us-circle.png" />
+                        <div class="text-container">
+                            <h3>Initiate Request</h3>
+                            <div>
+                                Guides to the link to Initiate I-Card Requests
                             </div>
                         </div>
-                    </div>
-                    <div class="text-container">
-                        <h3>Contact Us</h3>
-                        <div class="">
-                            <br />.
-                        </div>
-                    </div>
-                </a>
-            </div>
-            @*  @if (ViewBag.Role == "DteAdmin")
-            {
+                    </a>
+                </div>
                 <div class="a-box">
-                    <a href="/Home/Reports" class="clickable">
-                    <div class="img-container">
-                        <div class="img-inner">
-                            <div class="inner-skew">
-                                <img src="~/images/asset/report-100.png" />
+                    <a href="/Home/Task" class="clickable">
+                        <div class="img-container">
+                            <div class="img-inner">
+                                <div class="inner-skew">
+                                    <img src="~/images/asset/task-100.png" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-container">
-                        <h3>Report</h3>
-                        <div class="">
-                            Report
-                            <br />.
+                        <div class="text-container">
+                            <h3>Task</h3>
+                            <div class="">
+                                Contains role based activity
+                                <br />.
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
+                <div class="a-box">
+                    <a href="/Home/ContactUs" class="clickable">
+                        <div class="img-container">
+                            <div class="img-inner">
+                                <div class="inner-skew">
+                                    <img src="~/images/asset/contact-us-circle.png" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <h3>Contact Us</h3>
+                            <div class="">
+                                <br />.
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
-            } *@
+            <div class="col-md-2 col-sm-6">
+            </div>
         </div>
-        <div class="col-md-2 col-sm-6">
-        </div>
-    </div>
 
+    </div>
 </div>
+
 
 
 

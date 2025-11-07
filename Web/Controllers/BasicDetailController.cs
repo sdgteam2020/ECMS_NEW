@@ -2134,57 +2134,7 @@ namespace Web.Controllers
 
         #endregion
 
-        #region CSVFileUpload/UploadCsv/GetHeaderMap/UploadChipAndSerial
-        /// <summary>
-        /// Handles the GET request to upload a CSV file, validates and decodes a Base64-encoded string (jcoor),
-        /// and then passes the decoded value to the view.
-        /// </summary>
-        /// <param name="jcoor">
-        /// Base64-encoded string containing the identifier for CSV file upload.
-        /// </param>
-        /// <returns>
-        /// Returns the view with the decoded string (jcoor) if valid, 
-        /// or redirects to the "ContactUs" page with an error message if invalid or an exception occurs.
-        /// </returns>
-        [HttpGet]
-        public Task<ActionResult> CSVFileUpload(string jcoor)
-        {
-            // Validate the Base64 string (jcoor)
-            if (string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
-            {
-                TempData["error"] = "Invalid Input."; // Set error message in TempData
-                TempData.Keep("error");
-                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
-            }
-
-            try
-            {
-                // Decode the Base64 string (jcoor) into the original string
-                var base64EncodedBytes = Convert.FromBase64String(jcoor);
-                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
-
-                // Pass the decoded string to the view via ViewBag
-                ViewBag.jcoor = decodedString;
-
-                return Task.FromResult<ActionResult>(View()); // Return the view with decoded string
-            }
-            catch (FormatException ex)
-            {
-                // Handle FormatException if the Base64 string is not properly formatted
-                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {jcoor}", jcoor);
-                TempData["error"] = "Invalid Input."; // Set error message in TempData
-                TempData.Keep("error");
-                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
-            }
-            catch (Exception ex)
-            {
-                // Handle any other unexpected errors
-                _logger.LogError(1001, ex, "BasicDetailsController=>CSVFileUpload.");
-                TempData["error"] = "Invalid Input."; // Set error message in TempData
-                TempData.Keep("error");
-                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
-            }
-        }
+        #region UploadCsv/GetHeaderMap/GetCSVFileUploadsHistory
 
         /// <summary>
         /// Handles the uploading of a CSV file, processes the contents, and validates each record.
@@ -2318,60 +2268,6 @@ namespace Web.Controllers
             // Return the populated header map if all expected columns are present
             return headerMap;
         }
-
-
-        /// <summary>
-        /// Handles the POST request to upload Chip and Serial data and processes it.
-        /// Validates input, calls the business logic layer to upload the data, and returns a response.
-        /// </summary>
-        /// <param name="data">
-        /// A list of DTO objects containing Chip and Serial data to be uploaded.
-        /// </param>
-        /// <returns>
-        /// A JSON response indicating the result of the upload operation, including success or failure message.
-        /// If the input is invalid or empty, returns an appropriate error message.
-        /// </returns>
-        [HttpPost]
-        public async Task<ActionResult> UploadChipAndSerial([FromBody] List<DTOUploadChipAndSerialRequest> data)
-        {
-            // Validate that data contains at least one record
-            if (data == null || data.Count == 0)
-            {
-                // Return a bad request if no records are provided
-                return BadRequest(new { message = "No records received. Please select at least one record to process." });
-            }
-
-            DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
-
-            // Check if the model state is valid before proceeding
-            if (ModelState.IsValid)
-            {
-                // Call the business logic layer to upload the Chip and Serial data
-                response = await basicDetailBL.UploadChipAndSerial(data);
-
-                // Return the response indicating success or failure of the upload
-                if (response.Result == true)
-                {
-                    return Json(response); // Return success response as JSON
-                }
-                else
-                {
-                    return Json(response); // Return failure response as JSON
-                }
-            }
-            else
-            {
-                // Handle the case where the model state is invalid
-                response.Result = false;
-
-                // Collect all error messages from the model state
-                response.Message = ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToString();
-
-                // Return failure response with validation error messages
-                return Json(response);
-            }
-        }
-
 
 
         /// <summary>
@@ -5198,7 +5094,59 @@ namespace Web.Controllers
         //}
         #endregion Card Distribution
 
-        #region ICard Printing
+        #region CSVFileUpload/ICardPrintUploadCsv/ICardPrintValidRecordsUpload
+
+        /// <summary>
+        /// Handles the GET request to upload a CSV file, validates and decodes a Base64-encoded string (jcoor),
+        /// and then passes the decoded value to the view.
+        /// </summary>
+        /// <param name="jcoor">
+        /// Base64-encoded string containing the identifier for CSV file upload.
+        /// </param>
+        /// <returns>
+        /// Returns the view with the decoded string (jcoor) if valid, 
+        /// or redirects to the "ContactUs" page with an error message if invalid or an exception occurs.
+        /// </returns>
+        [HttpGet]
+        public Task<ActionResult> CSVFileUpload(string jcoor)
+        {
+            // Validate the Base64 string (jcoor)
+            if (string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
+            {
+                TempData["error"] = "Invalid Input."; // Set error message in TempData
+                TempData.Keep("error");
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
+            }
+
+            try
+            {
+                // Decode the Base64 string (jcoor) into the original string
+                var base64EncodedBytes = Convert.FromBase64String(jcoor);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+
+                // Pass the decoded string to the view via ViewBag
+                ViewBag.jcoor = decodedString;
+
+                return Task.FromResult<ActionResult>(View()); // Return the view with decoded string
+            }
+            catch (FormatException ex)
+            {
+                // Handle FormatException if the Base64 string is not properly formatted
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {jcoor}", jcoor);
+                TempData["error"] = "Invalid Input."; // Set error message in TempData
+                TempData.Keep("error");
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
+            }
+            catch (Exception ex)
+            {
+                // Handle any other unexpected errors
+                _logger.LogError(1001, ex, "BasicDetailsController=>CSVFileUpload.");
+                TempData["error"] = "Invalid Input."; // Set error message in TempData
+                TempData.Keep("error");
+                return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
+            }
+        }
+
         /// <summary>
         /// Uploads a CSV file containing I-Card printing requests, validates the data,
         /// saves the file both with and without remarks, and stores import metadata in the database.

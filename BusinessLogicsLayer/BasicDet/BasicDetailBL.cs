@@ -67,10 +67,6 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.CheckArmyNO(ArmyNo);
         }
-        public async Task<DTOUploadChipAndSerialResponse> UploadChipAndSerial(List<DTOUploadChipAndSerialRequest> Data)
-        {
-            return await _iBasicDetailDB.UploadChipAndSerial(Data);
-        }
         public async Task<string?> GetCSVString(DTOCSVExportRequest Data)
         {
             return await _iBasicDetailDB.GetCSVString(Data);

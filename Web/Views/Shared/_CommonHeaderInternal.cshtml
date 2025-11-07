@@ -25,19 +25,260 @@
     }
 
 }
-<nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
+<style>
+    /* ======= Base Header Style ======= */
+    .eisac-header {
+        background: linear-gradient(90deg, #00b4ff 0%, #0076e3 50%, #005fba 100%);
+        height: 120px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        z-index: 1039;
+    }
+    /* Center Section */
+    .center {
+        flex: 1;
+        text-align: center;
+    }
+
+    .title-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 0.6rem 1.2rem;
+        border-radius: 16px;
+        backdrop-filter: blur(8px);
+        box-shadow: inset 0 1px 6px rgba(255,255,255,0.2);
+    }
+
+    .title-eisac-header {
+        display: inline-flex;
+        align-content: center;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    /* ======= Layout Container ======= */
+    .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 1920px;
+        height: 100%;
+        padding: 0 20px;
+    }
+
+    /* ======= Logos ======= */
+    .header-logo {
+        flex: 0 0 auto;
+        text-align: center;
+    }
+
+    .logo-img {
+        height: 95px;
+        width: auto;
+        transition: transform 0.3s ease;
+    }
+
+        .logo-img:hover {
+            transform: scale(1.08);
+        }
+
+    /* ======= Title ======= */
+    .header-title {
+        text-align: center;
+        color: white;
+        flex: 1;
+    }
+
+    /* STRONGER, DARKER, MORE LEGIBLE */
+    .title-text {
+        font-size: 34px;
+        font-weight: bolder;
+        font-family: "Open Sans","sans-serif";
+        margin: 0;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        /* deeper gradient for contrast */
+        background: linear-gradient(to right, #2e7d32 0%, #c1120c 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: #fff;
+        /* dark stroke + stacked shadows = crisp edges on any BG */
+        -webkit-text-stroke: 1px rgba(0, 0, 0, 0.35);
+        text-shadow: 0 2px 3px rgba(0,0,0,.35), /* depth */
+        -1px 0 0 rgba(0,0,0,.28), /* outline left  */
+        1px 0 0 rgba(0,0,0,.28), /* outline right */
+        0 -1px 0 rgba(0,0,0,.28), /* outline top   */
+        0 1px 0 rgba(0,0,0,.28); /* outline bottom */
+    }
+
+    /* subtitle a bit brighter, with subtle shadow */
+    .subtitle {
+        font-size: 15px;
+        color: #ffffff;
+        margin-top: 3px;
+        letter-spacing: 0.5px;
+        text-shadow: 0 1px 2px rgba(0,0,0,.35);
+        opacity: .95;
+    }
+
+    /* optional: bump size on large screens */
+    @@media (min-width: 1400px) {
+        .title-text {
+            font-size: 38px;
+        }
+    }
+
+
+    /* ======= Underline ======= */
+    .title-underline {
+        width: 80px;
+        height: 3px;
+        background: white;
+        border-radius: 5px;
+        margin: 6px auto 0;
+        opacity: 0.8;
+    }
+
+    /* ======= Responsive ======= */
+    @@media (max-width: 992px) {
+        .title-text {
+            font-size: 26px;
+        }
+
+        .logo-img {
+            height: 75px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .header-container {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .eisac-header {
+            height: auto;
+            padding: 10px 0;
+        }
+
+        .title-text {
+            font-size: 22px;
+        }
+    }
+</style>
+<header class="eisac-header">
+    <div class="header-container">
+        <!-- Left Logo -->
+        <div class="header-logo">
+            <img src="~/Images/dgis_ico.png" alt="Army Logo" class="logo-img" />
+        </div>
+
+        <!-- Center Title -->
+        <div class="center title-eisac-header">
+            <div class="title-chip">
+                <img src="~/Images/Header-Logo.png" alt="Army Logo" class="logo-img" />
+                <div class="header-title">
+                    <h1 class="title-text">ENTERPRISE IA SECURE ACCESS CARD (E-ISAC)</h1>
+                    <p class="subtitle">Secure Identity &amp; Access Portal</p>
+                    <div class="title-underline"></div>
+                </div>
+            </div>
+            <div class="ml-3 mr-3">
+                <nav class="navbar-expand shadow navbar-light show" id="sidenavAccordion">
+                    <ul class="navbar-nav align-items-center ml-auto">
+                        <li class="nav-item dropdown no-caret mr-2 dropdown-user">
+
+                            <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <div class="d-flex justify-content-end">
+                                    <div class="mr-2">
+                                        <div class="text-white ProfileName font-weight-500">WELCOME</div>
+                                        <div class="text-white ProfileName font-weight-500"><span class="text-white ProfileName font-weight-500" id="aspntokenarmyno"></span></div>
+                                        <div class="text-white ProfileName font-weight-500"><span class="text-white ProfileName font-weight-500 mr-2" id="ProfileRankName"></span><span id="ProfileName" class="font-weight-500 text-white ProfileName"></span></div>
+                                    </div>
+                                    <img class="" src="/Images/user4.png" />
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+
+                                <h6 class="dropdown-header d-flex align-items-center">
+                                    <img class="dropdown-user-img" src="/Images/user4.png" />
+                                    <div class="dropdown-user-details">
+                                        <div class="dropdown-user-details-name">
+                                            @user.UserName
+                                        </div>
+                                    </div>
+                                </h6>
+                                <a class="dropdown-item" href="/UserProfile/Profile">
+                                    <i class="ti-settings text-primary"></i>
+                                    Edit Profile
+                                    <span class="d-none" id="aspndomainUnitID"></span>
+                                </a>
+
+                                @foreach (var item in RoleList)
+                                {
+                                    @if (RoleName == item)
+                                    {
+                                        <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
+                                            <button type="submit" class="dropdown-item disabled" style="opacity: 0.6;cursor: not-allowed;color:blue;"><i class="ti-settings text-primary"></i><span class="fw-bold">@(user.UserName + " (" + item + ")")</span></button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
+                                            <button type="submit" class="dropdown-item"><i class="ti-settings text-primary"></i><span>@(user.UserName + " (" + item + ")")</span></button>
+                                        </form>
+                                    }
+                                }
+                                @if (ClaimsList.Count > 0)
+                                {
+                                    <div class="text-center fw-bold">Allowed feature</div>
+                                    <ul>
+                                        @foreach (var item in ClaimsList)
+                                        {
+                                            <li><div class="dropdown-item">@item.Type</div></li>
+                                        }
+                                    </ul>
+                                }
+
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item active" style="background-color: #0d6efd" href="/Account/Logout" id="btnLogout">
+                                    <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+                        <li>
+                            <a class="dropdown-toggle notif-toggle" id="navbarDropdownUserImage" data-bs-toggle="tooltip" data-bs-placement="top" title="Pending Action" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-bell" aria-hidden="true"></i>
+                                <span class="btn__badge pulse-button" id="Totalnotification">0</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+                                <div class="preview-list"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+        <!-- Right Logo -->
+        <div class="header-logo">
+            <img src="~/Images/dgislogo.png" alt="DGIS Logo" class="logo-img" />
+        </div>
+    </div>
+</header>
+@* <nav class="topnav navbar navbar-expand shadow navbar-light bg-white show" id="sidenavAccordion">
     <a class="navbar-brand" href="/Home/index"><img src="~/Images/dgis_ico.png"></a>
     <div class="ml-4 text-center tagline"><img src="~/Images/EISAC.png" width="63%"></div>
-    @*<span class="tagline ml-4 text-center"> Enterprise - Indian Army Secure Access Card Appl (E-ISAC)</span> *@
     <ul class="navbar-nav align-items-center ml-auto">
-        @*             <li>
-                <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="btn__badge pulse-button" id="Totalnotification">0</span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
-                    <div class="preview-list"></div>
-                </div>
-            </li> *@
         <li class="nav-item dropdown no-caret mr-2 dropdown-user">
 
             <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -112,4 +353,4 @@
     <div class="text-start ml-5">
         <img src="~/Images/dgislogo.png" onerror="this.style.display='none';" alt="Image Not Found" height="98px" class="" />
     </div>
-</nav>
+</nav> *@
