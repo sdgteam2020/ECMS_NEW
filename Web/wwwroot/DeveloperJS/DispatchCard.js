@@ -1590,7 +1590,7 @@ function getColumnsForListBindDialog(choice) {
     return columns;
 }
 function getSearchStatus(cvalue) {
-    const currentSearchText = (cvalue == 2 || cvalue == 3) ? $("#spnUnitMapId").html() : $('#searchText').val().trim();
+    const currentSearchText = (cvalue == 2 || cvalue == 3) ? $("#spnUnitMapId").html() : (($('#searchText').val() ?? '').toString().trim());
     const currentSearchField = $('#searchField').val();
 
     // Ensure searchChanged is only true when the actual search field or text changes.

@@ -114,4 +114,17 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessage = "SentAspNetUsersId is number.")]
         public int ReciverAspNetUsersId { get; set; }
     }
+    public class DTODataTablesRequestForReportCard : DTODataTablesRequest
+    {
+        public int? ApplyForId { get; set; }
+        public int? UnitType { get; set; }
+        public byte? ComdId { get; set; }
+        public byte? CorpsId { get; set; }
+        public byte? DivId { get; set; }
+        public byte? BdeId { get; set; }
+        public byte? FmnBranchID { get; set; }
+        public byte? PsoId { get; set; }
+        public byte? SubDteId { get; set; }
+        public int? UnitMapId { get; set; }
+    }
 }

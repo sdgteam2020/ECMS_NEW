@@ -1215,7 +1215,6 @@ namespace DataAccessLayer
             }
         }
 
-        
         /// <summary>
         /// Retrieves a list of report form entries (Form 11) based on the provided hierarchy request.
         /// </summary>
@@ -1259,6 +1258,421 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "ReportReturnDB->GetReportForm11");
                 return new List<DTOReportReturnListResponse>();
             }
+        }
+
+        public async Task<DTOReportCardDashboardCountResponse> GetReportCardDashboardCount(DTOMHierarchyRequest dTO)
+        {
+            string query = @"DECLARE @TotExported_Officer int
+                            DECLARE @TotPrinted_Officer int
+                            DECLARE @TotDispatchToORO int
+                            DECLARE @TotCardInORO int
+                            DECLARE @TotDispatchToUnit_Officer int
+                            DECLARE @TotCardInUnit_Officer int
+                            DECLARE @TotDistributed_Officer int
+
+                            DECLARE @TotExported_OR int
+                            DECLARE @TotPrinted_OR int
+                            DECLARE @TotDispatchToRegt int
+                            DECLARE @TotCardInRegt int
+                            DECLARE @TotDispatchToUnit_OR int
+                            DECLARE @TotCardInUnit_OR int
+                            DECLARE @TotDistributed_OR int
+							
+
+                            SET @TotExported_Officer=0
+                            SET @TotPrinted_Officer=0
+                            SET @TotDispatchToORO=0
+                            SET @TotCardInORO=0
+                            SET @TotDispatchToUnit_Officer=0
+                            SET @TotCardInUnit_Officer=0
+                            SET @TotDistributed_Officer=0
+
+                            SET @TotExported_OR=0
+                            SET @TotPrinted_OR=0
+                            SET @TotDispatchToRegt=0
+                            SET @TotCardInRegt=0
+                            SET @TotDispatchToUnit_OR=0
+                            SET @TotCardInUnit_OR=0
+                            SET @TotDistributed_OR=0
+
+                            -- Calculation for TotExported_Officer, TotExported_OR, TotPrinted_Officer, TotPrinted_OR
+                            -- Ensure there is a semicolon before the WITH clause
+                            ;WITH CTE AS (
+                                SELECT 
+                                    stcount.RequestId,
+                                    basi.ApplyForId,
+                                    stcount.StepId,
+                                    req.StatusId,
+                                    unit.UnitMapId
+                                FROM TrnStepCounter stcount
+                                INNER JOIN TrnICardRequest req ON stcount.RequestId = req.RequestId
+                                INNER JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId
+                                INNER JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId
+                                WHERE unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                    AND unit.UnitType = @UnitType
+                                    AND (
+                                        -- Unit Type Conditions
+                                        (@UnitType = 1 AND 
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId) 
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId) 
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId) 
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                        )
+                                        OR
+                                        (@UnitType = 2 AND 
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId) 
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId) 
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId) 
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId) 
+                                            AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                        )
+                                        OR
+                                        (@UnitType = 3 AND 
+                                            unit.PsoId = ISNULL(@PsoId, unit.PsoId) 
+                                            AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                        )
+                                    )
+                            )
+                            -- Calculation for each type of count
+                            SELECT 
+                                SUM(CASE WHEN ApplyForId = 1 AND StepId = 5 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotExported_Officer,
+                                SUM(CASE WHEN ApplyForId = 2 AND StepId = 5 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotExported_OR,
+                                SUM(CASE WHEN ApplyForId = 1 AND StepId = 6 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotPrinted_Officer,
+                                SUM(CASE WHEN ApplyForId = 2 AND StepId = 6 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotPrinted_OR,
+	                            SUM(CASE WHEN ApplyForId = 1 AND StepId = 11 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotDispatchToORO,
+                                SUM(CASE WHEN ApplyForId = 2 AND StepId = 11 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotDispatchToRegt,
+	                            SUM(CASE WHEN ApplyForId = 1 AND StepId = 12 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotCardInORO,
+                                SUM(CASE WHEN ApplyForId = 2 AND StepId = 12 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotCardInRegt,
+	                            SUM(CASE WHEN ApplyForId = 1 AND StepId = 13 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotDispatchToUnit_Officer,
+                                SUM(CASE WHEN ApplyForId = 2 AND StepId = 13 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotDispatchToUnit_OR,
+	                            SUM(CASE WHEN ApplyForId = 1 AND StepId = 14 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotCardInUnit_Officer,
+                                SUM(CASE WHEN ApplyForId = 2 AND StepId = 14 AND StatusId = 1 THEN 1 ELSE 0 END) AS TotCardInUnit_OR,
+	                            SUM(CASE WHEN ApplyForId = 1 AND StepId = 15 AND StatusId = 2 THEN 1 ELSE 0 END) AS TotDistributed_Officer,
+                                SUM(CASE WHEN ApplyForId = 2 AND StepId = 15 AND StatusId = 2 THEN 1 ELSE 0 END) AS TotDistributed_OR
+                            FROM CTE;";
+
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UnitType", dTO.UnitType, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ComdId", dTO.ComdId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@CorpsId", dTO.CorpsId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@DivId", dTO.DivId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@BdeId", dTO.BdeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
+
+                    var ret = await connection.QueryAsync<DTOReportCardDashboardCountResponse>(query, parameters);
+                    return ret.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ReportReturnDB->GetReportDashboardCount");
+                return new DTOReportCardDashboardCountResponse();
+            }
+        }
+
+        public async Task<DTODataTablesResponse<DTOReportCardResponse>> GetReportCardData(DTODataTablesRequestForReportCard dTO)
+        {
+            string selectFields = "";
+            string fromJoinClause = "";
+            string whereClause = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+
+            // Common unit filter reused in all choices
+            string unitFilter = @"
+                                (
+                                    (@UnitType = 1 AND
+                                        unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                        AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                        AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                        AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    )
+                                    OR
+                                    (@UnitType = 2 AND
+                                        unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                        AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                        AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                        AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                        AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                    )
+                                    OR
+                                    (@UnitType = 3 AND
+                                        unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                        AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                    )
+                                )
+                                AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)";
+
+            var sortOrder = dTO.sortDirection;
+            if (dTO.Choice == "Export")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["RequestId"] = "req.RequestId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ServiceNo"] = "ServiceNo",
+                    ["ActionOn"] = "req.CardExportedOn"
+                };
+                selectFields = $@"req.RequestId,basi.FName,basi.LName,ServiceNo,ranks.RankAbbreviation RankName,marmed.Abbreviation as ArmedAbbreviation,req.CardExportedOn as ActionOn";
+                fromJoinClause = $@"from TrnStepCounter step
+                                    INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId";
+                whereClause = $@"WHERE
+                            {unitFilter}
+                            AND req.StatusId=1
+                            AND step.StepId=5   --Exported
+                            AND basi.ApplyForId=@ApplyForId
+                            AND (@SearchTerm IS NULL OR ServiceNo LIKE @SearchTerm)";
+            }
+            else if (dTO.Choice == "Printed")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["RequestId"] = "req.RequestId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ServiceNo"] = "ServiceNo",
+                    ["ActionOn"] = "req.CardPrintedOn"
+                };
+                selectFields = $@"req.RequestId,basi.FName,basi.LName,ServiceNo,ranks.RankAbbreviation RankName,marmed.Abbreviation as ArmedAbbreviation,req.CardPrintedOn as ActionOn";
+                fromJoinClause = $@"from TrnStepCounter step
+                                    INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId";
+                whereClause = $@"WHERE
+                            {unitFilter}
+                            AND req.StatusId=1
+                            AND step.StepId=6 --I-CARD PRINT
+                            AND basi.ApplyForId=@ApplyForId
+                            AND (@SearchTerm IS NULL OR ServiceNo LIKE @SearchTerm)";
+            }
+            else if (dTO.Choice == "DispatchToORO_Regt")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["RequestId"] = "req.RequestId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ServiceNo"] = "ServiceNo",
+                    ["ActionOn"] = "dcard.OutDate"
+                };
+                selectFields = $@"req.RequestId,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,dcard.OutDate as ActionOn,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID";
+                fromJoinClause = $@"from TrnDispatchCardMapping dcm
+                                    INNER JOIN TrnDispatchCard dcard on dcm.DispatchCardId =dcard.DispatchCardId
+                                    INNER JOIN TrnICardRequest req on dcm.RequestId=req.RequestId
+                                    INNER JOIN TrnStepCounter step on req.RequestId=step.RequestId
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                                    INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                                    INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                                    INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                                    INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                                    INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                                    INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id";
+                whereClause = $@"WHERE
+                            {unitFilter}
+                            AND req.StatusId=1
+                            AND step.StepId=11 --Card Dispatch to Regiment / Officer Record Office
+                            AND dcard.Step=1
+                            AND dcard.ApplyForId=@ApplyForId
+                            AND (@SearchTerm IS NULL OR basi.ServiceNo LIKE @SearchTerm)";
+            }
+            else if (dTO.Choice == "CardInORO_Regt")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["RequestId"] = "req.RequestId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ServiceNo"] = "ServiceNo",
+                    ["ActionOn"] = "dcard.ReceiptDate"
+                };
+                selectFields = $@"req.RequestId,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,dcard.ReceiptDate as ActionOn,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID";
+                fromJoinClause = $@"from TrnDispatchCardMapping dcm
+                                    INNER JOIN TrnDispatchCard dcard on dcm.DispatchCardId =dcard.DispatchCardId
+                                    INNER JOIN TrnICardRequest req on dcm.RequestId=req.RequestId
+                                    INNER JOIN TrnStepCounter step on req.RequestId=step.RequestId
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                                    INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                                    INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                                    INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                                    INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                                    INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                                    INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id";
+                whereClause = $@"WHERE
+                            {unitFilter}
+                            AND req.StatusId=1
+                            AND step.StepId=12 --Card in Regiment / Officer Record Office
+                            AND dcard.Step=1
+                            AND dcard.ApplyForId=@ApplyForId
+                            AND (@SearchTerm IS NULL OR basi.ServiceNo LIKE @SearchTerm)";
+            }
+            else if (dTO.Choice == "DispatchToUnit")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["RequestId"] = "req.RequestId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ServiceNo"] = "ServiceNo",
+                    ["ActionOn"] = "dcard.OutDate"
+                };
+                selectFields = $@"req.RequestId,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,dcard.OutDate as ActionOn,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID";
+                fromJoinClause = $@"from TrnDispatchCardMapping dcm
+                                    INNER JOIN TrnDispatchCard dcard on dcm.DispatchCardId =dcard.DispatchCardId
+                                    INNER JOIN TrnICardRequest req on dcm.RequestId=req.RequestId
+                                    INNER JOIN TrnStepCounter step on req.RequestId=step.RequestId
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                                    INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                                    INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                                    INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                                    INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                                    INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                                    INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id";
+                whereClause = $@"WHERE
+                            {unitFilter}
+                            AND req.StatusId=1
+                            AND step.StepId=13 --Card Dispatch to Unit
+                            AND dcard.Step=2
+                            AND dcard.ApplyForId={dTO.ApplyForId}
+                            AND (@SearchTerm IS NULL OR basi.ServiceNo LIKE @SearchTerm)";
+            }
+            else if (dTO.Choice == "CardInUnit")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["RequestId"] = "req.RequestId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ServiceNo"] = "ServiceNo",
+                    ["ActionOn"] = "dcard.ReceiptDate"
+                };
+                selectFields = $@"req.RequestId,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,dcard.ReceiptDate as ActionOn,fromRanks.RankAbbreviation as FromRankName,fromUp.Name as FromName,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,fromUp.ArmyNo as FromServiceNo,toUp.ArmyNo as ToServiceNo,fromAspUser.DomainId as FromDID,toAspUser.DomainId as ToDID";
+                fromJoinClause = $@"from TrnDispatchCardMapping dcm
+                                    INNER JOIN TrnDispatchCard dcard on dcm.DispatchCardId =dcard.DispatchCardId
+                                    INNER JOIN TrnICardRequest req on dcm.RequestId=req.RequestId
+                                    INNER JOIN TrnStepCounter step on req.RequestId=step.RequestId
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                                    INNER JOIN UserProfile fromUp on dcard.FromUserId=fromUp.UserId
+                                    INNER JOIN MRank fromRanks on fromUp.RankId=fromRanks.RankId
+                                    INNER JOIN UserProfile toUp on dcard.ToUserId=toUp.UserId
+                                    INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                                    INNER JOIN AspNetUsers fromAspUser on dcard.FromAspNetUsersId = fromAspUser.Id
+                                    INNER JOIN AspNetUsers toAspUser on dcard.ToAspNetUsersId = toAspUser.Id";
+                whereClause = $@"WHERE
+                            {unitFilter}
+                            AND req.StatusId=1
+                            AND step.StepId=14 --Card in Unit
+                            AND dcard.Step=2
+                            AND dcard.ApplyForId=@ApplyForId
+                            AND (@SearchTerm IS NULL OR basi.ServiceNo LIKE @SearchTerm)";
+            }
+            else if (dTO.Choice == "CardDistributed")
+            {
+                allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["RequestId"] = "req.RequestId",
+                    ["ArmedAbbreviation"] = "marmed.Abbreviation",
+                    ["ServiceNo"] = "ServiceNo",
+                    ["ActionOn"] = "dist.DistributedOn"
+                };
+                selectFields = $@"req.RequestId,ranks.RankAbbreviation RankName,basi.FName,basi.LName,ServiceNo,marmed.Abbreviation as ArmedAbbreviation,dist.DistributedOn as ActionOn,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,toUp.ArmyNo as ToServiceNo,toAspUser.DomainId as ToDID";
+                fromJoinClause = $@"from TrnDistributeCards dist
+                                    INNER JOIN TrnStepCounter step on dist.RequestId = step.RequestId
+                                    INNER JOIN TrnICardRequest req on step.RequestId=req.RequestId
+                                    INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                                    INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
+                                    INNER JOIN MRank ranks on ranks.RankId=basi.RankId
+                                    INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
+                                    INNER JOIN UserProfile toUp on dist.UpdatedbyUserId=toUp.UserId
+                                    INNER JOIN MRank toRanks on toUp.RankId=toRanks.RankId
+                                    INNER JOIN AspNetUsers toAspUser on dist.Updatedby = toAspUser.Id";
+                whereClause = $@"WHERE
+                            {unitFilter}
+                            AND req.StatusId=2 --Complete
+                            AND step.StepId=15 --I- Card Distributed
+                            AND basi.ApplyForId=@ApplyForId
+                            AND (
+	                            @SearchTerm IS NULL OR
+                                basi.ServiceNo LIKE '%' + @SearchTerm + '%'
+                                )";
+            }
+                try
+                {
+                    var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                    ? allowedSortColumns[dTO.sortColumn!]
+                    : "ServiceNo";
+                    var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                    using (var connection = _contextDP.CreateConnection())
+                    {
+                        var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue}%";
+
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@ApplyForId", dTO.ApplyForId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@UnitType", dTO.UnitType, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@ComdId", dTO.ComdId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@CorpsId", dTO.CorpsId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@DivId", dTO.DivId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@BdeId", dTO.BdeId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@FmnBranchID", dTO.FmnBranchID, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@PsoId", dTO.PsoId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
+
+                        var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+                        var records = (await ret.ReadAsync<DTOReportCardResponse>()).ToList();
+                        var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                        var responseData = new DTODataTablesResponse<DTOReportCardResponse>
+                        {
+                            draw = dTO.Draw,
+                            recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                            recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                            data = records,
+                        };
+                        return responseData;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(1001, ex, "ReportReturnDB->GetReportCardData");
+                    List<DTOReportCardResponse> dTOUserRegnResponses = new List<DTOReportCardResponse>();
+                    var responseData = new DTODataTablesResponse<DTOReportCardResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOUserRegnResponses
+                    };
+                    return responseData;
+                }
         }
     }
 }

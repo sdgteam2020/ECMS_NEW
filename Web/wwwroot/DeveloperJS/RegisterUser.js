@@ -1,16 +1,11 @@
-﻿$(document).ready(function () {
-    BindData($("#UnitId").html());
+﻿$(function () {
+    BindData();
 });
-function BindData(unitId) {
+function BindData() {
     var listItem = "";
-    var userdata =
-    {
-        "UnitId": unitId,
-    };
     $.ajax({
         url: '/Home/GetAllRegisterUser',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
 
         success: function (response) {

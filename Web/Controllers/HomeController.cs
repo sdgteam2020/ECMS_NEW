@@ -80,6 +80,10 @@ namespace Web.Controllers
             this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
         }
 
+
+
+        #region GetSessionValue / ContactUs / Index
+
         /// <summary>
         /// Retrieves the role of the user from the session.
         /// If the session contains a valid token, it retrieves the role name from the session object.
@@ -111,6 +115,29 @@ namespace Web.Controllers
             // Return the ContactUs view
             return View();
         }
+
+
+        /// <summary>
+        /// Action method for the Index page. It retrieves the user's role from the session
+        /// and passes it to the view through the ViewBag.
+        /// </summary>
+        /// <returns>The Index view, with the user's role passed in ViewBag.</returns>
+        public IActionResult Index()
+        {
+            // Retrieve the user's role from the session
+            string role = GetSessionValue();
+
+            // Pass the role to the view through ViewBag
+            ViewBag.Role = role;
+
+            // Return the Index view
+            return View();
+        }
+
+        #endregion
+
+
+        #region Notification /GetAllNotificationData / SaveNotification / GetNotification / GetNotificationRequestId / UpdateNotification
         public IActionResult Notification()
         {
             return View();
@@ -147,21 +174,337 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// Action method for the Index page. It retrieves the user's role from the session
-        /// and passes it to the view through the ViewBag.
+        /// Action method to save a notification. It updates any previous notifications and adds a new one for both the sender and receiver.
         /// </summary>
-        /// <returns>The Index view, with the user's role passed in ViewBag.</returns>
-        public IActionResult Index()
+        /// <param name="Data">The notification data to be saved.</param>
+        /// <returns>A JSON response indicating success (1) or failure (0).</returns>
+        public async Task<IActionResult> SaveNotification(DTOTrnNotificationRequest Data)
+        {
+            #region Old code
+            //try
+            //{
+            //    // Retrieve the user ID from the claims
+            //    int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //    Data.SentAspNetUsersId = userId;
+
+            //    // Update the previous notification data
+            //    await _INotificationBL.UpdatePrevious(Data);
+
+            //    // Add the new notification
+            //    await _INotificationBL.Add(Data);
+
+            //    // Retrieve the user ID associated with the request
+            //    int requestUserId = await _ITrnICardRequestBL.GetUserIdByRequestId(Data.RequestId);
+
+            //    // Prepare notification data for the receiver and set the receiver and sender IDs
+            //    Data.NotificationId = 0;
+            //    Data.SentAspNetUsersId = requestUserId;
+            //    Data.ReciverAspNetUsersId = requestUserId;
+
+            //    // Add the notification for the receiver
+            //    await _INotificationBL.Add(Data);
+
+            //    // Return a success response
+            //    return Json(1);
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Return failure if an exception occurs
+            //    return Json(0);
+            //}
+            #endregion Old code
+            try
+            {
+                // Retrieve the user ID from the claims
+                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                Data.SentAspNetUsersId = userId;
+
+                if (Data.StepId == 5) //Export
+                {
+                    // Update the previous notification data
+                    await _INotificationBL.UpdatePrevious(Data);
+                }
+                else
+                {
+                    // Update the previous notification data
+                    await _INotificationBL.UpdatePrevious(Data);
+
+                    // Add the new notification
+                    await _INotificationBL.AddNotification(Data);
+                }
+
+                // Return a success response
+                return Json(1);
+            }
+            catch (Exception ex)
+            {
+                // Return failure if an exception occurs
+                return Json(0);
+            }
+        }
+
+        /// <summary>
+        /// Action method to retrieve notifications based on the provided type and applyForId.
+        /// </summary>
+        /// <param name="TypeId">The notification type ID used to filter the notifications.</param>
+        /// <param name="applyForId">The applyForId used to filter the notifications.</param>
+        /// <returns>A JSON response containing a list of notifications or null if no notifications are found.</returns>
+        public async Task<IActionResult> GetNotification()
+        {
+            // Retrieve the user ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Fetch the notifications based on the user ID, TypeId, and applyForId
+            DTONotificationResult dTONotificationResponses = await _basicDetailBL.GetNotification(userId);
+            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+            // Return the notifications as a JSON response, or null if no notifications are found
+            if (dTONotificationResponses.Items != null)
+            {
+                foreach (var basicDetailUpdVM in dTONotificationResponses.Items)
+                {
+                    // Load existing photo and signature if files exist
+
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
+
+                    if (System.IO.File.Exists(sourcePathPhoto))
+                    {
+                        string resultB64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                        //basicDetailUpdVM.ExistingPhotoInBase64 = resultB64;
+                        basicDetailUpdVM.ExistingPhotoInBase64 = imageEncryptAndDecrypt.CompressBase64(resultB64, maxWidth: 65, jpegQuality: 10, true);
+                    }
+                }
+
+                return Json(dTONotificationResponses);
+            }
+            else
+            {
+                return Json(dTONotificationResponses);
+            }
+        }
+
+        /// <summary>
+        /// Action method to retrieve notifications based on the request ID, type, and applyForId.
+        /// </summary>
+        /// <param name="TypeId">The notification type ID used to filter the notifications.</param>
+        /// <param name="applyForId">The applyForId used to filter the notifications.</param>
+        /// <returns>A JSON response containing a list of notifications related to the request ID or null if no notifications are found.</returns>
+        public async Task<IActionResult> GetNotificationRequestId(int TypeId, int applyForId)
+        {
+            // Retrieve the user ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Fetch the notifications based on the user ID, TypeId, and applyForId
+            List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotificationRequestId(userId, TypeId, applyForId);
+            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+            // Return the notifications as a JSON response, or null if no notifications are found
+            if (dTONotificationResponses != null)
+            {
+
+                foreach (var basicDetailUpdVM in dTONotificationResponses)
+                {
+                    // Load existing photo and signature if files exist
+
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
+
+                    if (System.IO.File.Exists(sourcePathPhoto))
+                    {
+                        basicDetailUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    }
+                }
+                return Json(dTONotificationResponses);
+            }
+            else
+            {
+                return Json(null);
+            }
+        }
+
+        /// <summary>
+        /// Action method to update a notification as read based on the provided notification data.
+        /// </summary>
+        /// <param name="Data">The notification data to be updated.</param>
+        /// <returns>A JSON response indicating the success or failure of the update operation.</returns>
+        public async Task<IActionResult> UpdateNotification(MTrnNotification Data)
+        {
+            // Retrieve the user ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Set the sender ID for the notification
+            Data.SentAspNetUsersId = userId;
+
+            // Update the notification status to "read" and return the result as JSON
+            return Json(await _INotificationBL.UpdateRead(Data));
+        }
+
+        #endregion
+
+
+        #region DashboardUserMgt / GetDashboardUserMgtCount / RequestDashboard / GetRequestDashboardCount / RegisterUser / GetAllRegisterUser
+
+
+        /// <summary>
+        /// Action method for the Dashboard User Management page. It retrieves session data, checks the user's role,
+        /// and performs a lookup to determine if the user has access to the specified record office (RO).
+        /// </summary>
+        /// <returns>The DashboardUserMgt view with appropriate session and role data passed in ViewBag.</returns>
+        public async Task<IActionResult> DashboardUserMgt()
         {
             // Retrieve the user's role from the session
             string role = GetSessionValue();
 
-            // Pass the role to the view through ViewBag
+            // Initialize the DTO session object
+            DtoSession? dtoSession = new DtoSession();
+
+            // Retrieve the session data if available
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            }
+
+            // Retrieve relevant session information such as UnitId, TrnDomainMappingId, and UserId
+            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+            int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+            int UserId = dtoSession != null ? dtoSession.UserId : 0;
+
+            // Retrieve the Record Office data based on the TrnDomainMappingId
+            DTOGetROByTDMIdResponse? dTOGetROByUserIdResponse = await _recordOfficeBL.GetROByTDMId(TDMId);
+
+            // Check if the user has access to the Record Office
+            if (dTOGetROByUserIdResponse == null)
+            {
+                ViewBag.ROFound = 0;
+            }
+            else if (dTOGetROByUserIdResponse.IsRO == true || dTOGetROByUserIdResponse.IsORO == true || dTOGetROByUserIdResponse.TDMId == TDMId)
+            {
+                ViewBag.ROFound = 1;
+            }
+            else
+            {
+                ViewBag.ROFound = 0;
+            }
+
+            // Pass the UnitId and Role to the view
+            ViewBag.UnitId = UnitId;
             ViewBag.Role = role;
 
-            // Return the Index view
+            // Return the DashboardUserMgt view
             return View();
         }
+
+        
+        /// <summary>
+        /// Action method to retrieve the dashboard user management count based on the provided UnitId and current user's session.
+        /// It calls the business logic layer to get the user management count for the dashboard.
+        /// </summary>
+        /// <param name="UnitId">The UnitId used to filter the user management count data.</param>
+        /// <returns>A JSON response containing the dashboard user management count.</returns>
+        [HttpPost]
+        public async Task<IActionResult> GetDashboardUserMgtCount(int UnitId)
+        {
+            try
+            {
+                // Retrieve the user ID from the claims
+                int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                // Fetch the dashboard user management count from the business logic layer
+                return Json(await _home.GetDashboardUserMgtCount(UnitId, UserId));
+            }
+            catch (Exception ex)
+            {
+                // Log any exceptions and return an internal server error
+                _logger.LogError(1001, ex, "Home->GetDashboardUserMgtCount");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+
+        
+        /// <summary>
+        /// Action method to display the Request Dashboard based on the provided base64-encoded Id.
+        /// The method validates the Id, decodes it, and determines the appropriate view based on the decoded value.
+        /// </summary>
+        /// <param name="Id">The base64-encoded Id used to determine the dashboard type.</param>
+        /// <returns>A view for the Request Dashboard with the corresponding role and previous link.</returns>
+        public async Task<IActionResult> RequestDashboard(string Id)
+        {
+            // Validate the base64 encoded Id and check if it's valid
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                // Set an error message if the Id is invalid
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            try
+            {
+                // Retrieve the user's role from the session
+                string role = GetSessionValue();
+
+                // Decode the base64-encoded Id
+                var base64EncodedBytes = Convert.FromBase64String(Id);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+
+                // Pass the decoded string (dashboard type) and role to the view
+                ViewBag.Type = decodedString;
+                ViewBag.Role = role;
+
+                // Set the previous link based on the decoded dashboard type
+                if (decodedString == "Posting Out" || decodedString == "Posting In")
+                {
+                    ViewBag.PreviousLink = "DashboardUserMgt";
+                }
+                else
+                {
+                    ViewBag.PreviousLink = "SubDashboard";
+                }
+
+                return View();
+            }
+            catch (FormatException ex)
+            {
+                // Log any exceptions related to invalid base64 string and return an error
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            catch (Exception ex)
+            {
+                // Log any other exceptions and return an error
+                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
+                TempData["error"] = ex.Message;
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+        }
+
+        
+        /// <summary>
+        /// Action method to retrieve the request dashboard count based on the provided Id and session data.
+        /// </summary>
+        /// <param name="Id">The ID used to retrieve the request dashboard count data.</param>
+        /// <returns>A JSON response containing the request dashboard count data.</returns>
+        public async Task<IActionResult> GetRequestDashboardCount(string Id)
+        {
+            // Retrieve the user ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Retrieve session data
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            }
+
+            // Retrieve UnitMapId from the session data
+            int UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+
+            // Fetch request dashboard count from the business logic layer
+            return Json(await _home.GetRequestDashboardCount(userId, Id, UnitMapId));
+        }
+
 
         /// <summary>
         /// Action method to display the "Register User" page. It retrieves the user's session data
@@ -171,25 +514,48 @@ namespace Web.Controllers
         [Authorize]
         public IActionResult RegisterUser()
         {
-            // Initialize a new DtoSession object
-            DtoSession? dtoSession = new DtoSession();
-
-            // Check if the session contains a valid "Token"
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                // Retrieve the session object "Token" and deserialize it into the dtoSession object
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-            }
-
-            // Retrieve the UnitId from the session or default to 0 if not available
-            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
-
-            // Pass the UnitId to the view using ViewBag
-            ViewBag.UnitId = UnitId;
-
-            // Return the RegisterUser view
             return View();
         }
+
+
+        /// <summary>
+        /// Action method to retrieve all registered users based on the provided UnitId.
+        /// </summary>
+        /// <param name="UnitId">The UnitId used to retrieve registered users.</param>
+        /// <returns>A JSON response containing the list of registered users.</returns>
+        [HttpPost]
+        public async Task<IActionResult> GetAllRegisterUser()
+        {
+            try
+            {
+                // Initialize a new DtoSession object
+                DtoSession? dtoSession = new DtoSession();
+
+                // Check if the session contains a valid "Token"
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    // Retrieve the session object "Token" and deserialize it into the dtoSession object
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
+
+                // Retrieve the UnitId from the session or default to 0 if not available
+                int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+
+                // Fetch all registered users based on the provided UnitId
+                return Json(await _home.GetAllRegisterUser(UnitId));
+            }
+            catch (Exception ex)
+            {
+                // Log any exceptions and return an error response
+                _logger.LogError(1001, ex, "Home->GetAllRegisterUser");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+
+        #endregion
+
+
+        #region Dashboard / GetDashboardCount /SubDashboard / GetSubDashboardCount
 
         /// <summary>
         /// Action method for the Dashboard page. It retrieves the user's role, claims, and user information
@@ -220,35 +586,248 @@ namespace Web.Controllers
             return View();
         }
 
-        #region Report Return
         /// <summary>
-        /// Action method to display the report page. It retrieves the user's role, claims, and other session data
-        /// and passes them to the view for display.
+        /// Action method to retrieve the dashboard count based on the user's configuration settings and session data.
+        /// It validates configuration values and then calls the business logic layer to get the dashboard count data.
         /// </summary>
-        /// <returns>The Report view with role and user claims passed in ViewBag.</returns>
-        public async Task<IActionResult> Report()
+        /// <returns>A JSON response containing the dashboard count data.</returns>
+        public async Task<IActionResult> GetDashboardCount()
+        {
+            // Retrieve the user ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Retrieve configuration values for ArmedIdForORO and ApplFwdCondition
+            short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
+            DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
+            {
+                MPRSO = new MPRSO(),
+                MP6F = new MP6F(),
+                MP6A = new MP6A()
+            };
+
+            // Validate the configuration values
+            if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
+                string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
+                string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name) || dTOApplFwdCondition.MP6A.RankOrderby == 0 || ArmedIdForORO == 0)
+            {
+                // If configuration values are invalid, return an error
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+            // Fetch dashboard count from the business logic layer
+            return Json(await _home.GetDashBoardCount(userId, dTOApplFwdCondition, ArmedIdForORO));
+        }
+
+
+        /// <summary>
+        /// Action method to display the sub-dashboard. It retrieves the user's role and passes it to the view.
+        /// </summary>
+        /// <returns>The SubDashboard view with the user's role passed in ViewBag.</returns>
+        public async Task<IActionResult> SubDashboard()
         {
             // Retrieve the user's role from the session
             string role = GetSessionValue();
 
-            // Pass the role to the view using ViewBag
+            // Pass the role to the view
             ViewBag.Role = role;
 
-            // Retrieve the user ID from the claims of the current user
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            // Fetch the user from the UserManager service using the user ID
-            var user = await userManager.FindByIdAsync(userId);
-
-            // Retrieve all claims associated with the user
-            var UserClaims = await userManager.GetClaimsAsync(user);
-
-            // Pass the user claims to the view using ViewBag
-            ViewBag.UserClaims = UserClaims;
-
-            // Return the Report view
+            // Return the SubDashboard view
             return View();
         }
+
+        /// <summary>
+        /// Action method to retrieve the sub-dashboard count based on the user's session data.
+        /// </summary>
+        /// <returns>A JSON response containing the sub-dashboard count data.</returns>
+        public async Task<IActionResult> GetSubDashboardCount()
+        {
+            // Retrieve the user ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Retrieve session data
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            }
+
+            // Retrieve UnitId from the session data
+            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+
+            // Fetch sub-dashboard count from the business logic layer
+            return Json(await _home.GetSubDashboardCount(userId, UnitId));
+        }
+
+        #endregion
+
+
+        #region Task / GetTaskBoardCount / MyTask / GetTaskCountICardRequest
+
+        /// <summary>
+        /// Action method to display the Task page. It retrieves the user's role and claims, then passes them to the view.
+        /// </summary>
+        /// <returns>The Task view with the user's role and claims passed in ViewBag.</returns>
+        public async Task<IActionResult> Task()
+        {
+            // Retrieve the user's role from the session
+            string role = GetSessionValue();
+            ViewBag.Role = role;
+
+            // Retrieve the user ID from the claims
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userManager.FindByIdAsync(userId);
+
+            // Get the user's claims using UserManager
+            var UserClaims = await userManager.GetClaimsAsync(user);
+            ViewBag.UserClaims = UserClaims;
+
+            return View();
+        }
+
+        /// <summary>
+        /// Action method to retrieve the task board count based on the user's session and claims.
+        /// It retrieves session data, user claims, and then calls the business logic layer to fetch the task count data.
+        /// </summary>
+        /// <returns>A JSON response containing the task board count data.</returns>
+        public async Task<IActionResult> GetTaskBoardCount()
+        {
+            // Retrieve the user ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(userId.ToString());
+
+            // Initialize necessary variables
+            int MapUnitId = 0;
+            int TDMId = 0;
+            byte ClaimValue = 0;
+
+            // Retrieve session data
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            }
+
+            // Retrieve user claims using UserManager
+            var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Set the session data based on user claims
+            if (dtoSession != null)
+            {
+                MapUnitId = dtoSession.UnitId;
+                TDMId = dtoSession.TrnDomainMappingId;
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    ClaimValue = 1;
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                {
+                    ClaimValue = 2;
+                }
+                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
+                {
+                    ClaimValue = 3;
+                }
+                else
+                {
+                    ClaimValue = 0;
+                }
+            }
+
+            // Fetch task board count from the business logic layer
+            return Json(await _home.GetTaskBoardCount(MapUnitId, ClaimValue, TDMId));
+        }
+
+        /// <summary>
+        /// Action method to display the MyTask page based on the provided base64-encoded Id.
+        /// The method validates the Id, decodes it, and retrieves the user's role and claims before returning the view.
+        /// </summary>
+        /// <param name="Id">The base64-encoded Id used to determine the task type.</param>
+        /// <returns>A view for the MyTask page with the corresponding role and user claims.</returns>
+        public async Task<IActionResult> MyTask(string Id)
+        {
+            // Validate the base64 encoded Id and check if it's valid
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                // Set an error message if the Id is invalid
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToActionPermanent("ContactUs", "Home");
+            }
+
+            try
+            {
+                // Retrieve the user's role from the session
+                string role = GetSessionValue();
+
+                // Decode the base64-encoded Id
+                var base64EncodedBytes = Convert.FromBase64String(Id);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+
+                // Pass the decoded string (task type) and role to the view
+                ViewBag.Type = decodedString;
+                ViewBag.Role = role;
+
+                // Retrieve the user ID from the claims
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await userManager.FindByIdAsync(userId);
+
+                // Get the user's claims using UserManager
+                var UserClaims = await userManager.GetClaimsAsync(user);
+                ViewBag.UserClaims = UserClaims;
+
+                return View();
+            }
+            catch (FormatException ex)
+            {
+                // Log any exceptions related to invalid base64 string and return an error
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            catch (Exception ex)
+            {
+                // Log any other exceptions and return an error
+                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
+                TempData["error"] = ex.Message;
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+        }
+
+        /// <summary>
+        /// Action method to retrieve the task count for the I-Card request based on the provided Id and applyForId.
+        /// It fetches the task count from the business logic layer (BL) and returns the result as JSON.
+        /// </summary>
+        /// <param name="Id">The ID of the request.</param>
+        /// <param name="applyForId">The ID of the applyFor field used to filter the task count.</param>
+        /// <returns>A JSON response containing the task count for the I-Card request.</returns>
+        public async Task<IActionResult> GetTaskCountICardRequest(int Id, int applyForId)
+        {
+            // Retrieve the user ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Fetch the I-Card task count based on the user ID, request ID, and applyForId
+            DTOICardTaskCountResponse? dTOICardTaskCountResponse = await _basicDetailBL.GetTaskCountICardRequest(userId, Id, applyForId);
+
+            // Return the task count as a JSON response, or null if no data is found
+            if (dTOICardTaskCountResponse != null)
+            {
+                return Json(dTOICardTaskCountResponse);
+            }
+            else
+            {
+                return Json(null);
+            }
+        }
+
+        #endregion
+
+
+        #region ReportAndReturn /  GetReportReturnCount
+
 
         /// <summary>
         /// Action method to display the "Report and Return" page. It retrieves the user's claims
@@ -333,6 +912,42 @@ namespace Web.Controllers
             }
         }
 
+        #endregion
+
+
+        #region Report / GetReportDashboardCount / GetReportData / IsValidMonthYear
+
+
+        /// <summary>
+        /// Action method to display the report page. It retrieves the user's role, claims, and other session data
+        /// and passes them to the view for display.
+        /// </summary>
+        /// <returns>The Report view with role and user claims passed in ViewBag.</returns>
+        public async Task<IActionResult> Report()
+        {
+            // Retrieve the user's role from the session
+            string role = GetSessionValue();
+
+            // Pass the role to the view using ViewBag
+            ViewBag.Role = role;
+
+            // Retrieve the user ID from the claims of the current user
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Fetch the user from the UserManager service using the user ID
+            var user = await userManager.FindByIdAsync(userId);
+
+            // Retrieve all claims associated with the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Pass the user claims to the view using ViewBag
+            ViewBag.UserClaims = UserClaims;
+
+            // Return the Report view
+            return View();
+        }
+
+        
         /// <summary>
         /// Action method to retrieve the report dashboard count based on the provided data.
         /// It validates the session and user claims, then fetches the required report dashboard data.
@@ -410,6 +1025,7 @@ namespace Web.Controllers
             // Return the report dashboard count data as a JSON response
             return Json(await _reportReturnBL.GetReportDashboardCount(dTORecord));
         }
+
 
         /// <summary>
         /// Action method to retrieve the report data based on the provided filter criteria.
@@ -523,6 +1139,7 @@ namespace Web.Controllers
             }
         }
 
+
         /// <summary>
         /// Validates the provided month/year input in the "MM/yyyy" format.
         /// The method checks if the input is a valid date and falls within the range of the last 2 years and the current month.
@@ -551,243 +1168,11 @@ namespace Web.Controllers
             // Return whether the selected month is within the valid range
             return selectedMonthStart >= minDate && selectedMonthStart <= maxDate;
         }
+
         #endregion
-        /// <summary>
-        /// Action method to display the sub-dashboard. It retrieves the user's role and passes it to the view.
-        /// </summary>
-        /// <returns>The SubDashboard view with the user's role passed in ViewBag.</returns>
-        public async Task<IActionResult> SubDashboard()
-        {
-            // Retrieve the user's role from the session
-            string role = GetSessionValue();
 
-            // Pass the role to the view
-            ViewBag.Role = role;
 
-            // Return the SubDashboard view
-            return View();
-        }
-
-        /// <summary>
-        /// Action method for the Dashboard User Management page. It retrieves session data, checks the user's role,
-        /// and performs a lookup to determine if the user has access to the specified record office (RO).
-        /// </summary>
-        /// <returns>The DashboardUserMgt view with appropriate session and role data passed in ViewBag.</returns>
-        public async Task<IActionResult> DashboardUserMgt()
-        {
-            // Retrieve the user's role from the session
-            string role = GetSessionValue();
-
-            // Initialize the DTO session object
-            DtoSession? dtoSession = new DtoSession();
-
-            // Retrieve the session data if available
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-            }
-
-            // Retrieve relevant session information such as UnitId, TrnDomainMappingId, and UserId
-            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
-            int TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
-            int UserId = dtoSession != null ? dtoSession.UserId : 0;
-
-            // Retrieve the Record Office data based on the TrnDomainMappingId
-            DTOGetROByTDMIdResponse? dTOGetROByUserIdResponse = await _recordOfficeBL.GetROByTDMId(TDMId);
-
-            // Check if the user has access to the Record Office
-            if (dTOGetROByUserIdResponse == null)
-            {
-                ViewBag.ROFound = 0;
-            }
-            else if (dTOGetROByUserIdResponse.IsRO == true || dTOGetROByUserIdResponse.IsORO == true || dTOGetROByUserIdResponse.TDMId == TDMId)
-            {
-                ViewBag.ROFound = 1;
-            }
-            else
-            {
-                ViewBag.ROFound = 0;
-            }
-
-            // Pass the UnitId and Role to the view
-            ViewBag.UnitId = UnitId;
-            ViewBag.Role = role;
-
-            // Return the DashboardUserMgt view
-            return View();
-        }
-
-        /// <summary>
-        /// Action method to initiate a new request. It retrieves the user's role and passes it to the view.
-        /// </summary>
-        /// <returns>The InitiateRequest view with the user's role passed in ViewBag.</returns>
-        public IActionResult InitiateRequest()
-        {
-            // Pass the user's role to the view
-            ViewBag.Role = GetSessionValue();
-
-            // Return the InitiateRequest view
-            return View();
-        }
-
-        /// <summary>
-        /// Action method to display the Request Dashboard based on the provided base64-encoded Id.
-        /// The method validates the Id, decodes it, and determines the appropriate view based on the decoded value.
-        /// </summary>
-        /// <param name="Id">The base64-encoded Id used to determine the dashboard type.</param>
-        /// <returns>A view for the Request Dashboard with the corresponding role and previous link.</returns>
-        public async Task<IActionResult> RequestDashboard(string Id)
-        {
-            // Validate the base64 encoded Id and check if it's valid
-            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
-            {
-                // Set an error message if the Id is invalid
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
-
-            try
-            {
-                // Retrieve the user's role from the session
-                string role = GetSessionValue();
-
-                // Decode the base64-encoded Id
-                var base64EncodedBytes = Convert.FromBase64String(Id);
-                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
-
-                // Pass the decoded string (dashboard type) and role to the view
-                ViewBag.Type = decodedString;
-                ViewBag.Role = role;
-
-                // Set the previous link based on the decoded dashboard type
-                if (decodedString == "Posting Out" || decodedString == "Posting In")
-                {
-                    ViewBag.PreviousLink = "DashboardUserMgt";
-                }
-                else
-                {
-                    ViewBag.PreviousLink = "SubDashboard";
-                }
-
-                return View();
-            }
-            catch (FormatException ex)
-            {
-                // Log any exceptions related to invalid base64 string and return an error
-                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
-            catch (Exception ex)
-            {
-                // Log any other exceptions and return an error
-                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
-                TempData["error"] = ex.Message;
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
-        }
-
-        /// <summary>
-        /// Action method to display the Task page. It retrieves the user's role and claims, then passes them to the view.
-        /// </summary>
-        /// <returns>The Task view with the user's role and claims passed in ViewBag.</returns>
-        public async Task<IActionResult> Task()
-        {
-            // Retrieve the user's role from the session
-            string role = GetSessionValue();
-            ViewBag.Role = role;
-
-            // Retrieve the user ID from the claims
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await userManager.FindByIdAsync(userId);
-
-            // Get the user's claims using UserManager
-            var UserClaims = await userManager.GetClaimsAsync(user);
-            ViewBag.UserClaims = UserClaims;
-
-            return View();
-        }
-
-        /// <summary>
-        /// Action method to retrieve the I-Card process report based on the provided request data.
-        /// </summary>
-        /// <param name="Data">The request data used to fetch the report.</param>
-        /// <returns>A JSON response containing the I-Card process report data.</returns>
-        public async Task<IActionResult> GetICardProcessReport(DTOMHierarchyRequest Data)
-        {
-            try
-            {
-                // Retrieve the report based on the provided data
-                var ret = await _reportReturnBL.GetReportForm11(Data);
-                return Json(ret);
-            }
-            catch (Exception ex)
-            {
-                // Return an internal server error response if any exception occurs
-                return Json(KeyConstants.InternalServerError);
-            }
-        }
-
-        /// <summary>
-        /// Action method to display the MyTask page based on the provided base64-encoded Id.
-        /// The method validates the Id, decodes it, and retrieves the user's role and claims before returning the view.
-        /// </summary>
-        /// <param name="Id">The base64-encoded Id used to determine the task type.</param>
-        /// <returns>A view for the MyTask page with the corresponding role and user claims.</returns>
-        public async Task<IActionResult> MyTask(string Id)
-        {
-            // Validate the base64 encoded Id and check if it's valid
-            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
-            {
-                // Set an error message if the Id is invalid
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToActionPermanent("ContactUs", "Home");
-            }
-
-            try
-            {
-                // Retrieve the user's role from the session
-                string role = GetSessionValue();
-
-                // Decode the base64-encoded Id
-                var base64EncodedBytes = Convert.FromBase64String(Id);
-                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
-
-                // Pass the decoded string (task type) and role to the view
-                ViewBag.Type = decodedString;
-                ViewBag.Role = role;
-
-                // Retrieve the user ID from the claims
-                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var user = await userManager.FindByIdAsync(userId);
-
-                // Get the user's claims using UserManager
-                var UserClaims = await userManager.GetClaimsAsync(user);
-                ViewBag.UserClaims = UserClaims;
-
-                return View();
-            }
-            catch (FormatException ex)
-            {
-                // Log any exceptions related to invalid base64 string and return an error
-                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
-            catch (Exception ex)
-            {
-                // Log any other exceptions and return an error
-                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
-                TempData["error"] = ex.Message;
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
-        }
+        #region Request / GetRegistrationApplyfor / InitiateRequest
 
         /// <summary>
         /// Action method for the Request page. It retrieves the current user's claims and role,
@@ -825,391 +1210,23 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// Action method to retrieve the card details based on the provided data.
-        /// It retrieves user ID from the session and uses it to fetch the corresponding card details.
+        /// Action method to initiate a new request. It retrieves the user's role and passes it to the view.
         /// </summary>
-        /// <param name="Data">The data containing information to fetch the card details.</param>
-        /// <returns>A JSON response containing the card details for the current user.</returns>
-        public async Task<IActionResult> GetApplyCardDetails(DTOApplyCardDetailsRequest Data)
+        /// <returns>The InitiateRequest view with the user's role passed in ViewBag.</returns>
+        public IActionResult InitiateRequest()
         {
-            // Retrieve the current user's ID from the claims
-            Data.UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            // Pass the user's role to the view
+            ViewBag.Role = GetSessionValue();
 
-            // Fetch the card details based on the provided data
-            return Json(await _registrationBL.GetApplyCardDetails(Data));
+            // Return the InitiateRequest view
+            return View();
         }
 
-        /// <summary>
-        /// Action method to retrieve the task count for the I-Card request based on the provided Id and applyForId.
-        /// It fetches the task count from the business logic layer (BL) and returns the result as JSON.
-        /// </summary>
-        /// <param name="Id">The ID of the request.</param>
-        /// <param name="applyForId">The ID of the applyFor field used to filter the task count.</param>
-        /// <returns>A JSON response containing the task count for the I-Card request.</returns>
-        public async Task<IActionResult> GetTaskCountICardRequest(int Id, int applyForId)
-        {
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+        #endregion
 
-            // Fetch the I-Card task count based on the user ID, request ID, and applyForId
-            DTOICardTaskCountResponse? dTOICardTaskCountResponse = await _basicDetailBL.GetTaskCountICardRequest(userId, Id, applyForId);
 
-            // Return the task count as a JSON response, or null if no data is found
-            if (dTOICardTaskCountResponse != null)
-            {
-                return Json(dTOICardTaskCountResponse);
-            }
-            else
-            {
-                return Json(null);
-            }
-        }
-
-        /// <summary>
-        /// Action method to save a notification. It updates any previous notifications and adds a new one for both the sender and receiver.
-        /// </summary>
-        /// <param name="Data">The notification data to be saved.</param>
-        /// <returns>A JSON response indicating success (1) or failure (0).</returns>
-        public async Task<IActionResult> SaveNotification(DTOTrnNotificationRequest Data)
-        {
-            #region Old code
-            //try
-            //{
-            //    // Retrieve the user ID from the claims
-            //    int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            //    Data.SentAspNetUsersId = userId;
-
-            //    // Update the previous notification data
-            //    await _INotificationBL.UpdatePrevious(Data);
-
-            //    // Add the new notification
-            //    await _INotificationBL.Add(Data);
-
-            //    // Retrieve the user ID associated with the request
-            //    int requestUserId = await _ITrnICardRequestBL.GetUserIdByRequestId(Data.RequestId);
-
-            //    // Prepare notification data for the receiver and set the receiver and sender IDs
-            //    Data.NotificationId = 0;
-            //    Data.SentAspNetUsersId = requestUserId;
-            //    Data.ReciverAspNetUsersId = requestUserId;
-
-            //    // Add the notification for the receiver
-            //    await _INotificationBL.Add(Data);
-
-            //    // Return a success response
-            //    return Json(1);
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Return failure if an exception occurs
-            //    return Json(0);
-            //}
-            #endregion Old code
-            try
-            {
-                // Retrieve the user ID from the claims
-                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                Data.SentAspNetUsersId = userId;
-
-                if (Data.StepId ==5) //Export
-                {
-                    // Update the previous notification data
-                    await _INotificationBL.UpdatePrevious(Data);
-                }
-                else
-                {
-                    // Update the previous notification data
-                    await _INotificationBL.UpdatePrevious(Data);
-
-                    // Add the new notification
-                    await _INotificationBL.AddNotification(Data);
-                }
-
-                // Return a success response
-                return Json(1);
-            }
-            catch (Exception ex)
-            {
-                // Return failure if an exception occurs
-                return Json(0);
-            }
-        }
-
-        /// <summary>
-        /// Action method to retrieve notifications based on the provided type and applyForId.
-        /// </summary>
-        /// <param name="TypeId">The notification type ID used to filter the notifications.</param>
-        /// <param name="applyForId">The applyForId used to filter the notifications.</param>
-        /// <returns>A JSON response containing a list of notifications or null if no notifications are found.</returns>
-        public async Task<IActionResult> GetNotification()
-        {
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            // Fetch the notifications based on the user ID, TypeId, and applyForId
-            DTONotificationResult dTONotificationResponses = await _basicDetailBL.GetNotification(userId);
-            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
-
-            // Return the notifications as a JSON response, or null if no notifications are found
-            if (dTONotificationResponses.Items != null)
-            {
-                foreach (var basicDetailUpdVM in dTONotificationResponses.Items)
-                {
-                    // Load existing photo and signature if files exist
-
-                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
-
-                    if (System.IO.File.Exists(sourcePathPhoto))
-                    {
-                        string resultB64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-                        //basicDetailUpdVM.ExistingPhotoInBase64 = resultB64;
-                        basicDetailUpdVM.ExistingPhotoInBase64 = imageEncryptAndDecrypt.CompressBase64(resultB64, maxWidth: 65, jpegQuality: 10,true);
-                    }
-                }
-
-                return Json(dTONotificationResponses);
-            }
-            else
-            {
-                return Json(dTONotificationResponses);
-            }
-        }
-
-        /// <summary>
-        /// Action method to retrieve notifications based on the request ID, type, and applyForId.
-        /// </summary>
-        /// <param name="TypeId">The notification type ID used to filter the notifications.</param>
-        /// <param name="applyForId">The applyForId used to filter the notifications.</param>
-        /// <returns>A JSON response containing a list of notifications related to the request ID or null if no notifications are found.</returns>
-        public async Task<IActionResult> GetNotificationRequestId(int TypeId, int applyForId)
-        {
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            // Fetch the notifications based on the user ID, TypeId, and applyForId
-            List<DTONotificationResponse>? dTONotificationResponses = await _basicDetailBL.GetNotificationRequestId(userId, TypeId, applyForId);
-            string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
-
-            // Return the notifications as a JSON response, or null if no notifications are found
-            if (dTONotificationResponses != null)
-            {
-
-                foreach (var basicDetailUpdVM in dTONotificationResponses)
-                {
-                    // Load existing photo and signature if files exist
-
-                    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", basicDetailUpdVM.PhotoImagePath);
-
-                    if (System.IO.File.Exists(sourcePathPhoto))
-                    {
-                        basicDetailUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-                    }
-                }
-                return Json(dTONotificationResponses);
-            }
-            else
-            {
-                return Json(null);
-            }
-        }
-
-        /// <summary>
-        /// Action method to update a notification as read based on the provided notification data.
-        /// </summary>
-        /// <param name="Data">The notification data to be updated.</param>
-        /// <returns>A JSON response indicating the success or failure of the update operation.</returns>
-        public async Task<IActionResult> UpdateNotification(MTrnNotification Data)
-        {
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            // Set the sender ID for the notification
-            Data.SentAspNetUsersId = userId;
-
-            // Update the notification status to "read" and return the result as JSON
-            return Json(await _INotificationBL.UpdateRead(Data));
-        }
-
-        /// <summary>
-        /// Action method to retrieve the task board count based on the user's session and claims.
-        /// It retrieves session data, user claims, and then calls the business logic layer to fetch the task count data.
-        /// </summary>
-        /// <returns>A JSON response containing the task board count data.</returns>
-        public async Task<IActionResult> GetTaskBoardCount()
-        {
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = await userManager.FindByIdAsync(userId.ToString());
-
-            // Initialize necessary variables
-            int MapUnitId = 0;
-            int TDMId = 0;
-            byte ClaimValue = 0;
-
-            // Retrieve session data
-            DtoSession? dtoSession = new DtoSession();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-            }
-
-            // Retrieve user claims using UserManager
-            var UserClaims = await userManager.GetClaimsAsync(user);
-
-            // Set the session data based on user claims
-            if (dtoSession != null)
-            {
-                MapUnitId = dtoSession.UnitId;
-                TDMId = dtoSession.TrnDomainMappingId;
-                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
-                {
-                    ClaimValue = 1;
-                }
-                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
-                {
-                    ClaimValue = 2;
-                }
-                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
-                {
-                    ClaimValue = 3;
-                }
-                else
-                {
-                    ClaimValue = 0;
-                }
-            }
-
-            // Fetch task board count from the business logic layer
-            return Json(await _home.GetTaskBoardCount(MapUnitId, ClaimValue, TDMId));
-        }
-
-        /// <summary>
-        /// Action method to retrieve the dashboard count based on the user's configuration settings and session data.
-        /// It validates configuration values and then calls the business logic layer to get the dashboard count data.
-        /// </summary>
-        /// <returns>A JSON response containing the dashboard count data.</returns>
-        public async Task<IActionResult> GetDashboardCount()
-        {
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            // Retrieve configuration values for ArmedIdForORO and ApplFwdCondition
-            short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
-            DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
-            {
-                MPRSO = new MPRSO(),
-                MP6F = new MP6F(),
-                MP6A = new MP6A()
-            };
-
-            // Validate the configuration values
-            if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
-                string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
-                string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name) || dTOApplFwdCondition.MP6A.RankOrderby == 0 || ArmedIdForORO == 0)
-            {
-                // If configuration values are invalid, return an error
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return Json(KeyConstants.InternalServerError);
-            }
-
-            // Fetch dashboard count from the business logic layer
-            return Json(await _home.GetDashBoardCount(userId, dTOApplFwdCondition, ArmedIdForORO));
-        }
-
-        /// <summary>
-        /// Action method to retrieve the request dashboard count based on the provided Id and session data.
-        /// </summary>
-        /// <param name="Id">The ID used to retrieve the request dashboard count data.</param>
-        /// <returns>A JSON response containing the request dashboard count data.</returns>
-        public async Task<IActionResult> GetRequestDashboardCount(string Id)
-        {
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            // Retrieve session data
-            DtoSession? dtoSession = new DtoSession();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-            }
-
-            // Retrieve UnitMapId from the session data
-            int UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
-
-            // Fetch request dashboard count from the business logic layer
-            return Json(await _home.GetRequestDashboardCount(userId, Id, UnitMapId));
-        }
-
-        /// <summary>
-        /// Action method to retrieve the sub-dashboard count based on the user's session data.
-        /// </summary>
-        /// <returns>A JSON response containing the sub-dashboard count data.</returns>
-        public async Task<IActionResult> GetSubDashboardCount()
-        {
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            // Retrieve session data
-            DtoSession? dtoSession = new DtoSession();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-            }
-
-            // Retrieve UnitId from the session data
-            int UnitId = dtoSession != null ? dtoSession.UnitId : 0;
-
-            // Fetch sub-dashboard count from the business logic layer
-            return Json(await _home.GetSubDashboardCount(userId, UnitId));
-        }
-
-        /// <summary>
-        /// Action method to retrieve all registered users based on the provided UnitId.
-        /// </summary>
-        /// <param name="UnitId">The UnitId used to retrieve registered users.</param>
-        /// <returns>A JSON response containing the list of registered users.</returns>
-        [HttpPost]
-        public async Task<IActionResult> GetAllRegisterUser(int UnitId)
-        {
-            try
-            {
-                // Fetch all registered users based on the provided UnitId
-                return Json(await _home.GetAllRegisterUser(UnitId));
-            }
-            catch (Exception ex)
-            {
-                // Log any exceptions and return an error response
-                _logger.LogError(1001, ex, "Home->GetAllRegisterUser");
-                return Json(KeyConstants.InternalServerError);
-            }
-        }
-
-        /// <summary>
-        /// Action method to retrieve the dashboard user management count based on the provided UnitId and current user's session.
-        /// It calls the business logic layer to get the user management count for the dashboard.
-        /// </summary>
-        /// <param name="UnitId">The UnitId used to filter the user management count data.</param>
-        /// <returns>A JSON response containing the dashboard user management count.</returns>
-        [HttpPost]
-        public async Task<IActionResult> GetDashboardUserMgtCount(int UnitId)
-        {
-            try
-            {
-                // Retrieve the user ID from the claims
-                int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-                // Fetch the dashboard user management count from the business logic layer
-                return Json(await _home.GetDashboardUserMgtCount(UnitId, UserId));
-            }
-            catch (Exception ex)
-            {
-                // Log any exceptions and return an internal server error
-                _logger.LogError(1001, ex, "Home->GetDashboardUserMgtCount");
-                return Json(KeyConstants.InternalServerError);
-            }
-        }
-
+        #region VisitorStats /InitializeCounterFile /UpdateCounterFile /UpdateStats /GetIso8601WeekOfYear /LoadStatsFromFile
+        
         /// <summary>
         /// Action method to retrieve visitor stats, including total visitors, today's count, this week's count, and this month's count.
         /// It checks the visitor's IP address, user-agent, and session status to update or load stats.
@@ -1386,6 +1403,229 @@ namespace Web.Controllers
                 DayOfWeek.Monday);
         }
 
+        #endregion
 
+
+        #region  GetICardProcessReport / GetApplyCardDetails
+
+        /// <summary>
+        /// Action method to retrieve the I-Card process report based on the provided request data.
+        /// </summary>
+        /// <param name="Data">The request data used to fetch the report.</param>
+        /// <returns>A JSON response containing the I-Card process report data.</returns>
+        public async Task<IActionResult> GetICardProcessReport(DTOMHierarchyRequest Data)
+        {
+            try
+            {
+                // Retrieve the report based on the provided data
+                var ret = await _reportReturnBL.GetReportForm11(Data);
+                return Json(ret);
+            }
+            catch (Exception ex)
+            {
+                // Return an internal server error response if any exception occurs
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+
+        /// <summary>
+        /// Action method to retrieve the card details based on the provided data.
+        /// It retrieves user ID from the session and uses it to fetch the corresponding card details.
+        /// </summary>
+        /// <param name="Data">The data containing information to fetch the card details.</param>
+        /// <returns>A JSON response containing the card details for the current user.</returns>
+        public async Task<IActionResult> GetApplyCardDetails(DTOApplyCardDetailsRequest Data)
+        {
+            // Retrieve the current user's ID from the claims
+            Data.UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Fetch the card details based on the provided data
+            return Json(await _registrationBL.GetApplyCardDetails(Data));
+        }
+
+        #endregion
+
+        #region ReportCard / GetReportCardDashboardCount
+        
+        public async Task<IActionResult> ReportCard()
+        {
+            // Retrieve the user's role from the session
+            string role = GetSessionValue();
+
+            // Pass the role to the view using ViewBag
+            ViewBag.Role = role;
+
+            // Retrieve the user ID from the claims of the current user
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Fetch the user from the UserManager service using the user ID
+            var user = await userManager.FindByIdAsync(userId);
+
+            // Retrieve all claims associated with the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Pass the user claims to the view using ViewBag
+            ViewBag.UserClaims = UserClaims;
+
+            // Return the Report view
+            return View();
+        }
+
+        public async Task<IActionResult> GetReportCardDashboardCount([FromBody] DTOMHierarchyRequest dTORecord)
+        {
+            // Retrieve the current user's ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(userId.ToString());
+
+            // Initialize the DTO session object and retrieve session data
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            }
+
+            // Retrieve the MapUnitId from the session data
+            int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
+            if (MapUnitId == null)
+            {
+                return BadRequest(new { message = "Session expired." });
+            }
+
+            // Fetch the map unit details based on the MapUnitId
+            DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
+
+            // Retrieve the user's claims using UserManager
+            var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Conditional logic based on the user's claims to modify the request data
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+            {
+                // If user has "Army Level Reports" claim, do not modify the request data
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Fmn Level Reports"))
+            {
+                dTORecord.UnitType = dTOMap.UnitType;
+
+                // Modify the request data based on unit type
+                if (dTOMap.UnitType == 1)
+                {
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                }
+                else if (dTOMap.UnitType == 2)
+                {
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                }
+                else if (dTOMap.UnitType == 3)
+                {
+                    dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                    dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                }
+            }
+            else
+            {
+                // Modify request data based on unit type
+                if (MapUnitId != null)
+                {
+                    dTORecord.UnitType = dTOMap.UnitType;
+                    dTORecord.UnitMapId = (int)MapUnitId;
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                    dTORecord.DivId = (byte?)dTOMap.DivId;
+                    dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                    dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                    dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                    dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                }
+            }
+
+            // Return the report dashboard count data as a JSON response
+            return Json(await _reportReturnBL.GetReportCardDashboardCount(dTORecord));
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> GetReportCardData([FromBody] DTODataTablesRequestForReportCard dTORecord)
+        {
+            // Retrieve the current user's ID from the claims
+            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await userManager.FindByIdAsync(userId.ToString());
+
+            // Initialize the DTO session object and retrieve session data
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            }
+
+            // Retrieve the MapUnitId from the session data
+            int? MapUnitId = dtoSession != null ? dtoSession.UnitId : null;
+            if (MapUnitId == null)
+            {
+                return BadRequest(new { message = "Session expired." });
+            }
+
+            // Fetch the map unit details based on the MapUnitId
+            DTOMapUnitResponse dTOMap = await _mapUnitBL.GetALLByUnitMapId((int)MapUnitId);
+
+            // Retrieve the user's claims using UserManager
+            var UserClaims = await userManager.GetClaimsAsync(user);
+
+            // Conditional logic based on the user's claims to modify the request data
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Army Level Reports"))
+            {
+                // If user has "Army Level Reports" claim, do not modify the request data
+            }
+            else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Fmn Level Reports"))
+            {
+                dTORecord.UnitType = dTOMap.UnitType;
+
+                // Modify the request data based on unit type
+                if (dTOMap.UnitType == 1)
+                {
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                }
+                else if (dTOMap.UnitType == 2)
+                {
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                }
+                else if (dTOMap.UnitType == 3)
+                {
+                    dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                    dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                }
+            }
+            else
+            {
+                // Modify request data based on unit type
+                if (MapUnitId != null)
+                {
+                    dTORecord.UnitType = dTOMap.UnitType;
+                    dTORecord.UnitMapId = (int)MapUnitId;
+                    dTORecord.ComdId = (byte?)dTOMap.ComdId;
+                    dTORecord.CorpsId = (byte?)dTOMap.CorpsId;
+                    dTORecord.DivId = (byte?)dTOMap.DivId;
+                    dTORecord.BdeId = (byte?)dTOMap.BdeId;
+                    dTORecord.FmnBranchID = (byte?)dTOMap.FmnBranchID;
+                    dTORecord.PsoId = (byte?)dTOMap.PsoId;
+                    dTORecord.SubDteId = (byte?)dTOMap.SubDteId;
+                }
+            }
+
+            // If no errors, retrieve the report data
+            try
+            {
+                var ret = await _reportReturnBL.GetReportCardData(dTORecord);
+                return Json(ret);
+            }
+            catch (Exception ex)
+            {
+                // Log any exceptions and return an internal server error
+                _logger.LogError(1001, ex, "Home->GetReportCardData");
+                return BadRequest(new { message = "Internal Server Error" });
+            }
+        }
+
+        #endregion
     }
 }

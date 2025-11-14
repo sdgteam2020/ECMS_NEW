@@ -1,0 +1,350 @@
+﻿@{
+    ViewData["Title"] = "DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<string> RoleNameList = new List<string>() { "user" };
+    List<Claim> claims = ViewBag.UserClaims;
+}
+<link asp-href-include="~/css/reportandreturn.css" rel="stylesheet" />
+<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<style>
+    .clickable {
+        height: 190px;
+        width: 190px;
+        display: block;
+        margin-bottom: 25px;
+    }
+
+    .p-4 {
+        padding: 1.5rem !important;
+        padding-bottom: 4.5rem !important;
+    }
+
+    .ui-datepicker-calendar {
+        display: none !important;
+    }
+
+    #CardReport_tbldatadialog {
+        table-layout: auto !important;
+        width: 100% !important;
+    }
+
+        #CardReport_tbldatadialog th,
+        #CardReport_tbldatadialog td {
+            white-space: nowrap; /* Optional: prevent line wrap */
+            vertical-align: middle;
+        }
+
+    .modal .modal-body .table-responsive {
+        max-height: 500px;
+    }
+
+    .seven h1 {
+        color: rgb(255, 255, 255);
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+        background: linear-gradient(to right, rgb(0, 123, 255), rgb(0, 86, 179));
+        padding: 10px 16px;
+    }
+
+</style>
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> >Report & Returns (Cards)
+
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="row">
+        <div class="card">
+            @if (claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports" || i.Value == "Fmn Level Reports"))
+            {
+                <div class="row p-3">
+                    <div class="card  section_to_report_toPrint p-3" id="section_to_report_toPrint">
+                        <div class="row pt-1 SearchTab d-print-none">
+                            <div class="form-group row mb-2">
+                                <span id="spnclaimId" class="d-none">@(claims.Any(i => i.Value == "Army Level Reports") ? "Army Level Reports" : "Fmn Level Reports")</span>
+                                <label class="col-form-label col-md-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
+                                <div class="col-md-10">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
+                                        <label class="form-check-label" for="UnitType1">Unit</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
+                                        <label class="form-check-label" for="UnitType2">
+                                            Unit(Fmn HQ)
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
+                                        <label class="form-check-label" for="UnitType3">Unit(Dte/Branch)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row SearchTab">
+                            <div class="col-sm-3 unittype">
+                                <label class="col-form-label fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
+                                <select class="form-select" aria-hidden="true" name="ddlCommand" required id="ddlCommand">
+                                    <option value="">All</option>
+                                </select>
+
+                            </div>
+                            <div class="col-sm-3 unittype">
+                                <label class="col-form-label fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
+
+                                <select class="form-select" aria-hidden="true" name="ddlCorps" required id="ddlCorps">
+                                    <option value="">All</option>
+                                </select>
+
+                            </div>
+                            <div class="col-sm-3 unittype">
+                                <label class="col-form-label fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
+
+                                <select class="form-select" aria-hidden="true" name="ddlDiv" required id="ddlDiv">
+                                    <option value="">All</option>
+                                </select>
+
+                            </div>
+                            <div class="col-sm-3 unittype">
+                                <label class="col-form-label fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
+
+                                <select class="form-select" aria-hidden="true" name="ddlBde" required id="ddlBde">
+                                    <option value="">All</option>
+                                </select>
+
+                            </div>
+                            <div class="col-sm-3 FmnBranch  d-none">
+                                <label class="col-form-label fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
+
+                                <select class="form-select" aria-hidden="true" name="ddlFmnBranch" required id="ddlFmnBranch">
+                                    <option value="">All</option>
+                                </select>
+
+                            </div>
+                            <div class="col-sm-3 DteBranch d-none">
+                                <label class="col-form-label fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
+
+                                <select class="form-select" aria-hidden="true" name="ddlPSODte" required id="ddlPSODte">
+                                    <option value="">All</option>
+                                </select>
+
+                            </div>
+                            <div class="col-sm-3 DteBranch d-none">
+                                <label class="col-form-label fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
+
+                                <select class="form-select" aria-hidden="true" name="ddlDgSubDte" required id="ddlDgSubDte">
+                                    <option value="">All</option>
+                                </select>
+
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="col-form-label fw-bold">Unit<i class="fas fa-asterisk mand1"></i></label>
+
+                                <select class="form-select" aria-hidden="true" name="ddlUnit" required id="ddlUnit">
+                                    <option value="">All</option>
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (RoleNameList.Contains(ViewBag.Role))
+            {
+                <div class="row p-3">
+                    <div class="seven">
+                        <h1>Offrs</h1>
+                    </div>
+                    <div class="card p-3">
+                        <div class="row">
+                            <div class="row align-items-stretch">
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnExport_Officer">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Exported <br> by AFSAC</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotExported_Officer">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnPrinted_Officer">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Printed</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotPrinted_Officer">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row align-items-stretch">
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnDispatchToORO">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch <br> to Officer Record Office</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToORO">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnCardInORO">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Officer Record Office</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInORO">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row align-items-stretch">
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnDispatchToUnit_Officer">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch <br> to Unit</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToUnit_Officer">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnCardInUnit_Officer">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Unit</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInUnit_Officer">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row align-items-stretch">
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnDistributed_Officer">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Distributed</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDistributed_Officer">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row p-3">
+                    <div class="seven">
+                        <h1>JCO / OR</h1>
+                    </div>
+                    <div class="card p-3">
+                        <div class="row">
+                            <div class="row align-items-stretch">
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnExport_OR">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Exported <br> by AFSAC</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotExported_OR">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnPrinted_OR">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Printed</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotPrinted_OR">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row align-items-stretch">
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnDispatchToRegt">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch <br> to Regiment</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToRegt">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnCardInRegt">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Regiment</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInRegt">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row align-items-stretch">
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnDispatchToUnit_OR">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch <br> to Unit</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToUnit_OR">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnCardInUnit_OR">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Unit</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInUnit_OR">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row align-items-stretch">
+                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                                    <a href="#">
+                                        <div class="wrap" id="btnDistributed_OR">
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Distributed</h4>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDistributed_OR">0</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="CardReport" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><span id="CardReport_lblModelTitle"></span></h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table border border-purple table-striped no-footer table-hover dataTable" role="grid" id="CardReport_tbldatadialog">
+                            <thead></thead>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="col-sm-12" id="msg">
+                </div>
+            </div>
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div>
+<script asp-src-include="~/developerjs/ReportCard.js"></script>
+
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />

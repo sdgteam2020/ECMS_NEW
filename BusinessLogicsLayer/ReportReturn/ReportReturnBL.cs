@@ -12,7 +12,15 @@ namespace BusinessLogicsLayer.ReportReturn
         {
             _IReportReturnDB = reportReturnDB;
             //_IMapUnitDB = iMapUnitDB;   
-        } 
+        }
+        public async Task<DTOReportCardDashboardCountResponse> GetReportCardDashboardCount(DTOMHierarchyRequest dTO)
+        {
+            return await _IReportReturnDB.GetReportCardDashboardCount(dTO);
+        }
+        public async Task<DTODataTablesResponse<DTOReportCardResponse>> GetReportCardData(DTODataTablesRequestForReportCard dTO)
+        {
+            return await _IReportReturnDB.GetReportCardData(dTO);
+        }
         public async Task<DTOReportReturnCountlst> GetMstepCount(DTOMHierarchyRequest Data,short ArmedIdForORO)
         {
             DTOReportReturnCountlst dTOReportReturnCountlst = new DTOReportReturnCountlst();
