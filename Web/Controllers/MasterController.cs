@@ -985,6 +985,7 @@ namespace Web.Controllers
         /// This action method is used to render the MapUnit page where users can manage unit mappings,
         /// such as linking specific units to their respective command, corps, and division.
         /// </remarks>
+        [Authorize(Roles = "admin")]
         public IActionResult MapUnit()
         {
             return View();
@@ -1119,6 +1120,7 @@ namespace Web.Controllers
         /// <remarks>
         /// This method handles the addition and update of map units. If the unit name already exists, it returns an error.
         /// </remarks>
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveMapUnit(MapUnit dTO)
         {
             try
@@ -1170,6 +1172,7 @@ namespace Web.Controllers
         /// <remarks>
         /// This method handles the retrieval of map units based on the provided filters. If the filters are not valid, it returns an empty list.
         /// </remarks>
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllMapUnit(DTODataTablesRequestForMapUnit dTO)
         {
             try
@@ -1887,6 +1890,7 @@ namespace Web.Controllers
         /// Returns the view for Unit.
         /// </summary>
         /// <returns>The Unit view.</returns>
+        [Authorize(Roles = "admin")]
         public IActionResult Unit()
         {
             return View();
@@ -1897,6 +1901,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="dTO">The unit data transfer object containing unit details.</param>
         /// <returns>A JSON result indicating whether the unit was saved or updated.</returns>
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SaveUnit(MUnit dTO)
         {
             try
@@ -1947,6 +1952,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="dTO">The data transfer object containing pagination and filter information.</param>
         /// <returns>A JSON result containing the filtered list of units.</returns>
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetAllUnit(DTODataTablesRequest dTO)
         {
@@ -1984,6 +1990,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="dTO">The unit data transfer object containing the UnitId.</param>
         /// <returns>A JSON result indicating success or failure.</returns>
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteUnit(MUnit dTO)
         {
             try
@@ -2014,6 +2021,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="ints">The array of UnitIds to be deleted.</param>
         /// <returns>A JSON result indicating success or failure.</returns>
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteUnitMultiple(int[] ints)
         {
             try
@@ -2248,11 +2256,13 @@ namespace Web.Controllers
                     if (!roles.Contains("admin"))
                     {
                         dTO.Approved = false;
+                        dTO.ApptId = 0;
                     }
                     dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 }
                 else
                 {
+                    dTO.ApptId = 0;
                     dTO.Approved = false;
                     dTO.Updatedby = null;
                 }

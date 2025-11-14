@@ -268,6 +268,7 @@ namespace Web.Controllers
         /// <remarks>
         /// Delegates to the business layer; logs exceptions with event ID 1001.
         /// </remarks>
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllClaims()
         {
@@ -427,6 +428,7 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
+        
         /// <summary>
         /// Returns the total count of user profiles as a JSON payload.
         /// </summary>

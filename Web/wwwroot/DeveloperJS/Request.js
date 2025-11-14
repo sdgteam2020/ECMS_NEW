@@ -200,7 +200,7 @@ $(document).ready(function () {
                             result = await ChkSfx(ArmyNoSfx);
                             if (result == false) {
                                 IsValid = 0;
-                                toastr.error("Invalid Old Army No.");
+                                toastr.error("Invalid Army No.");
                             }
                             else {
                                 IsValid = 1;
