@@ -30,7 +30,17 @@ namespace DataAccessLayer
         {
             try
             {
-                var ret = await _context.MRegistration.Where(x => x.ApplyForId == Data.ApplyForId).ToListAsync();
+                var ret = await _context.MRegistration
+                            .Where(x => x.ApplyForId == Data.ApplyForId)
+                            .Select(x=> new MRegistration
+                            {
+                                RegistrationId = x.RegistrationId,
+                                Name = x.Name,
+                                Order = x.Order,
+                                ApplyForId = x.ApplyForId
+                            })
+                            .AsNoTracking()
+                            .ToListAsync();
                 return ret;
             }
             catch (Exception ex)

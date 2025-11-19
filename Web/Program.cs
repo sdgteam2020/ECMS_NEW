@@ -1,30 +1,31 @@
 using AutoMapper;
 using BusinessLogicsLayer;
 using BusinessLogicsLayer.Helpers;
+using BusinessLogicsLayer.Service;
 using DataAccessLayer;
 using DataAccessLayer.Logger;
+using DataAccessLayer.Security;
 using DataTransferObject;
 using DataTransferObject.Domain.Identitytable;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Newtonsoft.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
-using System;
-using ApplicationUser = DataTransferObject.Domain.Identitytable.ApplicationUser;
-using BusinessLogicsLayer.Service;
-using Microsoft.SqlServer.Management.Smo.Wmi;
-using DataAccessLayer.Security;
-using Microsoft.AspNetCore.Authorization;
+using EntityFramework.Exceptions.SqlServer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Web.Healpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Rewrite;
-using EntityFramework.Exceptions.SqlServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.SqlServer.Management.Smo.Wmi;
+using Newtonsoft.Json.Serialization;
+using System;
+using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
+using ApplicationUser = DataTransferObject.Domain.Identitytable.ApplicationUser;
 
 var builder = WebApplication.CreateBuilder(args);
 var configration = builder.Configuration;
@@ -135,8 +136,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     // When the code is published on IAM, these two lines are commented out.
-    //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    //options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
     //------------------- End Instructions----------------------
 });
 builder.Services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);

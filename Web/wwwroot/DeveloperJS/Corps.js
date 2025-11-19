@@ -227,7 +227,11 @@ function Save() {
     $.ajax({
         url: '/Master/SaveCorps',
         type: 'POST',
-        data: { "CorpsName": $("#txtCoprsName").val().trim(), "ComdId": $("#ddlCommand").val(), "CorpsId": $(".spnCorpsId").html() }, //get the search string
+        data: {
+            "CorpsName": $("#txtCoprsName").val().trim(),
+            "ComdId": $("#ddlCommand").val(),
+            "CorpsId": $(".spnCorpsId").html()
+        }, //get the search string
         success: function (result) {
 
 

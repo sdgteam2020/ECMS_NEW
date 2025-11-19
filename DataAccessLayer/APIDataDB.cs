@@ -1,19 +1,9 @@
-﻿using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Domain.Master;
-using DataTransferObject.Domain.Model;
-using DataTransferObject.Response.User;
-using DataTransferObject.Response;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
-using Dapper;
+using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+using DataTransferObject.Response;
 
 namespace DataAccessLayer
 {
@@ -85,24 +75,19 @@ namespace DataAccessLayer
         public async Task<DTOApiPersDataResponse> GetByIC(DTOAPIDataRequest Data)
         {
             // SQL query to select personal data from the MApiData table for the given Army number.
-            // Sensitive fields such as name, father name, birth date, etc., are decrypted using the DEcryptByPassPhrase function.
-            string query = "SELECT [ApplyForId], [Pers_Army_No], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_name])) [Pers_name], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Father_Name])) [Pers_Father_Name], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_birth_dt])) [Pers_birth_dt], " +
-                           "[Pers_enrol_dt], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_District])) [Pers_District], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_State])) [Pers_State], " +
-                           "[Pers_Regt], [Pers_Height], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_UID])) [Pers_UID], " +
-                           "[Pers_Blood_Gp], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_House_no])) [Pers_House_no], " +
-                           "[Pers_Moh_st], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Village])) [Pers_Village], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Tehsil])) [Pers_Tehsil], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Post_office])) [Pers_Post_office], " +
-                           "[Pers_Police_stn], [Pers_Pin_code], [Pers_Iden_mark_1], [Pers_Iden_mark_2], [Pers_Gender] " +
-                           "FROM [dbo].[MApiData] WHERE [Pers_Army_No] = @ArmyNo";
+            string query = @"SELECT [ApplyForId], [Pers_Army_No], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_name])) [Pers_name], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_birth_dt])) [Pers_birth_dt], 
+                            [Pers_enrol_dt], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_District])) [Pers_District], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_State])) [Pers_State], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_House_no])) [Pers_House_no], 
+                            [Pers_Moh_st], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Village])) [Pers_Village], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Tehsil])) [Pers_Tehsil], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Post_office])) [Pers_Post_office], 
+                            [Pers_Police_stn], [Pers_Pin_code]
+                            FROM [dbo].[MApiData] WHERE [Pers_Army_No] = @ArmyNo";
 
             // Using the database connection to execute the query and retrieve the personal data for the given Army number.
             using (var connection = _contextDP.CreateConnection())
@@ -161,24 +146,19 @@ namespace DataAccessLayer
         public async Task<DTOApiPersDataResponse> GetByoffrsIC(DTOAPIDataRequest Data)
         {
             // SQL query to select personal data from the MApiDataOffrs table for the given Army number.
-            // Sensitive fields such as name, father name, birth date, etc., are decrypted using the DEcryptByPassPhrase function.
-            string query = "SELECT [ApplyForId], [Pers_Army_No], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_name])) [Pers_name], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Father_Name])) [Pers_Father_Name], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_birth_dt])) [Pers_birth_dt], " +
-                           "[Pers_enrol_dt], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_District])) [Pers_District], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_State])) [Pers_State], " +
-                           "[Pers_Regt], [Pers_Height], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_UID])) [Pers_UID], " +
-                           "[Pers_Blood_Gp], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_House_no])) [Pers_House_no], " +
-                           "[Pers_Moh_st], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Village])) [Pers_Village], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Tehsil])) [Pers_Tehsil], " +
-                           "CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Post_office])) [Pers_Post_office], " +
-                           "[Pers_Police_stn], [Pers_Pin_code], [Pers_Iden_mark_1], [Pers_Iden_mark_2], [Pers_Gender] " +
-                           "FROM [dbo].[MApiDataOffrs] WHERE [Pers_Army_No] = @ArmyNo";
+            string query = @"SELECT [ApplyForId], [Pers_Army_No], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_name])) [Pers_name], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_birth_dt])) [Pers_birth_dt], 
+                            [Pers_enrol_dt], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_District])) [Pers_District], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_State])) [Pers_State], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_House_no])) [Pers_House_no], 
+                            [Pers_Moh_st], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Village])) [Pers_Village], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Tehsil])) [Pers_Tehsil], 
+                            CONVERT(nvarchar(MAX), DEcryptByPassPhrase('ASDC@123', [Pers_Post_office])) [Pers_Post_office], 
+                            [Pers_Police_stn], [Pers_Pin_code]
+                            FROM [dbo].[MApiDataOffrs] WHERE [Pers_Army_No] = @ArmyNo";
 
             // Using the database connection to execute the query and retrieve the personal data for the given Army number.
             using (var connection = _contextDP.CreateConnection())

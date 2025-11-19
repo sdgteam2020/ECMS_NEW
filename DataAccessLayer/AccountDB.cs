@@ -49,6 +49,7 @@ namespace DataAccessLayer
             return ret;
         }
         
+        
         /// <summary>
         /// Checks whether any other user already has the specified <paramref name="DomainId"/>.
         /// </summary>
@@ -67,6 +68,8 @@ namespace DataAccessLayer
             var ret = _context.Users.Any(x => x.DomainId.ToUpper() == DomainId.ToUpper() && x.Id != Id);
             return ret;
         }
+        
+        
         public async Task<DTOAccountResponse?> FindDomainId(string DomainId)
         {
             try
@@ -95,6 +98,8 @@ namespace DataAccessLayer
             }
 
         }
+        
+        
         public async Task<bool?> FindRoleByName(string Role)
         {
             try
@@ -108,6 +113,8 @@ namespace DataAccessLayer
                 return null;
             }
         }
+        
+        
         /// <summary>Builds a server-side DataTables payload of domain registrations.</summary>
         /// <param name="request">DataTables request: draw/start/length/search/sort.</param>
         /// <returns><see cref="DTODataTablesResponse{DTODomainRegnResponse}"/> with totals and current page rows.</returns>
@@ -218,6 +225,8 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+        
+        
         /// <summary>
         /// Retrieves a paginated, sortable, and searchable list of user registration data for DataTables.
         /// </summary>
@@ -1016,6 +1025,8 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+        
+        
         /// <summary>
         /// Retrieves a paginated, sortable, and searchable list of all user registrations.
         /// </summary>
@@ -1113,6 +1124,7 @@ namespace DataAccessLayer
             }
         }
 
+        
         /// <summary>
         /// Retrieves a paginated, sortable, and searchable list of user profiles for profile management.
         /// </summary>
@@ -1212,6 +1224,7 @@ namespace DataAccessLayer
             }
         }
 
+        
         /// <summary>
         /// Saves the mapping between a user and domain, with logging for both mapping and unmapping actions.
         /// </summary>
@@ -1334,6 +1347,7 @@ namespace DataAccessLayer
             }
         }
 
+        
         /// <summary>
         /// Creates or updates a domain registration (user), along with roles, claims,
         /// and <c>TrnDomainMapping</c>, inside a database transaction.
@@ -1563,6 +1577,7 @@ namespace DataAccessLayer
             }
         }
 
+
         /// <summary>
         /// Updates the domain flag and related user information for a specified user based on the provided DTO.
         /// </summary>
@@ -1624,6 +1639,7 @@ namespace DataAccessLayer
 
         }
 
+
         /// <summary>
         /// Retrieves all application roles ordered by ID and maps them to <see cref="DTOMasterResponse"/> items.
         /// </summary>
@@ -1651,6 +1667,7 @@ namespace DataAccessLayer
             return lst;
         }
 
+
         /// <summary>
         /// Retrieves all claim definitions from the claims store and maps them to <see cref="DTOClaimsResponse"/>.
         /// </summary>
@@ -1675,6 +1692,7 @@ namespace DataAccessLayer
             }
             return lst;
         }
+
 
         /// <summary>
         /// Saves the profile and domain mapping for a user based on the provided <paramref name="model"/> and session details.
@@ -2036,6 +2054,8 @@ namespace DataAccessLayer
             }
 
         }
+        
+        
         /// <summary>
         /// Computes aggregate account statistics: total users, active/inactive counts,
         /// verified/not-verified counts, and mapping stats (mapped/unmapped, IO/CO/RO/ORO).
@@ -2108,6 +2128,8 @@ namespace DataAccessLayer
             }
 
         }
+        
+        
         /// <summary>
         /// Saves a unit along with its mapping information in the database.
         /// </summary>
@@ -2193,6 +2215,7 @@ namespace DataAccessLayer
             }
         }
 
+        
         /// <summary>
         /// Retrieves all user claims from the database, grouped by claim type, and returns them in a format suitable for DataTables.
         /// </summary>
@@ -2264,6 +2287,7 @@ namespace DataAccessLayer
             }
         }
 
+        
         /// <summary>
         /// Retrieves all users associated with a specific claim type and returns them in a format suitable for DataTables.
         /// </summary>

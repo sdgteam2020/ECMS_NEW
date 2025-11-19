@@ -3620,9 +3620,7 @@ namespace DataAccessLayer
 
 
                             select trnclose.Authority,trnclose.Remarks,res.Reasons from TrnApplClose trnclose
-                            inner join MReasons res on trnclose.ReasonId=res.ReasonId where trnclose.RequestId=@RequestId
-
-";
+                            inner join MReasons res on trnclose.ReasonId=res.ReasonId where trnclose.RequestId=@RequestId";
             try
             {
                 ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();

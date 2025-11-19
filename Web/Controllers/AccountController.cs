@@ -1131,9 +1131,12 @@ namespace Web.Controllers
                         {
                             var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
 
+                            // 1) Kill any existing auth + session first (old session id)
+
                             HttpContext.Session.Remove("Token"); // Remove Session Object
-                            //await signInManager.SignOutAsync(); // Sign out any existing user
-                            //await userManager.UpdateSecurityStampAsync(usera); // Update security stamp to invalidate old tokens
+                            await signInManager.SignOutAsync(); // Sign out any existing user
+                            await userManager.UpdateSecurityStampAsync(usera); // Update security stamp to invalidate old tokens
+
                             if (usera != null)
                             {
                                 //default Password - Admin123#
@@ -1663,8 +1666,16 @@ namespace Web.Controllers
             // Remove the session token to clear user-specific session data
             HttpContext.Session.Remove("Token");
 
+
             // Sign out the user from ASP.NET Identity authentication
             await signInManager.SignOutAsync();
+
+            //Clear server-side session state
+            HttpContext.Session.Clear();
+
+            // Delete session + auth cookies explicitly (good for audits)
+            Response.Cookies.Delete(".AspNetCore.Identity.Application");
+            Response.Cookies.Delete(".AspNetCore.Session");
 
             // Return the logout confirmation view to the user
             return View();

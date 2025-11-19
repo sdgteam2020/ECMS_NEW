@@ -12,8 +12,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing.Imaging;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Encodings.Web;
 using Web.WebHelpers;
 
 namespace Web.Controllers
@@ -59,11 +61,8 @@ namespace Web.Controllers
         /// An <see cref="IActionResult"/> that renders the Command view.
         /// </returns>
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Command()
+        public IActionResult Command()
         {
-            // Retrieve the role of the currently authenticated user from their claims
-            string role = this.User.FindFirstValue(ClaimTypes.Role);
-
             // Return the Command view to the client
             return View();
         }
@@ -91,6 +90,8 @@ namespace Web.Controllers
         /// - <c>KeyConstants.InternalServerError</c> in case of an exception.
         /// </returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveCommand(MComd dTO)
         {
             try
@@ -408,7 +409,13 @@ namespace Web.Controllers
             else
             {
                 // Return validation errors if the model is not valid
-                return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => HtmlEncoder.Default.Encode(e.ErrorMessage))
+                    .ToList();
+
+                return Json(errors);
             }
 
         }

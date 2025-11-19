@@ -29,7 +29,7 @@
     {
         public DTOApiPersDataResponse1 AFSAC { get; set; }
     }
-    public class DTOApiPersDataResponse : DTOAPIBaseResponse
+    public class DTOApiPersDataResponse : DTOAPIBaseResponse                                                                                            
     {
         public string Pers_birth_dt { get; set; } = string.Empty;
         public string Pers_Army_No { get; set; } = string.Empty;
@@ -37,15 +37,6 @@
         public string Pers_name { get; set; } = string.Empty;
         public DTOApiPersAddressResponse Pers_Address { get; set; } = new DTOApiPersAddressResponse(); // Ensures it's never null
         
-        //public string pers_Rank { get; set; }
-        //public string pers_Father_Name { get; set; }
-        //public string pers_Regt { get; set; }
-        //public string pers_Height { get; set; }
-        //public string pers_UID { get; set; }
-        //public string pers_Blood_Gp { get; set; }
-        //public string pers_Iden_mark_1 { get; set; }
-        //public string pers_Iden_mark_2 { get; set; }
-        //public string pers_Gender { get; set; }
     }
     public class DTOApiPersAddressResponse
     {

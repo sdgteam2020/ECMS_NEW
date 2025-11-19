@@ -221,6 +221,7 @@ namespace DataAccessLayer
         //{
         //    this.configuration = configuration;
         //}
+        
         /// <summary>
         /// Asynchronously checks if a given ApptId exists in the foreign key relationship in the TrnDomainMapping table.
         /// The method performs a SQL query to count the distinct occurrences of the ApptId in the TrnDomainMapping table,

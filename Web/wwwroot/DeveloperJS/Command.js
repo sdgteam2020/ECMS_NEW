@@ -241,11 +241,12 @@ function BindData() {
 }
 function Save() {
 
-    /*  alert($('#bdaymonth').val());*/
+    const token = $('input[name="__RequestVerificationToken"]').val();
 
     $.ajax({
         url: '/Master/SaveCommand',
         type: 'POST',
+        headers: { 'RequestVerificationToken': token },
         data: { "ComdName": $("#txtComandName").val().trim(), "ComdId": $("#spncomdId").html(), "ComdAbbreviation": $("#txtAbbreviation").val().trim().toUpperCase(), "Orderby": $("#spnSOrderby").html() }, //get the search string
         success: function (result) {
 
