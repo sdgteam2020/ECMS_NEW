@@ -1,4 +1,6 @@
 ﻿$(async function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     await GetByArmyNo(null);
     $("#btntokenrefresh").on("click",async function () {
        
@@ -71,6 +73,7 @@
             url: '/UserProfile/DeRegisterUserId',
             contentType: 'application/x-www-form-urlencoded',
             type: 'POST',
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             success: function (result) {
                 if (result == true) {
                     toastr.success('User successfully Unmapped');
@@ -78,6 +81,7 @@
                         url: '/Account/Logout',
                         contentType: 'application/x-www-form-urlencoded',
                         type: 'POST',
+                        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                         success: function () {
                             window.location.href = "/Account/Logout";
                         }
@@ -99,6 +103,7 @@ function GetALLByUnitById(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "UnitMapId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data)
         {
             
@@ -151,6 +156,7 @@ function UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, UserId,
         data: {
             "RankId": RankId, "Name": Name, "UserId": UserId, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "TDMId": TDMId, "Thumbprint": Thumbprint
         }, //get the search string , "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
@@ -183,7 +189,8 @@ async function GetByArmyNo(ArmyNo) {
     fetch('/UserProfile/GetByArmyNoOrAspnetuserId', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: userdata
     })

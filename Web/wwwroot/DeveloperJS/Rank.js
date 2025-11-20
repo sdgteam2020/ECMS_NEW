@@ -1,4 +1,6 @@
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     Reset();
     BindData()
     $("#btnReset").on("click", function () {
@@ -70,7 +72,7 @@ function BindData() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -229,7 +231,8 @@ function Save() {
     $.ajax({
         url: '/Master/SaveRank',
         type: 'POST',
-        data: { "ApplyForId": $("#ddlRankType").val(),"RankName": $("#txtRank").val().trim(), "RankId": $("#spnrankId").html().trim(), "RankAbbreviation": $("#txtAbbreviation").val().trim(), "Orderby": $("#spnSOrderby").html() }, //get the search string
+        data: { "ApplyForId": $("#ddlRankType").val(), "RankName": $("#txtRank").val().trim(), "RankId": $("#spnrankId").html().trim(), "RankAbbreviation": $("#txtAbbreviation").val().trim(), "Orderby": $("#spnSOrderby").html() }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
@@ -295,6 +298,7 @@ function Delete(RankId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -341,6 +345,7 @@ function DeleteMultiple(ComdId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -380,6 +385,7 @@ function OrderByChange(RankId, OrderBy) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {

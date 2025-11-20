@@ -6,6 +6,8 @@ var ToUnitId;
 var ToUserId;
 var RecordRegimentId;
 $(async function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     const now = moment();                 // current date-time
     const max = moment().add(1, 'month'); // +1 month
 
@@ -109,7 +111,6 @@ async function Save() {
     {
         $("#loading").show();
 
-        var token = $('input[name="__RequestVerificationToken"]').val();
         let formData = new FormData();
 
         formData.append('ApplyForId', CategoryId);
@@ -125,14 +126,9 @@ async function Save() {
         formData.append('ToAspNetUsersId', $("#ddlDID").val());
         formData.append('ToUserId', ToUserId);
 
-        // Append the CSRF token if needed (depends on your backend configuration)
-        formData.append('__RequestVerificationToken', token);
-
         const response = await fetch('/BasicDetail/DispatchOut', {
             method: 'POST',
-            headers: {
-                'RequestVerificationToken': token
-            },
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             body: formData
         });
 
@@ -213,6 +209,7 @@ async function Save() {
         $("#loading").hide();
     }
 }
+
 async function GetUserIdWithName(AspNetUsersId) {
     let param = new URLSearchParams({
         "AspNetUsersId": AspNetUsersId
@@ -222,7 +219,8 @@ async function GetUserIdWithName(AspNetUsersId) {
         const response = await fetch('/BasicDetail/GetUserIdWithName', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: param
         });
@@ -249,6 +247,7 @@ async function GetUserIdWithName(AspNetUsersId) {
         alert("Error: " + error.message);
     }
 }
+
 async function GetDispatchToData(CategeryId, RecordRegimentId) {
     let param = new URLSearchParams({
         "CategeryId": CategeryId,
@@ -259,7 +258,8 @@ async function GetDispatchToData(CategeryId, RecordRegimentId) {
         const response = await fetch('/BasicDetail/GetDispatchToData', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: param
         });
@@ -294,6 +294,7 @@ async function GetDispatchToData(CategeryId, RecordRegimentId) {
         alert("Error: " + error.message);
     }
 }
+
 async function GetddlRecordRegiment() {
     let param = new URLSearchParams({
         "ToUnitId": ToUnitId
@@ -302,7 +303,8 @@ async function GetddlRecordRegiment() {
         const response = await fetch('/BasicDetail/GetddlRecordRegiment', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: param
         });
@@ -329,6 +331,7 @@ async function GetddlRecordRegiment() {
         alert("Error: " + error.message);
     }
 }
+
 async function GetDDMappedForRecord() {
     let param = new URLSearchParams({
         "UnitMapId": ToUnitId
@@ -338,7 +341,8 @@ async function GetDDMappedForRecord() {
         const response = await fetch('/Master/GetDDMappedForRecord', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: param
         });

@@ -1,5 +1,7 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     BindData();
     AccountCount();
     BindRoles();
@@ -43,6 +45,7 @@ $(function () {
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -95,6 +98,7 @@ $(function () {
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -128,6 +132,7 @@ $(function () {
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
                 type: 'POST',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                 success: function (data) {
                     $("#spnTDMUnitType").html(data.UnitType);
                     $("#spnUnitMapId").html(data.UnitMapId);
@@ -196,6 +201,7 @@ $(function () {
             $("#lblFmn").html('');
         }
     });
+
     $("#btnDomainAdd").on("click", function () {
         Reset();
         ResetErrorMessage();
@@ -239,6 +245,7 @@ $(function () {
             BindDialog("User");
         }
     });
+
     $("#btnMappedUser").on("click", function () {
 
         if ($("#lblMappedUser").html() > 0) {
@@ -248,6 +255,7 @@ $(function () {
             BindDialog("MappedUser");
         }
     });
+
     $("#btnUnMappedUser").on("click", function () {
         if ($("#lblUnMappedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -256,6 +264,7 @@ $(function () {
             BindDialog("UnMappedUser");
         }
     });
+
     $("#btnActiveUser").on("click", function () {
         if ($("#lblActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -264,6 +273,7 @@ $(function () {
             BindDialog("ActiveUser");
         }
     });
+
     $("#btnInActiveUser").on("click", function () {
         if ($("#lblInActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -272,6 +282,7 @@ $(function () {
             BindDialog("InActiveUser");
         }
     });
+
     $("#btnVerified").on("click", function () {
         if ($("#lblVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -280,6 +291,7 @@ $(function () {
             BindDialog("Verified");
         }
     });
+
     $("#btnNotVerifiedUser").on("click", function () {
         if ($("#lblNotVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -288,6 +300,7 @@ $(function () {
             BindDialog("NotVerifiedUser");
         }
     });
+
     $("#btnIO").on("click", function () {
         if ($("#lblIO").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -299,6 +312,7 @@ $(function () {
             BindData("IO");
         }
     });
+
     $("#btnApprover").on("click", function () {
         if ($("#lblApprover").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -307,6 +321,7 @@ $(function () {
             BindDialog("CO");
         }
     });
+
     //$("#btnRO").on("click", function () {
     //    if ($("#lblRO").html() > 0) {
     //        $("#tbldatadialog").DataTable().destroy();
@@ -335,6 +350,7 @@ function BindDialog(Choice) {
             url: "/Account/GetDataForDataTable",
             contentType: 'application/x-www-form-urlencoded',
             type: "POST",
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             data: function (d) {
                 d.draw = d.draw;
                 d.start = d.start;
@@ -570,7 +586,10 @@ function BindData() {
             try {
                 let response = await fetch("/Account/GetAllDomainRegn", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 
@@ -814,6 +833,7 @@ function Save() {
             "ApptId": $("#spnUnitAppointmentId").html(),
             "UnitMappId": $("#spnUnitMapId").html(),
         }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if (result == DataSave) {
                 toastr.success('Domain Id has been saved');
@@ -930,6 +950,7 @@ function GetALLByUnitById(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "UnitMapId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             $("#spnUnitMapId").html(data.UnitMapId);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
@@ -983,6 +1004,7 @@ function GetNameByApptId(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "ApptId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             $("#spnUnitAppointmentId").html(data.ApptId);
             $("#txtAppointmentName").val(data.AppointmentName);
@@ -993,6 +1015,7 @@ function BindRoles() {
     $.ajax({
         url: "/Account/GetAllRole",
         type: "POST",
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             var list = "";
             for (var i = 0; i < response.length; i++) {
@@ -1006,6 +1029,7 @@ function BindClaims() {
     $.ajax({
         url: "/Account/GetAllClaims",
         type: "GET",
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             var list = "";
             for (var i = 0; i < response.length; i++) {
@@ -1019,6 +1043,7 @@ function AccountCount() {
     $.ajax({
         url: "/Account/AccountCount",
         type: "POST",
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             $("#lblUser").html(response.User);
             $("#lblActiveUser").html(response.ActiveUser);

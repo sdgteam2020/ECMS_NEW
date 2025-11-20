@@ -1,5 +1,4 @@
-﻿$(document).ready(function () {
-
+﻿$(function () {
 
     document.addEventListener('DOMContentLoaded', function () {
         // Push a new state to the browser history

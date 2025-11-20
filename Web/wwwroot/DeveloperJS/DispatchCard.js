@@ -1,6 +1,8 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 //var table2;
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     let cvalue = parseInt($("#spnClaimValue").html());
     BindData(cvalue, function () {
     });
@@ -17,7 +19,8 @@ $(function () {
                     fetch('/Master/GetALLByUnitName', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': globalThis.RequestVerificationToken
                         },
                         body: new URLSearchParams(param) // Send data in URL encoded format
                     })
@@ -217,21 +220,16 @@ function resetSelectedFields() {
 
 async function Save() {
     try {
-        var token = $('input[name="__RequestVerificationToken"]').val();
         let formData = new FormData();
         let DispatchCardId = parseInt($("#spnDispatchCardId").html());
 
         formData.append('DispatchCardId', DispatchCardId);
         formData.append('ToRemark', $("#txtToRemark").val());
 
-        // Append the CSRF token if needed (depends on your backend configuration)
-        formData.append('__RequestVerificationToken', token);
 
         const response = await fetch('/BasicDetail/DispatchCardIn', {
             method: 'POST',
-            headers: {
-                'RequestVerificationToken': token
-            },
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             body: formData
         });
 
@@ -283,6 +281,7 @@ function BindData(cvalue, callback) {
         serverSide: true,
         filter: true,
         stateSave: true,
+        responsive: true,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -296,7 +295,10 @@ function BindData(cvalue, callback) {
             try {
                 let response = await fetch("/BasicDetail/GetAllDispatchCard", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 
@@ -494,7 +496,10 @@ function BindDialog(rowData, cvalue, callback) {
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardDataForDialog", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 
@@ -1186,7 +1191,10 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
             try {
                 let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" }, // Change Content-Type to JSON
+                    headers: {
+                        "Content-Type": "application/json",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    }, // Change Content-Type to JSON
                     body: JSON.stringify(requestData) // Send data as JSON
                 });
 
@@ -1619,6 +1627,7 @@ function ExportCsvFile() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // Tell the server we are sending JSON
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: JSON.stringify(requestData), // Convert the request     data to JSON
         })
@@ -1650,6 +1659,7 @@ function ProceedToDispatch(searchField, searchText) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // Tell the server we are sending JSON
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: JSON.stringify(requestData), // Convert the request     data to JSON
         })

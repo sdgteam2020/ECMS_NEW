@@ -1,4 +1,6 @@
 ﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     $("#ZipFile").on("change", function () {
         beforeUploadZipFileCheck(this);
     });
@@ -80,6 +82,7 @@ function Save() {
         data: formData,
         contentType: false,
         processData: false,
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {

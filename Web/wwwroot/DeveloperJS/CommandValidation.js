@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     $('.Alphanumeric').on('change', function () {
       
         if ($('.Alphanumeric').val().match("^[a-zA-Z0-9 ]*$")) {

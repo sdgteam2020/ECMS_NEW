@@ -1,4 +1,6 @@
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     mMsater(0, "ddlCommand", 1, "");
     BindData()
 
@@ -91,7 +93,7 @@ function BindData() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                
@@ -245,6 +247,7 @@ function Save() {
         url: '/Master/SaveBde',
         type: 'POST',
         data: { "BdeName": $("#txtBdeName").val(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $("#ddlDiv").val(), "BdeId": $(".spnBdeId").html() }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
@@ -310,6 +313,7 @@ function Delete(BdeId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -363,6 +367,7 @@ function DeleteMultiple(BdeCatId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {

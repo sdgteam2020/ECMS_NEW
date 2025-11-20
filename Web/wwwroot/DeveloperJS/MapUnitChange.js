@@ -2,6 +2,8 @@
 
 var table; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     BindData();
     $("#btnAdd").on("click", function (){
         location.href = '/Master/MapUnitChangeRequest';
@@ -28,7 +30,10 @@ function BindData() {
             try {
                 let response = await fetch("/Master/GetAllMapUnitChange", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 

@@ -3,6 +3,8 @@
 var table; // Declare table variable outside the function to preserve the instance
 var tableView; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     //mMsater(0, "ddlRank", Rank, "");
     //mMsater(0, "ddlArmType", ArmyType, "");
     BindData();
@@ -29,7 +31,10 @@ function BindData() {
             try {
                 let response = await fetch("/Account/GetAllClaims", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 
@@ -131,7 +136,10 @@ function BindDialog(claimValue) {
             try {   
                 let response = await fetch("/Account/GetAllUsersByClaim", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 

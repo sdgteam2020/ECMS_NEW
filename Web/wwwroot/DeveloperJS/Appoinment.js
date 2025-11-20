@@ -1,4 +1,6 @@
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     BindData()
 
     $("#btnReset").on("click", function () {
@@ -81,7 +83,7 @@ function BindData() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == -1) {
@@ -258,6 +260,7 @@ function Save() {
             "ApptId": $("#spnapptId").html(),
             "Approved": $('input[name="Approved"]:checked').val()
         }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
@@ -321,6 +324,7 @@ function Delete(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -368,6 +372,7 @@ function DeleteMultiple(Ids) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {

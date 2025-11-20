@@ -1,6 +1,6 @@
 $(function () {
-  
-   
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     BindData()
     $("#btnReset").on("click",function () {
         Reset()();
@@ -75,13 +75,13 @@ function BindData() {
     var userdata =
     {
         "Id": 0,
-
     };
     $.ajax({
         url: '/Master/GetAllCommand',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -240,13 +240,10 @@ function BindData() {
 
 }
 function Save() {
-
-    const token = $('input[name="__RequestVerificationToken"]').val();
-
     $.ajax({
         url: '/Master/SaveCommand',
         type: 'POST',
-        headers: { 'RequestVerificationToken': token },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         data: { "ComdName": $("#txtComandName").val().trim(), "ComdId": $("#spncomdId").html(), "ComdAbbreviation": $("#txtAbbreviation").val().trim().toUpperCase(), "Orderby": $("#spnSOrderby").html() }, //get the search string
         success: function (result) {
 
@@ -310,6 +307,7 @@ function Delete(ComdId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -357,6 +355,7 @@ function DeleteMultiple(ComdId) {
         url: '/Master/DeleteCommandMultiple',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         type: 'POST',
         success: function (response) {
             if (response != "null") {
@@ -396,6 +395,7 @@ function OrderByChange(ComdId, OrderBy) {
         url: '/Master/OrderByChange',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         type: 'POST',
         success: function (response) {
             if (response != "null") {
@@ -423,7 +423,6 @@ function OrderByChange(ComdId, OrderBy) {
     });
 }
 
-
 function GetBinaryTree(ComdId) {
     var listitem = "";
     var userdata =
@@ -436,6 +435,7 @@ function GetBinaryTree(ComdId) {
         url: '/Master/GetBinaryTree',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         type: 'POST',
         success: function (response) {
             if (response != "null") {

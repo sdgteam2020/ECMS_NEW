@@ -1,4 +1,6 @@
 ﻿$(async function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     var selectionButton;
 
     var RemarkTypeID = [5];
@@ -196,7 +198,6 @@ function Proceed(choice) {
 }
     function Save(choice) {
         var FaultyRemarkIds = "" + $("#ddlFaultyRemark").val() + "";
-        var token = $('input[name="__RequestVerificationToken"]').val();
         let data = {
             "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
             "RequestId": $("#spnFaultyCardRequestId").html(),
@@ -220,9 +221,8 @@ function Proceed(choice) {
             type: 'POST',
             data: JSON.stringify(data),
             contentType: "application/json",
-            headers: {
-                "RequestVerificationToken": token
-            },
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+
             success: function (result) {
                 if ($("#spnClaimValue").html().toLowerCase() === "true" && result.Result == true)
                 {
@@ -261,23 +261,24 @@ function Proceed(choice) {
             }
         });
     }
-    function GetBasicDetailForParitalViewByRequestId(RequestId) {
-        let param = new URLSearchParams({ RequestId: RequestId });
+function GetBasicDetailForParitalViewByRequestId(RequestId) {
+    let param = new URLSearchParams({ RequestId: RequestId });
 
-        fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: param
+    fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
+        },
+        body: param
+    })
+        .then(response => response.text())
+        .then(html =>{
+            document.getElementById("partialContainerBD").innerHTML = html;
         })
-            .then(response => response.text())
-            .then(html =>{
-                document.getElementById("partialContainerBD").innerHTML = html;
-          })
-          .catch(error => {
-            alert("Error: " + error.message);
-        });
+        .catch(error => {
+        alert("Error: " + error.message);
+    });
 }
 async function GetTrnFaultyCardDetail(TrnFaultyCardId) {
 
@@ -287,7 +288,8 @@ async function GetTrnFaultyCardDetail(TrnFaultyCardId) {
         const response = await fetch('/BasicDetail/GetTrnFaultyCardDetail', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: param
         });
@@ -334,6 +336,7 @@ function DownloadPdf(RequestId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {

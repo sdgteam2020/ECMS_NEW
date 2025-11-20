@@ -1,4 +1,6 @@
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     mMsater(0, "ddlArmType", 9, "");
     BindData()
     $("#btnAddRegimental").on("click",function () {
@@ -23,7 +25,8 @@ $(function () {
                 fetch('/Master/GetALLByUnitName', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
                     body: param
                 })
@@ -119,7 +122,7 @@ function BindData() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -196,7 +199,7 @@ function BindData() {
                     memberTable.buttons().container().appendTo('#tblData_wrapper .col-md-6:eq(0)');
 
                     var rows;
-                    $("#tblData #chkAll").click(function () {
+                    $("#tblData #chkAll").on("click",function () {
                         if ($(this).is(':checked')) {
                             rows = memberTable.rows({ 'search': 'applied' }).nodes();
                             $('input[type="checkbox"]', rows).prop('checked', this.checked);
@@ -293,7 +296,8 @@ function Save() {
     fetch('/Master/SaveRegimental', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json' // change to JSON
+            'Content-Type': 'application/json', // change to JSON
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: JSON.stringify(payload) // send proper JSON
     })
@@ -359,7 +363,8 @@ function Delete(Id) {
     fetch('/Master/DeleteRegimental', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: userdata
     })
@@ -405,6 +410,7 @@ function DeleteMultiple(ids) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {

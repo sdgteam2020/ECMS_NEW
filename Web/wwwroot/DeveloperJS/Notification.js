@@ -4,6 +4,8 @@ $(function () {
     });
 });
 function BindData() {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     if ($.fn.DataTable.isDataTable("#tbldatatabledata_Notification")) {
         // Destroy the DataTable and clear the table content
         $("#tbldatatabledata_Notification").DataTable().clear().destroy(); // Clear and destroy DataTable properly
@@ -29,7 +31,10 @@ function BindData() {
             try {
                 let response = await fetch("/Home/GetAllNotificationData", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: JSON.stringify(requestData)
                 });
 

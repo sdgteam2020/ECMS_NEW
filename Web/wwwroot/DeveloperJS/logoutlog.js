@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(function () {
 var dataToSend = {
     domainName: $("#spnlogoutDomainId").html(),
     appName: $("#spnlogoutAppName").html(),

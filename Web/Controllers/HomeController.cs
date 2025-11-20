@@ -593,6 +593,7 @@ namespace Web.Controllers
         /// <returns>A JSON response containing the dashboard count data.</returns>
         public async Task<IActionResult> GetDashboardCount()
         {
+
             // Retrieve the user ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
@@ -1226,12 +1227,13 @@ namespace Web.Controllers
 
 
         #region VisitorStats /InitializeCounterFile /UpdateCounterFile /UpdateStats /GetIso8601WeekOfYear /LoadStatsFromFile
-        
+
         /// <summary>
         /// Action method to retrieve visitor stats, including total visitors, today's count, this week's count, and this month's count.
         /// It checks the visitor's IP address, user-agent, and session status to update or load stats.
         /// </summary>
         /// <returns>A JSON response containing the visitor stats.</returns>
+        [IgnoreAntiforgeryToken]
         public JsonResult VisitorStats()
         {
             var model = new DTOVisitorCounterResponse();

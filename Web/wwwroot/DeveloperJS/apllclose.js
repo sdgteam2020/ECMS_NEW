@@ -1,5 +1,6 @@
 ﻿var applyforId = 0;
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     //if (sessionStorage.getItem("ArmyNo") != null) {
 
@@ -79,6 +80,7 @@ function Save() {
             "RequestId": $(".spnRequestId").html(),
             "Remarks": $("#txtremarks").val(),
         }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
             if (result == DataSave) {
@@ -143,6 +145,7 @@ function GetdataPostingData(ArmyNo) {
         data: {
             "ArmyNo": ArmyNo
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response != null) {
                 applyforId = response.ApplyForId;

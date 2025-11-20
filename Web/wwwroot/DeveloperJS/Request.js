@@ -6,6 +6,7 @@ var Message = "";
 var IsToken = true;
 var IsWithTokenApply = true;
 $(document).ready(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     $("#btnApplicantsPostingout").on("click", function () {
         $("#armynosearchAllName").html("");
@@ -278,7 +279,7 @@ function GetAllRegistrationApplyFor(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             let inputField = document.getElementById("txtApplyForArmyNo");
 
@@ -420,7 +421,7 @@ function GetByArmyNoIsToken(ArmyNo) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
 
@@ -563,6 +564,7 @@ function CheckArmyNOExist() {
             "ICNumber": lCardType == 4 ? $("#txtApplyForOldArmyNo").val() : $("#txtApplyForArmyNo").val(),
             "lCardType": lCardType
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response.Status == false) {
 
@@ -609,7 +611,8 @@ async function CheckArmyNo(ArmyNo) {
         const response = await fetch('/BasicDetail/CheckArmyNO', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: param
         });

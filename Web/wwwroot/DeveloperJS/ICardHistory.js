@@ -1,4 +1,7 @@
-﻿function GetRequestHistory(spnRequestId) {
+﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+});
+function GetRequestHistory(spnRequestId) {
     var userdata = {
 
         "RequestId": spnRequestId,
@@ -11,6 +14,7 @@
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
               
@@ -184,6 +188,7 @@ function GetMovementHistory(spnRequestId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
 

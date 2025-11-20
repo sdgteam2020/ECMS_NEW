@@ -3,6 +3,7 @@
     GetDashboardMasterCount();
 })
 function GetDashboardMasterCount() {
+    const token = $('input[name="__RequestVerificationToken"]').val();
     var userdata =
     {
         "Id": 0,
@@ -13,6 +14,7 @@ function GetDashboardMasterCount() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': token },
 
         success: function (response) {
             if (response != "null" && response != null) {

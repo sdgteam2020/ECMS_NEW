@@ -1,5 +1,7 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     let cvalue = $("#spnFlagICardAppl").html();
     BindData(cvalue, function () {
     });
@@ -63,6 +65,7 @@ $(function () {
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -96,6 +99,7 @@ $(function () {
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
                 datatype: 'json',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                 success: function (data) {
                     $("#lblName").html(data.LName == null ? data.FName : data.FName + ' ' + data.LName);
                     $("#lblRank").html(data.RankName);
@@ -143,7 +147,10 @@ function BindData(cvalue, callback) {
             try {
                 let response = await fetch("/BasicDetail/GetAllICardRequestHold", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 
@@ -258,6 +265,7 @@ function Save() {
             "HoldReason": $("#txtHoldReason").val(),
             "UnHoldReason": $("#txtUnHoldReason").val().length > 0 ?$("#txtUnHoldReason").val() : null,
         }, 
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if (result == DataSave) {
                 toastr.success('ICard Request Hold has been saved');

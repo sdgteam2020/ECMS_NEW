@@ -1,5 +1,5 @@
 ﻿$(function () {
-
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     $(".ApplIdDetails").addClass("d-none");
    
     $("#btnTracking").on("click", function () {
@@ -24,6 +24,7 @@ function GetRequestHistoryByApplId(ApplId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response.length > 0) {
@@ -143,7 +144,7 @@ function GetDataFromBasicDetails(RequestId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 $(".PhotoImagePath").attr('src', response.ExistingPhotoInBase64);

@@ -1,4 +1,6 @@
 ﻿$(async function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     var selectionButton;
 
     let MapUnitChangeRequestId = parseInt($("#spnMapUnitChangeRequestId").html());
@@ -190,6 +192,7 @@ function Save(choice) {
                 "FmnBranchID": document.getElementById('ddlFmnBranch')?.value || "",
                 "SubDteId": document.getElementById('ddlDgSubDte')?.value || ""
             }, //get the search string
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             success: function (result) {
                 if (result.Result == true) {
                     const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));
@@ -231,6 +234,7 @@ function Save(choice) {
                 "SubDteId": document.getElementById('ddlDgSubDte')?.value || ""
 
             }, //get the search string
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             success: function (result) {
                 if ($("#spnRoleName").html().toLowerCase() === "admin" && result.Result == true) {
                     $("#spnMapUnitChangeRequestId").html(result.Id);
@@ -269,7 +273,8 @@ async function GetUnitDetails(UnitMapId) {
     fetch('/Master/GetALLByUnitMapId', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: param
     })
@@ -329,7 +334,8 @@ async function GetChangeMapUnitDetails(MapUnitChangeRequestId) {
     fetch('/Master/GetChangeMapUnitDetails', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: param
     })
@@ -446,7 +452,8 @@ async function GetCurrentUserDetails() {
         const response = await fetch('/ConfigUser/GetTokenArmyNo', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: new URLSearchParams(userdata)
         });

@@ -2,6 +2,7 @@
 let checkedDataIds = [];
 let dataExportType = 1;
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     BindData()
     $("#btnAdd").on("click",function () {
         $("#armynosearchAllName").html("");
@@ -62,7 +63,6 @@ $(function () {
 
 });
 function BindData() {
-    var token = $('input[name="__RequestVerificationToken"]').val();
     $("#tbldata").DataTable().destroy();
     table = $("#tbldata").DataTable({
         processing: true,
@@ -85,7 +85,7 @@ function BindData() {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
-                        'RequestVerificationToken': token
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
                     body: new URLSearchParams(requestData).toString()
                 });
@@ -285,7 +285,6 @@ function BindData() {
 }
 
 function DataExport() {
-    var token = $('input[name="__RequestVerificationToken"]').val();
     var userdata = {
         "Ids": checkedDataIds,
         "DataExportType": dataExportType
@@ -295,7 +294,7 @@ function DataExport() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'RequestVerificationToken': token
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: JSON.stringify(userdata),
         credentials: 'same-origin'

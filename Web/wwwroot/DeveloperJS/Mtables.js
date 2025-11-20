@@ -1,4 +1,8 @@
-﻿async function mMsater(sectid = '', ddl, TableId, ParentId) {
+﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+});
+
+async function mMsater(sectid = '', ddl, TableId, ParentId) {
 
     const userdata = new URLSearchParams({
         id: TableId,
@@ -9,7 +13,8 @@
         const response = await fetch('/Master/GetAllMMaster', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: userdata
         });
@@ -71,6 +76,7 @@ function mMsaterByParent(sectid = '', ddl, TableId, ComdId,CorpsId,DivId,BdeId) 
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -158,6 +164,7 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, IsRO, IsORO, IsAfsacCell,BasicD
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -241,7 +248,8 @@ async function GetRemarks(ddl, sectid, RemarkTypeId) {
         const response = await fetch('/BasicDetail/GetRemarks', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: userdata
         });

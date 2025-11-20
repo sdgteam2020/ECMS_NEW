@@ -1,5 +1,7 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     BindData("");
     AccountCount();
     $("#AddNewDomain input[name='txtapproval']").on("click",function () {
@@ -22,6 +24,7 @@ $(function () {
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -56,6 +59,7 @@ $(function () {
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
                 datatype: 'json',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                 success: function (data) {
                     $("#lblName").html(data.Name);
                     $("#lblRank").html(data.RankName);
@@ -202,6 +206,7 @@ function BindDialog(Choice) {
             url: "/Account/GetDataForDataTable",
             contentType: 'application/x-www-form-urlencoded',
             type: "POST",
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             data: function (d) {
                 d.draw = d.draw;
                 d.start = d.start;
@@ -351,7 +356,10 @@ function BindData() {
             try {
                 let response = await fetch("/Account/GetAllUserRegn", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 
@@ -627,6 +635,7 @@ function SaveMapping() {
             "ArmyNo": $("#txtArmyNo").val(),
 
         }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             var obj = jQuery.parseJSON(response);
             if (obj.Result == true) {
@@ -671,6 +680,7 @@ function GetProfileByUserId(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "UserId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             $("#spnUserProfileId").html(data.UserId);
             $("#txtArmyNo").val(data.ArmyNo);
@@ -685,6 +695,7 @@ function GetALLByUnitByIdForMapping(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "UnitMapId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             $("#lblUnitNameForMapping").html(data.UnitName);
             $("#lblSusnoForMapping").html(data.Sus_no + '' + data.Suffix);
@@ -739,6 +750,7 @@ function GetNameByApptIdForMapping(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "ApptId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             $("#lblAppointmentNameForMapping").html(data.AppointmentName);
         }
@@ -824,6 +836,7 @@ function UpdateDomainFlag() {
             "Active": $('input:radio[name=txtactive]:checked').val(),
             "AdminMsg": $('#txtadminmessage').val().length > 0 ? $('#txtadminmessage').val() : null,
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if (result == DataUpdate) {
                 toastr.success('Domain Flag has been Updated');
@@ -925,6 +938,7 @@ function GetNameByApptId(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "ApptId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             $("#lblAppointmentName").html(data.AppointmentName);
         }
@@ -965,6 +979,7 @@ function AccountCount() {
     $.ajax({
         url: "/Account/AccountCount",
         type: "POST",
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             $("#lblUser").html(response.User);
             $("#lblActiveUser").html(response.ActiveUser);

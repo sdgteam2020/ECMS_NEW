@@ -4,7 +4,8 @@ var TokenArmyNo = "";
 var token;
 
 $(async function () {
-    token = $('input[name="__RequestVerificationToken"]').val();
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     var RemarkTypeID = [7];
     GetRemarks("ddlLostRemark", 0, RemarkTypeID);
       
@@ -57,6 +58,7 @@ $(async function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // Tell the server we are sending JSON
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             }
         })
             .then(response => response.json())
@@ -212,9 +214,7 @@ async function Save() {
         data: formData,
         processData: false, 
         contentType: false, 
-        headers: {
-            'RequestVerificationToken': token
-        },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
             if (result.Result == true) {
@@ -242,7 +242,8 @@ function GetBasicDetailForParitalViewByRequestId(RequestId) {
     fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: param
     })
@@ -263,9 +264,7 @@ function DownloadPdf(RequestId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-        headers: {
-            'RequestVerificationToken': token 
-        },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -381,9 +380,7 @@ async function CheckTokenRequired(ArmyNo) {
             contentType: 'application/x-www-form-urlencoded',
             data: userdata,
             type: 'POST',
-            headers: {
-                'RequestVerificationToken': token
-            },
+            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             success: function (response) {
                 if (response != "null" && response != null) {
 

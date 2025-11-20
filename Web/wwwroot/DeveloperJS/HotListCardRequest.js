@@ -1,4 +1,6 @@
 ﻿$(async function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     var RemarkTypeID = [6];
     GetRemarks("ddlHotlistRemark", 0, RemarkTypeID);
       
@@ -47,6 +49,7 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // Tell the server we are sending JSON
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             }
         })
             .then(response => response.json())
@@ -172,6 +175,7 @@ function Save() {
             "RemarksIds": $("#ddlHotlistRemark").val().length > 0 ? HotlistRemarkIds : null,
             "Remark": $("#txtHotlistRemark").val()
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
             if (result.Result == true) {
@@ -197,7 +201,8 @@ function GetBasicDetailForParitalViewByRequestId(RequestId) {
     fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: param
     })
@@ -218,7 +223,7 @@ function DownloadPdf(RequestId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {

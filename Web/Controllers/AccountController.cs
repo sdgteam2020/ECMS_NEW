@@ -101,6 +101,7 @@ namespace Web.Controllers
         /// <returns>The AccessDenied view.</returns>
         [HttpGet]
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         public IActionResult AccessDenied()
         {
             return View();
@@ -712,6 +713,7 @@ namespace Web.Controllers
         /// </remarks>
         [HttpGet]
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> IMLoginSelf()
         {
             byte id = 0;
@@ -809,6 +811,7 @@ namespace Web.Controllers
         /// </remarks>
         [HttpPost]
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> IMLoginSelf(DTOIMLoginRequest model)
         {
             string? Footer = _configuration["Footer:Test"];
@@ -1666,6 +1669,12 @@ namespace Web.Controllers
             // Remove the session token to clear user-specific session data
             HttpContext.Session.Remove("Token");
 
+            var user = await userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                await userManager.UpdateSecurityStampAsync(user); // invalidate all cookies
+            }
 
             // Sign out the user from ASP.NET Identity authentication
             await signInManager.SignOutAsync();

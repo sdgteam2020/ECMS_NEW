@@ -1,5 +1,7 @@
 ﻿var table;
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     BindData();
     $("#btnAdd").on("click", function () {
         $("#armynosearchAllName").html("");
@@ -31,7 +33,10 @@ function BindData() {
             try {
                 let response = await fetch("/Posting/GetAllPostingOutWithType", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -234,6 +239,7 @@ function Save() {
             "DispatchedOn": formatDateToSqlString($("#txtDispatchDate").val()),
             "RefNo": $("#txtRefNo").val(),
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             if (data.Result) {
                $("#AddDispatchDetails").modal('hide');

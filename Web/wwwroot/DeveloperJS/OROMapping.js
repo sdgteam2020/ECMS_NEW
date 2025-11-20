@@ -1,4 +1,6 @@
-﻿$(document).ready(function () {
+﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     mMsater(0, "ddlRO", RecordOffice, "");
     mMsater(0, "ddlRank", Rank, "");
     GetArmsList("ddlArmedIdList", 0);
@@ -32,6 +34,7 @@
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -67,7 +70,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
                 type: 'POST',
-
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                 success: function (response) {
                     if (response != "null" && response != null) {
                         if (response == InternalServerError) {
@@ -155,7 +158,7 @@ function BindData() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -341,6 +344,7 @@ function Save() {
             "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
             "UnitId": $("#spnUnitMapId").html() == "0" ? null : $("#spnUnitMapId").html(),
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
@@ -411,7 +415,7 @@ function GetDDMappedForRecord(UnitId, TDMId) {
         contentType: 'application/x-www-form-urlencoded',
         data: param1,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -459,6 +463,7 @@ function Delete(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -495,7 +500,7 @@ function GetArmsList(ddl, sectid) {
         url: '/Master/GetArmsList',
         contentType: 'application/x-www-form-urlencoded',
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {

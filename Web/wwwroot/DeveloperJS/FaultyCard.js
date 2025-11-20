@@ -1,5 +1,7 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     BindData();
     $("#btnAdd").on("click",function () {
         $("#armynosearchAllName").html("");
@@ -29,7 +31,10 @@ function BindData() {
             try {
                 let response = await fetch("/BasicDetail/GetAllFaulty", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken,
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 
@@ -224,6 +229,7 @@ function BindData() {
         table.column(8).visible(false);
     }
 }
+
 async function GetRemarksData(remarksRemarksIds) {
 
     let param = new URLSearchParams({ RemarksIds: remarksRemarksIds });
@@ -232,7 +238,8 @@ async function GetRemarksData(remarksRemarksIds) {
         const response = await fetch('/BasicDetail/GetRemarksData', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: param
         });

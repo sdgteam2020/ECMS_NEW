@@ -356,6 +356,8 @@ namespace Web.Controllers
         /// UpdateChageComdByCorps method. The method ensures that only an admin user can access it.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveCorps(MCorps dTO)
         {
             // Set the IsActive flag to true and capture the user who is updating the Corps.

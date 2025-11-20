@@ -2,6 +2,8 @@
 
 var lstUpdate = new Array();
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     $("#btnsave").on("click", function () {
         validateCsvFileOnChange();
     });
@@ -109,6 +111,7 @@ function validateCsvFileOnChange() {
                     data: formData,
                     processData: false,
                     contentType: false,
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                     success: function (data, status, xhr) {
                         if (data.Result) {
                             
@@ -162,6 +165,7 @@ function validateCsvFileOnChange() {
                                             url: '/BasicDetail/ICardPrintValidRecordsUpload',
                                             type: 'GET',
                                             dataType: 'json',
+                                            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                                             success: function (data) {
                                                 if (data.Result) {
                                                     Swal.fire({
@@ -251,7 +255,10 @@ function BindData() {
             try {
                 let response = await fetch("/BasicDetail/GetCSVFileUploadsHistory", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 

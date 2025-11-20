@@ -84,7 +84,12 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddSingleton<DapperContextDb2>();
 
-builder.Services.AddControllersWithViews();
+//builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
 
 builder.Services.AddSingleton<ITagHelperInitializer<ScriptTagHelper>, AppendVersionTagHelperInitializer>();
 builder.Services.AddSingleton<ITagHelperInitializer<LinkTagHelper>, AppendVersionTagHelperInitializer>();
@@ -155,7 +160,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/IMLoginSelf";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
-    options.SlidingExpiration = true; 
+    options.SlidingExpiration = false; 
 
     //options.ReturnUrlParameter=""
 });
@@ -266,8 +271,8 @@ else
 //app.UseRewriter(options);
 
 // When the code is published on IAM, these two lines are commented out.
-//app.UseForwardedHeaders();
-//app.UseHttpsRedirection();
+app.UseForwardedHeaders();
+app.UseHttpsRedirection();
 //------------------- End Instructions----------------------
 
 app.UseStaticFiles(new StaticFileOptions

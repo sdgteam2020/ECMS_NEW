@@ -1,4 +1,5 @@
 ﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     BindData();
 });
 function BindData() {
@@ -7,7 +8,7 @@ function BindData() {
         url: '/Home/GetAllRegisterUser',
         contentType: 'application/x-www-form-urlencoded',
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
 

@@ -1,5 +1,6 @@
 ﻿var table_Fwd; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     let Type = parseInt($("#spnType").html());
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();
@@ -20,6 +21,8 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
         serverSide: true,
         filter: true,
         stateSave: true,
+        responsive: true,
+        autoWidth: false,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -38,7 +41,10 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
             try {
                 let response = await fetch("/BasicDetail/GetAllIndexData", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: JSON.stringify(requestData)
                 });
 
@@ -230,15 +236,6 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     DownloadPdf(rowData.RequestId);
                 }
             });
-            //$("#tbldatatabledata_Fwd tbody").off("click", ".cls-fwdrecord").on("click", ".cls-fwdrecord", async function () {
-            //    alert(table_Fwd.row($(this).closest("tr")).data().RequestId);
-            //});
-            //$(".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {
-            //    var rowData = table_Fwd.row($(this).closest("tr")).data();
-            //    if (rowData != null) {
-            //        GetMovementHistory(rowData.RequestId);
-            //    }
-            //});
         }
     });
 }

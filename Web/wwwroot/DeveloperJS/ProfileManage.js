@@ -2,6 +2,8 @@
 
 var table; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     mMsater(0, "ddlRank", Rank, "");
     mMsater(0, "ddlArmType", ArmyType, "");
     BindData()
@@ -118,7 +120,10 @@ function BindData() {
             try {
                 let response = await fetch("/Account/GetAllProfileManage", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 
@@ -290,6 +295,7 @@ function ProfileCount() {
     $.ajax({
         url: '/Account/TotalProfileCount',
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if (result == InternalServerError) {
                 Swal.fire({
@@ -322,6 +328,7 @@ function Save() {
             "IsWithTokenApply": $('input:radio[name=IsWithTokenApply]:checked').val(),
 
         }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
@@ -376,6 +383,7 @@ function Delete(UserId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {

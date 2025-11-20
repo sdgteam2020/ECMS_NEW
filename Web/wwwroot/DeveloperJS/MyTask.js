@@ -1,6 +1,6 @@
 ﻿
 $(function () {
-
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     GetTaskIcardRequestCount($("#Id").html(), $("#applyForId").html())
 
     //GetNotification(1, 1);
@@ -19,7 +19,7 @@ function GetTaskIcardRequestCount(Id, applyForId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
 

@@ -28,6 +28,7 @@ function updateUICheckboxes(tableSelector, checkboxClass, masterCheckboxSelector
         }
     });
 }
+
 async function updateSelectedIds(tableSelector, checkboxClass) {
     try {
         // Assuming these functions might be async and involve DOM fetching or network requests

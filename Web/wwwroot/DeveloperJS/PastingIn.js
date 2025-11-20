@@ -51,6 +51,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 data: param,
                 type: 'POST',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                 success: function (data) {
                     console.log(data);
                     response($.map(data, function (item) {
@@ -134,6 +135,7 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // Tell the server we are sending JSON
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             }
         })
             .then(response => response.json())
@@ -180,6 +182,7 @@ function Save() {
             "DispatchedOn": formatDateToSqlString($("#txtDispatchDate").val()),
             "RefNo": $("#txtRefNo").val(),
         }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
@@ -247,7 +250,7 @@ function GetByArmyNo(userid) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
 
@@ -288,6 +291,7 @@ function GetdataPostingData(ArmyNo) {
         data: {
             "ArmyNo": ArmyNo
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response != null) {
                 $("#lblCategory").html(response.ApplyFor);

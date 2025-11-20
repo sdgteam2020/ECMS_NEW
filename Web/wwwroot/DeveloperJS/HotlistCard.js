@@ -2,6 +2,8 @@
 let checkedDataIds = [];
 let dataExportType = 1;
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     BindData();
     $("#btnAdd").on("click",function () {
         $("#armynosearchAllName").html("");
@@ -82,7 +84,10 @@ function BindData() {
             try {
                 let response = await fetch("/BasicDetail/GetAllHotlist", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -271,7 +276,8 @@ function DataExport() {
     fetch('/BasicDetail/HotlistDataExport', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: JSON.stringify(userdata)
     })

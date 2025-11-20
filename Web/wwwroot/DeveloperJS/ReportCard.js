@@ -3,6 +3,7 @@ var comid = 0; var corId = 0; var divId = 0; var bdeId = 0; var FmnBranchId = 0;
 var UnitType = 1;
 var table; // Declare table variable outside the function to preserve the instance
 $(async function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     if ($('#spnclaimId').length > 0) {
         if ($('#spnclaimId').html() === 'Army Level Reports' || $('#spnclaimId').html() === 'Fmn Level Reports') {
@@ -504,7 +505,10 @@ function GetReportReturnHistory(Choice, ApplyForId, callback) {
             try {
                 let response = await fetch("/Home/GetReportCardData", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: JSON.stringify(requestData)
                 });
                 if (!response.ok) {
@@ -1159,7 +1163,10 @@ async function GetReportCardDashboardCount() {
         };
         const response = await fetch('/Home/GetReportCardDashboardCount', {
             method: 'POST',
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                'RequestVerificationToken': globalThis.RequestVerificationToken
+            },
             body: JSON.stringify(requestData)
         });
 
@@ -1214,7 +1221,10 @@ async function GetLoginUnitMappingDetails() {
     try {
         const response = await fetch('/Master/GetALLByUnitMapWonUnit', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
+            },
             body: new URLSearchParams({ UnitMapId: 0 })
         });
 
@@ -1333,7 +1343,10 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
 
         const response = await fetch('/Master/GetUnitByHierarchy', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
+            },
             body: userdata
         });
 
@@ -1371,7 +1384,8 @@ async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
         const response = await fetch('/Master/GetAllMMaster', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: new URLSearchParams({
                 id: TableId,
@@ -1412,7 +1426,8 @@ async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsI
         const response = await fetch('/Master/GetAllMMasterByParent', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: new URLSearchParams({
                 TableId,

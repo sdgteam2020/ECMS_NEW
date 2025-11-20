@@ -1,7 +1,11 @@
 ﻿$(function () {
+
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     $("#btntokenrefresh").on("click",function () {
         GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo", "Thumbprint");
     });
+
     $('.form-control-Alphabets').on('keypress',function (e) {
 
         // Get the key code of the pressed key
@@ -14,17 +18,20 @@
             return false; // Block the keypress
         }
     });
+
     $("#IsTokenWaiverYes").on("click", function () {
         $("#spnReasonTokenWaiver").removeClass("d-none");
         $('#ReasonTokenWaiver').prop('required', true);
         $("#ReasonTokenWaiver-error").html('Reason for IACA Token Waiver is required.');
     });
+
     $("#IsTokenWaiverNo").on("click", function () {
         $("#spnReasonTokenWaiver").addClass("d-none");
         $('#ReasonTokenWaiver').prop('required', false);
         $('#ReasonTokenWaiver').val('');
         $("#ReasonTokenWaiver-error").html('');
     });
+
     $("input[name='IsTokenWaiver']").on("click",function () {
         $("#IsTokenWaiver-error").html("");
     });
@@ -32,9 +39,11 @@
     $("input[name='IsIO']").on("click", function () {
         $("#IsIO-error").html("");
     });
+
     $("input[name='IsCO']").on("click", function () {
         $("#IsCO-error").html("");
     });
+
     //$("input[name='IsRO']").click(function () {
     //    $("#IsRO-error").html("");
     //});
@@ -498,6 +507,7 @@ function GetALLByUnitById(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "UnitMapId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             $("#spnUnitMapId").html(data.UnitMapId);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
@@ -551,6 +561,7 @@ function GetNameByApptId(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "ApptId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             $("#spnUnitAppointmentId").html(data.ApptId);
             $("#txtAppointmentName").val(data.AppointmentName);
@@ -613,6 +624,7 @@ function UnitSave() {
             "FmnBranchID": $("#ddlFmnBranch").val(),
             "SubDteId": $("#ddlDgSubDte").val()
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if (result == DataSave) {
                 Swal.fire({
@@ -700,6 +712,7 @@ function AppointmentSave() {
             "AppointmentAbbreviation": $("#txtAppointmentAbbr").val().trim() == "" ? null : $("#txtAppointmentAbbr").val().trim(),
             "ApptId": $("#spnAppointmentId").html()
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if (result == DataSave) {
                 Swal.fire({

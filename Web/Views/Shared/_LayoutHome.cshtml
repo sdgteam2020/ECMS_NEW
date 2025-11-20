@@ -5,6 +5,7 @@
 @inject UserManager<ApplicationUser> userManager;
 @inject IHttpContextAccessor HttpContextAccessor;
 @inject IConfiguration configuration;
+@Html.AntiForgeryToken()
 <!DOCTYPE html>
 <html lang="en">
 <head>

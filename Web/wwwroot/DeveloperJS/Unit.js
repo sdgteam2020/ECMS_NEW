@@ -1,5 +1,7 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     Reset();
     BindData()
     $("#txtSerachunit").on("keyup",function () {
@@ -93,7 +95,10 @@ function BindData() {
                     try {
                         let response = await fetch("/Master/GetAllUnit", {
                             method: "POST",
-                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                'RequestVerificationToken': globalThis.RequestVerificationToken
+                            },
                             body: new URLSearchParams(requestData).toString()
                         });
 
@@ -212,6 +217,7 @@ function Save() {
         url: '/Master/SaveUnit',
         type: 'POST',
         data: { "Sus_no": $("#txtSusno").val().trim(), "UnitId": $("#spnUnitId").html().trim(), "Suffix": $("#txtSuffix").val().trim(), "UnitName": $("#txtUnitDesc").val().trim(), "Abbreviation": $("#txtAbbreviation").val().trim(), "IsVerify": true }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
@@ -278,6 +284,7 @@ function Delete(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -324,6 +331,7 @@ function DeleteMultiple(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {

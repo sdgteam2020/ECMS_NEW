@@ -1,4 +1,6 @@
-﻿$(document).ready(function () {
+﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     mMsater(0, "ddlProFormation", Formation, "");
     mMsater(0, "ddlProRank", Rank, "");
 
@@ -27,6 +29,7 @@
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                     success: function (data) {
                         console.log(data);
                         response($.map(data, function (item) {
@@ -55,6 +58,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
                 type: 'POST',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                 success: function (data) {
 
 
@@ -71,7 +75,7 @@
         appendTo: '#suggesstion-box'
     });
 });
-$("#btncheckarmyno").click(function () {
+$("#btncheckarmyno").on("click",function () {
         if ($("#txtArmyNo").val() != "")
         {
             $("#UserId").val("");
@@ -118,6 +122,7 @@ function SaveMapping() {
         data: examdata,
         type: 'POST',
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
 
             if (response != "null" && response != null) {
@@ -153,6 +158,7 @@ function SaveProfile() {
         data: profiledata,
         type: 'POST',
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
             if (result == DataSave) {
@@ -202,6 +208,7 @@ function Gotodashboard(ArmyNo) {
         data: examdata,
         type: 'POST',
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
 
             if (response != "null" && response != null) {
@@ -223,6 +230,7 @@ function CheckICNumberInProfile(txt) {
         data: {
             "ArmyNo": $("#" + txt).val()
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
 
             if (response.StatusCode == 2) {

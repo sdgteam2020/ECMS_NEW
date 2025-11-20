@@ -1,10 +1,14 @@
-﻿function GetUnitMoveHistory(MapUnitChangeRequestId) {
+﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+});
+function GetUnitMoveHistory(MapUnitChangeRequestId) {
     let param = new URLSearchParams({ MapUnitChangeRequestId: MapUnitChangeRequestId });
     var listItem = "";
     fetch('/Master/GetUnitMoveHistory', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: param
     })

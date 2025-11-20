@@ -1,5 +1,6 @@
 ﻿var memberTable = "";
-$(document).ready(function () {
+$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     $("body").on("click", ".cls-btnhistory", function () {
         
@@ -37,7 +38,7 @@ function GetLog(AspNetUsersId, FmDate,ToDate) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == -1) {

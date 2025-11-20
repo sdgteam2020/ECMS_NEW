@@ -1,13 +1,13 @@
-$(document).ready(function () {
-  
+$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     Reset();
     mMsater(0, "ddlArmedCat", ArmyCat, "");
     BindData()
-    $("#btnReset").click(function () {
+    $("#btnReset").on("click",function () {
         Reset();
     });
    
-    $("#btnsave").click(function () {
+    $("#btnsave").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -34,7 +34,7 @@ $(document).ready(function () {
 
     });
 
-    $('#btnMultiDelete').click(function () {
+    $('#btnMultiDelete').on("click",function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
@@ -83,7 +83,7 @@ function BindData() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -238,6 +238,7 @@ function Save() {
         url: '/Master/SaveArmed',
         type: 'POST',
         data: { "ArmedName": $("#txtArmedName").val().trim(), "ArmedCatId": $("#ddlArmedCat").val(), "ArmedId": $("#spnArmedId").html(), "Abbreviation": $("#txtAbbreviation").val().trim(), "FlagInf": $("#radioInfyes").prop("checked") }, //get the search string 
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
@@ -301,6 +302,7 @@ function Delete(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -347,6 +349,7 @@ function DeleteMultiple(ids) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {

@@ -3,6 +3,7 @@ var comid = 0; var corId = 0; var divId = 0; var bdeId = 0; var FmnBranchId = 0;
 var table; // Declare table variable outside the function to preserve the instance
 var tableView; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     $("#btnprintreport").click(function () {
         //    window.scrollTo(0, 0);
@@ -168,6 +169,7 @@ function GetCount() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -536,7 +538,10 @@ function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
             try {
                 let response = await fetch("/Home/GetRecordHistory", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: JSON.stringify(requestData)
                 });
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -667,7 +672,7 @@ function GetLoginUnitMappingDetails() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             
             if (response != "null" && response != null) {
@@ -815,7 +820,7 @@ function GetUnitByHierarchy(IsOnly,ddl, sectid, ComdId, CorpsId, DivId, BdeId, F
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
 
@@ -881,7 +886,7 @@ function mMsater(IsOnly,sectid = '', ddl, TableId, ParentId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -950,7 +955,7 @@ function mMsaterByParent(IsOnly,sectid = '', ddl, TableId, ComdId, CorpsId, DivI
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {

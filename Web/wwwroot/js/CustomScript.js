@@ -3,6 +3,8 @@ var minDateFilter;
 var maxDateFilter;
 var oTable;
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     $("#icardPrint").on("click",function () {
         window.print();
     });
@@ -65,6 +67,7 @@ function getUserData() {
         data: {
             "ICNumber": $("#ServiceNo").val()
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             //alert(JSON.stringify(response));
             //var myObj = JSON.parse(response.CourseId.length);
@@ -101,6 +104,7 @@ function getData1(id) {
         contentType: 'application/x-www-form-urlencoded',
         data: param,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
 
 

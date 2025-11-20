@@ -1,4 +1,5 @@
 ﻿// Set the options that I want
+var RequestVerificationToken;
 toastr.options = {
     "closeButton": false,
     "debug": false,
@@ -18,7 +19,7 @@ toastr.options = {
 }
 
 $(function () {
-   
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     $("img").on('error', function () {
        
         $(this).attr("src", "/Images/user4.png");
@@ -54,6 +55,7 @@ $(function () {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json', // Tell the server we are sending JSON
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
                     body: JSON.stringify(requestData), // Convert the request data to JSON
                 });
@@ -116,7 +118,8 @@ $(function () {
                 fetch('/BasicDetail/SearchAllServiceNo', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
                     body: param
                 })
@@ -209,6 +212,7 @@ function CheckProfileExist() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -236,6 +240,7 @@ function Getaspntokenarmyno() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -279,6 +284,7 @@ function SaveNotification(StepId, DisplayId, ReciverAspNetUsersId, RequestIds) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -298,6 +304,7 @@ function GetNotification() {
         url: '/Home/GetNotification',
         contentType: 'application/x-www-form-urlencoded',
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
 
@@ -381,6 +388,7 @@ function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -467,6 +475,7 @@ function UpdateNotification(DisplayId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {

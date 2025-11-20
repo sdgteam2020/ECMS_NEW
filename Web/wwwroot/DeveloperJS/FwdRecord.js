@@ -15,6 +15,8 @@ var Counter_Notification = 0;
 var spnRequestId_Notification = 0;
 $(function () {
 
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     $("#btntokenTofwd").on("click", async function () {
         $("#msgforfwd").html('');
 
@@ -103,6 +105,7 @@ $(function () {
                 contentType: 'application/x-www-form-urlencoded',
                 data: userdata,
                 type: 'POST',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
                 success: function (response) {
                     if (response != "null" && response != null) {
@@ -381,6 +384,7 @@ $(function () {
                 contentType: 'application/x-www-form-urlencoded',
                 data: param,
                 type: 'POST',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                 success: function (data) {
                     console.log(data);
                     if (data.length != 0) {
@@ -633,6 +637,7 @@ function SaveInternalFwd() {
         url: '/BasicDetail/SaveInternalFwd',
         type: 'POST',
         data: userdata,
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response == true) {
                 toastr.success('Fwd successfully.');
@@ -688,7 +693,8 @@ async function GetBasicDetailByRequestIdForFwd(RequestId) {
     fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: param
     })
@@ -712,6 +718,7 @@ function FwdData(AspNetUsersId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -803,6 +810,7 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
         contentType: 'application/x-www-form-urlencoded',
         data: param,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             if (data != null) {
                 $(".spnFArmyNo").html(data[0].ArmyNo);
@@ -832,6 +840,7 @@ function GetProfiledetailsByAspNetuseridForInternalFwd(AspNetUsersId) {
         contentType: 'application/x-www-form-urlencoded',
         data: param,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             if (data != null) {
                 $(".spnInternalFArmyNo").html(data[0].ArmyNo);
@@ -957,6 +966,7 @@ function ForwardTo(RequestId, HType) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (HType == 2 || HType == 3 || HType == 4 || HType == 5) {
@@ -1008,6 +1018,7 @@ function RejecteTo(RequestId, HType) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response.Result === true) {
                 if (applyfor == 1) {
@@ -1039,6 +1050,7 @@ function UpdateStepCounter(stepId, spnRequestId, Counter, Flag) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response.Result == true) {
@@ -1091,6 +1103,7 @@ function DataExport() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -1173,6 +1186,7 @@ function DataSignDigitaly(Data, msgid, RequestId, stepId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -1262,6 +1276,7 @@ function SignXmlSendTOdatabase(XmlFile, RequestId, Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -1319,6 +1334,7 @@ function DownloadXml(RequestId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -1349,6 +1365,7 @@ function DownloadPdf(RequestId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -1459,6 +1476,7 @@ function digitalpdfsignatureSave(RequestId, base64) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {
@@ -1543,6 +1561,7 @@ function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response != "null" && response != null) {

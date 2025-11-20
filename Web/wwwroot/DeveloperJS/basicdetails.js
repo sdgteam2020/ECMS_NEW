@@ -1,4 +1,6 @@
 ﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     $("#btnsave").on("click", function () {
         CheckValidation();
     });
@@ -142,6 +144,7 @@
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -187,6 +190,7 @@ function GetROListByArmedId(ArmedId, sectid) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -234,7 +238,7 @@ function GetRegimentalListByArmedId(ArmedId, sectid) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -314,7 +318,7 @@ function GetUnit() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == 0) {
@@ -336,6 +340,7 @@ function getunitbymapid(value)
         contentType: 'application/x-www-form-urlencoded',
         data: param1,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
 
             $("#txtUnit").val(data.UnitName);
@@ -359,6 +364,7 @@ function getApplyIcardDetails() {
             "RegistrationId": $("#RegistrationId").val(),
             "TypeId": $("#TypeId").val()
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response != null) {
                 

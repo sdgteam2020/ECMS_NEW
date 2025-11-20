@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.151" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="EntityFrameworkCore.Exceptions.SqlServer" Version="6.0.3.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />

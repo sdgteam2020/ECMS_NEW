@@ -1,5 +1,7 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     mMsater(0, "ddlCommand", 1, "");
     BindDataMapUnit();
 
@@ -15,6 +17,7 @@ $(function () {
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -50,6 +53,7 @@ $(function () {
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
                 datatype: 'json',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                 success: function (data) {
                     $("#lblUnit").html(data.UnitName);
                 }
@@ -235,6 +239,7 @@ async function GetUnitDetails(val, flag) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: new URLSearchParams(userdata).toString(), // Convert object to URL-encoded string
         });
@@ -299,7 +304,10 @@ function BindDataMapUnit() {
             try {
                 let response = await fetch("/Master/GetAllMapUnit", {
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: new URLSearchParams(requestData).toString()
                 });
 
@@ -506,7 +514,10 @@ function BindDataMapUnit() {
     try {
         fetch('/Master/SaveUnitWithMapping', {
             method: 'POST',
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                'RequestVerificationToken': globalThis.RequestVerificationToken
+            },
             body: new URLSearchParams(data).toString()
         }).then(response => {
             // Handle the response
@@ -573,6 +584,7 @@ async function UnitSave() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // Use JSON for modern APIs
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: JSON.stringify(data), // Convert data to JSON
         });
@@ -631,6 +643,7 @@ async function SaveUnitMap() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // Use JSON for modern APIs
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             body: JSON.stringify(data), // Convert data to JSON
         });
@@ -703,6 +716,7 @@ function DeleteMapUnit(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: async function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -756,6 +770,7 @@ function DeleteMapUnitMultiple(Id) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: async function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {

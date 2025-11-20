@@ -1,4 +1,6 @@
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     mMsater(0, "ddlCommand", 1, "");
     BindData()
 
@@ -80,7 +82,7 @@ function BindData() {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == -1) {
@@ -222,11 +224,10 @@ function BindData() {
 }
 function Save() {
 
-    /*  alert($('#bdaymonth').val());*/
-   
     $.ajax({
         url: '/Master/SaveCorps',
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         data: {
             "CorpsName": $("#txtCoprsName").val().trim(),
             "ComdId": $("#ddlCommand").val(),
@@ -296,6 +297,7 @@ function Delete(CorpsId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {
@@ -344,6 +346,7 @@ function DeleteMultiple(CorpsId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null") {
                 if (response == InternalServerError) {

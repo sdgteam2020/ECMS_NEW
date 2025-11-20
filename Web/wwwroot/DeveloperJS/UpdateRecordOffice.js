@@ -1,4 +1,6 @@
-﻿$(document).ready(function () {
+﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     GetDDMappedForRecord($("#spnUnitMapId").html(), $("#spnOldTDMId").html());
     GetUpdateRecordOffice($("#spnRecordOfficeId").html());
     $("#btnROUpdate").on("click", function () {
@@ -15,7 +17,7 @@ function GetDDMappedForRecord(UnitMapId, TDMId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {
@@ -58,6 +60,7 @@ function GetUpdateRecordOffice(RecordOfficeId) {
         url: '/Master/GetUpdateRecordOffice',
         contentType: 'application/x-www-form-urlencoded',
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         data: {
             "RecordOfficeId": RecordOfficeId,
         }, 
@@ -114,6 +117,7 @@ function Update() {
             "OldTDMId": $("#spnOldTDMId").html(),
             "Message": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
         }, 
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if(result == 1) {
                 toastr.error('Select diffrent Domain Id.');

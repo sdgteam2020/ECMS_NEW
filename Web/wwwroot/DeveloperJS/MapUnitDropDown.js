@@ -1,4 +1,6 @@
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     mMsater(0, "ddlCommand", 1, "");
    
     $('#ddlCommand').on('change', function () {
@@ -41,7 +43,7 @@ function GetUnitDetails(val, flag) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
 
@@ -89,6 +91,7 @@ function UnitSave() {
         url: '/Master/SaveUnit',
         type: 'POST',
         data: { "Sus_no": $("#txtSusno").val().substring(0, 7), "UnitId": 0, "Suffix": $("#txtSusno").val().substring(8, 7), "Unit_desc": $("#txtUnit").val(), "IsVerify": false }, //get the search string
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 

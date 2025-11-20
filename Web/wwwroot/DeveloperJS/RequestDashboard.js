@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     GetDashboardCount($("#Type").html())
 })
 function GetDashboardCount(type) {
@@ -12,7 +13,7 @@ function GetDashboardCount(type) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
-
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                     

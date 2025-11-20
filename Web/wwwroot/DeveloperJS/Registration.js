@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     //const [today] = new Date().toISOString().split('T');
     //const maxDate = new Date();
     //maxDate.setDate(maxDate.getDate() + 30);
@@ -19,6 +19,8 @@
     //$("#DOB_").datepicker({
     //    dateFormat: "dd-mm-yy" // Set the date format
     //});
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     $(function () {
         var dtToday = new Date();
 
@@ -234,6 +236,7 @@ function getApplyIcardDetails() {
             "RegistrationId": $("#RegistrationId").val(),
             "TypeId": $("#TypeId").val()
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response != null) {
                 $("#lblCategory").html(response.ApplyFor);
@@ -274,6 +277,7 @@ function Getdatafromapi() {
             "ICNumber": $("#ServiceNumber").val(),
             "lCardType": $("#TypeId").val()
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response.Status == false) {
                 alert(response.Message)
@@ -293,6 +297,7 @@ function CallDataFromAPI() {
             "ICNumber": $("#ServiceNumber").val(),
             "Type": $("#ApplyForId").val()
         },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response.Status == false) {
 

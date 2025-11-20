@@ -1,5 +1,7 @@
 ﻿var table_Fwd; // Declare table variable outside the function to preserve the instance
 $(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
     let Type = parseInt($("#spnType").html());
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();
@@ -74,7 +76,10 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
             try {
                 let response = await fetch("/BasicDetail/GetAllApprovalForIOData", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
                     body: JSON.stringify(requestData)
                 });
 

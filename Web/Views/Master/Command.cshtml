@@ -4,7 +4,6 @@
 }
 <link asp-href-include="~/css/hierarchy.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content pt-10">
@@ -40,7 +39,6 @@
             <div class="row">
                 <form action="" id="SaveForm" method="post" name="SaveForm">
                     <div class="row">
-                        @Html.AntiForgeryToken()
                         <div class="col-sm-5">
                             <div class="form-group row mb-2">
                                 <span class="spncomdId d-none" id="spncomdId">0</span>

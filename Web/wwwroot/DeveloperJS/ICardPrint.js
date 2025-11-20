@@ -1,14 +1,7 @@
 ﻿$(function () {
-$("#btn-i-card-print").on("click",function () {
-    //    window.scrollTo(0, 0);
-    //var datef2 = new Date();
-    //    $(".watermark").html($("#IpaddresGloble").html() + ' ' + DateFormateddMMyyyyhhmmss(datef2))
-    //    /*$(".section-to-print-popup").focus();*/
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    //    setTimeout(function () {
-    //        window.print();
-    //    }, 300); // 300 milliseconds delay
-
+    $("#btn-i-card-print").on("click", function () {
         PrintData("section-to-print-popup");
     });
 });
@@ -22,6 +15,7 @@ function GetICardPrintPreviewByRequestId(RequestId) {
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
             if (response.Result === true) {
@@ -57,48 +51,14 @@ function GetICardPrintPreviewByRequestId(RequestId) {
         }
     })
 }
-//function GetBasicDetailByRequestId(RequestId) {
-//    var userdata = {
-//        "RequestId": RequestId,
-//    };
-//    $.ajax({
-//        url: '/BasicDetail/GetBasicDetailByRequestId',
-//        contentType: 'application/x-www-form-urlencoded',
-//        data: userdata,
-//        type: 'POST',
-
-//        success: function (response) {
-//            if (response != "null" && response != null) {
-//                $("#basicphotosVP").attr('src', response.ExistingPhotoInBase64);
-//                $("#BasicsingVP").attr('src', response.ExistingSignatureInBase64);
-//                $("#lblvpNameAsPerRecord").html(response.NameAsPerRecord);
-//                $("#lblvpFName").html(response.FName);
-//                $("#lblvpLName").html(response.LName);
-//                $("#lblvpRank").html(response.RankName);
-//                $("#lblvparm").html(response.ArmedName);
-//                $("#lblvpArmyNo").html(response.ModifiedServiceNo);
-//                $("#lblvpMarks").html(response.IdenMark1);
-//                $("#lblvpdob").html(DateFormateMMMM_dd_yyyy(response.DOB));
-//                $("#lblvpheight").html(response.Height);
-//                $("#lblvpadhar").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
-//                $("#lblvpBloodGroup").html(response.BloodGroup);
-//                $("#lblvppoi").html(response.PlaceOfIssue);
-//                $("#lblvpdoi").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
-//                $("#lblvpissuA").html(response.IssuingAuthorityName);
-//                $("#lblvpdateo").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
-//                $("#lblvpaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
-//                $("#BasicDetailViewPurpose").modal('show');
-//            }
-//        }
-//    })
-//}
 function GetBasicDetailByRequestId(RequestId) {
     let param = new URLSearchParams({ RequestId: RequestId });
 
     fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         body: param
     })
@@ -124,13 +84,4 @@ function printDiv() {
     newWin.document.close();
 
     setTimeout(function () { newWin.close(); }, 10);
-
-    //var printContents = document.getElementById('ICardPrint').innerHTML;
-    //var originalContents = document.body.innerHTML;
-
-    //document.body.innerHTML = printContents;
-
-    //window.print();
-
-    //document.body.innerHTML = originalContents;
 }
