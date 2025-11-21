@@ -987,6 +987,7 @@ namespace Web.Controllers
         /// </returns>
         [HttpGet]
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         public IActionResult TokenValidate()
         {
             string? Footer = _configuration["Footer:Test"];
@@ -1100,6 +1101,7 @@ namespace Web.Controllers
         /// <exception cref="Exception">Catches all exceptions and logs using <c>_logger.LogError</c></exception>
         [HttpPost]
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
             try
@@ -1111,7 +1113,8 @@ namespace Web.Controllers
                 if (dd != null)
                 {
                     csConst.cSalt = dd;
-                    string Password = AESEncrytDecry.DecryptStringAES(model.Password);  //decrypt password
+                    //string Password = AESEncrytDecry.DecryptStringAES(model.Password);  //decrypt password
+                    string Password = AESEncrytDecry.DecryptAES(model.Password, dd);  //decrypt password
                     model.Password = Password;
                 }
 
@@ -1691,95 +1694,6 @@ namespace Web.Controllers
         }
 
         #endregion End Logout
-
-        #region Commented Code for for Login Purpose
-
-        //[HttpGet]
-        //[AllowAnonymous]
-        //public IActionResult Login()
-        //{
-        //    DTOLoginRequest loginVM = new DTOLoginRequest();
-        //    string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
-        //    HttpContext.Session.SetString(SessionKeySalt, dd);
-        //    loginVM.hdns = dd;
-
-        //    return View(loginVM);
-
-        //}
-
-        //[HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
-        //[HttpPost, AllowAnonymous]
-        //public async Task<IActionResult> Login(DTOLoginRequest model, string? returnUrl)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        string dd = HttpContext.Session.GetString(SessionKeySalt);
-        //        csConst.cSalt = dd;
-        //        string Password = AESEncrytDecry.DecryptStringAES(model.Password);
-
-        //        string ipAddress;
-        //        ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-
-        //        var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
-        //        var url = location.AbsoluteUri;
-
-        //        string user_name = string.Empty;
-
-        //        var selecteduser = await userManager.FindByNameAsync(model.UserName);
-        //        if (selecteduser == null)
-        //        {
-        //            user_name = model.UserName;
-
-        //            ModelState.AddModelError(string.Empty, "Invalid User Id or Password");
-        //            goto xyz;
-        //        }
-        //        else
-        //        {
-        //            //var result = await signInManager.PasswordSignInAsync(model.UserId, Password, model.RememberMe, true);
-        //            var result = await signInManager.PasswordSignInAsync(model.UserName, Password, false, true);
-        //            if (result.Succeeded)
-        //            {
-        //                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-        //                {
-        //                    return Redirect(returnUrl);
-        //                }
-        //                else
-        //                {
-        //                    var user = await userManager.FindByNameAsync(model.UserName);
-
-        //                    user_name = model.UserName;
-
-
-        //                    var roles = await userManager.GetRolesAsync(user);
-        //                    ViewBag.Message = "Sucessfully Logged In.";
-        //                roll_check:
-        //                    if (roles[0] == "Admin")
-        //                    {
-        //                        return RedirectToActionPermanent("Dashboard", "Home");
-
-        //                    }
-        //                    else if (roles[0] == "User")
-        //                    {
-        //                        return RedirectToActionPermanent("index", "ConfigUser");
-        //                    }
-        //                    else if (roles[0] == "Super Admin")
-        //                    {
-        //                        return RedirectToActionPermanent("Index", "Account");
-        //                    }
-        //                }
-        //            }
-        //            if (result.IsLockedOut)
-        //                ModelState.AddModelError("", "Your account is locked out. Kindly wait for 10 minutes and try again");
-        //            else
-        //                ModelState.AddModelError(string.Empty, "Invalid User Id or Password");
-        //        }
-        //    }
-        //    ViewBag.Message = "Sucessfully Logged In.";
-        //xyz:
-        //    return View(model);
-        //}
-
-        #endregion End Login
 
         #region IAM Code
 

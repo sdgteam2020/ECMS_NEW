@@ -18,7 +18,7 @@ namespace Web.Healpers
                     SHA256 mySHA256 = SHA256Managed.Create();
                     byte[] key = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(SharedKey));
                     byte[] iv = new byte[16] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
-                    if (result.IsNullOrEmpty())
+                    if (string.IsNullOrEmpty(result))
                         result = EncryptString(result, key, iv);
                     //string decrypted = helpers.DecryptString(encrypted, key, iv);
 
@@ -29,7 +29,7 @@ namespace Web.Healpers
                     SHA256 mySHA256 = SHA256Managed.Create();
                     byte[] key = mySHA256.ComputeHash(Encoding.ASCII.GetBytes(SharedKey));
                     byte[] iv = new byte[16] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
-                    if (!result.IsNullOrEmpty())
+                    if (!string.IsNullOrEmpty(result))
                         result = DecryptString(text, key, iv);
 
                     return result;

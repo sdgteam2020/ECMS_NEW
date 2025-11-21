@@ -154,15 +154,6 @@ namespace Web.Controllers
 
 
                 dTODataTablesResponse = await _INotificationBL.GetAllNotificationData(dTORecord);
-                //foreach (var item in dTODataTablesResponse.data)
-                //{
-                //    string sourcePathPhoto = Path.Combine(sourceFolderPhotoPhy, "Photo", item.PhotoImagePath);
-
-                //    if (System.IO.File.Exists(sourcePathPhoto))
-                //    {
-                //        item.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-                //    }
-                //}
                 return Json(dTODataTablesResponse);
             }
             catch (Exception ex)
@@ -180,39 +171,6 @@ namespace Web.Controllers
         /// <returns>A JSON response indicating success (1) or failure (0).</returns>
         public async Task<IActionResult> SaveNotification(DTOTrnNotificationRequest Data)
         {
-            #region Old code
-            //try
-            //{
-            //    // Retrieve the user ID from the claims
-            //    int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            //    Data.SentAspNetUsersId = userId;
-
-            //    // Update the previous notification data
-            //    await _INotificationBL.UpdatePrevious(Data);
-
-            //    // Add the new notification
-            //    await _INotificationBL.Add(Data);
-
-            //    // Retrieve the user ID associated with the request
-            //    int requestUserId = await _ITrnICardRequestBL.GetUserIdByRequestId(Data.RequestId);
-
-            //    // Prepare notification data for the receiver and set the receiver and sender IDs
-            //    Data.NotificationId = 0;
-            //    Data.SentAspNetUsersId = requestUserId;
-            //    Data.ReciverAspNetUsersId = requestUserId;
-
-            //    // Add the notification for the receiver
-            //    await _INotificationBL.Add(Data);
-
-            //    // Return a success response
-            //    return Json(1);
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Return failure if an exception occurs
-            //    return Json(0);
-            //}
-            #endregion Old code
             try
             {
                 // Retrieve the user ID from the claims
@@ -460,7 +418,16 @@ namespace Web.Controllers
                     ViewBag.PreviousLink = "SubDashboard";
                 }
 
-                return View();
+                if (role == "user")
+                {
+                    return View();
+                }
+                else
+                {
+                    TempData["error"] = "Switch to user role.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
             }
             catch (FormatException ex)
             {
@@ -582,8 +549,18 @@ namespace Web.Controllers
             // Pass the user claims to the view using ViewBag
             ViewBag.UserClaims = UserClaims;
 
-            // Return the Dashboard view
-            return View();
+            if (role == "user")
+            {
+                // Return the Dashboard view
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+ 
         }
 
         /// <summary>
@@ -634,8 +611,16 @@ namespace Web.Controllers
             // Pass the role to the view
             ViewBag.Role = role;
 
-            // Return the SubDashboard view
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         /// <summary>
@@ -684,7 +669,17 @@ namespace Web.Controllers
             var UserClaims = await userManager.GetClaimsAsync(user);
             ViewBag.UserClaims = UserClaims;
 
-            return View();
+            if (role == "user")
+            {
+                // Return the Dashboard view
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         /// <summary>
@@ -778,7 +773,17 @@ namespace Web.Controllers
                 var UserClaims = await userManager.GetClaimsAsync(user);
                 ViewBag.UserClaims = UserClaims;
 
-                return View();
+                if (role == "user")
+                {
+                    // Return the Dashboard view
+                    return View();
+                }
+                else
+                {
+                    TempData["error"] = "Switch to user role.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
             }
             catch (FormatException ex)
             {

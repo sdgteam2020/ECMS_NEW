@@ -3,9 +3,9 @@ using BusinessLogicsLayer;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Service;
 using DataAccessLayer;
+using DataTransferObject;
 using DataAccessLayer.Logger;
 using DataAccessLayer.Security;
-using DataTransferObject;
 using DataTransferObject.Domain.Identitytable;
 using EntityFramework.Exceptions.SqlServer;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.SqlServer.Management.Smo.Wmi;
 using Newtonsoft.Json.Serialization;
@@ -80,7 +81,8 @@ builder.Services.AddCors(options =>
 //builder.Services.AddScoped<IGenericRepositoryDL, GenericRepositoryDL>();
 builder.Services.AddScoped<IService, ServiceRepository>();
 builder.Services.AddScoped<IImageEncryptAndDecrypt, ImageEncryptAndDecrypt>();
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddSingleton<DapperContextDb2>();
 
@@ -103,17 +105,14 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 builder.Services.Configure<IdentityOptions>(opts =>
 {
-
-    //opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-    //opts.Lockout.MaxFailedAccessAttempts = 3;
     //opts.User.RequireUniqueEmail = false;
     //opts.SignIn.RequireConfirmedAccount = true;
     //opts.SignIn.RequireConfirmedEmail = false;
-    //opts.Lockout.AllowedForNewUsers = true;
     opts.Lockout.AllowedForNewUsers = true;
     opts.Lockout.MaxFailedAccessAttempts = 3;
     opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
 });
+// Build MapperConfiguration
 var mapperConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new MappingProfile());
@@ -121,6 +120,7 @@ var mapperConfig = new MapperConfiguration(mc =>
 
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
            {

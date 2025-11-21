@@ -35,33 +35,6 @@ namespace Web.Controllers
         /// <returns>A view displaying the application status along with footer and client IP information.</returns>
         public IActionResult AppStatus(int RequestId)
         {
-            // Initialize the DTO object for storing application tracking data.
-            //DTOApplicationTrack dTOApplicationTrack = new DTOApplicationTrack();
-
-            // Try-catch block for error handling in fetching application history data
-            //try
-            //{
-            //    // Fetch the application history based on the tracking ID
-            //    dTOApplicationTrack = await _basicDetailBL.ApplicationHistory(TrackingId);
-
-            //    // Check if the application details were successfully retrieved
-            //    if (dTOApplicationTrack.dTOApplicationDetails != null)
-            //    {
-            //        // If data exists, set the flag to indicate data is available
-            //        ViewBag.IsData = 1;
-            //    }
-            //    else
-            //    {
-            //        // If no data is found, set the flag to indicate no data
-            //        ViewBag.IsData = 0;
-            //    }
-            //}
-            //catch (Exception ex) 
-            //{
-            //    // In case of an exception, set the flag to indicate no data
-            //    ViewBag.IsData = 0; 
-            //}
-
             // Set the footer content fetched from the configuration file
             string? Footer = _configuration["Footer:Test"];
             ViewBag.Footer = Footer;

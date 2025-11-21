@@ -231,40 +231,6 @@ namespace DataAccessLayer
         /// <exception cref="Exception">Throws an exception if an error occurs during the database query execution.</exception>
         public async Task<DTOPostingInResponse> GetArmyDataForPostingOut(string ArmyNo)
         {
-            #region Old code by Kapoor Sir
-            //try
-            //{
-
-            //    string query = "  SELECT basi.BasicDetailId,trnicardr.RequestId,basi.FName,basi.LName,basi.ServiceNo,ranks.RankAbbreviation RankName,appl.ApplyForId,appl.Name ApplyFor,trnicardr.TrackingId," +
-            //                    " trnicardr.StatusId,uplod.PhotoImagePath" +
-            //                    " ,users.DomainId Users_DomainId,pro.ArmyNo Users_ArmyNo,pro.Name Users_Name,ranks1.RankAbbreviation Users_RankName,app.AppointmentName Users_AppointmentName" +
-            //                    " ,muni.UnitName,muni.Suffix,muni.Sus_no,mapunit.UnitMapId FromUnitID,users.Id FromAspNetUsersId,pro.userId FromUserID from BasicDetails basi" +
-            //                    " inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId" +
-            //                    " inner join TrnDomainMapping trndom on trndom.id=trnicardr.TrnDomainMappingId" +
-            //                    " inner join MRank ranks on ranks.RankId=basi.RankId" +
-            //                    " inner join MApplyFor appl on appl.ApplyForId=basi.ApplyForId" +
-            //                    " inner join TrnUpload uplod on uplod.BasicDetailId=basi.BasicDetailId" +
-            //                    " inner join AspNetUsers users on users.Id=trndom.AspNetUsersId" +
-            //                    " inner join UserProfile pro on pro.UserId=trndom.UserId" +
-            //                    " inner join MRank ranks1 on ranks1.RankId=pro.RankId" +
-            //                    " inner join MAppointment app on app.ApptId=trndom.ApptId" +
-            //                    " inner join MapUnit mapunit on mapunit.UnitMapId=basi.UnitId" +
-            //                    " inner join MUnit muni on muni.UnitId=mapunit.UnitId" +
-            //                    " where basi.ServiceNo=@ArmyNo and trnicardr.StatusId=1";
-            //    using (var connection = _contextDP.CreateConnection())
-            //    {
-            //        var ret = await connection.QueryAsync<DTOPostingInResponse>(query, new { ArmyNo });
-
-            //        return ret.FirstOrDefault() ?? new DTOPostingInResponse();
-
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(1001, ex, "PostingDB->GetArmyDataForPostingOut");
-            //    return new DTOPostingInResponse();
-            //}
-            #endregion
             try
             {
 

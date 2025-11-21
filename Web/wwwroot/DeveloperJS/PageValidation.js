@@ -148,11 +148,17 @@ async function SubmitsEncry1(result) {
 
             // Validate password against the regular expression
             if (passwordPattern.test(txtpassword)) {
-                var key = CryptoJS.enc.Utf8.parse(skey);
-                var iv = CryptoJS.enc.Utf8.parse(skey);
-                var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpassword), key,
+                //var key = CryptoJS.enc.Utf8.parse(skey);
+                //var iv = CryptoJS.enc.Utf8.parse(skey);
+                //var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpassword), key,
 
-                    { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+                //    { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+
+                //$('#Password').val(encryptedpassword);
+                //$('#ConfirmPassword').val(encryptedpassword);
+                //return true;
+
+                var encryptedpassword = encryptData(txtpassword, skey);
 
                 $('#Password').val(encryptedpassword);
                 $('#ConfirmPassword').val(encryptedpassword);
@@ -182,14 +188,18 @@ async function SubmitsEncry1(result) {
                 alert("Invalid Army No.");
                 return false; // Stop submission if suffix check fails
             }
-            var key = CryptoJS.enc.Utf8.parse(skey);
-            var iv = CryptoJS.enc.Utf8.parse(skey);
-            var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpassword), key,
+            //var key = CryptoJS.enc.Utf8.parse(skey);
+            //var iv = CryptoJS.enc.Utf8.parse(skey);
+            //var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpassword), key,
 
-                { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+            //    { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+            //);
+            //$('#Password').val(encryptedpassword);
+            //return true;
+
+            var encryptedpassword = encryptData(txtpassword, skey);
 
             $('#Password').val(encryptedpassword);
-            //$('#ConfirmPassword').val(encryptedpassword);
             return true;
         }
     }

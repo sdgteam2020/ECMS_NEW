@@ -1,6 +1,7 @@
-﻿$(function () {
+﻿var RequestVerificationToken;
+$(function () {
 
-    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+    RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     $("#btntokenrefresh").on("click",function () {
         GetTokenvalidatepersid2fawiththumbprint($("#ArmyNo").val(), "tokenmsg", "txtProfileForArmyNo", "Thumbprint");
@@ -91,6 +92,7 @@
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -146,6 +148,7 @@
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -181,6 +184,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
                 type: 'POST',
+                headers: { 'RequestVerificationToken': RequestVerificationToken },
                 success: function (data) {
                     $("#spnUnitMapId").html(data.UnitMapId);
                     $("#UnitMapId").val(data.UnitMapId);
@@ -243,6 +247,7 @@
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
+                    headers: { 'RequestVerificationToken': RequestVerificationToken },
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
@@ -279,6 +284,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
                 datatype: 'json',
+                headers: { 'RequestVerificationToken': RequestVerificationToken },
                 success: function (data) {
                     $("#txtUnit").prop('readOnly', true);
                     $("#txtUnit").val(data.UnitName);
@@ -507,7 +513,7 @@ function GetALLByUnitById(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "UnitMapId": param1 },
         type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        headers: { 'RequestVerificationToken': RequestVerificationToken },
         success: function (data) {
             $("#spnUnitMapId").html(data.UnitMapId);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
@@ -561,7 +567,7 @@ function GetNameByApptId(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "ApptId": param1 },
         type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        headers: { 'RequestVerificationToken': RequestVerificationToken },
         success: function (data) {
             $("#spnUnitAppointmentId").html(data.ApptId);
             $("#txtAppointmentName").val(data.AppointmentName);
@@ -624,7 +630,7 @@ function UnitSave() {
             "FmnBranchID": $("#ddlFmnBranch").val(),
             "SubDteId": $("#ddlDgSubDte").val()
         },
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        headers: { 'RequestVerificationToken': RequestVerificationToken },
         success: function (result) {
             if (result == DataSave) {
                 Swal.fire({
@@ -712,7 +718,7 @@ function AppointmentSave() {
             "AppointmentAbbreviation": $("#txtAppointmentAbbr").val().trim() == "" ? null : $("#txtAppointmentAbbr").val().trim(),
             "ApptId": $("#spnAppointmentId").html()
         },
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        headers: { 'RequestVerificationToken': RequestVerificationToken },
         success: function (result) {
             if (result == DataSave) {
                 Swal.fire({

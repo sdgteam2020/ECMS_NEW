@@ -562,8 +562,16 @@ namespace Web.Controllers
             ViewBag.StepCounter = stepCounter;
             ViewBag.jcoor = string.IsNullOrEmpty(jcoor) ? 1 : 0;
 
-            // Render the view with ViewBag context
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -905,17 +913,6 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult Registration(string Id)
         {
-            #region Old Code
-            // Previous implementation included:
-            // - Fetching logged-in userId from claims
-            // - Decrypting the provided Id using Unprotect
-            // - Populating dropdown options for BloodGroup, ArmedType, and Registration
-            // - Building a DTORegistrationRequest with decrypted TypeId
-            // - Returning the populated view with DTO model
-            //
-            // This logic is currently commented out and not in use.
-            #endregion End Old Code
-
             // Render the Registration view (empty for now)
             return View();
         }
@@ -988,10 +985,10 @@ namespace Web.Controllers
                                         TempData["error"] = "New Army No is alredy used.";
                                         goto end;
                                     }
-                                    else if (OldFirstTwo.IsNullOrEmpty())
+                                    else if (string.IsNullOrEmpty(OldFirstTwo))
                                     {
                                         // Handle OR rank cases
-                                        if (NewFirstTwo.IsNullOrEmpty())
+                                        if (string.IsNullOrEmpty(NewFirstTwo))
                                         {
                                             TempData["error"] = "Both Old and New Army No is OR rank.";
                                             goto end;
@@ -1007,10 +1004,10 @@ namespace Web.Controllers
                                             goto end;
                                         }
                                     }
-                                    else if (!OldFirstTwo.IsNullOrEmpty())
+                                    else if (!string.IsNullOrEmpty(OldFirstTwo))
                                     {
                                         // Validation rules for IC, SL, SS, WC, TA, JC
-                                        if (OldFirstTwo == "IC" && NewFirstTwo.IsNullOrEmpty())
+                                        if (OldFirstTwo == "IC" && string.IsNullOrEmpty(NewFirstTwo))
                                         {
                                             TempData["error"] = "Permanent Commissioned Officers are not downgraded.";
                                             goto end;
@@ -1031,12 +1028,12 @@ namespace Web.Controllers
                                             TempData["error"] = "SL / TA are not changed Army No.";
                                             goto end;
                                         }
-                                        else if ((OldFirstTwo == "SS" || OldFirstTwo == "WC") && model.ApplyForId == 2 && !NewFirstTwo.IsNullOrEmpty() && NewFirstTwo == "IC")
+                                        else if ((OldFirstTwo == "SS" || OldFirstTwo == "WC") && model.ApplyForId == 2 && !string.IsNullOrEmpty(NewFirstTwo) && NewFirstTwo == "IC")
                                         {
                                             TempData["error"] = "Please Select Offrs tab.";
                                             goto end;
                                         }
-                                        else if (OldFirstTwo == "JC" && model.ApplyForId == 2 && !NewFirstTwo.IsNullOrEmpty() && (NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA"))
+                                        else if (OldFirstTwo == "JC" && model.ApplyForId == 2 && !string.IsNullOrEmpty(NewFirstTwo) && (NewFirstTwo == "SS" || NewFirstTwo == "SL" || NewFirstTwo == "WC" || NewFirstTwo == "TA"))
                                         {
                                             TempData["error"] = "Please Select  Offrs tab.";
                                             goto end;
@@ -2446,75 +2443,6 @@ namespace Web.Controllers
         /// </returns>
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {
-            #region Old Code
-            //try
-            //{
-            //    // Create response object
-            //    DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
-
-            //    // Retrieve session data for user ID and unit ID
-            //    DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-            //    // Set values for the forward data object using session data and user information
-            //    data.FromUserId = sessiondata.UserId;
-            //    data.UnitId = sessiondata.UnitId;
-            //    data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            //    data.UpdatedOn = DateTime.Now;
-            //    data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            //    data.IsActive = true;
-            //    data.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
-
-            //    // Retrieve domain mapping using the request ID
-            //    TrnDomainMapping? Domain = new TrnDomainMapping();
-            //    Domain = await iDomainMapBL.GetByRequestId(data.RequestId);
-
-            //    if (Domain != null)
-            //    {
-            //        // Set the recipient user ID and AspNetUsersId for the rejection
-            //        data.ToAspNetUsersId = Domain.AspNetUsersId;
-            //        data.ToUserId = Domain.UserId.GetValueOrDefault();
-
-            //        // Update all records by request ID
-            //        if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
-            //        {
-            //            // Add the rejection record
-            //            await iTrnFwnBL.Add(data);
-
-            //            // Process digital sign XML files for the rejection
-            //            int[] d = new int[1];
-            //            d[0] = data.RequestId;
-            //            var dataret = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
-
-            //            if (dataret != null)
-            //            {
-            //                dataret.XmlFiles = ""; // Clear the XML files after processing
-            //            }
-
-            //            // Save the processed XML digital sign
-            //            await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
-
-            //            // Return the updated rejection data as JSON
-            //            return Ok(data);
-            //        }
-            //        else
-            //        {
-            //            // Return a bad request if update fails
-            //            return BadRequest();
-            //        }
-            //    }
-            //    else
-            //    {
-            //        // Return a bad request if domain mapping is not found
-            //        return BadRequest();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Log any exceptions and return a bad request response
-            //    _logger.LogError(1001, ex, "BasicDetails=>IcardRejecte.");
-            //    return BadRequest();
-            //}
-            #endregion Old Code
             // Initialize the generic response object
             DTOGenericResponse<DTOApplicationRejecteResponse?> response = new DTOGenericResponse<DTOApplicationRejecteResponse?>();
             DTOApplicationRejecteResponse dTOApplication = new DTOApplicationRejecteResponse();
@@ -4305,7 +4233,7 @@ namespace Web.Controllers
             try
             {
                 // Check if the input Army Number is not null or empty
-                if (!ArmyNo.IsNullOrEmpty())
+                if (!string.IsNullOrEmpty(ArmyNo))
                 {
                     // Call business layer to check validity and return the result as JSON
                     return Json(await basicDetailBL.CheckArmyNO(ArmyNo));
@@ -4669,64 +4597,6 @@ namespace Web.Controllers
         /// <returns>Returns JSON containing the temporary CSV file name or an error message.</returns>
         public async Task<IActionResult> CreateCSV(DTOCSVExportRequest model)
         {
-            #region Old Code
-            //try
-            //{
-            //    // Get the current logged-in user's ID
-            //    var UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            //    // Retrieve the user object from UserManager
-            //    var user = await userManager.FindByIdAsync(UserId);
-
-            //    // Get all claims for the current user
-            //    var UserClaims = await userManager.GetClaimsAsync(user);
-
-            //    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Internal Wk Distr"))
-            //    {
-            //        // If user has "Internal Wk Distr" claim, the Ids refer to TrnFwdId
-            //        model.IdsTypeRequestIdOrTrnFwdId = true;
-            //    }
-            //    else
-            //    {
-            //        // Otherwise, the Ids refer to RequestId
-            //        model.IdsTypeRequestIdOrTrnFwdId = false;
-            //    }
-
-            //    // Generate CSV string from the business layer
-            //    string? csvData = await basicDetailBL.GetCSVString(model);
-            //    if (csvData != null)
-            //    {
-            //        // Generate a temporary file name using a GUID
-            //        string TempFileName = Guid.NewGuid().ToString();
-
-            //        // Define the folder path for saving CSV files
-            //        string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "CSVFile");
-
-            //        // Check if directory exists; if not, create it
-            //        if (!Directory.Exists(sourceFolder))
-            //        {
-            //            Directory.CreateDirectory(sourceFolder);
-            //        }
-
-            //        // Write the CSV data to a file in the folder
-            //        System.IO.File.WriteAllText(sourceFolder + "/" + TempFileName + ".csv", csvData);
-
-            //        // Return the temporary file name as JSON
-            //        return Json(TempFileName);
-            //    }
-            //    else
-            //    {
-            //        // If CSV data generation failed, return an internal server error constant
-            //        return Json(KeyConstants.InternalServerError);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Log any exceptions and return an internal server error
-            //    _logger.LogError(1001, ex, "BasicDetails=>CreateCSV.");
-            //    return Json(KeyConstants.InternalServerError);
-            //}
-            #endregion  Old Code
             try
             {
                 // Generate CSV string from the business layer

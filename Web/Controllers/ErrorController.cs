@@ -145,11 +145,6 @@ namespace Web.Controllers
                 // Log the exception details, including the path and exception message
                 logger.LogError(1984, exceptionHandlerPathFeature.Error,
                     $"The path {exceptionHandlerPathFeature.Path} threw an exception: {exceptionHandlerPathFeature.Error}");
-
-                // Optionally, you can pass exception details to the view (this part is commented out)
-                // ViewBag.ExceptionPath = exceptionHandlerPathFeature.Path;
-                // ViewBag.ExceptionMessage = exceptionHandlerPathFeature.Error.Message;
-                // ViewBag.StackTrace = exceptionHandlerPathFeature.Error.StackTrace;
             }
 
             // Return the error view

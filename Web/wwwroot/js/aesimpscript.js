@@ -7,12 +7,7 @@
         return false;
     }
     else {
-        var key = CryptoJS.enc.Utf8.parse(skey);
-        var iv = CryptoJS.enc.Utf8.parse(skey);
-        var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpassword), key,
-
-            { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
-
+        var encryptedpassword = encryptData(txtpassword, skey);
         $('#Password').val(encryptedpassword);
     }
 }
@@ -26,14 +21,11 @@ function CreateHash() {
         return false;
     }
     else {
-        var key = CryptoJS.enc.Utf8.parse(skey);
-        var iv = CryptoJS.enc.Utf8.parse(skey);
-        var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtconfpassword), key,
-            { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+
+        var encryptedpassword = encryptData(txtconfpassword, skey);
 
         $('#Password').val(encryptedpassword);
         $('#ConfirmPassword').val(encryptedpassword);
-
     }
 }
 function CrNwHsh() {
@@ -46,12 +38,9 @@ function CrNwHsh() {
         return false;
     }
     else {
-        var key = CryptoJS.enc.Utf8.parse(skey);
-        var iv = CryptoJS.enc.Utf8.parse(skey);
-        var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtnewpassword), key,
-            { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
-        var encryptedconfpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtconfpassword), key,
-            { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+
+        var encryptedpassword = encryptData(txtnewpassword, skey);
+        var encryptedconfpassword = encryptData(txtconfpassword, skey);
         $('#Password').val(encryptedpassword);
         $('#ConfirmPassword').val(encryptedconfpassword);
 
@@ -68,16 +57,34 @@ function CrOldHsh() {
         return false;
     }
     else {
-        var key = CryptoJS.enc.Utf8.parse(skey);
-        var iv = CryptoJS.enc.Utf8.parse(skey);
-        var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtnewpassword), key,
-            { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
-        var encryptedconfpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtconfpassword), key,
-            { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
-        var encryptedoldpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtoldpassword), key,
-            { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+        var encryptedpassword = encryptData(txtnewpassword, skey);
+        var encryptedconfpassword = encryptData(txtconfpassword, skey);
+        var encryptedoldpassword = encryptData(txtoldpassword, skey);
+
         $('#Password').val(encryptedpassword);
         $('#ConfirmPassword').val(encryptedconfpassword);
         $('#OldPassword').val(encryptedoldpassword);
     }
+}
+function encryptData(plainText, secretKey) {
+    const key = CryptoJS.enc.Utf8.parse(secretKey);
+    const iv = CryptoJS.enc.Utf8.parse(secretKey.substring(0, 16)); // 16 bytes
+
+    const encrypted = CryptoJS.AES.encrypt(plainText, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    return encrypted.toString();   // Base64 output
+}
+function decryptData(cipherText, secretKey) {
+    const key = CryptoJS.enc.Utf8.parse(secretKey);
+    const iv = CryptoJS.enc.Utf8.parse(secretKey.substring(0, 16));
+
+    return CryptoJS.AES.decrypt(cipherText, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    }).toString(CryptoJS.enc.Utf8);
 }

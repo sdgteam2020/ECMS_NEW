@@ -391,35 +391,6 @@ namespace DataAccessLayer
         /// <returns>Returns a list of DTOReportReturnCount representing counts of record office offers.</returns>
         public async Task<List<DTOReportReturnCount>> GetRecordOffOffersCount(DTOMHierarchyRequest Data)
         {
-            #region Old code
-            //string query = " select COUNT(req.RequestId) Total, fwdsts.Name,fwdsts.FwdStatusId,mrec.RecordOfficeId, 3 GroupId from MTrnFwdStatus fwdsts" +
-            //   " inner join TrnFwds fwd on fwdsts.FwdStatusId=fwd.FwdStatusId  " +
-            //   " inner join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1 " +
-            //   " inner join TrnStepCounter step on step.ApplyForId=1 and req.RequestId=step.RequestId" +
-            //   " inner join TrnDomainMapping map on fwd.ToAspNetUsersId=map.AspNetUsersId  " +
-            //   " inner join OROMapping mrec on map.Id=mrec.TDMId " +
-            //   " inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
-            //   " left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-            //   " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-            //   " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-            //   " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-            //   " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-            //   " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-            //   " group by fwdsts.Name,fwdsts.FwdStatusId,mrec.RecordOfficeId";
-            //try
-            //{
-            //    using (var connection = _contextDP.CreateConnection())
-            //    {
-            //        var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
-            //        return ret.ToList();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(1001, ex, "ReportReturnDB->GetRecordJco");
-            //    return new List<DTOReportReturnCount>();
-            //}
-            #endregion
 
             string query = @"select COUNT(req.RequestId) Total, fwdsts.Name,fwdsts.FwdStatusId,mrec.RecordOfficeId, 3 GroupId from MTrnFwdStatus fwdsts
                             inner join TrnFwds fwd on fwdsts.FwdStatusId=fwd.FwdStatusId and fwd.StepId in (3,8)

@@ -3,14 +3,15 @@ using BusinessLogicsLayer.TrnLoginLog;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
+using iText.Commons.Actions;
 using iText.IO.Font.Constants;
 using iText.IO.Image;
 using iText.Kernel.Colors;
-using iText.Kernel.Events;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Pdf.Event;
 using iText.Kernel.Pdf.Extgstate;
 using iText.Layout;
 using iText.Layout.Element;
@@ -910,9 +911,9 @@ namespace Web.Controllers
             document.Add(tableFwd);
         }
         // Custom event handler for header and footer
-        public class HeaderFooterHandler : IEventHandler
+        public class HeaderFooterHandler : AbstractPdfDocumentEventHandler
         {
-            public void HandleEvent(Event @event)
+            protected override void OnAcceptedEvent(AbstractPdfDocumentEvent @event)
             {
                 PdfDocumentEvent docEvent = (PdfDocumentEvent)@event;
                 PdfDocument pdfDoc = docEvent.GetDocument();
@@ -987,14 +988,14 @@ namespace Web.Controllers
             return imageCellFwd;
         }
         // Custom event handler for diagonal watermark from bottom-left to top-right
-        public class BottomLeftDiagonalWatermarkHandler : IEventHandler
+        public class BottomLeftDiagonalWatermarkHandler : AbstractPdfDocumentEventHandler
         {
             private string _ipAddress;
             public BottomLeftDiagonalWatermarkHandler(string ipAddress)
             {
                 _ipAddress = ipAddress;
             }
-            public void HandleEvent(Event @event)
+            protected override void OnAcceptedEvent(AbstractPdfDocumentEvent @event)
             {
                 //_ipAddress = "192.168.100.10";
                 PdfDocumentEvent docEvent = (PdfDocumentEvent)@event;
