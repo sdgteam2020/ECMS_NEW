@@ -10,6 +10,7 @@ using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Web.Healpers;
 using Web.WebHelpers;
 
 namespace Web.Controllers
@@ -46,29 +47,6 @@ namespace Web.Controllers
             _iTrnMappingUnMappingLogBL = trnMappingUnMappingLogBL;
             _logger = logger;
             _configuration = configuration;
-        }
-        /// <summary>
-        /// This method retrieves the role of the currently logged-in user from the session.
-        /// It checks if the session contains a valid "Token" and retrieves the user's role from it.
-        /// If the token is not found, it returns an empty string.
-        /// </summary>
-        /// <returns>
-        /// A string representing the role of the user, or an empty string if no session is found.
-        /// </returns>
-        private string GetSessionValue()
-        {
-            DtoSession? dtoSession = new DtoSession();
-
-            // Check if session contains a valid token
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                // Retrieve the session object
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-            }
-
-            // Return the role of the user from the session, or an empty string if session is not found
-            string role = dtoSession != null ? dtoSession.RoleName : "";
-            return role;
         }
 
         /// <summary>
@@ -147,7 +125,7 @@ namespace Web.Controllers
         public IActionResult Profile()
         {
             // Get the role of the user from the session
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Set the role in the ViewBag to make it accessible in the view
             ViewBag.Role = role;
@@ -396,7 +374,7 @@ namespace Web.Controllers
                 DTOUserProfileResponse dTOUserProfileResponse = await _userProfileBL.GetByArmyNo(ArmyNo, userid);
 
                 // Add the role name to the response using the session value
-                dTOUserProfileResponse.RoleName = GetSessionValue();
+                dTOUserProfileResponse.RoleName = SessionHelper.GetRoleFromSession(HttpContext);
 
                 // Return the user profile as JSON
                 return Json(dTOUserProfileResponse);

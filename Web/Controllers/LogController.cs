@@ -23,6 +23,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
 using iTextImage = iText.Layout.Element.Image;
@@ -61,6 +62,8 @@ namespace Web.Controllers
         /// <returns>A view displaying login logs for the user's unit or null if the session is invalid.</returns>
         public async Task<IActionResult> LoginLog()
         {
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
             // Get the referer header from the request
             string referer = HttpContext.Request.Headers["Referer"].ToString();
 
@@ -72,12 +75,31 @@ namespace Web.Controllers
             if (dtoSession != null)
             {
                 var data = await _iTrnLoginLogBL.GetAllUserByUnitId(dtoSession.UnitId);
-                return View(data);
+
+                if (role == "user")
+                {
+                    return View(data);
+                }
+                else
+                {
+                    TempData["error"] = "Switch to user role.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
             }
             else
             {
-                // If session is invalid, return a view with no data
-                return View(null);
+                if (role == "user")
+                {
+                    // If session is invalid, return a view with no data
+                    return View(null);
+                }
+                else
+                {
+                    TempData["error"] = "Switch to user role.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
             }
         }
 
@@ -223,348 +245,6 @@ namespace Web.Controllers
 
         public async Task<IActionResult> CreatePdfAsync(int RequestId)
         {
-            #region Old Code
-            //try
-            //{
-            //    // Retrieve client IP address
-            //    string ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
-
-            //    // Define levels and create dictionary in one step
-            //    var dictionarLevel = new Dictionary<int, LevelMessage>
-            //    {
-            //        { 1, new LevelMessage { ID = 1, Name = "1st Level" } },
-            //        { 2, new LevelMessage { ID = 2, Name = "2nd Level" } },
-            //        { 3, new LevelMessage { ID = 3, Name = "3rd Level" } },
-            //        { 4, new LevelMessage { ID = 4, Name = "4th Level" } }
-            //    };
-
-            //    var now = DateTime.Now;
-            //    var yearName = now.ToString("yyyy");
-            //    var monthName = now.ToString("MMMM");
-            //    var dayName = now.ToString("dd");
-            //    var hh = now.ToString("hh");
-            //    var mm = now.ToString("mm");
-            //    var ss = now.ToString("ss");
-
-            //    // Fetch data asynchronously
-            //    var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(new[] { RequestId });
-
-            //    // Process certificates
-            //    List<X509Certificate2> certificates = new List<X509Certificate2>();
-
-            //    string XmlFilesRemoveAndChar = sata.XmlFiles.Replace("&", "&amp;");
-
-            //    XmlDocument xmlDoc = new XmlDocument();
-            //    xmlDoc.LoadXml(Convert.ToString(XmlFilesRemoveAndChar));
-
-            //    XmlNodeList certificateNodes = xmlDoc.GetElementsByTagName("X509Certificate");
-            //    List<DTOFwdLastRecForDigitalSign> DigitalSignList = new List<DTOFwdLastRecForDigitalSign>();
-
-            //    foreach (XmlNode node in certificateNodes)
-            //    {
-            //        string base64EncodedCertificate = node.InnerText;
-            //        byte[] certBytes = Convert.FromBase64String(base64EncodedCertificate);
-            //        X509Certificate2 certificate = new X509Certificate2(certBytes);
-            //        certificates.Add(certificate);
-
-            //        // Split by ", "
-            //        string[] pairs = certificate.Subject.Split(new string[] { ", " }, StringSplitOptions.None);
-
-            //        // Create dictionary
-            //        Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-
-            //        foreach (string pair in pairs)
-            //        {
-            //            string[] kv = pair.Split(new char[] { '=' }, 2); // Split into 2 parts only
-            //            string key = kv[0].Trim();
-            //            string value = kv.Length > 1 ? kv[1].Trim() : "";
-            //            keyValuePairs[key] = value;
-            //        }
-
-            //        DTOFwdLastRecForDigitalSign obj = new DTOFwdLastRecForDigitalSign();
-            //        obj.FromProfile = keyValuePairs["CN"];
-            //        string t;
-            //        t = keyValuePairs["SERIALNUMBER"];
-            //        if (t.ToLower().Trim() == "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3".ToLower()) //"7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996"
-            //        {
-            //            obj.FromArmyNo = "IC71150A";
-            //        }
-            //        else if (t.ToLower().Trim() == "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".ToLower())
-            //        {
-            //            //obj.FromArmyNo = subdata[1].Replace("SERIALNUMBER=", "").Replace("A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448", "IC60056W");
-            //            obj.FromArmyNo = "IC60056W";
-            //        }
-            //        else
-            //        {
-            //            obj.FromArmyNo = t;
-            //        }
-            //        DigitalSignList.Add(obj);
-            //    }
-            //    ///////////////End Certificate////////////////////
-
-            //    List<DTOFwdLastRecForDigitalSign> lstproDetails = new List<DTOFwdLastRecForDigitalSign>();
-
-            //    XmlDocument xmlDoc1 = new XmlDocument();
-
-            //    xmlDoc.LoadXml(Convert.ToString(XmlFilesRemoveAndChar));
-
-            //    XmlNodeList fwddetails = xmlDoc.GetElementsByTagName("RecForDigitalSign");
-            //    var nodesList = fwddetails.Cast<XmlNode>().ToList();
-            //    var orderedNodes = nodesList.OrderBy(x => int.Parse(x.SelectSingleNode("StepId").InnerText)).ToList();
-            //    BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
-
-            //    int i = 1;
-            //    List<DTODigitalSignPlusLog> DigitalSignPlusLogList = new List<DTODigitalSignPlusLog>();
-
-            //    foreach (var node in orderedNodes)
-            //    {
-            //        string base64EncodedCertificate1 = node.InnerXml;
-            //        // byte[] certBytes = Convert.FromBase64String(base64EncodedCertificate);
-            //        LevelMessage levelMessage = dictionarLevel[i];
-            //        DTODigitalSignPlusLog obj = new DTODigitalSignPlusLog();
-            //        obj.Sno = i;
-            //        obj.FromDomain = node["FromDomain"].InnerText;
-            //        obj.FromRank = node["FromRank"].InnerText;
-            //        obj.FromProfile = node["FromProfile"].InnerText;
-            //        obj.FromArmyNo = node["FromArmyNo"].InnerText;
-            //        obj.FromDate = Convert.ToDateTime(node["FromDate"].InnerText);
-            //        obj.LevelMessage = levelMessage.Name;
-
-            //        DTOFwdLastRecForDigitalSign? objDS = DigitalSignList.Where(x => x.FromArmyNo.Contains(obj.FromArmyNo)).FirstOrDefault();
-
-            //        int stepId = Convert.ToInt32(node["StepId"].InnerText);
-
-            //        if (stepId == 2)
-            //        {
-            //            if (objDS != null)
-            //            {
-            //                obj.IsLogWithSign = true;
-            //                obj.DSProfile = objDS.FromProfile;
-            //                obj.DSArmyNo = objDS.FromArmyNo;
-            //            }
-            //            else
-            //            {
-            //                DTOFwdLastRecForDigitalSign? dTOFwd = DigitalSignList.Where(x => x.FromArmyNo.Contains(db.ServiceNo)).FirstOrDefault();
-            //                if (dTOFwd != null)
-            //                {
-            //                    obj.IsLogWithSign = true;
-            //                    obj.DSProfile = dTOFwd.FromProfile;
-            //                    obj.DSArmyNo = dTOFwd.FromArmyNo;
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            if (objDS != null)
-            //            {
-            //                obj.IsLogWithSign = true;
-            //                obj.DSProfile = objDS.FromProfile;
-            //                obj.DSArmyNo = objDS.FromArmyNo;
-            //            }
-            //        }
-
-            //        DigitalSignPlusLogList.Add(obj);
-            //        i++;
-            //    }
-            //    string sourceFolder = Convert.ToString(Path.Combine(hostingEnvironment.WebRootPath, "DigitallysignaturePdf"));
-            //    if (!Directory.Exists(sourceFolder))
-            //        Directory.CreateDirectory(sourceFolder);
-
-            //    string pdfname = db.ServiceNo + "_" + RequestId + "_" + yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss + ".pdf";
-            //    var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\" + pdfname);
-            //    //if (!System.IO.File.Exists(filePath1))
-            //    //{
-            //    PdfWriter writer = new PdfWriter(filePath1);
-            //    PdfDocument pdf = new PdfDocument(writer);
-            //    pdf.SetDefaultPageSize(PageSize.A4);
-            //    Document document = new Document(pdf);
-            //    document.SetMargins(36, 36, 36, 36);
-            //    document.SetFontSize(12f);
-
-            //    // Add header and footer event
-            //    pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new HeaderFooterHandler());
-
-            //    // Add watermark to each page
-            //    pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new BottomLeftDiagonalWatermarkHandler(ipAddress));
-
-            //    PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
-
-            //    Paragraph header = new Paragraph("I-Card Process" +
-            //        " Digital Signature").SetTextAlignment(TextAlignment.CENTER).SetFontSize(20);
-
-            //    document.Add(header);
-
-            //    Paragraph subheader = new Paragraph("Pers info Details").SetTextAlignment(TextAlignment.CENTER).SetFontSize(15);
-            //    document.Add(subheader);
-
-            //    Table table = new Table(4);
-
-            //    //String imphotoFile = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\WriteReadData\\Photo\\" + db.PhotoImagePath);
-            //    //ImageData dataphoto = ImageDataFactory.Create(imphotoFile);
-
-            //    String sourcePathPhoto = System.IO.Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo", db.PhotoImagePath);
-            //    string base64Image = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-            //    // Decode Base64 string to byte array
-            //    string base64Data = base64Image.Split(',')[1]; // Remove data:image/jpeg;base64, prefix
-            //    byte[] imageBytes = Convert.FromBase64String(base64Data);
-            //    ImageData dataphoto = ImageDataFactory.Create(imageBytes);
-
-            //    iTextImage imagedataphoto = new iTextImage(dataphoto);
-            //    imagedataphoto.SetWidth(60);
-            //    Cell imageCellphotos = new Cell().Add(imagedataphoto);
-            //    //imageCellphotos.SetBorder(null);
-            //    table.AddCell(new Paragraph("Photos").SetFont(boldFont));
-            //    table.AddCell(imageCellphotos);
-
-            //    // Add header cells to the table
-            //    table.AddCell(new Paragraph("NAME").SetFont(boldFont));
-            //    table.AddCell(db.RankName + " " + db.FName + (db.LName == null ? "" : " " + db.LName));
-            //    table.AddCell(new Paragraph("Rank").SetFont(boldFont));
-            //    table.AddCell(db.RankName);
-
-            //    // Add data row with 4 columns
-            //    table.AddCell(new Paragraph("Arm / Service").SetFont(boldFont));
-            //    table.AddCell(db.ArmedName);
-            //    table.AddCell(new Paragraph("Army No").SetFont(boldFont));
-            //    table.AddCell(db.ServiceNo);
-            //    table.AddCell(new Paragraph("IdenMark1").SetFont(boldFont));
-            //    table.AddCell(db.IdenMark1);
-            //    table.AddCell(new Paragraph("Date of Birth").SetFont(boldFont));
-            //    table.AddCell(db.DOB.ToString("dd-MMM-yyyy"));
-            //    table.AddCell(new Paragraph("Height (Cm)").SetFont(boldFont));
-            //    table.AddCell(Convert.ToString(db.Height));
-            //    table.AddCell(new Paragraph("AADHAAR No").SetFont(boldFont));
-            //    table.AddCell(Regex.Replace(db.AadhaarNo, @"\d(?=\d{4})", "X"));
-            //    table.AddCell(new Paragraph("BloodGroup").SetFont(boldFont));
-            //    table.AddCell(db.BloodGroup);
-            //    table.AddCell(new Paragraph("Place of Issue").SetFont(boldFont));
-            //    table.AddCell(db.PlaceOfIssue);
-            //    table.AddCell(new Paragraph("Date of Issue").SetFont(boldFont));
-            //    table.AddCell(db.DateOfIssue == DateTime.MinValue ? "" : db.DateOfIssue.ToString("dd-MMM-yyyy"));
-            //    table.AddCell(new Paragraph("Issuing Authority").SetFont(boldFont));
-            //    table.AddCell(db.IssuingAuthorityName);
-            //    table.AddCell(new Paragraph("Date of Commissioning/ Enrollment").SetFont(boldFont));
-            //    table.AddCell(db.DateOfCommissioning.ToString("dd-MMM-yyyy"));
-
-            //    table.AddCell(new Paragraph("Permt Address as per Service Records").SetFont(boldFont));
-            //    //table.AddCell(new Cell(1, 3).Add(new Paragraph("Amount")));
-            //    table.AddCell("Village - " + db.Village + ", Post Office-" + db.PO + ", Tehsil- " + db.Tehsil + ", District- " + db.District + ", State- " + db.State + ", Pin Code- " + db.PinCode);
-            //    table.AddCell(new Paragraph("Signature").SetFont(boldFont));
-
-            //    //String sigFile = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\WriteReadData\\Signature\\" + db.SignatureImagePath);
-            //    //ImageData datasig = ImageDataFactory.Create(sigFile);
-            //    //iTextImage imagedatasig = new iTextImage(datasig);
-            //    //imagedatasig.SetWidth(60);
-
-            //    String sourcePathSignature = System.IO.Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature", db.SignatureImagePath);
-            //    base64Image = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
-            //    // Decode Base64 string to byte array
-            //    base64Data = base64Image.Split(',')[1]; // Remove data:image/jpeg;base64, prefix
-            //    imageBytes = Convert.FromBase64String(base64Data);
-            //    ImageData datasig = ImageDataFactory.Create(imageBytes);
-            //    iTextImage imagedatasig = new iTextImage(datasig);
-            //    imagedatasig.SetWidth(80);
-
-            //    Cell imageCellsig = new Cell().Add(imagedatasig);
-            //    table.AddCell(imageCellsig);
-
-            //    document.Add(table);
-
-            //    Paragraph header2 = new Paragraph("Details of Digital Signature & Digital Log.").SetTextAlignment(TextAlignment.CENTER).SetFontSize(20);
-
-            //    document.Add(header2);
-
-            //    // Define custom column widths
-            //    float[] columnWidths = { 18F, 144F, 73F, 144F, 72F, 72F };
-
-            //    Table tableFwd = new Table(columnWidths);
-            //    tableFwd.SetPadding(5);
-            //    tableFwd.SetSpacingRatio(2);
-            //    tableFwd.AddHeaderCell(new Paragraph("Ser No").SetFont(boldFont));
-            //    tableFwd.AddHeaderCell(new Paragraph("Personal Details").SetFont(boldFont));
-            //    tableFwd.AddHeaderCell(new Paragraph("Approvers").SetFont(boldFont));
-            //    tableFwd.AddHeaderCell(new Paragraph("Date and Time").SetFont(boldFont));
-            //    tableFwd.AddHeaderCell(new Paragraph("Digital Log").SetFont(boldFont));
-            //    tableFwd.AddHeaderCell(new Paragraph("Digital Signature").SetFont(boldFont));
-
-            //    i = 1;
-            //    if (DigitalSignPlusLogList.Count > 0)
-            //    {
-            //        foreach (var digitaldata in DigitalSignPlusLogList)
-            //        {
-            //            if (digitaldata.IsLogWithSign == true)
-            //            {
-            //                if (digitaldata.FromArmyNo == digitaldata.DSArmyNo)
-            //                {
-            //                    Cell cell_1 = new Cell();
-            //                    cell_1.Add(new Paragraph(i.ToString()));
-            //                    cell_1.SetTextAlignment(TextAlignment.CENTER);
-
-            //                    tableFwd.AddCell(cell_1);
-            //                    tableFwd.AddCell(new Paragraph(digitaldata.FromProfile + "\n" + digitaldata.FromArmyNo));
-            //                    tableFwd.AddCell(new Paragraph(digitaldata.LevelMessage + " (" + digitaldata.FromDomain + " )"));
-            //                    tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd-MMM-yyyy HH:mm:ss") : ""));
-            //                    tableFwd.AddCell(CreateApprovedImage());
-            //                    tableFwd.AddCell(CreateDigitalSignImage());
-            //                }
-            //                else
-            //                {
-            //                    Cell cell_1 = new Cell();
-            //                    cell_1.Add(new Paragraph(i.ToString()));
-            //                    cell_1.SetTextAlignment(TextAlignment.CENTER);
-
-            //                    tableFwd.AddCell(cell_1);
-            //                    //tableFwd.AddCell(new Paragraph(digitaldata.Sno.ToString()).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetHorizontalAlignment(HorizontalAlignment.CENTER));
-            //                    tableFwd.AddCell(new Paragraph("" + digitaldata.FromRank + " " + digitaldata.FromProfile + "\n" + digitaldata.FromArmyNo));
-            //                    tableFwd.AddCell(new Paragraph(digitaldata.LevelMessage + " (" + digitaldata.FromDomain + " )"));
-            //                    tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd-MMM-yyyy HH:mm:ss") : ""));
-            //                    tableFwd.AddCell(CreateApprovedImage());
-            //                    tableFwd.AddCell(new Paragraph("NA"));
-
-            //                    i++;
-
-            //                    Cell cell_2 = new Cell();
-            //                    cell_2.Add(new Paragraph(i.ToString()));
-            //                    cell_2.SetTextAlignment(TextAlignment.CENTER);
-
-            //                    tableFwd.AddCell(cell_2);
-            //                    //tableFwd.AddCell(new Paragraph(digitaldata.Sno.ToString()).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetHorizontalAlignment(HorizontalAlignment.CENTER));
-            //                    tableFwd.AddCell(new Paragraph(digitaldata.DSProfile + "\n" + digitaldata.DSArmyNo));
-            //                    tableFwd.AddCell(new Paragraph(digitaldata.LevelMessage));
-            //                    tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd-MMM-yyyy HH:mm:ss") : ""));
-            //                    tableFwd.AddCell(new Paragraph("NA"));
-            //                    tableFwd.AddCell(CreateDigitalSignImage());
-            //                }
-
-
-            //            }
-            //            else
-            //            {
-            //                Cell cell_1 = new Cell();
-            //                cell_1.Add(new Paragraph(i.ToString()));
-            //                cell_1.SetTextAlignment(TextAlignment.CENTER);
-
-            //                tableFwd.AddCell(cell_1);
-            //                //tableFwd.AddCell(new Paragraph(digitaldata.Sno.ToString()).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetHorizontalAlignment(HorizontalAlignment.CENTER));
-            //                tableFwd.AddCell(new Paragraph("" + digitaldata.FromRank + " " + digitaldata.FromProfile + "\n" + digitaldata.FromArmyNo));
-            //                tableFwd.AddCell(new Paragraph(digitaldata.LevelMessage + " (" + digitaldata.FromDomain + " )"));
-            //                tableFwd.AddCell(new Paragraph(digitaldata.FromDate != null ? digitaldata.FromDate.Value.ToString("dd-MMM-yyyy HH:mm:ss") : ""));
-            //                tableFwd.AddCell(CreateApprovedImage());
-            //                tableFwd.AddCell(new Paragraph("NA"));
-            //            }
-            //            i++;
-            //        }
-            //    }
-
-            //    document.Add(tableFwd);
-            //    document.Close();
-            //    return Json(pdfname);
-            //}
-            //catch (Exception ex)
-            //{
-            //    return Json(0);
-            //}
-            #endregion
             try
             {
                 // Constants for hardcoded values

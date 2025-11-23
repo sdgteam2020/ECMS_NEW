@@ -105,9 +105,6 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 builder.Services.Configure<IdentityOptions>(opts =>
 {
-    //opts.User.RequireUniqueEmail = false;
-    //opts.SignIn.RequireConfirmedAccount = true;
-    //opts.SignIn.RequireConfirmedEmail = false;
     opts.Lockout.AllowedForNewUsers = true;
     opts.Lockout.MaxFailedAccessAttempts = 3;
     opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);

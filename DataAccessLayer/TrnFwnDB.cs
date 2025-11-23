@@ -137,59 +137,6 @@ namespace DataAccessLayer
         /// <returns>Returns true if the save operation was successful, false if an error occurred, or null if an exception was thrown.</returns>
         public async Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO)
         {
-            #region old code
-            //using (var transaction = _context.Database.BeginTransaction())
-            //{
-            //    try
-            //    {
-            //        foreach (int item in dTO.RequestIds)
-            //        {
-            //            MStepCounter? mStepCounter = await _context.TrnStepCounter.FirstOrDefaultAsync(x => x.RequestId == item);
-            //            if (mStepCounter != null)
-            //            {
-            //                byte StepId = mStepCounter.StepId;
-            //                mStepCounter.StepId = (byte)(StepId + 1);
-            //                mStepCounter.Updatedby = dTO.FromAspNetUsersId;
-            //                mStepCounter.UpdatedOn = dTO.UpdatedOn;
-            //                await _context.SaveChangesAsync();
-
-            //                var trnfwd = new MTrnFwd
-            //                {
-            //                    RequestId = item,
-            //                    ToUserId = dTO.ToUserId,
-            //                    FromUserId = dTO.FromUserId,
-            //                    FromAspNetUsersId = dTO.FromAspNetUsersId,
-            //                    ToAspNetUsersId = dTO.ToAspNetUsersId,
-            //                    UnitId = dTO.UnitId,
-            //                    Remark = dTO.Remark,
-            //                    Status = dTO.Status,
-            //                    TypeId = dTO.TypeId,
-            //                    IsComplete = dTO.IsComplete,
-            //                    RemarksIds = dTO.RemarksIds,
-            //                    PostingOutId = null,
-            //                    IsActive = dTO.IsActive,
-            //                    Updatedby = dTO.FromAspNetUsersId,
-            //                    UpdatedOn = dTO.UpdatedOn,
-            //                };
-            //                await _context.TrnFwds.AddAsync(trnfwd);
-            //                await _context.SaveChangesAsync();
-            //            }
-            //            else
-            //            {
-            //                return false;
-            //            }
-            //        }
-            //        transaction.Commit();
-            //        return true;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        transaction.Rollback();
-            //        _logger.LogError(1001, ex, "TrnFwnDB->SaveInternalFwd");
-            //        return null;
-            //    }
-            //}
-            #endregion end old code
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try

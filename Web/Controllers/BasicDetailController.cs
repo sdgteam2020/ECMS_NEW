@@ -49,6 +49,7 @@ using NuGet.Packaging;
 using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO.Compression;
 using System.Linq;
@@ -180,6 +181,7 @@ namespace Web.Controllers
         /// </returns>
         public async Task<ActionResult> Index(string Id, string jcoor)
         {
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
             // Initialize notification object (example usage, not persisted here)
             MTrnNotification noti = new MTrnNotification
             {
@@ -319,8 +321,16 @@ namespace Web.Controllers
             // Placeholder await to satisfy async signature
             await Task.CompletedTask;
 
-            // Return Index view
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         /// <summary>
@@ -393,7 +403,7 @@ namespace Web.Controllers
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {
             // Fetch current role from session and store in ViewBag
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
             ViewBag.Role = role;
 
             // Extract userId from claims and validate it
@@ -707,6 +717,8 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<ActionResult> InaccurateData(string Id)
         {
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
             // Extract current user identifier from claims
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -769,8 +781,17 @@ namespace Web.Controllers
                             ? "Requests pending due to Incorrect Details/Data"
                             : "List of Observation Raised";
 
-                        // Return view with retrieved records
-                        return View(allrecord);
+
+                        if (role == "user")
+                        {
+                            return View(allrecord);
+                        }
+                        else
+                        {
+                            TempData["error"] = "Switch to user role.";
+                            TempData.Keep("error");
+                            return RedirectToAction("ContactUs", "Home");
+                        }
                     }
                 }
 
@@ -813,6 +834,7 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<ActionResult> InaccurateDataView(string Id)
         {
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
             // Validate Id: must not be null or empty
             if (string.IsNullOrEmpty(Id))
             {
@@ -849,7 +871,16 @@ namespace Web.Controllers
                 // If record found, render the view with retrieved details
                 if (dTOBasicDetail != null)
                 {
-                    return View(dTOBasicDetail);
+                    if (role == "user")
+                    {
+                        return View(dTOBasicDetail);
+                    }
+                    else
+                    {
+                        TempData["error"] = "Switch to user role.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
                 }
                 else
                 {
@@ -891,8 +922,20 @@ namespace Web.Controllers
             // Retrieve all I-Card types asynchronously from the business layer
             var allrecord = await Task.Run(() => basicDetailBL.GetAllICardType());
 
-            // Render the view with the retrieved list of I-Card types
-            return View(allrecord);
+
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                // Render the view with the retrieved list of I-Card types
+                return View(allrecord);
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -913,8 +956,18 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult Registration(string Id)
         {
-            // Render the Registration view (empty for now)
-            return View();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -1192,6 +1245,9 @@ namespace Web.Controllers
             string decryptedId = string.Empty;
             int decryptedIntId = 0;
 
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
             // If Id is provided, attempt to decrypt and validate it
             if (Id != null)
             {
@@ -1353,8 +1409,17 @@ namespace Web.Controllers
                                                             ", Pin Code- " + (modelex.PinCode == 0 ? "" : modelex.PinCode);
                     }
 
-                    // Render edit view with populated details
-                    return View(basicDetailUpdVM);
+                    if (role == "user")
+                    {
+                        // Render edit view with populated details
+                        return View(basicDetailUpdVM);
+                    }
+                    else
+                    {
+                        TempData["error"] = "Switch to user role.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
                 }
                 else
                 {
@@ -2010,6 +2075,9 @@ namespace Web.Controllers
         [HttpGet]
         public Task<ActionResult> DecryptZipFile(string jcoor)
         {
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
             // Validate that jcoor is not null/empty and is a valid Base64 string
             if (string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
             {
@@ -2026,8 +2094,19 @@ namespace Web.Controllers
                 // Pass decoded string to ViewBag for use in the View
                 ViewBag.jcoor = decodedString;
 
-                // Return view with decoded data
-                return Task.FromResult<ActionResult>(View());
+                if (role == "user")
+                {
+                    // Return view with decoded data
+                    return Task.FromResult<ActionResult>(View());
+                }
+                else
+                {
+                    TempData["error"] = "Switch to user role.";
+                    TempData.Keep("error");
+                    return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home"));
+                }
+
+
             }
             catch (FormatException ex)
             {
@@ -3048,8 +3127,11 @@ namespace Web.Controllers
         /// <returns>
         /// Returns a <see cref="ViewResult"/> for the Faulty Card page with a ViewBag property indicating claim status.
         /// </returns>
-        public async Task<ViewResult> FaultyCardAsync()
+        public async Task<IActionResult> FaultyCard()
         {
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
             // Step 1: Get the current user's ID from the claims
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
@@ -3069,9 +3151,17 @@ namespace Web.Controllers
 
             // Step 5: Pass claim status to the view using ViewBag
             ViewBag.Claim = Claim;
-
-            // Step 6: Return the Faulty Card view
-            return View();
+            
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         /// <summary>
@@ -3168,9 +3258,10 @@ namespace Web.Controllers
         /// Returns the Faulty Card Request view with decrypted ID and claim information.
         /// If the ID is invalid or tampered with, redirects to ContactUs page with error message.
         /// </returns>
-        public async Task<ActionResult> FaultyCardRequestAsync(string? Id)
+        public async Task<ActionResult> FaultyCardRequest(string? Id)
         {
             bool Claim = false;
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Step 1: Get the current logged-in user's Id
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -3228,7 +3319,16 @@ namespace Web.Controllers
             ViewBag.Claim = Claim;
             ViewBag.TrnFaultyCardId = decryptedIntId;
 
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -3545,11 +3645,21 @@ namespace Web.Controllers
         /// although currently it simply renders the view.
         /// </summary>
         /// <returns>A ViewResult representing the Hotlist Card page.</returns>
-        public async Task<ViewResult> HotlistCardAsync()
+        public IActionResult HotlistCard()
         {
-            // Currently no data is fetched; simply returns the view.
-            // Async keyword is kept for potential future asynchronous operations.
-            return View();
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -3689,11 +3799,21 @@ namespace Web.Controllers
         /// This action is responsible for returning the view where users can submit or view hotlist card requests.
         /// </summary>
         /// <returns>Returns a ViewResult rendering the Hotlist Card Request page.</returns>
-        public async Task<ActionResult> HotListCardRequestAsync()
+        public ActionResult HotListCardRequest()
         {
-            // Simply return the view for Hotlist Card Request.
-            // No data fetching is performed here; the view may call other endpoints (e.g., via AJAX) for data.
-            return View();
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -3783,10 +3903,20 @@ namespace Web.Controllers
         /// This is typically the page where users can view or submit lost card requests.
         /// </summary>
         /// <returns>The LostCard view.</returns>
-        public async Task<ViewResult> LostCardAsync()
+        public IActionResult LostCard()
         {
-            // Simply return the view associated with Lost Card
-            return View();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -3871,10 +4001,20 @@ namespace Web.Controllers
         /// Returns the Lost Card Request view for the user to submit new requests.
         /// </summary>
         /// <returns>The Lost Card Request view.</returns>
-        public async Task<ActionResult> LostCardRequestAsync()
+        public ActionResult LostCardRequest()
         {
-            // Simply returns the LostCardRequest view
-            return View();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -4056,9 +4196,21 @@ namespace Web.Controllers
         /// Returns the view for the card distribution page.
         /// </summary>
         /// <returns>A <see cref="ViewResult"/> representing the Distribute Card view.</returns>
-        public async Task<ViewResult> DistributeCardAsync()
+        public IActionResult DistributeCard()
         {
-            return View();
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -4219,7 +4371,7 @@ namespace Web.Controllers
 
         #endregion DistributeCard
 
-        #region GetSessionValue/GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
+        #region GetData/SearchAllServiceNo/GetBasicDetailByRequestId/GetRequestHistory/GetRegimentalListByArmedId/GetROListByArmedId/GetRemarks/CreateCSV/GetICardPrintPreviewByRequestId/GetBDetailByRequestId/GetTopArmyNoFromICardRequest/ICardRequestHold/GetAllICardRequestHold
 
         /// <summary>
         /// Checks whether the provided Army Number exists or is valid.
@@ -4252,33 +4404,6 @@ namespace Web.Controllers
                 return Json(false);
             }
         }
-
-        /// <summary>
-        /// Retrieves the role name of the currently logged-in user from the session.
-        /// </summary>
-        /// <returns>
-        /// Returns the user's role as a <see cref="string"/>. 
-        /// Returns an empty string if no session or role is found.
-        /// </returns>
-        private string GetSessionValue()
-        {
-            // Initialize a new session object
-            DtoSession? dtoSession = new DtoSession();
-
-            // Check if the session token exists
-            string? sessionToken = HttpContext.Session.GetString("Token");
-            if (!string.IsNullOrEmpty(sessionToken))
-            {
-                // Deserialize the session token to get the DtoSession object
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-            }
-
-            // Extract the RoleName from the session object, fallback to empty string if null
-            string role = dtoSession?.RoleName ?? string.Empty;
-
-            return role;
-        }
-
 
         /// <summary>
         /// Retrieves I-Card request status based on the provided IC number and card type.
@@ -4776,8 +4901,18 @@ namespace Web.Controllers
             // Store the claims in ViewBag to make them available to the view
             ViewBag.UserClaims = UserClaims;
 
-            // Return the ICardRequestHold view
-            return View();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -4980,6 +5115,9 @@ namespace Web.Controllers
         [HttpGet]
         public Task<ActionResult> CSVFileUpload(string jcoor)
         {
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
             // Validate the Base64 string (jcoor)
             if (string.IsNullOrEmpty(jcoor) || !service.IsValidBase64(jcoor))
             {
@@ -4997,7 +5135,16 @@ namespace Web.Controllers
                 // Pass the decoded string to the view via ViewBag
                 ViewBag.jcoor = decodedString;
 
-                return Task.FromResult<ActionResult>(View()); // Return the view with decoded string
+                if (role == "user")
+                {
+                    return Task.FromResult<ActionResult>(View()); // Return the view with decoded string
+                }
+                else
+                {
+                    TempData["error"] = "Switch to user role.";
+                    TempData.Keep("error");
+                    return Task.FromResult<ActionResult>(RedirectToAction("ContactUs", "Home")); // Redirect to "ContactUs" page
+                }
             }
             catch (FormatException ex)
             {
@@ -5233,10 +5380,21 @@ namespace Web.Controllers
         /// <returns>
         /// Returns the Destruction Card view to the client.
         /// </returns>
-        public async Task<ViewResult> DestructionCardAsync()
+        public IActionResult DestructionCardAsync()
         {
-            // Simply return the view associated with Destruction Card
-            return View();
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
 
@@ -5522,6 +5680,9 @@ namespace Web.Controllers
         [Authorize(Policy = "ICardDispatchPolicy")]
         public async Task<ActionResult> DispatchOut()
         {
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
             // Retrieve session object containing previous search/filter parameters
             DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 =
                 SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
@@ -5543,19 +5704,46 @@ namespace Web.Controllers
                 if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                 {
                     ViewBag.ClaimValue = 1; // User can export ICard data
-                    return View();
+                    if (role == "user")
+                    {
+                        return View();
+                    }
+                    else
+                    {
+                        TempData["error"] = "Switch to user role.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
                 }
                 else if (UserClaims.Count > 0 &&
                          UserClaims.Any(i => i.Value == "Dispatch Card") &&
                          UserClaims.Any(i => i.Value == "Appl Approver"))
                 {
                     ViewBag.ClaimValue = 2; // User is Dispatch Card + Application Approver
-                    return View();
+                    if (role == "user")
+                    {
+                        return View();
+                    }
+                    else
+                    {
+                        TempData["error"] = "Switch to user role.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
                 }
                 else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
                 {
                     ViewBag.ClaimValue = 3; // User is Dispatch Card only
-                    return View();
+                    if (role == "user")
+                    {
+                        return View();
+                    }
+                    else
+                    {
+                        TempData["error"] = "Switch to user role.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
                 }
                 else
                 {
@@ -5786,6 +5974,10 @@ namespace Web.Controllers
         /// </returns>
         public async Task<IActionResult> DispatchCard()
         {
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+
             // Get the current logged-in user's ID from claims
             int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
@@ -5800,27 +5992,33 @@ namespace Web.Controllers
             {
                 // User has export rights; set ClaimValue = 1
                 ViewBag.ClaimValue = 1;
-                return View();
             }
             // Check if user has both "Dispatch Card" and "Appl Approver" claims
             else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
             {
                 // User is a dispatch card approver; set ClaimValue = 2
                 ViewBag.ClaimValue = 2;
-                return View();
             }
             // Check if user has only "Dispatch Card" claim
             else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
             {
                 // User can dispatch cards but not approve; set ClaimValue = 3
                 ViewBag.ClaimValue = 3;
-                return View();
             }
             else
             {
                 // User has no relevant claims; set ClaimValue = 0
                 ViewBag.ClaimValue = 0;
+            }
+            if (role == "user")
+            {
                 return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
         }
 

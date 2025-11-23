@@ -28,102 +28,6 @@ namespace DataAccessLayer
         /// <exception cref="Exception">Throws exception if there is an error during the database operation.</exception>
         public async Task<List<DTOReportReturnCount>> GetMstepCount(DTOMHierarchyRequest Data, int ApplyForId)
         {
-            #region Old Code by Kapoor Sir
-            //string query = " SELECT fwd.StepId,fwd.IsComplete,fwd.TrnFwdId into tempTrnFwds  from TrnFwds fwd" +
-            //               "  inner join TrnStepCounter step on fwd.RequestId=step.RequestId AND fwd.StepId=fwd.StepId and step.ApplyForId=@ApplyForId " +
-            //               "  left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  " +
-            //               "  left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  " +
-            //               "  left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-            //               " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-            //               " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-            //               " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-            //               " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-            //               //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-            //               //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-            //               //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
-            //               " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId) " +
-            //               " group by fwd.StepId,fwd.IsComplete,fwd.TrnFwdId " +
-            //               " create table #Temp(StepId int, IsApprove int, Total int)" +
-            //               " SELECT * into tempstep FROM MStepCounterStep WHERE IsDashboard=1" +
-            //               " declare @Total int=0" +
-            //               " declare @IsApprove int=0" +
-            //               " declare @StepId int=0" +
-            //               " while ((select COUNT(*) total from tempstep) > 0)" +
-            //               " begin" +
-            //               " set @Total=0" +
-            //               " set @IsApprove=0" +
-            //               " set @StepId=0" +
-            //               " Select Top 1 @StepId=StepId from tempstep" +
-            //               " if exists(select * from tempstep where StepId=@StepId and @StepId=1)" +
-            //               " begin" +
-            //               " SELECT @Total=COUNT(*) from TrnStepCounter step" +
-            //               "  left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1  " +
-            //               "  left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId  " +
-            //               "  left join MapUnit unit on basi.UnitId=unit.UnitMapId " +
-            //               "  where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-            //               "  and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-            //               "  and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-            //               "  and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-            //               //"  and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-            //               //"  and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-            //               //"  and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
-            //               "  and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId) " +
-            //               "  and step.ApplyForId=@ApplyForId and step.StepId=@StepId" +
-
-            //               " INSERT INTO #Temp(StepId,IsApprove,Total)VALUES(@StepId,@IsApprove,@Total)" +
-            //               " end" +
-            //               " else if exists(select * from tempstep where StepId=@StepId and @StepId in (2,3,4) )" +
-            //               " begin " +
-            //               "  select @Total=COUNT(*) from tempTrnFwds where tempTrnFwds.StepId=@StepId and IsComplete=1" +
-            //               "  INSERT INTO #Temp(StepId,IsApprove,Total)VALUES(@StepId,1,@Total)" +
-            //               "  select @Total=COUNT(*) from tempTrnFwds where tempTrnFwds.StepId=@StepId and IsComplete=0" +
-            //               "  INSERT INTO #Temp(StepId,IsApprove,Total)VALUES(@StepId,0,@Total)" +
-            //               " End" +
-            //               " else " +
-            //               " begin" +
-            //               " INSERT INTO #Temp(StepId,IsApprove,Total)VALUES(@StepId,0,(select COUNT(*) from tempTrnFwds where tempTrnFwds.StepId=@StepId and IsComplete=0))" +
-            //               " End" +
-            //               " delete from tempstep where StepId=@StepId" +
-            //               " End" +
-            //               " select a.StepId,a.IsApprove,a.Total,b.Name,b.TypeId,b.OrderBy  from #Temp a inner join MStepCounterStep b on a.StepId=b.StepId" +
-            //               " order by b.TypeId,a.StepId,b.OrderBy" +
-            //               " drop table tempstep" +
-            //               " drop table #Temp" +
-            //               " drop table tempTrnFwds";
-
-
-            ////string query = " select Count(fwd.RequestId) Total,Mstep.Name,Mstep.StepId,Mstep.TypeId," +
-            ////               " ISNULL(fwd.IsComplete,0) IsComplete,ISNULL(fwd.FwdStatusId,0) FwdStatusId from MStepCounterStep Mstep" +
-            ////               " left join TrnFwds fwd on Mstep.StepId=fwd.StepId" +
-            ////               " left join TrnStepCounter step on Mstep.StepId=step.StepId and step.ApplyForId=@ApplyForId" +
-            ////               " left join TrnICardRequest req on step.RequestId=req.RequestId and req.StatusId=1 " +
-            ////               " left join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
-            ////               " left join MapUnit unit on basi.UnitId=unit.UnitMapId" +
-            ////               " and unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-            ////               " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-            ////               " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-            ////               " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-            ////               " and unit.BdeId=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-            ////               " and unit.BdeId=ISNULL(@PsoId,unit.PsoId)" +
-            ////               " and unit.BdeId=ISNULL(@SubDteId,unit.SubDteId)" +
-            ////               " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-            ////               " where Mstep.IsDashboard=1" +
-            ////               " group by Mstep.Name,Mstep.StepId,Mstep.TypeId,fwd.IsComplete,fwd.FwdStatusId" +
-            ////               " order by Mstep.TypeId,Mstep.StepId,fwd.IsComplete,fwd.FwdStatusId";
-            //try
-            //{
-            //    using (var connection = _contextDP.CreateConnection())
-            //    {
-            //        var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { ApplyForId, Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
-            //        return ret.ToList();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(1001, ex, "ReportReturnDB->GetMstepCount");
-            //    return new List<DTOReportReturnCount>();
-            //}
-            #endregion
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
             try
             {
@@ -453,35 +357,6 @@ namespace DataAccessLayer
         /// <returns>Returns a list of DTOReportReturnCount representing the filtered count of record offices.</returns>
         public async Task<List<DTOReportReturnCount>> GetRecordJcoCount(DTOMHierarchyRequest Data, int IsComplete, short ArmedIdForORO)
         {
-            #region Old Code
-            //string query = " select count(req.RequestId) Total ,recf.RecordOfficeId,recf.Name,step.StepId from MRecordOffice recf" +
-            //   " left join TrnDomainMapping map on recf.TDMId=map.Id" +
-            //   " left join TrnFwds fwd on map.AspNetUsersId=fwd.ToAspNetUsersId and fwd.IsComplete=@IsComplete and fwd.StepId=3" +
-            //   " left join TrnICardRequest req on fwd.RequestId=req.RequestId and req.StatusId=1  " +
-            //   " left join TrnStepCounter step on req.RequestId=step.RequestId " +
-            //   " left join MRecordOffice mrec on map.Id=mrec.TDMId and mrec.ArmedId!=@ArmedIdForORO " +
-            //   " left join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId " +
-            //   " left join MapUnit unit on basi.UnitId=unit.UnitMapId" +
-            // " where unit.ComdId=ISNULL(@ComdId,unit.ComdId) " +
-            //   " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
-            //   " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
-            //   " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-            //   " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
-            //   " and recf.ArmedId!=@ArmedIdForORO   group by recf.RecordOfficeId,recf.Name,step.StepId";
-            //try
-            //{
-            //    using (var connection = _contextDP.CreateConnection())
-            //    {
-            //        var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { IsComplete, Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId, ArmedIdForORO });
-            //        return ret.ToList();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(1001, ex, "ReportReturnDB->GetReportForm11");
-            //    return new List<DTOReportReturnCount>();
-            //}
-            #endregion
             string query = @"select count(req.RequestId) Total ,recf.RecordOfficeId,recf.Name,step.StepId from MRecordOffice recf
                             inner join TrnICardRequest req on recf.RecordOfficeId=req.RecordOfficeId and req.StatusId=1  
                             inner join TrnFwds fwd on req.RequestId=fwd.RequestId and fwd.IsComplete=@IsComplete and fwd.StepId=3

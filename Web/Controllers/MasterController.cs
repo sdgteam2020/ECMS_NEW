@@ -2656,7 +2656,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>The ArmedType management view.</returns>
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> ArmedType()
+        public IActionResult ArmedType()
         {
             return View();
         }

@@ -480,7 +480,7 @@ namespace Web.Controllers
 
         #endregion End ProfileManage
 
-        #region UserRegn
+        #region UserRegn/GetAllUserRegn/GetDataForDataTable/SaveMapping/UpdateDomainFlag
 
         /// <summary>
         /// Displays the User Registration management page for administrators.

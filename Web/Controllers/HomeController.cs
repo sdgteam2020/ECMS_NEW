@@ -17,10 +17,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Management.Smo;
 using System.Data;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
+using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
 
@@ -82,29 +84,7 @@ namespace Web.Controllers
 
 
 
-        #region GetSessionValue / ContactUs / Index
-
-        /// <summary>
-        /// Retrieves the role of the user from the session.
-        /// If the session contains a valid token, it retrieves the role name from the session object.
-        /// </summary>
-        /// <returns>The role name from the session, or an empty string if no valid session is found.</returns>
-        private string GetSessionValue()
-        {
-            // Initialize a new DtoSession object
-            DtoSession? dtoSession = new DtoSession();
-
-            // Check if the session contains a valid "Token"
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-            {
-                // Retrieve the session object "Token" and deserialize it into the dtoSession object
-                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-            }
-
-            // Retrieve the role name from the session, or return an empty string if not available
-            string role = dtoSession != null ? dtoSession.RoleName : "";
-            return role;
-        }
+        #region ContactUs / Index
 
         /// <summary>
         /// Action method that displays the "Contact Us" page.
@@ -125,13 +105,21 @@ namespace Web.Controllers
         public IActionResult Index()
         {
             // Retrieve the user's role from the session
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Pass the role to the view through ViewBag
             ViewBag.Role = role;
 
-            // Return the Index view
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         #endregion
@@ -140,7 +128,17 @@ namespace Web.Controllers
         #region Notification /GetAllNotificationData / SaveNotification / GetNotification / GetNotificationRequestId / UpdateNotification
         public IActionResult Notification()
         {
-            return View();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
         public async Task<IActionResult> GetAllNotificationData([FromBody] DTODataTablesRequestForNotification dTORecord)
         {
@@ -310,7 +308,7 @@ namespace Web.Controllers
         public async Task<IActionResult> DashboardUserMgt()
         {
             // Retrieve the user's role from the session
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Initialize the DTO session object
             DtoSession? dtoSession = new DtoSession();
@@ -347,8 +345,16 @@ namespace Web.Controllers
             ViewBag.UnitId = UnitId;
             ViewBag.Role = role;
 
-            // Return the DashboardUserMgt view
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         
@@ -398,7 +404,7 @@ namespace Web.Controllers
             try
             {
                 // Retrieve the user's role from the session
-                string role = GetSessionValue();
+                string role = SessionHelper.GetRoleFromSession(HttpContext);
 
                 // Decode the base64-encoded Id
                 var base64EncodedBytes = Convert.FromBase64String(Id);
@@ -529,10 +535,11 @@ namespace Web.Controllers
         /// and passes them to the view for display.
         /// </summary>
         /// <returns>The Dashboard view with role and user claims passed in ViewBag.</returns>
+        
         public async Task<IActionResult> Dashboard()
         {
             // Retrieve the user's role from the session
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Pass the role to the view using ViewBag
             ViewBag.Role = role;
@@ -551,7 +558,6 @@ namespace Web.Controllers
 
             if (role == "user")
             {
-                // Return the Dashboard view
                 return View();
             }
             else
@@ -606,7 +612,7 @@ namespace Web.Controllers
         public async Task<IActionResult> SubDashboard()
         {
             // Retrieve the user's role from the session
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Pass the role to the view
             ViewBag.Role = role;
@@ -658,7 +664,7 @@ namespace Web.Controllers
         public async Task<IActionResult> Task()
         {
             // Retrieve the user's role from the session
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
             ViewBag.Role = role;
 
             // Retrieve the user ID from the claims
@@ -755,7 +761,7 @@ namespace Web.Controllers
             try
             {
                 // Retrieve the user's role from the session
-                string role = GetSessionValue();
+                string role = SessionHelper.GetRoleFromSession(HttpContext);
 
                 // Decode the base64-encoded Id
                 var base64EncodedBytes = Convert.FromBase64String(Id);
@@ -775,7 +781,6 @@ namespace Web.Controllers
 
                 if (role == "user")
                 {
-                    // Return the Dashboard view
                     return View();
                 }
                 else
@@ -854,8 +859,19 @@ namespace Web.Controllers
             // Pass the user claims to the view using ViewBag
             ViewBag.UserClaims = UserClaims;
 
-            // Return the ReportAndReturn view
-            return View();
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         /// <summary>
@@ -932,7 +948,7 @@ namespace Web.Controllers
         public async Task<IActionResult> Report()
         {
             // Retrieve the user's role from the session
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Pass the role to the view using ViewBag
             ViewBag.Role = role;
@@ -949,8 +965,16 @@ namespace Web.Controllers
             // Pass the user claims to the view using ViewBag
             ViewBag.UserClaims = UserClaims;
 
-            // Return the Report view
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         
@@ -1196,11 +1220,19 @@ namespace Web.Controllers
             ViewBag.UserClaims = UserClaims;
 
             // Retrieve the user's role from the session
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
             ViewBag.Role = role;
 
-            // Return the Request view
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         /// <summary>
@@ -1221,11 +1253,20 @@ namespace Web.Controllers
         /// <returns>The InitiateRequest view with the user's role passed in ViewBag.</returns>
         public IActionResult InitiateRequest()
         {
-            // Pass the user's role to the view
-            ViewBag.Role = GetSessionValue();
+            // Retrieve the user's role from the session
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+            ViewBag.Role = role;
 
-            // Return the InitiateRequest view
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         #endregion
@@ -1457,7 +1498,7 @@ namespace Web.Controllers
         public async Task<IActionResult> ReportCard()
         {
             // Retrieve the user's role from the session
-            string role = GetSessionValue();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Pass the role to the view using ViewBag
             ViewBag.Role = role;
@@ -1474,8 +1515,16 @@ namespace Web.Controllers
             // Pass the user claims to the view using ViewBag
             ViewBag.UserClaims = UserClaims;
 
-            // Return the Report view
-            return View();
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         public async Task<IActionResult> GetReportCardDashboardCount([FromBody] DTOMHierarchyRequest dTORecord)

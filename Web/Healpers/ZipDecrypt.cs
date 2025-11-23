@@ -1,11 +1,4 @@
-﻿using NuGet.Packaging;
-using System;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Cryptography;
 
 namespace Web.Healpers
 {
@@ -84,7 +77,6 @@ namespace Web.Healpers
             byte[] zipData = DecryptZipFile(encryptedZipFile, aesKey, aesIv);
 
             // Save the decrypted zip file and unzip
-            //SaveAndUnzip(tempZipFilePath+"\\"+"decrypted.zip", zipData, outputFolder);
             SaveAndUnzip(tempZipFilePath + "\\" + "decrypted.zip", destinationzipfilename, zipData, outputFolder);
         }
     }

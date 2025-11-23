@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text;
+using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
 
@@ -54,11 +55,20 @@ namespace Web.Controllers
         /// <returns>
         /// Returns an <see cref="IActionResult"/> that renders the PostingIn view.
         /// </returns>
-        public async Task<IActionResult> PostingIn(string? EncId)
+        public IActionResult PostingIn(string? EncId)
         {
-            // Currently, this method just returns the PostingIn view.
-            // EncId can be used in future to fetch specific data or perform additional logic.
-            return View();
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         /// <summary>
@@ -110,7 +120,19 @@ namespace Web.Controllers
             // Call the business logic layer to fetch the posting history for the current user
             var data = await _iPostingBL.GetAllPostingHistory(userid);
 
-            return View(data);  // Return the fetched posting history data to the view
+
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View(data);  // Return the fetched posting history data to the view
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
 
         /// <summary>
@@ -172,7 +194,18 @@ namespace Web.Controllers
                 ViewBag.Type = t;
                 ViewBag.PostingType = PostingTy;
 
-                return View();  // Return the view with the ViewBag data
+                string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+                if (role == "user")
+                {
+                    return View();
+                }
+                else
+                {
+                    TempData["error"] = "Switch to user role.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
             }
             catch (Exception ex)
             {
@@ -372,9 +405,20 @@ namespace Web.Controllers
         /// <returns>
         /// Returns the view for application closure.
         /// </returns>
-        public async Task<IActionResult> ApplicationClose()
+        public IActionResult ApplicationClose()
         {
-            return View();  // Return the view for closing the application
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
         }
         /// <summary>
         /// This method handles the saving of application close data.
@@ -452,6 +496,7 @@ namespace Web.Controllers
         {
             int retint = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Validate the input parameters
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
@@ -497,12 +542,32 @@ namespace Web.Controllers
                 if (string.IsNullOrEmpty(jcoor))
                 {
                     var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 1));
-                    return View(allrecord);
+
+                    if (role == "user")
+                    {
+                        return View(allrecord);
+                    }
+                    else
+                    {
+                        TempData["error"] = "Switch to user role.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
                 }
                 else
                 {
-                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 2));
-                    return View(allrecord);
+
+                    if (role == "user")
+                    {
+                        var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 2));
+                        return View(allrecord);
+                    }
+                    else
+                    {
+                        TempData["error"] = "Switch to user role.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
                 }
             }
             catch (FormatException ex)
