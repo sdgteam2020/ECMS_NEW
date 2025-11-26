@@ -122,16 +122,10 @@ namespace DataAccessLayer
             // LINQ query to fetch appointments and map them to DTOAppointmentResponse.
             // The query is currently not using the join with MFormation (commented out), and FormationId is not used for filtering.
             var GetALL = (from A in _context.MAppointment
-                              // Join with MFormation table (currently commented out)
-                              // on A.FormationId equals F.FormationId
-                              // Where clause to filter by FormationId (currently commented out)
-                              // where F.FormationId == FormationId
                           select new DTOAppointmentResponse
                           {
                               ApptId = A.ApptId,  // Selects the appointment ID
                               AppointmentName = A.AppointmentName,  // Selects the appointment name
-                                                                    // FormationId = F.FormationId,  // Formation ID (currently commented out)
-                                                                    // FormationName = F.FormationName,  // Formation Name (currently commented out)
                           }).ToList();  // Executes the query and materializes the results into a list
 
             // Return the result wrapped in a Task.
@@ -168,60 +162,7 @@ namespace DataAccessLayer
                 return null;  // Return null in case of an exception.
             }
         }
-
-
-        //public async Task<bool> GetByName(MCorps Data)
-        //{
-        //    var ret = _context.MCorps.Where(p=> p.ComdId == Data.ComdId).Select(p => p.CorpsName.ToUpper() == Data.CorpsName.ToUpper()).FirstOrDefault();
-        //    return ret;
-        //}
-
-        //public Task<List<DTOCorpsResponse>> GetALLCorps()
-        //{
-        //    var Corps = (from c in _context.MCorps
-        //                 join d in _context.MComd
-        //                 on c.ComdId equals d.ComdId
-        //                 where c.CorpsId!=1
-        //                 select new DTOCorpsResponse
-        //                 {
-
-        //                     CorpsId = c.CorpsId,
-        //                     CorpsName = c.CorpsName,
-        //                     comdName = d.ComdName,
-        //                     ComdId=d.ComdId,
-
-        //                 }).ToList();
-
-
-        //    return Task.FromResult(Corps);  
-        //}
-
-        //public async Task<List<DTOCorpsResponse>> GetByComdId(int ComdId)
-        //{
-        //    var Corps = (from c in _context.MCorps
-        //                 join d in _context.MComd
-        //                 on c.ComdId equals d.ComdId where c.ComdId == ComdId   
-        //                 select new DTOCorpsResponse
-        //                 {
-
-        //                     CorpsId = c.CorpsId,
-        //                     CorpsName = c.CorpsName,
-
-
-
-        //                 }).ToList();
-
-
-        //    return await Task.FromResult(Corps);
-        //}
-
-
-
-        //public UserDB(IConfiguration configuration)
-        //{
-        //    this.configuration = configuration;
-        //}
-        
+       
         /// <summary>
         /// Asynchronously checks if a given ApptId exists in the foreign key relationship in the TrnDomainMapping table.
         /// The method performs a SQL query to count the distinct occurrences of the ApptId in the TrnDomainMapping table,

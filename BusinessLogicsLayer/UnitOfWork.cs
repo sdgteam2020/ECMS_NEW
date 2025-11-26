@@ -157,20 +157,6 @@ namespace BusinessLogicsLayer
 
 
                 }
-                //var Ret = await Appt.GetByFormationId(Convert.ToInt32(Data.ParentId));
-                //foreach (var Forma in Ret)
-                //{
-
-                //    DTOMasterResponse db = new DTOMasterResponse();
-
-
-
-                //    db.Id = Forma.ApptId;
-                //    db.Name = Forma.AppointmentName;
-                //    lst.Add(db);
-
-
-                //}
             } 
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.RankOffrs))
             {

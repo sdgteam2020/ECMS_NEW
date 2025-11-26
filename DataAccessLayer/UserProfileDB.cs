@@ -169,8 +169,6 @@ namespace DataAccessLayer
                     }
                     else
                     {
-                        //userUpdate.Extension = dTO.Extension;
-                        //userUpdate.DialingCode = dTO.DialingCode;
                         userUpdate.IsIO = dTO.IsIO;
                         userUpdate.IsCO = dTO.IsCO;
                         userUpdate.IsRO = dTO.IsRO;
@@ -189,7 +187,6 @@ namespace DataAccessLayer
                             mUserProfile.UserId = dTO.UserId;
                             mUserProfile.Name = dTO.Name;
                             mUserProfile.RankId = dTO.RankId;
-                            //mUserProfile.MobileNo = dTO.MobileNo;
                             mUserProfile.IsToken = dTO.IsToken;
                             mUserProfile.Thumbprint = dTO.Thumbprint;
 
@@ -326,9 +323,6 @@ namespace DataAccessLayer
                                      ArmyNo = up.ArmyNo,
                                      UserId = up.UserId,
                                      Name = up.Name,
-                                     MobileNo = up.MobileNo,
-                                     DialingCode= xmap != null ? xmap.DialingCode:null,
-                                     Extension= xmap != null ? xmap.Extension:null,
                                      IsRO = xmap != null ? xmap.IsRO:null,
                                      RankId = rank.RankId,
                                      RankName = rank.RankName,
@@ -362,7 +356,7 @@ namespace DataAccessLayer
         {
             try
             {
-                string query = @"SELECT prof.ArmyNo,prof.UserId,prof.Name,prof.MobileNo,trnd.Id as TDMId,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,prof.IsWithTokenApply,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId,
+                string query = @"SELECT prof.ArmyNo,prof.UserId,prof.Name,trnd.Id as TDMId,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,prof.IsWithTokenApply,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId,
                                 appt.AppointmentName,trnd.MappedDate,usermodify.DomainId MappedBy,roles.Name RoleName from UserProfile prof 
                                 inner join MRank ran on prof.RankId = ran.RankId 
                                 inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId 
@@ -447,8 +441,6 @@ namespace DataAccessLayer
                                      IsCO = xmap != null ? xmap.IsCO : false,
                                      IsRO = xmap != null ? xmap.IsRO : false,
                                      IsORO = xmap != null ? xmap.IsORO : false,
-                                     DialingCode = xmap != null ? xmap.DialingCode : "",
-                                     Extension = xmap != null ? xmap.Extension : "",
                                      ApptId = (short)(xappo != null ? xappo.ApptId : 0),
                                      AppointmentName = xappo != null ? xappo.AppointmentName:"No Appointment" ,
                                      DomainId = xu != null ? xu.DomainId : null,

@@ -20,13 +20,95 @@ toastr.options = {
 
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $("#loadingToken").hide();
+    $("#loading").hide();
+
+    // 1) Global loader hooks (for jQuery + fetch)
+    $(document).ajaxStart(function () {
+        $("#loading").show();
+    }).ajaxStop(function () {
+        $("#loading").hide();
+    });
+
+    // 2) Wrap fetch so it fires ajaxStart/ajaxStop
+    (function () {
+        if (!window.fetch) {
+            return;
+        }
+
+        const originalFetch = window.fetch.bind(window);
+        let activeFetches = 0;
+
+        window.fetch = function (...args) {
+            if (activeFetches === 0) {
+                $(document).trigger('ajaxStart');
+            }
+            activeFetches++;
+
+            return originalFetch(...args)
+                .then(response => {
+                    activeFetches--;
+                    if (activeFetches === 0) {
+                        $(document).trigger('ajaxStop');
+                    }
+                    return response;
+                })
+                .catch(error => {
+                    activeFetches--;
+                    if (activeFetches === 0) {
+                        $(document).trigger('ajaxStop');
+                    }
+                    throw error;
+                });
+        };
+    })();
+
+    // ====== Date / Time pickers ======
+        
+    $('.datepicker').datetimepicker({
+        format: "L"
+    });
+    $('.timepicker').datetimepicker({
+        format: "LT"
+    });
+    $('.datetimepicker').datetimepicker({
+        sideBySide: true
+    });
+
+    $('.datepickerpast').datetimepicker({
+        format: "L",
+        maxDate: new Date()
+    });
+
+
+    $('.datetimepickerpast').datetimepicker({
+        sideBySide: true,
+        format: 'YYYY-MM-DD HH:mm',
+        maxDate: new Date()
+    }).on('dp.change', function (e) {
+        // Set the formatted value (optional: adjust format)
+        $(this).val(e.date.format('YYYY-MM-DD HH:mm'));
+
+        // Trigger input for floating label (if CSS relies on :placeholder-shown)
+        $(this).trigger('input');
+    });
+
+    // ====== Misc bindings ======
+    $('.PersInfo').on("click", function () {
+        sessionStorage.persid = null
+    })
+
+    // Fallback image for all <img>
     $("img").on('error', function () {
        
         $(this).attr("src", "/Images/user4.png");
     });
-    var path = window.location.href; // because the 'href' property of the DOM element is the absolute path
 
-    
+    // Highlight active menu item
+    var path = window.location.href; // because the 'href' property of the DOM element is the absolute path
     $("#layouttask .nav-link").each(function () {
        
         if (this.href === path) {
@@ -503,4 +585,50 @@ function formatDateToSqlString(inputDate) {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
         `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.` +
         `${pad(date.getMilliseconds(), 3)}`;
+}
+function encryptData(plainText) {
+    const secretKey = getSecretKey();
+    if (!secretKey) return "";
+
+    const key = CryptoJS.enc.Utf8.parse(secretKey);
+    const iv = CryptoJS.enc.Utf8.parse(secretKey.substring(0, 16)); // 16 bytes
+
+    const encrypted = CryptoJS.AES.encrypt(plainText, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    return encrypted.toString();   // Base64 output
+}
+function decryptData(cipherText) {
+
+    if (!cipherText) return "";
+
+    const secretKey = getSecretKey();
+    if (!secretKey) return "";
+
+    const key = CryptoJS.enc.Utf8.parse(secretKey);
+    const iv = CryptoJS.enc.Utf8.parse(secretKey.substring(0, 16));
+
+    // fix if spaces replaced +
+    cipherText = cipherText.replace(/ /g, "+");
+
+    const decrypted = CryptoJS.AES.decrypt(cipherText, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    const result = decrypted.toString(CryptoJS.enc.Utf8);
+    return result;
+}
+function getSecretKey() {
+    const element = document.getElementById("spnUniqueSecretKey");
+    if (!element) {
+        console.error("spnUniqueSecretKey not found on this page");
+        return null;
+    }
+    const key = element.innerText.trim();
+    return key;
 }

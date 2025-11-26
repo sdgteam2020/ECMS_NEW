@@ -2,19 +2,6 @@
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    //if (sessionStorage.getItem("ArmyNo") != null) {
-
-    //    var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
-    //    var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
-
-    //    var bytes = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey);
-    //    var decryptedArmyNo = bytes.toString(CryptoJS.enc.Utf8);
-
-    //    $("#iarmynopostingin").html(decryptedArmyNo);
-    //    GetdataPostingData(decryptedArmyNo);
-
-    //    mMsater(0, "ddlpostingReason", PostingReason, "2");
-    //}
     $("#btnApplicationClose").on("click", function () {
         if ($("#SaveForm")[0].checkValidity()) {
 

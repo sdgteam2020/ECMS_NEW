@@ -12,10 +12,6 @@ namespace BusinessLogicsLayer.Helpers
     {
         public static string DecryptStringAES(string cipherText)
         {
-
-            //var keybytes = Encoding.UTF8.GetBytes("8080808080808080");
-            //var iv = Encoding.UTF8.GetBytes("8080808080808080");           
-
             var keybytes = Encoding.UTF8.GetBytes(csConst.cSalt);
             var iv = Encoding.UTF8.GetBytes(csConst.cSalt);
 

@@ -254,7 +254,7 @@ $(function () {
             IsDigitalSignReq = true;
 
             $(".spnFname").html(`${rowData.RankName || ""} ${rowData.FName || ""} ${rowData.LName || ""}`.trim());
-            $(".spnFarmyno").html(/^[A-Za-z]{2}/.test(rowData.ServiceNo) ? rowData.ServiceNo.slice(0, 2) + ' ' + rowData.ServiceNo.slice(2) : rowData.ServiceNo);
+            $(".spnApplicantArmyNo").html(/^[A-Za-z]{2}/.test(rowData.ServiceNo) ? rowData.ServiceNo.slice(0, 2) + ' ' + rowData.ServiceNo.slice(2) : rowData.ServiceNo);
             $("#spnStepCounter").html(rowData.StepCounter);
             var spnTrnFwdId = rowData.IsTrnFwdId;
             $("#spnCurrentspnTrnFwdId").html(spnTrnFwdId);

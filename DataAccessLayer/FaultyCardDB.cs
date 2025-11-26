@@ -252,10 +252,6 @@ namespace DataAccessLayer
                 {
                     string searchValue = request.searchValue.ToLower();
 
-                    //queryableData = queryableData.Where(x =>  x.UserId.ToString().ToLower().Contains(searchValue) ||
-                    //                          x.DomainId.ToLower().Contains(searchValue)||
-                    //                          x.ArmyNo.ToLower().Contains(searchValue));
-
                     queryableData = queryableData.Where(x => x.ServiceNo.ToLower().Contains(searchValue));
                 }
 

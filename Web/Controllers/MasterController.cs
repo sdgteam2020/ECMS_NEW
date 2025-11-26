@@ -16,6 +16,7 @@ using System.Drawing.Imaging;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
+using Web.Validation;
 using Web.WebHelpers;
 
 namespace Web.Controllers
@@ -91,7 +92,6 @@ namespace Web.Controllers
         /// </returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveCommand(MComd dTO)
         {
             try
@@ -357,7 +357,6 @@ namespace Web.Controllers
         /// </remarks>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveCorps(MCorps dTO)
         {
             // Set the IsActive flag to true and capture the user who is updating the Corps.
@@ -1014,6 +1013,8 @@ namespace Web.Controllers
         /// It queries the database using the unitOfWork pattern to return the top matching unit information.
         /// </remarks>
         [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> GetTopBySUSNo(string SUSNo)
         {
             try
@@ -1222,6 +1223,8 @@ namespace Web.Controllers
         /// This method retrieves all map units that match the provided unit name, used for searching purposes.
         /// </remarks>
         [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> GetALLByUnitName(string UnitName)
         {
             try
@@ -1246,6 +1249,8 @@ namespace Web.Controllers
         /// This method retrieves all map units based on the provided unit map ID.
         /// </remarks>
         [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> GetALLByUnitMapId(int UnitMapId)
         {
             try
@@ -2078,6 +2083,8 @@ namespace Web.Controllers
         /// <param name="UnitId">The UnitId of the unit to retrieve.</param>
         /// <returns>A JSON result containing the unit details or an error if not found.</returns>
         [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> GetUnitByUnitId(int UnitId)
         {
             try
@@ -2253,6 +2260,8 @@ namespace Web.Controllers
         /// <param name="dTO">The appointment data transfer object.</param>
         /// <returns>JSON result indicating whether the appointment was saved or updated.</returns>
         [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> SaveAppointment(MAppointment dTO)
         {
             try
@@ -2336,6 +2345,8 @@ namespace Web.Controllers
         /// <param name="ApptId">The ID of the appointment to retrieve.</param>
         /// <returns>JSON result containing the appointment details.</returns>
         [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> GetByApptId(short ApptId)
         {
             try
@@ -2411,6 +2422,8 @@ namespace Web.Controllers
         /// <param name="AppointmentName">The name of the appointment to search for.</param>
         /// <returns>JSON result containing appointments matching the name.</returns>
         [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> GetALLByAppointmentName(string AppointmentName)
         {
             try
@@ -3484,6 +3497,8 @@ namespace Web.Controllers
         /// <param name="Data">The data transfer object containing the request parameters for fetching master data.</param>
         /// <returns>A JSON response containing the result of the request. Returns an internal server error if an exception occurs.</returns>
         [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> GetAllMMaster(DTOMasterRequest Data)
         {
             try
@@ -3504,6 +3519,7 @@ namespace Web.Controllers
         /// <param name="Data">The data transfer object containing the request parameters, including the parent identifier.</param>
         /// <returns>A JSON response containing the result of the request. Returns an internal server error if an exception occurs.</returns>
         [AllowAnonymous]
+        [HttpPost]
         public async Task<IActionResult> GetAllMMasterByParent(DTOMHierarchyRequest Data)
         {
             try

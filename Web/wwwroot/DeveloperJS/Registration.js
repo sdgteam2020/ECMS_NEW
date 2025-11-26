@@ -1,24 +1,4 @@
 ﻿$(function () {
-    //const [today] = new Date().toISOString().split('T');
-    //const maxDate = new Date();
-    //maxDate.setDate(maxDate.getDate() + 30);
-    //const [maxDateFormatted] = maxDate.toISOString().split('T');
-    //const dateInput = document.getElementById('DOB');
-    //dateInput.setAttribute('min', today);
-    //dateInput.setAttribute('max', maxDateFormatted);
-    //const Commissioning = document.getElementById('Commissioning');
-    //Commissioning.setAttribute('min', today);
-    //Commissioning.setAttribute('max', maxDateFormatted);
-
-
-    //$("#DOB").datepicker({
-    //    changeMonth: true,
-    //    changeYear:true,
-    //    dateFormat: "dd-mm-yy" // Set the date format
-    //});
-    //$("#DOB_").datepicker({
-    //    dateFormat: "dd-mm-yy" // Set the date format
-    //});
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     $(function () {
@@ -35,6 +15,12 @@
 
         var maxDate = day + '/' + month + '/' + year;
         $('#DOB').attr('max', maxDate);
+    });
+
+    // Attach click event to all radios with class submitTypeRadio
+    $(document).on("change", ".submitTypeRadio", function () {
+        const value = $(this).val();
+        registrationEnableDisabledField(value);
     });
 
     $('#DOB').on('change', function () {
@@ -130,13 +116,11 @@
         const encryptedRegistrationApplyFor = sessionStorage.getItem("RegistrationApplyFor");
         const encryptedlCardType = sessionStorage.getItem("lCardType");
 
-        const secretKey = document.getElementById("spnUniqueSecretKey").innerText;
-
-        const decryptedArmyNo = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey).toString(CryptoJS.enc.Utf8);
-        const decryptedOldArmyNo = CryptoJS.AES.decrypt(encryptedOldArmyNo, secretKey).toString(CryptoJS.enc.Utf8);
-        const decryptedOffType = CryptoJS.AES.decrypt(encryptedOffType, secretKey).toString(CryptoJS.enc.Utf8);
-        const decryptedRegistrationApplyFor = CryptoJS.AES.decrypt(encryptedRegistrationApplyFor, secretKey).toString(CryptoJS.enc.Utf8);
-        const decryptedlCardType = CryptoJS.AES.decrypt(encryptedlCardType, secretKey).toString(CryptoJS.enc.Utf8);
+        const decryptedArmyNo = decryptData(encryptedArmyNo);
+        const decryptedOldArmyNo = decryptData(encryptedOldArmyNo);
+        const decryptedOffType = decryptData(encryptedOffType);
+        const decryptedRegistrationApplyFor = decryptData(encryptedRegistrationApplyFor);
+        const decryptedlCardType = decryptData(encryptedlCardType);
 
         $("#ServiceNumber").val(decryptedArmyNo);
         $("#OldServiceNo").val(decryptedOldArmyNo);
@@ -421,8 +405,7 @@ function Proceed(id) {
     }
 
     const encryptedRegistrationApplyFor = sessionStorage.getItem("RegistrationApplyFor");
-    const secretKey = document.getElementById("spnUniqueSecretKey").innerText;
-    const decryptedRegistrationApplyFor = CryptoJS.AES.decrypt(encryptedRegistrationApplyFor, secretKey).toString(CryptoJS.enc.Utf8);
+    const decryptedRegistrationApplyFor = decryptData(encryptedRegistrationApplyFor);
 
 
     if (decryptedRegistrationApplyFor === "4" || decryptedRegistrationApplyFor === "9") {

@@ -1,5 +1,6 @@
 ﻿using BusinessLogicsLayer.API;
 using BusinessLogicsLayer.APIData;
+using BusinessLogicsLayer.EncryptionSetting;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +18,13 @@ namespace Web.Controllers
         private readonly IaPiBl _aPIBL;
         private readonly IConfiguration _configuration;
         private readonly IapiDataBl _aPIDataBL;
-        public ApiController(IaPiBl aPIBL, IConfiguration configuration, IapiDataBl aPIDataBL)
+        private readonly IEncryptionSettingBL encryptionSettingBL;// For Encryption Setting
+        public ApiController(IaPiBl aPIBL, IConfiguration configuration, IapiDataBl aPIDataBL, IEncryptionSettingBL encryptionSettingBL)
         {
             _aPIBL = aPIBL;
             _configuration = configuration;
             _aPIDataBL = aPIDataBL;
+            this.encryptionSettingBL = encryptionSettingBL;
         }
 
         /// <summary>
@@ -34,8 +37,19 @@ namespace Web.Controllers
         public async Task<IActionResult> LoginApi(string ICNumber, int Type)
         {
             DTOApiPersDataResponse res1 = new DTOApiPersDataResponse();
+            string Pk = string.Empty;
             try
             {
+                // Retrieve the encryption key from the database
+                var keyRecord = await encryptionSettingBL.Get(1);
+                if (keyRecord != null)
+                {
+                    Pk = keyRecord.PrivateKeyForApi; // Assign the private key from the database record
+                }
+                else
+                {
+                    throw new InvalidOperationException("Encryption key record not found."); // Throw error if key record is missing
+                }
                 // Retrieve configuration values from appsettings.json
                 bool FromApiJCO = Convert.ToBoolean(_configuration["ApiCall:FromApiJCO"]);
                 bool FromApiOffr = Convert.ToBoolean(_configuration["ApiCall:FromApiOffr"]);
@@ -79,10 +93,10 @@ namespace Web.Controllers
                         if (res.Status == true)
                         {
                             // Decrypt sensitive fields using the public key
-                            res.Pers_Army_No = apiHelpers.EncDec(res.Pers_Army_No, PubKeyForDesc, false);
-                            res.Pers_name = apiHelpers.EncDec(res.Pers_name, PubKeyForDesc, false);
-                            res.Pers_birth_dt = apiHelpers.EncDec(res.Pers_birth_dt, PubKeyForDesc, false);
-                            res.Pers_enrol_dt = apiHelpers.EncDec(res.Pers_enrol_dt, PubKeyForDesc, false);
+                            res.Pers_Army_No = apiHelpers.EncDec(res.Pers_Army_No, PubKeyForDesc, Pk, false);
+                            res.Pers_name = apiHelpers.EncDec(res.Pers_name, PubKeyForDesc, Pk, false);
+                            res.Pers_birth_dt = apiHelpers.EncDec(res.Pers_birth_dt, PubKeyForDesc, Pk, false);
+                            res.Pers_enrol_dt = apiHelpers.EncDec(res.Pers_enrol_dt, PubKeyForDesc, Pk, false);
 
                             // Try parsing dates and format them if successful
                             DateTime DOB, DOC;
@@ -98,15 +112,15 @@ namespace Web.Controllers
                             }
 
                             // Decrypt address fields
-                            res.Pers_Address.Pers_House_no = apiHelpers.EncDec(res.Pers_Address.Pers_House_no, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Moh_st = apiHelpers.EncDec(res.Pers_Address.Pers_Moh_st, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Village = apiHelpers.EncDec(res.Pers_Address.Pers_Village, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Tehsil = apiHelpers.EncDec(res.Pers_Address.Pers_Tehsil, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Post_office = apiHelpers.EncDec(res.Pers_Address.Pers_Post_office, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Police_stn = apiHelpers.EncDec(res.Pers_Address.Pers_Police_stn, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Pin_code = apiHelpers.EncDec(res.Pers_Address.Pers_Pin_code, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_District = apiHelpers.EncDec(res.Pers_Address.Pers_District, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_State = apiHelpers.EncDec(res.Pers_Address.Pers_State, PubKeyForDesc, false);
+                            res.Pers_Address.Pers_House_no = apiHelpers.EncDec(res.Pers_Address.Pers_House_no, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Moh_st = apiHelpers.EncDec(res.Pers_Address.Pers_Moh_st, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Village = apiHelpers.EncDec(res.Pers_Address.Pers_Village, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Tehsil = apiHelpers.EncDec(res.Pers_Address.Pers_Tehsil, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Post_office = apiHelpers.EncDec(res.Pers_Address.Pers_Post_office, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Police_stn = apiHelpers.EncDec(res.Pers_Address.Pers_Police_stn, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Pin_code = apiHelpers.EncDec(res.Pers_Address.Pers_Pin_code, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_District = apiHelpers.EncDec(res.Pers_Address.Pers_District, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_State = apiHelpers.EncDec(res.Pers_Address.Pers_State, PubKeyForDesc, Pk, false);
 
                             res.Message = "OK"; // Set the success message
                             res1 = res; // Return the decrypted response data
@@ -156,19 +170,19 @@ namespace Web.Controllers
                         if (res.Status == true)
                         {
                             // Decrypt sensitive fields using the public key
-                            res.Pers_Army_No = apiHelpers.EncDec(res.Pers_Army_No, PubKeyForDesc, false);
-                            res.Pers_name = apiHelpers.EncDec(res.Pers_name, PubKeyForDesc, false);
-                            res.Pers_birth_dt = apiHelpers.EncDec(res.Pers_birth_dt, PubKeyForDesc, false);
-                            res.Pers_enrol_dt = apiHelpers.EncDec(res.Pers_enrol_dt, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_House_no = apiHelpers.EncDec(res.Pers_Address.Pers_House_no, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Moh_st = apiHelpers.EncDec(res.Pers_Address.Pers_Moh_st, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Village = apiHelpers.EncDec(res.Pers_Address.Pers_Village, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Tehsil = apiHelpers.EncDec(res.Pers_Address.Pers_Tehsil, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Post_office = apiHelpers.EncDec(res.Pers_Address.Pers_Post_office, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Police_stn = apiHelpers.EncDec(res.Pers_Address.Pers_Police_stn, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_Pin_code = apiHelpers.EncDec(res.Pers_Address.Pers_Pin_code, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_District = apiHelpers.EncDec(res.Pers_Address.Pers_District, PubKeyForDesc, false);
-                            res.Pers_Address.Pers_State = apiHelpers.EncDec(res.Pers_Address.Pers_State, PubKeyForDesc, false);
+                            res.Pers_Army_No = apiHelpers.EncDec(res.Pers_Army_No, PubKeyForDesc, Pk, false);
+                            res.Pers_name = apiHelpers.EncDec(res.Pers_name, PubKeyForDesc, Pk, false);
+                            res.Pers_birth_dt = apiHelpers.EncDec(res.Pers_birth_dt, PubKeyForDesc, Pk, false);
+                            res.Pers_enrol_dt = apiHelpers.EncDec(res.Pers_enrol_dt, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_House_no = apiHelpers.EncDec(res.Pers_Address.Pers_House_no, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Moh_st = apiHelpers.EncDec(res.Pers_Address.Pers_Moh_st, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Village = apiHelpers.EncDec(res.Pers_Address.Pers_Village, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Tehsil = apiHelpers.EncDec(res.Pers_Address.Pers_Tehsil, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Post_office = apiHelpers.EncDec(res.Pers_Address.Pers_Post_office, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Police_stn = apiHelpers.EncDec(res.Pers_Address.Pers_Police_stn, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_Pin_code = apiHelpers.EncDec(res.Pers_Address.Pers_Pin_code, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_District = apiHelpers.EncDec(res.Pers_Address.Pers_District, PubKeyForDesc, Pk, false);
+                            res.Pers_Address.Pers_State = apiHelpers.EncDec(res.Pers_Address.Pers_State, PubKeyForDesc, Pk, false);
 
                             res.Message = "OK"; // Set the success message
                             res1 = res; // Return the decrypted response data

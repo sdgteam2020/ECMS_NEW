@@ -84,21 +84,6 @@
 
     </environment>
 
-    @*   <script>
-    WebFont.load({
-    google: { "families": ["Roboto:300,400,500,700,900"] },
-    custom: { "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['../fonts/AllFont/fonts.min.css'] },
-    active: function () {
-    sessionStorage.fonts = true;
-    }
-    });
-
-    </script> *@
-    @* <script type="text/javascript">
-    function preventBack() { window.history.forward(); }
-    setTimeout("preventBack()", 0);
-    window.onunload = function () { null };
-    </script> *@
     <style>
 
 
@@ -361,25 +346,6 @@
 
 </head>
 <body class="nav-fixed sidenav-toggled">
-@*     <div class="watermark">
-        <div>
-            <img src="/Images/dgislogo.png" alt="Watermark" loading="lazy">
-        </div>
-    </div> *@
-@*     <div class="watermark1">
-        <h4 id="waterIpaddresGloble" style="font-size:22px;"></h4>
-        <span id="waterarmyno" style="font-size:22px;"></span><br>
-        <span id="waterrank" style="font-size:22px;"></span>
-        <span id="waterProfileName" style="font-size:22px;"></span>
-    </div> *@
-
-@*     <div class="watermark2">
-        <h4 id="waterIpaddresGloble1" style="font-size:22px;"></h4>
-        <span id="waterarmyno1" style="font-size:22px;"></span><br>
-        <span id="waterrank1" style="font-size:22px;"></span>
-        <span id="waterProfileName1" style="font-size:22px;"></span>
-    </div> *@
-
     <div id="loading" class="loader">
         <div class="loader-container">
         <img src="/Images/load.gif" width="100">
@@ -389,15 +355,6 @@
             </div>
         </div>
     </div>
-    @* <div id="loadingToken" class="loader">
-    <div class="loader-container">
-    <img src="/Images/load.gif" width="100">
-    <div>
-    <h4 style="margin-top: -20px;" id="tokenmess"></h4>
-    <span>Please wait. Read Token....... This may take few seconds.</span>
-    </div>
-    </div>
-    </div> *@
     @{
         var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await userManager.FindByIdAsync(userId);
@@ -453,7 +410,7 @@
                         </nav>
                     }
                     <div class="content-wrapper">
-                        <span class="d-none" id="spnUniqueSecretKey">my-top-secret-key-123</span>
+                        <span class="d-none" id="spnUniqueSecretKey">my-top-secret-key-123-456-7890AB</span>
                         <partial name="_Notification" />
                         @RenderBody()
                         <partial name="_ChatBot" />
@@ -466,16 +423,6 @@
             </main>
         </div>
     </div>
-    @*
-
-    @if (IsSectionDefined("Modal"))
-    {
-    <div class="">
-    @RenderSection("Modal", required: false)
-    </div>
-    }
-    *@
-
     @if (IsSectionDefined("Modal"))
     {
         <div class="">
@@ -508,53 +455,6 @@
         </div>
     </footer>
 
-    <script>
-        $(document).ready(function () {
-
-            $('[data-toggle="tooltip"]').tooltip();
-            $("#loadingToken").hide();
-
-            $("#loading").hide();
-            $(document).ajaxStart(function () {
-                $("#loading").show();
-            }).ajaxStop(function () {
-                $("#loading").hide();
-            });
-            $('.datepicker').datetimepicker({
-                format: "L"
-            });
-            $('.timepicker').datetimepicker({
-                format: "LT"
-            });
-            $('.datetimepicker').datetimepicker({
-                sideBySide: true
-            });
-
-            $('.datepickerpast').datetimepicker({
-                format: "L",
-                maxDate: new Date()
-            });
-
-
-            $('.datetimepickerpast').datetimepicker({
-              sideBySide: true,
-              format: 'YYYY-MM-DD HH:mm',
-              maxDate: new Date()
-            }).on('dp.change', function (e) {
-              // Set the formatted value (optional: adjust format)
-              $(this).val(e.date.format('YYYY-MM-DD HH:mm'));
-
-              // Trigger input for floating label (if CSS relies on :placeholder-shown)
-              $(this).trigger('input');
-            });
-
-            $('.PersInfo').on("click", function () {
-                sessionStorage.persid = null
-            })
-        });
-
-    </script>
-
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script asp-src-include="~/js/bootstrap.bundle.min.js"></script>
     <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -572,7 +472,7 @@
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
     <script asp-src-include="~/developerjs/icardhistory.js"></script>
     <script asp-src-include="~/developerjs/chatbot.js"></script>
-    <script asp-src-include="~/js/aes.js"></script>
+    <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
     @RenderSection("Scripts", false)
 
 
@@ -669,7 +569,7 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Army No</label>
                                 <div class="col-sm-8">
-                                    <label class="form-control spnFarmyno " id="spnFarmyno" readonly></label>
+                                    <label class="form-control spnApplicantArmyNo" id="spnFarmyno" readonly></label>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">

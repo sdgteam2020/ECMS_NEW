@@ -17,5 +17,8 @@ namespace DataTransferObject.Domain.Master
 
         [Unicode(false)]
         public string PrivateKey { get; set; } = string.Empty;
+
+        [Unicode(false)]
+        public string PrivateKeyForApi { get; set; } = string.Empty;
     }
 }

@@ -105,11 +105,9 @@
         const encryptedOffType = sessionStorage.getItem("OffType");
         const encryptedlCardType = sessionStorage.getItem("lCardType");
 
-        const secretKey = document.getElementById("spnUniqueSecretKey").innerText;
-
-        const decryptedArmyNo = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey).toString(CryptoJS.enc.Utf8);
-        const decryptedOffType = CryptoJS.AES.decrypt(encryptedOffType, secretKey).toString(CryptoJS.enc.Utf8);
-        const decryptedlCardType = CryptoJS.AES.decrypt(encryptedlCardType, secretKey).toString(CryptoJS.enc.Utf8);
+        const decryptedArmyNo = decryptData(encryptedArmyNo);
+        const decryptedOffType = decryptData(encryptedOffType);
+        const decryptedlCardType = decryptData(encryptedlCardType);
 
 
 

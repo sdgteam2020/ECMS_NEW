@@ -7,7 +7,6 @@
         public int TDMId { get; set; }
         public string ArmyNo { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string MobileNo { get; set; } = string.Empty;
         public string? Thumbprint { get; set; }
         public int ApptId { get; set; }
         public string AppointmentName { get; set; } = string.Empty;

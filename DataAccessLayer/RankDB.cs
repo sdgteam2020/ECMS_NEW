@@ -19,15 +19,6 @@ namespace DataAccessLayer
             _logger = logger;
             _contextDP = contextDP;
         }
-
-
-
-        //public UserDB(IConfiguration configuration)
-        //{
-        //    this.configuration = configuration;
-        //}
-
-
         /// <summary>
         /// Checks if a rank exists with the same abbreviation or name, excluding the specified rank ID.
         /// </summary>

@@ -143,8 +143,6 @@ namespace DataAccessLayer
                                            TrnDomainMappingId = xtdm != null ? xtdm.Id : 0,
                                            TrnDomainMappingApptId = (short)(xtdm != null ? xtdm.ApptId : 0),
                                            TrnDomainMappingUnitId = xtdm != null ? xtdm.UnitId : 0,
-                                           Extension = xtdm != null ? xtdm.Extension : "",
-                                           DialingCode = xtdm != null ? xtdm.DialingCode : "",
                                            IsIO = xtdm != null ? xtdm.IsIO : false,
                                            IsCO = xtdm != null ? xtdm.IsCO : false,
                                            IsRO = xtdm != null ? xtdm.IsRO : false,
@@ -818,134 +816,6 @@ namespace DataAccessLayer
                     };
                     return responseData;
                 }
-                //else if (request.Choice == "RO")
-                //{
-                //    var queryableData = (from u in _context.Users.OrderByDescending(x => x.Id)
-                //                         join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId
-                //                         join up in _context.UserProfile on tdm.UserId equals up.UserId into xtdmup_jointable
-                //                         from xup in xtdmup_jointable.DefaultIfEmpty()
-                //                         where tdm.IsRO == true
-                //                         select new DTOUserRegnResponse()
-                //                         {
-                //                             Id = u.Id,
-                //                             DomainId = u.DomainId,
-                //                             AdminMsg = u.AdminMsg,
-                //                             AdminFlag = u.AdminFlag,
-                //                             Active = u.Active,
-                //                             UpdatedOn = u.UpdatedOn,
-                //                             Mapped = true,
-                //                             TrnDomainMappingId = tdm.Id,
-                //                             TrnDomainMappingApptId = tdm.ApptId,
-                //                             TrnDomainMappingUnitId = tdm.UnitId,
-                //                             IsIO = tdm.IsIO,
-                //                             IsCO = tdm.IsCO,
-                //                             IsRO = tdm.IsRO,
-                //                             IsORO = tdm.IsORO,
-                //                             ArmyNo = xup != null ? xup.ArmyNo : null,
-                //                             UserId = xup != null ? xup.UserId : 0,
-                //                             RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
-                //                                          join r in _context.Roles on ur.RoleId equals r.Id
-                //                                          select r.Name).ToList(),
-                //                         }).AsQueryable();
-                //    // Total records without filtering
-                //    var totalRecords = queryableData.Count();
-
-
-                //    // Apply filtering
-                //    if (!string.IsNullOrEmpty(request.searchValue))
-                //    {
-                //        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue));
-                //    }
-
-                //    // Apply sorting
-
-                //    if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
-                //    {
-                //        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
-                //        queryableData = request.sortDirection.ToLower() == "asc"
-                //        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                //        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
-                //    }
-
-                //    // Total records after filtering
-                //    var filteredRecords = queryableData.Count();
-
-                //    // Paginate the result
-                //    var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
-
-                //    var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
-                //    {
-                //        draw = request.Draw,
-                //        recordsTotal = totalRecords, // Total records without filtering
-                //        recordsFiltered = filteredRecords, // Total records after filtering
-                //        data = paginatedData
-                //    };
-                //    return responseData;
-                //}
-                //else if (request.Choice == "ORO")
-                //{
-                //    var queryableData = (from u in _context.Users.OrderByDescending(x => x.Id)
-                //                         join tdm in _context.TrnDomainMapping on u.Id equals tdm.AspNetUsersId
-                //                         join up in _context.UserProfile on tdm.UserId equals up.UserId into xtdmup_jointable
-                //                         from xup in xtdmup_jointable.DefaultIfEmpty()
-                //                         where tdm.IsORO == true
-                //                         select new DTOUserRegnResponse()
-                //                         {
-                //                             Id = u.Id,
-                //                             DomainId = u.DomainId,
-                //                             AdminMsg = u.AdminMsg,
-                //                             AdminFlag = u.AdminFlag,
-                //                             Active = u.Active,
-                //                             UpdatedOn = u.UpdatedOn,
-                //                             Mapped = true,
-                //                             TrnDomainMappingId = tdm.Id,
-                //                             TrnDomainMappingApptId = tdm.ApptId,
-                //                             TrnDomainMappingUnitId = tdm.UnitId,
-                //                             IsIO = tdm.IsIO,
-                //                             IsCO = tdm.IsCO,
-                //                             IsRO = tdm.IsRO,
-                //                             IsORO = tdm.IsORO,
-                //                             ArmyNo = xup != null ? xup.ArmyNo : null,
-                //                             UserId = xup != null ? xup.UserId : 0,
-                //                             RoleNames = (from ur in _context.UserRoles.Where(x => x.UserId == u.Id)
-                //                                          join r in _context.Roles on ur.RoleId equals r.Id
-                //                                          select r.Name).ToList(),
-                //                         }).AsQueryable();
-                //    // Total records without filtering
-                //    var totalRecords = queryableData.Count();
-
-
-                //    // Apply filtering
-                //    if (!string.IsNullOrEmpty(request.searchValue))
-                //    {
-                //        queryableData = queryableData.Where(x => x.DomainId.ToLower().Contains(request.searchValue));
-                //    }
-
-                //    // Apply sorting
-
-                //    if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
-                //    {
-                //        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
-                //        queryableData = request.sortDirection.ToLower() == "asc"
-                //        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                //        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
-                //    }
-
-                //    // Total records after filtering
-                //    var filteredRecords = queryableData.Count();
-
-                //    // Paginate the result
-                //    var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
-
-                //    var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
-                //    {
-                //        draw = request.Draw,
-                //        recordsTotal = totalRecords, // Total records without filtering
-                //        recordsFiltered = filteredRecords, // Total records after filtering
-                //        data = paginatedData
-                //    };
-                //    return responseData;
-                //}
                 else
                 {
                     var queryableData = (from u in _context.Users
@@ -1157,7 +1027,6 @@ namespace DataAccessLayer
                                          Name = up.Name,
                                          IsToken = up.IsToken,
                                          IsWithTokenApply = up.IsWithTokenApply,
-                                         MobileNo = up.MobileNo,
                                          IsTokenWaiver = up.IsTokenWaiver,
                                          ReasonTokenWaiver = up.ReasonTokenWaiver,
                                          RankId = rk.RankId,
@@ -1469,8 +1338,6 @@ namespace DataAccessLayer
                                 trnDomainMapping.AspNetUsersId = userUpdate.Id;
                                 trnDomainMapping.UnitId = dTO.UnitMappId;
                                 trnDomainMapping.ApptId = dTO.ApptId;
-                                trnDomainMapping.Extension = dTO.Extension;
-                                trnDomainMapping.DialingCode = dTO.DialingCode;
                                 trnDomainMapping.IsIO = dTO.IsIO;
                                 trnDomainMapping.IsCO = dTO.IsCO;
                                 trnDomainMapping.IsRO = dTO.IsRO;
@@ -1487,8 +1354,6 @@ namespace DataAccessLayer
                                 trnDomainMapping.AspNetUsersId = userUpdate.Id;
                                 trnDomainMapping.UnitId = dTO.UnitMappId;
                                 trnDomainMapping.ApptId = dTO.ApptId;
-                                trnDomainMapping.Extension = dTO.Extension;
-                                trnDomainMapping.DialingCode = dTO.DialingCode;
                                 trnDomainMapping.IsIO = dTO.IsIO;
                                 trnDomainMapping.IsCO = dTO.IsCO;
                                 trnDomainMapping.IsRO = dTO.IsRO;
@@ -1551,8 +1416,6 @@ namespace DataAccessLayer
                             AspNetUsersId = Id,
                             UnitId = dTO.UnitMappId,
                             ApptId = dTO.ApptId,
-                            Extension = dTO.Extension,
-                            DialingCode = dTO.DialingCode,
                             IsIO =dTO.IsIO,
                             IsCO=dTO.IsCO,
                             IsRO=dTO.IsRO,
@@ -1748,8 +1611,6 @@ namespace DataAccessLayer
                         trnDomainMapping.AspNetUsersId = user.Id;
                         trnDomainMapping.UnitId = model.UnitMapId;
                         trnDomainMapping.ApptId = model.ApptId;
-                        //trnDomainMapping.DialingCode = model.DialingCode;
-                        //trnDomainMapping.Extension = model.Extension;
                         trnDomainMapping.IsRO = model.IsRO;
                         trnDomainMapping.IsIO = model.IsIO;
                         trnDomainMapping.IsCO = model.IsCO;
@@ -1764,7 +1625,6 @@ namespace DataAccessLayer
                             {
                                 uptUserProfile.RankId = model.RankId;
                                 uptUserProfile.Name = model.Name;
-                                //uptUserProfile.MobileNo = model.MobileNo;
                                 uptUserProfile.ArmedId = model.ArmedId;
                                 uptUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                 uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
@@ -1787,7 +1647,6 @@ namespace DataAccessLayer
                                 ArmyNo = dTOTempSession.ICNO,
                                 RankId = model.RankId,
                                 Name = model.Name,
-                                //MobileNo=model.MobileNo,
                                 ArmedId = model.ArmedId,
                                 IsToken = true,
                                 IsWithTokenApply=true,
@@ -1850,8 +1709,6 @@ namespace DataAccessLayer
                             trnDomainMapping.AspNetUsersId = dTOTempSession.AspNetUsersId;
                             trnDomainMapping.UnitId = model.UnitMapId;
                             trnDomainMapping.ApptId = model.ApptId;
-                            //trnDomainMapping.DialingCode = model.DialingCode;
-                            //trnDomainMapping.Extension = model.Extension;
                             trnDomainMapping.IsRO = model.IsRO;
                             trnDomainMapping.IsIO = model.IsIO;
                             trnDomainMapping.IsCO = model.IsCO;
@@ -1865,7 +1722,6 @@ namespace DataAccessLayer
                                 {
                                     uptUserProfile.RankId = model.RankId;
                                     uptUserProfile.Name = model.Name;
-                                    //uptUserProfile.MobileNo = model.MobileNo;
                                     uptUserProfile.ArmedId = model.ArmedId;
                                     uptUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                     uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
@@ -1885,7 +1741,6 @@ namespace DataAccessLayer
                                 mUserProfile.ArmyNo = dTOTempSession.ICNO;
                                 mUserProfile.RankId = model.RankId;
                                 mUserProfile.Name = model.Name;
-                                //mUserProfile.MobileNo = model.MobileNo;
                                 mUserProfile.ArmedId = model.ArmedId;
                                 mUserProfile.IsToken = true;
                                 mUserProfile.IsWithTokenApply = true;
@@ -1963,7 +1818,6 @@ namespace DataAccessLayer
                                     {
                                         uptUserProfile.RankId = model.RankId;
                                         uptUserProfile.Name = model.Name;
-                                        //uptUserProfile.MobileNo = model.MobileNo;
                                         uptUserProfile.ArmedId = model.ArmedId;
                                         uptUserProfile.IsTokenWaiver = model.IsTokenWaiver;
                                         uptUserProfile.ReasonTokenWaiver = model.ReasonTokenWaiver;
@@ -1984,7 +1838,6 @@ namespace DataAccessLayer
                                     mUserProfile.ArmyNo = dTOTempSession.ICNO;
                                     mUserProfile.RankId = model.RankId;
                                     mUserProfile.Name = model.Name;
-                                    //mUserProfile.MobileNo = model.MobileNo;
                                     mUserProfile.ArmedId = model.ArmedId;
                                     mUserProfile.IsToken = true;
                                     mUserProfile.IsWithTokenApply = true;

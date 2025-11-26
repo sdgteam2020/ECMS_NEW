@@ -206,9 +206,6 @@ namespace DataAccessLayer
                                " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
                                " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
                                " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                               //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                               //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-                               //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                                " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
                                " where basi.ApplyForId=@ApplyForId and  fwd.FwdStatusId in (3) " +
                                " group by Mfsts.FwdStatusId,fwd.TypeId";
@@ -229,9 +226,6 @@ namespace DataAccessLayer
                                " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
                                " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
                                " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                               //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                               //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-                               //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                                " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)" +
                               " where basi.ApplyForId=@ApplyForId and  fwd.FwdStatusId in (2)  and IsComplete=1 " +
                               " group by Mfsts.FwdStatusId,fwd.TypeId";
@@ -1087,9 +1081,6 @@ namespace DataAccessLayer
                            " and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)" +
                            " and unit.DivId=ISNULL(@DivId,unit.DivId)" +
                            " and unit.BdeId=ISNULL(@BdeId,unit.BdeId)" +
-                           //" and unit.FmnBranchID=ISNULL(@FmnBranchID,unit.FmnBranchID)" +
-                           //" and unit.PsoId=ISNULL(@PsoId,unit.PsoId)" +
-                           //" and unit.SubDteId=ISNULL(@SubDteId,unit.SubDteId)" +
                            " and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)";
             try
             {

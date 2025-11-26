@@ -34,14 +34,6 @@ namespace DataAccessLayer
             {
                 return 2;
             }
-            //else if (mRecordOffices.Any(x => x.ArmedId == Dto.ArmedId && x.RecordOfficeId != Dto.RecordOfficeId))
-            //{
-            //    return 3;
-            //}
-            //else if (mRecordOffices.Any(x => x.TDMId == Dto.TDMId && x.RecordOfficeId != Dto.RecordOfficeId))
-            //{
-            //    return 4;
-            //}
             else
             {
                 return 1;

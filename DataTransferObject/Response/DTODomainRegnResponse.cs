@@ -9,8 +9,6 @@
         public List<string>? ClaimValues { get; set; }
         public List<string>? ClaimTypes { get; set; }
         public string? ArmyNo { get; set; }
-        public string? DialingCode { get; set; }
-        public string? Extension { get; set; }
         public DateTime UpdatedOn { get; set; }
         public bool AdminFlag { get; set; }
         public bool Active { get; set; }

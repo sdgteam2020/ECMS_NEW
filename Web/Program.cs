@@ -236,36 +236,40 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-//app.Use(async (ctx, next) =>
-//{
-//    ctx.Response.Headers.Add("Content-Security-Policy", "default-src *; style-src 'self' ");
-//    ctx.Response.Headers.Add("Feature-Policy", "fullscreen 'none'");
-//    ctx.Response.Headers.Add("Referrer-Policy", "same-origin");
-//    ctx.Response.Headers.Add("X-Frame-Options", "DENY");
-//    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-//    ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-//    ctx.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-//    ctx.Response.Headers.Remove("X-Powered-By");
-//    ctx.Response.Headers.Remove("x-aspnet-version");
-//    //// Some headers won't remove
-//    //ctx.Response.Headers.Remove("Server");
-//    ctx.Response.Headers.Add("Content-Security-Policy", "default-src 'self'");
-//    ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-//    ctx.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
-//    ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+app.Use(async (ctx, next) =>
+{
+    // 1) Content Security Policy
+    ctx.Response.Headers["Content-Security-Policy"] =
+        "default-src 'self'; " +
+        "script-src 'self'; " +
+        "style-src 'self' 'unsafe-inline'; " + // allow Bootstrap inline styles
+        "img-src 'self' data:; " +
+        "font-src 'self' data:; " +
+        "connect-src 'self'; " +
+        "frame-ancestors 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self';";
 
-//    await next();
+    // 2) X-Frame-Options (align with frame-ancestors)
+    ctx.Response.Headers["X-Frame-Options"] = "DENY";
 
-//});
-//var options = new RewriteOptions()
-//           // Redirect from non-www to www
-//           .AddRedirectToWww()
-//           // Redirect to HTTPS
-//           .AddRedirectToHttps()
-//           // Example of custom rewrite rule
-//           .AddRewrite("^articles/(.*)", "blog/article?id=$1", skipRemainingRules: true);
+    // 3) Referrer-Policy
+    ctx.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
 
-//app.UseRewriter(options);
+    // Extra good headers
+    ctx.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    ctx.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+
+    // Use HSTS only on HTTPS + production
+    ctx.Response.Headers["Strict-Transport-Security"] =
+        "max-age=31536000; includeSubDomains; preload";
+
+    // Hide tech details where possible
+    ctx.Response.Headers.Remove("X-Powered-By");
+    ctx.Response.Headers.Remove("x-aspnet-version");
+
+    await next();
+});
 
 // When the code is published on IAM, these two lines are commented out.
 app.UseForwardedHeaders();
@@ -280,11 +284,12 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseRequestLocalization();
 app.UseResponseCompression();
 app.UseRouting();
+app.UseSession(); // MUST be before Authentication & Authorization
 
 app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
+
 //app.UseMyMiddleware();
 //app.UseMiddleware<BackRestrictionMiddleware>();
 //app.UseSessionMiddleware();

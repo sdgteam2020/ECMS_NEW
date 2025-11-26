@@ -581,13 +581,12 @@ function CheckArmyNOExist() {
                     confirmButtonText: "Yes, submit it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
 
-                        var encryptedArmyNo = CryptoJS.AES.encrypt($("#txtApplyForArmyNo").val(), secretKey).toString();
-                        var encryptedOldArmyNo = CryptoJS.AES.encrypt($("#txtApplyForOldArmyNo").val(), secretKey).toString();
-                        var encryptedOffType = CryptoJS.AES.encrypt(OffType.toString(), secretKey).toString();
-                        var encryptedRegistrationApplyFor = CryptoJS.AES.encrypt(RegistrationApplyFor.toString(), secretKey).toString();
-                        var encryptedlCardType = CryptoJS.AES.encrypt(lCardType.toString(), secretKey).toString();
+                        var encryptedArmyNo = encryptData($("#txtApplyForArmyNo").val());
+                        var encryptedOldArmyNo = encryptData($("#txtApplyForOldArmyNo").val());
+                        var encryptedOffType = encryptData(OffType.toString());
+                        var encryptedRegistrationApplyFor = encryptData(RegistrationApplyFor.toString());
+                        var encryptedlCardType = encryptData(lCardType.toString());
 
                         sessionStorage.setItem("OffType", encryptedOffType);
                         sessionStorage.setItem("RegistrationApplyFor", encryptedRegistrationApplyFor);

@@ -4,6 +4,13 @@ $(function () {
 
     BindData("");
     AccountCount();
+    $("#btnDomainFlag").on("click", function () {
+        Proceed();
+    });
+    $("#btnAddMapping").on("click", function () {
+        ProceedForMapping();
+    });
+
     $("#AddNewDomain input[name='txtapproval']").on("click",function () {
         $("#txtapproval-error").html("");
     });
@@ -886,6 +893,7 @@ function GetALLByUnitById(param1) {
         contentType: 'application/x-www-form-urlencoded',
         data: { "UnitMapId": param1 },
         type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
             $("#lblUnitName").html(data.UnitName);
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);

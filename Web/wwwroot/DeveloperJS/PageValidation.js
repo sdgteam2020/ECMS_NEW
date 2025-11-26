@@ -1,15 +1,20 @@
 ﻿$(function () {
+    const btn = document.getElementById('btnProceed');
+    if (!btn) return;
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // Push a new state to the browser history
+    btn.addEventListener('click', function (event) {
+        const isNewUser = btn.dataset.isNewUser === "true";
+        handleSubmit(event, isNewUser);
+    });
+
+    // Push a new state to the browser history
+    history.pushState(null, null, location.href);
+
+    // Listen for the popstate event
+    window.addEventListener('popstate', function (event) {
+        // Prevent the back button action by pushing the state again
         history.pushState(null, null, location.href);
-
-        // Listen for the popstate event
-        window.addEventListener('popstate', function (event) {
-            // Prevent the back button action by pushing the state again
-            history.pushState(null, null, location.href);
-            alert('Back navigation is disabled!');
-        });
+        alert('Back navigation is disabled!');
     });
 });
 async function handleSubmit(event, isNewUser) {
@@ -148,15 +153,6 @@ async function SubmitsEncry1(result) {
 
             // Validate password against the regular expression
             if (passwordPattern.test(txtpassword)) {
-                //var key = CryptoJS.enc.Utf8.parse(skey);
-                //var iv = CryptoJS.enc.Utf8.parse(skey);
-                //var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpassword), key,
-
-                //    { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
-
-                //$('#Password').val(encryptedpassword);
-                //$('#ConfirmPassword').val(encryptedpassword);
-                //return true;
 
                 var encryptedpassword = encryptData(txtpassword, skey);
 
@@ -188,14 +184,6 @@ async function SubmitsEncry1(result) {
                 alert("Invalid Army No.");
                 return false; // Stop submission if suffix check fails
             }
-            //var key = CryptoJS.enc.Utf8.parse(skey);
-            //var iv = CryptoJS.enc.Utf8.parse(skey);
-            //var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpassword), key,
-
-            //    { keySize: 128 / 8, iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-            //);
-            //$('#Password').val(encryptedpassword);
-            //return true;
 
             var encryptedpassword = encryptData(txtpassword, skey);
 
@@ -204,4 +192,26 @@ async function SubmitsEncry1(result) {
         }
     }
 
+}
+function encryptData(plainText, secretKey) {
+    const key = CryptoJS.enc.Utf8.parse(secretKey);
+    const iv = CryptoJS.enc.Utf8.parse(secretKey.substring(0, 16)); // 16 bytes
+
+    const encrypted = CryptoJS.AES.encrypt(plainText, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    return encrypted.toString();   // Base64 output
+}
+function decryptData(cipherText, secretKey) {
+    const key = CryptoJS.enc.Utf8.parse(secretKey);
+    const iv = CryptoJS.enc.Utf8.parse(secretKey.substring(0, 16));
+
+    return CryptoJS.AES.decrypt(cipherText, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    }).toString(CryptoJS.enc.Utf8);
 }

@@ -95,14 +95,17 @@
                                                 }
                                                 @if (dTOTempSession != null)
                                                 {
-                                                    if (dTOTempSession.NewUser == true)
+                                                    var isNewUser = dTOTempSession.NewUser == true ? "true" : "false";
+
+                                                    <button type="submit" id="btnProceed" class="btn btn-primary mt-2" data-is-new-user="@isNewUser">Proceed</button>
+@*                                                     if (dTOTempSession.NewUser == true)
                                                     {
                                                         <button type="submit" class="btn btn-primary mt-2" onclick="return handleSubmit(event, true)">Proceed</button>
                                                     }
                                                     else
                                                     {
                                                         <button type="submit" class="btn btn-primary mt-2" onclick="return handleSubmit(event, false)">Proceed</button>
-                                                    }
+                                                    } *@
                                                 }
                                                 <a class="btn btn-warning" href="/ApplicationStatus/AppStatus">Check Appl Status</a>
                                             </div>
@@ -159,8 +162,5 @@
     <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
     <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
     @* <script src="~/fonts/feather/feather.min.js"></script> *@
-@*     <script asp-src-include="~/js/aes.js"></script> *@
-    <script asp-src-include="~/js/aesimpscript.js"></script>
     <script asp-src-include="~/developerjs/pagevalidation.js"></script>
-
 }

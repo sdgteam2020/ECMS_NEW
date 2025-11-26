@@ -10,11 +10,6 @@ namespace DataAccessLayer
         {
 
         }
-        //public UserDB(IConfiguration configuration)
-        //{
-        //    this.configuration = configuration;
-        //}
-
         /// <summary>
         /// Retrieves a list of roles for user selection.
         /// </summary>

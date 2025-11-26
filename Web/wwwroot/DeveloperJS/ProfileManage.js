@@ -21,6 +21,10 @@ $(function () {
             }, 200); // Adjust the delay as needed
         }
     });
+    $("#btnProfileAddButton").on("click", function () {
+        Proceed();
+    });
+
     $("#IsTokenWaiverYes").on("click", function () { 
         $("#spnReasonTokenWaiver").removeClass("d-none");
         $('#txtMessage').prop('required', true);
@@ -319,7 +323,6 @@ function Save() {
             "UserId": $("#spnUserProfileId").html(),
             "ArmyNo": $("#txtArmyNo").val(),
             "Name": $("#txtName").val(),
-/*            "MobileNo": $("#txtMobileNo").val(),*/
             "RankId": $("#ddlRank").val(),
             "ArmedId": $("#ddlArmType").val(),
             "IsTokenWaiver": $('input:radio[name=IsTokenWaiver]:checked').val(),
@@ -426,7 +429,6 @@ function Reset() {
     $("#txtArmyNo").val("");
     $("#ddlRank").val("");
     $("#txtName").val("");
-/*    $("#txtMobileNo").val("");*/
     $("#ddlArmType").val("");
     $("#IsTokenWaiverYes").prop("checked", false);
     $("#IsTokenWaiverNo").prop("checked", false);
@@ -442,7 +444,6 @@ function ResetErrorMessage() {
     $("#txtName-error").html("");
     $("#ddlRank-error").html("");
     $("#txtArmyNo-error").html("");
-/*    $("#txtMobileNo-error").html("");*/
     $("#ddlArmType-error").html("");
     $("#IsTokenWaiver-error").html("");
     $("#txtMessage-error").html("");

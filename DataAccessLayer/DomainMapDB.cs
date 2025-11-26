@@ -153,8 +153,6 @@ namespace DataAccessLayer
                                         IsCO = xtdm != null ? xtdm.IsCO : false,
                                         IsRO = xtdm != null ? xtdm.IsRO : false,
                                         IsORO = xtdm != null ? xtdm.IsORO : false,
-                                        DialingCode = xtdm != null ? xtdm.DialingCode:"",
-                                        Extension = xtdm != null ? xtdm.Extension : "",
                                         AspNetUsersId = au != null ? au.Id : 0,
                                         UserId = xup != null ? xup.UserId : null,
                                         ApplicationUser = au != null ? au : null,

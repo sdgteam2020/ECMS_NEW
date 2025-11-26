@@ -117,9 +117,6 @@ namespace BusinessLogicsLayer
             services.AddTransient<IApplCloseDB, ApplCloseDB>();
 
 
-            //services.AddTransient<IBasicDetailTempBL, BasicDetailTempBL>();
-            //services.AddTransient<IBasicDetailTempDB, BasicDetailTempDB>();
-
             services.AddTransient<iGetTokenBL, GetTokenBL>();
 
             services.AddTransient<IStepCounterBL, StepCounterBL>();
@@ -215,28 +212,6 @@ namespace BusinessLogicsLayer
 
             services.AddTransient<IEncryptionSettingBL, EncryptionSettingBL>();
 
-
-
-            //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=SDG20\\SQLEXPRESS; Database=AFSAC;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True"));
-            //services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=.\\sqlexpress; Database=AFSAC;User Id=sa; Password=Admin@2018;MultipleActiveResultSets=True;TrustServerCertificate=True"));
-            // services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer("Server=192.168.10.63; database=AFSAC_New; User Id=sa; Password=Admin@2018;Connect Timeout=30;TrustServerCertificate=True; MultipleActiveResultSets=true"));
-            // services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-            //{
-            //    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-            //    options.Lockout.MaxFailedAccessAttempts = 3;
-            //    options.User.RequireUniqueEmail = false;
-            //    options.SignIn.RequireConfirmedAccount = true;
-            //    options.SignIn.RequireConfirmedEmail = false;
-            //    options.Lockout.AllowedForNewUsers = true;
-
-            //})
-            // .AddDefaultUI()
-            // .AddEntityFrameworkStores<ApplicationDbContext>()
-            // .AddDefaultTokenProviders();
-
-
-
-            // return services;
         }
 
     }

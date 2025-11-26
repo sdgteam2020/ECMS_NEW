@@ -124,7 +124,6 @@ $(function () {
             $("#txtAppointmentName").val(i.item.label);
             $("#spnApptIdMap").html(i.item.value);
             $("#ApptId").val(i.item.value);
-            //alert(i.item.value)
         },
         appendTo: '#suggesstion-box'
     });
@@ -177,7 +176,6 @@ $(function () {
         select: function (e, i) {
             e.preventDefault();
             $("#txtUnitName").val(i.item.label);
-            //alert(i.item.value)
             var param1 = { "UnitMapId": i.item.value };
             $.ajax({
                 url: '/Master/GetALLByUnitMapId',
@@ -613,9 +611,6 @@ function UnitSave() {
             "ServiceNo": $("#spnServiceNo").html(),
             "Name": $("#spnName").html(),
             "Rank": $("#spnRank").html(),
-            //"MobileNo": $("#txtMobileNo").val(),
-            //"DialingCode": $("#txtDialingCode").val(),
-            //"Extension": $("#txtExtension").val(),
             "DomainId": $("#spnDomainId").html(),
             "UnitId": $("#spnUnitId").html(),
             "Sus_no": $("#txtSusno").val().substring(0, 7),
@@ -767,9 +762,6 @@ function Reset() {
     $("#txtUnit").prop('readOnly', false);
     $("#txtSusno").val("");
     $("#txtUnit").val("");
-    //$("#txtMobileNo").val("");
-    //$("#txtDialingCode").val("");
-    //$("#txtExtension").val("");
     $("#ddlCommand").val("");
     $("#ddlCorps").val("");
     $("#ddlDiv").val("");
@@ -789,9 +781,6 @@ function Reset() {
 function ResetErrorMessage() {
     $("#txtSusno-error").html("");
     $("#txtUnit-error").html("");
-    //$("#txtMobileNo-error").html("");
-    //$("#txtDialingCode-error").html("");
-    //$("#txtExtension-error").html("");
     $("#ddlCommand-error").html("");
     $("#ddlCorps-error").html("");
     $("#ddlDiv-error").html("");

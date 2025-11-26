@@ -11,6 +11,10 @@ $(function () {
         closeOnSelect: false
     });
 
+    $("#btnDomainAddDialog").on("click", function () {
+        Proceed();
+    });
+
     $("#AddNewDomain input[name='txtapproval']").on("click", function () {
         $("#txtapproval-error").html("");
     });
@@ -743,8 +747,6 @@ function BindData() {
                     ResetErrorMessage();
                     $("#txtDomainId").val(rowData.DomainId);
                     $("#txtRole").val($(this).closest("tr").find("#roleName").html());
-                    //$("#txtDialingCode").val(rowData.DialingCode);
-                    //$("#txtExtension").val(rowData.Extension);
                     $("#spnDomainRegId").html(rowData.Id);
                     if (rowData.AdminFlag == true) {
                         $("#txtapprovalyes").prop("checked", true);
@@ -821,8 +823,6 @@ function Save() {
             "DomainId": $("#txtDomainId").val(),
             "RoleIds": $('#ddlRoles').val(),
             "ClaimValues": $('#ddClaims').val(),
-            //"DialingCode": $("#txtDialingCode").val(),
-            //"Extension": $("#txtExtension").val(),
             "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
             "Active": $('input:radio[name=txtactive]:checked').val(),
             "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
@@ -888,8 +888,6 @@ function Reset() {
     $("#spnDomainRegId").html("0");
     $("#txtDomainId").val("");
     //$("#ddlRoles").select2('data', null);
-    //$("#txtDialingCode").val("");
-    //$("#txtExtension").val("");
 
     $('#ddlRoles').val(null).trigger('change');
     $('#ddClaims').val(null).trigger('change');
@@ -933,8 +931,6 @@ function ResetErrorMessage() {
     $("#txtDomainId-error").html("");
     $("#ddlRoles-error").html("");
     $("#ddClaims-error").html("");
-    //$("#txtDialingCode-error").html("");
-    //$("#txtExtension-error").html("");
     $("#txtapproval-error").html("");
     $("#txtactive-error").html("");
     //$("#IsRO-error").html("");

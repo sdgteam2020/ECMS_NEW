@@ -24,7 +24,5 @@ namespace DataTransferObject.Response
         public bool IsIO { get; set; }
         public bool IsCO { get; set; }
         public bool IsORO { get; set; }
-        public string? DialingCode { get; set; } //= string.Empty;
-        public string? Extension { get; set; } //= string.Empty;
     }
 }

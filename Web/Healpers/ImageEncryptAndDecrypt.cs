@@ -17,19 +17,6 @@ namespace Web.Healpers
         private static readonly Regex s_dataUri = new(@"^data:(?<mime>[^;]+);base64,(?<data>.+)$",RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private readonly IEncryptionSettingBL encryptionSettingBL;
 
-        #region Key and IV Initialization
-        //// Fixed key and IV (hardcoded)
-        //private static readonly byte[] FixedKey = new byte[32] // 256-bit key
-        //{
-        //    0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF,
-        //    0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF
-        //};
-
-        //private static readonly byte[] FixedIV = new byte[16] // 128-bit IV
-        //{
-        //    0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF
-        //};
-        #endregion
         public ImageEncryptAndDecrypt(IEncryptionSettingBL encryptionSettingBL)
         {
             this.encryptionSettingBL = encryptionSettingBL;

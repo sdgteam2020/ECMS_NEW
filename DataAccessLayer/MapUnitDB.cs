@@ -247,15 +247,9 @@ namespace DataAccessLayer
         /// <returns>A task that represents the asynchronous operation. The task result contains the unit details if found, otherwise null.</returns>
         public Task<DTOMapUnitResponse> GetALLByUnitMapId(int UnitMapId)
         {
-            //on new { Div.UnitId, a.Years_Months } equals new { c.UnitId, c.Years_Months }
             var Div = (from uni in _context.MapUnit
-                           //where (unit.ComdId == 0 ? uni.ComdId == uni.ComdId : uni.ComdId == unit.ComdId)
-                           //&& (unit.CorpsId == 0 ? uni.CorpsId == uni.CorpsId : uni.CorpsId == unit.CorpsId)
-                           //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
-                           //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
                        join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
                        join Com in _context.MComd on uni.ComdId equals Com.ComdId
-                       //   on new { uni.ComdId } equals new { Com.ComdId }
                        join cor in _context.MCorps on uni.CorpsId equals cor.CorpsId
                        join div in _context.MDiv on uni.DivId equals div.DivId
                        join bde in _context.MBde on uni.BdeId equals bde.BdeId
@@ -304,12 +298,7 @@ namespace DataAccessLayer
         {
 
 
-            //on new { Div.UnitId, a.Years_Months } equals new { c.UnitId, c.Years_Months }
             var Div =await (from uni in _context.MapUnit
-                           //where (unit.ComdId == 0 ? uni.ComdId == uni.ComdId : uni.ComdId == unit.ComdId)
-                           //&& (unit.CorpsId == 0 ? uni.CorpsId == uni.CorpsId : uni.CorpsId == unit.CorpsId)
-                           //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
-                           //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
                        join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
                        join Com in _context.MComd
                        on uni.ComdId equals Com.ComdId

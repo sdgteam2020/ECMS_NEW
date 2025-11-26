@@ -6,10 +6,9 @@ namespace Web.Healpers
 {
     public class ApiHelpers
     {
-        private const string PrivateKey = "Indra@2025#$";
-        public string EncDec(string text, string PubKey, Boolean truefalse)
+        public string EncDec(string text, string PubKey, string PrvKey, Boolean truefalse)
         {
-            var SharedKey = PrivateKey + PubKey;
+            var SharedKey = PrvKey + PubKey;
             var result = text;
             try
             {

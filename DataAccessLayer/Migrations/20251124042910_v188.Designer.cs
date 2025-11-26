@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251124042910_v188")]
+    partial class v188
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,6 +200,10 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<bool>("IsWithTokenApply")
                         .HasColumnType("bit");
+
+                    b.Property<string>("MobileNo")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -2501,6 +2508,14 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int>("AspNetUsersId")
                         .HasColumnType("int");
+
+                    b.Property<string>("DialingCode")
+                        .HasMaxLength(6)
+                        .HasColumnType("varchar(6)");
+
+                    b.Property<string>("Extension")
+                        .HasMaxLength(5)
+                        .HasColumnType("varchar(5)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");

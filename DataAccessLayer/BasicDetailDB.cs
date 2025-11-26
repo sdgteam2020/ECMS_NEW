@@ -207,12 +207,6 @@ namespace DataAccessLayer
                 string safeField = dTO.SearchField.Trim().ToLower();
                 switch (safeField)
                 {
-                    //case "categery":
-                    //    searchFilter = @"AND mappl.Name=@SearchText";
-                    //    break;
-                    //case "requestid":
-                    //    searchFilter = @"AND req.RequestId=@SearchText";
-                    //    break;
                     case "serviceno":
                         searchFilter = @"AND basi.ServiceNo LIKE '%' + @SearchText + '%'";
                         break;
@@ -225,24 +219,6 @@ namespace DataAccessLayer
                     case "recordofficename":
                         searchFilter = @"AND mappl.ApplyForId = 1 AND mrec.RecordOfficeId=@SearchText";
                         break;
-                    //case "chipno":
-                    //    searchFilter = @"AND req.ChipNo LIKE '%' + @SearchText + '%'";
-                    //    break;
-                    //case "cardserialno":
-                    //    searchFilter = @"AND req.CardSerialNo LIKE '%' + @SearchText + '%'";
-                    //    break;
-                    //case "status":
-                    //    if (dTO.SearchText?.Trim().ToLower() == "pending" || dTO.SearchText?.Trim().ToLower() == "card distribute")
-                    //    {
-                    //        finalValue = PendingStepId;
-                    //        searchFilter = @"AND stepc.StepId = @FinalStepId";
-                    //    }
-                    //    else
-                    //    {
-                    //        finalValue = DispatchStepId;
-                    //        searchFilter = @"AND stepc.StepId >= @FinalStepId";
-                    //    }
-                    //    break;
                     default:
                         // optional fallback to global filter
                         searchFilter = @"";

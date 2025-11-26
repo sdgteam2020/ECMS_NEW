@@ -38,12 +38,7 @@ namespace DataAccessLayer
             string UnitName = Data.UnitName;
             using (var connection = _contextDP.CreateConnection())
             {
-                //data.MRank.RankAbbreviation
-                //data.MArmedType.Abbreviation
                 var ret = connection.Execute(query, new { StepId, Updatedby, id,UnitName });
-
-
-
                 return Data;
             }
         }

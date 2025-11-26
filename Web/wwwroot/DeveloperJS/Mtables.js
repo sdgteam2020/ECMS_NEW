@@ -16,6 +16,7 @@ async function mMsater(sectid = '', ddl, TableId, ParentId) {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
+            credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
             body: userdata
         });
 

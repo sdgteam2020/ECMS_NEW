@@ -7,9 +7,11 @@ using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Web.Validation;
 using Web.WebHelpers;
 
 namespace Web.Controllers
@@ -101,6 +103,8 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Id">The ID of the user whose profile existence is being checked.</param>
         /// <returns>A JSON response indicating profile existence or data based on user role.</returns>
+        [AllowAnonymous]
+        [AnySessionRequired]
         [HttpPost]
         public async Task<IActionResult> CheckProfileExist(int Id)
         {
@@ -141,7 +145,6 @@ namespace Web.Controllers
         /// <param name="Data">The token data to retrieve details for.</param>
         /// <returns>A JSON response containing the token details retrieved from the backend.</returns>
         [HttpPost]
-        //[ValidateAntiForgeryToken] // Uncomment to enable anti-forgery token validation for the request
         public IActionResult GetTokenDetails(DTOTokenResponse Data)
         {
             // Call the service to fetch token details based on the provided token data

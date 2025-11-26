@@ -3,37 +3,38 @@ using BusinessLogicsLayer;
 using BusinessLogicsLayer.Account;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Helpers;
+using BusinessLogicsLayer.IAMSetting;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
 using DataAccessLayer;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using OneLogin.Saml;
+using System.Configuration;
 using System.Data;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Web;
+using Web.Validation;
 using Web.WebHelpers;
-using OneLogin.Saml;
 using ApplicationRole = DataTransferObject.Domain.Identitytable.ApplicationRole;
-using System.Net;
-using BusinessLogicsLayer.IAMSetting;
-using System.Configuration;
-using Humanizer;
-using DataTransferObject.Constants;
 
 namespace Web.Controllers
 {
@@ -754,6 +755,11 @@ namespace Web.Controllers
                 {
                     HttpContext.Session.Remove("IMData");
                 }
+                string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
+                if (dd != null)
+                {
+                    HttpContext.Session.Remove(SessionKeySalt);
+                }
             }
 
             return View();
@@ -839,8 +845,6 @@ namespace Web.Controllers
                     dTOTempSession.IsCO = _trnDomainMapping.IsCO;
                     dTOTempSession.IsRO = _trnDomainMapping.IsRO;
                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
-                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
-                    dTOTempSession.Extension = _trnDomainMapping.Extension;
                     dTOTempSession.IsToken = _trnDomainMapping.IsToken;
 
 
@@ -848,6 +852,7 @@ namespace Web.Controllers
                     {
                         dTOTempSession.Status = 5;
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        HttpContext.Session.CommitAsync().Wait(); // Force write session
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
                     else
@@ -855,6 +860,7 @@ namespace Web.Controllers
                         TempData["error"] = "Role not authorized.";
                         dTOTempSession.Status = 6;
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        HttpContext.Session.CommitAsync().Wait(); // Force write session
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
 
@@ -874,8 +880,6 @@ namespace Web.Controllers
                     dTOTempSession.IsCO = _trnDomainMapping.IsCO;
                     dTOTempSession.IsRO = _trnDomainMapping.IsRO;
                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
-                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
-                    dTOTempSession.Extension = _trnDomainMapping.Extension;
                     dTOTempSession.IsToken = _trnDomainMapping.IsToken;
                     if (_trnDomainMapping.Role != null)
                     {
@@ -888,6 +892,7 @@ namespace Web.Controllers
                         TempData["error"] = "Role not authorized.";
                         dTOTempSession.Status = 6;
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        HttpContext.Session.CommitAsync().Wait(); // Force write session
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
 
@@ -904,6 +909,7 @@ namespace Web.Controllers
                     {
                         dTOTempSession.Status = 3;
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        HttpContext.Session.CommitAsync().Wait(); // Force write session
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
                     else
@@ -911,6 +917,7 @@ namespace Web.Controllers
                         TempData["error"] = "Role not authorized.";
                         dTOTempSession.Status = 6;
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        HttpContext.Session.CommitAsync().Wait(); // Force write session
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
 
@@ -931,8 +938,6 @@ namespace Web.Controllers
                     dTOTempSession.IsCO = _trnDomainMapping.IsCO;
                     dTOTempSession.IsRO = _trnDomainMapping.IsRO;
                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
-                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
-                    dTOTempSession.Extension = _trnDomainMapping.Extension;
                     dTOTempSession.IsToken = _trnDomainMapping.IsToken;
                     if (_trnDomainMapping.Role != null)
                     {
@@ -950,6 +955,7 @@ namespace Web.Controllers
                         TempData["error"] = "Role not authorized.";
                         dTOTempSession.Status = 6;
                         SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                        HttpContext.Session.CommitAsync().Wait(); // Force write session
                         return RedirectToActionPermanent("TokenValidate", "Account");
                     }
 
@@ -962,6 +968,7 @@ namespace Web.Controllers
                     dTOTempSession.RoleName = model.Role;
                     dTOTempSession.Status = 2;
                     SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                    HttpContext.Session.CommitAsync().Wait(); // Force write session
                     return RedirectToActionPermanent("TokenValidate", "Account");
                 }
 
@@ -994,7 +1001,7 @@ namespace Web.Controllers
             ViewBag.Footer = Footer;
 
 
-            string dd = AESEncrytDecry.GetSalt();  // "8080808080808080"; //protector.Protect("1");
+            string dd = AESEncrytDecry.GetSalt();
             HttpContext.Session.SetString(SessionKeySalt, dd);
             ViewBag.hdns = dd;
 
@@ -1112,8 +1119,6 @@ namespace Web.Controllers
                 string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
                 if (dd != null)
                 {
-                    csConst.cSalt = dd;
-                    //string Password = AESEncrytDecry.DecryptStringAES(model.Password);  //decrypt password
                     string Password = AESEncrytDecry.DecryptAES(model.Password, dd);  //decrypt password
                     model.Password = Password;
                 }
@@ -1179,11 +1184,13 @@ namespace Web.Controllers
                                     if (RoleNameList.Contains(dTOTempSession.RoleName))
                                     {
                                         HttpContext.Session.Remove("IMData");
+                                        HttpContext.Session.Remove(SessionKeySalt);
                                         return RedirectToActionPermanent("Index", "Home");
                                     }
                                     else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
                                     {
                                         HttpContext.Session.Remove("IMData");
+                                        HttpContext.Session.Remove(SessionKeySalt);
                                         return RedirectToActionPermanent("DashboardMaster", "Master");
                                     }
                                 }
@@ -1265,6 +1272,7 @@ namespace Web.Controllers
                                 dTOTempSession.ICNO = _dTOProfileResponse.ArmyNo;
                                 dTOTempSession.UserId = _dTOProfileResponse.UserId;
                                 SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                HttpContext.Session.CommitAsync().Wait(); // Force write session
                                 return RedirectToActionPermanent("Profile", "Account");
                             }
                             else if ((dTOTempSession.Status == 2 || dTOTempSession.Status == 3 || dTOTempSession.Status == 4) && _dTOProfileResponse == null) // Valid Case
@@ -1273,6 +1281,7 @@ namespace Web.Controllers
                                 dTOTempSession.Password = model.Password;
                                 dTOTempSession.ICNO = model.ICNo;
                                 SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+                                HttpContext.Session.CommitAsync().Wait(); // Force write session
                                 return RedirectToActionPermanent("Profile", "Account");
                             }
                             else if (dTOTempSession.Status == 5 && dTOTempSession.ICNO != model.ICNo) // DomainId mapped with other Profile
@@ -1352,8 +1361,6 @@ namespace Web.Controllers
                         dTOProfileAndMappingRequest.TDMId = dTOTempSession.TDMId;
                         dTOProfileAndMappingRequest.ApptId = dTOTempSession.TDMApptId;
                         dTOProfileAndMappingRequest.UnitMapId = dTOTempSession.TDMUnitMapId;
-                        //dTOProfileAndMappingRequest.DialingCode = dTOTempSession.DialingCode;
-                        //dTOProfileAndMappingRequest.Extension = dTOTempSession.Extension;
                         //dTOProfileAndMappingRequest.IsRO = dTOTempSession.IsRO;
                         dTOProfileAndMappingRequest.IsCO = dTOTempSession.IsCO;
                         dTOProfileAndMappingRequest.IsIO = dTOTempSession.IsIO;
@@ -1374,7 +1381,6 @@ namespace Web.Controllers
                             dTOProfileAndMappingRequest.ArmyNo = mUserProfile.ArmyNo;
                             dTOProfileAndMappingRequest.RankId = mUserProfile.RankId;
                             dTOProfileAndMappingRequest.Name = mUserProfile.Name;
-                            //dTOProfileAndMappingRequest.MobileNo = mUserProfile.MobileNo;
                             dTOProfileAndMappingRequest.ArmedId = mUserProfile.ArmedId;
                             dTOProfileAndMappingRequest.ReasonTokenWaiver = mUserProfile.ReasonTokenWaiver;
                             dTOProfileAndMappingRequest.IsTokenWaiver = mUserProfile.IsTokenWaiver;
@@ -1455,6 +1461,7 @@ namespace Web.Controllers
 
 
                             SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession); // Update Session Object
+                            HttpContext.Session.CommitAsync().Wait(); // Force write session
                             TempData["success"] = "Domian Id - " + dTOTempSession.DomainId + " & Profile Id- " + dTOTempSession.UserId + ".<br/>Your regn request was successfully placed with Admin for necy Approval.. <br/>Pl note regn No - " + dTOTempSession.AspNetUsersId + " for future correspondence.<br/>Contact Admin or try login after 24 Hrs.";
                             return RedirectToActionPermanent("TokenValidate", "Account");
                         }
@@ -1551,6 +1558,7 @@ namespace Web.Controllers
         /// - Designed for AJAX calls returning JSON results.
         /// </remarks>
         [AllowAnonymous]
+        [AnySessionRequired]
         [HttpPost]
         public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO)
         {
@@ -1849,8 +1857,6 @@ namespace Web.Controllers
                                     dTOTempSession.IsCO = _trnDomainMapping.IsCO;
                                     dTOTempSession.IsRO = _trnDomainMapping.IsRO;
                                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
-                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
-                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
                                     dTOTempSession.IsToken = _trnDomainMapping.IsToken;
 
                                     // Check if Role is valid
@@ -1888,8 +1894,6 @@ namespace Web.Controllers
                                     dTOTempSession.IsCO = _trnDomainMapping.IsCO;
                                     dTOTempSession.IsRO = _trnDomainMapping.IsRO;
                                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
-                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
-                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
                                     dTOTempSession.IsToken = _trnDomainMapping.IsToken;
                                     if (_trnDomainMapping.Role != null)
                                     {
@@ -1949,8 +1953,6 @@ namespace Web.Controllers
                                     dTOTempSession.IsCO = _trnDomainMapping.IsCO;
                                     dTOTempSession.IsRO = _trnDomainMapping.IsRO;
                                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
-                                    dTOTempSession.DialingCode = _trnDomainMapping.DialingCode;
-                                    dTOTempSession.Extension = _trnDomainMapping.Extension;
                                     dTOTempSession.IsToken = _trnDomainMapping.IsToken;
                                     if (_trnDomainMapping.Role != null)
                                     {

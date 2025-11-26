@@ -986,7 +986,6 @@ namespace Web.Controllers
         /// on success or re-renders the Registration view with errors.
         /// </returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registration(DTORegistrationRequest model)
         {
             try
@@ -3382,7 +3381,6 @@ namespace Web.Controllers
         /// <param name="dTO">DTOFaultyCardRequest object containing the faulty card data submitted from the client.</param>
         /// <returns>Returns a JSON response indicating success or failure along with relevant messages.</returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> SaveFaultyCard([FromBody] DTOFaultyCardRequest dTO)
         {
@@ -3538,7 +3536,6 @@ namespace Web.Controllers
         /// <param name="dTO">DTOFaultyCardRequest object containing the faulty card data submitted from the client.</param>
         /// <returns>JSON response indicating success or failure with relevant message.</returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveFaultyCardRequest([FromBody] DTOFaultyCardRequest dTO)
         {
             // Initialize forwarding entity
@@ -3927,7 +3924,6 @@ namespace Web.Controllers
         /// <param name="dTO">DataTables request object containing paging, sorting, and filtering info.</param>
         /// <returns>JSON result containing the list of lost card records.</returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetAllLost(DTODataTablesRequest dTO)
         {
             // Call the business layer to get all lost card records and return as JSON
@@ -3942,7 +3938,6 @@ namespace Web.Controllers
         /// <param name="req">Request object containing the IDs of lost card records to export.</param>
         /// <returns>JSON response containing the status and temporary CSV file name.</returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LostDataExport([FromBody] DTOHotlistCardsExportRequest req)
         {
             // Response object to store result and message
@@ -4033,7 +4028,6 @@ namespace Web.Controllers
         /// 6. Returns a <see cref="DTOCommonSaveResponse"/> with the result, message, and metadata.
         /// </remarks>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveLostCardRequest([FromForm] DTOLostCardAddRequest model)
         {
             DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
@@ -5773,7 +5767,6 @@ namespace Web.Controllers
         /// JSON result containing dispatch summary, file information, or error messages.
         /// </returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Policy = "ICardDispatchPolicy")]
         public async Task<ActionResult> DispatchOut([FromForm] DTODispatchOutRequest dTO)
         {
@@ -6161,7 +6154,6 @@ namespace Web.Controllers
         /// <param name="dTO">The DTO containing Dispatch Card Id, remarks, and other metadata from the form.</param>
         /// <returns>An <see cref="ActionResult"/> containing a JSON response with success/failure and messages.</returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> DispatchCardIn([FromForm] DTODispatchInRequest dTO)
         {
             // Initialize the response object
