@@ -410,7 +410,6 @@
                         </nav>
                     }
                     <div class="content-wrapper">
-                        <span class="d-none" id="spnUniqueSecretKey">my-top-secret-key-123-456-7890AB</span>
                         <partial name="_Notification" />
                         @RenderBody()
                         <partial name="_ChatBot" />
@@ -473,6 +472,7 @@
     <script asp-src-include="~/developerjs/icardhistory.js"></script>
     <script asp-src-include="~/developerjs/chatbot.js"></script>
     <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
+    <script asp-src-include="~/developerjs/_notifications.js"></script>
     @RenderSection("Scripts", false)
 
 

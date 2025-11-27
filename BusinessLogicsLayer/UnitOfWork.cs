@@ -96,7 +96,7 @@ namespace BusinessLogicsLayer
             }
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Corps))
             {
-                var Ret = await Corps.GetByComdId(Convert.ToInt32(Data.ParentId));
+                var Ret = await Corps.GetByComdId(Convert.ToInt32(Data.parentId));
 
                 foreach (var comd in Ret)
                 {
@@ -263,7 +263,7 @@ namespace BusinessLogicsLayer
             }
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.PostingReason))
             {
-                var Ret = await MasterBL.GetPostingReason(Convert.ToInt32(Data.ParentId));
+                var Ret = await MasterBL.GetPostingReason(Convert.ToInt32(Data.parentId));
 
                 foreach (var Forma in Ret)
                 {
@@ -290,7 +290,7 @@ namespace BusinessLogicsLayer
             }
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.IssuingAuthority))
             {
-                var result = await IssuingAuthorityBL.GetByApplyForId(Convert.ToByte(Data.ParentId));
+                var result = await IssuingAuthorityBL.GetByApplyForId(Convert.ToByte(Data.parentId));
 
                 foreach (var item in result)
                 {
@@ -302,7 +302,7 @@ namespace BusinessLogicsLayer
             }
             else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Regimental))
             {
-                var result = await Regimental.GetByArmedId(Convert.ToByte(Data.ParentId));
+                var result = await Regimental.GetByArmedId(Convert.ToByte(Data.parentId));
 
                 foreach (var item in result)
                 {

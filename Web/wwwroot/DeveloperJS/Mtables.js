@@ -4,20 +4,21 @@
 
 async function mMsater(sectid = '', ddl, TableId, ParentId) {
 
-    const userdata = new URLSearchParams({
+    const payload = {
+        tableName: "",
         id: TableId,
-        ParentId: ParentId
-    });
+        parentId: ParentId ? Number(ParentId) : null   // ⭐ THIS IS IMPORTANT
+    };
 
     try {
         const response = await fetch('/Master/GetAllMMaster', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
-            body: userdata
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();

@@ -101,19 +101,19 @@ namespace DataAccessLayer
         /// <param name="FmDate">The start date for filtering logs.</param>
         /// <param name="ToDate">The end date for filtering logs.</param>
         /// <returns>Returns a list of DTOLoginLogResponse containing login details for the specified user within the date range.</returns>
-        public async Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId, DateTime? FmDate, DateTime? ToDate)
+        public async Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId, int UnitId, DateTime? FmDate, DateTime? ToDate)
         {
-            string query = "select logs.[Id],logs.[AspNetUsersId],logs.[UserId],logs.[IP],logs.[Updatedby],logs.[UpdatedOn],logs.[RoleId],users.DomainId,roles.Name RoleName," +
-                           " ran.RankAbbreviation RankName,prof.ArmyNo,prof.Name from [AFSAC2].[dbo].TrnLogin_Log logs" +
-                           " inner join AspNetUsers users on users.Id=logs.AspNetUsersId" +
-                           " inner join TrnDomainMapping map on map.AspNetUsersId=users.Id" +
-                           " inner join AspNetRoles roles on roles.Id=logs.[RoleId]" +
-                           " inner join UserProfile prof on prof.UserId=logs.UserId" +
-                           " inner join MRank ran on ran.RankId=prof.RankId" +
-                           " and map.AspNetUsersId=@AspnetUserId and CAST(logs.[UpdatedOn] as Date) BETWEEN CAST(@FmDate AS DATE)  AND CAST(@ToDate AS DATE) order by logs.[UpdatedOn] desc";
+            string query = @"select logs.[Id],logs.[AspNetUsersId],logs.[UserId],logs.[IP],logs.[Updatedby],logs.[UpdatedOn],logs.[RoleId],users.DomainId,roles.Name RoleName,
+                            ran.RankAbbreviation RankName,prof.ArmyNo,prof.Name from [AFSAC2].[dbo].TrnLogin_Log logs
+                            inner join AspNetUsers users on users.Id=logs.AspNetUsersId
+                            inner join TrnDomainMapping map on map.AspNetUsersId=users.Id
+                            inner join AspNetRoles roles on roles.Id=logs.[RoleId]
+                            inner join UserProfile prof on prof.UserId=logs.UserId
+                            inner join MRank ran on ran.RankId=prof.RankId
+                            and map.AspNetUsersId=@AspnetUserId and map.UnitId=@UnitId and CAST(logs.[UpdatedOn] as Date) BETWEEN CAST(@FmDate AS DATE)  AND CAST(@ToDate AS DATE) order by logs.[UpdatedOn] desc";
             using (var connection = _context.CreateConnection())
             {
-                var Ret = await connection.QueryAsync<DTOLoginLogResponse>(query, new { AspnetUserId, FmDate, ToDate });
+                var Ret = await connection.QueryAsync<DTOLoginLogResponse>(query, new { AspnetUserId, UnitId, FmDate, ToDate });
 
                 return Ret.ToList();
             }

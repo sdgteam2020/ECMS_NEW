@@ -33,7 +33,6 @@ using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Registration;
 using BusinessLogicsLayer.ReportReturn;
-using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.TrnICardHold;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.TrnMappingUnMappingLog;
@@ -116,8 +115,6 @@ namespace BusinessLogicsLayer
             services.AddTransient<IApplCloseBL, ApplCloseBL>();
             services.AddTransient<IApplCloseDB, ApplCloseDB>();
 
-
-            services.AddTransient<iGetTokenBL, GetTokenBL>();
 
             services.AddTransient<IStepCounterBL, StepCounterBL>();
             services.AddTransient<IStepCounterDB, StepCounterDB>();

@@ -1,18 +1,12 @@
 ﻿$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    GetDashboardUserMgtCount($("#UnitId").html());
+    GetDashboardUserMgtCount();
 })
-function GetDashboardUserMgtCount(UnitId) {
-    var userdata =
-    {
-        "UnitId": UnitId,
-
-    };
+function GetDashboardUserMgtCount() {
     $.ajax({
         url: '/Home/GetDashboardUserMgtCount',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {

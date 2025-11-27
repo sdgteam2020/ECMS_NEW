@@ -47,3 +47,4 @@ const AllRegimental = 21;
 const ORO = 22;
 const HostUrlDGISToken = 'https://dgisapp.army.mil:55102'; /*http://localhost*/
 const HostUrl = 'https://localhost:7023';
+const spnUniqueKey = 'my-top-secret-key-123-456-7890AB';

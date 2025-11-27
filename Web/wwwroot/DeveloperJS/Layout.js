@@ -117,8 +117,6 @@ $(function () {
     });
 
     Getaspntokenarmyno()
-    if (window.location.pathname !="/UserProfile/Profile")
-        CheckProfileExist();
 
     $("#btnSercharmynoSmart").on("click", async function () {
         if ($("#armynosearchAllName").html() != "") {
@@ -282,45 +280,10 @@ $(function () {
 
 });
 
-function CheckProfileExist() {
-    var listItem = "";
-    var userdata =
-    {
-        "Id": 0,
-
-    };
-    $.ajax({
-        url: '/ConfigUser/CheckProfileExist',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response.UserId == 0 || response.UserId == null) {
-                    alert('Please Add Profile First !');
-                    window.location = "/UserProfile/Profile";
-                }
-
-            } else {
-                alert('Please Add Profile First !');
-                window.location = "/UserProfile/Profile";
-            }
-        }
-    });
-}
 function Getaspntokenarmyno() {
-    var listItem = "";
-    var userdata =
-    {
-        "Id": 0,
-
-    };
     $.ajax({
         url: '/ConfigUser/GetTokenArmyNo',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
@@ -511,29 +474,6 @@ function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
                         list += ' </a>';
                         
                         list += '</div>';
-                        //if (response[i].DisplayId == 2 || response[i].DisplayId == 3 || response[i].DisplayId == 7) {
-                        //    var SpnIOself = 0;
-                        //    var SpnGSOself = 0;
-                        //    var SpnIORejectself = 0;
-                        //    if ($(".SpnIOself").html() == "")
-                        //        SpnIOself = 0;
-                        //    else
-                        //        SpnIOself = $(".SpnIOself").html();
-                        //    if ($(".SpnGSOself").html() == "")
-                        //        SpnGSOself = 0;
-                        //    else
-                        //        SpnGSOself = $(".SpnGSOself").html();
-                        //    if ($(".SpnIORejectself").html() == "")
-                        //        SpnIORejectself = 0;
-                        //    else
-                        //        SpnIORejectself = $(".SpnIORejectself").html();
-
-                        //    //$("#IOTotal").html(parseInt(SpnIOself) + parseInt(SpnGSOself) + parseInt(SpnIORejectself));
-
-                        //    //if ($("#IOTotal").html() == 0)
-                        //    //    $("#IOTotal").html("");
-
-                        //}
                     }
                     $(".preview-list").append(list);
                 }
@@ -587,7 +527,7 @@ function formatDateToSqlString(inputDate) {
         `${pad(date.getMilliseconds(), 3)}`;
 }
 function encryptData(plainText) {
-    const secretKey = getSecretKey();
+    const secretKey = spnUniqueKey;
     if (!secretKey) return "";
 
     const key = CryptoJS.enc.Utf8.parse(secretKey);
@@ -605,7 +545,7 @@ function decryptData(cipherText) {
 
     if (!cipherText) return "";
 
-    const secretKey = getSecretKey();
+    const secretKey = spnUniqueKey;
     if (!secretKey) return "";
 
     const key = CryptoJS.enc.Utf8.parse(secretKey);
@@ -622,13 +562,4 @@ function decryptData(cipherText) {
 
     const result = decrypted.toString(CryptoJS.enc.Utf8);
     return result;
-}
-function getSecretKey() {
-    const element = document.getElementById("spnUniqueSecretKey");
-    if (!element) {
-        console.error("spnUniqueSecretKey not found on this page");
-        return null;
-    }
-    const key = element.innerText.trim();
-    return key;
 }

@@ -1,8 +1,10 @@
 ﻿using BusinessLogicsLayer.BasicDet;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Healpers.BaseInterfaces;
+using Web.Validation;
 
 namespace Web.Controllers
 {
@@ -33,6 +35,9 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="TrackingId">The tracking ID used to fetch application status details.</param>
         /// <returns>A view displaying the application status along with footer and client IP information.</returns>
+        [HttpGet]
+        [AllowAnonymous]
+        [AnySessionRequired]
         public IActionResult AppStatus(int RequestId)
         {
             // Set the footer content fetched from the configuration file
@@ -69,6 +74,9 @@ namespace Web.Controllers
         /// Thrown when an error occurs while retrieving card history. 
         /// The exception is logged, and a null JSON result is returned.
         /// </exception>
+        [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> GetRequestHistoryByRequestId(int RequestId)
         {
             try
@@ -120,6 +128,9 @@ namespace Web.Controllers
         /// Any exception encountered during fetching, path resolution, 
         /// or decryption is logged, and a null JSON result is returned.
         /// </exception>
+        [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
         public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
             // Fetch and return the basic details for the provided request ID as a JSON response

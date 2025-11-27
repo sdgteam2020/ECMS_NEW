@@ -78,24 +78,6 @@ namespace DataAccessLayer
         }
 
 
-        /// <summary>
-        /// Retrieves the domain mapping record for a given `AspNetUsersId` from the `TrnDomainMapping` table.
-        /// This method queries the `TrnDomainMapping` table to fetch the domain mapping details associated with the provided `AspNetUsersId`.
-        /// </summary>
-        /// <param name="Data">An instance of the `TrnDomainMapping` class that contains the `AspNetUsersId` for the domain mapping record.</param>
-        /// <returns>
-        /// Returns a `TrnDomainMapping` object if a matching record is found, otherwise returns `null`.
-        /// </returns>
-        /// <remarks>
-        /// This method uses `FirstOrDefaultAsync` to retrieve the first matching domain mapping record for the provided `AspNetUsersId`.
-        /// If no matching record exists, it will return `null`.
-        /// </remarks>
-        public async Task<TrnDomainMapping?> GetByDomainIdbyUnit(TrnDomainMapping Data)
-        {
-            // Query the TrnDomainMapping table to retrieve the record where the AspNetUsersId matches the given Data's AspNetUsersId
-            return await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == Data.AspNetUsersId).FirstOrDefaultAsync();
-        }
-
 
         /// <summary>
         /// Retrieves the domain mapping record associated with a given `RequestId` from the `TrnDomainMapping` table.

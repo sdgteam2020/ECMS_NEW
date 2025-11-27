@@ -18,6 +18,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using Web.Validation;
 using Web.WebHelpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
@@ -2945,6 +2946,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>Returns the view for the record office.</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult RecordOffice()
         {
             short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]); //Get from appsettings.json
@@ -2961,6 +2963,7 @@ namespace Web.Controllers
         /// <param name="dTO">Data Transfer Object for the record office.</param>
         /// <returns>Returns a JSON result indicating the status of the operation.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveRecordOffice(MRecordOffice dTO)
         {
             try
@@ -3036,6 +3039,7 @@ namespace Web.Controllers
         /// Retrieves all record office data.
         /// </summary>
         /// <returns>Returns a JSON response containing all record office data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetAllRecordOffice()
         {
             try
@@ -3057,6 +3061,7 @@ namespace Web.Controllers
         /// <param name="dTO">The record office DTO to be deleted.</param>
         /// <returns>Returns a JSON response indicating the success of the deletion.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteRecordOffice(MRecordOffice dTO)
         {
             try
@@ -3078,6 +3083,7 @@ namespace Web.Controllers
         /// <param name="TypeId">The type ID for filtering the records.</param>
         /// <param name="SearchName">The name to search within the records.</param>
         /// <returns>Returns a JSON response with the mapped data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetMappedForRecord(int TypeId, string SearchName)
         {
             try
@@ -3099,6 +3105,7 @@ namespace Web.Controllers
         /// <param name="TDMId">The TDM ID to search for the domain.</param>
         /// <returns>Returns a JSON response with the domain ID.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetDomainIdByTDMId(int TDMId)
         {
             try
@@ -3117,6 +3124,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="RecordOfficeId">The ID of the record office to retrieve.</param>
         /// <returns>Returns a JSON response with the record office data for updating.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetUpdateRecordOffice(int RecordOfficeId)
         {
             try
@@ -3144,6 +3152,7 @@ namespace Web.Controllers
         /// Displays the update page for the record office, ensuring the user is authorized.
         /// </summary>
         /// <returns>Returns the view for updating the record office if authorized, else redirects to an error page.</returns>
+        [HttpGet]
         public async Task<IActionResult> UpdateRecordOffice()
         {
             DtoSession? dtoSession = new DtoSession();
@@ -3185,6 +3194,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="UnitMapId">The ID of the unit map to retrieve mapped data for.</param>
         /// <returns>Returns a JSON response with the mapped DD data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetDDMappedForRecord(int UnitMapId)
         {
             try
@@ -3205,6 +3215,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="dTO">Data Transfer Object containing the updated record office value.</param>
         /// <returns>Returns a JSON response indicating the success of the update operation.</returns>
+        [HttpPost]
         public async Task<IActionResult> UpdateROValue(DTOUpdateROValueRequest dTO)
         {
             try
@@ -3499,12 +3510,15 @@ namespace Web.Controllers
         [AllowAnonymous]
         [AnySessionRequired]
         [HttpPost]
-        public async Task<IActionResult> GetAllMMaster(DTOMasterRequest Data)
+        public async Task<IActionResult> GetAllMMaster([FromBody] DTOMasterRequest data)
         {
+            if (data == null)
+                return BadRequest(new { error = "Request body required." });
+
             try
             {
-                var ret = await unitOfWork.GetAllMMaster(Data); // Fetch all master data based on the request parameters
-                return Json(ret);
+                var result = await unitOfWork.GetAllMMaster(data);
+                return Json(result);
             }
             catch
             {

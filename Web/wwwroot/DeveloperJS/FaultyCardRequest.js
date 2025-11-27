@@ -82,32 +82,6 @@
         await GetTrnFaultyCardDetail(TrnFaultyCardId);
     }
     else {
-        //if (sessionStorage.getItem("ArmyNo") != null && sessionStorage.getItem("RequestIdForFaulty") != null && sessionStorage.getItem("MaxTrnFwdId") != null) {
-        //    var encryptedArmyNo = sessionStorage.getItem("ArmyNo");
-        //    var encryptedRequestId = sessionStorage.getItem("RequestIdForFaulty");
-        //    var encryptedMaxTrnFwdId = sessionStorage.getItem("MaxTrnFwdId");
-
-        //    var secretKey = document.getElementById("spnUniqueSecretKey").innerText;
-
-        //    var bytes = CryptoJS.AES.decrypt(encryptedArmyNo, secretKey);
-        //    var decryptedArmyNo = bytes.toString(CryptoJS.enc.Utf8);
-
-        //    var bytes = CryptoJS.AES.decrypt(encryptedRequestId, secretKey);
-        //    var decryptedRequestId = bytes.toString(CryptoJS.enc.Utf8);
-
-        //    var bytes = CryptoJS.AES.decrypt(encryptedMaxTrnFwdId, secretKey);
-        //    var decryptedMaxTrnFwdId = bytes.toString(CryptoJS.enc.Utf8);
-
-
-        //    $("#spnArmyNo").html(decryptedArmyNo);
-        //    $("#spnFaultyCardRequestId").html(decryptedRequestId);
-        //    $("#spnMaxTrnFwdId").html(decryptedMaxTrnFwdId);
-        //    $("#lblFaultyRequestId").html(decryptedRequestId);
-
-        //    GetBasicDetailForParitalViewByRequestId(decryptedRequestId);
-
-            
-        //}
         return new Promise((resolve, reject) => {
             fetch('/BasicDetail/DataRecForGetSession', {
                 method: 'POST',

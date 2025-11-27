@@ -6,7 +6,6 @@ using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.IAMSetting;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Service;
-using BusinessLogicsLayer.Token;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
 using DataAccessLayer;
@@ -45,7 +44,6 @@ namespace Web.Controllers
         public readonly IDomainMapBL _iDomainMapBL;
         private readonly IUserProfileBL _userProfileBL;
         public readonly IMapUnitBL _IMapUnitBL;
-        public readonly iGetTokenBL _iGetTokenBL;
         public readonly ITrnLoginLogBL _TrnLoginLogBL;
         private readonly IUnitBL _iUnitBL;
         private readonly ApplicationDbContext context, contextTransaction;
@@ -62,7 +60,7 @@ namespace Web.Controllers
         private readonly IIAMSettingBL _iAMSettingBL;
         private readonly IHostEnvironment _hostEnv;
 
-        public AccountController(IConfiguration configuration,IUnitOfWork unitOfWork,IUnitBL unitBL, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, iGetTokenBL iGetTokenBL, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
+        public AccountController(IConfiguration configuration,IUnitOfWork unitOfWork,IUnitBL unitBL, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
             IDataProtectionProvider dataProtectionProvider, IService service, IMapper mapper, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor, IIAMSettingBL iAMSettingBL, IHostEnvironment hostEnv)
         {
             _configuration = configuration;
@@ -74,7 +72,6 @@ namespace Web.Controllers
             _iAccountBL = iAccountBL;
             _iDomainMapBL = iDomainMapBL;
             _userProfileBL = userProfileBL;
-            _iGetTokenBL = iGetTokenBL;
             _IMapUnitBL = mapUnitBL;
             this.context = context;
             this.contextTransaction = contextTransaction;
@@ -714,7 +711,6 @@ namespace Web.Controllers
         /// </remarks>
         [HttpGet]
         [AllowAnonymous]
-        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> IMLoginSelf()
         {
             byte id = 0;
@@ -817,7 +813,6 @@ namespace Web.Controllers
         /// </remarks>
         [HttpPost]
         [AllowAnonymous]
-        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> IMLoginSelf(DTOIMLoginRequest model)
         {
             string? Footer = _configuration["Footer:Test"];
@@ -993,8 +988,8 @@ namespace Web.Controllers
         /// or a redirect action result based on user role.
         /// </returns>
         [HttpGet]
+        [AnySessionRequired]
         [AllowAnonymous]
-        [IgnoreAntiforgeryToken]
         public IActionResult TokenValidate()
         {
             string? Footer = _configuration["Footer:Test"];
@@ -1107,8 +1102,8 @@ namespace Web.Controllers
         /// </remarks>
         /// <exception cref="Exception">Catches all exceptions and logs using <c>_logger.LogError</c></exception>
         [HttpPost]
+        [AnySessionRequired]
         [AllowAnonymous]
-        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
         {
             try
@@ -1334,6 +1329,7 @@ namespace Web.Controllers
         /// or a redirect to "TokenValidate" if session is invalid or unauthorized.
         /// </returns>
         [HttpGet]
+        [AnySessionRequired]
         [AllowAnonymous]
         public async Task<IActionResult> Profile()
         {
@@ -1428,6 +1424,7 @@ namespace Web.Controllers
         /// - Logs errors in case of exceptions during processing.
         /// </remarks>
         [HttpPost]
+        [AnySessionRequired]
         [AllowAnonymous]
         public async Task<IActionResult> Profile(DTOProfileAndMappingRequest model)
         {
@@ -1726,6 +1723,7 @@ namespace Web.Controllers
         /// - Redirects to IAM login page if the response is missing, invalid, or an exception occurs.
         /// </returns>
         [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> IMLogin()
         {
             try
@@ -2039,6 +2037,7 @@ namespace Web.Controllers
         /// </returns>
         [HttpGet]
         [AllowAnonymous]
+        [AnySessionRequired]
         public IActionResult TokenValidate_()  //__ForIAM
         {
             // Get footer text from configuration and pass to ViewBag
@@ -2134,6 +2133,7 @@ namespace Web.Controllers
         /// </remarks>
         [HttpPost]
         [AllowAnonymous]
+        [AnySessionRequired]
         public async Task<IActionResult> TokenValidate_(DTOTokenRequestForIAM model)  //__ForIAM
         {
             try

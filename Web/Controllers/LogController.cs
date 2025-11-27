@@ -115,8 +115,20 @@ namespace Web.Controllers
         {
             try
             {
+                int UnitId = 0;
+                // Initialize the DTO session object
+                DtoSession? dtoSession = new DtoSession();
+
+                // Retrieve the session data if available
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    // Retrieve relevant session information such as UnitId, TrnDomainMappingId, and UserId
+                    UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                }
+
                 // Retrieve the login logs based on the user ID and date range
-                return Json(await _iTrnLoginLogBL.GetLoginLogByUserId(AspNetUsersId, FmDate, ToDate));
+                return Json(await _iTrnLoginLogBL.GetLoginLogByUserId(AspNetUsersId, UnitId, FmDate, ToDate));
             }
             catch (Exception ex)
             {

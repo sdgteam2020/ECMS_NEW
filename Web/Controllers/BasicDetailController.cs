@@ -179,6 +179,7 @@ namespace Web.Controllers
         /// Returns an <see cref="ActionResult"/> rendering the Index view with relevant ViewBag data,
         /// or redirects to the ContactUs page if input is invalid.
         /// </returns>
+        [HttpGet]
         public async Task<ActionResult> Index(string Id, string jcoor)
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
@@ -400,6 +401,7 @@ namespace Web.Controllers
         /// An <see cref="ActionResult"/> that renders the ApprovalForIO view with pre-populated ViewBag data,
         /// or redirects to the ContactUs page if input or user validation fails.
         /// </returns>
+        [HttpGet]
         public async Task<ActionResult> ApprovalForIO(string Id, string jcoor)
         {
             // Fetch current role from session and store in ViewBag
@@ -3126,6 +3128,7 @@ namespace Web.Controllers
         /// <returns>
         /// Returns a <see cref="ViewResult"/> for the Faulty Card page with a ViewBag property indicating claim status.
         /// </returns>
+        [HttpGet]
         public async Task<IActionResult> FaultyCard()
         {
             // Retrieve the user's role from the session
@@ -3257,6 +3260,7 @@ namespace Web.Controllers
         /// Returns the Faulty Card Request view with decrypted ID and claim information.
         /// If the ID is invalid or tampered with, redirects to ContactUs page with error message.
         /// </returns>
+        [HttpGet]
         public async Task<ActionResult> FaultyCardRequest(string? Id)
         {
             bool Claim = false;
@@ -3642,6 +3646,7 @@ namespace Web.Controllers
         /// although currently it simply renders the view.
         /// </summary>
         /// <returns>A ViewResult representing the Hotlist Card page.</returns>
+        [HttpGet]
         public IActionResult HotlistCard()
         {
             // Retrieve the user's role from the session
@@ -3796,6 +3801,7 @@ namespace Web.Controllers
         /// This action is responsible for returning the view where users can submit or view hotlist card requests.
         /// </summary>
         /// <returns>Returns a ViewResult rendering the Hotlist Card Request page.</returns>
+        [HttpGet]
         public ActionResult HotListCardRequest()
         {
             // Retrieve the user's role from the session
@@ -4190,6 +4196,7 @@ namespace Web.Controllers
         /// Returns the view for the card distribution page.
         /// </summary>
         /// <returns>A <see cref="ViewResult"/> representing the Distribute Card view.</returns>
+        [HttpGet]
         public IActionResult DistributeCard()
         {
             // Retrieve the user's role from the session
@@ -4276,7 +4283,8 @@ namespace Web.Controllers
         /// Returns the view for creating a new Distribute Card request.
         /// </summary>
         /// <returns>The DistributeCardRequest view.</returns>
-        public async Task<ActionResult> DistributeCardRequestAsync()
+        [HttpGet]
+        public ActionResult DistributeCardRequest()
         {
             return View();
         }
@@ -4374,6 +4382,7 @@ namespace Web.Controllers
         /// <returns>
         /// A JSON response with `true` if the Army Number is valid, otherwise `false`.
         /// </returns>
+        [HttpPost]
         public async Task<IActionResult> CheckArmyNO(string ArmyNo)
         {
             try
@@ -4583,6 +4592,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="RequestId">The request identifier used to fetch the user's basic details.</param>
         /// <returns>Returns a JSON object with the user's details including encrypted images, or null if not found.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
             // Fetch the basic detail data for the given request ID
@@ -4618,6 +4628,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="RequestId">The request identifier for which the history is fetched.</param>
         /// <returns>Returns a JSON object containing the I-Card history details.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetRequestHistory(int RequestId)
         {
             // Initialize the response object for card history
@@ -4647,6 +4658,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="RequestId">The request identifier for which the card movement history is fetched.</param>
         /// <returns>Returns a JSON object containing the card movement history details.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetCardMovementHistory(int RequestId)
         {
             // Fetch the card movement history from the business layer and return as JSON
@@ -4700,6 +4712,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The DTO containing the TypeId for which remarks are to be fetched.</param>
         /// <returns>Returns a JSON result containing the list of remarks.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetRemarks(DTORemarksRequest Data)
         {
             // Call the master business layer to get remarks by TypeId
@@ -4714,6 +4727,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="model">DTO containing parameters for CSV export.</param>
         /// <returns>Returns JSON containing the temporary CSV file name or an error message.</returns>
+        [HttpPost]
         public async Task<IActionResult> CreateCSV(DTOCSVExportRequest model)
         {
             try
@@ -4761,6 +4775,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="RequestId">The RequestId of the I-Card request.</param>
         /// <returns>Returns JSON containing the BasicDetailCrtAndUpdVM with decrypted images, or null if not found.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
         {
             // Initialize the generic response object
@@ -4831,6 +4846,7 @@ namespace Web.Controllers
         /// <param name="RequestId">The RequestId of the I-Card request.</param>
         /// <returns>Returns JSON containing the basic detail record, or internal server error on exception.</returns>
         [Authorize(Policy = "FlagICardApplPolicy")]
+        [HttpPost]
         public async Task<IActionResult> GetBDetailByRequestId(int RequestId)
         {
             try
@@ -4856,6 +4872,7 @@ namespace Web.Controllers
         /// <param name="ArmyNo">The Army Number to search for in I-Card requests.</param>
         /// <returns>Returns JSON containing the top Army Number entry, or internal server error on exception.</returns>
         [Authorize(Policy = "FlagICardApplPolicy")]
+        [HttpPost]
         public async Task<IActionResult> GetTopArmyNoFromICardRequest(string ArmyNo)
         {
             try
@@ -5043,55 +5060,6 @@ namespace Web.Controllers
         }
 
         #endregion
-
-        #region Card Distribution
-
-        /// <summary>
-        /// Displays the I-Card Distribution page to users who meet the "ViewFlaggedICardApplPolicy" policy.
-        /// </summary>
-        /// <remarks>
-        /// This action method retrieves the currently logged-in user's claims
-        /// and passes them to the view via ViewBag for role-based UI rendering or permissions handling.
-        /// </remarks>
-        /// <returns>
-        /// Returns the ICardDistribution view along with the user's claims.
-        /// </returns>
-        [Authorize(Policy = "ViewFlaggedICardApplPolicy")]
-        [HttpGet]
-        public async Task<IActionResult> ICardDistribution()
-        {
-            // Get the currently logged-in user's ID from the claims principal
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            // Retrieve the user object from UserManager based on userId
-            var user = await userManager.FindByIdAsync(userId);
-
-            // Get all claims assigned to the user (permissions, roles, etc.)
-            var UserClaims = await userManager.GetClaimsAsync(user);
-
-            // Pass the retrieved claims to the view using ViewBag
-            ViewBag.UserClaims = UserClaims;
-
-            // Return the ICardDistribution view
-            return View();
-        }
-
-
-        //[Authorize(Policy = "ViewFlaggedICardApplPolicy")]
-        //[HttpPost]
-        //public async Task<IActionResult> GetAllICardDistribution()
-        //{
-        //    try
-        //    {
-        //        return Json(await basicDetailBL.GetAllICardRequestHold());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
-        //        return Json(KeyConstants.InternalServerError);
-        //    }
-        //}
-        #endregion Card Distribution
 
         #region CSVFileUpload/ICardPrintUploadCsv/ICardPrintValidRecordsUpload
 
@@ -5374,7 +5342,8 @@ namespace Web.Controllers
         /// <returns>
         /// Returns the Destruction Card view to the client.
         /// </returns>
-        public IActionResult DestructionCardAsync()
+        [HttpGet]
+        public IActionResult DestructionCard()
         {
             // Retrieve the user's role from the session
             string role = SessionHelper.GetRoleFromSession(HttpContext);
@@ -5469,7 +5438,8 @@ namespace Web.Controllers
         /// Returns the view for destruction card requests.
         /// </summary>
         /// <returns>ViewResult containing the Destruction Card Request page.</returns>
-        public async Task<ActionResult> DestructionCardRequestAsync()
+        [HttpGet]
+        public ActionResult DestructionCardRequest()
         {
             // Simply return the view associated with destruction card requests
             return View();
@@ -5482,6 +5452,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="model">The destruction card model to save.</param>
         /// <returns>JSON containing the result, messages, record ID, and timestamp.</returns>
+        [HttpPost]
         public async Task<IActionResult> SaveDestructionCardRequest(TrnDestructionCard model)
         {
             // Initialize the response object for front-end
@@ -5562,6 +5533,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="AspNetUsersId">The ID of the ASP.NET user.</param>
         /// <returns>JSON containing a generic response with user details.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetUserIdWithName(int AspNetUsersId)
         {
             // Initialize the generic response object
@@ -5581,6 +5553,7 @@ namespace Web.Controllers
         /// <param name="CategeryId">The category ID for the dispatch.</param>
         /// <param name="RecordRegimentId">The regiment ID for the dispatch record.</param>
         /// <returns>JSON containing a generic response with dispatch-to details.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetDispatchToData(byte CategeryId, byte RecordRegimentId)
         {
             // Initialize the generic response object
@@ -5599,6 +5572,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="ToUnitId">The target unit ID for which regiments are fetched.</param>
         /// <returns>JSON containing a generic response with regiment and unit details.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetddlRecordRegiment(int ToUnitId)
         {
             // Initialize the session object
@@ -5672,6 +5646,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>View with appropriate ClaimValue or redirects to error page if session/user invalid.</returns>
         [Authorize(Policy = "ICardDispatchPolicy")]
+        [HttpGet]
         public async Task<ActionResult> DispatchOut()
         {
             // Retrieve the user's role from the session
@@ -5965,6 +5940,7 @@ namespace Web.Controllers
         /// <returns>
         /// Returns the DispatchCard view with the appropriate ClaimValue.
         /// </returns>
+        [HttpGet]
         public async Task<IActionResult> DispatchCard()
         {
             // Retrieve the user's role from the session

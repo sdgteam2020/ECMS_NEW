@@ -90,6 +90,7 @@ namespace Web.Controllers
         /// Action method that displays the "Contact Us" page.
         /// </summary>
         /// <returns>The "Contact Us" view.</returns>
+        [HttpGet]
         public IActionResult ContactUs()
         {
             // Return the ContactUs view
@@ -102,6 +103,7 @@ namespace Web.Controllers
         /// and passes it to the view through the ViewBag.
         /// </summary>
         /// <returns>The Index view, with the user's role passed in ViewBag.</returns>
+        [HttpGet]
         public IActionResult Index()
         {
             // Retrieve the user's role from the session
@@ -126,6 +128,7 @@ namespace Web.Controllers
 
 
         #region Notification /GetAllNotificationData / SaveNotification / GetNotification / GetNotificationRequestId / UpdateNotification
+        [HttpGet]
         public IActionResult Notification()
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
@@ -140,6 +143,9 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+        
+        
+        [HttpPost]
         public async Task<IActionResult> GetAllNotificationData([FromBody] DTODataTablesRequestForNotification dTORecord)
         {
             // Retrieve current userId from claims and assign it into the DTO
@@ -167,6 +173,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The notification data to be saved.</param>
         /// <returns>A JSON response indicating success (1) or failure (0).</returns>
+        [HttpPost]
         public async Task<IActionResult> SaveNotification(DTOTrnNotificationRequest Data)
         {
             try
@@ -205,6 +212,7 @@ namespace Web.Controllers
         /// <param name="TypeId">The notification type ID used to filter the notifications.</param>
         /// <param name="applyForId">The applyForId used to filter the notifications.</param>
         /// <returns>A JSON response containing a list of notifications or null if no notifications are found.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetNotification()
         {
             // Retrieve the user ID from the claims
@@ -245,6 +253,7 @@ namespace Web.Controllers
         /// <param name="TypeId">The notification type ID used to filter the notifications.</param>
         /// <param name="applyForId">The applyForId used to filter the notifications.</param>
         /// <returns>A JSON response containing a list of notifications related to the request ID or null if no notifications are found.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetNotificationRequestId(int TypeId, int applyForId)
         {
             // Retrieve the user ID from the claims
@@ -282,6 +291,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The notification data to be updated.</param>
         /// <returns>A JSON response indicating the success or failure of the update operation.</returns>
+        [HttpPost]
         public async Task<IActionResult> UpdateNotification(MTrnNotification Data)
         {
             // Retrieve the user ID from the claims
@@ -305,6 +315,7 @@ namespace Web.Controllers
         /// and performs a lookup to determine if the user has access to the specified record office (RO).
         /// </summary>
         /// <returns>The DashboardUserMgt view with appropriate session and role data passed in ViewBag.</returns>
+        [HttpGet]
         public async Task<IActionResult> DashboardUserMgt()
         {
             // Retrieve the user's role from the session
@@ -365,10 +376,22 @@ namespace Web.Controllers
         /// <param name="UnitId">The UnitId used to filter the user management count data.</param>
         /// <returns>A JSON response containing the dashboard user management count.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetDashboardUserMgtCount(int UnitId)
+        public async Task<IActionResult> GetDashboardUserMgtCount()
         {
             try
             {
+                int UnitId=0;
+                // Initialize the DTO session object
+                DtoSession? dtoSession = new DtoSession();
+
+                // Retrieve the session data if available
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    // Retrieve relevant session information such as UnitId, TrnDomainMappingId, and UserId
+                    UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                }
+
                 // Retrieve the user ID from the claims
                 int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 

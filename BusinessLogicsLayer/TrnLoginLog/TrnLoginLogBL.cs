@@ -39,14 +39,14 @@ namespace BusinessLogicsLayer.TrnLoginLog
             return _iTrnLoginLogDB.GetAllUserByUnitId(UnitId);
         }
 
-        public Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId, DateTime? FmDate, DateTime? ToDate)
+        public Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId, int UnitId, DateTime? FmDate, DateTime? ToDate)
         {
             if(FmDate==null)
                 FmDate=DateTime.Now;
             if (ToDate == null)
                 ToDate = DateTime.Now;
 
-            return _iTrnLoginLogDB.GetLoginLogByUserId(AspnetUserId, FmDate, ToDate);
+            return _iTrnLoginLogDB.GetLoginLogByUserId(AspnetUserId, UnitId, FmDate, ToDate);
         }
 
         public Task<bool> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data)
