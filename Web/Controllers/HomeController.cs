@@ -406,14 +406,15 @@ namespace Web.Controllers
             }
         }
 
-        
+
         /// <summary>
         /// Action method to display the Request Dashboard based on the provided base64-encoded Id.
         /// The method validates the Id, decodes it, and determines the appropriate view based on the decoded value.
         /// </summary>
         /// <param name="Id">The base64-encoded Id used to determine the dashboard type.</param>
         /// <returns>A view for the Request Dashboard with the corresponding role and previous link.</returns>
-        public async Task<IActionResult> RequestDashboard(string Id)
+        [HttpGet]
+        public IActionResult RequestDashboard(string Id)
         {
             // Validate the base64 encoded Id and check if it's valid
             if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
@@ -476,12 +477,13 @@ namespace Web.Controllers
             }
         }
 
-        
+
         /// <summary>
         /// Action method to retrieve the request dashboard count based on the provided Id and session data.
         /// </summary>
         /// <param name="Id">The ID used to retrieve the request dashboard count data.</param>
         /// <returns>A JSON response containing the request dashboard count data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetRequestDashboardCount(string Id)
         {
             // Retrieve the user ID from the claims
@@ -508,6 +510,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>The "Register User" view with the UnitId passed in ViewBag.</returns>
         [Authorize]
+        [HttpGet]
         public IActionResult RegisterUser()
         {
             return View();
@@ -558,7 +561,7 @@ namespace Web.Controllers
         /// and passes them to the view for display.
         /// </summary>
         /// <returns>The Dashboard view with role and user claims passed in ViewBag.</returns>
-        
+        [HttpGet]
         public async Task<IActionResult> Dashboard()
         {
             // Retrieve the user's role from the session
@@ -597,6 +600,7 @@ namespace Web.Controllers
         /// It validates configuration values and then calls the business logic layer to get the dashboard count data.
         /// </summary>
         /// <returns>A JSON response containing the dashboard count data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetDashboardCount()
         {
 
@@ -632,7 +636,8 @@ namespace Web.Controllers
         /// Action method to display the sub-dashboard. It retrieves the user's role and passes it to the view.
         /// </summary>
         /// <returns>The SubDashboard view with the user's role passed in ViewBag.</returns>
-        public async Task<IActionResult> SubDashboard()
+        [HttpGet]
+        public IActionResult SubDashboard()
         {
             // Retrieve the user's role from the session
             string role = SessionHelper.GetRoleFromSession(HttpContext);
@@ -656,6 +661,7 @@ namespace Web.Controllers
         /// Action method to retrieve the sub-dashboard count based on the user's session data.
         /// </summary>
         /// <returns>A JSON response containing the sub-dashboard count data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetSubDashboardCount()
         {
             // Retrieve the user ID from the claims
@@ -684,6 +690,7 @@ namespace Web.Controllers
         /// Action method to display the Task page. It retrieves the user's role and claims, then passes them to the view.
         /// </summary>
         /// <returns>The Task view with the user's role and claims passed in ViewBag.</returns>
+        [HttpGet]
         public async Task<IActionResult> Task()
         {
             // Retrieve the user's role from the session
@@ -716,6 +723,7 @@ namespace Web.Controllers
         /// It retrieves session data, user claims, and then calls the business logic layer to fetch the task count data.
         /// </summary>
         /// <returns>A JSON response containing the task board count data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetTaskBoardCount()
         {
             // Retrieve the user ID from the claims
@@ -770,6 +778,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Id">The base64-encoded Id used to determine the task type.</param>
         /// <returns>A view for the MyTask page with the corresponding role and user claims.</returns>
+        [HttpGet]
         public async Task<IActionResult> MyTask(string Id)
         {
             // Validate the base64 encoded Id and check if it's valid
@@ -838,6 +847,7 @@ namespace Web.Controllers
         /// <param name="Id">The ID of the request.</param>
         /// <param name="applyForId">The ID of the applyFor field used to filter the task count.</param>
         /// <returns>A JSON response containing the task count for the I-Card request.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetTaskCountICardRequest(int Id, int applyForId)
         {
             // Retrieve the user ID from the claims
@@ -868,6 +878,7 @@ namespace Web.Controllers
         /// and passes them to the view for display.
         /// </summary>
         /// <returns>The ReportAndReturn view with user claims passed in ViewBag.</returns>
+        [HttpGet]
         public async Task<IActionResult> ReportAndReturn()
         {
             // Retrieve the user ID from the claims of the current user
@@ -903,6 +914,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The data used to retrieve the report return count.</param>
         /// <returns>A JSON response containing the report return count or an error message.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetReportReturnCount(DTOMHierarchyRequest Data)
         {
             try
@@ -968,6 +980,7 @@ namespace Web.Controllers
         /// and passes them to the view for display.
         /// </summary>
         /// <returns>The Report view with role and user claims passed in ViewBag.</returns>
+        [HttpGet]
         public async Task<IActionResult> Report()
         {
             // Retrieve the user's role from the session
@@ -1000,13 +1013,14 @@ namespace Web.Controllers
             }
         }
 
-        
+
         /// <summary>
         /// Action method to retrieve the report dashboard count based on the provided data.
         /// It validates the session and user claims, then fetches the required report dashboard data.
         /// </summary>
         /// <param name="dTORecord">The request data for the report dashboard count.</param>
         /// <returns>A JSON response containing the dashboard count data or an error message.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetReportDashboardCount([FromBody] DTOMHierarchyRequest dTORecord)
         {
             // Retrieve the current user's ID from the claims
@@ -1232,6 +1246,7 @@ namespace Web.Controllers
         /// and passes them to the view for display.
         /// </summary>
         /// <returns>The Request view with the user's claims and role passed in ViewBag.</returns>
+        [HttpGet]
         public async Task<IActionResult> Request()
         {
             // Retrieve the user ID from the claims
@@ -1264,6 +1279,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The registration data containing the "ApplyFor" property.</param>
         /// <returns>A JSON response containing the data fetched based on the "ApplyFor" value.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetRegistrationApplyfor(MRegistration Data)
         {
             // Fetch the registration data based on the "ApplyFor" property
@@ -1274,6 +1290,7 @@ namespace Web.Controllers
         /// Action method to initiate a new request. It retrieves the user's role and passes it to the view.
         /// </summary>
         /// <returns>The InitiateRequest view with the user's role passed in ViewBag.</returns>
+        [HttpGet]
         public IActionResult InitiateRequest()
         {
             // Retrieve the user's role from the session
@@ -1302,7 +1319,7 @@ namespace Web.Controllers
         /// It checks the visitor's IP address, user-agent, and session status to update or load stats.
         /// </summary>
         /// <returns>A JSON response containing the visitor stats.</returns>
-        [IgnoreAntiforgeryToken]
+        [HttpPost]
         public JsonResult VisitorStats()
         {
             var model = new DTOVisitorCounterResponse();
@@ -1517,7 +1534,7 @@ namespace Web.Controllers
         #endregion
 
         #region ReportCard / GetReportCardDashboardCount
-        
+        [HttpGet]
         public async Task<IActionResult> ReportCard()
         {
             // Retrieve the user's role from the session
@@ -1549,7 +1566,8 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
-
+        
+        [HttpPost]
         public async Task<IActionResult> GetReportCardDashboardCount([FromBody] DTOMHierarchyRequest dTORecord)
         {
             // Retrieve the current user's ID from the claims

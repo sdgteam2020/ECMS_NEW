@@ -58,7 +58,7 @@
                             Total ORO Mapping  <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
                         </h6>
                         <div>
-                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-md"><i class="fa fa-plus mr-1 font-weight-700" aria-hidden="true"></i>Add ORO Mapping</button>
+                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-md"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add ORO Mapping</button>
                             @* <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button> *@
 
                         </div>
@@ -92,12 +92,12 @@
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 
-<div class="modal fade" id="AddNewOROMapping" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="AddNewOROMapping" tabindex="-1" aria-labelledby="exampleModalLabel" >
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Enter Officer Record Office Mapping Details</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -107,7 +107,7 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Record Office<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlRO" id="ddlRO" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Record Office is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" style="width: 100%;"  name="ddlRO" id="ddlRO" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Record Office is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Record Office</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlRO" data-valmsg-replace="true"></span>
@@ -116,7 +116,7 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Select Arms</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control select2 select2-accessible" multiple="" placeholder="Select Arms" style="width: 100%;" aria-hidden="true" name="ddlArmedIdList" id="ddlArmedIdList" data-val="true" data-val-regex="This special chars and space not allowed for security reasons.">
+                                    <select class="form-control select2 select2-accessible" multiple="" placeholder="Select Arms" style="width: 100%;"  name="ddlArmedIdList" id="ddlArmedIdList" data-val="true" data-val-regex="This special chars and space not allowed for security reasons.">
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlArmedIdList" data-valmsg-replace="true"></span>
                                 </div>
@@ -124,7 +124,7 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Select Rank</label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" style="width: 100%;"  name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Rank</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlRank" data-valmsg-replace="true"></span>
@@ -141,7 +141,7 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Linked Domain ID & Pers Details</label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;" aria-hidden="true" name="ddlTDMId" id="ddlTDMId" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" style="width: 100%;"  name="ddlTDMId" id="ddlTDMId" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Domain Id</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlTDMId" data-valmsg-replace="true"></span>

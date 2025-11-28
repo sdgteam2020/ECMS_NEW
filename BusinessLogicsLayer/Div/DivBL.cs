@@ -1,14 +1,8 @@
-﻿using BusinessLogicsLayer.Bde;
+﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
-using DataAccessLayer;
 using DataTransferObject.Domain.Master;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataTransferObject.Response;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.Div
 {
@@ -25,7 +19,7 @@ namespace BusinessLogicsLayer.Div
             return _DivDB.GetALLDiv();
         }
 
-        public Task<List<DTODivResponse>> GetByHId(DTOMHierarchyRequest Data)
+        public Task<List<DTODivResponse>> GetByHId(DTOParentChildIdRequest Data)
         {
             return _DivDB.GetByHId(Data);
         }

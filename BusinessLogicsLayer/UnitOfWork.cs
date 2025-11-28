@@ -382,7 +382,7 @@ namespace BusinessLogicsLayer
         /// </summary>
         /// <param name="Data">The request data containing filtering options such as TableId and ParentId.</param>
         /// <returns>A list of <see cref="DTOMasterResponse"/> representing the master records.</returns>
-        public async Task<List<DTOMasterResponse>> GetAllMMasterByParent(DTOMHierarchyRequest Data)
+        public async Task<List<DTOMasterResponse>> GetAllMMasterByParent(DTOParentChildIdRequest Data)
             {
                 List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
                 int count = 0;

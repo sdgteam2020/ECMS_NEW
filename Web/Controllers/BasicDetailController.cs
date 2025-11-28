@@ -2947,6 +2947,7 @@ namespace Web.Controllers
         /// Returns a JSON object with merged XML files for digital signing if data exists,
         /// otherwise generates a JSON response indicating the absence of XML data.
         /// </returns>
+        [HttpPost]
         public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
         {
             try

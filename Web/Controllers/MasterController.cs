@@ -63,6 +63,7 @@ namespace Web.Controllers
         /// An <see cref="IActionResult"/> that renders the Command view.
         /// </returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult Command()
         {
             // Return the Command view to the client
@@ -161,6 +162,7 @@ namespace Web.Controllers
         /// In case of any exceptions, an internal server error is logged, and the client receives an appropriate error response.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllCommand(int[] Id)
         {
             try
@@ -192,6 +194,7 @@ namespace Web.Controllers
         /// Otherwise, the command is deleted from the database.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteCommand(MComd dTO)
         {
             try
@@ -232,6 +235,7 @@ namespace Web.Controllers
         /// It calls the <see cref="unitOfWork.Comds.OrderByChange"/> method to perform the actual update in the database.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> OrderByChange(MComd dTO)
         {
             try
@@ -267,6 +271,7 @@ namespace Web.Controllers
         /// The deletion process is handled one record at a time for each command ID in the array.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteCommandMultiple(int[] ints)
         {
             try
@@ -301,6 +306,7 @@ namespace Web.Controllers
         /// If an exception occurs during the retrieval, the method logs the error and returns an internal server error response.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetBinaryTree(int Id)
         {
             try
@@ -332,6 +338,7 @@ namespace Web.Controllers
         /// Returns a view representing the Corps management page for the administrator.
         /// </returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult Corps()
         {
             return View();
@@ -438,6 +445,7 @@ namespace Web.Controllers
         /// If an exception occurs during the data retrieval process, the exception is logged, and an internal server error message is returned.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllCorps(int Id)
         {
             try
@@ -472,6 +480,7 @@ namespace Web.Controllers
         /// Any exceptions are logged and an internal server error code is returned.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteCorps(MCorps dTO)
         {
             try
@@ -509,6 +518,7 @@ namespace Web.Controllers
         /// Logs any exceptions and returns an appropriate error response.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteCorpsMultiple(int[] ints)
         {
             try
@@ -543,6 +553,7 @@ namespace Web.Controllers
         /// A view for managing Div data.
         /// </returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult Div()
         {
             return View();
@@ -563,6 +574,7 @@ namespace Web.Controllers
         /// - `KeyConstants.InternalServerError` if an exception occurs.
         /// </returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveDiv(MDiv dTO)
         {
             try
@@ -645,6 +657,7 @@ namespace Web.Controllers
         /// If an error occurs during the retrieval process, an exception is caught and logged, and an error response is returned.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllDiv(int Id)
         {
             try
@@ -681,6 +694,7 @@ namespace Web.Controllers
         /// 4. Any errors are logged, and an internal server error message is returned if an exception occurs.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteDiv(MDiv dTO)
         {
             try
@@ -725,6 +739,7 @@ namespace Web.Controllers
         /// 3. If an exception occurs, it logs the error and returns a failure response indicating the error.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteDivMultiple(int[] ints)
         {
             try
@@ -765,6 +780,7 @@ namespace Web.Controllers
         /// the [Authorize] attribute, ensuring that only authorized personnel can interact with this page.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult Bde()
         {
 
@@ -793,6 +809,7 @@ namespace Web.Controllers
         /// The update process also handles any necessary changes in related records, like updating the associated division and command.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveBde(MBde dTO)
         {
             try
@@ -875,6 +892,7 @@ namespace Web.Controllers
         /// If an error occurs during the data retrieval, it logs the error and returns a failure response.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllBde(int Id)
         {
             try
@@ -907,6 +925,7 @@ namespace Web.Controllers
         /// Otherwise, the Brigade is deleted, and the success status is returned.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteBde(MBde dTO)
         {
             try
@@ -953,6 +972,7 @@ namespace Web.Controllers
         /// If any error occurs during the deletion process, an error message is logged and the method returns an internal server error.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteBdeMultiple(int[] ints)
         {
             try
@@ -995,6 +1015,7 @@ namespace Web.Controllers
         /// such as linking specific units to their respective command, corps, and division.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult MapUnit()
         {
             return View();
@@ -1041,6 +1062,7 @@ namespace Web.Controllers
         /// This method checks for duplicate units and mappings, and updates or saves the data accordingly.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO)
         {
             try
@@ -1132,6 +1154,7 @@ namespace Web.Controllers
         /// This method handles the addition and update of map units. If the unit name already exists, it returns an error.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveMapUnit(MapUnit dTO)
         {
             try
@@ -1184,6 +1207,7 @@ namespace Web.Controllers
         /// This method handles the retrieval of map units based on the provided filters. If the filters are not valid, it returns an empty list.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllMapUnit(DTODataTablesRequestForMapUnit dTO)
         {
             try
@@ -1274,7 +1298,8 @@ namespace Web.Controllers
         /// <remarks>
         /// This method retrieves all map units filtered by the unit ID stored in the session.
         /// </remarks>
-        public async Task<IActionResult> GetALLByUnitMapWonUnit(int UnitMapId)
+        [HttpPost]
+        public async Task<IActionResult> GetALLByUnitMapWonUnit()
         {
             try
             {
@@ -1303,6 +1328,7 @@ namespace Web.Controllers
         /// <remarks>
         /// This method retrieves all map units filtered by the unit ID provided.
         /// </remarks>
+        [HttpPost]
         public async Task<IActionResult> GetALLByUnitById(int UnitId)
         {
             try
@@ -1327,6 +1353,7 @@ namespace Web.Controllers
         /// This method checks for any foreign key references before allowing the deletion of a map unit.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteMapUnit(int UnitMapId)
         {
             try
@@ -1359,6 +1386,7 @@ namespace Web.Controllers
         /// This method allows the deletion of multiple map units by passing an array of unit map IDs.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteMapUnitMultiple(int[] ints)
         {
             try
@@ -1388,6 +1416,7 @@ namespace Web.Controllers
         /// <remarks>
         /// This method retrieves units based on the provided hierarchy filter.
         /// </remarks>
+        [HttpPost]
         public async Task<IActionResult> GetUnitByHierarchy(DTOMHierarchyRequest Data)
         {
             try
@@ -1411,6 +1440,7 @@ namespace Web.Controllers
         /// Displays the view for MapUnitChange and assigns the role name to the ViewBag.
         /// </summary>
         /// <returns>Returns the View for MapUnitChange.</returns>
+        [HttpGet]
         public IActionResult MapUnitChange() 
         {
             string RoleName = string.Empty;
@@ -1431,6 +1461,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="MapUnitChangeRequestId">The ID of the MapUnitChangeRequest.</param>
         /// <returns>Returns the unit move history details in JSON format.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetUnitMoveHistory(int MapUnitChangeRequestId)
         {
             try
@@ -1502,6 +1533,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="MapUnitChangeRequestId">The ID of the MapUnitChangeRequest.</param>
         /// <returns>Returns the change map unit details in JSON format.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetChangeMapUnitDetails(int MapUnitChangeRequestId)
         {
             try
@@ -1605,6 +1637,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Id">The encrypted ID of the MapUnitChange request.</param>
         /// <returns>Returns the view or error message based on the process outcome.</returns>
+        [HttpGet]
         public async Task<IActionResult> MapUnitChangeRequest(string? Id)
         {
             int MapUnitId = 0;
@@ -1712,6 +1745,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="dTO">The DTO containing the MapUnitChangeRequest data.</param>
         /// <returns>Returns a response indicating the success or failure of the save operation.</returns>
+        [HttpPost]
         public async Task<IActionResult> SaveMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO)
         {
             DTOCommonSaveResponse dTOCommon = new DTOCommonSaveResponse();
@@ -1837,6 +1871,7 @@ namespace Web.Controllers
         /// <param name="dTO">The data transfer object containing the Map Unit Change Request information to be updated.</param>
         /// <returns>A JSON response indicating the result of the update action.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> UpdateMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO)
         {
             DTOCommonSaveResponse dTOCommon = new DTOCommonSaveResponse();
@@ -1906,6 +1941,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>The Unit view.</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult Unit()
         {
             return View();
@@ -1917,6 +1953,7 @@ namespace Web.Controllers
         /// <param name="dTO">The unit data transfer object containing unit details.</param>
         /// <returns>A JSON result indicating whether the unit was saved or updated.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveUnit(MUnit dTO)
         {
             try
@@ -2006,6 +2043,7 @@ namespace Web.Controllers
         /// <param name="dTO">The unit data transfer object containing the UnitId.</param>
         /// <returns>A JSON result indicating success or failure.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteUnit(MUnit dTO)
         {
             try
@@ -2037,6 +2075,7 @@ namespace Web.Controllers
         /// <param name="ints">The array of UnitIds to be deleted.</param>
         /// <returns>A JSON result indicating success or failure.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteUnitMultiple(int[] ints)
         {
             try
@@ -2062,6 +2101,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The unit data transfer object containing the Sus_no and Suffix.</param>
         /// <returns>A JSON result containing the unit details or an error if not found.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetBySusNO(MUnit Data)
         {
             try
@@ -2118,6 +2158,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>View for Formation</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult Formation()
         {
             return View();
@@ -2130,6 +2171,7 @@ namespace Web.Controllers
         /// <param name="dTO">The formation object to be saved.</param>
         /// <returns>JSON response indicating success, update, or validation errors.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveFormation(MFormation dTO)
         {
             try
@@ -2180,6 +2222,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>JSON response containing a list of all formations.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllFormation()
         {
             try
@@ -2200,6 +2243,7 @@ namespace Web.Controllers
         /// <param name="dTO">The formation object to be deleted.</param>
         /// <returns>JSON response indicating success or failure.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteFormation(MFormation dTO)
         {
             try
@@ -2220,6 +2264,7 @@ namespace Web.Controllers
         /// <param name="ints">An array of formation IDs to delete.</param>
         /// <returns>JSON response indicating success or failure.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteFormationMultiple(int[] ints)
         {
             try
@@ -2249,6 +2294,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>The view for managing appointments.</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult Appointment()
         {
             return View();
@@ -2334,6 +2380,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>JSON result containing all appointments.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllAppointment()
         {
             return Json(await unitOfWork.Appt.GetALLAppt()); // Fetch all appointments
@@ -2368,6 +2415,7 @@ namespace Web.Controllers
         /// <param name="dTO">The appointment data transfer object to delete.</param>
         /// <returns>JSON result indicating whether the appointment was successfully deleted.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteAppointment(MAppointment dTO)
         {
             try
@@ -2397,6 +2445,7 @@ namespace Web.Controllers
         /// <param name="ints">The array of appointment IDs to delete.</param>
         /// <returns>JSON result indicating whether the appointments were successfully deleted.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteAppointmentMultiple(short[] ints)
         {
             try
@@ -2452,6 +2501,7 @@ namespace Web.Controllers
         /// </remarks>
         /// <returns>The Rank management view.</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult Rank()
         {
             return View();
@@ -2475,6 +2525,7 @@ namespace Web.Controllers
         /// Uses audit fields: <c>IsActive</c>, <c>Updatedby</c>, <c>UpdatedOn</c>.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveRank(MRank dTO)
         {
             try
@@ -2538,6 +2589,7 @@ namespace Web.Controllers
         /// or <c>KeyConstants.InternalServerError</c> on failure.
         /// </returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllRank(int[] Id)
         {
             try
@@ -2569,6 +2621,7 @@ namespace Web.Controllers
         /// (e.g., TotalBD / TotalBDT / TotalUP counters).
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteRank(MRank dTO)
         {
             try
@@ -2609,6 +2662,7 @@ namespace Web.Controllers
         /// The actual ordering logic is encapsulated in <c>unitOfWork.Rank.OrderByChange</c>.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> RankOrderByChange(MRank dTO)
         {
             try
@@ -2640,6 +2694,7 @@ namespace Web.Controllers
         /// or adding a batch FK check for robustness.
         /// </remarks>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteRankMultiple(int[] ints)
         {
             try
@@ -2670,6 +2725,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>The ArmedType management view.</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult ArmedType()
         {
             return View();
@@ -2682,6 +2738,7 @@ namespace Web.Controllers
         /// <param name="dTO">The ArmedType data transfer object containing the details to be saved.</param>
         /// <returns>A JSON result indicating the success or failure of the operation.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveArmed(MArmedType dTO)
         {
             try
@@ -2733,6 +2790,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>A JSON result containing the list of all ArmedTypes.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllArmed()
         {
             try
@@ -2755,6 +2813,7 @@ namespace Web.Controllers
         /// <param name="dTO">The ArmedType data transfer object containing the ArmedId to be deleted.</param>
         /// <returns>A JSON result indicating success, failure, or foreign key dependency.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteArmed(MArmedType dTO)
         {
             try
@@ -2783,6 +2842,7 @@ namespace Web.Controllers
         /// <param name="ints">An array of ArmedId values to delete.</param>
         /// <returns>A JSON result indicating success or failure of the operation.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteArmedMultiple(int[] ints)
         {
             try
@@ -2812,6 +2872,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>Returns the Regimental view.</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult Regimental()
         {
             return View();
@@ -2824,6 +2885,7 @@ namespace Web.Controllers
         /// <param name="dTO">The regimental data transfer object containing the regimental details.</param>
         /// <returns>Returns a JSON response indicating the result of the save operation.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveRegimental([FromBody] MRegimental dTO)
         {
             // FormBody used when send null in Unit then not support action method (treat as string, not null)
@@ -2875,6 +2937,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Id">An array of regimental IDs to filter the results (optional).</param>
         /// <returns>Returns a JSON response with the list of all regimental records.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetAllRegimental(int[] Id)
         {
             try
@@ -2896,6 +2959,7 @@ namespace Web.Controllers
         /// <param name="dTO">The regimental data transfer object containing the regimental details to be deleted.</param>
         /// <returns>Returns a JSON response indicating the result of the delete operation.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteRegimental(MRegimental dTO)
         {
             try
@@ -2917,6 +2981,7 @@ namespace Web.Controllers
         /// <param name="ints">An array of regimental IDs to be deleted.</param>
         /// <returns>Returns a JSON response indicating the result of the multiple delete operation.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteRegimentalMultiple(int[] ints)
         {
             try
@@ -3016,16 +3081,6 @@ namespace Web.Controllers
                     return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                 }
             }
-            //catch (DbUpdateException ex) when (ex.InnerException?.InnerException is SqlException sqlEx && (sqlEx.Number == 2601 || sqlEx.Number == 2627))
-            //{
-            //    _logger.LogError(1001, ex, "Master->SaveRecordOffice");
-            //    return Json(KeyConstants.Exists);
-            //}
-            //catch (UniqueConstraintException ex)
-            //{
-            //    _logger.LogError(1001, ex, "Master->SaveRecordOffice");
-            //    return Json(KeyConstants.Exists);
-            //}
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->SaveRecordOffice");
@@ -3269,6 +3324,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>Returns the view for ORO Mapping.</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult OROMapping()
         {
             return View();
@@ -3284,6 +3340,7 @@ namespace Web.Controllers
         /// </returns>
         /// <exception cref="Exception">Throws when an error occurs during the retrieval of ORO mappings.</exception>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllOROMapping()
         {
             try
@@ -3317,6 +3374,7 @@ namespace Web.Controllers
         /// <exception cref="ArgumentNullException">Thrown if the RankId or ArmedIdList is null or empty.</exception>
         /// <exception cref="Exception">Throws if any exception occurs during the save or update operation.</exception>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveOROMapping(OROMapping dTO)
         {
             try
@@ -3366,6 +3424,7 @@ namespace Web.Controllers
         /// A JSON response containing a list of arms. The list is fetched from the business layer.
         /// </returns>
         /// <exception cref="Exception">Throws when an error occurs while fetching the list of arms.</exception>
+        [HttpPost]
         public async Task<IActionResult> GetArmsList()
         {
             return Json(await _IMasterBL.GetArmsList());// Fetch the list of arms from the business layer and return as JSON
@@ -3387,6 +3446,7 @@ namespace Web.Controllers
         /// </remarks>
         /// <exception cref="Exception">Throws if any exception occurs during the delete operation.</exception>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteOROMapping(OROMapping dTO)
         {
             try
@@ -3411,6 +3471,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>View for AFSAC Cell Mapping.</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult AfsacCellMapping()
         {
             return View();
@@ -3423,6 +3484,7 @@ namespace Web.Controllers
         /// <returns>A JSON result containing the list of AFSAC Cell Mappings.</returns>
         /// <exception cref="Exception">Throws exception if retrieval fails.</exception>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetAllAfsacCellMapping()
         {
             try
@@ -3445,6 +3507,7 @@ namespace Web.Controllers
         /// <returns>A JSON result indicating success or failure of the save operation.</returns>
         /// <exception cref="Exception">Throws exception if save operation fails.</exception>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> SaveAfsacCellMapping(AfsacCellMapping dTO)
         {
             try
@@ -3484,6 +3547,7 @@ namespace Web.Controllers
         /// <returns>A JSON result indicating success or failure of the delete operation.</returns>
         /// <exception cref="Exception">Throws exception if deletion fails.</exception>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteAfsacCellMapping(AfsacCellMapping dTO)
         {
             try
@@ -3533,9 +3597,12 @@ namespace Web.Controllers
         /// <param name="Data">The data transfer object containing the request parameters, including the parent identifier.</param>
         /// <returns>A JSON response containing the result of the request. Returns an internal server error if an exception occurs.</returns>
         [AllowAnonymous]
+        [AnySessionRequired]
         [HttpPost]
-        public async Task<IActionResult> GetAllMMasterByParent(DTOMHierarchyRequest Data)
+        public async Task<IActionResult> GetAllMMasterByParent([FromBody]DTOParentChildIdRequest Data)
         {
+            if (Data == null)
+                return BadRequest(new { error = "Request body required." });
             try
             {
                 var ret = await unitOfWork.GetAllMMasterByParent(Data); // Fetch all master data based on the parent specified in the request
@@ -3557,6 +3624,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>The view for the Dashboard Master page.</returns>
         [Authorize(Roles = "admin")]
+        [HttpGet]
         public IActionResult DashboardMaster()
         {
             return View();
@@ -3568,6 +3636,7 @@ namespace Web.Controllers
         /// </summary>
         /// <returns>JSON result containing the count of dashboard master records.</returns>
         [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> GetDashboardMasterCount()
         {
             return Json(await unitOfWork.MasterBL.GetDashboardMasterCount());// Fetch dashboard master count data and return as JSON

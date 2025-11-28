@@ -78,14 +78,14 @@ namespace DataAccessLayer
         /// <summary>
         /// Retrieves a list of divisions based on the provided command and corps IDs.
         /// </summary>
-        /// <param name="Data">An instance of the <see cref="DTOMHierarchyRequest"/> containing the command ID and corps ID for filtering divisions.</param>
+        /// <param name="Data">An instance of the <see cref="DTOParentChildIdRequest"/> containing the command ID and corps ID for filtering divisions.</param>
         /// <returns>
         /// A list of <see cref="DTODivResponse"/> containing division IDs and names that match the provided command and corps IDs.
         /// </returns>
         /// <remarks>
         /// This method is used to retrieve divisions within a specific corps and command, excluding the default division (with ID = 1).
         /// </remarks>
-        public async Task<List<DTODivResponse>> GetByHId(DTOMHierarchyRequest Data)
+        public async Task<List<DTODivResponse>> GetByHId(DTOParentChildIdRequest Data)
         {
             // Query to retrieve divisions filtered by Command ID and Corps ID, excluding the default division with ID = 1
             var Div = await (from div in _context.MDiv

@@ -55,6 +55,7 @@ namespace Web.Controllers
         /// <returns>
         /// Returns an <see cref="IActionResult"/> that renders the PostingIn view.
         /// </returns>
+        [HttpGet]
         public IActionResult PostingIn(string? EncId)
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
@@ -81,6 +82,7 @@ namespace Web.Controllers
         /// <returns>
         /// Returns a <see cref="JsonResult"/> containing the posting data, including a decrypted photo image.
         /// </returns>
+        [HttpPost]
         public async Task<IActionResult> GetPostingIn(string ArmyNo)
         {
             // Fetch posting information based on Army Number (ArmyNo)
@@ -112,6 +114,7 @@ namespace Web.Controllers
         /// <returns>
         /// Returns the <see cref="IActionResult"/> which will render the posting out records view.
         /// </returns>
+        [HttpGet]
         public async Task<IActionResult> GetAllPostingOut()
         {
             // Retrieve the user ID from the current logged-in user's claims
@@ -142,6 +145,7 @@ namespace Web.Controllers
         /// <returns>
         /// Returns the <see cref="IActionResult"/> which will render the posting out details view.
         /// </returns>
+        [HttpPost]
         public async Task<IActionResult> GetPostingOutDetails()
         {
             // Retrieve the user ID from the current logged-in user's claims
@@ -166,7 +170,8 @@ namespace Web.Controllers
         /// <returns>
         /// Returns a view with the decoded values for `Type` and `PostingType` as ViewBag properties.
         /// </returns>
-        public async Task<IActionResult> GetPostingOutWithType(string Type, string PostingType)
+        [HttpGet]
+        public IActionResult GetPostingOutWithType(string Type, string PostingType)
         {
             // Check if Type or PostingType are null, empty or invalid base64-encoded
             if (string.IsNullOrEmpty(Type) || !service.IsValidBase64(Type) || string.IsNullOrEmpty(PostingType) || !service.IsValidBase64(PostingType))
@@ -281,6 +286,7 @@ namespace Web.Controllers
         /// - Returns `KeyConstants.Save` if a new record is created successfully.
         /// - Returns `KeyConstants.IncorrectData` if the data is incorrect.
         /// </returns>
+        [HttpPost]
         public async Task<IActionResult> SavePoasingOut(TrnPostingOut dTO)
         {
             try
@@ -337,6 +343,7 @@ namespace Web.Controllers
         /// - Returns `Result = true` and success message if the record is saved.
         /// - Returns a message indicating if the dispatch details already exist or if there are validation errors.
         /// </returns>
+        [HttpPost]
         public async Task<IActionResult> SavePostingOutDispatchDetails(DTODispatchDetailsSaveRequest dTO)
         {
             DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();  // Initialize response object
@@ -405,6 +412,7 @@ namespace Web.Controllers
         /// <returns>
         /// Returns the view for application closure.
         /// </returns>
+        [HttpGet]
         public IActionResult ApplicationClose()
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
@@ -431,6 +439,7 @@ namespace Web.Controllers
         /// - `KeyConstants.IncorrectData` if the data is incorrect.
         /// - `KeyConstants.Exists` if the application close record already exists.
         /// </returns>
+        [HttpPost]
         public async Task<IActionResult> SaveApplicationClose(TrnApplClose dTO)
         {
             try
@@ -492,6 +501,7 @@ namespace Web.Controllers
         /// <returns>
         /// Returns a view containing the list of closed applications based on the parameters.
         /// </returns>
+        [HttpGet]
         public async Task<ActionResult> AppCloseList(string Id, string jcoor)
         {
             int retint = 0;

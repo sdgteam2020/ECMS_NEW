@@ -1225,7 +1225,6 @@ async function GetLoginUnitMappingDetails() {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: new URLSearchParams({ UnitMapId: 0 })
         });
 
         const result = await response.json();
@@ -1380,17 +1379,20 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
 }
 
 async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
+    const payload = {
+        tableName: "",
+        id: TableId,
+        parentId: ParentId ? Number(ParentId) : null   // ⭐ THIS IS IMPORTANT
+    };
     try {
         const response = await fetch('/Master/GetAllMMaster', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: new URLSearchParams({
-                id: TableId,
-                ParentId: ParentId
-            })
+            credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();
@@ -1422,20 +1424,22 @@ async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
 }
 
 async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
+    const payload = {
+        TableId: TableId ? Number(TableId) : null,
+        ComdId: ComdId ? Number(ComdId) : null,
+        CorpsId: CorpsId ? Number(CorpsId) : null,
+        DivId: DivId ? Number(DivId) : null,
+        BdeId: BdeId ? Number(BdeId) : null
+    };
     try {
         const response = await fetch('/Master/GetAllMMasterByParent', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: new URLSearchParams({
-                TableId,
-                ComdId,
-                CorpsId,
-                DivId,
-                BdeId
-            })
+            credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();

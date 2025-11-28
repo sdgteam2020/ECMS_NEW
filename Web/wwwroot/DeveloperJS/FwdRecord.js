@@ -548,7 +548,7 @@ $(function () {
             }
         }
         else {
-            $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
+            $("#msgforfwd").html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-check " ></i><span class="m-lg-2">Please Correct Token insert and Click refresh Button </span></div>');
         }
     });
 
@@ -1250,17 +1250,17 @@ function GetTokenSignXml(xml, msgid, RequestId, Id) {
                 // No Token Found
                 if (xmlContent.indexOf("<Root>No Token Found</Root>") == -1) {
 
-                    $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " aria-hidden="true"></i><span class="m-lg-2">Token Detected  </span></div>');
+                    $("#" + msgid).html('<div class="mt-4 alert alert-success alert-dismissible fade show "><i class="fa fa-check " ></i><span class="m-lg-2">Token Detected  </span></div>');
 
                     SignXmlSendTOdatabase(xmlContent, RequestId, Id);
 
                 } else {
-                    $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2"> No Token Found</span>.</div>');
+                    $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" ></i><span class="m-lg-2"> No Token Found</span>.</div>');
                 }
             }
         },
         error: function (result) {
-            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" ></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
         }
     });
 }
@@ -1457,7 +1457,7 @@ function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate, Requ
         },
         error: function (result) {
 
-            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" aria-hidden="true"></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
+            $("#" + msgid).html('<div class="mt-4 alert alert-danger alert-dismissible fade show "><i class="fa fa-times" ></i><span class="m-lg-2">DGIS Appl Not Running</span>.</div>');
 
 
         }

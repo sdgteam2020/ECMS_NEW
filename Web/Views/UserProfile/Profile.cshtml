@@ -278,7 +278,7 @@ else
                                                             <label class="col-form-label col-sm-4 labelprofile">Rank<i class="fas fa-asterisk mand1"></i></label>
                                                             <div class="col-sm-8">
 
-                                                                <select class="form-select" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProRank" required id="ddlProRank">
+                                                                <select class="form-select" style="width: 100%;" tabindex="-1"  name="ddlProRank" required id="ddlProRank">
                                                                     <option value="0">Select Rank </option>
                                                                 </select>
                                                             </div>
@@ -297,7 +297,7 @@ else
                                                     <label class="col-form-label col-sm-4">Formation</label>
                                                     <div class="col-sm-8">
 
-                                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProFormation" required id="ddlProFormation">
+                                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1"  name="ddlProFormation" required id="ddlProFormation">
                                                     <option value="0">Select Formation </option>
                                                     </select>
                                                     </div>
@@ -335,7 +335,7 @@ else
                                                             <label class="col-form-label col-sm-4 labelprofile">Appt.</label>
                                                             <div class="col-sm-8">
                                                                 <label id="" class="lblAppt col-form-label"></label>
-                                                                @* <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" name="ddlProAppointment" required id="ddlProAppointment">
+                                                                @* <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1"  name="ddlProAppointment" required id="ddlProAppointment">
                                                                 <option value="0">Select Appointment </option>
                                                                 </select> *@
                                                             </div>
@@ -481,11 +481,11 @@ else
             </div>
         </div>
     </div>
-    <div class="modal fade" id="AddNewProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="AddNewProfile" tabindex="-1" aria-labelledby="exampleModalLabel" >
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
                     <h5 class="modal-title" id="exampleModalToggleLabel">Update Profile  </h5>
                 </div>
 
@@ -500,7 +500,7 @@ else
 <script asp-src-include="~/developerjs/profile.js"></script>
 <script asp-src-include="~/developerjs/token.js"></script>
 
-<div class="modal fade" id="DeRegisterConfirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="DeRegisterConfirmModal" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

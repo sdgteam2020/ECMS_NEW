@@ -44,6 +44,7 @@ namespace Web.Controllers
                     dTOGetToken.RankName= dtoSession.RankName;
                     dTOGetToken.ICNO = dtoSession.ICNO;
                     dTOGetToken.Name = dtoSession.Name;
+                    dTOGetToken.UnitId = dtoSession.UnitId;
                 }
                 // Return the updated session data as a JSON response
                 return Json(dTOGetToken);

@@ -80,15 +80,14 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 data: "ServiceNo",
                 name: "ServiceNo",
                 render: function (data, type, row) {
-                    // Check if first two characters are alphabets
+                    let displayText = data;
+
+                    // If first two chars are alphabets, insert space
                     if (/^[A-Za-z]{2}/.test(data)) {
-                        // Insert space after first two characters
-                        return `<a href="#" onclick="GetBasicDetailByRequestId(${row.RequestId});event.preventDefault();">${data.slice(0, 2) + ' ' + data.slice(2)}</a>`;
-                        
-                    } else {
-                        // No space needed
-                        return `<a href="#" onclick="GetBasicDetailByRequestId(${row.RequestId});event.preventDefault();">${data}</a>`;;
+                        displayText = data.slice(0, 2) + ' ' + data.slice(2);
                     }
+
+                    return `<a href="#" class="service-no-link">${displayText}</a>`;
                 }
             },
             {
@@ -138,7 +137,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 name: "Application History",
                 orderable: false,
                 render: function (data, type, row) {
-                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" aria-hidden="true"></i></button>`
+                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
                 }
             },
             {
@@ -148,7 +147,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 name: "Card History",
                 orderable: false,
                 render: function (data, type, row) {
-                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" aria-hidden="true"></i></button>`
+                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
                 }
             },
             // Additional column for Edit action
@@ -160,7 +159,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 orderable: false,
                 render: function (data, type, row) {
                     // Always include the Print Preview button
-                    let html = `<button class="btn btn-icon btn-round btn-primary mr-2" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-print mt-2"></i></button>`;
+                    let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-ICardPrintPreviewByRequestId"><i class="fa fa-print mt-2"></i></button>`;
 
                     // Case 1: Editable + Forward
                     if ((row.StepCounter == 1 || row.StepCounter == 7 || row.StepCounter == 8 || row.StepCounter == 9 || row.StepCounter == 10) && (VBId == 0 || VBId == 1 || VBId == 11 || row.IsFwdStatusId == 3))
@@ -234,6 +233,18 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 var rowData = table_Fwd.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     DownloadPdf(rowData.RequestId);
+                }
+            });
+            $("#tbldatatabledata_Fwd tbody").off("click", ".service-no-link").on("click", ".service-no-link", function () {
+                var rowData = table_Fwd.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    GetBasicDetailByRequestId(rowData.RequestId);
+                }
+            });
+            $("#tbldatatabledata_Fwd tbody").off("click", ".cls-ICardPrintPreviewByRequestId").on("click", ".cls-ICardPrintPreviewByRequestId", function () {
+                var rowData = table_Fwd.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    GetICardPrintPreviewByRequestId(rowData.RequestId);
                 }
             });
         }

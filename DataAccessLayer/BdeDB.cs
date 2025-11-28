@@ -126,7 +126,7 @@ namespace DataAccessLayer
         /// This method performs a join between the `MBde`, `MDiv`, `MCorps`, and `MComd` tables to retrieve the Brigade data.
         /// It filters based on the provided `ComdId`, `CorpsId`, and `DivId`, ensuring that the Brigade with `BdeId = 1` is excluded from the results.
         /// </remarks>
-        public async Task<List<DTOBdeResponse>> GetByHId(DTOMHierarchyRequest Data)
+        public async Task<List<DTOBdeResponse>> GetByHId(DTOParentChildIdRequest Data)
         {
             // Perform a LINQ query to get Brigades matching the provided hierarchy details
             var Bde = await (from bde in _context.MBde

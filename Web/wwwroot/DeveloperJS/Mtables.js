@@ -63,21 +63,19 @@ async function mMsater(sectid = '', ddl, TableId, ParentId) {
 }
 function mMsaterByParent(sectid = '', ddl, TableId, ComdId,CorpsId,DivId,BdeId) {
 
-
-    var userdata =
-    {
-        "TableId": TableId,
-        "ComdId": ComdId,
-        "CorpsId": CorpsId,
-        "DivId": DivId,
-        "BdeId": BdeId,
-
+    const payload = {
+        TableId: TableId ? Number(TableId) : null,
+        ComdId: ComdId ? Number(ComdId) : null,
+        CorpsId: CorpsId ? Number(CorpsId) : null,
+        DivId: DivId ? Number(DivId) : null,
+        BdeId: BdeId ? Number(BdeId) : null
     };
     $.ajax({
         url: '/Master/GetAllMMasterByParent',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(payload),
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {

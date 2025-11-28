@@ -122,6 +122,7 @@ namespace Web.Controllers
         /// <returns>
         /// Returns the Profile view with the user's role set in the ViewBag.
         /// </returns>
+        [HttpGet]
         public IActionResult Profile()
         {
             // Get the role of the user from the session
@@ -141,6 +142,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="dTO">The user profile data to be saved or updated.</param>
         /// <returns>Returns a JSON response indicating the result of the operation.</returns>
+        [HttpPost]
         public async Task<IActionResult> SaveUserProfile(MUserProfile dTO)
         {
             try
@@ -230,6 +232,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="dTO">The update profile data with mapping to be saved.</param>
         /// <returns>Returns a JSON response indicating the result of the operation.</returns>
+        [HttpPost]
         public async Task<IActionResult> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
         {
             try
@@ -299,6 +302,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="dTO">The profile data to be mapped to the unit.</param>
         /// <returns>Returns a JSON response indicating the result of the operation.</returns>
+        [HttpPost]
         public async Task<IActionResult> MappingIOGSOUNIT(MMappingProfile dTO)
         {
             try
@@ -338,6 +342,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Id">The identifier for the domain (unused in the method body but expected as part of the signature).</param>
         /// <returns>Returns a JSON response containing a list of user profiles.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetAll(string Id)
         {
             try
@@ -392,6 +397,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="ArmyNo">The army number of the user (not used in this implementation).</param>
         /// <returns>Returns a JSON response containing the user profile.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetByArmyNoIsWithoutTokenApply(string ArmyNo)
         {
             try
@@ -418,7 +424,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="UserId">The UserId of the profile to retrieve.</param>
         /// <returns>Returns a JSON response containing the user profile or an error message.</returns>
-        [Authorize]
+        [HttpPost]
         public async Task<IActionResult> GetProfileByUserId(int UserId)
         {
             try
@@ -446,6 +452,7 @@ namespace Web.Controllers
         /// <param name="ISRO">Filter flag for ISRO.</param>
         /// <param name="IsORO">Filter flag for ORO.</param>
         /// <returns>Returns a JSON response with the retrieved data or an error message.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetDataForFwd(string Name, int TypeId, int StepId, int UnitId, int ISRO, int IsORO)
         {
             try
@@ -474,6 +481,7 @@ namespace Web.Controllers
         /// <param name="IsAfsacCell">Filter flag for AfsacCell.</param>
         /// <param name="BasicDetailsId">BasicDetailsId for filtering.</param>
         /// <returns>Returns a JSON response with the officer data or an error message.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetOffrsByUnitMapId(int id, int UnitId, int IsRO, int IsORO, int IsAfsacCell, int BasicDetailsId)
         {
             try
@@ -504,6 +512,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="ArmyNo">The Army number for fetching the user profile.</param>
         /// <returns>Returns a JSON response with the user profile data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetByMasterArmyNo(string ArmyNo)
         {
             try
@@ -526,6 +535,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The domain mapping data that contains the AspNetUserId.</param>
         /// <returns>Returns a JSON response with the domain mapping data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetByAspnetUserIdBy(TrnDomainMapping Data)
         {
             try
@@ -545,6 +555,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="RequestId">The RequestId associated with the user profile.</param>
         /// <returns>Returns a JSON response with the user profile data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetByRequestId(int RequestId)
         {
             try
@@ -564,6 +575,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="ArmyNo">The Army number to be checked in the user profile.</param>
         /// <returns>Returns a JSON response indicating whether the ArmyNo exists in the profile.</returns>
+        [HttpPost]
         public async Task<IActionResult> CheckArmyNoInUserProfile(string ArmyNo)
         {
             // Retrieve the user ID from claims
@@ -580,6 +592,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="ArmyNo">The Army number for retrieving the profile.</param>
         /// <returns>Returns a JSON response with the top profile data.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetTopByArmyNo(string ArmyNo)
         {
             try

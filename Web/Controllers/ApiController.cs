@@ -34,6 +34,7 @@ namespace Web.Controllers
         /// <param name="ICNumber">The IC number for the individual.</param>
         /// <param name="Type">The type of user: 1 for officers, 2 for JCOs.</param>
         /// <returns>A JSON response containing the user details or an error message.</returns>
+        [HttpPost]
         public async Task<IActionResult> LoginApi(string ICNumber, int Type)
         {
             DTOApiPersDataResponse res1 = new DTOApiPersDataResponse();

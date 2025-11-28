@@ -392,7 +392,7 @@ function getColumnsData(choice) {
                     data: null,
                     name: "History",
                     render: function (data, type, row) {
-                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" aria-hidden="true"></i></button>`
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                     }
                 },
                 {
@@ -489,7 +489,7 @@ function getColumnsData(choice) {
                     data: null,
                     name: "History",
                     render: function (data, type, row) {
-                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" aria-hidden="true"></i></button>`
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
                     }
                 }
             ];

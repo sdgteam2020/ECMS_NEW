@@ -59,15 +59,9 @@
 
 })
 function GetDashboardCount() {
-    var userdata =
-    {
-        "Id": 0,
-
-    };
     $.ajax({
         url: '/Home/GetTaskBoardCount',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 

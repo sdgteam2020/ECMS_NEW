@@ -874,17 +874,16 @@ function GetUnitByHierarchy(IsOnly,ddl, sectid, ComdId, CorpsId, DivId, BdeId, F
 
 function mMsater(IsOnly,sectid = '', ddl, TableId, ParentId) {
 
-
-    var userdata =
-    {
-        "id": TableId,
-        "ParentId": ParentId,
-
+    const payload = {
+        tableName: "",
+        id: TableId,
+        parentId: ParentId ? Number(ParentId) : null   // ⭐ THIS IS IMPORTANT
     };
+
     $.ajax({
         url: '/Master/GetAllMMaster',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(payload),
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
@@ -939,22 +938,19 @@ function mMsater(IsOnly,sectid = '', ddl, TableId, ParentId) {
 }
 
 function mMsaterByParent(IsOnly,sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
-
-
-    var userdata =
-    {
-        "TableId": TableId,
-        "ComdId": ComdId,
-        "CorpsId": CorpsId,
-        "DivId": DivId,
-        "BdeId": BdeId,
-
+    const payload = {
+        TableId: TableId ? Number(TableId) : null,
+        ComdId: ComdId ? Number(ComdId) : null,
+        CorpsId: CorpsId ? Number(CorpsId) : null,
+        DivId: DivId ? Number(DivId) : null,
+        BdeId: BdeId ? Number(BdeId) : null
     };
     $.ajax({
         url: '/Master/GetAllMMasterByParent',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(payload),
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {

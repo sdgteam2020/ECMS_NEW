@@ -305,22 +305,15 @@ function CheckValidation() {
     }
 }
 function GetUnit() {
-    var listItem = "";
-    var userdata =
-    {
-        "Id": 0,
-
-    };
     $.ajax({
         url: '/ConfigUser/GetTokenArmyNo',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == 0) {
-                    //  alert("Plase Add Profile")
+   
                 }
                 else {
                     getunitbymapid(response.UnitId)

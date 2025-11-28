@@ -60,6 +60,7 @@ namespace Web.Controllers
         /// for all users belonging to the same unit ID as the current user.
         /// </summary>
         /// <returns>A view displaying login logs for the user's unit or null if the session is invalid.</returns>
+        [HttpGet]
         public async Task<IActionResult> LoginLog()
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
@@ -111,6 +112,7 @@ namespace Web.Controllers
         /// <param name="FmDate">The optional start date for filtering the logs.</param>
         /// <param name="ToDate">The optional end date for filtering the logs.</param>
         /// <returns>A JSON response containing the login logs or 0 in case of an error.</returns>
+        [HttpPost]
         public async Task<IActionResult> LoginLogByAspNetUsersId(int AspNetUsersId, DateTime? FmDate, DateTime? ToDate)
         {
             try
@@ -144,6 +146,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The request data containing the XML file information to be digitally signed.</param>
         /// <returns>A JSON response indicating the success or failure of the operation.</returns>
+        [HttpPost]
         public async Task<IActionResult> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data)
         {
             try
@@ -172,6 +175,7 @@ namespace Web.Controllers
         /// <param name="RequestId">The ID of the request associated with the PDF.</param>
         /// <param name="base64">The base64-encoded string representing the PDF content to be saved.</param>
         /// <returns>A JSON response containing the filename of the saved PDF.</returns>
+        [HttpPost]
         public async Task<IActionResult> DigitalpdfsignatureSave(int RequestId, string base64)
         {
             // Retrieve the basic details of the request based on the RequestId
@@ -197,6 +201,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="RequestId">The ID of the request used to generate the XML file.</param>
         /// <returns>A JSON response containing the filename of the saved XML file, or 0 in case of an error.</returns>
+        [HttpPost]
         public async Task<IActionResult> CreateXmlAsync(int RequestId)
         {
             try
@@ -255,6 +260,7 @@ namespace Web.Controllers
             }
         }
 
+        [HttpPost]
         public async Task<IActionResult> CreatePdfAsync(int RequestId)
         {
             try

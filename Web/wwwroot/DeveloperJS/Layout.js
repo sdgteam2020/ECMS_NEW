@@ -256,7 +256,13 @@ $(function () {
 
     GetNotification();
 
-    fetch('/Home/VisitorStats?_=' + new Date().getTime()) // cache busting
+    fetch('/Home/VisitorStats', {
+        method: 'POST',
+        headers: {
+            'RequestVerificationToken': globalThis.RequestVerificationToken
+            // NOTE: No need for Content-Type or body if action koi data expect nahi kar raha
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');

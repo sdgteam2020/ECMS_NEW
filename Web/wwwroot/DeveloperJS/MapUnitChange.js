@@ -138,14 +138,14 @@ function BindData() {
                 render: function (data, type, row) {
                     let role = $("#spnRoleName").html(); // Get current role
                     if (data === false && role === "admin") {
-                        return `<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" aria-hidden="true"></i></button></span>`;
+                        return `<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
                     }
                     else if (data === true && role === "admin")
                     {
-                        return `<span class='badge badge-pill badge-danger mr-1'>NA</span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" aria-hidden="true"></i></button></span>`;
+                        return `<span class='badge badge-pill badge-danger mr-1'>NA</span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
                     }
                     else {
-                        return `<span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" aria-hidden="true"></i></button></span>`;
+                        return `<span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
                     }
                 }
             }
