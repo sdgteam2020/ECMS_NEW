@@ -50,6 +50,7 @@ using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.IO.Compression;
 using System.Linq;
@@ -2664,6 +2665,143 @@ namespace Web.Controllers
                 // Call the service to update the step counter
                 await iStepCounterBL.UpdateStepCounter(mStepCounter);
                 response.Result = true;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and return a generic error message
+                _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
+                response.Message = "Internal Server Error!";
+            }
+
+            // Return the response with the operation result
+            return Ok(response);
+        }
+        public async Task<IActionResult> ActionOnRequest(DTOActionOnRequest  dTOActionOn)
+        {
+            DTOGenericResponse<DTOApplicationRejecteResponse?> response = new DTOGenericResponse<DTOApplicationRejecteResponse?>();
+            try
+            {
+                MTrnICardRequest? mTrnICard = await iTrnICardRequestBL.Get(dTOActionOn.RequestId);
+
+                if (mTrnICard != null && mTrnICard.StatusId == 1)
+                {
+                    if (dTOActionOn.Flag == "R")
+                    {
+
+                        DTORequestRejectDetailResponse? rejectDetailResponse = await iTrnFwnBL.RequestRejectDetail(dTOActionOn.RequestId);
+
+                        if (rejectDetailResponse != null)
+                        {
+                            if (rejectDetailResponse.UserId.GetValueOrDefault() == 0)
+                            {
+                                response.Message = "Profile is not mapped with domain Id!";
+                                response.Result = false;
+                                return Ok(response);
+                            }
+                            else
+                            {
+                                if (rejectDetailResponse.StepId == 2)
+                                    dTOActionOn.StepId = 7;
+                                else if (rejectDetailResponse.StepId == 3)
+                                    dTOActionOn.StepId = 8;
+                                else if (rejectDetailResponse.StepId == 4)
+                                    dTOActionOn.StepId = 9;
+                                else if (rejectDetailResponse.StepId == 5)
+                                    dTOActionOn.StepId = 10;
+
+                                // Retrieve session data for unit ID
+                                DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                                // Set values for the forward data object using session data and user information
+                                dTOActionOn.FromUserId = dtoSession.UserId;
+                                dTOActionOn.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                dTOActionOn.ToUserId = rejectDetailResponse.UserId.GetValueOrDefault();
+                                dTOActionOn.ToAspNetUsersId = rejectDetailResponse.AspNetUsersId;
+                                dTOActionOn.UnitId = dtoSession.UnitId;
+                                dTOActionOn.UpdatedOn = DateTime.Now;
+                                dTOActionOn.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                dTOActionOn.IsActive = true;
+                                dTOActionOn.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
+                                dTOActionOn.FwdStatusId = 3; // Set the status to 3 for rejection
+                                dTOActionOn.IsComplete = false;
+
+                                // Call the service to update the step counter
+                                await iStepCounterBL.UpdateStepCounter(mStepCounter);
+                            }
+                        }
+                        else
+                        {
+                            //Invalid Input
+                        }
+
+                    }
+                    else if (dTOActionOn.Flag == "A")
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                }
+                else
+                {
+                    if (mTrnICard == null)
+                    {
+                        //Invalid Request Id
+                    }
+                    else
+                    {
+                        if (mTrnICard.StatusId == 2)
+                        {
+                            //Request is completed, cannot be rejected
+                        }
+                        else
+                        {
+                            //Request is closed, cannot be rejected
+                        }
+                    }
+
+                }
+
+
+
+
+
+
+
+
+
+                //// If the Flag is 'R', perform additional checks
+                //if (mStepCounter.Flag == "R")
+                //{
+                //    // Retrieve domain mapping using the request ID
+                //    TrnDomainMapping? Domain = new TrnDomainMapping();
+                //    Domain = await iDomainMapBL.GetByRequestId(mStepCounter.RequestId);
+
+                //    // If the UserId from the domain mapping is 0, return an error response
+                //    if (Domain?.UserId.GetValueOrDefault() == 0)
+                //    {
+                //        response.Message = "Profile is not mapped with domain Id!";
+                //        response.Result = false;
+                //        return Ok(response);
+                //    }
+                //}
+
+                //// Retrieve session data for unit ID
+                //DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                //// Get unit details based on the session's unit ID
+                //DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
+
+                //// Update the step counter with the current date, user ID, and unit name
+                //mStepCounter.UpdatedOn = DateTime.Now;
+                //mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                //mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
+
+                //// Call the service to update the step counter
+                //await iStepCounterBL.UpdateStepCounter(mStepCounter);
+                //response.Result = true;
             }
             catch (Exception ex)
             {

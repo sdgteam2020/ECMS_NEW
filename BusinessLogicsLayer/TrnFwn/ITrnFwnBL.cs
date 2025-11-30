@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.Bde
 {
@@ -10,6 +11,7 @@ namespace BusinessLogicsLayer.Bde
         public Task<bool> UpdateAllBYRequestId(int RequestId);
         public Task<bool> UpdateFieldBYTrnFwdId(int TrnFwdId);
         public Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO);
+        public Task<DTORequestRejectDetailResponse?> RequestRejectDetail(int RequestId);
 
     }
 }

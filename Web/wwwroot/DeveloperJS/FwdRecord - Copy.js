@@ -1037,53 +1037,6 @@ function RejecteTo(RequestId, HType) {
 
     });
 }
-function ActionOnRequest(spnRequestId, Flag) {
-
-    var userdata = {
-        RequestId: spnRequestId,
-        Flag: Flag,
-        TrnFwdId: Flag === "A" ? parseInt($("#spnCurrentspnTrnFwdId").html(), 10) : 0,
-        Remark: Flag === "A" ? $("#txtFRemarks").val() : $("#txtFrejectedRemarks").val,
-        RemarksIds: Flag === "A" ? $("#ddlRemarks").val() : $("#ddlRRemarks").val(),
-        ToAspNetUsersId: Flag === "A" ? $("#spnFwdToAspNetUsersId").html() : 0,
-        ToUserId: Flag === "A" ? $("#spnFwdToUsersId").html() : 0,
-    };
-    $.ajax({
-        url: '/BasicDetail/ActionOnRequest',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response.Result == true) {
-                    $("#FwdRecord").modal('hide');
-                    var HType = 0;
-                    if (Counter == 3) {
-                        HType = 1;
-                    } else if (Counter == 4) {
-                        HType = 2;
-                    }
-                    if (Flag == "R") {
-                        RejecteTo(spnRequestId, Counter);
-                    } else {
-                        ForwardTo(spnRequestId, Counter);
-                    }
-                    Counter_Notification = Counter;
-                    spnRequestId_Notification = spnRequestId;
-                }
-                else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: response.Message
-                    });
-                }
-            }
-        }
-
-    });
-}
 
 function UpdateStepCounter(stepId, spnRequestId, Counter, Flag) {
     var userdata = {

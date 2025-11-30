@@ -72,16 +72,21 @@ function GetBasicDetailByRequestId(RequestId) {
         });
 }
 function printDiv() {
+    const divToPrint = document.getElementById('ICardPrint');
+    if (!divToPrint) return;
 
-    var divToPrint = document.getElementById('ICardPrint');
-
-    var newWin = window.open('', 'Print-Window');
+    const newWin = window.open('', 'Print-Window');
 
     newWin.document.open();
-
-    newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
-
+    newWin.document.write('<html><head><title>Print</title></head><body>');
+    newWin.document.write(divToPrint.innerHTML);
+    newWin.document.write('</body></html>');
     newWin.document.close();
 
-    setTimeout(function () { newWin.close(); }, 10);
+    // Attach onload handler via JS (CSP-safe)
+    newWin.onload = function () {
+        newWin.focus();
+        newWin.print();
+        newWin.close();
+    };
 }

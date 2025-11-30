@@ -34,14 +34,6 @@ var configration = builder.Configuration;
 
 builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(configration.GetConnectionString("AFSACDBConnection")).UseExceptionProcessor());
 
-//builder.Services.Configure<ForwardedHeadersOptions>(options =>
-//{
-//    options.ForwardedHeaders =
-//       //This one did not work ForwardedHeaders.XForwardedFor | 
-//       ForwardedHeaders.XForwardedHost |
-//       ForwardedHeaders.XForwardedProto;
-//});
-
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(option =>
 {
     option.Password.RequireNonAlphanumeric = true;
@@ -76,17 +68,12 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader());
 });
 
-// Add services to the container.
-//builder.Services.AddRazorPages();
-//builder.Services.AddScoped<IGenericRepositoryDL, GenericRepositoryDL>();
 builder.Services.AddScoped<IService, ServiceRepository>();
 builder.Services.AddScoped<IImageEncryptAndDecrypt, ImageEncryptAndDecrypt>();
 
 
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddSingleton<DapperContextDb2>();
-
-//builder.Services.AddControllersWithViews();
 
 builder.Services.AddControllersWithViews(options =>
 {

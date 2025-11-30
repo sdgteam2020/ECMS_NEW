@@ -3,6 +3,8 @@ using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
@@ -190,7 +192,27 @@ namespace DataAccessLayer
                 }
             }
         }
-    }
 
-    
+        public async Task<DTORequestRejectDetailResponse?> RequestRejectDetail(int RequestId)
+        {
+            string query = @"Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
+                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+                            INNER JOIN TrnDomainMapping tdm on tdm.Id = ireq.TrnDomainMappingId
+                            where step.RequestId=@RequestId";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    DTORequestRejectDetailResponse? dTORequest = (await connection.QueryAsync<DTORequestRejectDetailResponse>(query, new { RequestId })).FirstOrDefault();
+                    return dTORequest;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "TrnFwnDB->RequestRejectDetail");
+                return new DTORequestRejectDetailResponse();
+            }
+        }
+    }
 }

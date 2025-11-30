@@ -8,6 +8,12 @@ var IsWithTokenApply = true;
 $(document).ready(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+
+    // For both fields, convert to uppercase on input
+    $('#txtApplyForOldArmyNo, #txtApplyForArmyNo').on('input', function () {
+        this.value = this.value.toUpperCase();
+    });
+
     $("#btnApplicantsPostingout").on("click", function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");

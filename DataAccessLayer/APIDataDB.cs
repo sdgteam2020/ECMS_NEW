@@ -14,7 +14,7 @@ namespace DataAccessLayer
     /// </summary>
     public class APIDataDB : GenericRepositoryDL<MApiData>, IAPIDataDB
     {
-        protected readonly ApplicationDbContext _context;// For Entity Framework operations
+        protected new readonly ApplicationDbContext _context;// For Entity Framework operations
         private readonly DapperContext _contextDP;// For Dapper operations
 
         /// <summary>
@@ -56,9 +56,6 @@ namespace DataAccessLayer
                 {
                     return false;  // If no records were found, return false.
                 }
-
-                // The following line is commented out, and it would return a single record if necessary:
-                // return ret.SingleOrDefault();
             }
         }
 

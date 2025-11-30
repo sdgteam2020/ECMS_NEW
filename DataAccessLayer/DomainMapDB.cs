@@ -31,9 +31,7 @@ namespace DataAccessLayer
         /// </remarks>
         public async Task<TrnDomainMapping?> GetByAspnetUserIdBy(int AspNetUsersId)
         {
-            // Perform the query to fetch the TrnDomainMapping record for the given AspNetUsersId.
-            var ret =await _context.TrnDomainMapping.Where(p => p.AspNetUsersId == AspNetUsersId).FirstOrDefaultAsync();
-            return ret;
+               return  await _context.TrnDomainMapping.FirstOrDefaultAsync(p => p.AspNetUsersId == AspNetUsersId);
         }
 
         

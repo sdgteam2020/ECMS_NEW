@@ -21,6 +21,13 @@ toastr.options = {
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    $('img[data-fallback]').on('error', function () {
+        const fallback = $(this).data('fallback');
+        if (this.src !== fallback) {
+            this.src = fallback;
+        }
+    });
+
     $('[data-toggle="tooltip"]').tooltip();
 
     $("#loadingToken").hide();

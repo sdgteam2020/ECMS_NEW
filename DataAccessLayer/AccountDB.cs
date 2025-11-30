@@ -1,15 +1,14 @@
 ﻿using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
-using DataTransferObject.Response;
-using Microsoft.EntityFrameworkCore;
-using DataTransferObject.Requests;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.Logging;
-using DataTransferObject.Domain;
-using Microsoft.AspNetCore.Identity;
 using DataTransferObject.Domain.Model;
-using System.Runtime.Intrinsics.Arm;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 
 namespace DataAccessLayer
@@ -166,7 +165,6 @@ namespace DataAccessLayer
 
                 if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                 {
-                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
                     queryableData = request.sortDirection.ToLower() == "asc"
                     ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                     : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -287,7 +285,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -351,7 +349,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -415,7 +413,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -478,7 +476,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -541,7 +539,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -604,7 +602,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -667,7 +665,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -731,7 +729,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -795,7 +793,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -859,7 +857,7 @@ namespace DataAccessLayer
 
                     if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                     {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                        
                         queryableData = request.sortDirection.ToLower() == "asc"
                         ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                         : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -958,7 +956,7 @@ namespace DataAccessLayer
 
                 if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                 {
-                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                    
                     queryableData = request.sortDirection.ToLower() == "asc"
                     ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                     : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -1046,17 +1044,13 @@ namespace DataAccessLayer
                {
                    string searchValue = request.searchValue.ToLower();
 
-                   //queryableData = queryableData.Where(x =>  x.UserId.ToString().ToLower().Contains(searchValue) ||
-                   //                          x.DomainId.ToLower().Contains(searchValue)||
-                   //                          x.ArmyNo.ToLower().Contains(searchValue));
-
                    queryableData = queryableData.Where(x => x.ArmyNo.ToLower().Contains(searchValue));
                 }
 
                 // Apply sorting
                 if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                 {
-                   //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                   
                    queryableData = request.sortDirection.ToLower() == "asc"
                    ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                    : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -1856,7 +1850,6 @@ namespace DataAccessLayer
 
                                 if (model.IsTokenWaiver == true)
                                 {
-                                    //applicationUser.AdminFlag = false;
                                     applicationUser.AdminMsg = "Domian Id - " + applicationUser.DomainId + " & Profile Id- " + trnDomainMapping.UserId + ".Your token request was successfully placed with Admin for necy Approval. Pl note regn No - " + trnDomainMapping.UserId + " for future correspondence.";
                                     await _context.SaveChangesAsync();
                                 }
@@ -2009,9 +2002,6 @@ namespace DataAccessLayer
                         Name = dTO.Name,
                         ServiceNo = dTO.ServiceNo,
                         Rank = dTO.Rank,
-                        //MobileNo= dTO.MobileNo,
-                        //DialingCode = dTO.DialingCode,
-                        //Extension= dTO.Extension,
                         DomainId =dTO.DomainId,
                         IsActive=true,
                         UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
@@ -2103,7 +2093,7 @@ namespace DataAccessLayer
                 // Apply sorting
                 if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                 {
-                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                    
                     queryableData = request.sortDirection.ToLower() == "asc"
                     ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                     : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
@@ -2206,7 +2196,7 @@ namespace DataAccessLayer
                 //Apply sorting
                 if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                 {
-                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                    
                     queryableData = request.sortDirection.ToLower() == "asc"
                     ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                     : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));

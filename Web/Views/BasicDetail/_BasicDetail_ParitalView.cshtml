@@ -113,13 +113,13 @@
                     <div class="col-sm-4">
                         <div class="form-group row mb-0 ">
                             <div class="col-12 text-center">
-                                <img src=@Model.PhotoImagePath width="200" id="basicphotosVP" class="border border-primary p-2" onerror="this.src='/images/user4.png';" />
+                                <img src=@Model.PhotoImagePath width="200" id="basicphotosVP" class="border border-primary p-2" data-fallback="/Images/user4.png" />
                                 <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
                             </div>
                         </div>
                         <div class="form-group row mb-0 ">
                             <div class="col-12 text-center">
-                                <img src=@Model.SignatureImagePath width="200" height="100" id="BasicsingVP" class="border border-primary p-2" onerror="this.src='/images/Signature.png';" />
+                                <img src=@Model.SignatureImagePath width="200" height="100" id="BasicsingVP" class="border border-primary p-2" data-fallback="/Images/Signature.png" />
                             </div>
                         </div>
                     </div>

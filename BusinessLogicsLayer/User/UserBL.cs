@@ -1,13 +1,6 @@
-﻿using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using DataAccessLayer;
+using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Response.User;
-using DataAccessLayer;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BusinessLogicsLayer.User
@@ -25,12 +18,5 @@ namespace BusinessLogicsLayer.User
         {
             return _userdb.GetRole();
         }
-
-        //public UserBL(IUserDB userdb)
-        //{
-        //    _userdb = userdb;
-        //}
-
-
     }
 }

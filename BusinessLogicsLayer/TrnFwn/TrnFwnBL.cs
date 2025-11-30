@@ -3,6 +3,7 @@ using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.BdeCate
 {
@@ -32,6 +33,10 @@ namespace BusinessLogicsLayer.BdeCate
         public async Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO)
         {
             return await _ITrnFwnDB.SaveInternalFwd(dTO);
+        }
+        public async Task<DTORequestRejectDetailResponse?> RequestRejectDetail(int RequestId)
+        {
+            return await _ITrnFwnDB.RequestRejectDetail(RequestId);
         }
     }
 }

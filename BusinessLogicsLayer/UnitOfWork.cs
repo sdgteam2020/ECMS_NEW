@@ -372,7 +372,6 @@ namespace BusinessLogicsLayer
                     lst.Add(db);
                 }
             }
-            //Constants.MasterTbl.Command;
             return lst;
         }
 
@@ -448,7 +447,6 @@ namespace BusinessLogicsLayer
 
                     }
                 }
-                //Constants.MasterTbl.Command;
                 return lst;
             }
 
