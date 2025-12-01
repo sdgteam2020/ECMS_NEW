@@ -8,6 +8,7 @@ using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccessLayer
 {
@@ -212,6 +213,129 @@ namespace DataAccessLayer
             {
                 _logger.LogError(1001, ex, "TrnFwnDB->RequestRejectDetail");
                 return new DTORequestRejectDetailResponse();
+            }
+        }
+        public async Task<DTORequestFwdDetailResponse?> RequestFwdDetail(int RequestId)
+        {
+            string query = @"declare @ApplyForId tinyint 
+                            declare @StepId tinyint 
+
+                            Select @StepId=step.StepId from TrnStepCounter step where step.RequestId=@RequestId
+
+                            IF @StepId = 1 OR @StepId = 2
+                            BEGIN
+                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
+                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+                            INNER JOIN TrnDomainMapping tdm on tdm.Id = ireq.TrnDomainMappingId
+                            where step.RequestId=@RequestId
+                            END
+                            ELSE IF @StepId = 3
+	                            BEGIN
+	                            Select @ApplyForId=bs.ApplyForId from BasicDetails bs where bs.BasicDetailId =(Select BasicDetailId from TrnICardRequest where RequestId =@RequestId)
+	                            IF @ApplyForId = 1
+	                            Begin
+	                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
+	                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+	                            INNER JOIN MRecordOffice mrec on mrec.RecordOfficeId = ireq.RecordOfficeId
+	                            INNER JOIN OROMapping oro on oro.RecordOfficeId = mrec.RecordOfficeId
+	                            INNER JOIN TrnDomainMapping tdm on tdm.Id = oro.TDMId
+	                            where step.RequestId=@RequestId
+	                            End
+	                            ELSE
+	                            Begin
+	                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
+	                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+	                            INNER JOIN MRecordOffice mrec on mrec.RecordOfficeId = ireq.RecordOfficeId
+	                            INNER JOIN TrnDomainMapping tdm on tdm.Id = mrec.TDMId
+	                            where step.RequestId=@RequestId
+	                            End
+                            END
+                            ELSE IF @StepId = 4
+                            BEGIN
+	                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
+	                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+	                            INNER JOIN TrnDomainMapping tdm on tdm.Id = (Select TDMId from AfsacCellMapping where AfsacCellMappingId=1)
+	                            where step.RequestId=@RequestId
+                            END";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    DTORequestFwdDetailResponse? dTORequest = (await connection.QueryAsync<DTORequestFwdDetailResponse>(query, new { RequestId })).FirstOrDefault();
+                    return dTORequest;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "TrnFwnDB->RequestFwdDetail");
+                return new DTORequestFwdDetailResponse();
+            }
+        }
+
+        public async Task<bool> ActionOnRequest(DTOActionOnRequest data, byte StepId)
+        {
+            // Initialize transaction for multiple database operations
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+            try
+            {
+                string insertSql;
+                string query1, query2, query3;
+
+                if (data.Flag == "R")
+                {
+                    if (StepId == 3)
+                    {
+                        query2 = @"Update BasicDetails set DateOfIssue=GETDATE() where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
+                        await db.ExecuteAsync(query2, new { data.RequestId }, transaction: transaction);
+                    }
+
+                }
+                query1 = @"Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@RequestId";
+                await db.ExecuteAsync(query1, new { data.StepId, data.RequestId, data.Updatedby }, transaction: transaction);
+
+                query3 = @"UPDATE TrnFwds set IsComplete=1 where RequestId=@RequestId";
+                await db.ExecuteAsync(query3, new { data.RequestId }, transaction: transaction);
+
+
+                // Insert new posting record
+                insertSql = @$"INSERT INTO TrnFwds(RequestId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,UnitId,Remark,TypeId,IsComplete,IsActive,Updatedby,UpdatedOn,RemarksIds,FwdStatusId,StepId)
+                                VALUES (@RequestId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@UnitId,@Remark,@TypeId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@RemarksIds,@FwdStatusId,@StepId);";
+                var parameters = new DynamicParameters();
+                parameters.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUserId", data.ToUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromUserId", data.FromUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@FromAspNetUsersId", data.FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToAspNetUsersId", data.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UnitId", data.UnitId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@Remark", data.Remark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@TypeId", data.TypeId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@IsComplete", data.IsComplete, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@IsActive", data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@Updatedby", data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@RemarksIds", data.RemarksIds, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@FwdStatusId", data.FwdStatusId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@StepId", data.StepId, DbType.Byte, ParameterDirection.Input);
+
+                // Insert the new TrnFwds record
+                await db.ExecuteAsync(insertSql, parameters, transaction: transaction);
+
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Rollback the transaction if any operation fails
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "TrnFwnDB->ActionOnRequest");
+                return false;
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
             }
         }
     }

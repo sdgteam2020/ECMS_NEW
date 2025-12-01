@@ -38,5 +38,13 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return await _ITrnFwnDB.RequestRejectDetail(RequestId);
         }
+        public async Task<DTORequestFwdDetailResponse?> RequestFwdDetail(int RequestId)
+        {
+            return await _ITrnFwnDB.RequestFwdDetail(RequestId);
+        }
+        public async Task<bool> ActionOnRequest(DTOActionOnRequest data, byte StepId)
+        {
+            return await _ITrnFwnDB.ActionOnRequest(data, StepId);
+        }
     }
 }

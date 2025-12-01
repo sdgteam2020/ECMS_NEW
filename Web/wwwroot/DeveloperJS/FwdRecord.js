@@ -483,13 +483,6 @@ $(function () {
                         if (parseInt($("#spnFwdToAspNetUsersId").html()) != 0) {
                             var spnRequestId = $("#spnCurrentspnRequestId").html();
 
-                            var Counter = parseInt($("#spnStepCounter").html());
-                            if (Counter == 1 || Counter == 7 || Counter == 8 || Counter == 9 || Counter == 10) {
-                                Counter = 2;
-                            } else {
-                                Counter = parseInt($("#spnStepCounter").html()) + 1;
-                            }
-
                             if (parseInt(StepCounter) == 1 || parseInt(StepCounter) == 7 || parseInt(StepCounter) == 8 || parseInt(StepCounter) == 9 || parseInt(StepCounter) == 10) {
                                 if (parseInt($("#spnCurrentApplyFor").html()) == 1) {
                                     let CurrentRegistrationApplyFor = parseInt($("#spnCurrentRegistrationApplyFor").html());
@@ -497,30 +490,30 @@ $(function () {
                                         if (IsWithTokenApply == true) {
                                             if ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val()) {
                                                 IsDigitalSignReq = true;
-                                                UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                                ActionOnRequest(spnRequestId, "A")
                                             }
                                         }
                                         else {
                                             IsDigitalSignReq = false;
-                                            UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                            ActionOnRequest(spnRequestId, "A")
                                         }
                                     }
                                     else {
                                         if (IsToken == true && CurrentRegistrationApplyFor == 1) {
                                             if (($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) && ($("#spnServiceNo").html() == $("#txtspnTokenArmyNo").val())) {
                                                 IsDigitalSignReq = true;
-                                                UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                                ActionOnRequest(spnRequestId, "A")
                                             }
                                         }
                                         else {
                                             IsDigitalSignReq = false;
-                                            UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                            ActionOnRequest(spnRequestId, "A")
                                         }
                                     }
                                 }
                                 else {
                                     IsDigitalSignReq = false;
-                                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                    ActionOnRequest(spnRequestId, "A")
                                 }
                             }
                             else {
@@ -530,13 +523,13 @@ $(function () {
                                     //alert("2" + $("#txtspnTokenArmyNo").val());
                                     if ($("#aspntokenarmyno").html() === $("#txtspnTokenArmyNo").val()) {
                                         IsDigitalSignReq = true;
-                                        UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                        ActionOnRequest(spnRequestId, "A")
                                     }
 
                                 }
                                 else {
                                     IsDigitalSignReq = false;
-                                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "A");
+                                    ActionOnRequest(spnRequestId, "A")
                                 }
                             }
                         }
@@ -566,19 +559,9 @@ $(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 var spnRequestId = $("#spnCurrentspnRequestId").html();
-                var Counter = parseInt($("#spnStepCounter").html());
-                if (Counter == 2)
-                    Counter = 7
-                else if (Counter == 3)
-                    Counter = 8
-                else if (Counter == 4)
-                    Counter = 9
-                else if (Counter == 5)
-                    Counter = 10
-
 
                 if ($("#txtFrejectedRemarks").val() != "" || $("#ddlRRemarks").val() != "")
-                    UpdateStepCounter(spnStepId, spnRequestId, Counter, "R");
+                    ActionOnRequest(spnRequestId, "R");
                 else
                     toastr.error('Please Enter Remarks To Reject');
 
@@ -1055,30 +1038,48 @@ function ActionOnRequest(spnRequestId, Flag) {
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
-            if (response != "null" && response != null) {
-                if (response.Result == true) {
-                    $("#FwdRecord").modal('hide');
-                    var HType = 0;
-                    if (Counter == 3) {
-                        HType = 1;
-                    } else if (Counter == 4) {
-                        HType = 2;
-                    }
-                    if (Flag == "R") {
-                        RejecteTo(spnRequestId, Counter);
+            if (response.Result == true) {
+                $("#FwdRecord").modal('hide');
+
+                if (Flag == "R") {
+                    if (response.Value.ApplyForId == 1) {
+                        SaveNotification(response.Value.AfterAction_StepId, response.Value.AfterAction_StepId, response.Value.AspNetUsersId, spnRequestId)
                     } else {
-                        ForwardTo(spnRequestId, Counter);
+                        SaveNotification(response.Value.AfterAction_StepId, (parseInt(response.Value.AfterAction_StepId) + 10), response.Value.AspNetUsersId, spnRequestId)
                     }
-                    Counter_Notification = Counter;
-                    spnRequestId_Notification = spnRequestId;
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    if (response.Value.AfterAction_StepId == 2 || response.Value.AfterAction_StepId == 3 || response.Value.AfterAction_StepId == 4 || response.Value.AfterAction_StepId == 5) {
+                        var lsts = new Array();
+                        var ids = spnRequestId;
+                        lsts.push(ids);
+                        if (IsToken == true) {
+
+                            DataSignDigitaly(lsts, "tokenmsgforfwd", spnRequestId, response.Value.AfterAction_StepId);
+
+                        } else {
+                            DataSignDigitaly(lsts, "tokenmsgforfwd", spnRequestId, response.Value.AfterAction_StepId);
+                        }
+                        if (response.Value.ApplyForId == 1) {
+                            SaveNotification(response.Value.AfterAction_StepId, response.Value.AfterAction_StepId, response.Value.AspNetUsersId, spnRequestId)
+                        } else {
+                            SaveNotification(response.Value.AfterAction_StepId, (parseInt(response.Value.AfterAction_StepId) + 10), response.Value.AspNetUsersId, spnRequestId)
+                        }
+                    } else {
+                        setTimeout(function () {
+                            location.reload();
+                        }, 2000);
+                    }
                 }
-                else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: response.Message
-                    });
-                }
+            }
+            else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: response.Message
+                });
             }
         }
 
