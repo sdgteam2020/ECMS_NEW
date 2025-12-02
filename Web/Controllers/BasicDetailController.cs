@@ -2676,172 +2676,191 @@ namespace Web.Controllers
             // Return the response with the operation result
             return Ok(response);
         }
+        [HttpPost]
         public async Task<IActionResult> ActionOnRequest(DTOActionOnRequest  dTOActionOn)
         {
             DTOGenericResponse<DTOActionOnRequestResponse?> response = new DTOGenericResponse<DTOActionOnRequestResponse?>();
             DTOActionOnRequestResponse dTOAction = new DTOActionOnRequestResponse();
             try
             {
-                MTrnICardRequest? mTrnICard = await iTrnICardRequestBL.Get(dTOActionOn.RequestId);
-
-                if (mTrnICard != null && mTrnICard.StatusId == 1)
+                if(ModelState.IsValid)
                 {
-                    if (dTOActionOn.Flag == "R")
+                    MTrnICardRequest? mTrnICard = await iTrnICardRequestBL.Get(dTOActionOn.RequestId);
+
+                    if (mTrnICard != null && mTrnICard.StatusId == 1)
                     {
-
-                        DTORequestRejectDetailResponse? rejectDetailResponse = await iTrnFwnBL.RequestRejectDetail(dTOActionOn.RequestId);
-
-                        if (rejectDetailResponse != null)
+                        if (dTOActionOn.Flag == "R")
                         {
-                            dTOAction.AspNetUsersId = rejectDetailResponse.AspNetUsersId;
-                            dTOAction.BeforeAction_StepId = rejectDetailResponse.StepId;
-                            dTOAction.ApplyForId = rejectDetailResponse.ApplyForId;
 
+                            DTORequestRejectDetailResponse? rejectDetailResponse = await iTrnFwnBL.RequestRejectDetail(dTOActionOn.RequestId);
 
-                            if (rejectDetailResponse.UserId.GetValueOrDefault() == 0)
+                            if (rejectDetailResponse != null)
                             {
-                                response.Message = "Profile is not mapped with domain Id!";
-                                response.Value = dTOAction;
-                                response.Result = false;
-                                return Ok(response);
-                            }
-                            else
-                            {
-                                if (rejectDetailResponse.StepId == 2)
-                                    dTOActionOn.StepId = 7;
-                                else if (rejectDetailResponse.StepId == 3)
-                                    dTOActionOn.StepId = 8;
-                                else if (rejectDetailResponse.StepId == 4)
-                                    dTOActionOn.StepId = 9;
-                                else if (rejectDetailResponse.StepId == 5)
-                                    dTOActionOn.StepId = 10;
+                                dTOAction.AspNetUsersId = rejectDetailResponse.AspNetUsersId;
+                                dTOAction.BeforeAction_StepId = rejectDetailResponse.StepId;
+                                dTOAction.ApplyForId = rejectDetailResponse.ApplyForId;
 
-                                dTOAction.AfterAction_StepId = dTOActionOn.StepId;
 
-                                // Retrieve session data for unit ID
-                                DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-                                // Set values for the forward data object using session data and user information
-                                dTOActionOn.FromUserId = dtoSession.UserId;
-                                dTOActionOn.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                dTOActionOn.ToUserId = rejectDetailResponse.UserId.GetValueOrDefault();
-                                dTOActionOn.ToAspNetUsersId = rejectDetailResponse.AspNetUsersId;
-                                dTOActionOn.UnitId = dtoSession.UnitId;
-                                dTOActionOn.UpdatedOn = DateTime.Now;
-                                dTOActionOn.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                dTOActionOn.IsActive = true;
-                                dTOActionOn.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
-                                dTOActionOn.FwdStatusId = 3; // Set the status to 3 for rejection
-                                dTOActionOn.IsComplete = false;
-
-                                await iTrnFwnBL.ActionOnRequest(dTOActionOn, rejectDetailResponse.StepId);
-
-                                response.Message = "ok";
-                                response.Value = dTOAction;
-                                response.Result = true;
-                                return Ok(response);
-                            }
-                        }
-                        else
-                        {
-                            //Invalid Input
-                            response.Message = "Invalid Input";
-                            response.Value = dTOAction;
-                            response.Result = false;
-                            return Ok(response);
-                        }
-
-                    }
-                    else if (dTOActionOn.Flag == "A")
-                    {
-                        DTORequestFwdDetailResponse? dTORequestFwdDetail = await iTrnFwnBL.RequestFwdDetail(dTOActionOn.RequestId);
-                        if (dTORequestFwdDetail != null)
-                        {
-                            dTOAction.AspNetUsersId = dTORequestFwdDetail.AspNetUsersId;
-                            dTOAction.BeforeAction_StepId = dTORequestFwdDetail.StepId;
-                            dTOAction.ApplyForId = dTORequestFwdDetail.ApplyForId;
-
-                            if (dTORequestFwdDetail.UserId.GetValueOrDefault() == 0)
-                            {
-                                response.Message = "Profile is not mapped with domain Id!";
-                                response.Value = dTOAction;
-                                response.Result = false;
-                                return Ok(response);
-                            }
-                            else
-                            {
-                                if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 2)
+                                if (rejectDetailResponse.UserId.GetValueOrDefault() == 0)
                                 {
-                                    if ((dTORequestFwdDetail.AspNetUsersId == dTOActionOn.FromAspNetUsersId) || (dTORequestFwdDetail.UserId.GetValueOrDefault() == dTOActionOn.FromUserId) )
-                                    {
-                                        response.Message = "Source and destination DID/Profile are not the same.";
-                                        response.Value = dTOAction;
-                                        response.Result = false;
-                                        return Ok(response);
-                                    }
-
-                                }
-                                else if (dTORequestFwdDetail.StepId == 3)
-                                {
-                                    if ((dTORequestFwdDetail.AspNetUsersId != dTOActionOn.ToAspNetUsersId) || (dTORequestFwdDetail.UserId.GetValueOrDefault() != dTOActionOn.ToUserId))
-                                    {
-                                        response.Message = "Destination DID/Profile are not correct.";
-                                        response.Value = dTOAction;
-                                        response.Result = false;
-                                        return Ok(response);
-                                    }
-                                }
-                                else if(dTORequestFwdDetail.StepId == 4)
-                                {
-                                    if ((dTORequestFwdDetail.AspNetUsersId != dTOActionOn.ToAspNetUsersId) || (dTORequestFwdDetail.UserId.GetValueOrDefault() != dTOActionOn.ToUserId))
-                                    {
-                                        response.Message = "Destination DID/Profile are not correct.";
-                                        response.Value = dTOAction;
-                                        response.Result = false;
-                                        return Ok(response);
-                                    }
-                                }
-                                else
-                                {
-                                    response.Message = "Invalid Input";
+                                    response.Message = "Profile is not mapped with domain Id!";
                                     response.Value = dTOAction;
                                     response.Result = false;
                                     return Ok(response);
                                 }
-
-                                if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 7 || dTORequestFwdDetail.StepId == 8 || dTORequestFwdDetail.StepId == 9 || dTORequestFwdDetail.StepId == 10)
+                                else
                                 {
-                                    dTOActionOn.StepId = 2;
+                                    if (rejectDetailResponse.StepId == 1)
+                                    {
+                                        response.Message = "At this stage, the application has not been rejected.";
+                                        response.Value = dTOAction;
+                                        response.Result = false;
+                                        return Ok(response);
+                                    }
+                                    else if (rejectDetailResponse.StepId == 2)
+                                        dTOActionOn.StepId = 7;
+                                    else if (rejectDetailResponse.StepId == 3)
+                                        dTOActionOn.StepId = 8;
+                                    else if (rejectDetailResponse.StepId == 4)
+                                        dTOActionOn.StepId = 9;
+                                    else if (rejectDetailResponse.StepId == 5)
+                                        dTOActionOn.StepId = 10;
+
+                                    dTOAction.AfterAction_StepId = dTOActionOn.StepId;
+
+                                    // Retrieve session data for unit ID
+                                    DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                                    // Set values for the forward data object using session data and user information
+                                    dTOActionOn.FromUserId = dtoSession.UserId;
+                                    dTOActionOn.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                    dTOActionOn.ToUserId = rejectDetailResponse.UserId.GetValueOrDefault();
+                                    dTOActionOn.ToAspNetUsersId = rejectDetailResponse.AspNetUsersId;
+                                    dTOActionOn.UnitId = dtoSession.UnitId;
+                                    dTOActionOn.UpdatedOn = DateTime.Now;
+                                    dTOActionOn.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                    dTOActionOn.IsActive = true;
+                                    dTOActionOn.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
+                                    dTOActionOn.FwdStatusId = 3; // Set the status to 3 for rejection
+                                    dTOActionOn.IsComplete = false;
+
+                                    await iTrnFwnBL.ActionOnRequest(dTOActionOn, rejectDetailResponse.StepId);
+
+                                    response.Message = "Reject Application successfully.";
+                                    response.Value = dTOAction;
+                                    response.Result = true;
+                                    return Ok(response);
+                                }
+                            }
+                            else
+                            {
+                                //Invalid Input
+                                response.Message = "Invalid Input";
+                                response.Value = dTOAction;
+                                response.Result = false;
+                                return Ok(response);
+                            }
+
+                        }
+                        else if (dTOActionOn.Flag == "A")
+                        {
+                            DTORequestFwdDetailResponse? dTORequestFwdDetail = await iTrnFwnBL.RequestFwdDetail(dTOActionOn.RequestId);
+                            if (dTORequestFwdDetail != null)
+                            {
+                                dTOAction.AspNetUsersId = dTORequestFwdDetail.AspNetUsersId;
+                                dTOAction.BeforeAction_StepId = dTORequestFwdDetail.StepId;
+                                dTOAction.ApplyForId = dTORequestFwdDetail.ApplyForId;
+
+                                if (dTORequestFwdDetail.UserId.GetValueOrDefault() == 0)
+                                {
+                                    response.Message = "Profile is not mapped with domain Id!";
+                                    response.Value = dTOAction;
+                                    response.Result = false;
+                                    return Ok(response);
                                 }
                                 else
                                 {
-                                    dTOActionOn.StepId = (byte)(dTOActionOn.StepId + 1);
+                                    if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 2)
+                                    {
+                                        if ((dTORequestFwdDetail.AspNetUsersId == dTOActionOn.ToAspNetUsersId) || (dTORequestFwdDetail.UserId.GetValueOrDefault() == dTOActionOn.ToUserId))
+                                        {
+                                            response.Message = "Source and destination DID/Profile are not the same.";
+                                            response.Value = dTOAction;
+                                            response.Result = false;
+                                            return Ok(response);
+                                        }
+
+                                    }
+                                    else if (dTORequestFwdDetail.StepId == 3)
+                                    {
+                                        if ((dTORequestFwdDetail.AspNetUsersId != dTOActionOn.ToAspNetUsersId) || (dTORequestFwdDetail.UserId.GetValueOrDefault() != dTOActionOn.ToUserId))
+                                        {
+                                            response.Message = "Destination DID/Profile are not correct.";
+                                            response.Value = dTOAction;
+                                            response.Result = false;
+                                            return Ok(response);
+                                        }
+                                    }
+                                    else if (dTORequestFwdDetail.StepId == 4)
+                                    {
+                                        if ((dTORequestFwdDetail.AspNetUsersId != dTOActionOn.ToAspNetUsersId) || (dTORequestFwdDetail.UserId.GetValueOrDefault() != dTOActionOn.ToUserId))
+                                        {
+                                            response.Message = "Destination DID/Profile are not correct.";
+                                            response.Value = dTOAction;
+                                            response.Result = false;
+                                            return Ok(response);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        response.Message = "Invalid Input";
+                                        response.Value = dTOAction;
+                                        response.Result = false;
+                                        return Ok(response);
+                                    }
+
+                                    if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 7 || dTORequestFwdDetail.StepId == 8 || dTORequestFwdDetail.StepId == 9 || dTORequestFwdDetail.StepId == 10)
+                                    {
+                                        dTOActionOn.StepId = 2;
+                                    }
+                                    else
+                                    {
+                                        dTOActionOn.StepId = (byte)(dTOActionOn.StepId + 1);
+                                    }
+
+                                    dTOAction.AfterAction_StepId = dTOActionOn.StepId;
+
+
+                                    // Retrieve session data for unit ID
+                                    DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                                    // Set values for the forward data object using session data and user information
+                                    dTOActionOn.FromUserId = dtoSession.UserId;
+                                    dTOActionOn.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                    dTOActionOn.ToUserId = dTORequestFwdDetail.UserId.GetValueOrDefault();
+                                    dTOActionOn.ToAspNetUsersId = dTORequestFwdDetail.AspNetUsersId;
+                                    dTOActionOn.UnitId = dtoSession.UnitId;
+                                    dTOActionOn.UpdatedOn = DateTime.Now;
+                                    dTOActionOn.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                                    dTOActionOn.IsActive = true;
+                                    dTOActionOn.TypeId = dTOActionOn.StepId;
+                                    dTOActionOn.FwdStatusId = 2; // Set the status to 2 for Approved
+                                    dTOActionOn.IsComplete = false;
+
+                                    await iTrnFwnBL.ActionOnRequest(dTOActionOn, dTORequestFwdDetail.StepId);
+
+                                    response.Message = "ok";
+                                    response.Value = dTOAction;
+                                    response.Result = true;
+                                    return Ok(response);
                                 }
-
-                                dTOAction.AfterAction_StepId = dTOActionOn.StepId;
-
-
-                                // Retrieve session data for unit ID
-                                DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-                                // Set values for the forward data object using session data and user information
-                                dTOActionOn.FromUserId = dtoSession.UserId;
-                                dTOActionOn.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                dTOActionOn.ToUserId = dTORequestFwdDetail.UserId.GetValueOrDefault();
-                                dTOActionOn.ToAspNetUsersId = dTORequestFwdDetail.AspNetUsersId;
-                                dTOActionOn.UnitId = dtoSession.UnitId;
-                                dTOActionOn.UpdatedOn = DateTime.Now;
-                                dTOActionOn.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                dTOActionOn.IsActive = true;
-                                dTOActionOn.TypeId = dTOActionOn.StepId;
-                                dTOActionOn.FwdStatusId = 2; // Set the status to 2 for Approved
-                                dTOActionOn.IsComplete = false;
-
-                                await iTrnFwnBL.ActionOnRequest(dTOActionOn, dTORequestFwdDetail.StepId);
-
-                                response.Message = "ok";
+                            }
+                            else
+                            {
+                                //Invalid Input
+                                response.Message = "Invalid Input";
                                 response.Value = dTOAction;
-                                response.Result = true;
+                                response.Result = false;
                                 return Ok(response);
                             }
                         }
@@ -2856,44 +2875,56 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        //Invalid Input
-                        response.Message = "Invalid Input";
-                        response.Value = dTOAction;
-                        response.Result = false;
-                        return Ok(response);
-                    }
-                }
-                else
-                {
-                    if (mTrnICard == null)
-                    {
-                        //Invalid Request Id
-                        response.Message = "Invalid Request Id";
-                        response.Value = dTOAction;
-                        response.Result = false;
-                        return Ok(response);
-                    }
-                    else
-                    {
-                        if (mTrnICard.StatusId == 2)
+                        if (mTrnICard == null)
                         {
-                            //Request is completed, cannot be rejected
-                            response.Message = "Request is completed, cannot be rejected";
+                            //Invalid Request Id
+                            response.Message = "Invalid Request Id";
                             response.Value = dTOAction;
                             response.Result = false;
                             return Ok(response);
                         }
                         else
                         {
-                            //Request is closed, cannot be rejected
-                            response.Message = "Request is closed, cannot be rejected";
-                            response.Value = dTOAction;
-                            response.Result = false;
-                            return Ok(response);
+                            if (mTrnICard.StatusId == 2)
+                            {
+                                //Request is completed, cannot be rejected
+                                response.Message = "Request is completed, cannot be rejected";
+                                response.Value = dTOAction;
+                                response.Result = false;
+                                return Ok(response);
+                            }
+                            else
+                            {
+                                //Request is closed, cannot be rejected
+                                response.Message = "Request is closed, cannot be rejected";
+                                response.Value = dTOAction;
+                                response.Result = false;
+                                return Ok(response);
+                            }
                         }
+
+                    }
+                }
+                else
+                {
+                    // Extract validation errors from ModelState
+                    var errors = ModelState
+                        .Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                    if (errors.Any())
+                    {
+                        // Concatenate all validation error messages
+                        response.Message = string.Join("; ", errors);
                     }
 
+                    response.Value = dTOAction;
+                    response.Result = false;
+                    return Ok(response);
                 }
+
             }
             catch (Exception ex)
             {

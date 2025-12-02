@@ -1037,6 +1037,7 @@ function ActionOnRequest(spnRequestId, Flag) {
         data: userdata,
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
         success: function (response) {
             if (response.Result == true) {
                 $("#FwdRecord").modal('hide');

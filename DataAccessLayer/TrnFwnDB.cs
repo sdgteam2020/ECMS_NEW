@@ -8,19 +8,24 @@ using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
+using System.Transactions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
     public class TrnFwnDB : GenericRepositoryDL<MTrnFwd>, ITrnFwnDB
     {
         private readonly DapperContext _contextDP;
+        private readonly DapperContextDb2 _contextDP2;
         protected new readonly ApplicationDbContext _context;
         private readonly ILogger<TrnFwnDB> _logger;
-        public TrnFwnDB(ApplicationDbContext context, DapperContext contextDP, ILogger<TrnFwnDB> logger) : base(context)
+        public TrnFwnDB(ApplicationDbContext context, DapperContext contextDP, DapperContextDb2 contextDP2, ILogger<TrnFwnDB> logger) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
+            _contextDP2 = contextDP2;
             _logger = logger;
         }
 
@@ -277,25 +282,40 @@ namespace DataAccessLayer
         {
             // Initialize transaction for multiple database operations
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+            var (db2, transaction2) = _contextDP2.CreateConnectionWithTransaction();
             try
             {
                 string insertSql;
-                string query1, query2, query3;
+                string query1, query2, query3,query4;
 
                 if (data.Flag == "R")
                 {
                     if (StepId == 3)
                     {
                         query2 = @"Update BasicDetails set DateOfIssue=GETDATE() where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
-                        await db.ExecuteAsync(query2, new { data.RequestId }, transaction: transaction);
+                        var parameters2 = new DynamicParameters();
+                        parameters2.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
+                        await db.ExecuteAsync(query2, parameters2, transaction: transaction);
                     }
-
+                    query4 = @"UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] ='' ,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn WHERE [RequestId]= @RequestId";
+                    var parameters4 = new DynamicParameters();
+                    parameters4.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters4.Add("@Updatedby", data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                    parameters4.Add("@UpdatedOn", data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                    
+                    await db2.ExecuteAsync(query4, parameters4, transaction: transaction2);
                 }
                 query1 = @"Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@RequestId";
-                await db.ExecuteAsync(query1, new { data.StepId, data.RequestId, data.Updatedby }, transaction: transaction);
+                var parameters1 = new DynamicParameters();
+                parameters1.Add("@StepId", data.StepId, DbType.Byte, ParameterDirection.Input);
+                parameters1.Add("@Updatedby", data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters1.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
+                await db.ExecuteAsync(query1, parameters1, transaction: transaction);
 
                 query3 = @"UPDATE TrnFwds set IsComplete=1 where RequestId=@RequestId";
-                await db.ExecuteAsync(query3, new { data.RequestId }, transaction: transaction);
+                var parameters3 = new DynamicParameters();
+                parameters3.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
+                await db.ExecuteAsync(query3, parameters3, transaction: transaction);
 
 
                 // Insert new posting record
@@ -323,12 +343,14 @@ namespace DataAccessLayer
 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();
+                transaction2.Commit();
                 return true;
             }
             catch (Exception ex)
             {
                 // Rollback the transaction if any operation fails
                 transaction.Rollback();
+                transaction2.Rollback();
                 _logger.LogError(1001, ex, "TrnFwnDB->ActionOnRequest");
                 return false;
             }
@@ -336,6 +358,7 @@ namespace DataAccessLayer
             {
                 // Dispose of the connection
                 db.Dispose();
+                db2.Dispose();
             }
         }
     }

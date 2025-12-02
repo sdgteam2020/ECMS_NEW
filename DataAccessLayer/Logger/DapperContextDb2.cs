@@ -15,5 +15,13 @@ namespace DataAccessLayer.Logger
         }
         public IDbConnection CreateConnection()
             => new SqlConnection(_connectionString);
+        // Method to create a connection and start a transaction
+        public (IDbConnection, IDbTransaction) CreateConnectionWithTransaction()
+        {
+            var connection = CreateConnection();
+            connection.Open();
+            var transaction = connection.BeginTransaction();
+            return (connection, transaction);
+        }
     }
 }
