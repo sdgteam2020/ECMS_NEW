@@ -277,7 +277,7 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<XssProtectionMiddleware>();
+//app.UseMiddleware<XssProtectionMiddleware>();
 
 //app.UseMyMiddleware();
 //app.UseMiddleware<BackRestrictionMiddleware>();

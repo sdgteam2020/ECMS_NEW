@@ -2677,6 +2677,7 @@ namespace Web.Controllers
             return Ok(response);
         }
         [HttpPost]
+        [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> ActionOnRequest(DTOActionOnRequest  dTOActionOn)
         {
             DTOGenericResponse<DTOActionOnRequestResponse?> response = new DTOGenericResponse<DTOActionOnRequestResponse?>();
@@ -2780,7 +2781,17 @@ namespace Web.Controllers
                                 }
                                 else
                                 {
-                                    if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 2)
+                                    if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 7 || dTORequestFwdDetail.StepId == 8 || dTORequestFwdDetail.StepId == 9 || dTORequestFwdDetail.StepId == 10)
+                                    {
+                                        dTOActionOn.StepId = 2;
+                                    }
+                                    else
+                                    {
+                                        dTOActionOn.StepId = (byte)(dTOActionOn.StepId + 1);
+                                    }
+
+
+                                    if (dTORequestFwdDetail.StepId == 2)
                                     {
                                         if ((dTORequestFwdDetail.AspNetUsersId == dTOActionOn.ToAspNetUsersId) || (dTORequestFwdDetail.UserId.GetValueOrDefault() == dTOActionOn.ToUserId))
                                         {
@@ -2819,14 +2830,7 @@ namespace Web.Controllers
                                         return Ok(response);
                                     }
 
-                                    if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 7 || dTORequestFwdDetail.StepId == 8 || dTORequestFwdDetail.StepId == 9 || dTORequestFwdDetail.StepId == 10)
-                                    {
-                                        dTOActionOn.StepId = 2;
-                                    }
-                                    else
-                                    {
-                                        dTOActionOn.StepId = (byte)(dTOActionOn.StepId + 1);
-                                    }
+
 
                                     dTOAction.AfterAction_StepId = dTOActionOn.StepId;
 
@@ -2837,8 +2841,11 @@ namespace Web.Controllers
                                     // Set values for the forward data object using session data and user information
                                     dTOActionOn.FromUserId = dtoSession.UserId;
                                     dTOActionOn.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                                    dTOActionOn.ToUserId = dTORequestFwdDetail.UserId.GetValueOrDefault();
-                                    dTOActionOn.ToAspNetUsersId = dTORequestFwdDetail.AspNetUsersId;
+                                    if (dTOActionOn.StepId != 2)
+                                    {
+                                        dTOActionOn.ToUserId = dTORequestFwdDetail.UserId.GetValueOrDefault();
+                                        dTOActionOn.ToAspNetUsersId = dTORequestFwdDetail.AspNetUsersId;
+                                    }
                                     dTOActionOn.UnitId = dtoSession.UnitId;
                                     dTOActionOn.UpdatedOn = DateTime.Now;
                                     dTOActionOn.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
