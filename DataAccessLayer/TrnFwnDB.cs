@@ -201,10 +201,25 @@ namespace DataAccessLayer
 
         public async Task<DTORequestRejectDetailResponse?> RequestRejectDetail(int RequestId)
         {
-            string query = @"Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
-                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
-                            INNER JOIN TrnDomainMapping tdm on tdm.Id = ireq.TrnDomainMappingId
-                            where step.RequestId=@RequestId";
+            string query = @"declare @StepId tinyint 
+                            declare @RequestId int
+                            Select @StepId=step.StepId from TrnStepCounter step where step.RequestId=@RequestId
+                            IF @StepId = 1
+	                            BEGIN
+	                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId as FromAspNetUsersId,tdm.UserId as FromUserId from TrnStepCounter step
+	                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+	                            INNER JOIN TrnDomainMapping tdm on tdm.Id = ireq.TrnDomainMappingId
+	                            where step.RequestId=@RequestId
+	                            END
+                            ELSE IF @StepId = 2 OR @StepId = 3 OR @StepId = 4
+	                            Begin
+	                            Select step.ApplyForId,step.StepId,fwd.ToAspNetUsersId as FromAspNetUsersId ,tdm_to.UserId as FromUserId,tdm.AspNetUsersId as ToAspNetUsersId,tdm.UserId as ToUserId from TrnStepCounter step
+	                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+	                            INNER JOIN TrnDomainMapping tdm on tdm.Id = ireq.TrnDomainMappingId
+	                            INNER JOIN TrnFwds fwd on fwd.RequestId = ireq.RequestId and fwd.TrnFwdId = (Select MAX(fw.TrnFwdId) from TrnFwds fw where fw.RequestId=ireq.RequestId)
+	                            INNER JOIN TrnDomainMapping tdm_to on tdm_to.AspNetUsersId = fwd.ToAspNetUsersId
+	                            where step.RequestId=@RequestId
+	                            End";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
@@ -224,43 +239,54 @@ namespace DataAccessLayer
         {
             string query = @"declare @ApplyForId tinyint 
                             declare @StepId tinyint 
-
                             Select @StepId=step.StepId from TrnStepCounter step where step.RequestId=@RequestId
-
-                            IF @StepId = 1 OR @StepId = 2
+                            IF @StepId = 1
                             BEGIN
-                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
+                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId as FromAspNetUsersId,tdm.UserId as FromUserId from TrnStepCounter step
                             INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
                             INNER JOIN TrnDomainMapping tdm on tdm.Id = ireq.TrnDomainMappingId
                             where step.RequestId=@RequestId
                             END
-                            ELSE IF @StepId = 3
+                            ELSE IF @StepId = 2
 	                            BEGIN
 	                            Select @ApplyForId=bs.ApplyForId from BasicDetails bs where bs.BasicDetailId =(Select BasicDetailId from TrnICardRequest where RequestId =@RequestId)
-	                            IF @ApplyForId = 1
-	                            Begin
-	                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
-	                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
-	                            INNER JOIN MRecordOffice mrec on mrec.RecordOfficeId = ireq.RecordOfficeId
-	                            INNER JOIN OROMapping oro on oro.RecordOfficeId = mrec.RecordOfficeId
-	                            INNER JOIN TrnDomainMapping tdm on tdm.Id = oro.TDMId
-	                            where step.RequestId=@RequestId
-	                            End
-	                            ELSE
-	                            Begin
-	                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
-	                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
-	                            INNER JOIN MRecordOffice mrec on mrec.RecordOfficeId = ireq.RecordOfficeId
-	                            INNER JOIN TrnDomainMapping tdm on tdm.Id = mrec.TDMId
-	                            where step.RequestId=@RequestId
-	                            End
-                            END
-                            ELSE IF @StepId = 4
+		                            IF @ApplyForId = 1
+		                            Begin
+		                            Select step.ApplyForId,step.StepId,fwd.ToAspNetUsersId as FromAspNetUsersId ,tdm_to.UserId as FromUserId,tdm.AspNetUsersId as ToAspNetUsersId,tdm.UserId as ToUserId from TrnStepCounter step
+		                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+		                            INNER JOIN MRecordOffice mrec on mrec.RecordOfficeId = ireq.RecordOfficeId
+		                            INNER JOIN OROMapping oro on oro.RecordOfficeId = mrec.RecordOfficeId
+		                            INNER JOIN TrnDomainMapping tdm on tdm.Id = oro.TDMId
+		                            INNER JOIN TrnFwds fwd on fwd.RequestId = ireq.RequestId and fwd.TrnFwdId = (Select MAX(fw.TrnFwdId) from TrnFwds fw where fw.RequestId=ireq.RequestId)
+		                            INNER JOIN TrnDomainMapping tdm_to on tdm_to.AspNetUsersId = fwd.ToAspNetUsersId
+		                            where step.RequestId=@RequestId
+		                            End
+		                            ELSE
+		                            Begin
+		                            Select step.ApplyForId,step.StepId,fwd.ToAspNetUsersId as FromAspNetUsersId ,tdm_to.UserId as FromUserId,tdm.AspNetUsersId as ToAspNetUsersId,tdm.UserId as ToUserId from TrnStepCounter step
+		                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+		                            INNER JOIN MRecordOffice mrec on mrec.RecordOfficeId = ireq.RecordOfficeId
+		                            INNER JOIN TrnDomainMapping tdm on tdm.Id = mrec.TDMId
+		                            INNER JOIN TrnFwds fwd on fwd.RequestId = ireq.RequestId and fwd.TrnFwdId = (Select MAX(fw.TrnFwdId) from TrnFwds fw where fw.RequestId=ireq.RequestId)
+		                            INNER JOIN TrnDomainMapping tdm_to on tdm_to.AspNetUsersId = fwd.ToAspNetUsersId
+		                            where step.RequestId=@RequestId
+		                            End
+	                            END
+                            ELSE IF @StepId = 3
                             BEGIN
-	                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId,tdm.UserId from TrnStepCounter step
+	                            Select step.ApplyForId,step.StepId,fwd.ToAspNetUsersId as FromAspNetUsersId ,tdm_to.UserId as FromUserId,tdm.AspNetUsersId as ToAspNetUsersId,tdm.UserId as ToUserId from TrnStepCounter step
 	                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
 	                            INNER JOIN TrnDomainMapping tdm on tdm.Id = (Select TDMId from AfsacCellMapping where AfsacCellMappingId=1)
+	                            INNER JOIN TrnFwds fwd on fwd.RequestId = ireq.RequestId and fwd.TrnFwdId = (Select MAX(fw.TrnFwdId) from TrnFwds fw where fw.RequestId=ireq.RequestId)
+	                            INNER JOIN TrnDomainMapping tdm_to on tdm_to.AspNetUsersId = fwd.ToAspNetUsersId
 	                            where step.RequestId=@RequestId
+                            END
+                            ELSE IF @StepId = 7 OR @StepId = 8 OR @StepId = 9
+                            BEGIN
+                            Select step.ApplyForId,step.StepId,tdm.AspNetUsersId as FromAspNetUsersId,tdm.UserId as FromUserId from TrnStepCounter step
+                            INNER JOIN TrnICardRequest ireq on ireq.RequestId = step.RequestId
+                            INNER JOIN TrnDomainMapping tdm on tdm.Id = ireq.TrnDomainMappingId
+                            where step.RequestId=@RequestId
                             END";
             try
             {

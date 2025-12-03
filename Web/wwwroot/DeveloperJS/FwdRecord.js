@@ -1025,12 +1025,12 @@ function ActionOnRequest(spnRequestId, Flag) {
     var userdata = {
         RequestId: spnRequestId,
         Flag: Flag,
-        TrnFwdId: Flag === "A" ? parseInt($("#spnCurrentspnTrnFwdId").html(), 10) : 0,
-        Remark: Flag === "A" ? $("#txtFRemarks").val() : $("#txtFrejectedRemarks").val,
+        Remark: Flag === "A" ? $("#txtFRemarks").val() : $("#txtFrejectedRemarks").val(),
         RemarksIds: Flag === "A" ? $("#ddlRemarks").val() : $("#ddlRRemarks").val(),
         ToAspNetUsersId: Flag === "A" ? $("#spnFwdToAspNetUsersId").html() : 0,
         ToUserId: Flag === "A" ? $("#spnFwdToUsersId").html() : 0,
     };
+    console.log(userdata);
     $.ajax({
         url: '/BasicDetail/ActionOnRequest',
         contentType: 'application/x-www-form-urlencoded',

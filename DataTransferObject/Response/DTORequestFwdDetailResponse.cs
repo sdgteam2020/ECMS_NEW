@@ -10,7 +10,9 @@ namespace DataTransferObject.Response
     {
         public byte ApplyForId { get; set; }
         public byte StepId { get; set; }
-        public int AspNetUsersId { get; set; }
-        public int? UserId { get; set; }
+        public int FromAspNetUsersId { get; set; }
+        public int FromUserId { get; set; }
+        public int ToAspNetUsersId { get; set; }
+        public int ToUserId { get; set; }
     }
 }
