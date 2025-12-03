@@ -2783,7 +2783,6 @@ namespace Web.Controllers
                             DTORequestFwdDetailResponse? dTORequestFwdDetail = await iTrnFwnBL.RequestFwdDetail(dTOActionOn.RequestId);
                             if (dTORequestFwdDetail != null)
                             {
-                                dTOAction.AspNetUsersId = dTORequestFwdDetail.ToAspNetUsersId;
                                 dTOAction.BeforeAction_StepId = dTORequestFwdDetail.StepId;
                                 dTOAction.ApplyForId = dTORequestFwdDetail.ApplyForId;
 
@@ -2796,7 +2795,7 @@ namespace Web.Controllers
                                         response.Result = false;
                                         return Ok(response);
                                     }
-                                    if (dTORequestFwdDetail.StepId == 1)
+                                    if (dTORequestFwdDetail.StepId == 1 || dTORequestFwdDetail.StepId == 7 || dTORequestFwdDetail.StepId == 8 || dTORequestFwdDetail.StepId == 9)
                                     {
                                         if ((dTOActionOn.ToAspNetUsersId == CurrentAspNetUsersId) || (dTOActionOn.ToUserId == dtoSession.UserId))
                                         {
@@ -2807,16 +2806,19 @@ namespace Web.Controllers
                                         }
                                         dTORequestFwdDetail.ToAspNetUsersId = dTOActionOn.ToAspNetUsersId;
                                         dTORequestFwdDetail.ToUserId = dTOActionOn.ToUserId;
+
+                                        dTOAction.AspNetUsersId = dTOActionOn.ToAspNetUsersId;
                                     }
                                     else if (dTORequestFwdDetail.StepId == 2 || dTORequestFwdDetail.StepId == 3)
                                     {
-                                        if ((dTOActionOn.ToAspNetUsersId != dTOActionOn.ToAspNetUsersId) || (dTOActionOn.ToUserId != dTOActionOn.ToUserId))
+                                        if ((dTORequestFwdDetail.ToAspNetUsersId != dTOActionOn.ToAspNetUsersId) || (dTORequestFwdDetail.ToUserId != dTOActionOn.ToUserId))
                                         {
                                             response.Message = "Destination DID/Profile are not correct.";
                                             response.Value = dTOAction;
                                             response.Result = false;
                                             return Ok(response);
                                         }
+                                        dTOAction.AspNetUsersId = dTORequestFwdDetail.ToAspNetUsersId;
                                     }
                                 }
                                 else
@@ -2844,7 +2846,7 @@ namespace Web.Controllers
                                     }
                                     else
                                     {
-                                        dTOActionOn.StepId = (byte)(dTOActionOn.StepId + 1);
+                                        dTOActionOn.StepId = (byte)(dTORequestFwdDetail.StepId + 1);
                                     }
 
                                     dTOAction.AfterAction_StepId = dTOActionOn.StepId;
@@ -2859,6 +2861,7 @@ namespace Web.Controllers
                                     dTOActionOn.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                                     dTOActionOn.IsActive = true;
                                     dTOActionOn.TypeId = dTOActionOn.StepId;
+                                    dTOActionOn.StepId = dTOActionOn.StepId;
                                     dTOActionOn.FwdStatusId = 2; // Set the status to 2 for Approved
                                     dTOActionOn.IsComplete = false;
 

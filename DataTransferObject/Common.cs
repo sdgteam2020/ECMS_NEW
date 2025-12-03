@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Identitytable;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,6 +12,8 @@ namespace DataTransferObject.Domain
        
         [ForeignKey("ApplicationUserUpdate"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int? Updatedby { get; set;}
+
+        [JsonIgnore]
         public ApplicationUser? ApplicationUserUpdate { get; set; }
 
         [Required]

@@ -202,7 +202,6 @@ namespace DataAccessLayer
         public async Task<DTORequestRejectDetailResponse?> RequestRejectDetail(int RequestId)
         {
             string query = @"declare @StepId tinyint 
-                            declare @RequestId int
                             Select @StepId=step.StepId from TrnStepCounter step where step.RequestId=@RequestId
                             IF @StepId = 1
 	                            BEGIN
