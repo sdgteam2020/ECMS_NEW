@@ -39,6 +39,8 @@ namespace BusinessLogicsLayer
 
 
         public Task<List<DTOMasterResponse>> GetAllMMaster(DTOMasterRequest Data);
+
+        public Task<List<DTOMasterResponse>> GetAllMMaster_Outer(DTOMasterRequest Data);
         public Task<List<DTOMasterResponse>> GetAllMMasterByParent(DTOParentChildIdRequest Data);
     }
 }

@@ -375,6 +375,106 @@ namespace BusinessLogicsLayer
             return lst;
         }
 
+        public async Task<List<DTOMasterResponse>> GetAllMMaster_Outer(DTOMasterRequest Data)
+        {
+            List<DTOMasterResponse> lst = new List<DTOMasterResponse>();
+            int count = 0;
+            if (Data.id == Convert.ToInt16(Constants.MasterTbl.Command))
+            {
+                var Ret = await Comds.GetAllByorder();
+                foreach (var comd in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    if (comd.ComdId != 1)
+                    {
+                        db.Id = comd.ComdId;
+                        db.Name = comd.ComdName;
+                        lst.Add(db);
+                    }
+
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.Corps))
+            {
+                var Ret = await Corps.GetByComdId(Convert.ToInt32(Data.parentId));
+
+                foreach (var comd in Ret)
+                {
+                    if (count == 0)
+                    {
+                        DTOMasterResponse db1 = new DTOMasterResponse();
+                        db1.Id = 1;
+                        db1.Name = "No Corps";
+                        lst.Add(db1);
+                        count = 1;
+                    }
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = comd.CorpsId;
+                    db.Name = comd.CorpsName;
+                    lst.Add(db);
+
+
+
+                }
+                if (count == 0)
+                {
+                    DTOMasterResponse db = new DTOMasterResponse();
+                    db.Id = 1;
+                    db.Name = "No Corps";
+                    lst.Add(db);
+
+                }
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.FmnBranches))
+            {
+                var Ret = await MasterBL.GetMFmnBranches();
+
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.Id;
+                    db.Name = Forma.Name;
+                    lst.Add(db);
+                }
+
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.PSO))
+            {
+                var Ret = await MasterBL.GetMPSO();
+
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.Id;
+                    db.Name = Forma.Name;
+                    lst.Add(db);
+                }
+
+            }
+            else if (Data.id == Convert.ToInt16(Constants.MasterTbl.SubDte))
+            {
+                var Ret = await MasterBL.GetMSubDte();
+
+                foreach (var Forma in Ret)
+                {
+
+                    DTOMasterResponse db = new DTOMasterResponse();
+
+                    db.Id = Forma.Id;
+                    db.Name = Forma.Name;
+                    lst.Add(db);
+                }
+
+            }
+            return lst;
+        }
+
 
         /// <summary>
         /// Retrieves a list of master records based on a parent entity.

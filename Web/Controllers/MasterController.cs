@@ -3566,13 +3566,31 @@ namespace Web.Controllers
 
         #region Master Table 
 
+        [AllowAnonymous]
+        [AnySessionRequired]
+        [HttpPost]
+        public async Task<IActionResult> GetAllMMaster_Outer([FromBody] DTOMasterRequest data)
+        {
+            if (data == null)
+                return BadRequest(new { error = "Request body required." });
+
+            try
+            {
+                var result = await unitOfWork.GetAllMMaster_Outer(data);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetAllMMaster_Outer");
+                return Json(KeyConstants.InternalServerError);
+            }
+        }
+
         /// <summary>
         /// Retrieves all master data based on the provided request parameters.
         /// </summary>
         /// <param name="Data">The data transfer object containing the request parameters for fetching master data.</param>
         /// <returns>A JSON response containing the result of the request. Returns an internal server error if an exception occurs.</returns>
-        [AllowAnonymous]
-        [AnySessionRequired]
         [HttpPost]
         public async Task<IActionResult> GetAllMMaster([FromBody] DTOMasterRequest data)
         {
@@ -3584,8 +3602,9 @@ namespace Web.Controllers
                 var result = await unitOfWork.GetAllMMaster(data);
                 return Json(result);
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllMMaster");
                 return Json(KeyConstants.InternalServerError);
             }
         }
@@ -3608,8 +3627,9 @@ namespace Web.Controllers
                 var ret = await unitOfWork.GetAllMMasterByParent(Data); // Fetch all master data based on the parent specified in the request
                 return Json(ret);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(1001, ex, "Master->GetAllMMasterByParent");
                 return Json(KeyConstants.InternalServerError);
             }
         }

@@ -45,13 +45,6 @@ $(function () {
         $("#IsCO-error").html("");
     });
 
-    //$("input[name='IsRO']").click(function () {
-    //    $("#IsRO-error").html("");
-    //});
-    //$("input[name='IsORO']").click(function () {
-    //    $("#IsORO-error").html("");
-    //});
-
     $("#btnUnitMapReset").on("click", function () {
         Reset();
         ResetErrorMessage();
@@ -441,8 +434,7 @@ function Proceed() {
         }).then((result) => {
             let isIO = $("input[type='radio'][name=IsIO]:checked").length;
             let isCO = $("input[type='radio'][name=IsCO]:checked").length;
-            //let isRO = $("input[type='radio'][name=IsRO]:checked").length;
-            //let isORO = $("input[type='radio'][name=IsORO]:checked").length;
+
             let isTokenWaiver = $("input[type='radio'][name=IsTokenWaiver]:checked").length;
             if (result.isConfirmed && isTokenWaiver > 0 && isIO > 0 && isCO > 0) { // && isRO > 0 && isORO > 0
                 $(formId).submit();
@@ -477,20 +469,6 @@ function ValidateRadioButton() {
         $("#IsCO-error").html("");
     }
 
-    //if ($("input[type='radio'][name=IsRO]:checked").length == 0) {
-    //    $("#IsRO-error").html("Record Office is required.");
-    //}
-    //else {
-    //    $("#IsRO-error").html("");
-    //}
-
-    //if ($("input[type='radio'][name=IsORO]:checked").length == 0) {
-    //    $("#IsORO-error").html("Officer Record Office is required.");
-    //}
-    //else {
-    //    $("#IsORO-error").html("");
-    //}
-
     if ($("input[type='radio'][name=IsTokenWaiver]:checked").length == 0) {
         $("#IsTokenWaiver-error").html("Token Waiver to access Appl is required.");
     }
@@ -499,8 +477,6 @@ function ValidateRadioButton() {
     }
 }
 function ResetErrorMessage() {
-    //$("#IsRO-error").html("");
-    //$("#IsORO-error").html("");
     $("#IsIO-error").html("");
     $("#IsCO-error").html("");
     $("#IsTokenWaiver-error").html("");    
@@ -788,4 +764,134 @@ function ResetErrorMessage() {
     $("#ddlFmnBranch-error").html("");
     $("#ddlPSODte-error").html("");
     $("#ddlDgSubDte-error").html("");
+}
+async function mMsater(sectid = '', ddl, TableId, ParentId) {
+
+    const payload = {
+        tableName: "",
+        id: TableId,
+        parentId: ParentId ? Number(ParentId) : null   // ⭐ THIS IS IMPORTANT
+    };
+
+    try {
+        const response = await fetch('/Master/GetAllMMaster_Outer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': globalThis.RequestVerificationToken
+            },
+            credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (data != "null" && data != null) {
+            if (data === InternalServerError) {
+                Swal.fire({
+                    text: errormsg
+                });
+            } else {
+
+                let listItemddl = "";
+
+                if (parseInt(TableId) === 7) {
+                    listItemddl += '<option value="">Select Rank</option>';
+                } else {
+                    listItemddl += '<option value="">Please Select</option>';
+                }
+
+                for (let i = 0; i < data.length; i++) {
+                    listItemddl += `<option value="${data[i].Id}">${data[i].Name}</option>`;
+                }
+
+                document.getElementById(ddl).innerHTML = listItemddl;
+
+                if (sectid !== '') {
+                    document.getElementById(ddl).value = sectid;
+                }
+            }
+        } else {
+            // No data found case (optional alert as in original)
+            // Swal.fire({
+            //     text: "No data found Offrs"
+            // });
+        }
+
+    } catch (error) {
+        Swal.fire({
+            text: errormsg002
+        });
+    }
+}
+
+function mMsaterByParent(sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
+
+    const payload = {
+        TableId: TableId ? Number(TableId) : null,
+        ComdId: ComdId ? Number(ComdId) : null,
+        CorpsId: CorpsId ? Number(CorpsId) : null,
+        DivId: DivId ? Number(DivId) : null,
+        BdeId: BdeId ? Number(BdeId) : null
+    };
+    $.ajax({
+        url: '/Master/GetAllMMasterByParent',
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
+                    Swal.fire({
+                        text: errormsg
+                    });
+                }
+
+                else {
+
+                    var listItemddl = "";
+
+                    listItemddl += '<option value="">Please Select</option>';
+
+                    for (var i = 0; i < response.length; i++) {
+                        listItemddl += '<option value="' + response[i].Id + '">' + response[i].Name + '</option>';
+                    }
+                    $("#" + ddl + "").html(listItemddl);
+
+                    //if (TableId == 5 || TableId == 7 || TableId == 8) {
+
+                    //    if (sectid != '') {
+                    //        $("#" + ddl + " option").filter(function () {
+                    //            return this.text == sectid;
+                    //        }).attr('selected', true);
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    if (sectid != '') {
+                        $("#" + ddl + "").val(sectid);
+
+                    }
+
+                    //}
+
+
+                }
+            }
+            else {
+                //Swal.fire({
+                //    text: "No data found Offrs"
+                //});
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
+            });
+        }
+    });
 }

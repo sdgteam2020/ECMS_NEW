@@ -2501,6 +2501,7 @@ namespace Web.Controllers
         /// <returns>
         /// A JSON response indicating success with the new forward record, or a bad request response in case of failure.
         /// </returns>
+        [Authorize(Roles = "admin2")]
         public async Task<IActionResult> IcardFwd(MTrnFwd data)
         {
             try
@@ -2552,6 +2553,7 @@ namespace Web.Controllers
         /// <returns>
         /// A JSON response indicating success with the updated forward record or a bad request response in case of failure.
         /// </returns>
+        [Authorize(Roles = "admin2")]
         public async Task<IActionResult> IcardRejecte(MTrnFwd data)
         {
             // Initialize the generic response object
@@ -2660,6 +2662,7 @@ namespace Web.Controllers
         /// A JSON response indicating the result of the update operation. If successful, 
         /// it returns `Result = true`, otherwise `Result = false` with an appropriate message.
         /// </returns>
+        [Authorize(Roles = "admin2")]
         public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
         {
             DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
@@ -2706,8 +2709,8 @@ namespace Web.Controllers
             // Return the response with the operation result
             return Ok(response);
         }
+        
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> ActionOnRequest(DTOActionOnRequest  dTOActionOn)
         {
             DTOGenericResponse<DTOActionOnRequestResponse?> response = new DTOGenericResponse<DTOActionOnRequestResponse?>();
