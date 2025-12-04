@@ -53,5 +53,6 @@ namespace DataAccessLayer.BaseInterfaces
         Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId);
         Task UpdateCardStatus(int requestId, byte status);
         Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId);
+        public Task<DTOPreventBasicDetailEditResponse?> GetPreventBasicDetailEdit(int BasicDetailId);
     }
 }

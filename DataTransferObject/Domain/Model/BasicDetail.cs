@@ -70,6 +70,7 @@ namespace DataTransferObject.Domain.Model
         public string PaperIcardNo { get; set; } = string.Empty;
 
         public int? PreviousBasicDetailId { get; set; }
+        public bool IsLock { get; set; } = false;
 
     }
 }

@@ -28,5 +28,6 @@
         public string? RegimentalName { get; set; }
         public string? Remark { get; set; }
         public int IsPosting { get; set; }
+        public bool IsLock { get; set; }
     }
 }

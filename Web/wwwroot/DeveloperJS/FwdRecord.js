@@ -852,7 +852,6 @@ function ActionOnRequest(spnRequestId, Flag) {
         ToAspNetUsersId: Flag === "A" ? $("#spnFwdToAspNetUsersId").html() : 0,
         ToUserId: Flag === "A" ? $("#spnFwdToUsersId").html() : 0,
     };
-    console.log(userdata);
     $.ajax({
         url: '/BasicDetail/ActionOnRequest',
         contentType: 'application/x-www-form-urlencoded',

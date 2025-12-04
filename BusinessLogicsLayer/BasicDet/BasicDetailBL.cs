@@ -364,5 +364,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.DispatchCardIn(dTODispatch, StepId, DispatchCardId, ToRemark);
         }
+        public async Task<DTOPreventBasicDetailEditResponse?> GetPreventBasicDetailEdit(int BasicDetailId)
+        {
+                return await _iBasicDetailDB.GetPreventBasicDetailEdit(BasicDetailId);
+        }
     }
 }

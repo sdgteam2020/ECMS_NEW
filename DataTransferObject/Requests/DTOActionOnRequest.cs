@@ -63,5 +63,8 @@ namespace DataTransferObject.Requests
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public bool IsActive { get; set; } = true;
+
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
+        public bool IsLock { get; set; }
     }
 }

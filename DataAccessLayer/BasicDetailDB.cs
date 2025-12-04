@@ -1589,9 +1589,9 @@ namespace DataAccessLayer
                 {
                     if (Data.BasicDetailId == 0)
                     {
-                        var insertBasicDetail = " INSERT INTO BasicDetails (ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName, PreviousBasicDetailId)" +
+                        var insertBasicDetail = " INSERT INTO BasicDetails (ArmedId, RankId, ServiceNo, DOB, PlaceOfIssue, DateOfIssue, DateOfCommissioning, ApplyForId, UnitId, PaperIcardNo,IsActive, Updatedby, UpdatedOn, IssuingAuthorityId, NameAsPerRecord, RegimentalId, FName, LName, PreviousBasicDetailId,IsLock)" +
                                                 " OUTPUT INSERTED.BasicDetailId " +
-                                                " VALUES (@ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName, @PreviousBasicDetailId);";
+                                                " VALUES (@ArmedId, @RankId, @ServiceNo, @DOB, @PlaceOfIssue, @DateOfIssue, @DateOfCommissioning, @ApplyForId, @UnitId, @PaperIcardNo, @IsActive, @Updatedby, @UpdatedOn, @IssuingAuthorityId, @NameAsPerRecord, @RegimentalId, @FName, @LName, @PreviousBasicDetailId,@IsLock);";
                         var parametersBD = new DynamicParameters();
                         //parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Output);
                         parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
@@ -1613,7 +1613,9 @@ namespace DataAccessLayer
                         parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@PreviousBasicDetailId", Data.PreviousBasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersBD.Add("@IsLock", Data.IsLock, DbType.Boolean, ParameterDirection.Input);
                         int BasicDetailId = await db.QuerySingleAsync<int>(insertBasicDetail, parametersBD, transaction: transaction);
+
 
                         address.BasicDetailId = BasicDetailId;
 
@@ -1699,7 +1701,7 @@ namespace DataAccessLayer
                         trnUpload.BasicDetailId = Data.BasicDetailId;
                         mTrnIdentityInfo.BasicDetailId = Data.BasicDetailId;
 
-                        var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName, PreviousBasicDetailId=@PreviousBasicDetailId WHERE BasicDetailId=@BasicDetailId ";
+                        var updateBasicDetail = " UPDATE BasicDetails SET ArmedId=@ArmedId, RankId=@RankId, ServiceNo=@ServiceNo, DOB=@DOB, PlaceOfIssue=@PlaceOfIssue, DateOfIssue=@DateOfIssue, DateOfCommissioning=@DateOfCommissioning, ApplyForId=@ApplyForId, UnitId=@UnitId, PaperIcardNo=@PaperIcardNo,IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, IssuingAuthorityId=@IssuingAuthorityId, NameAsPerRecord=@NameAsPerRecord, RegimentalId=@RegimentalId, FName=@FName, LName=@LName, PreviousBasicDetailId=@PreviousBasicDetailId,IsLock=@IsLock WHERE BasicDetailId=@BasicDetailId ";
                         var parametersBD = new DynamicParameters();
                         parametersBD.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                         parametersBD.Add("@ArmedId", Data.ArmedId, DbType.Byte, ParameterDirection.Input);
@@ -1721,6 +1723,7 @@ namespace DataAccessLayer
                         parametersBD.Add("@FName", Data.FName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@LName", Data.LName, DbType.AnsiString, ParameterDirection.Input, 18);
                         parametersBD.Add("@PreviousBasicDetailId", Data.PreviousBasicDetailId, DbType.Int32, ParameterDirection.Input);
+                        parametersBD.Add("@IsLock", Data.IsLock, DbType.Boolean, ParameterDirection.Input);
                         await db.ExecuteAsync(updateBasicDetail, parametersBD, transaction: transaction);
 
                         var updateAddress = " UPDATE TrnAddress SET BasicDetailId=@BasicDetailId, State=@State, District=@District, PS=@PS, PO=@PO, Tehsil=@Tehsil, Village=@Village, PinCode=@PinCode WHERE AddressId=@AddressId";
@@ -2145,7 +2148,7 @@ namespace DataAccessLayer
 
             if (dTO.stepcount == 0)//////For all record
             {
-                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
+                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON B.BasicDetailId = trnicrd.BasicDetailId
                         inner join MRank ran on ran.RankId=B.RankId
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId
@@ -2164,7 +2167,7 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 1)//////For Draft
             {
-                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
+                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 1
                         inner join MRank ran on ran.RankId=B.RankId
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId
@@ -2184,7 +2187,7 @@ namespace DataAccessLayer
 
             else if (dTO.stepcount == 777)//////For Completed   
             {
-                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd 
+                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd 
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 2
                         inner join MRank ran on ran.RankId=B.RankId 
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
@@ -2203,7 +2206,7 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 888)//////For Submitted
             {
-                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
+                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                         inner join MRank ran on ran.RankId=B.RankId 
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
@@ -2220,7 +2223,7 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 5)
             {
-                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId, Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
+                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId, Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 2
                         inner join MRank ran on ran.RankId=B.RankId
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
@@ -2237,7 +2240,7 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 2 || dTO.stepcount == 3 || dTO.stepcount == 4 || dTO.stepcount == 6)//IO
             {
-                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
+                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 1
                         inner join MRank ran on ran.RankId=B.RankId
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
@@ -2254,7 +2257,7 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 7 || dTO.stepcount == 8 || dTO.stepcount == 9 || dTO.stepcount == 10)//Reject From IO
             {
-                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId, Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
+                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId, Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 1                        
                         inner join MRank ran on ran.RankId=B.RankId
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
@@ -2272,7 +2275,7 @@ namespace DataAccessLayer
             }
             else if (dTO.stepcount == 999)//Reject From IO,MI11 and HQ 54
             {
-                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
+                query = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,B.DOB,B.DateOfCommissioning,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting FROM TrnICardRequest trnicrd
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId AND trnicrd.StatusId = 1
                         inner join MRank ran on ran.RankId=B.RankId
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
@@ -2348,6 +2351,7 @@ namespace DataAccessLayer
                                          RankName = e.RankName,
                                          IsPosting = e.IsPosting,
                                          UnitName = e.UnitName,
+                                         IsLock=e.IsLock,
                                          UnitId = e.UnitId
                                      }).ToList();
                     var responseData = new DTODataTablesResponse<DTOBasicDetailIndexResponse>
@@ -2850,23 +2854,24 @@ namespace DataAccessLayer
         /// <exception cref="Exception">Throws an exception if there is an error while executing the database query.</exception>
         public async Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId)
         {
-            string query = "select bas.*," +
-                            " issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode," +
-                            " trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId," +
-                            " regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId," +
-                            " ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas" +
-                            " inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId" +
-                            " inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId" +
-                            " inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId" +
-                            " inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId" +
-                            " inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId" +
-                            " inner join MRank ran on ran.RankId=bas.RankId" +
-                            " inner join MArmedType arm on arm.ArmedId=bas.ArmedId" +
-                            " inner join MapUnit uni on uni.UnitMapId=bas.UnitId" +
-                            " inner join MUnit Muni on Muni.UnitId=uni.UnitId" +
-                            " left join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.StatusId=1 " +
-                            " left join MRegimental regi on regi.RegId=bas.RegimentalId" +
-                            " where bas.BasicDetailId=@BasicDetailId";
+            string query = @"Select bas.*,
+                            issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,
+                            trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId,
+                            regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId,icardreq.StatusId,tdm.AspNetUsersId,
+                            ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,trninfo.InfoId from BasicDetails bas
+                            inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId
+                            inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId
+                            inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId
+                            inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId
+                            inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId
+                            inner join MRank ran on ran.RankId=bas.RankId
+                            inner join MArmedType arm on arm.ArmedId=bas.ArmedId
+                            inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+                            inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                            inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId 
+                            inner join TrnDomainMapping tdm on tdm.Id = icardreq.TrnDomainMappingId
+                            left join MRegimental regi on regi.RegId=bas.RegimentalId
+                            where bas.BasicDetailId=@BasicDetailId";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
@@ -2880,6 +2885,28 @@ namespace DataAccessLayer
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->GetBesicDetailForEditById");
                 return null;
+            }
+
+        }
+        public async Task<DTOPreventBasicDetailEditResponse?> GetPreventBasicDetailEdit(int BasicDetailId)
+        {
+            string query = @"Select icardreq.RequestId,bas.IsLock,icardreq.StatusId,tdm.AspNetUsersId from BasicDetails bas
+                            inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId 
+                            inner join TrnDomainMapping tdm on tdm.Id = icardreq.TrnDomainMappingId
+                            where bas.BasicDetailId=@BasicDetailId";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var basicDetailEditResponse = await connection.QueryAsync<DTOPreventBasicDetailEditResponse>(query, new { BasicDetailId });
+
+                    return basicDetailEditResponse.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetPreventBasicDetailEdit");
+                return new DTOPreventBasicDetailEditResponse();
             }
 
         }

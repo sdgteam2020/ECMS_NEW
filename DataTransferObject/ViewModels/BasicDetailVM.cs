@@ -24,6 +24,10 @@ namespace DataTransferObject.ViewModels
         public int BasicDetailId { get; set; }
         public int? PreviousBasicDetailId { get; set; }
 
+        public bool IsLock { get; set; } = false;
+        public int AspNetUsersId { get; set; }
+        public byte StatusId { get; set; }
+
         [StringLength(12)]
         [MaxLength(12)]
         [Column(TypeName = "varchar(12)")]

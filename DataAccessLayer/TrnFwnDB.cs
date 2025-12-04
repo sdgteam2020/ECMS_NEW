@@ -322,6 +322,7 @@ namespace DataAccessLayer
                         parameters2.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
                         await db.ExecuteAsync(query2, parameters2, transaction: transaction);
                     }
+
                     query4 = @"UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] ='' ,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn WHERE [RequestId]= @RequestId";
                     var parameters4 = new DynamicParameters();
                     parameters4.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
@@ -330,6 +331,12 @@ namespace DataAccessLayer
                     
                     await db2.ExecuteAsync(query4, parameters4, transaction: transaction2);
                 }
+                query2 = @"Update BasicDetails set IsLock=@IsLock where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
+                var parameters5 = new DynamicParameters();
+                parameters5.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters5.Add("@IsLock", data.IsLock, DbType.Boolean, ParameterDirection.Input);
+                await db.ExecuteAsync(query2, parameters5, transaction: transaction);
+
                 query1 = @"Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@RequestId";
                 var parameters1 = new DynamicParameters();
                 parameters1.Add("@StepId", data.StepId, DbType.Byte, ParameterDirection.Input);
