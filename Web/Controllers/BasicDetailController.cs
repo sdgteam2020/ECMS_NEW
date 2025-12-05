@@ -3266,36 +3266,44 @@ namespace Web.Controllers
         {
             try
             {
-                // Step 1: Initialize the return object which will hold the ID and merged XML files
-                DTOXmlFilesFwdLogRequest ret = new DTOXmlFilesFwdLogRequest();
-
-                // Step 2: Fetch existing XML data from the database based on provided IDs
-                // The BL (Business Layer) returns an object containing XML files if they exist
-                var xmldata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(Data.Ids);
-
-                // Step 3: Check if any XML data was retrieved
-                if (xmldata != null && !string.IsNullOrEmpty(xmldata.XmlFiles))
+                if (ModelState.IsValid)
                 {
-                    // Step 3a: Assign the database record ID to the return object
-                    ret.Id = xmldata.Id;
+                    // Step 1: Initialize the return object which will hold the ID and merged XML files
+                    DTOXmlFilesFwdLogRequest ret = new DTOXmlFilesFwdLogRequest();
 
-                    // Step 3b: Generate XML for the last record in the provided IDs list
-                    // This is likely the most recent data that needs to be added to existing XML
-                    string xml = await GenerateLastRecordXml(Data.Ids[0]);
+                    // Step 2: Fetch existing XML data from the database based on provided IDs
+                    // The BL (Business Layer) returns an object containing XML files if they exist
+                    var xmldata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(Data.Ids);
 
-                    // Step 3c: Merge the existing XML from the database with the newly generated XML
-                    // Ensures that the final XML contains all historical and latest records
-                    ret.XmlFiles = MergeXmlDocuments(xmldata.XmlFiles, xml);
+                    // Step 3: Check if any XML data was retrieved
+                    if (xmldata != null && !string.IsNullOrEmpty(xmldata.XmlFiles))
+                    {
+                        // Step 3a: Assign the database record ID to the return object
+                        ret.Id = xmldata.Id;
 
-                    // Step 3d: Return the merged XML as a JSON response to the frontend
-                    return Json(ret);
+                        // Step 3b: Generate XML for the last record in the provided IDs list
+                        // This is likely the most recent data that needs to be added to existing XML
+                        string xml = await GenerateLastRecordXml(Data.Ids[0]);
+
+                        // Step 3c: Merge the existing XML from the database with the newly generated XML
+                        // Ensures that the final XML contains all historical and latest records
+                        ret.XmlFiles = MergeXmlDocuments(xmldata.XmlFiles, xml);
+
+                        // Step 3d: Return the merged XML as a JSON response to the frontend
+                        return Json(ret);
+                    }
+                    else
+                    {
+                        // Step 4: If no XML data exists, generate a JSON response appropriately
+                        // This may include a message like "No data found" or an empty XML structure
+                        return await GenerateJsonResponse(xmldata, Data);
+                    }
                 }
                 else
                 {
-                    // Step 4: If no XML data exists, generate a JSON response appropriately
-                    // This may include a message like "No data found" or an empty XML structure
-                    return await GenerateJsonResponse(xmldata, Data);
+                    return Json(null);
                 }
+
             }
             catch (Exception ex)
             {
@@ -3303,8 +3311,7 @@ namespace Web.Controllers
                 // This helps in tracing which method the error occurred in during debugging
                 _logger.LogError(1001, ex, "BasicDetails=>DataDigitalXmlSign.");
 
-                // Step 5b: Redirect the user to a generic error page to prevent crashing the app
-                return RedirectToAction("Error", "Error");
+                return Json(null);
             }
         }
 
@@ -6566,6 +6573,8 @@ namespace Web.Controllers
 
                 // Determine the claim value based on user's permissions
                 byte ClaimValue;
+                DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                dTO.TDMId= dtoSession != null ? dtoSession.TrnDomainMappingId : 0; 
                 if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                 {
                     ClaimValue = 1; // User can export ICard data

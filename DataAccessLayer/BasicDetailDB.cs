@@ -166,7 +166,7 @@ namespace DataAccessLayer
                                     INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                                     INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                                     INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
-                                    INNER JOIN OROMapping oro on req.RecordOfficeId = oro.RecordOfficeId
+                                    INNER JOIN OROMapping oro on req.RecordOfficeId = oro.RecordOfficeId AND oro.TDMId=@TDMId
                                     INNER JOIN MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId";
                 whereClause = @"WHERE
                                 (stepc.StepId=12)";
@@ -256,9 +256,10 @@ namespace DataAccessLayer
                         }
 
                         parameters.Add("@FinalStepId", finalValue, DbType.Byte, ParameterDirection.Input);
-                        //parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                        parameters.Add("@TDMId", dTO.TDMId , DbType.Int32, ParameterDirection.Input);
+                    //parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
 
-                        var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                         var records = (await ret.ReadAsync<DTODispatchCardStatusResponse>()).ToList();
                         var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 

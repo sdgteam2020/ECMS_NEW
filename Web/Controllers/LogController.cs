@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -151,18 +152,28 @@ namespace Web.Controllers
         {
             try
             {
-                // Update the request data with the current timestamp and user ID
-                Data.UpdatedOn = DateTime.Now;
-                Data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                Data.IsActive = 1;
-                Data.Id = Data.Id;
+                if (ModelState.IsValid)
+                {
+                    // Decode the Base64 string
+                    byte[] decodedBytes = Convert.FromBase64String(Data.XmlFiles);
+                    string xmlString = Encoding.UTF8.GetString(decodedBytes);
 
-                // Call the business logic layer to digitally sign the XML file and return the result
-                return Json(await _iTrnLoginLogBL.XmlFileDigitalSign(Data));
+                    Data.XmlFiles = xmlString;
+                    Data.UpdatedOn = DateTime.Now;
+                    Data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    Data.IsActive = true;
+                    Data.Id = Data.Id;
+
+                    return Json(await _iTrnLoginLogBL.XmlFileDigitalSign(Data));
+                }
+                else
+                {
+                    return Json(0);
+                }
             }
             catch (Exception ex)
             {
-                // Return an error response in case of an exception
+                _logger.LogError(1001, ex, "Log=>XmlFileDigitalSign.");
                 return Json(0);
             }
         }

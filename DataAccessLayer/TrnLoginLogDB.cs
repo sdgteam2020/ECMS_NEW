@@ -4,6 +4,8 @@ using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -42,10 +44,21 @@ namespace DataAccessLayer
         {
             using (var connection = _contextDP2.CreateConnection())
             {
-                if(Data.Id==0)
-                    await connection.ExecuteAsync("INSERT INTO [dbo].[XmlFilesFwdLog]([XmlFiles],[RequestId],[Updatedby],[UpdatedOn],[IsActive]) VALUES (@XmlFiles,@RequestId,@Updatedby,@UpdatedOn,@IsActive)", new { Data.XmlFiles, Data.RequestId, Data.Updatedby, Data.UpdatedOn, Data.IsActive });
+                string query1=string.Empty;
+                if (Data.Id == 0)
+                    query1 = @"INSERT INTO [dbo].[XmlFilesFwdLog]([XmlFiles],[RequestId],[Updatedby],[UpdatedOn],[IsActive]) VALUES (@XmlFiles,@RequestId,@Updatedby,@UpdatedOn,@IsActive)";
                 else
-                    await connection.ExecuteAsync("UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] =@XmlFiles ,[RequestId] = @RequestId,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn,[IsActive] =  @IsActive WHERE [Id]= @Id", new { Data.XmlFiles, Data.RequestId, Data.Updatedby, Data.UpdatedOn, Data.IsActive,Data.Id });
+                    query1 = @"UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] =@XmlFiles ,[RequestId] = @RequestId,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn,[IsActive] =  @IsActive WHERE [Id]= @Id";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", Data.Id, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@XmlFiles", Data.XmlFiles, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+
+                await connection.ExecuteAsync(query1, parameters);
                 return true;
             }
         }

@@ -1086,9 +1086,11 @@ function GetTokenSignXml(xml, msgid, RequestId, Id) {
 }
 
 function SignXmlSendTOdatabase(XmlFile, RequestId, Id) {
+    var base64Encoded = btoa(XmlFile); 
+
     var userdata = {
         "RequestId": RequestId,
-        "XmlFiles": XmlFile,
+        "XmlFiles": base64Encoded,
         "Id": Id
     };
     $.ajax({
@@ -1371,7 +1373,11 @@ function base64ToArrayBuffer(data) {
     }
     return bytes;
 };
-
+function xmlToBase64(xmlData) {
+    // Convert the XML string into a Base64-encoded string
+    var base64Encoded = btoa(xmlData);  // Note: `xmlData` should be a string containing XML
+    return base64Encoded;
+}
 function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
     var userdata = {
         "ArmyNo": ArmyNo,

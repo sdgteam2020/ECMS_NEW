@@ -178,30 +178,38 @@ namespace Web.Controllers
         {
             try
             {
-                // Retrieve the user ID from the claims
-                int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                Data.SentAspNetUsersId = userId;
-
-                if (Data.StepId == 5) //Export
+                if(ModelState.IsValid)
                 {
-                    // Update the previous notification data
-                    await _INotificationBL.UpdatePrevious(Data);
+                    // Retrieve the user ID from the claims
+                    int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    Data.SentAspNetUsersId = userId;
+
+                    if (Data.StepId == 5) //Export
+                    {
+                        // Update the previous notification data
+                        await _INotificationBL.UpdatePrevious(Data);
+                    }
+                    else
+                    {
+                        // Update the previous notification data
+                        await _INotificationBL.UpdatePrevious(Data);
+
+                        // Add the new notification
+                        await _INotificationBL.AddNotification(Data);
+                    }
+
+                    // Return a success response
+                    return Json(1);
                 }
                 else
                 {
-                    // Update the previous notification data
-                    await _INotificationBL.UpdatePrevious(Data);
-
-                    // Add the new notification
-                    await _INotificationBL.AddNotification(Data);
+                    return Json(0);
                 }
 
-                // Return a success response
-                return Json(1);
             }
             catch (Exception ex)
             {
-                // Return failure if an exception occurs
+                _logger.LogError(1001, ex, "Home=>SaveNotification.");
                 return Json(0);
             }
         }

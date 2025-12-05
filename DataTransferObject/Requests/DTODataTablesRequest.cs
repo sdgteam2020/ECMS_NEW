@@ -108,6 +108,7 @@ namespace DataTransferObject.Requests
         public string? SearchText { get; set; }
         public bool AllChecked { get; set; } = false;
         public bool SearchTextChanged { get; set; } = false;
+        public int TDMId { get; set; }
     }
     public class DTODataTablesRequestForNotification : DTODataTablesRequest
     {

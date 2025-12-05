@@ -327,7 +327,6 @@ function Getaspntokenarmyno() {
     });
 }
 function SaveNotification(StepId, DisplayId, ReciverAspNetUsersId, RequestIds) {
-    var listItem = "";
     var userdata =
     {
         "StepId": StepId,
@@ -345,13 +344,8 @@ function SaveNotification(StepId, DisplayId, ReciverAspNetUsersId, RequestIds) {
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == 1) {
-                    //alert("Notofication Sent")
-                }
-
-            } else {
-               
+            if (response == 0) {
+                toastr.error("Notofication failed");
             }
         }
     });
