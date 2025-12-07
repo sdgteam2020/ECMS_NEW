@@ -28,6 +28,7 @@ $(function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // Tell the server we are sending JSON
+                'RequestVerificationToken': globalThis.RequestVerificationToken
             }
         })
             .then(response => response.json())
@@ -53,25 +54,21 @@ $(function () {
     });
 });
 function Save() {
-
-    /*  alert($('#bdaymonth').val());*/
-   
+ 
     $.ajax({
         url: '/Posting/SaveApplicationClose',
         type: 'POST',
         data: {
-            "Id": $("#spnPostingOutID").html(),
-            "BasicDetailId": $(".spnBasicDetailIdOutID").html(),
             "ReasonId": $("#ddlpostingReason").val(),
             "Authority": $("#txtAuthority").val(),
             "RequestId": $(".spnRequestId").html(),
             "Remarks": $("#txtremarks").val(),
-        }, //get the search string
+        },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
-            if (result == DataSave) {
-                toastr.success('Data has been saved');
+            if (result.Result == true) {
+                toastr.success(result.Message);
                 if (applyforId == 1) {
                     window.location.href = "/Posting/AppCloseList/MQ==";
                 }
@@ -79,46 +76,8 @@ function Save() {
                     window.location.href = "/Posting/AppCloseList/?Id=MQ==&jcoor=SmNvL09ycw==";
                 }
             }
-            else if (result == DataUpdate) {
-                toastr.success('Data has been Updated');
-                if (applyforId == 1) {
-                    window.location.href = "/Posting/AppCloseList/MQ==";
-                }
-                else {
-                    window.location.href = "/Posting/AppCloseList/?Id=MQ==&jcoor=SmNvL09ycw==";
-                }
-            }
-            else if (result == DataExists) {
-
-                toastr.error('Appl Allready Closed!');
-            }
-            else if (result == IncorrectData) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Input!',
-
-                })
-
-            }
-            else if (result == InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
+             else {
+                toastr.error(result.Message);
             }
         }
     });
@@ -147,7 +106,7 @@ function GetdataPostingData(ArmyNo) {
                 else if (response.StatusId == 3)
                     $("#lblStatusofInds").html('Closed');
 
-                $("#lblTracking").html(response.TrackingId);
+                $("#lblApplId").html(response.RequestId);
                 $("#pstimage").attr("src", response.PhotoImagePath);
                 $("#lblUnitname").html(response.UnitName + ' (' + response.Sus_no + '' + response.Suffix+')');
 
@@ -158,7 +117,6 @@ function GetdataPostingData(ArmyNo) {
         
                 $(".spnRequestId").html(response.RequestId);
 
-                $(".spnBasicDetailIdOutID").html(response.BasicDetailId)
 
 
             }

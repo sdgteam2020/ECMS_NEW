@@ -440,55 +440,91 @@ namespace Web.Controllers
         /// - `KeyConstants.Exists` if the application close record already exists.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> SaveApplicationClose(TrnApplClose dTO)
+        public async Task<IActionResult> SaveApplicationClose(DTOApplicationCloseRequest dTO)
         {
+            DTOGenericResponse<DTOApplicationCloseResponse?> response = new DTOGenericResponse<DTOApplicationCloseResponse?>();
+            DTOApplicationCloseResponse closeResponse = new DTOApplicationCloseResponse();
             try
             {
+                TrnApplClose applClose = new TrnApplClose();
                 DtoSession? dtoSession = new DtoSession();
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 }
-
-                // Set the user and timestamp for the record
-                dTO.UserId = dtoSession != null ? dtoSession.UserId : 0;
-                dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                dTO.UpdatedOn = DateTime.Now;
 
                 // Validate the model before saving
                 if (ModelState.IsValid)
                 {
+                    applClose.Id = 0;
+                    applClose.ReasonId = dTO.ReasonId;
+                    applClose.Authority = dTO.Authority;
+                    applClose.Remarks = dTO.Remarks;
+                    applClose.RequestId = dTO.RequestId;
+                    applClose.UserId = dtoSession != null ? dtoSession.UserId : 0;
+                    applClose.IsActive = true;
+                    applClose.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    applClose.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
+                    closeResponse = await _iApplCloseBL.RequestIdExists(dTO);
                     // Check if the application close record already exists
-                    if (!await _iApplCloseBL.RequestIdExists(dTO))
+                    if (closeResponse.Result == true)
                     {
-                        // Save the application close record
-                        bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(dTO);
+                        applClose.BasicDetailId = closeResponse.BasicDetailId;
+                        
+                        bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(applClose);
                         if (reuslt == true)
                         {
-                            return Json(KeyConstants.Save);  // Return success message
+                            response.Message = "Appl closed successfully.";
+                            response.Value = closeResponse;
+                            response.Result = true;
+                            return Ok(response);
+
                         }
                         else
                         {
-                            return Json(KeyConstants.IncorrectData);  // Return failure message for incorrect data
+                            response.Message = "Internal Server Error.";
+                            response.Value = closeResponse;
+                            response.Result = false;
+                            return Ok(response);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);  // Return message if record already exists
+                        response.Value = closeResponse;
+                        response.Message = closeResponse.Message;
+                        response.Result = false;
+                        return Ok(response);
                     }
                 }
                 else
                 {
-                    // Return validation errors if model state is invalid
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    var errors = ModelState
+                        .Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                    if (errors.Any())
+                    {
+                        // Concatenate all validation error messages
+                        response.Message = string.Join("; ", errors);
+                    }
+
+                    response.Value = closeResponse;
+                    response.Result = false;
+                    return Ok(response);
                 }
 
             }
             catch (Exception ex)
             {
-                // Handle any exceptions that occur and return an internal server error
-                return Json(KeyConstants.InternalServerError);
+                _logger.LogError(1001, ex, "PostingController=>SaveApplicationClose.");
+                response.Message = "Internal Server Error.";
+                response.Value = closeResponse;
+                response.Result = false;
+                return Ok(response);
             }
         }
 
@@ -591,7 +627,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 // Log any other exceptions and return an error message
-                _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
+                _logger.LogError(1001, ex, "PostingController=>AppCloseList.");
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");

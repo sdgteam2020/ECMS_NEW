@@ -52,7 +52,7 @@ namespace DataAccessLayer
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Id", Data.Id, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@XmlFiles", Data.XmlFiles, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@XmlFiles", Data.XmlFiles, DbType.String, ParameterDirection.Input);
                 parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);

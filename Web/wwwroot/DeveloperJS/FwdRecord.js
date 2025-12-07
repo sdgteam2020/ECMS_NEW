@@ -889,11 +889,7 @@ function ActionOnRequest(spnRequestId, Flag) {
                         } else {
                             SaveNotification(response.Value.AfterAction_StepId, (parseInt(response.Value.AfterAction_StepId) + 10), response.Value.AspNetUsersId, spnRequestId)
                         }
-                    } else {
-                        setTimeout(function () {
-                            location.reload();
-                        }, 2000);
-                    }
+                    } 
                 }
             }
             else {

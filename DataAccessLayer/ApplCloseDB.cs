@@ -2,6 +2,8 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using Microsoft.Extensions.Logging;
 using System.Data;
 
@@ -30,33 +32,50 @@ namespace DataAccessLayer
             _logger = logger;
         }
 
-        /// <summary>
-        /// Asynchronously checks if a record with the given RequestId exists in the TrnApplClose table.
-        /// </summary>
-        /// <param name="DTo">The TrnApplClose DTO object containing the RequestId to be checked.</param>
-        /// <returns>
-        /// Returns true if a record with the given RequestId exists, otherwise false.
-        /// </returns>
-        public async Task<bool> RequestIdExists(TrnApplClose DTo)
+        public async Task<DTOApplicationCloseResponse> RequestIdExists(DTOApplicationCloseRequest DTo)
         {
-            // SQL query to count the number of records in the TrnApplClose table where the RequestId matches the provided value.
-            string query = "select count(*) from TrnApplClose where RequestId = @RequestId";
+            DTOApplicationCloseResponse closeResponse = new DTOApplicationCloseResponse();
 
-            // Using the database connection to execute the query and retrieve the count of matching records.
+            string query = @"Select basi.BasicDetailId,req.StatusId,basi.UnitId,appclose.Id as ApplCloseId from BasicDetails basi
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId
+                            left join TrnApplClose appclose on appclose.RequestId = req.RequestId
+                            where req.RequestId=@RequestId";
+
             using (var connection = _contextDP.CreateConnection())
             {
-                // Execute the query asynchronously and get the count of matching records.
-                int chk = await connection.QueryFirstAsync<int>(query, new { DTo.RequestId });
+                closeResponse = await connection.QueryFirstAsync<DTOApplicationCloseResponse>(query, new { DTo.RequestId, DTo.UnitId });
 
-                // If the count is greater than 0, return true indicating the RequestId exists.
-                if (chk > 0)
+                if (closeResponse != null)
                 {
-                    return true;
+                    if (closeResponse.StatusId == 1 && closeResponse.UnitId == DTo.UnitId && closeResponse.ApplCloseId == null)
+                    {
+                        closeResponse.Result = true;
+                        closeResponse.Message = "Ok";
+                        return closeResponse;
+                    }
+                    else
+                    {
+                        if (closeResponse.StatusId != 1)
+                        {
+                            closeResponse.Message = "Appl Allready Complete / Closed!";
+                        }
+                        else if (closeResponse.UnitId != DTo.UnitId)
+                        {
+                            closeResponse.Message = "You are not authorized to closed this request.";
+                        }
+                        else if (closeResponse.ApplCloseId != null)
+                        {
+                            closeResponse.Message = "Appl Allready Closed!";
+                        }
+                        closeResponse.Result = false;
+                        return closeResponse;
+                    }
                 }
                 else
                 {
-                    // If no matching records are found, return false.
-                    return false;
+                    closeResponse.Result = false;
+                    closeResponse.Message = "Invalid Input";
+                    return closeResponse;
                 }
             }
         }

@@ -1,4 +1,6 @@
 ﻿using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ namespace DataAccessLayer.BaseInterfaces
     public interface IApplCloseDB : IGenericRepositoryDL<TrnApplClose>
     {
 
-        public Task<bool> RequestIdExists(TrnApplClose DTo);
+        public Task<DTOApplicationCloseResponse> RequestIdExists(DTOApplicationCloseRequest DTo);
         public Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data);
     }
 }

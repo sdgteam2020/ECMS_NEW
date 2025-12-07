@@ -40,7 +40,7 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessage = "ToAspNetUsersId is number.")]
         public int ToAspNetUsersId { get; set; }
         
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "ToAspNetUsersId is number.")]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitId is number.")]
         public int UnitId { get; set; }
 
         [StringLength(100)]

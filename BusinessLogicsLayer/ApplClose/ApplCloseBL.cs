@@ -1,6 +1,8 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
+using DataTransferObject.Response;
 
 
 namespace BusinessLogicsLayer.Posting
@@ -12,7 +14,7 @@ namespace BusinessLogicsLayer.Posting
         {
             _iApplCloseDB = iApplCloseDB;   
         }
-        public async Task<bool> RequestIdExists(TrnApplClose DTo)
+        public async Task<DTOApplicationCloseResponse> RequestIdExists(DTOApplicationCloseRequest DTo)
         {
           return  await _iApplCloseDB.RequestIdExists(DTo);   
         }
