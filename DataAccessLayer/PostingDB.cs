@@ -425,5 +425,78 @@ namespace DataAccessLayer
                 return new List<DTOAppClosedListResponse>();
             }
         }
+        public async Task<DTOBeforePostingOutCheckedInputDataResponse> BeforePostingOutCheckedInputData(TrnPostingOut trnPostingOut)
+        {
+            DTOBeforePostingOutCheckedInputDataResponse dTOBeforePostingOut = new DTOBeforePostingOutCheckedInputDataResponse();
+
+            string query = @"Select basi.BasicDetailId,req.StatusId,basi.UnitId,tdm.AspNetUsersId as ToAspNetUsersId, tdm.UserId as ToUserID,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId from BasicDetails basi
+                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId
+                            left join TrnDomainMapping tdm on tdm.AspNetUsersId = @AspNetUsersId and tdm.UnitId =@UnitId and tdm.UserId =@UserId
+                            left join TrnFwds fwd on fwd.RequestId=req.RequestId
+                            where req.RequestId=@RequestId
+                            GROUP BY 
+                                basi.BasicDetailId,
+                                req.StatusId,
+                                basi.UnitId,
+                                tdm.AspNetUsersId,
+                                tdm.UserId";
+
+            using (var connection = _contextDP.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@RequestId", trnPostingOut.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UnitId", trnPostingOut.ToUnitID, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@AspNetUsersId", trnPostingOut.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UserId", trnPostingOut.ToUserID, DbType.Int32, ParameterDirection.Input);
+
+
+                dTOBeforePostingOut = await connection.QueryFirstAsync<DTOBeforePostingOutCheckedInputDataResponse>(query, parameters);
+
+                if (dTOBeforePostingOut != null)
+                {
+                    if (dTOBeforePostingOut.StatusId == 1 && dTOBeforePostingOut.UnitId == trnPostingOut.FromUnitID && dTOBeforePostingOut.UnitId != trnPostingOut.ToUnitID && trnPostingOut.TrnFwdId == dTOBeforePostingOut.MaxTrnFwdId &&  dTOBeforePostingOut.ToAspNetUsersId != null && dTOBeforePostingOut.ToUserID != null)
+                    {
+                        dTOBeforePostingOut.Result = true;
+                        dTOBeforePostingOut.Message = "Ok";
+                        return dTOBeforePostingOut;
+                    }
+                    else
+                    {
+                        if (dTOBeforePostingOut.StatusId != 1)
+                        {
+                            dTOBeforePostingOut.Message = "Appl Allready Complete / Closed!";
+                        }
+                        else if (dTOBeforePostingOut.UnitId != trnPostingOut.FromUnitID)
+                        {
+                            dTOBeforePostingOut.Message = "You are not authorized to postingout this request.";
+                        }
+                        else if (dTOBeforePostingOut.UnitId == trnPostingOut.ToUnitID)
+                        {
+                            dTOBeforePostingOut.Message = "The source unit and the destination unit are not the same.";
+                        }
+                        else if (dTOBeforePostingOut.MaxTrnFwdId != trnPostingOut.TrnFwdId)
+                        {
+                            dTOBeforePostingOut.Message = "Invalid Movement ID.";
+                        }
+                        else if (dTOBeforePostingOut.ToAspNetUsersId == null)
+                        {
+                            dTOBeforePostingOut.Message = "The Receiver ID is invalid.";
+                        }
+                        else if (dTOBeforePostingOut.ToUserID == null)
+                        {
+                            dTOBeforePostingOut.Message = "Invalid User ID.";
+                        }
+                        dTOBeforePostingOut.Result = false;
+                        return dTOBeforePostingOut;
+                    }
+                }
+                else
+                {
+                    dTOBeforePostingOut.Result = false;
+                    dTOBeforePostingOut.Message = "Invalid Input";
+                    return dTOBeforePostingOut;
+                }
+            }
+        }
     }
 }

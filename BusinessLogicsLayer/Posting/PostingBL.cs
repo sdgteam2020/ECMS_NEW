@@ -1,24 +1,13 @@
-﻿using BusinessLogicsLayer.Bde;
-using DataAccessLayer;
+﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.Posting
 {
     public class PostingBL : GenericRepositoryDL<TrnPostingOut>, IPostingBL
     {
-
-
-      
         private readonly IPostingDB postingDB;
         public PostingBL(ApplicationDbContext context, IPostingDB _postingDB) : base(context)
         {
@@ -49,6 +38,10 @@ namespace BusinessLogicsLayer.Posting
         }
         public async Task<DTOPostingOutDetailByIdResponse> GetPostingDetailById(string Id) { 
             return await postingDB.GetPostingDetailById(Id);
+        }
+        public async Task<DTOBeforePostingOutCheckedInputDataResponse> BeforePostingOutCheckedInputData(TrnPostingOut trnPostingOut)
+        {
+            return await postingDB.BeforePostingOutCheckedInputData(trnPostingOut);
         }
     }
 }

@@ -287,42 +287,85 @@ namespace Web.Controllers
         /// - Returns `KeyConstants.IncorrectData` if the data is incorrect.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> SavePoasingOut(TrnPostingOut dTO)
+        public async Task<IActionResult> SavePoasingOut(DTOPostingOutRequest dTO)
         {
+            DTOGenericResponse<DTOBeforePostingOutCheckedInputDataResponse?> response = new DTOGenericResponse<DTOBeforePostingOutCheckedInputDataResponse?>();
+            DTOBeforePostingOutCheckedInputDataResponse closeResponse = new DTOBeforePostingOutCheckedInputDataResponse();
             try
             {
-                // Set default values for the TrnPostingOut object
-                dTO.IsActive = true;
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));  // Get the current user ID
-                dTO.UpdatedOn = DateTime.Now;  // Set the updated timestamp
+                TrnPostingOut trnPostingOut = new TrnPostingOut();
+                int CurrentAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));  // Get the current user ID
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    trnPostingOut.FromUserID = dtoSession != null ? dtoSession.UserId : 0;
+                    trnPostingOut.FromUnitID = dtoSession != null ? dtoSession.UnitId : 0;
+                }
+                trnPostingOut.Id = 0;
+                trnPostingOut.RequestId= dTO.RequestId;
+                trnPostingOut.TrnFwdId= dTO.TrnFwdId;
+                trnPostingOut.SOSDate= dTO.SOSDate;
+                trnPostingOut.ReasonId= dTO.ReasonId;
+                trnPostingOut.Authority= dTO.Authority;
+                trnPostingOut.ToUnitID= dTO.ToUnitID;
+                trnPostingOut.ToAspNetUsersId = dTO.ToAspNetUsersId;
+                trnPostingOut.ToUserID = dTO.ToUserID;
+                trnPostingOut.IsActive = true;
+                trnPostingOut.FromAspNetUsersId = CurrentAspNetUsersId;
+                trnPostingOut.Updatedby = CurrentAspNetUsersId;
+                trnPostingOut.UpdatedOn = DateTime.Now;  // Set the updated timestamp
 
                 // Check if the model is valid
                 if (ModelState.IsValid)
                 {
-                    // If the record already exists (Id > 0), update it
-                    if (dTO.Id > 0)
+                    closeResponse = await _iPostingBL.BeforePostingOutCheckedInputData(trnPostingOut);
+                    if (closeResponse.Result == true)
                     {
-                        await _iPostingBL.Update(dTO);  // Update the existing record
-                        return Json(KeyConstants.Update);  // Return success response for update
-                    }
-                    else
-                    {
+                        trnPostingOut.BasicDetailId = closeResponse.BasicDetailId;
+
                         // If it's a new record, use UpdateForPosting method (this handles both add and update)
-                        bool result = await _iPostingBL.UpdateForPosting(dTO);  // Attempt to add or update the record
+                        bool result = await _iPostingBL.UpdateForPosting(trnPostingOut);  // Attempt to add or update the record
                         if (result == true)
                         {
-                            return Json(KeyConstants.Save);  // Return success response for save
+                            response.Message = "Posting Out successfully";
+                            response.Value = closeResponse;
+                            response.Result = false;
+                            return Ok(response);
                         }
                         else
                         {
-                            return Json(KeyConstants.IncorrectData);  // Return failure response for incorrect data
+                            response.Message = "Internal Server Error.";
+                            response.Value = closeResponse;
+                            response.Result = false;
+                            return Ok(response);
                         }
+                    }
+                    else
+                    {
+                        response.Value = closeResponse;
+                        response.Message = closeResponse.Message;
+                        response.Result = false;
+                        return Ok(response);
                     }
                 }
                 else
                 {
-                    // If the model state is invalid, return validation errors
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    var errors = ModelState
+                        .Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                    if (errors.Any())
+                    {
+                        // Concatenate all validation error messages
+                        response.Message = string.Join("; ", errors);
+                    }
+
+                    response.Value = closeResponse;
+                    response.Result = false;
+                    return Ok(response);
                 }
 
             }

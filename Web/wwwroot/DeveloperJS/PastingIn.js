@@ -1,4 +1,5 @@
 ﻿$(function () {
+    globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
         var dtToday = new Date();
 
         var month = dtToday.getMonth() + 1;
@@ -166,14 +167,9 @@ function Save() {
         url: '/Posting/SavePoasingOut',
         type: 'POST',
         data: {
-            "Id": $("#spnPostingOutID").html(),
-            "BasicDetailId": $(".spnBasicDetailIdOutID").html(),
             "ReasonId": $("#ddlpostingReason").val(),
             "Authority": $("#txtAuthority").val(),
             "SOSDate": convertToISOWithTime($("#txtSosDate").val()),
-            "FromAspNetUsersId": $(".spnFromAspNetUsersId").html(),
-            "FromUnitID": $(".spnFromUnitID").html(),
-            "FromUserID": $(".spnFromUserID").html(),
             "ToAspNetUsersId": $("#ddlaspnetiserpostout").val(),
             "ToUnitID": $("#postingoutUnitId").html(),
             "ToUserID": $(".spnToUserID").html(),
@@ -184,56 +180,13 @@ function Save() {
         }, //get the search string
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
-
-
-            if (result == DataSave) {
-
-
-                toastr.success('Data has been saved');
-
-                alert("Posting Out successfully");
+            if (result.Result == true) {
+                toastr.success(result.Message);
+                alert(result.Message);
                 location.href = '/Home/RequestDashboard/UG9zdGluZyBPdXQ=';
-
             }
-            else if (result == DataUpdate) {
-
-
-                toastr.success('Data has been Updated');
-                alert("Posting Out successfully");
-                location.href = '/Home/RequestDashboard/UG9zdGluZyBPdXQ=';
-
-            }
-            else if (result == DataExists) {
-
-                toastr.error(' Exits!');
-            }
-            else if (result == IncorrectData) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Input!',
-
-                })
-
-            } 
-            else if (result == InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
+            else {
+                toastr.error(result.Message)
             }
         }
     });
@@ -311,13 +264,9 @@ function GetdataPostingData(ArmyNo) {
                 $("#lblFromName").html(response.Users_RankName + ' ' + response.Users_Name );
                 $("#lblFromDomainId").html(response.Users_DomainId);
 
-                $(".spnFromAspNetUsersId").html(response.FromAspNetUsersId);
-                $(".spnFromUnitID").html(response.FromUnitID);
-                $(".spnFromUserID").html(response.FromUserID);
                 $(".spnRequestId").html(response.RequestId);
                 $(".spnTrnFwdId").html(response.MaxTrnFwdId ?? 0);
 
-                $(".spnBasicDetailIdOutID").html(response.BasicDetailId)
 
                 //if ($("#RegistrationId").val() == '3' || $("#RegistrationId").val() == '7') {
                 //    $("#lblunitname").html(response.Registraion);
