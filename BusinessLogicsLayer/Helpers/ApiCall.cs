@@ -1,5 +1,4 @@
 ﻿using BusinessLogicsLayer.API;
-using ModernHttpClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +11,19 @@ namespace BusinessLogicsLayer.Helpers
     public static class ApiCall
     {
         public const string ApiUrl = "http://192.168.10.203/api/";
+
+        private static readonly HttpClient _httpClient = new HttpClient
+        {
+            BaseAddress = new Uri(ApiUrl)
+        };
+
         public static async Task<HttpResponseMessage> PostAPI<T>(string url, T data)
         {
             try
             {
-
-                HttpClient httpClient = new HttpClient(new NativeMessageHandler());
-                HttpResponseMessage s = await httpClient.PostAsJsonAsync(ApiUrl + url, data);
-                return s;
+                // ApiUrl already set as BaseAddress
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync(url, data);
+                return response;
             }
             catch (Exception ex)
             {
@@ -31,10 +35,8 @@ namespace BusinessLogicsLayer.Helpers
         {
             try
             {
-
-                HttpClient httpClient = new HttpClient(new NativeMessageHandler());
-                HttpResponseMessage s = await httpClient.GetAsync(ApiUrl + url);
-                return s;
+                HttpResponseMessage response = await _httpClient.GetAsync(url);
+                return response;
             }
             catch (Exception ex)
             {
