@@ -1,17 +1,6 @@
 ﻿@using DataTransferObject.Response
 @model DTOPostingOutDetailByIdResponse
-
-<style>
-    .form-group .labelprofile {
-        font-weight:600;
-    }
-   
-    .containerMain {
-        margin-left: 10%;
-        margin-right: 10%;  
-    }
-    
-</style>
+<link asp-href-include="~/developercss/postingin.css" rel="stylesheet" />
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -45,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body" style="min-height:150px;">
+        <div class="card-body card-body-min-height" >
             <div class="row g-3 row-deck mb-3">
 
                 @* <div class="card p-4">

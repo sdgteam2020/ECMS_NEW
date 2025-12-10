@@ -229,7 +229,7 @@ app.Use(async (ctx, next) =>
     ctx.Response.Headers["Content-Security-Policy"] =
         "default-src 'self'; " +
         "script-src 'self'; " +
-        "style-src 'self' 'unsafe-inline'; " + // allow Bootstrap inline styles
+        "style-src 'self'; " + // allow Bootstrap inline styles
         "img-src 'self' data:; " +
         "font-src 'self' data:; " +
         "connect-src 'self'; " +

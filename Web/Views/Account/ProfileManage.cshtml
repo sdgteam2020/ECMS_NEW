@@ -2,11 +2,7 @@
     ViewData["Title"] = "Profile Management";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .swal2-html-container {
-        color: red !important;
-    }
-</style>
+<link asp-href-include="~/developercss/profilemanage.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -38,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body" style="min-height:150px;">
+        <div class="card-body card-body-min-height" >
             <div class="row">
                 <div class="col-xl-6">
                     <div class="col-form-label">
@@ -106,7 +102,7 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Rank<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;"  name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Rank is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select"   name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Rank is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Rank</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlRank" data-valmsg-replace="true"></span>
@@ -122,7 +118,7 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Name of Arms, Service & Corps <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;"  name="ddlArmType" id="ddlArmType" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Arms, Service & Corps is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select"   name="ddlArmType" id="ddlArmType" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Arms, Service & Corps is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Arms</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlArmType" data-valmsg-replace="true"></span>

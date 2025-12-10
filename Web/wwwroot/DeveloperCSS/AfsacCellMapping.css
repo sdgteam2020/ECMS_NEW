@@ -1,0 +1,12 @@
+﻿.modal-xl {
+    max-width: 1140px !important;
+    width: 100% !important;
+}
+
+.table {
+    min-width: 100% !important;
+}
+
+.modal .modal-body .table-responsive {
+    max-height: 500px;
+}

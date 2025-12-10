@@ -5,39 +5,7 @@
     List<Claim> claims = ViewBag.UserClaims;
 }
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-<style>
-    .clickable {
-    height: 190px;
-    width: 190px;
-    display: block;
-    margin-bottom: 25px;
-    }
-
-    .p-4 {
-    padding: 1.5rem !important;
-    padding-bottom: 4.5rem !important;
-    }
-
-    .ui-datepicker-calendar {
-    display: none !important;
-    }
-
-    #CardReport_tbldatadialog {
-        table-layout: auto !important;
-        width: 100% !important;
-    }
-
-    #CardReport_tbldatadialog th,
-    #CardReport_tbldatadialog td {
-        white-space: nowrap; /* Optional: prevent line wrap */
-        vertical-align: middle;
-    }
-
-    .modal .modal-body .table-responsive {
-        max-height: 500px;
-    }
-
-</style>
+<link asp-href-include="~/developercss/report.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">

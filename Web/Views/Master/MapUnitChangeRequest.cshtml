@@ -2,43 +2,7 @@
     ViewData["Title"] = "Unit Mapping Change Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .containerMain {
-        margin-left: 10%;
-        margin-right: 10%;
-    }
-
-    .faulty {
-        background-color: #044C92;
-        text-align: center;
-        padding: 0.5rem !important;
-        margin-right: 0.25rem !important;
-        border: hidden;
-        font-weight: 400 !important;
-        color: #fff !important;
-        width: 170px;
-        height: 60px;
-    }
-
-    .modal.left .modal-dialog, .modal.right .modal-dialog {
-        position: fixed;
-        margin: auto;
-        width: 700px;
-        height: 100%;
-        text-align: left;
-        -webkit-transform: translate3d(0%, 0, 0);
-        -ms-transform: translate3d(0%, 0, 0);
-        -o-transform: translate3d(0%, 0, 0);
-        transform: translate3d(0%, 0, 0);
-    }
-    .labelUnit{
-        font-weight: 700 !important;
-    }
-
-    .h-90 {
-        height: 90% !important;
-    }
-</style>
+<link asp-href-include="~/developercss/mapunitchangerequest.css" rel="stylesheet" />
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -216,7 +180,7 @@
                                     <div class="form-group row mb-2 unittype">
                                         <label class="col-form-label col-sm-4 labelUnit">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
-                                            <select class="form-select" style="width: 100%;"  name="ddlCommand" required id="ddlCommand">
+                                            <select class="form-select"   name="ddlCommand" required id="ddlCommand">
                                                 <option value="0">Select Comd / PSO </option>
                                             </select>
                                         </div>
@@ -224,7 +188,7 @@
                                     <div class="form-group row mb-4 unittype">
                                         <label class="col-form-label col-sm-4 labelUnit">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
-                                            <select class="form-select" style="width: 100%;"  name="ddlCorps" required id="ddlCorps">
+                                            <select class="form-select"   name="ddlCorps" required id="ddlCorps">
                                                 <option value="0">Select Corps / Dte / Area </option>
                                             </select>
                                         </div>
@@ -232,7 +196,7 @@
                                     <div class="form-group row mb-2 unittype">
                                         <label class="col-form-label col-sm-4 labelUnit">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
-                                            <select class="form-select" style="width: 100%;"  name="ddlDiv" required id="ddlDiv">
+                                            <select class="form-select"   name="ddlDiv" required id="ddlDiv">
                                                 <option value="0">Select One </option>
                                             </select>
                                         </div>
@@ -240,7 +204,7 @@
                                     <div class="form-group row mb-2 unittype">
                                         <label class="col-form-label col-sm-4 labelUnit">Bde<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
-                                            <select class="form-select" style="width: 100%;"  name="ddlBde" required id="ddlBde">
+                                            <select class="form-select"   name="ddlBde" required id="ddlBde">
                                                 <option value="0">Select Bde </option>
                                             </select>
                                         </div>
@@ -248,7 +212,7 @@
                                     <div class="form-group row mb-2 FmnBranch  d-none">
                                         <label class="col-form-label col-sm-4 labelUnit">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
-                                            <select class="form-select" style="width: 100%;"  name="ddlFmnBranch" required id="ddlFmnBranch">
+                                            <select class="form-select"   name="ddlFmnBranch" required id="ddlFmnBranch">
                                                 <option value="1">Select Fmn/Branch </option>
                                             </select>
                                         </div>
@@ -256,7 +220,7 @@
                                     <div class="form-group row mb-2 DteBranch d-none">
                                         <label class="col-form-label col-sm-4 labelUnit">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
-                                            <select class="form-select" style="width: 100%;"  name="ddlPSODte" required id="ddlPSODte">
+                                            <select class="form-select"   name="ddlPSODte" required id="ddlPSODte">
                                                 <option value="1">Select DG / Sub Dte </option>
                                             </select>
                                         </div>
@@ -264,7 +228,7 @@
                                     <div class="form-group row mb-2 DteBranch d-none">
                                         <label class="col-form-label col-sm-4 labelUnit">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
-                                            <select class="form-select" style="width: 100%;"  name="ddlDgSubDte" required id="ddlDgSubDte">
+                                            <select class="form-select"   name="ddlDgSubDte" required id="ddlDgSubDte">
                                                 <option value="1">Select DG / Sub Dte</option>
                                             </select>
                                         </div>

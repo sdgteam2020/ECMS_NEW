@@ -142,3 +142,21 @@ body {
         color: #04bcff;
         font-size: 18px;
     }
+.clickable {
+    height: 180px !important;
+    width: 200px !important;
+}
+
+.hero {
+    /* path to your image */
+    background-image: url("/Images/HomePage/2.png");
+    /* make it fill nicely */
+    background-size: cover; /* cover entire div */
+    background-position: top;
+    background-repeat: no-repeat;
+    /* optional: fixed parallax feel */
+    background-attachment: fixed;
+    /* size of the div */
+    min-height: 100vh; /* or a fixed height like 500px */
+    width: 100%;
+}

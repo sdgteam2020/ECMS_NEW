@@ -1,0 +1,19 @@
+﻿.form-group .labelprofile {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.cardbg {
+    /*  background: rgb(255,255,255);
+            background: radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(63,251,217,0.3225665266106442) 100%); */
+}
+
+.minheight {
+    min-height: 225px;
+}
+.full-width {
+    width: 100%;
+}
+.card-body-min-height {
+    min-height: 150px;
+}

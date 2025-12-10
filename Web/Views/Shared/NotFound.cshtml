@@ -2,58 +2,14 @@
 @{
     ViewBag.Title = "Not Found";
 }
-
 @{
-    // Layout = "/Views/Shared/_Layout.cshtml";
     Layout = null;
 }
 @* @if (ViewBag.ErrorTitle == null)
 { *@
-<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-<style>
+<link asp-href-include="~/developercss/notfound.css" rel="stylesheet" />
+<link asp-href-include="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    /*======================
-            404 page
-        =======================*/
-
-
-    .page_404 {
-        padding: 40px 0;
-        background: #fff;
-        font-family: 'Arvo', serif;
-    }
-
-        .page_404 img {
-            width: 100%;
-        }
-
-    .four_zero_four_bg {
-        background: url(../Images/dribbble_1.gif) no-repeat;
-        height: 400px;
-        background-position: center;
-    }
-
-
-        .four_zero_four_bg h1 {
-            font-size: 80px;
-        }
-
-        .four_zero_four_bg h3 {
-            font-size: 80px;
-        }
-
-    .link_404 {
-        color: #fff !important;
-        padding: 10px 20px;
-        background: #39ac31;
-        margin: 20px 0;
-        display: inline-block;
-    }
-
-    .contant_box_404 {
-        margin-top: -50px;
-    }
-</style>
 <section class="page_404">
     <div class="container">
         <div class="row">
@@ -72,7 +28,7 @@
 
                        
 
-                        <a href="/Account/IMLogin" class="link_404">Go to Login</a>
+                        <a href="/Account/IMLoginSelf" class="link_404">Go to Login</a>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,30 @@
+﻿.clickable {
+    height: 190px;
+    width: 190px;
+    display: block;
+    margin-bottom: 25px;
+}
+
+.p-4 {
+    padding: 1.5rem !important;
+    padding-bottom: 4.5rem !important;
+}
+
+.ui-datepicker-calendar {
+    display: none !important;
+}
+
+#CardReport_tbldatadialog {
+    table-layout: auto !important;
+    width: 100% !important;
+}
+
+    #CardReport_tbldatadialog th,
+    #CardReport_tbldatadialog td {
+        white-space: nowrap; /* Optional: prevent line wrap */
+        vertical-align: middle;
+    }
+
+.modal .modal-body .table-responsive {
+    max-height: 500px;
+}

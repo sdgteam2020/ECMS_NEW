@@ -16,6 +16,9 @@
         history.pushState(null, null, location.href);
         alert('Back navigation is disabled!');
     });
+    $('input.js-uppercase').on('input', function () {
+        this.value = this.value.toUpperCase();
+    });
 });
 async function handleSubmit(event, isNewUser) {
     try {

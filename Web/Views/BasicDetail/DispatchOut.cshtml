@@ -4,28 +4,7 @@
     var claimValue = ViewBag.ClaimValue;
 }
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
-<style>
-    .containerMain {
-        margin-left: 30%;
-        margin-right: 30%;
-    }
-
-    .labelprofile {
-        font-weight: 640 !important;
-    }
-
-    .modal.left .modal-dialog, .modal.right .modal-dialog {
-        position: fixed;
-        margin: auto;
-        width: 700px;
-        height: 100%;
-        text-align: left;
-        -webkit-transform: translate3d(0%, 0, 0);
-        -ms-transform: translate3d(0%, 0, 0);
-        -o-transform: translate3d(0%, 0, 0);
-        transform: translate3d(0%, 0, 0);
-    }
-</style>
+<link asp-href-include="~/developercss/dispatchout.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -52,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body" style="min-height:150px;">
+        <div class="card-body card-body-min-height" >
             <div class="row g-3 row-deck mb-3">
                 <form action="" enctype="multipart/form-data" id="SaveDispatchCard" method="post" name="SaveDispatchCard">
                     @Html.AntiForgeryToken()
@@ -72,7 +51,7 @@
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-5 labelprofile">Mode of Dispatch<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-7">
-                                        <select class="form-select" style="width: 100%;"  id="ddlDispatch" name="ddlDispatch" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Mode of Dispatch is required." data-val-regex-pattern="^[\d]+$">
+                                        <select class="form-select full-width"  id="ddlDispatch" name="ddlDispatch" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Mode of Dispatch is required." data-val-regex-pattern="^[\d]+$">
                                         </select>
                                         <span class="text-danger field-validation-valid" data-valmsg-for="ddlDispatch" data-valmsg-replace="true"></span>
                                     </div>
@@ -80,14 +59,14 @@
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-5 labelprofile">Name of Courier Incharge<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" style="width: 100%;"  name="txtCourierIncharge" id="txtCourierIncharge" maxlength="50" placeholder="Name of Courier Incharge" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Name of Courier Incharge is required." data-val-regex-pattern="^[\w ]*$" />
+                                        <input type="text" class="form-control full-width"  name="txtCourierIncharge" id="txtCourierIncharge" maxlength="50" placeholder="Name of Courier Incharge" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Name of Courier Incharge is required." data-val-regex-pattern="^[\w ]*$" />
                                         <span class="text-danger field-validation-valid" data-valmsg-for="txtCourierIncharge" data-valmsg-replace="true"></span>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-5 labelprofile">Ref of Dispatch<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" style="width: 100%;"  name="txtRefOfDispatch" id="txtRefOfDispatch" maxlength="50" placeholder="Ref of Dispatch" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Ref of Dispatch is required." data-val-regex-pattern="^[\w ]*$" />
+                                        <input type="text" class="form-control full-width"  name="txtRefOfDispatch" id="txtRefOfDispatch" maxlength="50" placeholder="Ref of Dispatch" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Ref of Dispatch is required." data-val-regex-pattern="^[\w ]*$" />
                                         <span class="text-danger field-validation-valid" data-valmsg-for="txtRefOfDispatch" data-valmsg-replace="true"></span>
                                     </div>
                                 </div>
@@ -125,7 +104,7 @@
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-5 labelprofile">Select DID<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-7">
-                                        <select class="form-select" style="width: 100%;"  id="ddlDID" name="ddlDID" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="DID is required." data-val-regex-pattern="^[\d]+$">
+                                        <select class="form-select full-width"  id="ddlDID" name="ddlDID" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="DID is required." data-val-regex-pattern="^[\d]+$">
                                         </select>
                                         <span class="text-danger field-validation-valid" data-valmsg-for="ddlDID" data-valmsg-replace="true"></span>
                                     </div>

@@ -3,21 +3,7 @@
 @{
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
-<style>
-    .login-wrap {
-        margin-top: 100px;
-        margin-left: 33%;
-        margin-right: 33%;
-        /*margin-bottom: 100px;*/
-        /*    margin-left: -50px;*/
-        /*  border: 7px double #242c6d;*/
-        width: 33%;
-    }
-    .form-group .labeltoken {
-        font-size: 16px;
-        font-weight: 700;
-    }
-</style>
+<link asp-href-include="~/developercss/tokenvalidate.css" rel="stylesheet" />
 @{
     DTOTempSession? dTOTempSession = new DTOTempSession();
     StringBuilder m1 = new StringBuilder();
@@ -58,11 +44,11 @@
                                                 <label class="labeltoken">Army No</label>
                                                 @if (dTOTempSession.IsToken == true)
                                                 {
-                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" readonly /> @* value="@dTOTempSession.ICNO" *@
+                                                    <input asp-for="ICNo" class="form-control js-uppercase" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" readonly />
                                                 }
                                                 else
                                                 {
-                                                    <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" autocomplete="off" oninput="this.value = this.value.toUpperCase();" value="@dTOTempSession.ICNO" />
+                                                    <input asp-for="ICNo" class="form-control js-uppercase" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" autocomplete="off" value="@dTOTempSession.ICNO" />
                                                 }
 
                                                 <span asp-validation-for="ICNo" class="text-danger"></span>
@@ -98,14 +84,6 @@
                                                     var isNewUser = dTOTempSession.NewUser == true ? "true" : "false";
 
                                                     <button type="submit" id="btnProceed" class="btn btn-primary mt-2" data-is-new-user="@isNewUser">Proceed</button>
-@*                                                     if (dTOTempSession.NewUser == true)
-                                                    {
-                                                        <button type="submit" class="btn btn-primary mt-2" onclick="return handleSubmit(event, true)">Proceed</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button type="submit" class="btn btn-primary mt-2" onclick="return handleSubmit(event, false)">Proceed</button>
-                                                    } *@
                                                 }
                                                 <a class="btn btn-warning" href="/ApplicationStatus/AppStatus">Check Appl Status</a>
                                             </div>
@@ -151,7 +129,7 @@
     <div class="loader-container">
         <img src="/Images/load.gif" width="100">
         <div>
-            <h4 style="margin-top: -20px;" id="tokenmess"></h4>
+            <h4 class="mt--20" id="tokenmess"></h4>
             <span>Please wait. Read Token....... This may take few seconds.</span>
         </div>
     </div>

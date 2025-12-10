@@ -2,28 +2,7 @@
     ViewData["Title"] = "Add Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .form-group .labelprofile {
-        font-size: 14px;
-        font-weight: 700;
-    }
-
-    .cardbg {
-        /*  background: rgb(255,255,255);
-                background: radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(63,251,217,0.3225665266106442) 100%); */
-    }
-
-    .minheight {
-        min-height: 225px;
-    }
-    .UpdateMapping{
-        margin-left: 30%;
-        margin-right: 30%;
-        width: 40%;
-        border-radius: 10px;
-        z-index: 1;
-    }
-</style>
+<link asp-href-include="~/developercss/updaterecordoffice.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -54,7 +33,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body" style="min-height:150px;">
+                <div class="card-body card-body-min-height" >
                     <form action="" id="UpdateRecordOffice" method="post" name="UpdateRecordOffice">
                         <div class="row">
                             <span class="d-none" id="spnRecordOfficeId">@ViewBag.ROId</span>
@@ -90,7 +69,7 @@
                                     <div class="form-group row mb-2">
                                         <label class="col-form-label col-sm-4 fw-bold">Select Domain Id <i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-8">
-                                            <select class="form-select" style="width: 100%;" tabindex="-1"  name="ddlTDMId" id="ddlTDMId" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Domain Id is required." data-val-regex-pattern="^[\d]+$">
+                                            <select class="form-select"  tabindex="-1"  name="ddlTDMId" id="ddlTDMId" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Domain Id is required." data-val-regex-pattern="^[\d]+$">
                                             </select>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlTDMId" data-valmsg-replace="true"></span>
                                         </div>

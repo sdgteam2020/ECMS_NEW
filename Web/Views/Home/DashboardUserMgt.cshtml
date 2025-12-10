@@ -3,14 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<string> RoleNameList = new List<string>() { "user", "coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
 }
-<style>
-    .clickable {
-        height: 190px;
-        width: 190px;
-        display: block;
-    }
-</style>
-
+<link asp-href-include="~/developercss/dashboardusermgt.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -72,7 +65,7 @@
                                 <div class="counter-icon">
                                     <i class="fa fa-address-card"></i>
                                 </div>
-                                <h3 style="margin-top:3.0rem!important;">
+                                <h3 class="counter-title">
                                     Login Logs
                                 </h3>
                             </div>
@@ -84,7 +77,7 @@
                                 <div class="counter-icon">
                                     <i class="fa fa-user"></i>
                                 </div>
-                                <h3 style="margin-top:3.0rem!important;">
+                                <h3 class="counter-title">
                                     Update Profile
                                 </h3>
                             </div>
@@ -98,7 +91,7 @@
                                     <div class="counter-icon">
                                         <i class="fa fa-user"></i>
                                     </div>
-                                    <h3 style="margin-top:3.0rem!important;">
+                                    <h3 class="counter-title">
                                         Update Record Office
                                     </h3>
                                 </div>

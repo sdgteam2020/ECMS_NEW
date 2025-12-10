@@ -1,0 +1,38 @@
+﻿.swal2-confirm, .swal2-styled {
+    background: #D97924 !important;
+}
+
+.login-wrap {
+    margin-top: 100px;
+    margin-left: 33%;
+    margin-right: 33%;
+    /*margin-bottom: 100px;*/
+    /*    margin-left: -50px;*/
+    /*  border: 7px double #242c6d;*/
+    width: 33%;
+}
+
+
+.form-group .labeltoken {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+body {
+    /*   background-image: url('/images/logo-white.jpg'); */
+    background-size: cover;
+    background-color: lightskyblue;
+    background-repeat: no-repeat;
+    /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
+}
+
+.bg-white {
+    background: #fff !important;
+}
+
+.logoheader {
+    background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%);
+}
+/*   img {
+            width: 500px;
+        } */

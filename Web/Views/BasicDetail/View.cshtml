@@ -1,20 +1,5 @@
 ﻿@model BasicDetailCrtAndUpdVM
-<style>
-    .table td img, .jsgrid .jsgrid-table td img {
-        width: 36px;
-        height: 36px;
-        border-radius: 0%;
-    }
-
-    .form-group .labelprofile {
-        font-size: 18px;
-        font-weight: 700;
-    }
-
-    .minheight {
-        min-height: 300px;
-    }
-</style>
+<link asp-href-include="~/developercss/basicdetail_view.css" rel="stylesheet" />
 <div class="container1" id="printdata">
     <div class="row section-to-print">
         <div class="col-sm-4  text-left">
@@ -24,7 +9,7 @@
             <span>PDF Download From E-IASAC</span>
         </div>
     </div>
-    <div class="card-body" style="min-height:150px;">
+    <div class="card-body card-body-min-height" >
         <div class="row">
             <div class="col-md-12">
                 <div class="card cardbg mb-1 mt-1">

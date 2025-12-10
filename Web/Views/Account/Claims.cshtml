@@ -2,24 +2,7 @@
     ViewData["Title"] = "Claim Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .swal2-html-container {
-        color: red !important;
-    }
-
-    .modal-xl {
-        max-width: 90% !important;
-        width: 90% !important;
-    }
-
-    .table {
-        min-width: 100% !important;
-    }
-
-    .modal .modal-body .table-responsive {
-        max-height: 500px;
-    }
-</style>
+<link asp-href-include="~/developercss/account_claims.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -51,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body" style="min-height:150px;">
+        <div class="card-body card-body-min-height" >
             <div class="row">
                 <div class="col-xl-6">
                     <div class="col-form-label">

@@ -1,0 +1,48 @@
+﻿.btn1 {
+    --bs-btn-padding-x: 2.75rem;
+    --bs-btn-padding-y: 1.075rem;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #2970e7bf;
+    color: white;
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #2970e7bf;
+    border-color: #2970e7bf;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #2970e7bf;
+    border-color: #2970e7bf;
+}
+
+.btn-primary:focus, .btn-primary.focus {
+    color: #fff;
+    background-color: #2970e7bf;
+    border-color: #2970e7bf;
+    box-shadow: 0 0 0 0.2rem rgba(38, 121, 244, 0.5);
+}
+
+.form-control1 {
+    width: 500px;
+    display: table; /* Instead of display:block */
+    margin-left: auto;
+    margin-right: auto;
+}
+.counter-title {
+    margin-top: 3.5rem !important;
+}
+.center-input-container {
+    margin-left: 40%;
+    margin-right: 40%;
+}
+
+.small-width-input {
+    width: 18% !important;
+}

@@ -23,55 +23,7 @@
         m2.Append(",<br/>ICNoTDMUnitMapId : " + dTOTempSession.ICNoTDMUnitMapId);
     }
 }
-<style>
-    .row.mb-1.required .form-label::after {
-        content: "*";
-        color: red;
-    }
-
-    .login-wrap {
-        margin-top: 100px;
-        margin-left: 20%;
-        margin-right: 20%;
-        width: 60%;
-    }
-
-    .unit-label-background {
-        background-color: #e9ecef;
-        max-width: 200px;
-        min-width: 200px;
-        height: 45px;
-    }
-
-    .form-label {
-        font-size: 1rem;
-    }
-
-    .form-control-Alphabets {
-        display: block;
-        width: 100%;
-        height: 34px;
-        padding: 6px 12px;
-        font-size: 14px;
-        line-height: 1.42857143;
-        color: #555;
-        background-color: #fff;
-        background-image: none;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-        -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
-    }
-
-        .form-control-Alphabets:focus {
-            border-color: #66afe9;
-            outline: 0;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
-        }
-</style>
+<link href="~/developercss/account_profile.css" rel="stylesheet" />
 <div class="page">
     <div class="container-fluid">
         <partial name="~/Views/Shared/_CommonHeader.cshtml" />
@@ -454,7 +406,7 @@
                             <div class="form-group row mb-2 unittype">
                                 <label class="col-form-label col-sm-4 fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;"  name="ddlCommand" id="ddlCommand" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Comd / PSO is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select"   name="ddlCommand" id="ddlCommand" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Comd / PSO is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Comd / PSO </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlCommand" data-valmsg-replace="true"></span>
@@ -463,7 +415,7 @@
                             <div class="form-group row mb-4 unittype">
                                 <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;"  name="ddlCorps" id="ddlCorps" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Corps / Dte / Area is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select"   name="ddlCorps" id="ddlCorps" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Corps / Dte / Area is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Corps / Dte / Area </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlCorps" data-valmsg-replace="true"></span>
@@ -472,7 +424,7 @@
                             <div class="form-group row mb-2 unittype">
                                 <label class="col-form-label col-sm-4 fw-bold">Div  /Branch / Sub Area<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;"  name="ddlDiv" id="ddlDiv" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Div  /Branch / SubArea is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select"   name="ddlDiv" id="ddlDiv" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Div  /Branch / SubArea is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Div  /Branch / SubArea </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlDiv" data-valmsg-replace="true"></span>
@@ -481,7 +433,7 @@
                             <div class="form-group row mb-2 unittype">
                                 <label class="col-form-label col-sm-4 fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;"  name="ddlBde" id="ddlBde" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Bde is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select"   name="ddlBde" id="ddlBde" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Bde is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Bde </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlBde" data-valmsg-replace="true"></span>
@@ -490,7 +442,7 @@
                             <div class="form-group row mb-2 FmnBranch  d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;"  name="ddlFmnBranch" id="ddlFmnBranch" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Type of Fmn /Branch is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select"   name="ddlFmnBranch" id="ddlFmnBranch" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Type of Fmn /Branch is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="1">Select Fmn/Branch </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlFmnBranch" data-valmsg-replace="true"></span>
@@ -499,7 +451,7 @@
                             <div class="form-group row mb-2 DteBranch d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">PSO /Dte<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;"  name="ddlPSODte" id="ddlPSODte" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="PSO /Dte is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select"   name="ddlPSODte" id="ddlPSODte" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="PSO /Dte is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="1">Select PSO /Dte</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlPSODte" data-valmsg-replace="true"></span>
@@ -508,7 +460,7 @@
                             <div class="form-group row mb-2 DteBranch d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select" style="width: 100%;"  name="ddlDgSubDte" id="ddlDgSubDte" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="DG / Sub Dte is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select"   name="ddlDgSubDte" id="ddlDgSubDte" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="DG / Sub Dte is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="1">Select DG / Sub Dte</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlDgSubDte" data-valmsg-replace="true"></span>

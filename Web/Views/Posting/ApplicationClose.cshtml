@@ -1,13 +1,4 @@
-﻿<style>
-    .form-group .labelprofile {
-        font-weight: 600;
-    }
-
-    .containerMain {
-        margin-left: 10%;
-        margin-right: 10%;
-    }
-</style>
+﻿<link asp-href-include="~/developercss/applicationclose.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -36,7 +27,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body" style="min-height:150px;">
+        <div class="card-body" >
             <div class="row g-3 row-deck mb-3">
 
                 @* <div class="card p-4">
@@ -130,7 +121,7 @@
                                                     <div class="form-group row mb-2">
                                                         <label class="col-form-label col-sm-4 labelprofile">Reason</label>
                                                         <div class="col-sm-8">
-                                                            <select class="form-select" id="ddlpostingReason" required>
+                                                            <select class="form-select full-width" id="ddlpostingReason" required>
                                                                 <option value="">Select One</option>
                                                             </select>
                                                         </div>

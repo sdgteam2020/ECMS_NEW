@@ -3,17 +3,7 @@
     ViewData["Title"] = "CSV File Upload";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .login-wrap {
-        margin-top: 15px;
-        margin-left: 33%;
-        margin-right: 33%;
-        /*margin-bottom: 100px;*/
-        /*    margin-left: -50px;*/
-        /*  border: 7px double #242c6d;*/
-        width: 33%;
-    }
-</style>
+<link asp-href-include="~/developercss/csvfileupload.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -68,7 +58,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body" style="min-height:150px;">
+        <div class="card-body card-body-min-height" >
             <div class="row">
                 <form enctype="multipart/form-data" action="" id="csvUploadForm" name="csvUploadForm" method="post">
                     <div class="row">

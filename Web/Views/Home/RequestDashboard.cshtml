@@ -3,13 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<string> RoleNameList = new List<string>() { "user" };
 }
-<style>
-    .clickable {
-        height: 190px;
-        width: 190px;
-        display: block;
-    }
-</style>
+<link asp-href-include="~/developercss/requestdashboard.css" rel="stylesheet" />
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -106,107 +100,9 @@
                             </a>
                         </div>
                     }
-                    @*
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter green">
-                                <div class="counter-icon">
-                                    <i class="fa fa-user-circle"></i>
-                                </div>
-                                <span class="counter-value" id="ToCourseJCO">0</span>
-                                <h3>
-                                    Course/TD JCOs/OR
-                                </h3>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter blue">
-                                <div class="counter-icon">
-                                    <i class="fa fa-share-alt"></i>
-                                </div>
-                                <span class="counter-value" id="ToObsnRaisedOASIS">0</span>
-                                <h3>
-                                    Obsn Raised with OASIS
-                                </h3>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter purple">
-                                <div class="counter-icon">
-                                    <i class="fa fa-street-view"></i>
-                                </div>
-                                <span class="counter-value" id="ToObsnRaisedINDRA">0</span>
-                                <h3>
-                                    Obsn Raised with INDRA
-                                </h3>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter yellow">
-                                <div class="counter-icon">
-                                    <i class="fa fa-hourglass-half"></i>
-                                </div>
-                                <span class="counter-value" id="ToHotlistedICard">0</span>
-                                <h3>
-                                    Hotlisted I-Card
-                                </h3>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter red">
-                                <div class="counter-icon">
-                                    <i class="fa fa-ban"></i>
-                                </div>
-                                <span class="counter-value" id="ToBlockExistingICard">0</span>
-                                <h3>
-                                    Block Existing<br/> I-Card
-                                </h3>   
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#">
-                            <div class="counter yellow">
-                                <div class="counter-icon">
-                                    <i class="fa fa-sign-language"></i>
-                                </div>
-                                <span class="counter-value" id="ToDepositICard">0</span>
-                                <h3>
-                                    Deposit I-Card
-                                </h3>
-
-                            </div>
-                        </a>
-                    </div> *@
                 </div>
             </div>
         </div>
     }
 </div>
 <script asp-src-include="~/developerjs/RequestDashboard.js"></script>
-<script>
-    // $('.counter-value').each(function () {
-    //     $(this).prop('Counter', 0).animate({
-    //         Counter: $(this).text()
-    //     }, {
-    //         duration: 3500,
-    //         easing: 'swing',
-    //         step: function (now) {
-    //             $(this).text(Math.ceil(now));
-    //         }
-    //     });
-    // });
-</script>

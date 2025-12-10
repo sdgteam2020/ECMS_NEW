@@ -1,19 +1,6 @@
 ﻿<link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
-<style>
-    .modal.left .modal-dialog, .modal.right .modal-dialog {
-        position: fixed;
-        margin: auto;
-        width: 700px;
-        height: 100%;
-        text-align: left;
-        -webkit-transform: translate3d(0%, 0, 0);
-        -ms-transform: translate3d(0%, 0, 0);
-        -o-transform: translate3d(0%, 0, 0);
-        transform: translate3d(0%, 0, 0);
-    }
-</style>
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
-
+<link asp-href-include="~/developercss/indexbasicdetail.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -198,7 +185,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body" style="min-height:150px;">
+        <div class="card-body card-body-min-height">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="table-responsive">

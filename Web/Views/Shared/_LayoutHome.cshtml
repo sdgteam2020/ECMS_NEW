@@ -66,72 +66,7 @@
         <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
     </environment>
 
-
-    <style>
-        .watermark {
-            position: fixed;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.1;
-            z-index: 1000;
-            pointer-events: none;
-            text-align: center;
-            margin-top: 6rem;
-        }
-
-        .watermark1 {
-            position: fixed;
-            top: 50%;
-            left: 12%;
-            transform: translate(-25%, -20%) rotate(-45deg);
-            opacity: 0.6;
-            z-index: 1000;
-            pointer-events: none;
-            text-align: left;
-            margin-top: 6rem;
-        }
-
-        .watermark2 {
-            position: fixed;
-            top: 50%;
-            right: 12%;
-            transform: translate(-25%, -20%) rotate(-45deg);
-            opacity: 0.6;
-            z-index: 1000;
-            pointer-events: none;
-            text-align: right;
-            margin-top: 6rem;
-        }
-
-        .watermark img {
-            width: 150px;
-        }
-
-        .watermark h4, .watermark span {
-            margin: 0;
-            font-size: 14px;
-            color: rgba(50, 50, 50, 0.8);
-        }
-
-        .watermark img {
-            width: 580px;
-            height: 588px;
-        }
-        footer {
-            padding: 5px;
-            /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
-            background: #003060 !important;
-            color: white;
-            margin-top: 20px;
-        }
-
-        footer .text-end span {
-            font-size: 0.9rem; /* Optional: Adjust the font size for span values */
-        }
-    </style>
-
-
+    <link asp-href-include="~/developercss/layouthome.css" rel="stylesheet" />
 </head>
 <body class="nav-fixed">
     @Html.AntiForgeryToken()
@@ -180,7 +115,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <!-- Invisible placeholder for balancing the center -->
-                    <div style="width: 20%;"></div>
+                    <div class="footer-placeholder"></div>
 
                     <!-- Left Section: Centered Content -->
                     <div class="flex-grow-1 text-center fw-bold">

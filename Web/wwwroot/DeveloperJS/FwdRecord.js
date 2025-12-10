@@ -24,6 +24,7 @@ $(function () {
     });
     sessionStorage.removeItem('ArmyNo');
 
+
     $('#btnDataExports').on("click", function () {
         if (globalThis.selectedIds.length == 0) {
             Swal.fire({

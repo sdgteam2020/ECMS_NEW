@@ -3,7 +3,7 @@ $(function () {
 
     BindData()
     $("#btnReset").on("click",function () {
-        Reset()();
+        Reset();
     });
    
     $("#btnsave").on("click",function () {

@@ -1,0 +1,16 @@
+﻿.swal2-html-container {
+    color: red !important;
+}
+
+.modal-xl {
+    max-width: 90% !important;
+    width: 90% !important;
+}
+
+.table {
+    min-width: 100% !important;
+}
+
+.modal .modal-body .table-responsive {
+    max-height: 500px;
+}

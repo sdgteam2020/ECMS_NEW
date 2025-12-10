@@ -2,21 +2,7 @@
     ViewData["Title"] = "Add Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .form-group .labelprofile {
-        font-size: 14px;
-        font-weight: 700;
-    }
-
-    .cardbg {
-        /*  background: rgb(255,255,255);
-            background: radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(63,251,217,0.3225665266106442) 100%); */
-    }
-
-    .minheight {
-        min-height: 225px;
-    }
-</style>
+<link asp-href-include="~/developercss/userprofile_profile.css" rel="stylesheet" />
 @if (@ViewBag.Role == "admin")
 {
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -74,7 +60,7 @@ else
 
                     </div>
                 </div>
-                <div class="card-body" style="min-height:150px;">
+                <div class="card-body card-body-min-height">
                     <div class="row">
                         <form action="" id="SaveFormProfile" method="post" name="SaveForm">
                             <div class="row">
@@ -278,7 +264,7 @@ else
                                                             <label class="col-form-label col-sm-4 labelprofile">Rank<i class="fas fa-asterisk mand1"></i></label>
                                                             <div class="col-sm-8">
 
-                                                                <select class="form-select" style="width: 100%;" tabindex="-1"  name="ddlProRank" required id="ddlProRank">
+                                                                <select class="form-select full-width" tabindex="-1" name="ddlProRank" required id="ddlProRank">
                                                                     <option value="0">Select Rank </option>
                                                                 </select>
                                                             </div>
@@ -292,50 +278,12 @@ else
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    @*  <div class="col-sm-4">
-                                                    <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4">Formation</label>
-                                                    <div class="col-sm-8">
-
-                                                    <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1"  name="ddlProFormation" required id="ddlProFormation">
-                                                    <option value="0">Select Formation </option>
-                                                    </select>
-                                                    </div>
-                                                    </div>
-                                                    </div> *@
-@*                                                     <div class="col-sm-4">
-                                                        <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-4 labelprofile">Mobile No<i class="fas fa-asterisk mand1"></i></label>
-                                                            <div class="col-sm-8">
-                                                                <input class="form-control allow-number" title="Mobile No" data-toggle="tooltip" placeholder="Enter Mobile No" id="txtMobileNo" required pattern="^[0-9]+$" minlength="10" maxlength="10" />
-                                                            </div>
-                                                        </div>
-                                                    </div> *@
-@*                                                     <div class="col-sm-4">
-                                                        <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-4 labelprofile">Army Contact No<i class="fas fa-asterisk mand1"></i></label>
-                                                            <div class="col-sm-4">
-                                                                <input class="form-control allow-number" title="ASCON Dialing" data-toggle="tooltip" placeholder="ASCON Dialing" id="txtDialingCode" required pattern="^[0-9]+$" minlength="6" maxlength="6" />
-                                                            </div>
-                                                            <div class="col-sm-4">
-                                                                <input class="form-control allow-number" title="Extension" data-toggle="tooltip" placeholder="Extension" id="txtExtension" required pattern="^[0-9]+$" minlength="4" maxlength="5" />
-                                                            </div>
-                                                        </div>
-                                                    </div> *@
-@*                                                     <div class="col-sm-4">
-                                                        <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-4 labelprofile">Thumb Print</label>
-                                                            <div class="col-sm-8">
-                                                                <label id="lblThumbPrint" class="col-form-label"></label>
-                                                            </div>
-                                                        </div>
-                                                    </div> *@
                                                     <div class="col-sm-4">
                                                         <div class="form-group row mb-2">
                                                             <label class="col-form-label col-sm-4 labelprofile">Appt.</label>
                                                             <div class="col-sm-8">
                                                                 <label id="" class="lblAppt col-form-label"></label>
-                                                                @* <select class=" js-example-basic-single select2 form-control" style="width: 100%;" tabindex="-1"  name="ddlProAppointment" required id="ddlProAppointment">
+                                                                @* <select class=" js-example-basic-single select2 form-control full-width" tabindex="-1"  name="ddlProAppointment" required id="ddlProAppointment">
                                                                 <option value="0">Select Appointment </option>
                                                                 </select> *@
                                                             </div>
@@ -419,65 +367,6 @@ else
                         </form>
                     </div>
                 </div>
-
-                @*
-                <div class="card-body" style="min-height:150px;">
-
-
-
-                <div class="col-xl-12">
-                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                <h6 class="mb-3 mb-md-0">
-                Total Profile <span id="lblTotalProfile" class="ml-3 border border-light b px-2 py-1">0</span>
-                </h6>
-                <div> *@
-                @*  <button type="button" id="btnAddProfile" class="btn btn-outline-success font-weight-600 btn-sm">Add New </button>
-                <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button> *@
-
-                @*        </div>
-                </div>
-                <div class="table-responsive">
-                <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldataProfile">
-                <thead>
-                <tr>
-                <th class="noExport d-none"></th>
-                <th class="noExport wd-30-f">
-                <div class="custom-control custom-checkbox small">
-                <input type="checkbox" class="custom-control-input" id="chkAll">
-                <label class="custom-control-label font-weight-bold" for="chkAll"></label>
-                </div>
-                </th>
-                <th class=" wd-30-f">S No</th>
-                <th class="nowrap">Army No</th>
-                <th class="nowrap">Name</th>
-                <th class="nowrap">Rank</th>
-                <th class="nowrap">Appt.</th>
-                <th class="nowrap">Unit Name(SUSNo)</th>
-                <th class="nowrap">
-                IO for unit offrs
-                </th> *@
-                @* <th class="nowrap">IO Name</th>
-                <th class="nowrap">IO Unit Name(SUSNo)</th> *@
-                @* <th class="nowrap">INT Offr</th>
-                <th class="nowrap">
-                Comdt/ Cdr/ CO/ OC or Gen Offr
-                </th> *@
-                @*   <th class="nowrap">GSO Name</th>
-                <th class="nowrap">GSO Unit Name(SUSNo)</th> *@
-                @*                                <th class="nowrap">Action</th>
-
-
-                </tr>
-                </thead>
-                <tbody id="DetailBodyProfile">
-                </tbody>
-                </table>
-                </div>
-                </div>
-
-
-                </div> *@
-
             </div>
         </div>
     </div>

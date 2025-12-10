@@ -3,35 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
-<style>
-    .containerMain {
-        margin-left: 10%;
-        margin-right: 10%;
-    }
-    .faulty {
-        background-color: #044C92;
-        text-align: center;
-        padding: 0.5rem !important;
-        margin-right: 0.25rem !important;
-        border: hidden;
-        font-weight: 400 !important;
-        color: #fff !important;
-        width: 170px;
-        height: 60px;
-    }
-
-    .modal.left .modal-dialog, .modal.right .modal-dialog {
-        position: fixed;
-        margin: auto;
-        width: 700px;
-        height: 100%;
-        text-align: left;
-        -webkit-transform: translate3d(0%, 0, 0);
-        -ms-transform: translate3d(0%, 0, 0);
-        -o-transform: translate3d(0%, 0, 0);
-        transform: translate3d(0%, 0, 0);
-    }
-</style>
+<link asp-href-include="~/developercss/faultycardrequest.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -59,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body" style="min-height:150px;">
+        <div class="card-body card-body-min-height" >
             <div class="row g-3 row-deck mb-3">
                 <form action="" id="SaveFaultyCardRequest" method="post" name="SaveFaultyCardRequest">
                     @Html.AntiForgeryToken();
@@ -99,7 +71,7 @@
                                     <div class="form-group row mb-2 Stage d-none">
                                         <label class="col-form-label col-sm-5 labelprofile">Stage<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7">
-                                            <select class="form-select" style="width: 100%;"  id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
+                                            <select class="form-select full-width"  id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
                                                 <option value="">Select One</option>
                                             </select>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlStage" data-valmsg-replace="true"></span>
@@ -108,7 +80,7 @@
                                     <div class="form-group row mb-2">
                                         <label class="col-form-label col-sm-5 labelprofile">Select Faulty Fd/ Reason<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7">
-                                            <select class="form-control select2 select2-accessible text-uppercase" multiple style="width: 100%;" tabindex="-1"  name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Faulty Reason is required.">
+                                            <select class="form-control select2 select2-accessible text-uppercase full-width" multiple  tabindex="-1" name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Faulty Reason is required.">
                                             </select>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlFaultyRemark" data-valmsg-replace="true"></span>
                                         </div>

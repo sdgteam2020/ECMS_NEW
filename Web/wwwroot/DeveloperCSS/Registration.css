@@ -1,0 +1,8 @@
+﻿.form-group.row.mb-2.required .form-label::after {
+    content: "*";
+    color: red;
+}
+
+.form-group .labelprofile {
+    font-weight: 700;
+}

@@ -10,6 +10,9 @@ $(function () {
         $("#unitoffrsModal").modal("show");
         $("#armynosearchTypeId").val(ApplicantPostingOut);
     });
+    $("#btnDispatchDetailsAddButton").on("click", function () {
+        Proceed();
+    });
 });
 
 function BindData() {

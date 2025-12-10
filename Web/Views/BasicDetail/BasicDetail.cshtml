@@ -3,26 +3,7 @@
     ViewBag.Title = "Edit I-card detail";
     int sno = 1;
 }
-<style>
-    .row.mb-1.required .form-label::after {
-        content: "*";
-        color: red;
-    }
-
-
-    .notefont {
-        font-size: 12px;
-        font-weight: 700;
-    }
-
-    .form-group .labelprofile {
-        font-weight: 700;
-    }
-
-    .row .labelprofile {
-        font-weight: 700;
-    }
-</style>
+<link asp-href-include="~/developercss/basicdetail.css" rel="stylesheet" />
 @* <div class="container1"> *@
 <div class="card">
     <span id="SpnTxnId" class="d-none">0</span>
@@ -173,7 +154,7 @@
                                                     </div>
 
                                                 }
-                                                <span id="lblPhoto" style="color: red;"></span>
+                                                <span id="lblPhoto" class="text-red"></span>
                                                 <span asp-validation-for="Photo_" class="text-danger"></span>
                                                 <span id="lblPhotoNotification" class="text-danger">Photo Upload Upto 200KB</span>
                                             </div>
@@ -208,7 +189,7 @@
                                                         </div>
                                                     </div>
                                                 }
-                                                <span id="lblSignature" style="color: red;"></span>
+                                                <span id="lblSignature" class="text-red"></span>
                                                 <span asp-validation-for="Signature_" class="text-danger"></span>
                                                 <span id="lblSignatureNotification" class="text-danger"> Signature Upload Upto 50KB</span>
                                             </div>
@@ -236,7 +217,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="RankId" class="col-sm-3 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-8">
-                                            <select asp-for="RankId" class="form-select" data-toggle="tooltip" title="Select Rank">
+                                            <select asp-for="RankId" class="form-select full-width" data-toggle="tooltip" title="Select Rank">
                                             </select>
                                             <span asp-validation-for="RankId" class="text-danger"></span>
                                         </div>
@@ -279,7 +260,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="ArmedId" class="col-sm-3 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-8">
-                                            <select asp-for="ArmedId" class="form-select" data-toggle="tooltip" title="Select Armed" required>
+                                            <select asp-for="ArmedId" class="form-select full-width" data-toggle="tooltip" title="Select Armed" required>
                                             </select>
                                             <span asp-validation-for="ArmedId" class="text-danger"></span>
                                         </div>
@@ -288,7 +269,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Regimental Centre</label>
                                         <div class="col-sm-8">
-                                            <select asp-for="RegimentalId" class="form-select" required data-toggle="tooltip" title="Select Regimental Name">
+                                            <select asp-for="RegimentalId" class="form-select full-width" required data-toggle="tooltip" title="Select Regimental Name">
                                             </select>
                                             <span id="lblRegimentalId" class="text-danger"></span>
                                         </div>
@@ -332,7 +313,7 @@
                                         <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="BloodGroupId" class="col-sm-4 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-6">
-                                            <select asp-for="BloodGroupId" class="form-select" data-toggle="tooltip" title="Select Blood Group Name " required>
+                                            <select asp-for="BloodGroupId" class="form-select full-width" data-toggle="tooltip" title="Select Blood Group Name " required>
                                             </select>
                                             <span asp-validation-for="BloodGroupId" class="text-danger"></span>
                                         </div>
@@ -358,7 +339,7 @@
                                         <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="IssuingAuthorityId" class="col-sm-4 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-6">
-                                            <select asp-for="IssuingAuthorityId" class="form-select" data-toggle="tooltip" title="Select Your Approver Appt.">
+                                            <select asp-for="IssuingAuthorityId" class="form-select full-width" data-toggle="tooltip" title="Select Your Approver Appt.">
                                             </select>
                                             <span asp-validation-for="IssuingAuthorityId" class="text-danger"></span>
                                         </div>
