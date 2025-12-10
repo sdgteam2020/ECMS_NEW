@@ -22,3 +22,6 @@
 .modal .modal-body .table-responsive {
     max-height: 500px;
 }
+.requested-generated-col {
+    width: 6rem;
+}

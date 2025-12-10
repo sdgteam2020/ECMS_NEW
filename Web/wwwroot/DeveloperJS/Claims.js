@@ -168,8 +168,16 @@ function BindDialog(claimValue) {
             { data: "DomainId", name: "DomainId" },
             { data: "ArmyNo", name: "ArmyNo" },
             { data: "Rank", name: "Rank" },
-            { data: "Name", name: "Name" },
-            { data: "Unit", name: "Unit" },
+            {
+                data: "Name",
+                name: "Name",
+                orderable: false, // Disable sorting for this column
+            },
+            {
+                data: "Unit",
+                name: "Unit",
+                orderable: false, // Disable sorting for this column
+            },
             { data: "AppointmentName", name: "AppointmentName" },
             {
                 data: "RoleNames",

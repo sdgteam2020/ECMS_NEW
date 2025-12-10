@@ -26,3 +26,6 @@
 .modal .modal-body .table-responsive {
     max-height: 500px;
 }
+.textarea-auto-height {
+    height: auto !important;
+}

@@ -1,3 +1,6 @@
 ﻿.swal2-html-container {
     color: red !important;
 }
+.textarea-auto-height {
+    height: auto !important;
+}

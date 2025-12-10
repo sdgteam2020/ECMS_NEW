@@ -21,6 +21,9 @@ $(function () {
             }, 200); // Adjust the delay as needed
         }
     });
+    $('input.js-uppercase').on('input', function () {
+        this.value = this.value.toUpperCase();
+    });
     $("#btnProfileAddButton").on("click", function () {
         Proceed();
     });

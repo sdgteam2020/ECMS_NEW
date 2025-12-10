@@ -4,12 +4,22 @@ $(function () {
 
     BindData();
     AccountCount();
-    BindRoles();
     BindClaims();
-    $('.select2').select2({
+    BindRoles();
+
+    $('#ddlRoles').select2({
+        placeholder: "Select Role",
+        width: '100%',
         dropdownParent: $('#AddNewDomain'),
         closeOnSelect: false
     });
+    $('#ddClaims').select2({
+        placeholder: "Select Claims",
+        width: '100%',
+        dropdownParent: $('#AddNewDomain'),
+        closeOnSelect: false
+    });
+
 
     $("#btnDomainAddDialog").on("click", function () {
         Proceed();
