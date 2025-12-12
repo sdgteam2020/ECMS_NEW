@@ -263,6 +263,7 @@ $(function () {
 
     GetNotification();
 
+    //javascript-obfuscator:disable
     fetch('/Home/VisitorStats', {
         method: 'POST',
         redirect: 'manual',
@@ -293,8 +294,9 @@ $(function () {
         .catch(error => {
             console.error('Error fetching visitor stats:', error);
         });
-
+    //javascript-obfuscator:enable
 });
+
 
 function Getaspntokenarmyno() {
     $.ajax({
