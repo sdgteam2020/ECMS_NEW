@@ -133,6 +133,7 @@ async function ChkSfx() {
             return false;
     }
 }
+
 async function SubmitsEncry1(result) {
    
     if (result) {

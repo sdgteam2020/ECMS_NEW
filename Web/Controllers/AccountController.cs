@@ -1114,6 +1114,7 @@ namespace Web.Controllers
                 string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
                 if (dd != null)
                 {
+                    ViewBag.hdns = dd;
                     string Password = AESEncrytDecry.DecryptAES(model.Password, dd);  //decrypt password
                     model.Password = Password;
                 }
