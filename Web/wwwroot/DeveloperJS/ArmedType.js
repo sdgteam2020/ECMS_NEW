@@ -6,6 +6,10 @@ $(function () {
     $("#btnReset").on("click",function () {
         Reset();
     });
+
+    $('input.js-uppercase').on('input', function () {
+        this.value = this.value.toUpperCase();
+    });
    
     $("#btnsave").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {

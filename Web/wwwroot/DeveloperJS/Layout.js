@@ -265,10 +265,13 @@ $(function () {
 
     fetch('/Home/VisitorStats', {
         method: 'POST',
+        redirect: 'manual',
         headers: {
+            'Content-Type': 'application/json',
             'RequestVerificationToken': globalThis.RequestVerificationToken
             // NOTE: No need for Content-Type or body if action koi data expect nahi kar raha
-        }
+        },
+        body: '{}'  // empty object so ASP.NET accepts the POST
     })
         .then(response => {
             if (!response.ok) {

@@ -16,7 +16,7 @@
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC</title>
     <link rel="stylesheet" href="~/static/css/all.min.css" />
-    <link asp-href-include="~/css/chatbot.css" rel="stylesheet" />
+@*     <link asp-href-include="~/css/chatbot.css" rel="stylesheet" /> *@
     <!-- Development: Load normal JS -->
     <environment include="Development">
         <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
@@ -153,7 +153,6 @@
                     <div class="content-wrapper">
                         <partial name="_Notification" />
                         @RenderBody()
-                        <partial name="_ChatBot" />
 
                         <!-- partial -->
                         <!-- main-panel ends -->
@@ -211,7 +210,7 @@
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
     <script asp-src-include="~/developerjs/icardhistory.js"></script>
-    <script asp-src-include="~/developerjs/chatbot.js"></script>
+@*     <script asp-src-include="~/developerjs/chatbot.js"></script> *@
     <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
     <script asp-src-include="~/developerjs/_notifications.js"></script>
     @RenderSection("Scripts", false)
@@ -237,7 +236,7 @@
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 fw-bold">Select Offr</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control select4 select2-hidden-accessible full-width" tabindex="-1" name="ddlfwdInternaloffrs" id="ddlfwdInternaloffrs" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offr is required.">
+                                        <select class="form-control" tabindex="-1" name="ddlfwdInternaloffrs" id="ddlfwdInternaloffrs" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offr is required.">
                                             <option value="0">Select Offr</option>
                                         </select>
                                         <span class="text-danger field-validation-valid" data-valmsg-for="ddlfwdInternaloffrs" data-valmsg-replace="true"></span>
@@ -270,7 +269,7 @@
                                 <div class="form-group row mb-2 RemarksInternalFwd d-none">
                                     <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control select4 select2-accessible full-width" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="ddlInternalRemarks" id="ddlInternalRemarks" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w ]*$">
+                                        <select class="form-control" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="ddlInternalRemarks" id="ddlInternalRemarks" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w ]*$">
                                         </select>
                                         <span class="text-danger field-validation-valid" data-valmsg-for="ddlInternalRemarks" data-valmsg-replace="true"></span>
                                     </div>
@@ -408,7 +407,7 @@
                             <div class="form-group row mb-2 Remarks d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control select3" multiple="" placeholder="Please select a Remarks"  tabindex="-1" name="Remarks" required id="ddlRemarks">
+                                    <select class="form-control" multiple="" placeholder="Please select a Remarks"  tabindex="-1" name="Remarks" required id="ddlRemarks">
                                     </select>
                                 </div>
                             </div>
@@ -459,7 +458,7 @@
                             <div class="form-group row recectopt  mb-3">
                                 <label class="col-form-label col-12 text-center">Select Remarks</label>
                                 <div class="col-sm-12">
-                                    <select class="form-control select2 select2-accessible text-uppercase full-width" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="Remarks" required id="ddlRRemarks">
+                                    <select class="form-control" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="Remarks" required id="ddlRRemarks">
                                     </select>
                                 </div>
                             </div>

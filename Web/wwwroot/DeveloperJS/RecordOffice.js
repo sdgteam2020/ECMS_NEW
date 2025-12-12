@@ -12,6 +12,9 @@
         Reset();
         ResetErrorMessage();
     });
+    $("#btnRecordOfficeAdd").on("click", function () {
+        Proceed()
+    });
 
     $("#txtUnitName").autocomplete({
         source: function (request, response) {

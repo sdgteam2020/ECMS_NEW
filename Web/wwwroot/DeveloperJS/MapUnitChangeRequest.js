@@ -15,6 +15,11 @@
         await GetCurrentUserDetails();
     }
 
+    $('input.js-uppercase').on('input', function () {
+        this.value = this.value.toUpperCase();
+    });
+
+
     $('input[name="UnitTyperdi"]').on("click", function () {
         var lst = '<option value="1">Please Select</option>';
         var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
@@ -138,7 +143,7 @@ function Proceed(choice) {
         Swal.fire({
             title: 'Please Confirm the following Unit Move Request details',
             html: `
-                    <div style="text-align: left; font-size: 16px;">
+                    <div class="unit-move-details">
                         <p><strong>Unit Name : </strong> ${UnitName.trim()}</p>
                         <p><strong>SUS NO : </strong> ${SUSNo.trim()}</p>
                         <p><strong>${choice === 1 ? "Remarks" : "Admin Remark"}:</strong> ${choice === 1 ? Remarks : AdminRemark}</p>
@@ -152,6 +157,9 @@ function Proceed(choice) {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             width: '500px', // optional: customize popup width
+            customClass: {
+                popup: 'unit-move-popup'   // optional: style popup via CSS instead of width
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 Save(choice);

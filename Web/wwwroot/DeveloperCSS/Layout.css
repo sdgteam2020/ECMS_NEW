@@ -283,3 +283,6 @@ footer .text-end span {
 .card-body-min-height {
     min-height: 150px;
 }
+.textarea-auto-height {
+    height: auto !important;
+}

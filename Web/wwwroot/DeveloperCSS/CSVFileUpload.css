@@ -7,3 +7,43 @@
     /*  border: 7px double #242c6d;*/
     width: 33%;
 }
+.text-red {
+    color: red;
+}
+/* Text intro in preview popup */
+.csv-preview-intro {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Table wrapper: horizontal scroll for many columns */
+.csv-preview-table-wrapper {
+    overflow-x: auto;
+}
+
+/* Optional: extra styling for preview table */
+.csv-preview-table {
+    margin-top: 10px;
+}
+
+/* Button group in validation complete popup */
+.csv-btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+/* Individual buttons using SweetAlert2 base classes + custom colors */
+.csv-btn-download {
+    background-color: #28a745 !important; /* green */
+}
+
+.csv-btn-proceed {
+    background-color: #007bff !important; /* blue */
+}
+
+.csv-btn-cancel {
+    background-color: #dc3545 !important; /* red */
+}

@@ -130,39 +130,25 @@ $(function () {
     });
 
 
-    $('.select2').select2({
+    $('#ddlRRemarks').select2({
+        placeholder: "select a Remarks",
+        width: '100%',
         dropdownParent: $('#BasicDetails'),
         closeOnSelect: true
-
     });
-
-    $('.select3').select2({
+    $('#ddlRemarks').select2({
+        placeholder: "select a Remarks",
+        width: '100%',
         dropdownParent: $('#FwdRecord'),
         closeOnSelect: true
     });
-
-    $('.select4').select2({
+    $('#ddlInternalRemarks').select2({
+        placeholder: "select a Remarks",
+        width: '100%',
         dropdownParent: $('#FwdInternalRecord'),
         closeOnSelect: true
     });
 
-
-    //$(".historyRequest").on("click", function () {
-    //    GetRequestHistory($(this).closest("tr").find(".spnRequestId").html());
-    //});
-
-    //$(".historyMovement").on("click", function () {
-    //    GetMovementHistory($(this).closest("tr").find(".spnRequestId").html());
-    //});
-
-    //$(".btndownloadpdf").on("click", function () {
-    //    var rowData = $(this).closest("tr").data();
-    //    DownloadPdf(rowData.RequestId);
-    //});
-
-    //$(".btndownloadxml").on("click", function () {
-    //    DownloadXml($(this).closest("tr").find(".spnRequestId").html())
-    //});
 
     $('#ddlfwdoffrs').on('change', function () {
         $("#spnFwdToAspNetUsersId").html(0);

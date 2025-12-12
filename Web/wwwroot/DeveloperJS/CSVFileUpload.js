@@ -74,10 +74,10 @@ function validateCsvFileOnChange() {
 
         Swal.fire({
             title: 'Preview of Uploaded Data!',
-            html: `<p style="margin-bottom: 10px; font-size: 14px; color: #333;">
+            html: `<p class="csv-preview-intro">
                   These are the top records from the uploaded CSV file. Please ensure that the correct file has been uploaded.
                 </p>
-                <div style="overflow-x:auto; class ="table-responsive">
+                <div class ="table-responsive csv-preview-table-wrapper">
                      <table id="myTable" class="table border border-purple table-striped no-footer dataTable table-hover" role="grid">
                        <thead>
                          <tr>
@@ -143,22 +143,18 @@ function validateCsvFileOnChange() {
                                     const swal = Swal.getPopup();
 
                                     const btnGroup = document.createElement('div');
-                                    btnGroup.style.display = 'flex';
-                                    btnGroup.style.justifyContent = 'center';
-                                    btnGroup.style.gap = '10px';
+                                    btnGroup.className = 'csv-btn-group';
 
                                     const downloadBtn = document.createElement('button');
                                     downloadBtn.textContent = 'Download';
-                                    downloadBtn.className = 'swal2-confirm swal2-styled';
-                                    downloadBtn.style.backgroundColor = '#28a745'; // green
+                                    downloadBtn.className = 'swal2-confirm swal2-styled csv-btn-download';
                                     downloadBtn.onclick = function () {
                                         window.open(`/CardPrinitngCSVs/CSVWithRemarks/${data.FileName}` , '_blank');
                                     };
 
                                     const proceedBtn = document.createElement('button');
                                     proceedBtn.textContent = 'Proceed';
-                                    proceedBtn.className = 'swal2-confirm swal2-styled';
-                                    proceedBtn.style.backgroundColor = '#007bff'; // blue
+                                    proceedBtn.className = 'swal2-confirm swal2-styled csv-btn-proceed';
                                     proceedBtn.onclick = function () {
                                         Swal.close();
                                         $.ajax({
@@ -193,8 +189,7 @@ function validateCsvFileOnChange() {
 
                                     const cancelBtn = document.createElement('button');
                                     cancelBtn.textContent = 'Cancel';
-                                    cancelBtn.className = 'swal2-cancel swal2-styled';
-                                    cancelBtn.style.backgroundColor = '#dc3545'; // red
+                                    cancelBtn.className = 'swal2-cancel swal2-styled csv-btn-cancel';
                                     cancelBtn.onclick = function () {
                                         Swal.close();
                                     };

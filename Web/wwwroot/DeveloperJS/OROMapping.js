@@ -5,7 +5,9 @@
     mMsater(0, "ddlRank", Rank, "");
     GetArmsList("ddlArmedIdList", 0);
     BindData();
-    $('.select2').select2({
+    $('#ddlArmedIdList').select2({
+        placeholder: "Select Arms",
+        width: '100%',
         dropdownParent: $('#AddNewOROMapping'),
         closeOnSelect: false
     });

@@ -8,6 +8,9 @@ $(function () {
         ResetErrorMessage();
         $("#AddNewRegimental").modal('show');
     });
+    $('input.js-uppercase').on('input', function () {
+        this.value = this.value.toUpperCase();
+    });
 
     $("#btnResetRegimental").on("click",function () {
         Reset();

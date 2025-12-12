@@ -34,3 +34,12 @@
 .h-90 {
     height: 90% !important;
 }
+/* Content inside the Swal confirmation */
+.unit-move-details {
+    text-align: left;
+    font-size: 16px;
+}
+/* Optional: control popup width via CSS instead of JS width: '500px' */
+.unit-move-popup {
+    max-width: 500px;
+}

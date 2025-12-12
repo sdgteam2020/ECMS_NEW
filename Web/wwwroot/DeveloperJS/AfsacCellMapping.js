@@ -63,6 +63,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 data: param1,
                 type: 'POST',
+                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
                 success: function (response) {
                     if (response != "null" && response != null) {
