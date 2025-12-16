@@ -875,3 +875,17 @@ a {
         justify-content: center;
         border: 2px solid #fff; /* ring for contrast */
     }
+@media (min-width: 992px) {
+    .modal-lg,
+    .modal-xl {
+        max-width: 800px;
+        width: 90%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .modal-xl {
+        max-width: 90%;
+        width: 90%;
+    }
+}
