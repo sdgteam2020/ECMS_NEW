@@ -25,3 +25,38 @@
     -o-transform: translate3d(0%, 0, 0);
     transform: translate3d(0%, 0, 0);
 }
+
+/* overall popup */
+.bootstrap-datetimepicker-widget {
+    width: 440px !important;
+    font-size: 14px;
+}
+
+/*calendar area width*/
+.bootstrap-datetimepicker-widget .datepicker {
+        width: 320px;
+    }
+
+/*time area width*/
+.bootstrap-datetimepicker-widget .timepicker {
+    width: 100px;
+}
+
+/*make day cells bigger/smaller*/
+.bootstrap-datetimepicker-widget table td,
+.bootstrap-datetimepicker-widget table th {
+    width: 36px;
+    height: 32px;
+}
+
+/*optional: smaller/bigger buttons*/
+.bootstrap-datetimepicker-widget .btn {
+    padding: 4px 10px;
+    font-size: 13px;
+}
+
+.dtp-okcancel {
+    padding: 8px 10px;
+    /*border-top: 1px solid #ddd;*/
+    text-align: right;
+}
