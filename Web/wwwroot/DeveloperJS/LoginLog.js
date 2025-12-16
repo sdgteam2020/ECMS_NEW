@@ -2,8 +2,25 @@
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    const today = new Date();
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+    $("#FmDate").datepicker({
+        dateFormat: "yy-mm-dd",
+        minDate: oneYearAgo,
+        maxDate: today,
+        onSelect: function (dateText) {
+            $("#ToDate").datepicker("option", "minDate", dateText);
+        }
+    });
+
+    $("#ToDate").datepicker({
+        dateFormat: "yy-mm-dd",
+        maxDate: today
+    });
+
     $("body").on("click", ".cls-btnhistory", function () {
-        
        
         $(".loginlodetails").html($(this).closest("tr").find(".DomainID").html() + '(' + $(this).closest("tr").find(".ArmyNo").html() +' ' + $(this).closest("tr").find(".RankName").html() + '' + $(this).closest("tr").find(".Name").html() + ') ');
 
@@ -19,7 +36,6 @@ $(function () {
                 GetLog($(this).closest("tr").find("#AspNetUsersId").html())
             }else
                 toastr.error('Please Select Valid date');
-
         }
     });
 
