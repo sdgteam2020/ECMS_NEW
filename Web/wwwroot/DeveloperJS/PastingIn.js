@@ -38,7 +38,68 @@
         e.preventDefault();
         return false;
     });
-   
+
+    let oldText = "";
+    let oldMoment = null;
+    const now = moment();                 // current date-time
+    const max = moment().add(1, 'month'); // +1 month
+
+    if ($('#txtDispatchDate').data('DateTimePicker')) {
+        $('#txtDispatchDate').data('DateTimePicker').destroy();
+    }
+
+    $('#txtDispatchDate').datetimepicker({
+        format: 'DD/MM/YYYY HH:mm',
+        sideBySide: true,
+        stepping: 5,
+        useCurrent: false,
+        minDate: now,
+        maxDate: max,
+        showClear: false,
+        showClose: false
+    }).on('dp.show', function () {
+
+        const picker = $(this).data('DateTimePicker');
+
+        oldText = $(this).val();
+        oldMoment = picker.date() ? picker.date().clone() : null;
+
+        picker.minDate(moment());
+
+        setTimeout(function () {
+            const $widget = $('.bootstrap-datetimepicker-widget:visible').last();
+            if (!$widget.length) return;
+
+            // add buttons once
+            if ($widget.find('.dtp-okcancel').length === 0) {
+                $widget.append(`
+                <div class="dtp-okcancel">
+                    <button type="button" class="btn btn-sm btn-secondary dtp-cancel">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-success ms-2 dtp-ok">OK</button>
+                </div>
+            `);
+
+                // OK
+                $widget.on('click', '.dtp-ok', function () {
+                    picker.hide();
+                });
+
+                // Cancel
+                $widget.on('click', '.dtp-cancel', function () {
+                    if (oldMoment) picker.date(oldMoment);
+                    else picker.clear();
+                    $('#txtDispatchDate').val(oldText);
+                    picker.hide();
+                });
+            }
+        }, 0);
+    });
+    $('#txtDispatchDate').on('keydown', (e) => {
+        e.preventDefault();
+        return false;
+    });    
+
+
     $("#postingoutUnitName").autocomplete({
 
 
