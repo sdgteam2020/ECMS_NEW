@@ -2294,7 +2294,7 @@ namespace DataAccessLayer
             try
             {
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "ServiceNo";
-                var multiQuery = query = $@"
+                var multiQuery = $@"
                         WITH RecordCTE AS (
                             SELECT DISTINCT Count(*) over () as TotalFilteredRecords, {query} {wherequery} 
                         )
@@ -2321,7 +2321,7 @@ namespace DataAccessLayer
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
 
-                    var ret = await connection.QueryMultipleAsync(query, parameters);
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOBasicDetailIndexResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 

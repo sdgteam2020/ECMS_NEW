@@ -26,5 +26,11 @@
       "library": "crypto-js@4.2.0",
       "destination": "wwwroot/lib/crypto-js/"
     }
-  ]
+  ,
+{
+  "provider": "cdnjs",
+  "library": "bootstrap@5.3.8",
+  "destination": "wwwroot/bootstrap/"
+}
+]
 }

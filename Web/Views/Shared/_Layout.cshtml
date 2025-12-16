@@ -150,6 +150,12 @@
                             <a class="nav-link MyTask" href="/Home/Task">Task</a>
                         </nav>
                     }
+                    else
+                    {
+                        <nav class="nav-hide-for-admin" id="layouttask">
+                            &nbsp
+                        </nav>
+                    }
                     <div class="content-wrapper">
                         <partial name="_Notification" />
                         @RenderBody()
