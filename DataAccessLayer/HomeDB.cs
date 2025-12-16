@@ -326,12 +326,12 @@ namespace DataAccessLayer
                             select @ToRejectedOffrs=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
                             inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId
-                            inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=1 
+                            inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=1 and fwd.FwdStatusId=3 
 
                             select @ToRejectedJCO=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
                             inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId
-                            inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=2 
+                            inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=2 and fwd.FwdStatusId=3 
 
                             select @ToDraftedOffrs ToDraftedOffrs,@ToDraftedJCO ToDraftedJCO ,@ToSubmittedOffrs ToSubmittedOffrs,@ToSubmittedJCO ToSubmittedJCO,@ToClosedOffrs ToClosedOffrs,@ToClosedJCO ToClosedJCO ,@ToCompletedOffrs ToCompletedOffrs,@ToCompletedJCO ToCompletedJCO,@ToRejectedOffrs ToRejectedOffrs,@ToRejectedJCO ToRejectedJCO";
             try

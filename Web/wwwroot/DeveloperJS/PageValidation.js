@@ -7,6 +7,38 @@
         handleSubmit(event, isNewUser);
     });
 
+    const pwd = document.getElementById("Password");
+    if (!pwd) return;
+
+    pwd.addEventListener("paste", function (e) {
+        e.preventDefault();
+    });
+
+    pwd.addEventListener("copy", function (e) {
+        e.preventDefault();
+    });
+
+    pwd.addEventListener("cut", function (e) {
+        e.preventDefault();
+    });
+
+    if ($('#ConfirmPassword').length) {
+        const confirmpwd = document.getElementById("ConfirmPassword");
+        if (!confirmpwd) return;
+
+        confirmpwd.addEventListener("paste", function (e) {
+            e.preventDefault();
+        });
+
+        confirmpwd.addEventListener("copy", function (e) {
+            e.preventDefault();
+        });
+
+        confirmpwd.addEventListener("cut", function (e) {
+            e.preventDefault();
+        });
+    }
+
     // Push a new state to the browser history
     history.pushState(null, null, location.href);
 

@@ -360,7 +360,7 @@
     --bs-nav-pills-border-radius: var(--bs-border-radius);
     --bs-nav-pills-link-active-color: #000;
     --bs-nav-pills-link-active-bg: #fff;
-    margin-top: 41px;
+    margin-top: 86px;
     background-color: #F5F7FF;
 }
 
@@ -801,11 +801,12 @@ a {
     background-color: rgb(133 215 127);
 }
 
+.nav-hide-for-admin{
+    height:94px;
+    width:100%;
+}
 /*
 /////////////Notification//////////*/
-
-
-
 .notification-bell {
     font-size: 20px;
 }
