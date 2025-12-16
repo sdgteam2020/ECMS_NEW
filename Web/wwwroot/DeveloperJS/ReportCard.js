@@ -624,6 +624,18 @@ function GetReportReturnHistory(Choice, ApplyForId, callback) {
                 document.body.removeChild(link);
                 //window.location.href = downloadUrl;
             });
+            $("#CardReport_tbldatadialog tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    GetRequestHistory(rowData.RequestId);
+                }
+            });
+            $("#CardReport_tbldatadialog tbody").off("click", ".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    GetMovementHistory(rowData.RequestId);
+                }
+            });
 
         }
     });
@@ -686,7 +698,28 @@ function getColumnsByChoice(choice) {
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
-                }
+                },
+                {
+                    title: "Application History",
+                    data: null,
+                    className: "noExport",
+                    name: "Application History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
+                {
+                    title: "Card History",
+                    className: "noExport",
+                    data: null,
+                    name: "Card History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
+
             ];
             break;
 
@@ -744,7 +777,27 @@ function getColumnsByChoice(choice) {
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
-                }
+                },
+                {
+                    title: "Application History",
+                    data: null,
+                    className: "noExport",
+                    name: "Application History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
+                {
+                    title: "Card History",
+                    className: "noExport",
+                    data: null,
+                    name: "Card History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
             ];
             break;
 
@@ -822,7 +875,27 @@ function getColumnsByChoice(choice) {
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
-                }
+                },
+                {
+                    title: "Application History",
+                    data: null,
+                    className: "noExport",
+                    name: "Application History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
+                {
+                    title: "Card History",
+                    className: "noExport",
+                    data: null,
+                    name: "Card History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
             ];
             break;
 
@@ -900,7 +973,27 @@ function getColumnsByChoice(choice) {
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
-                }
+                },
+                {
+                    title: "Application History",
+                    data: null,
+                    className: "noExport",
+                    name: "Application History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
+                {
+                    title: "Card History",
+                    className: "noExport",
+                    data: null,
+                    name: "Card History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
             ];
             break;
 
@@ -978,7 +1071,27 @@ function getColumnsByChoice(choice) {
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
-                }
+                },
+                {
+                    title: "Application History",
+                    data: null,
+                    className: "noExport",
+                    name: "Application History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
+                {
+                    title: "Card History",
+                    className: "noExport",
+                    data: null,
+                    name: "Card History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
             ];
             break;
 
@@ -1056,7 +1169,27 @@ function getColumnsByChoice(choice) {
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
-                }
+                },
+                {
+                    title: "Application History",
+                    data: null,
+                    className: "noExport",
+                    name: "Application History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
+                {
+                    title: "Card History",
+                    className: "noExport",
+                    data: null,
+                    name: "Card History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
             ];
             break;
 
@@ -1124,7 +1257,27 @@ function getColumnsByChoice(choice) {
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
-                }
+                },
+                {
+                    title: "Application History",
+                    data: null,
+                    className: "noExport",
+                    name: "Application History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
+                {
+                    title: "Card History",
+                    className: "noExport",
+                    data: null,
+                    name: "Card History",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    }
+                },
             ];
             break;
 
