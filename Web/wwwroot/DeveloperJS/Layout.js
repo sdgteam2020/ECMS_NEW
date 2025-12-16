@@ -191,6 +191,8 @@ $(function () {
     });
 
     $("#txtarmynosearchAll").autocomplete({
+        appendTo: '#unitoffrsModal #suggesstion-box',
+        position: { my: "left top", at: "left bottom", collision: "fit" },
         source: function (request, response) {
             if (request.term.length > 1) {
                 let param = new URLSearchParams(
@@ -258,7 +260,10 @@ $(function () {
             $("#RequestId_unitoffrsModal").val(i.item.RequestId);
             $("#MaxTrnFwdId_unitoffrsModal").val(i.item.MaxTrnFwdId);
         },
-        appendTo: '#suggesstion-box'
+        open: function () {
+            // make dropdown width = input width
+            $(".ui-autocomplete:visible").outerWidth($(this).outerWidth());
+        }
     });
 
     GetNotification();
