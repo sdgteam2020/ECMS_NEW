@@ -36,3 +36,19 @@ body {
 /*   img {
                         width: 500px;
                     } */
+
+#hindiheading {
+    line-height: 0 !important;
+}
+
+#hindiheading {
+    text-align: left;
+}
+
+#identification-mark {
+    line-height: 1;
+}
+
+#divimgpath {
+    background-color: white
+}
