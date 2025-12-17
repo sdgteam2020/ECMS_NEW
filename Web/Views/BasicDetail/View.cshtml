@@ -184,10 +184,10 @@
                                     @*                                     <img class="imgicardbg" src="~/images/asset/icardbg.jpg" /> *@
                                     <div class="row p-4">
                                         <div class="col-sm-12">
-                                            <div style="line-height:0 !important">
-                                                <p style="text-align:left;" class="f19 font-weight-600">
+                                            <div class="line-zero">
+                                                <p class="f19 font-weight-600">
                                                     भारतीय सशस्त्र सेनाएँ पहचान कार्ड
-                                                    <span style="float:right;">(IAFZ-2015)</span>
+                                                    <span>(IAFZ-2015)</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -202,7 +202,7 @@
                                             <div class="fw-bold text-uppercase">@(Model.RankName != null ? Model.RankName : "No Rank")</div>
                                             <div class="fw-bold text-uppercase">@(Model.ArmedName != null ? Model.ArmedName : "No Armed")</div>
                                             <div class="fw-bold text-uppercase">@Model.ServiceNo</div>
-                                            <div class="fw-bold" style="line-height:1">IDENTIFICATION MARK</div>
+                                            <div class="fw-bold identification-mark">IDENTIFICATION MARK</div>
                                             <div class="font-weight-500 text-uppercase">@Model.IdenMark1</div>
                                         </div>
                                         <div class="col-sm-12">
@@ -288,7 +288,7 @@
                                         <div class="col-sm-3  mt-2">
                                             <span class="font-weight-800 border border-dark p-2">SIGNATURE</span>
                                         </div>
-                                        <div class="col-sm-6 text-center mt-2 p-2 border border-dark" style="background-color:white">
+                                        <div class="col-sm-6 text-center mt-2 p-2 border border-dark signature-box">
                                             <span class="p-2"><img id="SignaturePath" src="/WriteReadData/Signature/@Model.SignatureImagePath" onerror="this.src='/Images/Signature.png'" height="30" width="80" /></span>
                                         </div>
                                     </div>

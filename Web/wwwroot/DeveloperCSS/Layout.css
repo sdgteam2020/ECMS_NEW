@@ -334,6 +334,15 @@ footer .text-end span {
     text-overflow: ellipsis !important;
     display: block; /* needed for ellipsis */
 }
+
+.line-zero p {
+    text-align: left;
+}
+
+    .line-zero p span {
+        float: right;
+    }
+}
 .width-auto {
     width: auto;
 }
