@@ -107,7 +107,7 @@ $(function () {
                 }
             });
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     $('#txtArmyNo').on("keyup", function (e) {

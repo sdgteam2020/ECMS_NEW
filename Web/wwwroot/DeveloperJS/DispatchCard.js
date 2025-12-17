@@ -53,7 +53,7 @@ $(function () {
             $("#searchText").val(i.item.label);
             $("#spnUnitMapId").html(i.item.value);
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     if ($('#btnAdd').length) {

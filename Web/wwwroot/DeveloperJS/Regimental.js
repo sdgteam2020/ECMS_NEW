@@ -64,7 +64,7 @@ $(function () {
             $("#txtUnitName").val(i.item.label);
             $("#spnUnitMapId").html(i.item.value);
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     $('#txtUnitName').on('keyup',function (e) {

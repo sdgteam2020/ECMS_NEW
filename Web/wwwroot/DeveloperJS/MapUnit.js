@@ -59,7 +59,7 @@ $(function () {
                 }
             });
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     document.getElementById('txtSusno').addEventListener('keyup', function (e) {

@@ -106,7 +106,7 @@
                 }
             });
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     $("#ddlRank").prop('disabled', true);

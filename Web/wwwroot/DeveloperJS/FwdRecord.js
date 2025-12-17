@@ -414,7 +414,7 @@ $(function () {
             //$("#btnIOProfileSerch").addClass('d-none');
             FwdData(i.item.value);
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     $('#txtFwdName').on("keyup", function (e) {

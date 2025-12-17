@@ -174,7 +174,7 @@
             //alert(i.item.value)
             getunitbymapid(i.item.value);
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
 });

@@ -118,7 +118,7 @@ $(function () {
             $("#spnApptIdMap").html(i.item.value);
             $("#ApptId").val(i.item.value);
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     $("#txtUnitName").autocomplete({
@@ -223,7 +223,7 @@ $(function () {
                 }
             });
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     $("#txtSusno").autocomplete({
@@ -290,7 +290,7 @@ $(function () {
                 }
             });
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     $('#txtSusno').on('keyup',function (e) {

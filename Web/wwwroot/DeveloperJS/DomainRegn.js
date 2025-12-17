@@ -63,7 +63,6 @@ $(function () {
                     success: function (data) {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
-
                                 $("#loading").addClass("d-none");
                                 return { label: item.AppointmentName, value: item.ApptId };
 
@@ -88,9 +87,8 @@ $(function () {
             e.preventDefault();
             $("#txtAppointmentName").val(i.item.label);
             $("#spnUnitAppointmentId").html(i.item.value);
-            //alert(i.item.value)
-        },
-        appendTo: '#suggesstion-box'
+            return false;
+        }
     });
 
     $("#txtUnitName").autocomplete({
@@ -196,7 +194,7 @@ $(function () {
                 }
             });
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     $('#txtUnitName').on("keyup", function (e) {

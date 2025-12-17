@@ -98,7 +98,7 @@
                 }
             });
         },
-        appendTo: '#suggesstion-box'
+        
     });
 
     $('#txtUnitName').keyup(function (e) {
