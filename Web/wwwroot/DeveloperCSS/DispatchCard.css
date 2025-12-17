@@ -26,3 +26,13 @@
 .thicker-bold {
     font-weight: 500 !important;
 }
+.search-field {
+    max-width: 180px;
+}
+.search-input-container {
+    max-width: 250px;
+}
+.lot-details-scroll {
+    white-space: nowrap;
+    overflow-x: auto;
+}

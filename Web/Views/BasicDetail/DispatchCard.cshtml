@@ -73,12 +73,12 @@
                         <div id="AdvSearch" class="mb-2 d-flex d-none">
                             @if (claimValue == 1)
                             {
-                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
+                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
                                     <option value="" selected>Select Field</option>
                                     <option value="regimentalname">Regt</option>
                                     <option value="recordofficename">ORO</option>
                                 </select>
-                                <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
+                                <div id="searchInputContainer" class="mr-2 search-input-container">
                                     <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
                                 </div>
                                 <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
@@ -87,11 +87,11 @@
                             }
                             else if (claimValue == 2)
                             {
-                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
+                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
                                     <option value="susno" selected>SUS No</option>
                                 </select>
                                 <span class="d-none" id="spnUnitMapId"></span>
-                                <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
+                                <div id="searchInputContainer" class="mr-2 search-input-container">
                                     <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Type SUS No" />
                                 </div>
                                 <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
@@ -100,11 +100,11 @@
                             }
                             else if (claimValue == 3)
                             {
-                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
+                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
                                     <option value="susno" selected>SUS No</option>
                                 </select>
                                 <span class="d-none" id="spnUnitMapId"></span>
-                                <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
+                                <div id="searchInputContainer" class="mr-2 search-input-container">
                                     <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Type SUS No" />
                                 </div>
                                 <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
@@ -113,11 +113,11 @@
                             }
                             else
                             {
-                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2" style="max-width: 180px;">
+                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
                                     <option value="" selected>Select Field</option>
                                     <option value="serviceno">Service No</option>
                                 </select>
-                                <div id="searchInputContainer" class="mr-2" style="max-width: 250px;">
+                                <div id="searchInputContainer" class="mr-2 search-input-container">
                                     <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
                                 </div>
                                 <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
@@ -150,7 +150,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div>
-                        <div id="LotDetails" class="alert alert-info small" style="white-space: nowrap; overflow-x: auto;">
+                        <div id="LotDetails" class="alert alert-info small lot-details-scroll">
 
                         </div>
                         <div class="mb-2 d-flex justify-content-end">
@@ -187,7 +187,7 @@
                                     <div class="form-group row mb-2">
                                         <label class="col-form-label col-sm-5 labelprofile">Remark<i class="fas fa-asterisk mand1"></i></label>
                                         <div class="col-sm-7">
-                                            <textarea class="form-control1" style="height:auto!important;" name="txtToRemark" id="txtToRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                            <textarea class="form-control1 textarea-auto-height" name="txtToRemark" id="txtToRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="txtToRemark" data-valmsg-replace="true"></span>
                                         </div>
                                     </div>

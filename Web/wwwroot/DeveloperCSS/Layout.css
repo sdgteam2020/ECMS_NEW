@@ -334,3 +334,9 @@ footer .text-end span {
     text-overflow: ellipsis !important;
     display: block; /* needed for ellipsis */
 }
+.width-auto {
+    width: auto;
+}
+.mt-initiate {
+    margin-top: 3.5rem !important;
+}
