@@ -7,3 +7,6 @@
     /*  border: 7px double #242c6d;*/
     width: 33%;
 }
+#lblZipFile {
+    color: red;
+}
