@@ -6,10 +6,11 @@
     var RemarkTypeID = [5];
     await GetRemarks("ddlFaultyRemark", 0, RemarkTypeID);
 
-    $('.select2').select2({
+    $('#ddlFaultyRemark').select2({
         placeholder: "Please select a Reason",
+        width: '100%',
         allowClear: true,
-        closeOnSelect: false // Only needed for multi-select
+        closeOnSelect: false
     });
 
     $("#btnSubmit").on("click", function () {
@@ -87,6 +88,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', // Tell the server we are sending JSON
+                    'RequestVerificationToken': globalThis.RequestVerificationToken
                 }
             })
                 .then(response => response.json())

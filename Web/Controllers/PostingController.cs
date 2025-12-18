@@ -330,7 +330,7 @@ namespace Web.Controllers
                         {
                             response.Message = "Posting Out successfully";
                             response.Value = closeResponse;
-                            response.Result = false;
+                            response.Result = true;
                             return Ok(response);
                         }
                         else
