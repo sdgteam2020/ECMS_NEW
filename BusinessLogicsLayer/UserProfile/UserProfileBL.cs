@@ -33,9 +33,43 @@ namespace BusinessLogicsLayer.Master
         {
             return await _iUserProfileDB.DeleteProfile(mUserProfile);
         }
-        public async Task<bool?> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
+        /// <summary>
+        /// Validates mapping data and updates the user profile with domain mapping.
+        /// </summary>
+        /// <param name="dTO">Profile update request containing mapping details.</param>
+        /// <returns>
+        /// A generic response indicating success or failure of the update operation.
+        /// </returns>
+        public async Task<DTOGenericResponse<string>> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
         {
-            return await _iUserProfileDB.UpdateProfileWithMapping(dTO);
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            DTOCheckedBeforeUpdateProfileResponse dTOChecked = await _iUserProfileDB.CheckedBeforeUpdateProfile(dTO);
+            if(dTOChecked.TDMId !=null && dTOChecked.UserId != null && dTOChecked.ApplyForId != null && dTOChecked.ApplyForId !=2 && dTOChecked.RankAbbreviation != null)
+            {
+                dTO.TDMId = dTOChecked.TDMId.Value;
+                dTO.UserId = dTOChecked.UserId.Value;
+
+                response = await _iUserProfileDB.UpdateProfileWithMapping(dTO);
+                response.Value = dTOChecked.RankAbbreviation;
+            }
+            else
+            {
+                if (dTOChecked.TDMId == null)
+                {
+                    response.Message = "DID is not mapped to the mapping table.";
+                }
+                else if(dTOChecked.UserId == null)
+                {
+                    response.Message = "Profile is not mapped to the mapping table.";
+                }
+                else if (dTOChecked.ApplyForId == null || dTOChecked.RankAbbreviation == null || dTOChecked.ApplyForId == 2)
+                {
+                    response.Message = "Invalid Rank Id.";
+                }
+                response.Value = "";
+                response.Result = false;
+            }
+            return response;
         }
 
         public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId)
@@ -100,6 +134,10 @@ namespace BusinessLogicsLayer.Master
         public async Task<MUserProfile> GetByIsWithoutTokenApply(int UserId)
         {
             return await _iUserProfileDB.GetByIsWithoutTokenApply(UserId);
+        }
+        public async Task<DTOCheckedBeforeUpdateProfileResponse> CheckedBeforeUpdateProfile(DTOUpdateProfileWithMappingRequest dTO)
+        {
+            return await _iUserProfileDB.CheckedBeforeUpdateProfile(dTO);
         }
     }
 }

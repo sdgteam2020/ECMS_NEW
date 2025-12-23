@@ -141,7 +141,7 @@ function Proceed(choice) {
         Swal.fire({
             title: 'Please confirm the following faulty card details:',
             html: `
-                    <div style="text-align: left; font-size: 16px;">
+                    <div class="swal-details">
                         <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
                         <p><strong>Request ID:</strong> ${$("#spnFaultyCardRequestId").html() }</p>
                         <p><strong>${choice === 1 ? "Issues Related to Card Misprint/Faulty" : "AFSAC Cell Remark"}:</strong> ${choice === 1 ? FromRemark : ToRemark}</p>
@@ -154,7 +154,9 @@ function Proceed(choice) {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            width: '500px', // optional: customize popup width
+            customClass: {
+                popup: 'swal-popup-500'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 Save(choice);

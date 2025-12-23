@@ -123,7 +123,7 @@ $(function () {
         }
     });
 
-    Getaspntokenarmyno()
+    //Getaspntokenarmyno()
 
     $("#btnSercharmynoSmart").on("click", async function () {
         if ($("#armynosearchAllName").html() != "") {

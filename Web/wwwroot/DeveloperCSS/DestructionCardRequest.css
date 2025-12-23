@@ -82,3 +82,11 @@
 #txtDestructionRemark {
     height: auto !important;
 }
+.swal-details {
+    text-align: left;
+    font-size: 16px;
+}
+
+.swal-details p {
+    margin: 6px 0;
+}

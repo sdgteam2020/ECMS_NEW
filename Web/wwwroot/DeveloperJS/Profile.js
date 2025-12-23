@@ -22,24 +22,15 @@
                 if (result.isConfirmed) {
                     var RankId = $("#ddlProRank").val();
                     var Name = $("#txtName").val();
-                    //var MobileNo = $("#txtMobileNo").val();
-                    //var DialingCode = $("#txtDialingCode").val();
-                    //var Extension = $("#txtExtension").val();
                     var Thumbprint = $("#Thumbprint").val();
-                  
-                    var TDMId = $("#spnTDMId").html();                   
-                    var userid = $("#spnUserId").html();
-                   
+                
 
                     let  IsRO = false;//$("#chkRO").prop("checked");
                     let  IsIO = $("#chkIO").prop("checked");
                     let IsCO = $("#chkCO").prop("checked");
                     let IsORO = false;// $("#chkORO").prop("checked");
                     
-                    UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, userid, TDMId, Thumbprint); //MobileNo, DialingCode, Extension,
-                        //SaveUserProfile(ArmyNo, Rank, Name, Appt, Unit, $("#intoffsyes").prop("checked"), 3, $("#spnUserIdIO").html(), $("#spnUserIdGSO").html(), userid)
-                   
-                    
+                    UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, Thumbprint); 
                 }
             })
              } else {
@@ -146,38 +137,23 @@ function GetALLByUnitById(param1) {
     });
 }
 
-function UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, UserId, TDMId, Thumbprint) { // MobileNo, DialingCode, Extension,
+function UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, Thumbprint) { 
 
-    /*  alert($('#bdaymonth').val());*/
-    
     $.ajax({
         url: '/UserProfile/UpdateProfileWithMapping',
         type: 'POST',
         data: {
-            "RankId": RankId, "Name": Name, "UserId": UserId, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "TDMId": TDMId, "Thumbprint": Thumbprint
-        }, //get the search string , "MobileNo": MobileNo, "DialingCode": DialingCode, "Extension": Extension
+            "RankId": RankId, "Name": Name, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "Thumbprint": Thumbprint
+        }, 
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (result) {
+        success: function (response) {
 
-
-            if (result == DataUpdate) {
-                toastr.success('User has been Updated');
+            if (response.Result == true) {
+                toastr.success(response.Message);
+                location.reload();
             }
-            else if (result == IncorrectData) {
-                toastr.error('Incorrect Data!');
-            }
-            else if (result == InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-                })
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-                }
+            else {
+                toastr.error(response.Message);
             }
         }
     });
@@ -204,12 +180,7 @@ async function GetByArmyNo(ArmyNo) {
                 } else if (response === 0) {
                     // Do nothing
                 } else {
-                    $("#spnUserId").html(response.UserId);
-                    $("#spnTDMId").html(response.TDMId);
                     $("#txtProArmy").val(response.ArmyNo);
-                    //$("#txtMobileNo").val(response.MobileNo);
-                    //$("#txtDialingCode").val(response.DialingCode);
-                    //$("#txtExtension").val(response.Extension);
                     $("#Thumbprint").val(response.Thumbprint);
                     /*  $("#lblThumbPrint").html(response.Thumbprint != null ? response.Thumbprint : "-");*/
                     $("#lblicno").html(response.ArmyNo);
@@ -222,7 +193,7 @@ async function GetByArmyNo(ArmyNo) {
 
                     $("#chkIO").prop("checked", response.IsIO === true);
                     $("#chkCO").prop("checked", response.IsCO === true);
-                    $("#chkORO").prop("checked", response.IsORO === true);
+                    //$("#chkORO").prop("checked", response.IsORO === true);
 
 
                     $("#txtName").val(response.Name);

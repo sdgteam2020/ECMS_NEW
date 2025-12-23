@@ -1532,7 +1532,7 @@ function base64toPDF(data) {
     );
     fileWindow.document.write(
         '<title>Digital Signature Pdf</title>' +
-        '<body style="overflow: hidden; margin: 0">' +
+        '<body class="m-0 overflow-hidden">' +
         '<object width="100%" width="-webkit-fill-available" height="100%" height="-webkit-fill-available" type="application/pdf" data="' + encodeURI(url) + '"></object>' +
         '</body>'
     );

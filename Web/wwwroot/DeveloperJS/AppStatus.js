@@ -11,6 +11,9 @@
         //window.print();
         PrintAppStatusData("section-to-print-app-status");
     });
+    $(".SignaturePath").on("error", function () {
+        $(this).attr("src", "/Images/Signature.png");
+    });
 });
 function GetRequestHistoryByApplId(ApplId) {
    
@@ -136,8 +139,6 @@ function GetDataFromBasicDetails(RequestId) {
     var userdata =
     {
         "RequestId": RequestId,
-
-
     };
     $.ajax({
         url: '/ApplicationStatus/GetBasicDetailByRequestId',

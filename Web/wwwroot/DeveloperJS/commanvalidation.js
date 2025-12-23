@@ -231,15 +231,9 @@ $(function () {
     });
 
     $(".btnPrint").on("click",function () {
-        //var now = new Date();
-        //var jsDate = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear() + ' ' + now.getHours()+ ':' + now.getMinutes() + ':' + now.getSeconds();
-
-        //var WaterMark = '<div style="font-size:80px;opacity:0.2;transform:rotate(300deg);-webkit-transform:rotate(300deg);color:blue">' + $("#IpaddresGloble").html() + ' ' + jsDate +'</div>';
-        //var printContents = document.getElementById('printdata').innerHTML;
-        //var originalContents = document.body.innerHTML;
-        //document.body.innerHTML = printContents + WaterMark;
 
         $('#printdata').printElement({
+
         });
     });
     /////////////////////////////////////////tbldatatabledata//////////////////////////
@@ -994,8 +988,11 @@ function Pad(d) {
         var now = new Date();
         var jsDate = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
 
-        var WaterMark = '<div style="position:fixed;top:50%;font-size:70px;font-weight:800;opacity:0.1;transform:rotate(300deg);color:blue">' + $("#IpaddresGloble").html() + ' ' + jsDate + '</div>';
-        $(body).append(WaterMark);
+        const watermark = $('<div>')
+            .addClass('print-watermark text-center')
+            .text($("#IpaddresGloble").html() + ' ' + jsDate);
+
+        body.append(watermark);
 
         html = $(html).append(head).append(body);
        

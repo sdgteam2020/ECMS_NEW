@@ -17,7 +17,7 @@ namespace BusinessLogicsLayer.Master
     {
         public Task<DTOProfileIdCheckInFKTableResponse> ProfileIdCheckInFKTable(int UserId);
         public Task<DTOProfileManageDeleteResponse> DeleteProfile(MUserProfile mUserProfile);
-        public Task<bool?> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO);
+        public Task<DTOGenericResponse<string>> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO);
         public Task<bool?> FindByArmyNo(string ArmyNo);
         public Task<bool?> FindByArmyNoWithUserId(string ArmyNo, int UserId);
         public Task<DTOProfileResponse?> GetProfileByUserId(int UserId);
@@ -32,5 +32,6 @@ namespace BusinessLogicsLayer.Master
         public Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId);
         public Task<DTOAllRelatedDataByArmyNoResponse?> GetAllRelatedDataByArmyNo(string ArmyNo);
         public Task<List<DTOAllRelatedDataByArmyNoResponse>?> GetTopByArmyNo(string ArmyNo);
+        public Task<DTOCheckedBeforeUpdateProfileResponse> CheckedBeforeUpdateProfile(DTOUpdateProfileWithMappingRequest dTO);
     }
 }

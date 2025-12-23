@@ -168,7 +168,7 @@ function Proceed() {
         Swal.fire({
             title: 'Please confirm the following Lost card details:',
             html: `
-                    <div style="text-align: left; font-size: 16px;">
+                    <div class="text-start fs-6">
                         <p><strong>Card Holder Name:</strong> ${ApplicantNameWithRank}</p>
                         <p><strong>Date Of Loss:</strong> ${DateFormateddMMyyyyhhmmss(parsedDate)}</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>

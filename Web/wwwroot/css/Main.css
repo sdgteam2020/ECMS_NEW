@@ -889,3 +889,14 @@ a {
         width: 90%;
     }
 }
+.print-watermark {
+    position: fixed;
+    top: 50%;
+    font-size: 70px;
+    font-weight: 800;
+    opacity: 0.1;
+    transform: rotate(300deg);
+    color: var(--bs-primary);
+    white-space: nowrap;
+    pointer-events: none;
+}

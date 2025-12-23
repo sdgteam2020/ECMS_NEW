@@ -133,7 +133,7 @@ function Proceed() {
         Swal.fire({
             title: 'Please confirm the following hotlist card details:',
             html: `
-                    <div style="text-align: left; font-size: 16px;">
+                    <div class="text-start fs-6">
                         <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>

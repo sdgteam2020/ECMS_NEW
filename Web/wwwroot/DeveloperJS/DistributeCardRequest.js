@@ -103,7 +103,7 @@ function Proceed() {
         Swal.fire({
             title: 'Please confirm the following card distribution details:',
             html: `
-                    <div style="text-align: left; font-size: 16px;">
+                    <div class="text-start fs-6">
                         <p><strong>Card Holder Name:</strong> ${ApplicantNameWithRank}</p>
                         <p><strong>Remarks:</strong> ${Remarks}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>

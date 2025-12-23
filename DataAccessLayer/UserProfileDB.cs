@@ -150,12 +150,15 @@ namespace DataAccessLayer
 
 
         /// <summary>
-        /// Updates a user's profile and domain mapping.
+        /// Updates user profile and domain mapping details within a database transaction.
         /// </summary>
-        /// <param name="dTO">The data transfer object containing the updated user and mapping information.</param>
-        /// <returns>Returns true if the update was successful; false otherwise.</returns>
-        public async Task<bool?> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
+        /// <param name="dTO">Request containing user profile and mapping update data.</param>
+        /// <returns>
+        /// A generic response indicating whether the update was successful.
+        /// </returns>
+        public async Task<DTOGenericResponse<string>> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
         {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
@@ -165,7 +168,10 @@ namespace DataAccessLayer
 
                     if (userUpdate == null)
                     {
-                        return false;
+                        response.Message = "DID is not mapped to the mapping table.";
+                        response.Value = "";
+                        response.Result = false;
+                        return response;
                     }
                     else
                     {
@@ -180,21 +186,25 @@ namespace DataAccessLayer
                         var mUserProfile = await _context.UserProfile.FindAsync(dTO.UserId);
                         if (mUserProfile == null)
                         {
-                            return false;
+                            response.Message = "Invalid Profile Id.";
+                            response.Value = "";
+                            response.Result = false;
+                            return response;
                         }
                         else
                         {
-                            mUserProfile.UserId = dTO.UserId;
                             mUserProfile.Name = dTO.Name;
                             mUserProfile.RankId = dTO.RankId;
-                            mUserProfile.IsToken = dTO.IsToken;
                             mUserProfile.Thumbprint = dTO.Thumbprint;
 
                             _context.UserProfile.Update(mUserProfile);
                             await _context.SaveChangesAsync();
                         }
                         transaction.Commit();
-                        return true;
+                        response.Message = "'User has been Updated";
+                        response.Value = "";
+                        response.Result = true;
+                        return response;
 
                     }
                 }
@@ -202,7 +212,10 @@ namespace DataAccessLayer
                 {
                     transaction.Rollback();
                     _logger.LogError(1001, ex, "UserProfileDB->UpdateProfileWithMapping");
-                    return null;
+                    response.Message = "Update failed";
+                    response.Value = "";
+                    response.Result = false;
+                    return response;
                 }
             }
         }
@@ -803,5 +816,27 @@ namespace DataAccessLayer
                 return new MUserProfile(); 
             }
         }
+        public async Task<DTOCheckedBeforeUpdateProfileResponse> CheckedBeforeUpdateProfile(DTOUpdateProfileWithMappingRequest dTO)
+        {
+            DTOCheckedBeforeUpdateProfileResponse dTOCheckedBeforeUpdate = new DTOCheckedBeforeUpdateProfileResponse();
+            try
+            {
+                string query = @"SELECT tdm.Id AS TDMId,tdm.UserId AS UserId,mr.ApplyForId AS ApplyForId,mr.RankAbbreviation
+                                FROM TrnDomainMapping tdm
+                                LEFT JOIN MRank mr ON mr.RankId = @RankId
+                                WHERE tdm.AspNetUsersId = @Updatedby";
+                using var connection = _contextDP.CreateConnection();
+
+                var result = await connection.QueryFirstOrDefaultAsync<DTOCheckedBeforeUpdateProfileResponse>(query,new { dTO.Updatedby, dTO.RankId });
+
+                return result ?? new DTOCheckedBeforeUpdateProfileResponse();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "UserProfileDB->GetByIsWithoutTokenApply");
+                return dTOCheckedBeforeUpdate;
+            }
+        }
+
     }
 }

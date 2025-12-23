@@ -227,72 +227,62 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// This method updates the user profile with additional domain mapping information.
-        /// It retrieves the domain mapping based on the user and updates the profile accordingly.
+        /// Updates the authenticated user's profile information along with domain mapping.
         /// </summary>
-        /// <param name="dTO">The update profile data with mapping to be saved.</param>
-        /// <returns>Returns a JSON response indicating the result of the operation.</returns>
+        /// <param name="dTO">
+        /// Contains profile data to be updated. The user ID is resolved from the current login session.
+        /// </param>
+        /// <returns>
+        /// JSON response indicating whether the update was successful and returning related status information.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
         {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
             try
             {
                 // Get the userId from the current logged-in user's claim
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-                // Retrieve the domain mapping for the current user
-                TrnDomainMapping? trnDomainMapping = await _iDomainMapBL.GetByAspnetUserIdBy(dTO.Updatedby);
-                if (trnDomainMapping != null)
+                if (ModelState.IsValid)
                 {
-                    // Set the mapping details in the DTO
-                    dTO.TDMId = trnDomainMapping.Id;
-                    dTO.UserId = (int)(trnDomainMapping.UserId != null ? trnDomainMapping.UserId : 0);
-                }
-                else
-                {
-                    // If no domain mapping is found, set the default values
-                    dTO.TDMId = 0;
-                    dTO.UserId = 0;
-                }
-
-                // Ensure valid UserId and TDMId before proceeding
-                if (dTO.UserId > 0 && dTO.TDMId > 0)
-                {
-                    dTO.UpdatedOn = DateTime.Now; // Set the updated time
-
-                    if (ModelState.IsValid)
+                    response = await _userProfileBL.UpdateProfileWithMapping(dTO);
+                    if (response.Result == true)
                     {
-                        // Attempt to update the user profile with mapping
-                        bool? result = await _userProfileBL.UpdateProfileWithMapping(dTO);
-                        if (result != null)
+                        DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token"); // Get Session Object
+
+                        if (dtoSession != null)
                         {
-                            if (result == true)
-                            {
-                                return Json(KeyConstants.Update); // Return success message "Update"
-                            }
-                            else
-                            {
-                                return Json(KeyConstants.InternalServerError); // Return error message
-                            }
+                            dtoSession.Name = dTO.Name;
+                            dtoSession.RankName = response.Value;
+                            SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession); // Set session object
                         }
-                        else
-                        {
-                            return Json(KeyConstants.InternalServerError); // Return error message if result is null
-                        }
-                    }
-                    else
-                    {
-                        return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); // Return validation errors
                     }
                 }
                 else
                 {
-                    return Json(KeyConstants.IncorrectData); // Return error message if UserId or TDMId is invalid
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors)
+                                .Select(e => e.ErrorMessage)
+                                .ToList();
+
+                    if (errors.Any())
+                    {
+                        // Concatenate all validation error messages
+                        response.Message = string.Join("; ", errors);
+                    }
+
+                    response.Value = "";
+                    response.Result = false;
                 }
+                return Json(response);
             }
             catch (Exception ex)
             {
-                return Json(KeyConstants.InternalServerError); // Return error message if an exception occurs
+                response.Value = "";
+                response.Message="Internal Server Error";
+                response.Result = false;
+                return Json(response);
             }
         }
 
@@ -367,6 +357,7 @@ namespace Web.Controllers
         /// <param name="ArmyNo">The army number to look for.</param>
         /// <param name="userid">The optional UserId to look for. If it's zero, the current user's Id is used.</param>
         /// <returns>Returns a JSON response containing the user profile or an error message.</returns>
+        [HttpPost]
         public async Task<IActionResult> GetByArmyNoOrAspnetuserId(string ArmyNo, int userid)
         {
             try

@@ -117,7 +117,7 @@
 
     }
     <div class="watermark yes-print"></div>
-    <div class="d-none" id="IpaddresGloble"></div>
+    <div class="d-none" id="IpaddresGloble">@(Context.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "0.0.0.0")</div>
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
     <div class="d-none" id="spnPostedOffrsfornoti"></div>
