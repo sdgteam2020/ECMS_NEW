@@ -75,11 +75,7 @@ table.smartTable {
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     background-color: transparent;
-    padding: 0;
-    margin: 0;
     border: 0;
-    border-radius: 1px;
-    transition: all 0.2s ease-in-out;
 }
 
 .page-link {
@@ -120,12 +116,10 @@ table.smartTable {
 }
 
 .form-control-sm {
-    height: calc(1.5em + 0.5rem + 2px);
     padding: 0.25rem 0.5rem;
     font-size: 0.76562rem;
     line-height: 1.5;
     border-radius: 0.2rem;
-    border: 1px solid #000;
 }
 
 .dataTables_paginate .pagination .page-link {
@@ -186,22 +180,6 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
     bottom: 0.5em;
 }
 
-div.dataTables_wrapper div.dataTables_length select {
-    display: inline-block;
-    /*width: 100%;*/
-    height: calc(1.5em + 0.75rem + 2px);
-    padding: 0.375rem 1.75rem 0.375rem 0.75rem;
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #4d5875;
-    vertical-align: middle;
-    /*background: url(images/arrow.svg) no-repeat right 0.75rem center/8px 10px;*/
-    background-color: #fff;
-    border: 1px solid #e3e8f7;
-    border-radius: 3px;
-    appearance: none;
-}
 
 div.dataTables_wrapper div.dataTables_length select {
     height: calc(1.5em + 0.5rem + 2px);
@@ -257,4 +235,34 @@ table.dataTable thead .sorting_desc {
 .btn-outline-primary {
     color: #0061f2;
     border-color: #0061f2;
+}
+
+.dataTables_wrapper .pagination {
+    margin: 0;
+}
+
+.dataTables_wrapper .page-item .page-link {
+    color: #00299e;
+    background-color: #e3e7ed;
+    border: 1px solid #ecf0fa;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.dataTables_wrapper .page-item.active .page-link {
+    color: #fff;
+    background-color: #0000d1;
+    border-color: #0000d1;
+}
+
+.dataTables_wrapper .page-item.disabled .page-link {
+    color: #6276ad;
+}
+table.dataTable thead th {
+    --dt-ordering-indicator-position: after;
+    --dt-ordering-indicator-color: #ffffff;
+}
+table.dataTable thead th {
+    --dt-ordering-indicator-position: after;
+    --dt-ordering-indicator-color: #ffffff;
 }

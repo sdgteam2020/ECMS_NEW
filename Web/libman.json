@@ -25,12 +25,32 @@
     {
       "library": "crypto-js@4.2.0",
       "destination": "wwwroot/lib/crypto-js/"
+    },
+    {
+      "library": "bootstrap@5.3.8",
+      "destination": "wwwroot/bootstrap/"
+    },
+    {
+      "library": "pdfmake@0.2.12",
+      "destination": "wwwroot/NewDataTables/pdfmake/"
     }
   ,
 {
   "provider": "cdnjs",
-  "library": "bootstrap@5.3.8",
-  "destination": "wwwroot/bootstrap/"
+  "library": "datatables-buttons@3.2.5",
+  "destination": "wwwroot/NewDataTables/datatables-buttons/"
+}
+,
+{
+  "provider": "cdnjs",
+  "library": "jszip@3.10.1",
+  "destination": "wwwroot/NewDataTables/jszip/"
+}
+,
+{
+  "provider": "cdnjs",
+  "library": "datatables-responsive@3.0.7",
+  "destination": "wwwroot/NewDataTables/datatables-responsive/"
 }
 ]
 }
