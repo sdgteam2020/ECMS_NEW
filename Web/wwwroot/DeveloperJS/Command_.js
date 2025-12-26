@@ -1,9 +1,7 @@
-var table; // Declare table variable outside the function to preserve the instance
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    BindData(function () {
-    });
+    BindData()
     $("#btnReset").on("click",function () {
         Reset();
     });
@@ -72,141 +70,174 @@ $(function () {
     });
 });
 
-function BindData(callback) {
-    if ($.fn.DataTable.isDataTable("#tbldata")) {
-        $("#tbldata").DataTable().destroy();
-        $("#tbldata").empty(); // Clear old thead/tbody
-    }
-    const columns = getColumnsForCommand();
-    table = $("#tbldata").DataTable({
-        autoWidth: false, // Let us handle width via CSS
-        responsive: true, // Responsive breaks layout for width control
-        processing: true,
-        serverSide: true,
-        filter: true,
-        stateSave: true,
-        responsive: true,
-        order: [[1, 'desc']], // Default sorting on the first column
-        ajax: async function (data, callback, settings) {
-            let requestData = {
-                draw: data.draw,
-                start: data.start,
-                length: data.length,
-                searchValue: data.search.value,
-                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
-            };
-            try {
-                let response = await fetch("/Master/GetAllCommand_Pagination", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        'RequestVerificationToken': globalThis.RequestVerificationToken
-                    },
-                    body: new URLSearchParams(requestData).toString()
-                });
+function BindData() {
+    var listItem = "";
+    var userdata =
+    {
+        "Id": 0,
+    };
+    $.ajax({
+        url: '/Master/GetAllCommand',
+        contentType: 'application/x-www-form-urlencoded',
+        data: userdata,
+        type: 'POST',
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-                let result = await response.json();
-                callback(result); // Sends data to DataTables
-
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        },
-        columns: columns,
-        language: {
-            search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search" // Add custom placeholder
-        },
-        dom: 'lBfrtip', // Add buttons to the DOM
-        buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-            {
-                extend: 'excel',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-                orientation: 'landscape',
-                pageSize: 'LEGAL',
-                title: 'E-IASC_DispatchCard',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                },
-                customize: function (doc) {
-                    WaterMarkOnPdf(doc)
-                }
-            }],
-        initComplete: function () {
-            // Add tooltip to the search input box
-            let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search Comd/Abbreviation');
-        },
-        drawCallback: function (settings) {
-
-            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData.ComdId != null) {
-                    $("#txtComandName").val(rowData.ComdName);
-                    $("#txtAbbreviation").val(rowData.ComdAbbreviation);
-
-                    $("#spncomdId").html(rowData.ComdId);
-                    $("#spnSOrderby").html(rowData.Orderby);
-
-                }
-                else {
-                    //Invalid Data
-                }
-            });
-
-            $("#tbldata tbody").off("click", ".cls-btntreeview").on("click", ".cls-btntreeview", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData.ComdId != null) {
-                    $("#treeview").modal('show');
-                    GetBinaryTree(rowData.ComdId)
-                }
-                else {
-                    //Invalid Data
-                }
-            });
-
-            $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData.ComdId != null) {
+        success: function (response) {
+            if (response != "null" && response != null) {
+                if (response == InternalServerError) {
                     Swal.fire({
-                        title: 'Are you sure?',
-                        text: "You want to Delete ",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#072697',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, Delete It!'
-                    }).then((result) => {
-                        if (result.value) {
+                        text: errormsg
+                    });
 
-                            Delete(rowData.ComdId);
+                }
+                else if (response == 0) {
+                    listItem += "<tr><td class='text-center' colspan=5>No Record Found</td></tr>";
+                    $("#tblcommnd").DataTable().destroy();
+                    $("#DetailBody").html(listItem);
+                    $("#lblTotal").html(0);
+                }
+               
+                else {
 
+                    $("#tblcommnd").DataTable().destroy();
+                   
+                    for (var i = 0; i < response.length; i++) {
+                        if (response[i].ComdId != 1) {
+                            listItem += "<tr>";
+                            listItem += "<td class='d-none'><span class='ScomdId'>" + response[i].ComdId + "</span><span class='SOrderby'>" + response[i].Orderby + "</span></td>";
+                            listItem += "<td class='align-middle'>" + i + "</td>";
+                            listItem += "<td class='align-middle'><span class='comdName'>" + response[i].ComdName + "</span></td>";
+                            listItem += "<td class='align-middle'><span class='comdAbbreviation'>" + response[i].ComdAbbreviation.toUpperCase() + "</span></td>";
+                            
+
+                            if (response[i].Orderby != response.length)
+                                listItem += "<td class='align-middle'><span id=''><button type='button' class='cls-btnorder btn btn-icon btn-round btn-info mr-1'><i class='fas fa-arrow-down'></i></button></span></td>";
+                            else
+                                listItem += "<td></td>";
+                              
+
+                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
+                            listItem += "<button type='button' class='cls-btntreeview btn btn-primary  mr-1'>Hierarchy Chart</button></td>";
+                            listItem += "</tr>";
+                        }
+                    }
+
+                    $("#DetailBody").html(listItem);
+                    $("#lblTotal").html(response.length-1);
+                  
+                    var memberTable = $('#tblcommnd').DataTable({
+                        autoWidth: false,
+                        responsive: true,
+                        stateSave: true,
+                        "order": [[2, "asc"]],
+                        columnDefs: [
+                            { targets: 0, visible: false, searchable: false },
+                            { targets: 1, orderable: false } // S No
+                        ],
+                        dom: 'lBfrtip', // Add buttons to the DOM
+                        buttons: [
+                        {
+                            extend: 'copy',
+                            exportOptions: {
+                                columns: { columns: ':visible:not(.noExport)' },
+                            }
+                        }, {
+                            extend: 'excel',
+                            exportOptions: {
+                                columns: { columns: ':visible:not(.noExport)' }
+                            }
+                        }, {
+                            extend: 'pdfHtml5',
+                            orientation: 'portrait',
+                            pageSize: 'A4',
+                            title: 'E-IASC_Command',
+                            exportOptions: {
+                                columns: { columns: ':visible:not(.noExport)' }
+                            },
+                            customize: function (doc) {
+                                WaterMarkOnPdf(doc)
+                            }
+                            }
+                        ]
+                    });
+
+                    memberTable.buttons().container().appendTo('#tblcommnd_wrapper .dt-buttons');
+
+                    $("#tblcommnd #chkAll").on("click",function () {
+                        if ($(this).is(':checked')) {
+                           let rows = memberTable.rows({ 'search': 'applied' }).nodes();
+                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+                        }
+                        else {
+                           let rows = memberTable.rows({ 'search': 'applied' }).nodes();
+                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
                         }
                     });
+                    $('#DetailBody').on('change', 'input[type="checkbox"]', function () {
+                        if (!this.checked) {
+                            var el = $('#chkAll').get(0);
+                            if (el && el.checked && ('indeterminate' in el)) {
+                                el.indeterminate = true;
+                            }
+                        }
+                    });
+
+                    $("body").off("click").on("click", ".cls-btnorder", function () {
+                     
+                        OrderByChange($(this).closest("tr").find(".ScomdId").html() ,$(this).closest("tr").find("#SOrderby").html());
+                        
+                    });
+                    $("body").on("click", ".cls-btnedit", function () {
+                      /*  $("#AddNewM").modal('show');*/
+                        $("#txtComandName").val($(this).closest("tr").find(".comdName").html());
+                        $("#txtAbbreviation").val($(this).closest("tr").find(".comdAbbreviation").html());
+                       
+                        $("#spncomdId").html($(this).closest("tr").find(".ScomdId").html());
+                        $("#spnSOrderby").html($(this).closest("tr").find(".SOrderby").html());
+                        
+                    });
+                    $("body").on("click", ".cls-btntreeview", function () {
+                        $("#treeview").modal('show'); 
+                        GetBinaryTree($(this).closest("tr").find(".ScomdId").html())
+                    });
+
+                    $("body").on("click", ".cls-btnDelete", function () {
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You want to Delete ",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#072697',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, Delete It!'
+                        }).then((result) => {
+                            if (result.value) {
+                                
+                                Delete($(this).closest("tr").find(".ScomdId").html());
+
+                            }
+                        });
+                    });
+
+
                 }
-                else {
-                    //Invalid Data
-                }
+            }
+            else {
+                listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
+                $("#tblcommnd").DataTable().destroy();
+                $("#DetailBody").html(listItem);
+                $("#lblTotal").html(0);
+            }
+        },
+        error: function (result) {
+            Swal.fire({
+                text: errormsg002
             });
-
-
         }
     });
+
 }
 function Save() {
     $.ajax({
@@ -575,58 +606,4 @@ function GetBinaryTree(ComdId) {
             });
         }
     });
-}
-
-function getColumnsForCommand() {
-    let columns = [];
-    columns = [
-        // Serial number column
-        {
-            title: "S No",
-            data: null,
-            name: "SerialNumber",
-            orderable: false, // Disable sorting for this column
-            render: function (data, type, row, meta) {
-                // Calculate serial number based on row index
-                return meta.row + meta.settings._iDisplayStart + 1;
-            }
-        },
-        {
-            title: "Comd / PSO",
-            data: "ComdName",
-            name: "ComdName",
-        },
-        {
-            title: "Abbreviation",
-            data: "ComdAbbreviation",
-            name: "ComdAbbreviation",
-        },
-        {
-            title: "Order",
-            data: "Orderby",
-            name: "Orderby",
-            render: function (data, type, row, meta) {
-                if (row.Orderby < meta.settings.json.recordsTotal) {
-                    return `<button class="cls-btnorder btn btn-info btn-sm"><i class="fas fa-arrow-down"></i></button>`;
-                } else {
-                    return ``;
-                }
-
-            }
-        },
-        // Additional column for Edit action
-        {
-            title: "Action",
-            data: null,
-            name: "Action",
-            orderable: false,
-            render: function (data, type, row) {
-                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>
-                                    <button type='button' class='cls-btntreeview btn btn-primary  mr-1'>Hierarchy Chart</button>`;
-                return Action;
-            }
-        }
-    ];
-    return columns;
 }

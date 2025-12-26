@@ -1,4 +1,5 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
@@ -17,5 +18,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<IEnumerable<DataTransferObject.Domain.Master.MComd>> GetAllByorder();
         public Task<DTOTreeViewUnitResponse> GetBinaryTree(int Id);
         public Task<DTOComdIdCheckInFKTableResponse?> ComdIdCheckInFKTable(byte ComdId);
+        public Task<DTODataTablesResponse<DTOAllCommand_PaginationResponse>> GetAllCommand_Pagination(DTODataTablesRequest dTO);
     }
 }

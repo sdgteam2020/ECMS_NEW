@@ -8,6 +8,7 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -322,6 +323,45 @@ namespace Web.Controllers
             }
         }
 
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllCommand_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTOAllCommand_PaginationResponse> dTOAllCommands = new List<DTOAllCommand_PaginationResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.Comds.GetAllCommand_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTOAllCommand_PaginationResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOAllCommands
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTOAllCommand_PaginationResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOAllCommands
+                };
+                _logger.LogError(1001, ex, "Master->GetAllCommand_Pagination"); // Log the error
+                return Json(responseData);
+            }
+        }
 
         #endregion Command
 

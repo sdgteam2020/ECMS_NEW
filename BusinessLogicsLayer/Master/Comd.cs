@@ -3,6 +3,7 @@ using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.Response.User;
 using System;
@@ -97,6 +98,10 @@ namespace BusinessLogicsLayer.Master
         public async Task<DTOComdIdCheckInFKTableResponse?> ComdIdCheckInFKTable(byte ComdId)
         {
             return await _iComdDB.ComdIdCheckInFKTable(ComdId);
+        }
+        public async Task<DTODataTablesResponse<DTOAllCommand_PaginationResponse>> GetAllCommand_Pagination(DTODataTablesRequest dTO)
+        {
+            return await _iComdDB.GetAllCommand_Pagination(dTO);
         }
     }
 }
