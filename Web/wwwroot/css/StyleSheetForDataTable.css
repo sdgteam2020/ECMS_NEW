@@ -61,6 +61,7 @@ table.smartTable {
     padding-left: 0;
     list-style: none;
     border-radius: 3px;
+    justify-content: flex-end;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
@@ -278,35 +279,6 @@ table.dataTable thead .sorting_desc {
     width: 20px !important;
     font-size: 0.75rem;
     border-radius: 0.35rem !important;
-}
-
-.datatable table.dataTable thead .sorting:before,
-.datatable table.dataTable thead .sorting_asc:before,
-.datatable table.dataTable thead .sorting_desc:before,
-.datatable table.dataTable thead .sorting_asc_disabled:before,
-.datatable table.dataTable thead .sorting_desc_disabled:before,
-.datatable table.dataTable thead .sorting:after,
-.datatable table.dataTable thead .sorting_asc:after,
-.datatable table.dataTable thead .sorting_desc:after,
-.datatable table.dataTable thead .sorting_asc_disabled:after,
-.datatable table.dataTable thead .sorting_desc_disabled:after {
-    display: none;
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-}
-
-.datatable table.dataTable thead .sorting:after {
-    content: "";
-}
-
-.datatable table.dataTable thead .sorting_asc:after,
-.datatable table.dataTable thead .sorting_asc_disabled:after {
-    content: "";
-}
-
-.datatable table.dataTable thead .sorting_desc:after,
-.datatable table.dataTable thead .sorting_desc_disabled:after {
-    content: "";
 }
 
 .datatable table.dataTable thead .sorting [data-fa-pseudo-element=":after"],
@@ -1318,4 +1290,7 @@ table.dataTable thead th.sorting_desc {
     color: #ffffff;
     border-top: 0;
     border-bottom: 1px solid #c6a3e4;
+}
+div.dt-container .dt-paging .dt-paging-button {
+    padding: 0;
 }

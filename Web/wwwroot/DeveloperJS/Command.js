@@ -1,4 +1,4 @@
-var table; // Declare table variable outside the function to preserve the instance
+﻿var table; // Declare table variable outside the function to preserve the instance
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -35,41 +35,6 @@ $(function () {
 
     });
 
-    $('#btnMultiDelete').on("click",function () {
-        var lst = new Array();
-
-        if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
-
-            memberTable.$('input[type="checkbox"]:checked').each(function () {
-
-                
-                var id = $(this).attr("Id");
-                lst.push(id);
-
-            });
-          
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You want to Delete",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#072697',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Delete it!'
-            }).then((result) => {
-                if (result.value) {
-                   
-                    DeleteMultiple(lst);
-
-                }
-            });
-        }
-        else {
-            Swal.fire({
-                text: "Please select atleast 1 data to Delete."
-            });
-        }
-    });
 });
 
 function BindData(callback) {
@@ -86,7 +51,7 @@ function BindData(callback) {
         filter: true,
         stateSave: true,
         responsive: true,
-        order: [[1, 'desc']], // Default sorting on the first column
+        order: [[2, 'asc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -174,6 +139,15 @@ function BindData(callback) {
                 if (rowData.ComdId != null) {
                     $("#treeview").modal('show');
                     GetBinaryTree(rowData.ComdId)
+                }
+                else {
+                    //Invalid Data
+                }
+            });
+            $("#tbldata tbody").off("click", ".cls-btnorder").on("click", ".cls-btnorder", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.ComdId != null && rowData.Orderby != null) {
+                    OrderByChange(rowData.ComdId, rowData.Orderby);
                 }
                 else {
                     //Invalid Data
@@ -304,45 +278,6 @@ function Delete(ComdId) {
                     text: errormsg001
                 });
             }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
-}
-
-function DeleteMultiple(ComdId) {
-   
-    var userdata =
-    {
-        "ints": ComdId,
-
-    };
-    $.ajax({
-        url: '/Master/DeleteCommandMultiple',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        type: 'POST',
-        success: function (response) {
-            if (response != "null") {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-                else if (response == Success) {
-                    //lol++;
-                    //if (lol == Tot) {
-                     toastr.error('Deleted Selected');
-                    BindData();
-                }
-
-                //}
-            }
-           
         },
         error: function (result) {
             Swal.fire({
@@ -602,22 +537,34 @@ function getColumnsForCommand() {
             name: "ComdAbbreviation",
         },
         {
-            title: "Order",
+            title: `Order`,
             data: "Orderby",
+            className: "noExport",
             name: "Orderby",
             render: function (data, type, row, meta) {
-                if (row.Orderby < meta.settings.json.recordsTotal) {
-                    return `<button class="cls-btnorder btn btn-info btn-sm"><i class="fas fa-arrow-down"></i></button>`;
-                } else {
-                    return ``;
+                const api = meta.settings.oInstance.api();
+                const pageInfo = api.page.info();
+
+                const isLastRowOnPage =
+                    meta.row === api.rows({ page: 'current' }).count() - 1;
+
+                const isLastPage =
+                    pageInfo.page === pageInfo.pages - 1;
+
+                if (isLastRowOnPage && isLastPage) {
+                    return `<span class="badge bg-secondary">Last</span>`;
                 }
 
+                return `<button class="cls-btnorder btn btn-info btn-sm">
+                <i class="fas fa-arrow-down"></i>
+            </button>`;
             }
         },
         // Additional column for Edit action
         {
             title: "Action",
             data: null,
+            className: "noExport",
             name: "Action",
             orderable: false,
             render: function (data, type, row) {

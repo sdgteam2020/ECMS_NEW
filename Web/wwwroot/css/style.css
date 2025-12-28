@@ -6804,24 +6804,6 @@ input[type=button].btn-block {
         color: #687281;
     }
 
-.pagination {
-    display: flex;
-    padding-left: 0;
-    list-style: none;
-    border-radius: 0.35rem;
-}
-
-.page-link {
-    position: relative;
-    display: block;
-    padding: 0.5rem 0.75rem;
-    margin-left: -1px;
-    line-height: 1.25;
-    color: #0061f2;
-    background-color: #fff;
-    border: 1px solid #d7dce3;
-}
-
     .page-link:hover {
         z-index: 2;
         color: #0042a6;
@@ -6845,13 +6827,6 @@ input[type=button].btn-block {
 .page-item:last-child .page-link {
     border-top-right-radius: 0.35rem;
     border-bottom-right-radius: 0.35rem;
-}
-
-.page-item.active .page-link {
-    z-index: 3;
-    color: #fff;
-    background-color: #0061f2;
-    border-color: #0061f2;
 }
 
 .page-item.disabled .page-link {

@@ -217,6 +217,7 @@ namespace DataAccessLayer
             fromJoinClause = @"from MComd com";
             whereClause = @"WHERE
                                 com.IsActive=1
+                                AND com.ComdId <> 1
                                 AND (
                                     com.ComdName LIKE '%' + @SearchTerm + '%' OR
                                     com.ComdAbbreviation LIKE '%' + @SearchTerm + '%'
