@@ -232,6 +232,10 @@ function validateCsvFileOnChange() {
 function BindData() {
     $("#tblData").DataTable().destroy();
     table = $("#tblData").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
         processing: true,
         serverSide: true,
         filter: true,
@@ -324,7 +328,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Type / Value" // Add custom placeholder
         },
-        dom: 'lBfrtip', // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
             {
                 extend: 'copy',

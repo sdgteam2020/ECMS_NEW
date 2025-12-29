@@ -44,6 +44,10 @@ function BindData(callback) {
     }
     const columns = getColumnsForCommand();
     table = $("#tbldata").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
         processing: true,
@@ -86,7 +90,7 @@ function BindData(callback) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: 'lBfrtip', // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rtip",
         buttons: [
             {
                 extend: 'copy',

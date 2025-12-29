@@ -60,63 +60,59 @@
                         </div>
 
                     </div>
-                    <div class="table-responsive">
-                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata">
+                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata">
 
-                            <thead>
+                        <thead>
+                            <tr>
+
+                                <th>
+                                    Role
+                                </th>
+                                <th>
+                                    Domain ID
+                                </th>
+                                <th>
+                                    Army No
+                                </th>
+                                <th>
+                                    Rank
+                                </th>
+                                <th>
+                                    Name
+                                </th>
+
+                                <th>View Login History</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
                                 <tr>
-                                  
-                                    <th>
-                                        Role
-                                    </th>
-                                    <th>
-                                        Domain ID
-                                    </th>
-                                    <th>
-                                       Army No
-                                    </th>
-                                    <th>
-                                        Rank 
-                                    </th>
-                                    <th>
-                                        Name
-                                    </th>
-                                    
-                                    <th>View Login History</th>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RoleName)
+                                    </td>
+                                    <td class="DomainID">
+                                        @Html.DisplayFor(modelItem => item.DomainID)
+                                    </td>
+                                    <td class="ArmyNo">
+                                        @Html.DisplayFor(modelItem => item.ArmyNo)
+                                    </td>
+                                    <td class="RankName">
+                                        @Html.DisplayFor(modelItem => item.RankName)
+                                    </td>
+                                    <td class="Name">
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+
+                                    <td>
+                                        <span class="d-none" id="AspNetUsersId">@Html.DisplayFor(modelItem => item.AspNetUsersId)</span>
+                                        <button type='button' class='cls-btnhistory btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-history'></i></button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.RoleName)
-                                        </td>
-                                        <td class="DomainID">
-                                            @Html.DisplayFor(modelItem => item.DomainID)
-                                        </td>
-                                        <td class="ArmyNo">
-                                            @Html.DisplayFor(modelItem => item.ArmyNo)
-                                        </td>
-                                        <td class="RankName">
-                                            @Html.DisplayFor(modelItem => item.RankName)
-                                        </td>
-                                        <td class="Name">
-                                            @Html.DisplayFor(modelItem => item.Name)
-                                        </td>
-                                       
-                                        <td>
-                                            <span class="d-none" id="AspNetUsersId">@Html.DisplayFor(modelItem => item.AspNetUsersId)</span>
-                                            <button type='button' class='cls-btnhistory btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-history'></i></button>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-
-
-                </div>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -137,44 +133,39 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="table-responsive">
-                        <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
+                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
 
 
-                            <thead class="d-none">
-                                <tr>
+                        <thead class="d-none">
+                            <tr>
 
-                                    <th>
-                                        Role Name
-                                    </th>
-                                    <th>
-                                        Domain ID
-                                    </th>
-                                    <th>
-                                        Service No
-                                    </th>
-                                    <th>
-                                        Rank Name
-                                    </th>
-                                    <th>
-                                         Name
-                                    </th>
-                                    <th>
-                                        Login On
-                                    </th>
-                                    <th>
-                                        Login IP
-                                    </th>
-                                    
-                                </tr>
-                            </thead>
-                            <tbody id="DataBoady" class="d-none">
-                               
-                            </tbody>
-                        </table>
+                                <th>
+                                    Role Name
+                                </th>
+                                <th>
+                                    Domain ID
+                                </th>
+                                <th>
+                                    Service No
+                                </th>
+                                <th>
+                                    Rank Name
+                                </th>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Login On
+                                </th>
+                                <th>
+                                    Login IP
+                                </th>
 
-
-                    </div>
+                            </tr>
+                        </thead>
+                        <tbody id="DataBoady" class="d-none">
+                        </tbody>
+                    </table>
                 </div>
                 <div class="row">
                     <div class="row justify-content-center">

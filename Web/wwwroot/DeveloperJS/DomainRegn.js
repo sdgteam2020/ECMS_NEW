@@ -354,6 +354,10 @@ $(function () {
 
 function BindDialog(Choice) {
     $("#tbldatadialog").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
         processing: true,
         serverSide: true,
         filter: true,
@@ -454,7 +458,7 @@ function BindDialog(Choice) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Domain ID" // Add custom placeholder
         },
-        dom: 'lBfrtip', // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
             {
                 extend: 'copy',
@@ -581,6 +585,10 @@ function BindData() {
     //}
 
     table = $("#tbldata").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
         processing: true,
         serverSide: true,
         filter: true,
@@ -711,7 +719,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Domain ID" // Add custom placeholder
         },
-        dom: 'lBfrtip', // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
             {
                 extend: 'copy',

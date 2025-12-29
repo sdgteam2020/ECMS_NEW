@@ -154,7 +154,11 @@ function GetLog(AspNetUsersId, FmDate,ToDate) {
 
                     $("#DataBoady").html(listItem2);
 
-                   var memberTable = $('#tbldata').DataTable({
+                    var memberTable = $('#tbldata').DataTable({
+                        scrollY: '65vh',          // ✅ vertical scroll
+                        scrollX: true,            // ✅ horizontal scroll
+                        scrollCollapse: true,
+                        fixedHeader: false,       // ❌ disable when using scrollY
                         retrieve: true,
                         lengthChange: false,
                         searching: false,

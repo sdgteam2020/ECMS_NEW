@@ -478,6 +478,10 @@ function GetReportReturnHistory(Choice, callback) {
 
     const columns = getColumnsByChoice(Choice);
     table = $("#CardReport_tbldatadialog").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
         processing: true,
@@ -526,7 +530,7 @@ function GetReportReturnHistory(Choice, callback) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No" // Add custom placeholder
         },
-        dom: 'lBfrtip', // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
             {
                 extend: 'copy',

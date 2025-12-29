@@ -14,6 +14,10 @@ function BindData() {
     }
 
     table_Fwd = $("#tbldatatabledata_Notification").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
         processing: true,
         serverSide: true,
         filter: true,
@@ -125,7 +129,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No / Appl ID" // Add custom placeholder
         },
-        dom: 'lBfrtip', // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
             {
                 extend: 'copy',

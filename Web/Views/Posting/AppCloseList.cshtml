@@ -35,37 +35,35 @@
         <div class="card-body card-body-min-height">
             <div class="row">
                 <div class="col-xl-12">
-                    <div class="table-responsive">
-                        <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover full-width">
-                            <thead>
+                    <table id="tbldatatabledata" class="table border border-purple table-striped no-footer dataTable table-hover full-width">
+                        <thead>
+                            <tr>
+                                <th>SNo.</th>
+                                <th>Updated On</th>
+                                <th>Army No, Rank, Name</th>
+                                <th>Type</th>
+                                <th>Reason</th>
+                                <th>Remark</th>
+                                <th>Auth</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
                                 <tr>
-                                    <th>SNo.</th>
-                                    <th>Updated On</th>
-                                    <th>Army No, Rank, Name</th>
-                                    <th>Type</th>
-                                    <th>Reason</th>
-                                    <th>Remark</th>
-                                    <th>Auth</th>
+                                    <td>@item.Sno</td>
+                                    <td>@item.UpdatedOn</td>
+                                    <td>@item.ServiceNo <br />@item.RankName @(item.LName == null ? item.FName : item.FName + " " + item.LName)</td>
+                                    <td>@item.ApplyFor </td>
+                                    <td>@item.Reason</td>
+                                    <td>@item.Remarks</td>
+                                    <td>@item.Authority</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>@item.Sno</td>
-                                        <td>@item.UpdatedOn</td>
-                                        <td>@item.ServiceNo <br />@item.RankName @(item.LName == null ? item.FName : item.FName + " " + item.LName)</td>
-                                        <td>@item.ApplyFor </td>
-                                        <td>@item.Reason</td>
-                                        <td>@item.Remarks</td>
-                                        <td>@item.Authority</td>
-                                    </tr>
-                                }
+                            }
 
 
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div><!-- Row End -->

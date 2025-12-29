@@ -211,7 +211,7 @@ function BindData() {
                         lengthChange: true,
                         stateSave: true,
                         "order": [[1, "asc"]],
-                        dom: 'lBfrtip', // Add buttons to the DOM
+                        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {

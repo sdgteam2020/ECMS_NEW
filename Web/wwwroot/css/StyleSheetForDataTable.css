@@ -1294,3 +1294,38 @@ table.dataTable thead th.sorting_desc {
 div.dt-container .dt-paging .dt-paging-button {
     padding: 0;
 }
+/* One row layout */
+div.dt-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Length dropdown */
+.dt-length {
+    flex: 0 0 auto;
+}
+
+/* Buttons LEFT (not center) */
+.dt-buttons {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 5px;
+}
+
+/* Search RIGHT */
+.dt-search {
+    margin-left: auto;
+}
+
+/* Force small buttons */
+.dt-buttons .btn {
+    padding: 2px 8px !important;
+    font-size: 12px !important;
+    line-height: 1.4;
+}
+
+/* Optional: remove extra margin DataTables adds */
+.dt-buttons .btn {
+    margin: 0 !important;
+}

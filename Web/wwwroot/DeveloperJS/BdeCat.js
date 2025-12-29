@@ -1,4 +1,4 @@
-$(function () {
+﻿$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlCommand", 1, "");
@@ -133,12 +133,16 @@ function BindData() {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length);
                   
-                  var  memberTable = $('#tbldata').DataTable({
+                    var memberTable = $('#tbldata').DataTable({
+                        scrollY: '65vh',          // ✅ vertical scroll
+                        scrollX: true,            // ✅ horizontal scroll
+                        scrollCollapse: true,
+                        fixedHeader: false,       // ❌ disable when using scrollY
                         retrieve: true,
                         lengthChange: true,
                         stateSave: true,
                         "order": [[2, "asc"]],
-                        dom: 'lBfrtip', // Add buttons to the DOM
+                        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {

@@ -275,6 +275,10 @@ function BindData(cvalue, callback) {
     }
     const columns = getColumnsForDispatchCard(cvalue);
     table = $("#tbldata").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
         processing: true,
@@ -317,7 +321,7 @@ function BindData(cvalue, callback) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: 'lBfrtip', // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
             {
                 extend: 'copy',
@@ -451,6 +455,10 @@ function BindDialog(rowData, cvalue, callback) {
 
     const columns = getColumnsByChoice(cvalue);
     table2 = $("#tbldatadialogLot").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
         autoWidth: false, // Let us handle width via CSS
         responsive: true, // Responsive breaks layout for width control
         processing: true,
@@ -544,7 +552,7 @@ function BindDialog(rowData, cvalue, callback) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: 'lBfrtip', // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
             {
                 extend: 'copy',
@@ -1144,6 +1152,10 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
     }
     let columns = getColumnsForListBindDialog(cvalue);
     table2 = $("#tbldatadialog").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
         autoWidth: false, // Let us handle width via CSS
         searching: false,
         responsive: true, // Responsive breaks layout for width control
@@ -1237,7 +1249,7 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search ReqId/Arm/SUSNo/ORO/Regt" // Add custom placeholder
         },
-        dom: 'lBfrtip', // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
             {
                 extend: 'copy',

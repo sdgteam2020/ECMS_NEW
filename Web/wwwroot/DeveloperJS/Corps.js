@@ -1,4 +1,4 @@
-$(function () {
+﻿$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlCommand", 1, "");
@@ -91,13 +91,13 @@ function BindData() {
                     });
                 }
                 else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
+                    listItem += "<tr><td class='text-center' colspan=5>No Record Found</td></tr>";
                     $("#tbldata").DataTable().destroy();
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(0);
                 }
                 else if (response == InternalServerError) {
-                    listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
+                    listItem += "<tr><td class='text-center' colspan=5>No Record Found</td></tr>";
                     $("#tbldata").DataTable().destroy();
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(0);
@@ -123,12 +123,23 @@ function BindData() {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length);
                   
-                   var memberTable = $('#tbldata').DataTable({
+                    var memberTable = $('#tbldata').DataTable({
+                        scrollY: '65vh',          // ✅ vertical scroll
+                        scrollX: true,            // ✅ horizontal scroll
+                        scrollCollapse: true,
+                        fixedHeader: false,       // ❌ disable when using scrollY
+                        columnDefs: [
+                            {
+                                targets: 0,            // first column
+                                visible: false,        // ✅ truly removed
+                                searchable: false
+                            }
+                        ],
                         retrieve: true,
                         lengthChange: true,
                         stateSave: true,
                         "order": [[1, "asc"]],
-                        dom: 'lBfrtip', // Add buttons to the DOM
+                        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
                         buttons: [{
                             extend: 'copy',
                             exportOptions: {

@@ -225,7 +225,11 @@ function BindData() {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length);
 
-                  var  memberTable = $('#tblData').DataTable({
+                    var memberTable = $('#tblData').DataTable({
+                        scrollY: '65vh',          // ✅ vertical scroll
+                        scrollX: true,            // ✅ horizontal scroll
+                        scrollCollapse: true,
+                        fixedHeader: false,       // ❌ disable when using scrollY
                         retrieve: true,
                         lengthChange: false,
                         stateSave: true,
