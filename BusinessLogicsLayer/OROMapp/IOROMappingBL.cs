@@ -1,11 +1,7 @@
 ﻿using DataAccessLayer;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.OROMapp
 {
@@ -14,5 +10,6 @@ namespace BusinessLogicsLayer.OROMapp
         public Task<List<DTOOROMappingResponse>?> GetAllOROMapping();
         public Task<bool> GetByName(OROMapping Dto);
         public Task<List<DTOAllOROResponse>> GetAllORO();
+        public Task<DTODataTablesResponse<DTOOROMappingResponse>> GetAllOROMapping_Pagination(DTODataTablesRequest dTO);
     }
 }

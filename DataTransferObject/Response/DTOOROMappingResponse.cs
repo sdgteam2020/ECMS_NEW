@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransferObject.Response
+﻿namespace DataTransferObject.Response
 {
     public class DTOOROMappingResponse
     {
+        public int TotalFilteredRecords { get; set; }
         public short OROMappingId { get; set; }
         public short? RankId { get; set; }
         public string? RankName { get; set; }

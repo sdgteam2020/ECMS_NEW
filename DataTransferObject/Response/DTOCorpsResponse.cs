@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransferObject.Response
+﻿namespace DataTransferObject.Response
 {
     public class DTOCorpsResponse
     {
-        [Required]
+        public int TotalFilteredRecords { get; set; }
         public int CorpsId { get; set; }
-        public string CorpsName { get; set; }
-        public string ComdName { get; set; }
+        public string CorpsName { get; set; }=string.Empty;
+        public string ComdName { get; set; } = string.Empty;
         public int ComdId { get; set; }
     }
 }

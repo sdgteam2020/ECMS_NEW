@@ -6,6 +6,7 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DataAccessLayer
 {
@@ -100,14 +101,15 @@ namespace DataAccessLayer
             try
             {
                 string query = "";
-                query = "Select mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName,mrecord.Message,mrecord.Abbreviation,mrecord.TDMId,mrecord.UnitId,marmed.ArmedId,marmed.ArmedName,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name, munit.Sus_no,munit.Suffix,munit.UnitName from MRecordOffice mrecord" +
-                        " inner join MArmedType marmed on marmed.ArmedId=mrecord.ArmedId" +
-                        " left join TrnDomainMapping trndomain on trndomain.Id=mrecord.TDMId" +
-                        " left join AspNetUsers users on users.Id=trndomain.AspNetUsersId" +
-                        " left join UserProfile usep on usep.UserId=trndomain.UserId" +
-                        " left join MRank ra on ra.RankId=usep.RankId " +
-                        " left join MapUnit mapunit on mapunit.UnitMapId = mrecord.UnitId " +
-                        " left join MUnit munit on munit.UnitId =mapunit.UnitId order by mrecord.RecordOfficeId desc";
+                query = @"Select mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName,mrecord.Message,mrecord.Abbreviation,mrecord.TDMId,mrecord.UnitId,marmed.ArmedId,marmed.ArmedName,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name, munit.Sus_no,munit.Suffix,munit.UnitName
+                        from MRecordOffice mrecord
+                        inner join MArmedType marmed on marmed.ArmedId=mrecord.ArmedId
+                        left join TrnDomainMapping trndomain on trndomain.Id=mrecord.TDMId
+                        left join AspNetUsers users on users.Id=trndomain.AspNetUsersId
+                        left join UserProfile usep on usep.UserId=trndomain.UserId
+                        left join MRank ra on ra.RankId=usep.RankId 
+                        left join MapUnit mapunit on mapunit.UnitMapId = mrecord.UnitId 
+                        left join MUnit munit on munit.UnitId =mapunit.UnitId order by mrecord.RecordOfficeId desc";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var allrecord = await connection.QueryAsync<DTORecordOfficeResponse>(query);
@@ -120,6 +122,85 @@ namespace DataAccessLayer
                 return null;
             }
 
+        }
+        public async Task<DTODataTablesResponse<DTORecordOfficeResponse>> GetAllRecordOffice_Pagination(DTODataTablesRequest dTO)
+        {
+            string selectFields = "";
+            string fromJoinClause = "";
+            string whereClause = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["RecordOfficeName"] = "mrecord.Name",
+                ["Abbreviation"] = "mrecord.Abbreviation",
+                ["RecordOfficeId"] = "mrecord.RecordOfficeId",
+                ["ArmedName"] = "marmed.ArmedName",
+            };
+            selectFields = @"mrecord.RecordOfficeId,mrecord.Name as RecordOfficeName,mrecord.Message,mrecord.Abbreviation,mrecord.TDMId,mrecord.UnitId,marmed.ArmedId,marmed.ArmedName,users.DomainId,usep.ArmyNo,ra.RankAbbreviation,usep.Name, munit.Sus_no,munit.Suffix,munit.UnitName";
+            fromJoinClause = @"from MRecordOffice mrecord
+                                inner join MArmedType marmed on marmed.ArmedId=mrecord.ArmedId
+                                left join TrnDomainMapping trndomain on trndomain.Id=mrecord.TDMId
+                                left join AspNetUsers users on users.Id=trndomain.AspNetUsersId
+                                left join UserProfile usep on usep.UserId=trndomain.UserId
+                                left join MRank ra on ra.RankId=usep.RankId 
+                                left join MapUnit mapunit on mapunit.UnitMapId = mrecord.UnitId 
+                                left join MUnit munit on munit.UnitId =mapunit.UnitId";
+            whereClause = @"WHERE
+                                (
+                                    mrecord.Name LIKE '%' + @SearchTerm + '%' OR
+                                    marmed.ArmedName LIKE '%' + @SearchTerm + '%' OR
+                                    mrecord.Abbreviation LIKE '%' + @SearchTerm + '%'
+                                )";
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "mrecord.RecordOfficeId";
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+                    var records = (await ret.ReadAsync<DTORecordOfficeResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTORecordOfficeResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "RecordOfficeDB->GetAllRecordOffice_Pagination");
+                List<DTORecordOfficeResponse> dTORecordOffices = new List<DTORecordOfficeResponse>();
+                var responseData = new DTODataTablesResponse<DTORecordOfficeResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTORecordOffices
+                };
+                return responseData;
+            }
         }
 
         /// <summary>

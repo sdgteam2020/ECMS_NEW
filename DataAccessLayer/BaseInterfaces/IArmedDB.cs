@@ -1,11 +1,6 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.BaseInterfaces
 {
@@ -14,5 +9,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<bool> GetByName(MArmedType Dto);
         public Task<List<DTOArmedResponse>> GetALLArmed();
         public Task<DTOArmedIdCheckInFKTableResponse?> ArmedIdCheckInFKTable(byte ArmedId);
+        public Task<DTODataTablesResponse<DTOArmedResponse>> GetAllArmed_Pagination(DTODataTablesRequest dTO);
     }
 }

@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransferObject.Response
+﻿namespace DataTransferObject.Response
 {
     public class DTORegimentalResponse
     {
+        public int TotalFilteredRecords { get; set; }
         public int RegId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Abbreviation { get; set; } = string.Empty;

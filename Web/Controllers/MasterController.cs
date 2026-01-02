@@ -502,7 +502,46 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllCorps_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTOCorpsResponse> dTOCorps = new List<DTOCorpsResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.Corps.GetAllCorps_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTOCorpsResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOCorps
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTOCorpsResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOCorps
+                };
+                _logger.LogError(1001, ex, "Master->GetAllCorps_Pagination"); // Log the error
+                return Json(responseData);
+            }
+        }
+
 
         /// Deletes a Corps record from the database after checking for foreign key references.
         /// </summary>
@@ -715,6 +754,45 @@ namespace Web.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllDiv_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTODivResponse> dTODivs = new List<DTODivResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.Div.GetAllDiv_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTODivResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTODivs
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTODivResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTODivs
+                };
+                _logger.LogError(1001, ex, "Master->GetAllDiv_Pagination"); // Log the error
+                return Json(responseData);
+            }
+        }
+
 
         /// <summary>
         /// Deletes a DIV (MDiv) from the database after verifying it is not referenced in any foreign key tables.
@@ -799,6 +877,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);  // Return error response in case of an exception
             }
         }
+
 
 
         #endregion End Bde
@@ -945,6 +1024,45 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllBde_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTOBdeResponse> dTOBdes = new List<DTOBdeResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.Bde.GetAllBde_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTOBdeResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOBdes
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTOBdeResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOBdes
+                };
+                _logger.LogError(1001, ex, "Master->GetAllBde_Pagination"); // Log the error
+                return Json(responseData);
+            }
         }
 
 
@@ -2426,6 +2544,45 @@ namespace Web.Controllers
             return Json(await unitOfWork.Appt.GetALLAppt()); // Fetch all appointments
         }
 
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllAppointment_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTOAppointmentResponse> dTOAppointments = new List<DTOAppointmentResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.Appt.GetAllAppointment_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTOAppointmentResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOAppointments
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTOAppointmentResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOAppointments
+                };
+                _logger.LogError(1001, ex, "Master->GetAllBde_Pagination"); // Log the error
+                return Json(responseData);
+            }
+        }
+
 
         /// <summary>
         /// Retrieves an appointment by its ID.
@@ -2644,6 +2801,44 @@ namespace Web.Controllers
             }
 
         }
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllRank_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTORankResponse> dTORanks = new List<DTORankResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.Rank.GetAllRank_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTORankResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTORanks
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTORankResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTORanks
+                };
+                _logger.LogError(1001, ex, "Master->GetAllBde_Pagination"); // Log the error
+                return Json(responseData);
+            }
+        }
 
 
         /// <summary>
@@ -2845,6 +3040,45 @@ namespace Web.Controllers
 
         }
 
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllArmed_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTOArmedResponse> dTOArmeds = new List<DTOArmedResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.Armed.GetAllArmed_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTOArmedResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOArmeds
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTOArmedResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOArmeds
+                };
+                _logger.LogError(1001, ex, "Master->GetAllBde_Pagination"); // Log the error
+                return Json(responseData);
+            }
+        }
+
 
         /// <summary>
         /// Deletes a specific ArmedType from the database if it is not referenced in other tables.
@@ -2990,6 +3224,44 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
+        }
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllRegimental_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTORegimentalResponse> dTORegimentals = new List<DTORegimentalResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.Regimental.GetAllRegimental_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTORegimentalResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTORegimentals
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTORegimentalResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTORegimentals
+                };
+                _logger.LogError(1001, ex, "Master->GetAllRegimental_Pagination"); // Log the error
+                return Json(responseData);
+            }
         }
 
 
@@ -3147,6 +3419,45 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllRecordOffice_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTORecordOfficeResponse> dTORecordOffices = new List<DTORecordOfficeResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.RecordOffice.GetAllRecordOffice_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTORecordOfficeResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTORecordOffices
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTORecordOfficeResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTORecordOffices
+                };
+                _logger.LogError(1001, ex, "Master->GetAllRecordOffice_Pagination"); // Log the error
+                return Json(responseData);
+            }
         }
 
 
@@ -3395,6 +3706,45 @@ namespace Web.Controllers
             }
 
         }
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllOROMapping_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTOOROMappingResponse> dTOOROs = new List<DTOOROMappingResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.OROMapping.GetAllOROMapping_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTOOROMappingResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOOROs
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTOOROMappingResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOOROs
+                };
+                _logger.LogError(1001, ex, "Master->GetAllOROMapping_Pagination"); // Log the error
+                return Json(responseData);
+            }
+        }
+
 
 
 
@@ -3537,6 +3887,45 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
 
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> GetAllAfsacCellMapping_Pagination(DTODataTablesRequest dTO)
+        {
+            List<DTOAfsacCellMappingResponse> dTOAfsacs = new List<DTOAfsacCellMappingResponse>();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    return Json(await unitOfWork.AfsacCellMapping.GetAllAfsacCellMapping_Pagination(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTOAfsacCellMappingResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOAfsacs
+                    };
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex) // Handle any exceptions that occur during the process
+            {
+
+                var responseData = new DTODataTablesResponse<DTOAfsacCellMappingResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOAfsacs
+                };
+                _logger.LogError(1001, ex, "Master->GetAllAfsacCellMapping_Pagination"); // Log the error
+                return Json(responseData);
+            }
         }
 
 

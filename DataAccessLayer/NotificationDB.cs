@@ -121,7 +121,7 @@ namespace DataAccessLayer
                 ["ApplId"] = "tre.RequestId"
             };
 
-            var sortOrder = dTO.sortDirection;
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
             selectFields = @"tre.RequestId as ApplId,noti.UpdatedOn,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,dis.Url";
 
             fromJoinClause = @"from TrnNotification noti

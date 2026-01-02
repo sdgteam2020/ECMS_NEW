@@ -39,8 +39,6 @@
                     <div class="row">
                         <div class="col-sm-3">
                             <div class="form-group row mb-2">
-                                <span class="spnrankId d-none" id="spnrankId">0</span>
-                                <span class="spnSOrderby d-none" id="spnSOrderby">0</span>
                                 <label class="col-form-label col-sm-4 fw-bold">Rank<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     <input class="form-control Alphanumeric" placeholder="Enter Rank" id="txtRank" maxlength="50" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
@@ -80,26 +78,14 @@
                 <div class="col-xl-12">
                     <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
                         <h6 class="mb-3 mb-md-0">
-                            Total Rank <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+@*                             Total Rank <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                         </h6>
                         <div>
                             @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Command</button> *@
                             @* <button type="button" id="btnMultiDelete" class="btn btn-outline-danger font-weight-600 btn-sm">Delete</button> *@
                         </div>
                     </div>
-                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tblData">
-                        <thead>
-                            <tr>
-                                <th class="noExport d-none"></th>
-                                <th class="wd-70-f">S No</th>
-                                <th class="nowrap">Rank</th>
-                                <th class="nowrap">Abbreviation</th>
-                                <th class="noExport nowrap">Order</th>
-                                <th class="noExport nowrap">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="DetailBody">
-                        </tbody>
+                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
                     </table>
                 </div>
             </div>

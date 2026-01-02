@@ -2,9 +2,11 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DataAccessLayer
 {
@@ -111,6 +113,80 @@ namespace DataAccessLayer
                 // Logs the exception in case of an error.
                 _logger.LogError(1001, ex, "ArmedDB->ArmedIdCheckInFKTable");
                 return null;  // Return null in case of an exception.
+            }
+        }
+        public async Task<DTODataTablesResponse<DTOArmedResponse>> GetAllArmed_Pagination(DTODataTablesRequest dTO)
+        {
+            string selectFields = "";
+            string fromJoinClause = "";
+            string whereClause = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ArmedName"] = "arm.ArmedName",
+                ["Abbreviation"] = "arm.Abbreviation",
+                ["FlagInf"] = "arm.FlagInf",
+                ["ArmedId"] = "arm.ArmedId",
+                ["ArmedCatId"] = "armcat.ArmedCatId",
+                ["Name"] = "armcat.Name",
+            };
+            selectFields = @"arm.ArmedId,arm.ArmedName,arm.Abbreviation,arm.FlagInf,armcat.ArmedCatId,armcat.Name";
+            fromJoinClause = @"from MArmedType arm
+                                INNER JOIN MArmedCats armcat on armcat.ArmedCatId = arm.ArmedCatId";
+            whereClause = @"WHERE
+                                (
+                                    arm.ArmedName LIKE '%' + @SearchTerm + '%' OR
+                                    arm.Abbreviation LIKE '%' + @SearchTerm + '%'
+                                )";
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "arm.ArmedId";
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+                    var records = (await ret.ReadAsync<DTOArmedResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTOArmedResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "ArmedDB->GetAllArmed_Pagination");
+                List<DTOArmedResponse> dTOArmeds = new List<DTOArmedResponse>();
+                var responseData = new DTODataTablesResponse<DTOArmedResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOArmeds
+                };
+                return responseData;
             }
         }
 

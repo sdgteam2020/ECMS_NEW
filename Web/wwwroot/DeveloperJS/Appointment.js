@@ -2,22 +2,9 @@
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    mMsater(0, "ddlCommand", 1, "");
+    BindData();
 
-    BindData(function () { });
-
-
-    $('#ddlCommand').on('change', function () {
-       
-        mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
-    });
-        
-    $('#ddlCorps').on('change', function () {
-
-        mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val() ,$('#ddlCorps').val(),0,0);///ComdId,CorpsId,DivId,BdeId
-    });
-
-    $("#btnReset").on("click",function () {
+    $("#btnReset").on("click", function () {
         Reset();
     });
 
@@ -40,14 +27,15 @@ $(function () {
 
         } else {
             $("#SaveForm")[0].reportValidity();
-    }
+        }
 
 
 
         // 
 
     });
- 
+  
+
     $('#btnMultiDelete').on("click",function () {
         var lst = new Array();
 
@@ -89,7 +77,7 @@ function BindData() {
         $("#tbldata").DataTable().destroy();
         $("#tbldata").empty(); // Clear old thead/tbody
     }
-    const columns = getColumnsForBde();
+    const columns = getColumnsForAppointment();
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
@@ -101,9 +89,9 @@ function BindData() {
         filter: true,
         stateSave: true,
 
-        autoWidth: true, // Let us handle width via CSS
+        autoWidth: false, // Let us handle width via CSS
         responsive: false, // ✅ IMPORTANT (disable)
-        order: [[0, 'desc']], // Default sorting on the first column
+        order: [[2, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -114,7 +102,7 @@ function BindData() {
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
             };
             try {
-                let response = await fetch("/Master/GetAllBde_Pagination", {
+                let response = await fetch("/Master/GetAllAppointment_Pagination", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
@@ -137,7 +125,7 @@ function BindData() {
         /* ===== FORCE WIDTHS (IMPORTANT) ===== */
         columnDefs: [
             {
-                targets: 0,
+                targets: 0,     // index of ApptId
                 visible: false,
                 width: "0px",
                 searchable: false
@@ -146,10 +134,10 @@ function BindData() {
             { targets: 2, width: "200px" },
             { targets: 3, width: "200px" },
             { targets: 4, width: "200px" },
-            { targets: -1, width: "120px" },
+            { targets: 5, width: "120px" },
             {
-                targets: '_all',  
-                orderSequence: ["asc", "desc"]  
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
             },
         ],
         language: {
@@ -174,7 +162,7 @@ function BindData() {
                 extend: 'pdfHtml5',
                 orientation: 'portrait',
                 pageSize: 'A4',
-                title: 'E-IASC_Bde',
+                title: 'E-IASC_Appoinment',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 },
@@ -189,6 +177,8 @@ function BindData() {
         },
         drawCallback: function (settings) {
 
+            this.api().columns.adjust();
+
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
@@ -198,17 +188,22 @@ function BindData() {
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
-                if (rowData.BdeId != null) {
+                if (rowData.ApptId != null) {
+                    ApptId = rowData.ApptId;
+                    $("#txtAppoinment").val(rowData.AppointmentName);
+                    if (rowData.AppointmentAbbreviation == "") {
+                        $("#txtAbbreviation").val("");
+                    }
+                    else {
+                        $("#txtAbbreviation").val(rowData.AppointmentAbbreviation);
+                    }
+                    if (rowData.Approved == true) {
+                        $("#ApprovedYes").prop("checked", true);
+                    }
+                    else {
+                        $("#ApprovedNo").prop("checked", true);
+                    }
 
-                    $("#ddlCommand").val(rowData.ComdId);
-
-                    mMsater(rowData.CorpsId, "ddlCorps", 2, rowData.ComdId);
-
-                    mMsaterByParent(rowData.DivId, "ddlDiv", 3, rowData.ComdId, rowData.CorpsId, 0, 0);///ComdId,CorpsId,DivId,BdeId
-
-                    BdeId = rowData.BdeId;
-
-                    $("#txtBdeName").val(rowData.BdeName);
                     $("#btnsave").val("Update");
 
                 }
@@ -219,7 +214,7 @@ function BindData() {
 
             $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
                 var rowData = table.row($(this).closest("tr")).data();
-                if (rowData.BdeId != null) {
+                if (rowData.ApptId != null) {
                     Swal.fire({
                         title: 'Are you sure?',
                         text: "You want to Delete ",
@@ -230,7 +225,7 @@ function BindData() {
                         confirmButtonText: 'Yes, Delete It!'
                     }).then((result) => {
                         if (result.value) {
-                            Delete(rowData.BdeId);
+                            Delete(rowData.ApptId);
                         }
                     });
                 }
@@ -247,42 +242,30 @@ function BindData() {
     table.column(0).visible(false);
 }
 function Save() {
-
-    /*  alert($('#bdaymonth').val());*/
-   
     $.ajax({
-        url: '/Master/SaveBde',
+        url: '/Master/SaveAppointment',
         type: 'POST',
-        data: {
-            "BdeName": $("#txtBdeName").val(),
-            "ComdId": $("#ddlCommand").val(),
-            "CorpsId": $("#ddlCorps").val(),
-            "DivId": $("#ddlDiv").val(),
-            "BdeId": BdeId
+        data:
+        {
+            "AppointmentName": $("#txtAppoinment").val().trim(),
+            "AppointmentAbbreviation": $("#txtAbbreviation").val().trim() == "" ? null : $("#txtAbbreviation").val().trim(),
+            "ApptId": ApptId,
+            "Approved": $('input[name="Approved"]:checked').val()
         }, //get the search string
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
-
-
             if (result == DataSave) {
-
-
-                toastr.success('Bde has been saved');
-                Reset();
+                toastr.success('Appointment has been saved');
                 BindData();
-
+                Reset();
             }
             else if (result == DataUpdate) {
-
-
-                toastr.success('Bde has been Updated');
-                Reset();
+                toastr.success('Appointment has been Updated');
                 BindData();
-
+                Reset();
             }
             else if (result == DataExists) {
-
-                toastr.error('Bde Name Exits!');
+                toastr.error('Appointment Name Exits!');
             }
             else if (result == InternalServerError) {
                 Swal.fire({
@@ -301,28 +284,28 @@ function Save() {
 
                 }
 
+
             }
         }
     });
 }
 
 function Reset() {
-    $("#ddlCommand").val("");
-    $("#ddlCorps").val("");
-    $("#ddlDiv").val("");
-    BdeId = 0;
+    ApptId = 0;
     $("#btnsave").val("Save");
-    $("#txtBdeName").val("");
+    $("#txtAppoinment").val("");
+    $("#txtAbbreviation").val("");
 }
 
-function Delete(BdeId) {
+function Delete(Id) {
+  
     var userdata =
     {
-        "BdeId": BdeId,
+        "ApptId": Id,
 
     };
     $.ajax({
-        url: '/Master/DeleteBde',
+        url: '/Master/DeleteAppointment',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -332,27 +315,15 @@ function Delete(BdeId) {
                 if (response == InternalServerError) {
                     Swal.fire({
                         text: errormsg
-                    });
-                }
-                else if (response == 0) {
-                    Swal.fire({
-                        text: "No found."
                     });
                 }
                 else if (response == "5") {
-                    toastr.error('BdeId is used in child table.');
+                    toastr.error('AppId is used in child table.');
                 }
-
                 else if (response == Success) {
-                    //lol++;
-                    //if (lol == Tot) {
-
                     toastr.success('Deleted Selected!');
-
                     BindData();
                 }
-
-                //}
             }
             else {
                 Swal.fire({
@@ -368,15 +339,15 @@ function Delete(BdeId) {
     });
 }
 
-function DeleteMultiple(BdeCatId) {
+function DeleteMultiple(Ids) {
    
     var userdata =
     {
-        "ints": BdeCatId,
+        "ints": Ids,
 
     };
     $.ajax({
-        url: '/Master/DeleteBdeMultiple',
+        url: '/Master/DeleteAppointmentMultiple',
         contentType: 'application/x-www-form-urlencoded',
         data: userdata,
         type: 'POST',
@@ -388,22 +359,10 @@ function DeleteMultiple(BdeCatId) {
                         text: errormsg
                     });
                 }
-                else if (response == 0) {
-                    Swal.fire({
-                        text: "No found."
-                    });
-                }
-
                 else if (response == Success) {
-                    //lol++;
-                    //if (lol == Tot) {
-
                     toastr.success('Deleted Selected!');
-
                     BindData();
                 }
-
-                //}
             }
             else {
                 Swal.fire({
@@ -418,13 +377,13 @@ function DeleteMultiple(BdeCatId) {
         }
     });
 }
-function getColumnsForBde() {
+function getColumnsForAppointment() {
     let columns = [];
     columns = [
         {
             title: "",
-            data: "BdeId",
-            name: "BdeId",
+            data: "ApptId",
+            name: "ApptId",
             visible: false,        // hidden
             searchable: false,
             width: "0px",
@@ -443,51 +402,38 @@ function getColumnsForBde() {
             }
         },
         {
-            title: "Comd / PSO",
-            data: "ComdName",
-            name: "ComdName",
+            title: "Appointment",
+            data: "AppointmentName",
+            name: "AppointmentName",
             className: "nowrap",
             width: "200px",
-            orderable: true,
+            orderable: true, 
             render: function (data, type, row, meta) {
                 if (!data) return '';
                 return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
             }
         },
         {
-            title: "Corps / Dte / Area",
-            data: "CorpsName",
-            name: "CorpsName",
+            title: "Abbreviation",
+            data: "AppointmentAbbreviation",
+            name: "AppointmentAbbreviation",
             className: "nowrap",
             width: "200px",
-            orderable: true,
+            orderable: true, 
             render: function (data, type, row, meta) {
                 if (!data) return '';
                 return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
             }
         },
         {
-            title: "Div  /Branch / SubArea",
-            data: "DivName",
-            name: "DivName",
+            title: "Approve",
+            data: "Approved",
+            name: "Approved",
             className: "nowrap",
             width: "200px",
-            orderable: true,
+            orderable: true, 
             render: function (data, type, row, meta) {
-                if (!data) return '';
-                return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
-            }
-        },
-        {
-            title: "Bde",
-            data: "BdeName",
-            name: "BdeName",
-            orderable: false, // Disable sorting for this column
-            className: "nowrap",
-            width: "200px",
-            render: function (data, type, row, meta) {
-                if (!data) return '';
-                return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
             }
         },
         // Additional column for Edit action

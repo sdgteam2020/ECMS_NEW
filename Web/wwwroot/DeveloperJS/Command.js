@@ -62,7 +62,7 @@ function BindData(callback) {
                 start: data.start,
                 length: data.length,
                 searchValue: data.search.value,
-                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
             };
             try {
@@ -86,6 +86,24 @@ function BindData(callback) {
             }
         },
         columns: columns,
+        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+        columnDefs: [
+            {
+                targets: 0,
+                visible: false,
+                width: "0px",
+                searchable: false
+            },
+            { targets: 1, width: "60px" },
+            { targets: 2, width: "200px" },
+            { targets: 3, width: "200px" },
+            { targets: 4, width: "110px" },
+            { targets: 5, width: "250px" },
+            {
+                targets: '_all',
+                orderSequence: ["asc", "desc"]
+            },
+        ],
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
@@ -106,9 +124,9 @@ function BindData(callback) {
             },
             {
                 extend: 'pdfHtml5',
-                orientation: 'landscape',
-                pageSize: 'LEGAL',
-                title: 'E-IASC_DispatchCard',
+                orientation: 'portrait',
+                pageSize: 'A4',
+                title: 'E-IASC_Command',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 },
@@ -128,10 +146,8 @@ function BindData(callback) {
                 if (rowData.ComdId != null) {
                     $("#txtComandName").val(rowData.ComdName);
                     $("#txtAbbreviation").val(rowData.ComdAbbreviation);
-
-                    $("#spncomdId").html(rowData.ComdId);
-                    $("#spnSOrderby").html(rowData.Orderby);
-
+                    ComdId = rowData.ComdId;
+                    Orderby = rowData.Orderby;
                 }
                 else {
                     //Invalid Data
@@ -185,13 +201,21 @@ function BindData(callback) {
 
         }
     });
+
+    // Force hide the column
+    table.column(0).visible(false);
 }
 function Save() {
     $.ajax({
         url: '/Master/SaveCommand',
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        data: { "ComdName": $("#txtComandName").val().trim(), "ComdId": $("#spncomdId").html(), "ComdAbbreviation": $("#txtAbbreviation").val().trim().toUpperCase(), "Orderby": $("#spnSOrderby").html() }, //get the search string
+        data: {
+            "ComdName": $("#txtComandName").val().trim(),
+            "ComdId": ComdId,
+            "ComdAbbreviation": $("#txtAbbreviation").val().trim().toUpperCase(),
+            "Orderby": Orderby
+        }, //get the search string
         success: function (result) {
 
 
@@ -240,7 +264,8 @@ function Save() {
 function Reset() {
     $("#txtComandName").val("");
     $("#txtAbbreviation").val("");
-    $("#spncomdId").html("0");
+    ComdId = 0;
+    Orderby = 0;
 }
 
 function Delete(ComdId) {
@@ -519,12 +544,22 @@ function GetBinaryTree(ComdId) {
 function getColumnsForCommand() {
     let columns = [];
     columns = [
+        {
+            title: "",
+            data: "ComdId",
+            name: "ComdId",
+            visible: false,        // hidden
+            searchable: false,
+            width: "0px",
+        },
         // Serial number column
         {
             title: "S No",
             data: null,
             name: "SerialNumber",
             orderable: false, // Disable sorting for this column
+            className: "text-center col-sno",
+            width: "60px",
             render: function (data, type, row, meta) {
                 // Calculate serial number based on row index
                 return meta.row + meta.settings._iDisplayStart + 1;
@@ -534,17 +569,25 @@ function getColumnsForCommand() {
             title: "Comd / PSO",
             data: "ComdName",
             name: "ComdName",
+            className: "nowrap",
+            width: "200px",
+            orderable: true,
         },
         {
             title: "Abbreviation",
             data: "ComdAbbreviation",
             name: "ComdAbbreviation",
+            className: "nowrap",
+            width: "200px",
+            orderable: true,
         },
         {
             title: `Order`,
             data: "Orderby",
             className: "noExport",
             name: "Orderby",
+            width: "110px",
+            orderable: true,
             render: function (data, type, row, meta) {
                 const api = meta.settings.oInstance.api();
                 const pageInfo = api.page.info();
@@ -571,6 +614,8 @@ function getColumnsForCommand() {
             className: "noExport",
             name: "Action",
             orderable: false,
+            className: "noExport text-center col-action",
+            width: "250px",
             render: function (data, type, row) {
                 let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
                                 <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>

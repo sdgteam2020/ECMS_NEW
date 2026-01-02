@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransferObject.Response
+﻿namespace DataTransferObject.Response
 {
     public class DTOAfsacCellMappingResponse
     {
+        public int TotalFilteredRecords { get; set; }
         public short AfsacCellMappingId { get; set; }
         public int? TDMId { get; set; }
         public int? UnitId { get; set; }

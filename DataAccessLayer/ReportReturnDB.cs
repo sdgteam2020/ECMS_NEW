@@ -643,7 +643,7 @@ namespace DataAccessLayer
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
-            var sortOrder = dTO.sortDirection;
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
             if (dTO.Choice == "Requisition")
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -1248,7 +1248,7 @@ namespace DataAccessLayer
                                 )
                                 AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)";
 
-            var sortOrder = dTO.sortDirection;
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
             if (dTO.Choice == "Export")
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

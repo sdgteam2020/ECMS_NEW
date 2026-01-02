@@ -122,7 +122,7 @@ namespace DataAccessLayer
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
-            var sortOrder = dTO.sortDirection;
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
             // Map the allowed sort columns to the DB fields for flexibility
             allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -466,7 +466,7 @@ namespace DataAccessLayer
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
-            var sortOrder = dTO.sortDirection;
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
             allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             { 
@@ -577,7 +577,7 @@ namespace DataAccessLayer
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
-            var sortOrder = dTO.sortDirection;
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
             if (dTO.ClaimValue == 1)
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -1368,7 +1368,7 @@ namespace DataAccessLayer
                 ["ApplyFor"] = "ApplyFor",
             };
 
-            var sortOrder = dTO.sortDirection;
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
             selectFields = @"munit.UnitName,B.FName,B.LName,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn";
             fromJoinClause = @"FROM MTrnICardHold thold
                                 inner join AspNetUsers u on u.Id = thold.Updatedby
@@ -2145,7 +2145,7 @@ namespace DataAccessLayer
                 ["ApplyFor"] = "ApplyFor"
             };
 
-            var sortOrder = dTO.sortDirection;
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
             if (dTO.stepcount == 0)//////For all record
             {
@@ -2397,8 +2397,8 @@ namespace DataAccessLayer
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
-            var sortOrder = dTO.sortDirection;
-            
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
             if (dTO.stepcount == 0 || dTO.stepcount == 1)//////For Fwd Record
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

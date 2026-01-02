@@ -1,11 +1,6 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.BaseInterfaces
 {
@@ -17,5 +12,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOAppointmentResponse>> GetALLByAppointmentName(string AppointmentName);
         public Task<DTOAppointmentResponse?> GetByApptId(short ApptId);
         public Task<DTOApptIdCheckInFKTableResponse?> ApptIdCheckInFKTable(short ApptId);
+        public Task<DTODataTablesResponse<DTOAppointmentResponse>> GetAllAppointment_Pagination(DTODataTablesRequest dTO);
     }
 }

@@ -2,9 +2,11 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DataAccessLayer
 {
@@ -67,16 +69,16 @@ namespace DataAccessLayer
                 // MRank, MapUnit, and MUnit, joining them using LEFT JOINs.
                 // The results are ordered by AfsacCellMappingId in descending order.
                 string query = "";
-                query = "Select acmap.AfsacCellMappingId, acmap.TDMId, acmap.UnitId, users.DomainId, usep.ArmyNo, ra.RankAbbreviation, " +
-                        "usep.Name, munit.Sus_no, munit.Suffix, munit.UnitName " +
-                        "from AfsacCellMapping acmap " +
-                        "left join TrnDomainMapping trndomain on trndomain.Id = acmap.TDMId " +
-                        "left join AspNetUsers users on users.Id = trndomain.AspNetUsersId " +
-                        "left join UserProfile usep on usep.UserId = trndomain.UserId " +
-                        "left join MRank ra on ra.RankId = usep.RankId " +
-                        "left join MapUnit mapunit on mapunit.UnitMapId = acmap.UnitId " +
-                        "left join MUnit munit on munit.UnitId = mapunit.UnitId " +
-                        "order by acmap.AfsacCellMappingId desc";
+                query = @"Select acmap.AfsacCellMappingId, acmap.TDMId, acmap.UnitId, users.DomainId, usep.ArmyNo, ra.RankAbbreviation, 
+                            usep.Name, munit.Sus_no, munit.Suffix, munit.UnitName 
+                            from AfsacCellMapping acmap 
+                            left join TrnDomainMapping trndomain on trndomain.Id = acmap.TDMId 
+                            left join AspNetUsers users on users.Id = trndomain.AspNetUsersId 
+                            left join UserProfile usep on usep.UserId = trndomain.UserId 
+                            left join MRank ra on ra.RankId = usep.RankId 
+                            left join MapUnit mapunit on mapunit.UnitMapId = acmap.UnitId 
+                            left join MUnit munit on munit.UnitId = mapunit.UnitId 
+                            order by acmap.AfsacCellMappingId desc";
 
                 // Using the database connection to execute the SQL query asynchronously.
                 // QueryAsync is used to fetch the result into a collection of DTOAfsacCellMappingResponse.
@@ -92,6 +94,80 @@ namespace DataAccessLayer
                 // Logging any exceptions that occur during the database operation.
                 _logger.LogError(1001, ex, "AfsacCellMappingDB->GetAllAfsacCellMapping");
                 return null;  // Returning null in case of an error.
+            }
+        }
+        public async Task<DTODataTablesResponse<DTOAfsacCellMappingResponse>> GetAllAfsacCellMapping_Pagination(DTODataTablesRequest dTO)
+        {
+            string selectFields = "";
+            string fromJoinClause = "";
+            string whereClause = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["AfsacCellMappingId"] = "acmap.AfsacCellMappingId",
+            };
+            selectFields = @"acmap.AfsacCellMappingId, acmap.TDMId, acmap.UnitId, users.DomainId, usep.ArmyNo, ra.RankAbbreviation,usep.Name, munit.Sus_no, munit.Suffix, munit.UnitName";
+            fromJoinClause = @"from AfsacCellMapping acmap 
+                                left join TrnDomainMapping trndomain on trndomain.Id = acmap.TDMId 
+                                left join AspNetUsers users on users.Id = trndomain.AspNetUsersId 
+                                left join UserProfile usep on usep.UserId = trndomain.UserId 
+                                left join MRank ra on ra.RankId = usep.RankId 
+                                left join MapUnit mapunit on mapunit.UnitMapId = acmap.UnitId 
+                                left join MUnit munit on munit.UnitId = mapunit.UnitId";
+            whereClause = @"WHERE
+                                (
+                                   @SearchTerm = '' OR
+                                   users.DomainId LIKE '%' + @SearchTerm + '%'
+                                )";
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "acmap.AfsacCellMappingId";
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+                    var records = (await ret.ReadAsync<DTOAfsacCellMappingResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTOAfsacCellMappingResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "AfsacCellMappingDB->GetAllAfsacCellMapping_Pagination");
+                List<DTOAfsacCellMappingResponse> dTOAfsacs = new List<DTOAfsacCellMappingResponse>();
+                var responseData = new DTODataTablesResponse<DTOAfsacCellMappingResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTOAfsacs
+                };
+                return responseData;
             }
         }
 

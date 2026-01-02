@@ -14,5 +14,6 @@ namespace BusinessLogicsLayer.RecordOffice
         public Task<DTOGetUpdateRecordOfficeResponse?> GetUpdateRecordOffice(int RecordOfficeId);
         public Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId);
         public Task<bool?> UpdateROValue(DTOUpdateROValueRequest dTO);
+        public Task<DTODataTablesResponse<DTORecordOfficeResponse>> GetAllRecordOffice_Pagination(DTODataTablesRequest dTO);
     }
 }

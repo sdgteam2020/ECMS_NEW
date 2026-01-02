@@ -5,13 +5,6 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BusinessLogicsLayer.BdeCate
 {
@@ -77,6 +70,10 @@ namespace BusinessLogicsLayer.BdeCate
         public async Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId)
         {
             return await _iRankDB.RankIdCheckInFKTable(RankId);
+        }
+        public async Task<DTODataTablesResponse<DTORankResponse>> GetAllRank_Pagination(DTODataTablesRequest dTO)
+        {
+            return await _iRankDB.GetAllRank_Pagination(dTO);
         }
 
     }

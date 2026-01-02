@@ -46,7 +46,6 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group row mb-2">
-                                <span class="d-none" id="spnArmedId">0</span>
                                 <label class="col-form-label col-sm-4 fw-bold">Arms/ Service<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
                                     
@@ -109,7 +108,7 @@
                 <div class="col-xl-12">
                     <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
                         <h6 class="mb-3 mb-md-0">
-                            Total Armed <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span>
+@*                             Total Armed <span id="lblTotal" class="ml-3 border border-light b px-2 py-1">0</span> *@
                         </h6>
                         <div>
                             @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Command</button> *@
@@ -117,20 +116,7 @@
 
                         </div>
                     </div>
-                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tblData">
-                        <thead>
-                            <tr>
-                                <th class="noExport d-none"></th>
-                                <th class="wd-60-f">S No</th>
-                                <th class="nowrap">Arms / Service & Corps</th>
-                                <th class="nowrap">Abbreviation</th>
-                                <th class="nowrap">Infantry</th>
-                                <th class="nowrap">Type</th>
-                                <th class="noExport nowrap">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="DetailBody">
-                        </tbody>
+                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
                     </table>
                 </div>
             </div>

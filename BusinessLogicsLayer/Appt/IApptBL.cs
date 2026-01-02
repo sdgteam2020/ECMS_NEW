@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
 namespace BusinessLogicsLayer.Appt
@@ -12,5 +13,6 @@ namespace BusinessLogicsLayer.Appt
         public Task<List<DTOAppointmentResponse>> GetALLByAppointmentName(string AppointmentName);
         public Task<DTOAppointmentResponse?> GetByApptId(short ApptId);
         public Task<DTOApptIdCheckInFKTableResponse?> ApptIdCheckInFKTable(short ApptId);
+        public Task<DTODataTablesResponse<DTOAppointmentResponse>> GetAllAppointment_Pagination(DTODataTablesRequest dTO);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
 
@@ -27,6 +28,10 @@ namespace BusinessLogicsLayer.Master
         public async Task<DTOArmedIdCheckInFKTableResponse?> ArmedIdCheckInFKTable(byte ArmedId)
         {
             return await _iArmedDB.ArmedIdCheckInFKTable(ArmedId);
+        }
+        public async Task<DTODataTablesResponse<DTOArmedResponse>> GetAllArmed_Pagination(DTODataTablesRequest dTO)
+        {
+            return await _iArmedDB.GetAllArmed_Pagination(dTO);
         }
     }
 }

@@ -90,7 +90,7 @@ namespace DataAccessLayer
                     ? allowedSortColumns[dTO.sortColumn!]
                     : "hotlist.UpdatedOn";
 
-                var sortOrder = dTO.sortDirection; // Ascending or descending order
+                var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
                 // Define the select fields for the query
                 string selectFields = @"appl.Name ApplyFor,

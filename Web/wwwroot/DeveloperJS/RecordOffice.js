@@ -1,4 +1,7 @@
-﻿$(function () {
+﻿var table; // Declare table variable outside the function to preserve the instance
+var RecordOfficeId = 0;
+var UnitMapId = 0;
+$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlArmType", ArmyType, "");
@@ -19,9 +22,8 @@
     $("#txtUnitName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 2) {
-                $("#spnUnitMapId").html('');
+                UnitMapId = 0;
                 var param = { "UnitName": request.term };
-                $("#spnUnitMapId").html(0);
                 $.ajax({
                     url: '/Master/GetALLByUnitName',
                     contentType: 'application/x-www-form-urlencoded',
@@ -38,7 +40,7 @@
                         }
                         else {
                             $("#txtUnitName").val("");
-                            $("#spnUnitMapId").html("");
+                            UnitMapId = 0;
                             $("#ddlTDMId").find("option").not(":first").remove();
                             $("#ddlTDMId").val("0");
                             alert("Unit not found.")
@@ -56,7 +58,7 @@
         select: function (e, i) {
             e.preventDefault();
             $("#txtUnitName").val(i.item.label);
-            $("#spnUnitMapId").html(i.item.value);
+            UnitMapId = i.item.value;
             var param1 = { "UnitMapId": i.item.value };
             $.ajax({
                 url: '/Master/GetDDMappedForRecord',
@@ -104,7 +106,7 @@
     $('#txtUnitName').keyup(function (e) {
         if (e.keyCode == 46) {
             $("#txtUnitName").val("");
-            $("#spnUnitMapId").html("");
+            UnitMapId = 0;
             $("#ddlTDMId").find("option").not(":first").remove();
             $("#ddlTDMId").val("0");
         }
@@ -144,169 +146,186 @@ function Proceed() {
     }
 }
 function BindData() {
-    var listItem = "";
-    var userdata =
-    {
-        "Id": 0,
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        $("#tbldata").DataTable().destroy();
+        $("#tbldata").empty(); // Clear old thead/tbody
+    }
+    const columns = getColumnsForRecordOffice();
+    table = $("#tbldata").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
 
-    };
-    $.ajax({
-        url: '/Master/GetAllRecordOffice',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
+        processing: true,
+        serverSide: true,
+        filter: true,
+        stateSave: false,
 
-                }
-                else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
-                    $("#tblData").DataTable().destroy();
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(0);
-                }
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
+        order: [[0, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
 
-                else {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search?.value || '',  // ✅ Safe access
+                sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/Master/GetAllRecordOffice_Pagination", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
+                    body: new URLSearchParams(requestData).toString()
+                });
 
-                    $("#tblData").DataTable().destroy();
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-                    for (var i = 0; i < response.length; i++) {
-
-                        listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMRecordOfficeId'>" + response[i].RecordOfficeId + "</span><span id='spnArmedId'>" + response[i].ArmedId + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span><span id='spnMessage'>" + response[i].Message + "</span><span id='spnUnitId'>" + response[i].UnitId + "</span><span id='spnSus_no'>" + response[i].Sus_no + "</span><span id='spnSuffix'>" + response[i].Suffix + "</span><span id='spnUnitName'>" + response[i].UnitName + "</span></td>";
-                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><span id='RecordOfficeName'>" + response[i].RecordOfficeName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='abbreviation'>" + response[i].Abbreviation.toUpperCase() + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='ArmedName'>" + response[i].ArmedName + "</span></td>";
-                        if (response[i].TDMId != null) {
-                            listItem += "<td class='align-middle'><span id='DID'>" + response[i].DomainId + ' & ' + response[i].ArmyNo +' '+ response[i].RankAbbreviation + ' ' + response[i].Name  + "</span></td>";
-                        }
-                        else {
-                            listItem += "<td class='align-middle'></td>";
-                        }
-                        if (response[i].ArmedId != $("#ArmedIdForORO").html()) {
-                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
-                        }
-                        else {
-                            listItem += "<td class='align-middle'><span class='badge rounded-pill bg-success'>View Only</span></td>";
-                        }
-                        
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
 
 
-                        /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                        listItem += "</tr>";
-
-                    }
-
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length);
-
-                  var  memberTable = $('#tblData').DataTable({
-                        retrieve: true,
-                        lengthChange: true,
-                        stateSave: true,
-                        "order": [[1, "asc"]],
-                        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_Regimental',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tblData_wrapper .col-md-6:eq(0)');
-
-                    $("body").on("click", ".cls-btnedit", function () {
-                        Reset();
-                        ResetErrorMessage();
-                        $("#txtName").val($(this).closest("tr").find("#RecordOfficeName").html());
-                        $("#txtAbbreviation").val($(this).closest("tr").find("#abbreviation").html());
-                        $("#spnRecordOfficeId").html($(this).closest("tr").find("#spnMRecordOfficeId").html());
-                        $("#ddlArmType").val($(this).closest("tr").find("#spnArmedId").html());
-                        if ($(this).closest("tr").find("#spnMessage").html() != null && $(this).closest("tr").find("#spnMessage").html() != "null") {
-                            $("#txtMessage").val($(this).closest("tr").find("#spnMessage").html());
-                        }
-                        else {
-                            $("#txtMessage").val("");
-                        }
-                        if ($(this).closest("tr").find("#spnUnitId").html() != null && $(this).closest("tr").find("#spnUnitId").html() != "null") {
-                            $("#spnUnitMapId").html($(this).closest("tr").find("#spnUnitId").html());
-                            $("#txtUnitName").val($(this).closest("tr").find("#spnSus_no").html() + $(this).closest("tr").find("#spnSuffix").html() +" "+ $(this).closest("tr").find("#spnUnitName").html() );
-                        }
-                        else {
-                            $("#spnUnitMapId").html("0");
-                            $("#txtUnitName").val("");
-                        }
-                        if ($(this).closest("tr").find("#spnTDMId").html() != null && $(this).closest("tr").find("#spnTDMId").html() != "null") {
-                            GetDDMappedForRecord($(this).closest("tr").find("#spnUnitId").html(),$(this).closest("tr").find("#spnTDMId").html());
-                        }
-                        else {
-                            $("#ddlTDMId").val("0");
-                        }
-                        $("#btnRecordOfficeAdd").val("Update");
-                        $("#AddNewRecordOffice").modal('show');
-
-                    });
-
-
-                    $("body").on("click", ".cls-btnDelete", function () {
-
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You want to Delete ",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#072697',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Yes, Delete It!'
-                        }).then((result) => {
-                            if (result.value) {
-
-                                Delete($(this).closest("tr").find("#spnMRecordOfficeId").html());
-
-                            }
-                        });
-                    });
-
-
-                }
-            }
-            else {
-                listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
-                $("#tblcommnd").DataTable().destroy();
-                $("#DetailBody").html(listItem);
-                $("#lblTotal").html(0);
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
+        columns: columns,
+        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+        columnDefs: [
+            {
+                targets: 0,
+                visible: false,
+                width: "0px",
+                searchable: false
+            },
+            { targets: 1, width: "60px" },
+            { targets: 2, width: "200px" },
+            { targets: 3, width: "200px" },
+            { targets: 4, width: "200px" },
+            { targets: 5, width: "200px" },
+            { targets: 6, width: "120px" },
+            {
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+            },
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search" // Add custom placeholder
+        },
+        dom: "<'dt-top'lBf>rtip",
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'portrait',
+                pageSize: 'A4',
+                title: 'E-IASC_Regimental',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        initComplete: function () {
+            // Add tooltip to the search input box
+            let searchBox = $('div.dataTables_filter input');
+            searchBox.attr('title', 'Search Comd/Abbreviation');
+        },
+        drawCallback: function (settings) {
+
+            this.api().columns.adjust();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
             });
+
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.RecordOfficeId != null) {
+                    Reset();
+                    ResetErrorMessage();
+                    $("#txtName").val(rowData.RecordOfficeName);
+                    $("#txtAbbreviation").val(rowData.Abbreviation);
+                    RecordOfficeId = rowData.RecordOfficeId;
+                    $("#ddlArmType").val(rowData.ArmedId);
+                    if (rowData.Message != null) {
+                        $("#txtMessage").val(rowData.Message);
+                    }
+                    else {
+                        $("#txtMessage").val("");
+                    }
+                    if (rowData.UnitId != null) {
+                        UnitMapId = rowData.UnitId;
+                        $("#txtUnitName").val(`${rowData.Sus_no}${rowData.Suffix} ${rowData.UnitName}`);
+                    }
+                    else {
+                        UnitMapId = 0;
+                        $("#txtUnitName").val("");
+                    }
+                    if (rowData.TDMId != null) {
+                        GetDDMappedForRecord(rowData.UnitId, rowData.TDMId);
+                    }
+                    else {
+                        $("#ddlTDMId").val("0");
+                    }
+                    $("#btnRecordOfficeAdd").val("Update");
+                    $("#AddNewRecordOffice").modal('show');
+                }
+                else {
+                    //Invalid Data
+                }
+            });
+
+            $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.RecordOfficeId != null) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You want to Delete ",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#072697',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Delete It!'
+                    }).then((result) => {
+                        if (result.value) {
+                            Delete(rowData.RecordOfficeId);
+                        }
+                    });
+                }
+                else {
+                    //Invalid Data
+                }
+            });
+
+
         }
     });
 
+    // Force hide the column
+    table.column(0).visible(false);
 }
 function Save() {
     $.ajax({
@@ -316,8 +335,8 @@ function Save() {
             "Name": $("#txtName").val().trim(),
             "Abbreviation": $("#txtAbbreviation").val().trim(),
             "ArmedId": $("#ddlArmType").val(),
-            "RecordOfficeId": $("#spnRecordOfficeId").html(),
-            "UnitId": $("#spnUnitMapId").html() == "0" ? null : $("#spnUnitMapId").html(),
+            "RecordOfficeId": RecordOfficeId,
+            "UnitId": UnitMapId == 0 ? null : UnitMapId,
             "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
             "Message": $("#txtMessage").val().length > 0 ? $("#txtMessage").val():null,
         }, 
@@ -380,9 +399,8 @@ function Reset() {
     $("#txtMessage").val("");
     $("#txtUnitName").val("");
     $("#ddlTDMId").val("0");
-
-    $("#spnRecordOfficeId").html("0");
-    $("#spnUnitMapId").html("0");
+    RecordOfficeId = 0;
+    UnitMapId = 0;
 }
 function ResetErrorMessage() {
     $("#txtName-error").html("");
@@ -480,4 +498,106 @@ function Delete(Id) {
             });
         }
     });
+}
+function getColumnsForRecordOffice() {
+    let columns = [];
+    columns = [
+        {
+            title: "",
+            data: "RecordOfficeId",
+            name: "RecordOfficeId",
+            visible: false,        // hidden
+            searchable: false,
+            width: "0px",
+        },
+        // Serial number column
+        {
+            title: "S No",
+            data: null,
+            name: "SerialNumber",
+            orderable: false, // Disable sorting for this column
+            className: "text-center col-sno",
+            width: "60px",
+            render: function (data, type, row, meta) {
+                // Calculate serial number based on row index
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }
+        },
+        {
+            title: "Record Office",
+            data: "RecordOfficeName",
+            name: "RecordOfficeName",
+            className: "nowrap",
+            width: "200px",
+            orderable: true,
+            render: function (data, type, row, meta) {
+                if (!data) return '';
+                return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+            }
+        },
+        {
+            title: "Abbreviation",
+            data: "Abbreviation",
+            name: "Abbreviation",
+            className: "nowrap",
+            width: "200px",
+            orderable: true,
+            render: function (data, type, row, meta) {
+                if (!data) return '';
+                return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data.toUpperCase()}">${data.toUpperCase()}</span>`;
+            }
+        },
+        {
+            title: "Arms / Service",
+            data: "ArmedName",
+            name: "ArmedName",
+            className: "text-center nowrap",
+            width: "200px",
+            orderable: true,
+            render: function (data, type, row, meta) {
+                if (!data) return '';
+                return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+            }
+        },
+        {
+            title: "Linked Domain ID & Pers Details",
+            data: "Name",
+            name: "Name",
+            className: "nowrap",
+            width: "200px",
+            orderable: false,
+            render: function (data, type, row, meta) {
+                if (row.TDMId != null) {
+                    let name = `${row.DomainId} & ${row.ArmyNo} ${row.RankAbbreviation} ${row.Name}`;
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${name}">${name}</span>`;
+                }
+                else {
+                    return ``;
+                }
+                
+            }
+        },
+        // Additional column for Edit action
+        {
+            title: "Action",
+            data: null,
+            className: "noExport",
+            name: "Action",
+            orderable: false,
+            className: "noExport text-center col-action",
+            width: "200px",
+            render: function (data, type, row) {
+                if (row.ArmedId != $("#ArmedIdForORO").html()) {
+                    let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                    return Action;
+                }
+                else {
+                    return `<span class='badge rounded-pill bg-success'>View Only</span>`;
+                }
+
+            }
+        }
+    ];
+    return columns;
 }

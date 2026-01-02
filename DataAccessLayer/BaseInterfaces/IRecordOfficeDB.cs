@@ -1,11 +1,6 @@
 ﻿using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.BaseInterfaces
 {
@@ -18,5 +13,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTORecordOfficeResponse>?> GetAllData();
         public Task<List<DTOGetMappedForRecordResponse>?> GetDDMappedForRecord(int UnitMapId);
         public Task<bool?> UpdateROValue(DTOUpdateROValueRequest dTO);
+        public Task<DTODataTablesResponse<DTORecordOfficeResponse>> GetAllRecordOffice_Pagination(DTODataTablesRequest dTO);
     }
 }

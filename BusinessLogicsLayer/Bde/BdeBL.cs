@@ -38,5 +38,9 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return await _iBdeCatDB.BdeIdCheckInFKTable(BdeId);
         }
+        public async Task<DTODataTablesResponse<DTOBdeResponse>> GetAllBde_Pagination(DTODataTablesRequest dTO)
+        {
+            return await _iBdeCatDB.GetAllBde_Pagination(dTO);
+        }
     }
 }

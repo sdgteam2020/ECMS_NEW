@@ -12,6 +12,7 @@ namespace BusinessLogicsLayer.Div
         public Task<List<DTODivResponse>> GetALLDiv(); 
         public Task<List<DTODivResponse>> GetByHId(DTOParentChildIdRequest Data);
         public Task<DTODivIdCheckInFKTableResponse?> DivIdCheckInFKTable(byte DivId);
+        public Task<DTODataTablesResponse<DTODivResponse>> GetAllDiv_Pagination(DTODataTablesRequest dTO);
     }
 }
 

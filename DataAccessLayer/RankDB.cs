@@ -2,9 +2,11 @@
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DataAccessLayer
 {
@@ -101,6 +103,77 @@ namespace DataAccessLayer
             {
                 _logger.LogError(1001, ex, "RankDB->RankIdCheckInFKTable");
                 return null;
+            }
+        }
+        public async Task<DTODataTablesResponse<DTORankResponse>> GetAllRank_Pagination(DTODataTablesRequest dTO)
+        {
+            string selectFields = "";
+            string fromJoinClause = "";
+            string whereClause = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["RankName"] = "ra.RankName",
+                ["RankAbbreviation"] = "ra.RankAbbreviation",
+                ["Orderby"] = "ra.Orderby",
+                ["ApplyForId"] = "ra.ApplyForId",
+            };
+            selectFields = @"ra.RankId,ra.RankName,ra.RankAbbreviation,ra.Orderby,ra.ApplyForId";
+            fromJoinClause = @"from MRank ra";
+            whereClause = @"WHERE
+                                (
+                                    ra.RankName LIKE '%' + @SearchTerm + '%' OR
+                                    ra.RankAbbreviation LIKE '%' + @SearchTerm + '%'
+                                )";
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "ra.RankId";
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+                    var records = (await ret.ReadAsync<DTORankResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTORankResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "RankDB->GetAllRank_Pagination");
+                List<DTORankResponse> dTORanks = new List<DTORankResponse>();
+                var responseData = new DTODataTablesResponse<DTORankResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTORanks
+                };
+                return responseData;
             }
         }
     }

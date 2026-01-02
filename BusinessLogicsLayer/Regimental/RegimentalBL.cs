@@ -1,14 +1,8 @@
-﻿using BusinessLogicsLayer.User;
-using DataAccessLayer;
+﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Master
 { 
@@ -34,6 +28,10 @@ namespace BusinessLogicsLayer.Master
         {
             Dto.Name = Dto.Name.Trim().TrimEnd().TrimStart();    
            return _RegimentalDB.GetByName(Dto);   
+        }
+        public async Task<DTODataTablesResponse<DTORegimentalResponse>> GetAllRegimental_Pagination(DTODataTablesRequest dTO)
+        {
+            return await _RegimentalDB.GetAllRegimental_Pagination(dTO); 
         }
     }
 }

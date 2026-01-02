@@ -1,8 +1,9 @@
-﻿$(function () {
+﻿var table; // Declare table variable outside the function to preserve the instance
+$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     Reset();
-    BindData()
+    BindData(function () { });
     $("#btnReset").on("click", function () {
         Reset();
     });
@@ -62,180 +63,176 @@
 });
 
 function BindData() {
-    var listItem = "";
-    var userdata =
-    {
-        "Id": 0,
-    };
-    $.ajax({
-        url: '/Master/GetAllRank',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        $("#tbldata").DataTable().destroy();
+        $("#tbldata").empty(); // Clear old thead/tbody
+    }
+    const columns = getColumnsForRank();
+    table = $("#tbldata").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
 
-                }
-                else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
-                    $("#tblData").DataTable().destroy();
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(0);
-                }
-               
-                else {
+        processing: true,
+        serverSide: true,
+        filter: true,
+        stateSave: true,
 
-                    $("#tblData").DataTable().destroy();
-                   
-                    for (var i = 0; i < response.length; i++) {
-                       
-                            listItem += "<tr>";
-                            listItem += "<td class='d-none'><span id='SRankId'>" + response[i].RankId + "</span><span id='SOrderby'>" + response[i].Orderby + "</span><span id='SApplyForId'>" + response[i].ApplyForId + "</span></td>";
-                            listItem += "<td class='align-middle'>" + (i+1) + "</td>";
-                            listItem += "<td class='align-middle'><span id='RankName'>" + response[i].RankName + "</span></td>";
-                            listItem += "<td class='align-middle'><span id='RankAbbreviation'>" + response[i].RankAbbreviation + "</span></td>";
-                            
+        autoWidth: true, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
+        order: [[0, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/Master/GetAllRank_Pagination", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
+                    body: new URLSearchParams(requestData).toString()
+                });
 
-                            if (i != response.length-1)
-                                listItem += "<td class='align-middle'><span id=''><button type='button' class='cls-btnorder btn btn-icon btn-round btn-info mr-1'><i class='fas fa-arrow-down'></i></button></span></td>";
-                            else
-                                listItem += "<td></td>";
-                              
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
 
 
-                            /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                            listItem += "</tr>";
-                        
-                    }
-
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length);
-                  
-                    var memberTable = $('#tblData').DataTable({
-                        scrollY: '65vh',          // ✅ vertical scroll
-                        scrollX: true,            // ✅ horizontal scroll
-                        scrollCollapse: true,
-                        fixedHeader: false,       // ❌ disable when using scrollY
-                        retrieve: true,
-                        lengthChange: true,
-                        stateSave: true,
-                        "order": [[1, "asc"]],
-                        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_Rank',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tblData_wrapper .col-md-6:eq(0)');
-
-                    var rows;
-                    $("#tblData #chkAll").on("click",function () {
-                        if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                        else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                    });
-                    $('#DetailBody').on('change', 'input[type="checkbox"]', function () {
-                        if (!this.checked) {
-                            var el = $('#chkAll').get(0);
-                            if (el && el.checked && ('indeterminate' in el)) {
-                                el.indeterminate = true;
-                            }
-                        }
-                    });
-
-                    $("body").off("click").on("click", ".cls-btnorder", function () {
-
-                       OrderByChange($(this).closest("tr").find("#SRankId").html() ,$(this).closest("tr").find("#SOrderby").html());
-                        
-                    });
-                    $("body").on("click", ".cls-btnedit", function () {
-                      /*  $("#AddNewM").modal('show');*/
-                        $("#txtRank").val($(this).closest("tr").find("#RankName").html());
-                        $("#txtAbbreviation").val($(this).closest("tr").find("#RankAbbreviation").html());
-                        $("#ddlRankType").val($(this).closest("tr").find("#SApplyForId").html());
-                       
-                        $("#spnrankId").html($(this).closest("tr").find("#SRankId").html());
-                        $("#spnSOrderby").html($(this).closest("tr").find("#SOrderby").html());
-                        
-                    });
-
-
-                    $("body").on("click", ".cls-btnDelete", function () {
-
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You want to Delete ",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#072697',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Yes, Delete It!'
-                        }).then((result) => {
-                            if (result.value) {
-                                
-                                Delete($(this).closest("tr").find("#SRankId").html());
-
-                            }
-                        });
-                    });
-
-
-                }
-            }
-            else {
-                listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
-                $("#tbldata").DataTable().destroy();
-                $("#DetailBody").html(listItem);
-                $("#lblTotal").html(0);
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
+        columns: columns,
+        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+        columnDefs: [
+            { targets: 0, width: "0px" },
+            { targets: 1, width: "60px" },
+            { targets: 2, width: "200px" },
+            { targets: 3, width: "200px" },
+            { targets: 4, width: "200px" },
+            { targets: 5, width: "120px" },
+            {
+                targets: '_all',
+                orderSequence: ["asc", "desc"]
+            },
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search" // Add custom placeholder
+        },
+        dom: "<'dt-top'lBf>rtip",
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'portrait',
+                pageSize: 'A4',
+                title: 'E-IASC_Rank',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        initComplete: function () {
+            // Add tooltip to the search input box
+            let searchBox = $('div.dataTables_filter input');
+            searchBox.attr('title', 'Search Comd/Abbreviation');
+        },
+        drawCallback: function (settings) {
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
             });
+
+            $("#tbldata tbody").off("click", ".cls-btnorder").on("click", ".cls-btnorder", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.Orderby != null) {
+
+                    OrderByChange(rowData.Orderby);
+                }
+                else {
+                    //Invalid Data
+                }
+            });
+
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.RankId != null) {
+
+                    /*  $("#AddNewM").modal('show');*/
+                    $("#txtRank").val(rowData.RankName);
+                    $("#txtAbbreviation").val(rowData.RankAbbreviation);
+                    $("#ddlRankType").val(rowData.ApplyForId);
+                    RankId = rowData.RankId;
+                    Orderby = rowData.Orderby;
+                }
+                else {
+                    //Invalid Data
+                }
+            });
+
+            $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.RankId != null) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You want to Delete ",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#072697',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Delete It!'
+                    }).then((result) => {
+                        if (result.value) {
+                            Delete(rowData.RankId);
+                        }
+                    });
+                }
+                else {
+                    //Invalid Data
+                }
+            });
+
+
         }
     });
-
 }
 function Save() {
-
-    /*  alert($('#bdaymonth').val());*/
-
     $.ajax({
         url: '/Master/SaveRank',
         type: 'POST',
-        data: { "ApplyForId": $("#ddlRankType").val(), "RankName": $("#txtRank").val().trim(), "RankId": $("#spnrankId").html().trim(), "RankAbbreviation": $("#txtAbbreviation").val().trim(), "Orderby": $("#spnSOrderby").html() }, //get the search string
+        data: {
+            "ApplyForId": $("#ddlRankType").val(),
+            "RankName": $("#txtRank").val().trim(),
+            "RankId": RankId,
+            "RankAbbreviation": $("#txtAbbreviation").val().trim(),
+            "Orderby": Orderby
+        }, //get the search string
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
@@ -286,9 +283,8 @@ function Reset() {
     $("#txtRank").val("");
     $("#txtAbbreviation").val("");
     $("#ddlRankType").val("");
-    $("#spnrankId").html("0");
-    $("#spnSOrderby").html("0");
-
+    RankId = 0;
+    Orderby = 0;
 }
 
 function Delete(RankId) {
@@ -314,14 +310,9 @@ function Delete(RankId) {
                     toastr.error('RankId is used in child table.');
                 }
                 else if (response == Success) {
-                    //lol++;
-                    //if (lol == Tot) {
-
                     toastr.success('Rank Selected');
                     BindData();
                 }
-
-                //}
             }
             else {
                 Swal.fire({
@@ -414,4 +405,93 @@ function OrderByChange(RankId, OrderBy) {
             });
         }
     });
+}
+function getColumnsForRank() {
+    let columns = [];
+    columns = [
+        {
+            title: "",
+            data: "RankId",
+            name: "RankId",
+            visible: false,
+            width: "0px",
+        },
+        // Serial number column
+        {
+            title: "S No",
+            data: null,
+            name: "SerialNumber",
+            orderable: false, // Disable sorting for this column
+            className: "text-center col-sno",
+            width: "60px",
+            render: function (data, type, row, meta) {
+                // Calculate serial number based on row index
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }
+        },
+        {
+            title: "Rank",
+            data: "RankName",
+            name: "RankName",
+            className: "nowrap",
+            width: "200px",
+            orderable: true, 
+            render: function (data, type, row, meta) {
+                if (!data) return '';
+                return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+            }
+        },
+        {
+            title: "Abbreviation",
+            data: "RankAbbreviation",
+            name: "RankAbbreviation",
+            className: "nowrap",
+            width: "200px",
+            orderable: true, 
+            render: function (data, type, row, meta) {
+                if (!data) return '';
+                return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+            }
+        },
+        {
+            title: "Order",
+            data: "Orderby",
+            name: "Orderby",
+            className: "noExport nowrap",
+            width: "200px",
+            orderable: true, 
+            render: function (data, type, row, meta) {
+                const api = meta.settings.oInstance.api();
+                const pageInfo = api.page.info();
+
+                const isLastRowOnPage =
+                    meta.row === api.rows({ page: 'current' }).count() - 1;
+
+                const isLastPage =
+                    pageInfo.page === pageInfo.pages - 1;
+
+                if (isLastRowOnPage && isLastPage) {
+                    return `<span class="badge bg-secondary">Last</span>`;
+                }
+
+                return `<button class="cls-btnorder btn btn-info btn-sm"><i class="fas fa-arrow-down"></i></button>`;
+            }
+        },
+        // Additional column for Edit action
+        {
+            title: "Action",
+            data: null,
+            className: "noExport",
+            name: "Action",
+            orderable: false,
+            className: "noExport text-center col-action",
+            width: "120px",
+            render: function (data, type, row) {
+                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                return Action;
+            }
+        }
+    ];
+    return columns;
 }

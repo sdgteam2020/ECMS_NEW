@@ -136,7 +136,7 @@ namespace DataAccessLayer
                     ? allowedSortColumns[dTO.sortColumn!]
                     : "pout.UpdatedOn";
 
-                var sortOrder = dTO.sortDirection;
+                var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
                 string CanAddDispatchDetailQr = @$"{(PostingTy == "PostingIn" ? "0" : "isnull((Select 1 from TrnPostingOut where Id = (Select MAX(Id) from TrnPostingOut where RequestId = pout.RequestId and FromUnitID = pout.FromUnitID) and Id = pout.Id and DispatchedOn is null),0)")}";
 

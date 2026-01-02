@@ -227,12 +227,12 @@ app.Use(async (ctx, next) =>
 {
     // 1) Content Security Policy
     ctx.Response.Headers["Content-Security-Policy"] =
-        "default-src 'self'; " +
+        //"default-src 'self'; " +
         "script-src 'self'; " +
         "style-src 'self'; " + // allow Bootstrap inline styles
         "img-src 'self' data:; " +
         "font-src 'self' data:; " +
-        "connect-src 'self'; " +
+        //"connect-src 'self'; " +
         "frame-ancestors 'none'; " +
         "base-uri 'self'; " +
         "form-action 'self';";

@@ -1,4 +1,5 @@
-﻿$(function () {
+﻿var table; // Declare table variable outside the function to preserve the instance
+$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     BindData();
@@ -19,9 +20,8 @@
     $("#txtUnitName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 2) {
-                $("#spnUnitMapId").html('');
+                UnitMapId = 0;
                 var param = { "UnitName": request.term };
-                $("#spnUnitMapId").html(0);
                 $.ajax({
                     url: '/Master/GetALLByUnitName',
                     contentType: 'application/x-www-form-urlencoded',
@@ -38,7 +38,7 @@
                         }
                         else {
                             $("#txtUnitName").val("");
-                            $("#spnUnitMapId").html("");
+                            UnitMapId = 0;
                             $("#ddlTDMId").find("option").not(":first").remove();
                             $("#ddlTDMId").val("0");
                             alert("Unit not found.")
@@ -56,7 +56,7 @@
         select: function (e, i) {
             e.preventDefault();
             $("#txtUnitName").val(i.item.label);
-            $("#spnUnitMapId").html(i.item.value);
+            UnitMapId = i.item.value;
             var param1 = { "UnitMapId": i.item.value };
             $.ajax({
                 url: '/Master/GetDDMappedForRecord',
@@ -135,165 +135,185 @@ function Proceed() {
     }
 }
 function BindData() {
-    var listItem = "";
-    var userdata =
-    {
-        "Id": 0,
-    };
-    $.ajax({
-        url: '/Master/GetAllAfsacCellMapping',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        $("#tbldata").DataTable().destroy();
+        $("#tbldata").empty(); // Clear old thead/tbody
+    }
+    const columns = getColumnsForAfsacCell();
+    table = $("#tbldata").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
 
-                }
-                else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
-                    $("#tblData").DataTable().destroy();
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(0);
-                }
+        processing: true,
+        serverSide: true,
+        filter: true,
+        stateSave: false,
 
-                else {
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
+        order: [[0, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
 
-                    $("#tblData").DataTable().destroy();
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search?.value || '',  // ✅ Safe access
+                sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/Master/GetAllAfsacCellMapping_Pagination", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
+                    body: new URLSearchParams(requestData).toString()
+                });
 
-                    for (var i = 0; i < response.length; i++) {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-                        listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMAfsacCellMappingId'>" + response[i].AfsacCellMappingId + "</span><span id='spnTDMId'>" + response[i].TDMId + "</span><span id='spnUnitId'>" + response[i].UnitId + "</span><span id='spnSus_no'>" + response[i].Sus_no + "</span><span id='spnSuffix'>" + response[i].Suffix + "</span><span id='spnUnitName'>" + response[i].UnitName + "</span></td>";
-                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-
-                        if (response[i].TDMId != null) {
-                            listItem += "<td class='align-middle'><span id='DID'>" + response[i].DomainId + ' & ' + response[i].ArmyNo + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + "</span></td>";
-                        }
-                        else {
-                            listItem += "<td class='align-middle'></td>";
-                        }
-
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
-
-
-                        /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                        listItem += "</tr>";
-
-                    }
-
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length);
-
-                    let memberTable = $('#tblData').DataTable({
-                        scrollY: '65vh',          // ✅ vertical scroll
-                        scrollX: true,            // ✅ horizontal scroll
-                        scrollCollapse: true,
-                        fixedHeader: false,       // ❌ disable when using scrollY
-                        retrieve: true,
-                        lengthChange: false,
-                        stateSave: true,
-                        "order": [[1, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_AfsacCellMapping',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tblData_wrapper .col-md-6:eq(0)');
-
-                    $("body").on("click", ".cls-btnedit", function () {
-                        Reset();
-                        ResetErrorMessage();
-                        $("#spnAfsacCellMappingId").html($(this).closest("tr").find("#spnMAfsacCellMappingId").html());
-
-                        if ($(this).closest("tr").find("#spnUnitId").html() != null && $(this).closest("tr").find("#spnUnitId").html() != "null") {
-                            $("#spnUnitMapId").html($(this).closest("tr").find("#spnUnitId").html());
-                            $("#txtUnitName").val($(this).closest("tr").find("#spnSus_no").html() + $(this).closest("tr").find("#spnSuffix").html() + " " + $(this).closest("tr").find("#spnUnitName").html());
-                        }
-                        else {
-                            $("#spnUnitMapId").html("0");
-                            $("#txtUnitName").val("");
-                        }
-                        if ($(this).closest("tr").find("#spnTDMId").html() != null && $(this).closest("tr").find("#spnTDMId").html() != "null") {
-                            GetDDMappedForRecord($(this).closest("tr").find("#spnUnitId").html(), $(this).closest("tr").find("#spnTDMId").html());
-                        }
-                        else {
-                            $("#ddlTDMId").val("0");
-                        }
-
-                        $("#btnAfsacCellMappingAdd").val("Update");
-                        $("#AddNewAfsacCellMapping").modal('show');
-                    });
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
 
 
-                    $("body").on("click", ".cls-btnDelete", function () {
-
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You want to Delete ",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#072697',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Yes, Delete It!'
-                        }).then((result) => {
-                            if (result.value) {
-
-                                Delete($(this).closest("tr").find("#spnMAfsacCellMappingId").html());
-
-                            }
-                        });
-                    });
-
-
-                }
-            }
-            else {
-                listItem += "<tr><td class='text-center' colspan=10>No Record Found</td></tr>";
-                $("#tblData").DataTable().destroy();
-                $("#DetailBody").html(listItem);
-                $("#lblTotal").html(0);
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
+        columns: columns,
+        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+        columnDefs: [
+            {
+                targets: 0,
+                visible: false,
+                width: "0px",
+                searchable: false
+            },
+            { targets: 1, width: "60px" },
+            { targets: 2, width: "200px" },
+            { targets: 3, width: "200px" },
+            {
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+            },
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search" // Add custom placeholder
+        },
+        dom: "<'dt-top'lBf>rtip",
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'portrait',
+                pageSize: 'A4',
+                title: 'E-IASC_AfsacCellMapping',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        initComplete: function () {
+            // Add tooltip to the search input box
+            let searchBox = $('div.dataTables_filter input');
+            searchBox.attr('title', 'Search');
+        },
+        drawCallback: function (settings) {
+
+            this.api().columns.adjust();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
             });
+
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.AfsacCellMappingId != null) {
+                    Reset();
+                    ResetErrorMessage();
+                    AfsacCellMappingId = rowData.AfsacCellMappingId;
+
+                    if (rowData.UnitId != null) {
+                        UnitMapId = rowData.UnitId;
+                        $("#txtUnitName").val(`${rowData.Sus_no}${rowData.Suffix} ${rowData.UnitName}`);
+                    }
+                    else {
+                        UnitMapId = 0;
+                        $("#txtUnitName").val("");
+                    }
+                    if (rowData.TDMId != null) {
+                        GetDDMappedForRecord(rowData.UnitId, rowData.TDMId);
+                    }
+                    else {
+                        $("#ddlTDMId").val("0");
+                    }
+
+                    $("#btnAfsacCellMappingAdd").val("Update");
+                    $("#AddNewAfsacCellMapping").modal('show');
+                }
+                else {
+                    //Invalid Data
+                }
+            });
+
+            $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.AfsacCellMappingId != null) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You want to Delete ",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#072697',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Delete It!'
+                    }).then((result) => {
+                        if (result.value) {
+                            Delete(rowData.AfsacCellMappingId);
+                        }
+                    });
+                }
+                else {
+                    //Invalid Data
+                }
+            });
+
+
         }
     });
 
+    // Force hide the column
+    table.column(0).visible(false);
 }
 function Save() {
     $.ajax({
         url: '/Master/SaveAfsacCellMapping',
         type: 'POST',
         data: {
-            "AfsacCellMappingId": $("#spnAfsacCellMappingId").html(),
+            "AfsacCellMappingId": AfsacCellMappingId,
             "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
-            "UnitId": $("#spnUnitMapId").html() == "0" ? null : $("#spnUnitMapId").html(),
+            "UnitId": UnitMapId == 0 ? null : UnitMapId,
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
@@ -339,10 +359,10 @@ function Save() {
 }
 
 function Reset() {
-    $("#spnAfsacCellMappingId").html("0");
+    AfsacCellMappingId = 0;
     $("#txtUnitName").val("");
     $("#ddlTDMId").val("0");
-    $("#spnUnitMapId").html("0");
+    UnitMapId = 0;
 }
 function ResetErrorMessage() {
     $("#txtUnitName-error").html("");
@@ -435,4 +455,64 @@ function Delete(Id) {
             });
         }
     });
+}
+function getColumnsForAfsacCell() {
+    let columns = [];
+    columns = [
+        {
+            title: "",
+            data: "AfsacCellMappingId",
+            name: "AfsacCellMappingId",
+            visible: false,        // hidden
+            searchable: false,
+            width: "0px",
+        },
+        // Serial number column
+        {
+            title: "S No",
+            data: null,
+            name: "SerialNumber",
+            orderable: false, // Disable sorting for this column
+            className: "text-center col-sno",
+            width: "60px",
+            render: function (data, type, row, meta) {
+                // Calculate serial number based on row index
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }
+        },
+        {
+            title: "Linked Domain ID & Pers Details",
+            data: "Name",
+            name: "Name",
+            className: "nowrap",
+            width: "200px",
+            orderable: false,
+            render: function (data, type, row, meta) {
+                if (row.TDMId != null) {
+                    let name = `${row.DomainId} & ${row.ArmyNo} ${row.RankAbbreviation} ${row.Name}`;
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${name}">${name}</span>`;
+                }
+                else {
+                    return ``;
+                }
+
+            }
+        },
+        // Additional column for Edit action
+        {
+            title: "Action",
+            data: null,
+            className: "noExport",
+            name: "Action",
+            orderable: false,
+            className: "noExport text-center col-action",
+            width: "200px",
+            render: function (data, type, row) {
+                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                return Action;
+            }
+        }
+    ];
+    return columns;
 }

@@ -96,7 +96,7 @@ namespace DataAccessLayer
                     ? allowedSortColumns[dTO.sortColumn!]
                     : "tdc.UpdatedOn";
 
-                var sortOrder = dTO.sortDirection;
+                var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
                 // Base query for fetching data
                 string selectFields = "";

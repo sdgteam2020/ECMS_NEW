@@ -205,8 +205,8 @@ namespace DataAccessLayer
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
 
-            var sortOrder = dTO.sortDirection;
-            
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
             allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["ComdName"] = "com.ComdName",
@@ -216,8 +216,7 @@ namespace DataAccessLayer
             selectFields = @"com.ComdId,com.ComdName,com.ComdAbbreviation,com.Orderby,com.IsActive";
             fromJoinClause = @"from MComd com";
             whereClause = @"WHERE
-                                com.IsActive=1
-                                AND com.ComdId <> 1
+                                com.ComdId <> 1
                                 AND (
                                     com.ComdName LIKE '%' + @SearchTerm + '%' OR
                                     com.ComdAbbreviation LIKE '%' + @SearchTerm + '%'

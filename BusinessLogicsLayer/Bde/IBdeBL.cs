@@ -13,7 +13,7 @@ namespace BusinessLogicsLayer.Bde
         public Task<List<DTOBdeResponse>> GetByHId(DTOParentChildIdRequest Data);
         public Task<bool?> FindByBdeWithId(string BdeName, byte BdeId);
         public Task<DTOBdeIdCheckInFKTableResponse?> BdeIdCheckInFKTable(byte BdeId);
-
+        public Task<DTODataTablesResponse<DTOBdeResponse>> GetAllBde_Pagination(DTODataTablesRequest dTO);
 
     }
 }

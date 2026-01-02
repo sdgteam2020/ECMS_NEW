@@ -281,20 +281,24 @@ async function GetUnitDetails(val, flag) {
     }
 }
 function BindDataMapUnit() {
-    $("#tbldata").DataTable().destroy();
-    //if ($.fn.DataTable.isDataTable("#tbldata")) {
-    //    $("#tbldata").DataTable().destroy();
-    //}
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        $("#tbldata").DataTable().destroy();
+        $("#tbldata").empty(); // Clear old thead/tbody
+    }
 
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
         stateSave: true,
+
+        autoWidth: false,      // ✅ REQUIRED
+        responsive: false,    // ✅ REQUIRED
         order: [[0, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -302,8 +306,8 @@ function BindDataMapUnit() {
                 start: data.start,
                 length: data.length,
                 searchValue: data.search.value,
-                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
             };
             try {
                 let response = await fetch("/Master/GetAllMapUnit", {
@@ -324,52 +328,167 @@ function BindDataMapUnit() {
             }
         },
         columns: [
-            { data: "UnitMapId", name: "UnitMapId", visible: false },
+            {
+                data: "UnitMapId",
+                name: "UnitMapId",
+                visible: false,        // hidden
+                searchable: false,
+                width: "0px",
+            },
             // Serial number column
             {
+                title: "S No",
                 data: null,
                 name: "SerialNumber",
                 orderable: false, // Disable sorting for this column
+                className: "text-center col-sno",
+                width: "60px",
                 render: function (data, type, row, meta) {
                     // Calculate serial number based on row index
                     return meta.row + (meta.settings?._iDisplayStart || 0) + 1;
                 }
             },
-            { data: "Sus_no", name: "Sus_no" },
-            { data: "UnitName", name: "UnitName", orderable: false },
+            {
+                title: "SUS No",
+                data: "Sus_no",
+                name: "Sus_no",
+                className: "nowrap",
+                width: "110px",
+                orderable: true, 
+            },
+            {
+                title: "Unit Name",
+                data: "UnitName",
+                name: "UnitName",
+                orderable: false,
+                width: "190px",
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
             // Display user-friendly value for UnitType
             {
+                title: "Unit Type",
                 data: "UnitType",
                 name: "UnitType",
-                render: function (data) {
+                className: "nowrap",
+                orderable: true, 
+                render: function (data, type, row, meta) {
                     let types = { 1: "Unit", 2: "Fmn HQ", 3: "Dte/Br" };
                     return `<span class='badge bg-primary'>${types[data] || ""}</span>`;
                 }
             },
-            { data: "BdeName", name: "BdeName", orderable: false },
-            { data: "DivName", name: "DivName" },
-            { data: "CorpsName", name: "CorpsName" },
-            { data: "ComdName", name: "ComdName" },
-            { data: "BranchName", name: "BranchName" },
-            { data: "SubDteName", name: "SubDteName" },
-            { data: "PSOName", name: "PSOName" },
+            {
+                title: "Bde",
+                data: "BdeName",
+                name: "BdeName",
+                orderable: false,
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "Div / Sub Area",
+                data: "DivName",
+                name: "DivName",
+                orderable: true, 
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "Corps / Area",
+                data: "CorpsName",
+                name: "CorpsName",
+                orderable: true, 
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "Comd",
+                data: "ComdName",
+                name: "ComdName",
+                orderable: true, 
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "Fmn /Branch",
+                data: "BranchName",
+                name: "BranchName",
+                orderable: true, 
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "DG / Sub Dte",
+                data: "SubDteName",
+                name: "SubDteName",
+                orderable: true, 
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "PSO /Dte",
+                data: "PSOName",
+                name: "PSOName",
+                orderable: true, 
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
             // Display user-friendly value for IsVerify
             {
+                title: "Status",
                 data: "IsVerify",
                 name: "IsVerify",
-                render: function (data) {
+                orderable: true, 
+                render: function (data, type, row, meta) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-success'>Verifed</span>" : "<span class='badge badge-danger'>Not Verify</span>";
                 }
             },
             // Additional column for Edit action
             {
+                title: "Action",
                 data: null,
                 orderable: false,
-                render: function (data, type, row) {
+                className: "noExport text-center col-action",
+                render: function (data, type, row, meta) {
                     return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
                 }
             }
+        ],
+        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+        columnDefs: [
+            {
+                targets: 0,
+                visible: false,
+                width: "0px",
+                searchable: false
+            },
+            { targets: 1, width: "60px" },
+            { targets: 2, width: "110px" },
+            { targets: 3, width: "190px" },
+            { targets: 4, width: "100px" },
+            { targets: -2, width: "110px" },
+            { targets: -1, width: "110px" },
+            {
+                targets: '_all',
+                orderSequence: ["asc", "desc"]
+            },
         ],
         language: {
             search: "", // Remove the default "Search:" label
@@ -402,6 +521,13 @@ function BindDataMapUnit() {
                 }
             }],
         drawCallback: function (settings) {
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -497,6 +623,9 @@ function BindDataMapUnit() {
             });
         }
     });
+
+    // Force hide the column
+    table.column(0).visible(false);
 }
 
  function SaveUnitWithMapping() {

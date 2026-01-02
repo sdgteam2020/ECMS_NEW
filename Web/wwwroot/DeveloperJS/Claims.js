@@ -1,6 +1,4 @@
-﻿//const { debug } = require("util");
-
-var table; // Declare table variable outside the function to preserve the instance
+﻿var table; // Declare table variable outside the function to preserve the instance
 var tableView; // Declare table variable outside the function to preserve the instance
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
@@ -17,10 +15,15 @@ function BindData() {
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
-        order: [[0, 'desc']],// Default sorting on the first column
+        stateSave: false,
+
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
+        order: [[0, 'desc']], // Default sorting on the first column
         searching: false ,
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -30,7 +33,6 @@ function BindData() {
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-               
             };
             try {
                 let response = await fetch("/Account/GetAllClaims", {
@@ -45,7 +47,6 @@ function BindData() {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
-                $("#lblTotal").html(result.recordsTotal);
                 callback(result); // Sends data to DataTables
 
 
@@ -54,9 +55,15 @@ function BindData() {
             }
         },
         columns: [
-            { data: "TotalUsers", name: "TotalUsers", visible: false },
+            {
+                title: "",
+                data: "TotalUsers",
+                name: "TotalUsers",
+                visible: false
+            },
             // Serial number column
             {
+                title: "S No",
                 data: null,
                 name: "SerialNumber",
                 orderable: false, // Disable sorting for this column
@@ -65,10 +72,19 @@ function BindData() {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "ClaimType", name: "ClaimType" },
-            { data: "TotalUsers", name: "TotalUsers" }
+            {
+                title: "Claim",
+                data: "ClaimType",
+                name: "ClaimType"
+            },
+            {
+                title: "User Claim Count",
+                data: "TotalUsers",
+                name: "TotalUsers"
+            }
             ,
             {
+                title: "View",
                 data: null,
                 orderable: false,
                 render: function (data, type, row) {

@@ -1,6 +1,7 @@
-﻿using DataAccessLayer.BaseInterfaces;
-using DataAccessLayer;
+﻿using DataAccessLayer;
+using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
 
@@ -39,6 +40,10 @@ namespace BusinessLogicsLayer.Appt
         public async Task<DTOApptIdCheckInFKTableResponse?> ApptIdCheckInFKTable(short ApptId)
         {
             return await _apptDB.ApptIdCheckInFKTable(ApptId);
+        }
+        public async Task<DTODataTablesResponse<DTOAppointmentResponse>> GetAllAppointment_Pagination(DTODataTablesRequest dTO)
+        {
+            return await _apptDB.GetAllAppointment_Pagination(dTO);  
         }
     }
 }

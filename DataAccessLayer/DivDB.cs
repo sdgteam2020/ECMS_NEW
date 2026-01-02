@@ -6,6 +6,7 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DataAccessLayer
 {
@@ -141,6 +142,80 @@ namespace DataAccessLayer
                 // Log any errors that occur during the query execution
                 _logger.LogError(1001, ex, "DivDB->DivIdCheckInFKTable");
                 return null;  // Return null if an error occurs
+            }
+        }
+        public async Task<DTODataTablesResponse<DTODivResponse>> GetAllDiv_Pagination(DTODataTablesRequest dTO)
+        {
+            string selectFields = "";
+            string fromJoinClause = "";
+            string whereClause = "";
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["DivName"] = "div.DivName",
+                ["ComdName"] = "com.ComdName",
+                ["CorpsName"] = "cor.CorpsName",
+            };
+            selectFields = @"div.DivId,div.DivName,cor.CorpsId,cor.CorpsName,com.ComdId,com.ComdName";
+            fromJoinClause = @"from MDiv div
+                                INNER JOIN MCorps cor on cor.CorpsId=div.CorpsId
+                                INNER JOIN MComd com ON com.ComdId =div.ComdId";
+            whereClause = @"WHERE
+                                div.DivId <> 1
+                                AND (
+                                    div.DivName LIKE '%' + @SearchTerm + '%' OR
+                                    cor.CorpsName LIKE '%' + @SearchTerm + '%' OR
+                                    com.ComdName LIKE '%' + @SearchTerm + '%'
+                                )";
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                ? allowedSortColumns[dTO.sortColumn!]
+                : "div.DivId";
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+                    var records = (await ret.ReadAsync<DTODivResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    var responseData = new DTODataTablesResponse<DTODivResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "DivDB->GetAllDiv_Pagination");
+                List<DTODivResponse> dTODivs = new List<DTODivResponse>();
+                var responseData = new DTODataTablesResponse<DTODivResponse>
+                {
+                    draw = 0,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = dTODivs
+                };
+                return responseData;
             }
         }
     }

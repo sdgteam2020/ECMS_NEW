@@ -1,16 +1,18 @@
-﻿$(function () {
+﻿var table; // Declare table variable outside the function to preserve the instance
+var DivId;
+$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlCommand", 1, "");
-    BindData()
+
+    BindData(function () { });
+
     $('#ddlCommand').on('change', function () {
         mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
     });
     $("#btnReset").on("click",function () {
         Reset();
     });
-
-
 
         $("#btnsave").on("click",function () {
         if ($("#SaveForm")[0].checkValidity()) {
@@ -78,161 +80,154 @@
     });
 });
 function BindData() {
-    var listItem = "";
-    var userdata =
-    {
-        "Id": 0,
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        $("#tbldata").DataTable().destroy();
+        $("#tbldata").empty(); // Clear old thead/tbody
+    }
+    const columns = getColumnsForDiv();
+    table = $("#tbldata").DataTable({
+        scrollY: '65vh',          // ✅ vertical scroll
+        scrollX: true,            // ✅ horizontal scroll
+        scrollCollapse: true,
+        fixedHeader: false,       // ❌ disable when using scrollY
 
-    };
-    $.ajax({
-        url: '/Master/GetAllDiv',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (response) {
-            if (response != "null" && response != null) {
-               
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                }
-                else if (response == 0) {
-                    listItem += "<tr><td class='text-center' colspan=7>No Record Found</td></tr>";
-                    $("#tbldata").DataTable().destroy();
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(0);
-                }
-                
-                else {
+        processing: true,
+        serverSide: true,
+        filter: true,
+        stateSave: true,
 
-                    $("#tbldata").DataTable().destroy();
-                   
-                    for (var i = 0; i < response.length; i++) {
+        autoWidth: true, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
+        order: [[0, 'desc']], // Default sorting on the first column
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/Master/GetAllDiv_Pagination", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
+                    body: new URLSearchParams(requestData).toString()
+                });
 
-                        listItem += "<tr>";
-                        listItem += "<td class='d-none'><span id='spnMDivId'>" + response[i].DivId + "</span><span id='spnMcorpsId'>" + response[i].CorpsId + "</span><span id='spncomdId'>" + response[i].ComdId + "</span></td>";
-                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
-                        listItem += "<td class='align-middle'><span id='comdName'>" + response[i].ComdName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='corpsName'>" + response[i].CorpsName + "</span></td>";
-                        listItem += "<td class='align-middle'><span id='divName'>" + response[i].DivName + "</span></td>";
-                       
-                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-                       
-                         /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                        listItem += "</tr>";
-                    }
-
-                    $("#DetailBody").html(listItem);
-                    $("#lblTotal").html(response.length);
-                  
-                    var memberTable = $('#tbldata').DataTable({
-                        scrollY: '65vh',          // ✅ vertical scroll
-                        scrollX: true,            // ✅ horizontal scroll
-                        scrollCollapse: true,
-                        fixedHeader: false,       // ❌ disable when using scrollY
-                        retrieve: true,
-                        lengthChange: true,
-                        "order": [[1, "asc"]],
-                        stateSave: true,
-                        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_Div',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
-                    });
-
-                    memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
-
-                    var rows;
-                    $("#tbldata #chkAll").on("click",function () {
-                        if ($(this).is(':checked')) {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                        else {
-                            rows = memberTable.rows({ 'search': 'applied' }).nodes();
-                            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                        }
-                    });
-                    $('#DetailBody').on('change', 'input[type="checkbox"]', function () {
-                        if (!this.checked) {
-                            var el = $('#chkAll').get(0);
-                            if (el && el.checked && ('indeterminate' in el)) {
-                                el.indeterminate = true;
-                            }
-                        }
-                    });
-
-                    $("body").on("click", ".cls-btnedit", function () {
-                    
-                        $("#ddlCommand").val($(this).closest("tr").find("#spncomdId").html());
-
-                        mMsater($(this).closest("tr").find("#spnMcorpsId").html(), "ddlCorps", 2, $(this).closest("tr").find("#spncomdId").html());
-
-                        $(".spnDivId").html($(this).closest("tr").find("#spnMDivId").html());
-
-                        $("#txtDivName").val($(this).closest("tr").find("#divName").html());
-                        $("#btnsave").val("Update");
-                    });
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
 
 
-                    $("body").on("click", ".cls-btnDelete", function () {
-
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You want to Delete ",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#072697',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Yes, Delete It!'
-                        }).then((result) => {
-                            if (result.value) {
-                                
-                                Delete($(this).closest("tr").find("#spnMDivId").html());
-
-                            }
-                        });
-                    });
-
-
-                }
-            }
-            else {
-                listItem += "<tr><td class='text-center' colspan=7>No Record Found</td></tr>";
-                $("#tbldata").DataTable().destroy();
-                $("#DetailBody").html(listItem);
-                $("#lblTotal").html(0);
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
+        columns: columns,
+        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+        columnDefs: [
+            {
+                targets: 0,
+                visible: false,
+                width: "0px",
+                searchable: false
+            },
+            { targets: 1, width: "60px" },
+            { targets: 2, width: "200px" },
+            { targets: 3, width: "200px" },
+            { targets: 4, width: "200px" },
+            { targets: 5, width: "120px" },
+            {
+                targets: '_all',
+                orderSequence: ["asc", "desc"]
+            },
+        ],
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "Search" // Add custom placeholder
+        },
+        dom: "<'dt-top'lBf>rtip",
+        buttons: [
+            {
+                extend: 'copy',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                orientation: 'portrait',
+                pageSize: 'A4',
+                title: 'E-IASC_Div',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                },
+                customize: function (doc) {
+                    WaterMarkOnPdf(doc)
+                }
+            }],
+        initComplete: function () {
+            // Add tooltip to the search input box
+            let searchBox = $('div.dataTables_filter input');
+            searchBox.attr('title', 'Search Comd/Abbreviation');
+        },
+        drawCallback: function (settings) {
+
+            $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.DivId != null) {
+
+                    $("#ddlCommand").val(rowData.ComdId);
+                    mMsater(rowData.CorpsId, "ddlCorps", 2, rowData.ComdId);
+                    DivId = rowData.DivId;
+                    $("#txtDivName").val(rowData.DivName);
+                    $("#btnsave").val("Update");
+
+                }
+                else {
+                    //Invalid Data
+                }
             });
+
+            $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                if (rowData.DivId != null) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You want to Delete ",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#072697',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Delete It!'
+                    }).then((result) => {
+                        if (result.value) {
+                            Delete(rowData.DivId);
+                        }
+                    });
+                }
+                else {
+                    //Invalid Data
+                }
+            });
+
+
         }
     });
 
+    // Force hide the column
+    table.column(0).visible(false);
 }
 function Save() {
 
@@ -241,7 +236,12 @@ function Save() {
     $.ajax({
         url: '/Master/SaveDiv',
         type: 'POST',
-        data: { "DivName": $("#txtDivName").val().trim(), "ComdId": $("#ddlCommand").val(), "CorpsId": $("#ddlCorps").val(), "DivId": $(".spnDivId").html() }, //get the search string
+        data: {
+            "DivName": $("#txtDivName").val().trim(),
+            "ComdId": $("#ddlCommand").val(),
+            "CorpsId": $("#ddlCorps").val(),
+            "DivId": DivId
+        }, //get the search string
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
@@ -291,7 +291,7 @@ function Save() {
 function Reset() {
     $("#ddlCommand").val("");
     $("#ddlCorps").val("");
-    $(".spnDivId").html("0");
+    DivId = 0;
     $("#btnsave").val("Save");
     $("#txtDivName").val("");
 }
@@ -398,4 +398,70 @@ function DeleteMultiple(Id) {
             });
         }
     });
+}
+function getColumnsForDiv() {
+    let columns = [];
+    columns = [
+        {
+            title: "",
+            data: "DivId",
+            name: "DivId",
+            visible: false,        // hidden
+            searchable: false,
+            width: "0px",
+        },
+        // Serial number column
+        {
+            title: "S No",
+            data: null,
+            name: "SerialNumber",
+            orderable: false, // Disable sorting for this column
+            className: "text-center col-sno",
+            width: "60px",
+            render: function (data, type, row, meta) {
+                // Calculate serial number based on row index
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }
+        },
+        {
+            title: "Comd / PSO",
+            data: "ComdName",
+            name: "ComdName",
+            className: "nowrap",
+            width: "200px",
+            orderable: true,
+        },
+        {
+            title: "Corps / Dte / Area",
+            data: "CorpsName",
+            name: "CorpsName",
+            className: "nowrap",
+            width: "200px",
+            orderable: true,
+        },
+        {
+            title: "Div  /Branch / SubArea",
+            data: "DivName",
+            name: "DivName",
+            className: "nowrap",
+            width: "200px",
+            orderable: true,
+        },
+        // Additional column for Edit action
+        {
+            title: "Action",
+            data: null,
+            className: "noExport",
+            name: "Action",
+            orderable: false,
+            className: "noExport text-center col-action",
+            width: "120px",
+            render: function (data, type, row) {
+                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                return Action;
+            }
+        }
+    ];
+    return columns;
 }

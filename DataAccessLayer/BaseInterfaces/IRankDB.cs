@@ -1,11 +1,6 @@
 ﻿using DataTransferObject.Domain.Master;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.BaseInterfaces
 {
@@ -17,5 +12,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<IEnumerable<MRank>> GetAllByorder();
         public Task<IEnumerable<MRank>> GetAllByType(int Type);
         public Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId);
+        public Task<DTODataTablesResponse<DTORankResponse>> GetAllRank_Pagination(DTODataTablesRequest dTO);
     }
 }

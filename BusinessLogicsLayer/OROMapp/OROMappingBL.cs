@@ -1,13 +1,8 @@
-﻿using BusinessLogicsLayer.RecordOffice;
-using DataAccessLayer;
+﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.OROMapp
 {
@@ -29,6 +24,10 @@ namespace BusinessLogicsLayer.OROMapp
         public async Task<List<DTOAllOROResponse>> GetAllORO()
         {
             return await _OROMappingDB.GetAllORO();
+        }
+        public async Task<DTODataTablesResponse<DTOOROMappingResponse>> GetAllOROMapping_Pagination(DTODataTablesRequest dTO)
+        {
+            return await _OROMappingDB.GetAllOROMapping_Pagination(dTO);
         }
     }
 }

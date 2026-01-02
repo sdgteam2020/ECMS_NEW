@@ -32,5 +32,9 @@ namespace BusinessLogicsLayer.Div
         {
             return await _DivDB.DivIdCheckInFKTable(DivId);
         }
+        public async Task<DTODataTablesResponse<DTODivResponse>> GetAllDiv_Pagination(DTODataTablesRequest dTO)
+        {
+            return await _DivDB.GetAllDiv_Pagination(dTO);
+        }
     }
 }

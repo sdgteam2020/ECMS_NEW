@@ -45,5 +45,9 @@ namespace BusinessLogicsLayer.RecordOffice
         {
             return await _RecordOfficeDB.GetROByTDMId(TDMId);
         }
+        public async Task<DTODataTablesResponse<DTORecordOfficeResponse>> GetAllRecordOffice_Pagination(DTODataTablesRequest dTO)
+        {
+            return await _RecordOfficeDB.GetAllRecordOffice_Pagination(dTO);
+        }
     }
 }

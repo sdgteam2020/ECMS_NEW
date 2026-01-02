@@ -17,10 +17,11 @@ namespace DataTransferObject.Requests
         public string? searchValue { get; set; }
 
         [RegularExpression(@"^[a-zA-Z_]*$", ErrorMessage = "Only alphabets and underscores are allowed.")]
-        public string sortColumn { get; set; } = string.Empty;
+        public string? sortColumn { get; set; } = null; // Make nullable
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
-        public string sortDirection { get; set; } = string.Empty;
+        public string? sortDirection { get; set; } = null; // Make nullable
+
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public string Choice { get; set; } = string.Empty;

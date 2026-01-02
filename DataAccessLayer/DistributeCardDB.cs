@@ -97,7 +97,7 @@ namespace DataAccessLayer
                     ? allowedSortColumns[dTO.sortColumn!]
                     : "tdc.UpdatedOn";
 
-                var sortOrder = dTO.sortDirection;
+                var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
                 string selectFields = @"appl.Name ApplyFor,
                                         req.RequestId,tdc.DistributeCardId,
