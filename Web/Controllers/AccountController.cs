@@ -1134,7 +1134,7 @@ namespace Web.Controllers
 
                     if (!armyNoRegex.IsMatch(model.ICNo))
                     {
-                        ModelState.AddModelError("ICNo", "Invalid format.");
+                        ModelState.AddModelError("ICNo", "Invalid Army No.");
                         goto End;
                     }
 

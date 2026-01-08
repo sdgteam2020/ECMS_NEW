@@ -72,14 +72,14 @@ async function ChkSfx() {
     let ArmyNo = document.getElementById('ICNo').value;
 
     if (ArmyNo.length < 8 || ArmyNo.length > 9) {
-        alert('Army number must be 8-9 characters long.');
+        alert('Invalid Army No.');
         return false;
     }
     else {
         const regex = /^[A-Z]{2}\d{5,6}[A-Z]$/;
 
         if (!regex.test(ArmyNo)) {
-            alert('Invalid format. Must be: 2 letters + 5-6 digits + 1 letter (e.g., IC12345X, SC123456P).');
+            alert('Invalid Army No.');
             return false;
         }
         else {
