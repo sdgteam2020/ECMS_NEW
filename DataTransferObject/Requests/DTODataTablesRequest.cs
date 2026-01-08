@@ -23,7 +23,7 @@ namespace DataTransferObject.Requests
         public string? sortDirection { get; set; } = null; // Make nullable
 
 
-        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
+        [RegularExpression("^[a-zA-Z: ]*$", ErrorMessage = "Only Alphabets and colon are allowed.")]
         public string Choice { get; set; } = string.Empty;
 
         //public DataTablesSearch Search { get; set; }

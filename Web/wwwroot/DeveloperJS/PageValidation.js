@@ -70,100 +70,105 @@ async function ChkSfx() {
     await new Promise(resolve => resolve()); // The 'await' here is just for structure
 
     let ArmyNo = document.getElementById('ICNo').value;
-    const isFirstTwoAlpha = /^[A-Za-z]{2}/.test(ArmyNo);
 
-    if (ArmyNo.length < 7 || isFirstTwoAlpha == false) {
-        alert('Invalid Army No.');
+    if (ArmyNo.length < 8 || ArmyNo.length > 9) {
+        alert('Army number must be 8-9 characters long.');
         return false;
-    }
-    var armyno = ArmyNo.replace(/[A-Za-z]/g, '');
-
-    var txt = ArmyNo.slice(-1);
-    // Get last character
-    const lastChar = ArmyNo.slice(-1);
-
-    // Check if it is an alphabet
-    const isAlpha = /^[A-Za-z]$/.test(lastChar);
-    if (txt == "" || isAlpha == false) {
-        alert('Invalid Army No.');
-        return false;
-    }
-    var vlength = armyno.length;
-    var NumMulti = parseInt(vlength) + 1;
-    var vMulti = 0;
-    var vSum = 0;
-    var Sfx;
-    for (var i = 0; i < vlength; i++) {
-        vMulti = parseInt(armyno.charAt(i)) * parseInt(NumMulti);
-        vSum = parseInt(vSum) + parseInt(vMulti);
-        NumMulti = parseInt(NumMulti) - 1;
-
-    }
-
-    var Reminder = parseInt(vSum) % 11;
-    switch (Reminder) {
-        case (0):
-            {
-                Sfx = "A"
-                break;
-            }
-        case (1):
-            {
-                Sfx = "F"
-                break;
-            }
-        case (2):
-            {
-                Sfx = "H"
-                break;
-            }
-        case (3):
-            {
-                Sfx = "K"
-                break;
-            }
-        case (4):
-            {
-                Sfx = "L"
-                break;
-            }
-        case (5):
-            {
-                Sfx = "M"
-                break;
-            }
-        case (6):
-            {
-                Sfx = "N"
-                break;
-            }
-        case (7):
-            {
-                Sfx = "P"
-                break;
-            }
-        case (8):
-            {
-                Sfx = "W"
-                break;
-            }
-        case (9):
-            {
-                Sfx = "X"
-                break;
-            }
-        case (10):
-            {
-                Sfx = "Y"
-                break;
-            }
-    }
-    if (txt.toUpperCase() === Sfx) {
-        return true;
     }
     else {
+        const regex = /^[A-Z]{2}\d{5,6}[A-Z]$/;
+
+        if (!regex.test(ArmyNo)) {
+            alert('Invalid format. Must be: 2 letters + 5-6 digits + 1 letter (e.g., IC12345X, SC123456P).');
             return false;
+        }
+        else {
+            var armyno = ArmyNo.replace(/[A-Za-z]/g, '');
+
+            var txt = ArmyNo.slice(-1);
+
+            var vlength = armyno.length;
+            var NumMulti = parseInt(vlength) + 1;
+            var vMulti = 0;
+            var vSum = 0;
+            var Sfx;
+            for (var i = 0; i < vlength; i++) {
+                vMulti = parseInt(armyno.charAt(i)) * parseInt(NumMulti);
+                vSum = parseInt(vSum) + parseInt(vMulti);
+                NumMulti = parseInt(NumMulti) - 1;
+
+            }
+
+            var Reminder = parseInt(vSum) % 11;
+            switch (Reminder) {
+                case (0):
+                    {
+                        Sfx = "A"
+                        break;
+                    }
+                case (1):
+                    {
+                        Sfx = "F"
+                        break;
+                    }
+                case (2):
+                    {
+                        Sfx = "H"
+                        break;
+                    }
+                case (3):
+                    {
+                        Sfx = "K"
+                        break;
+                    }
+                case (4):
+                    {
+                        Sfx = "L"
+                        break;
+                    }
+                case (5):
+                    {
+                        Sfx = "M"
+                        break;
+                    }
+                case (6):
+                    {
+                        Sfx = "N"
+                        break;
+                    }
+                case (7):
+                    {
+                        Sfx = "P"
+                        break;
+                    }
+                case (8):
+                    {
+                        Sfx = "W"
+                        break;
+                    }
+                case (9):
+                    {
+                        Sfx = "X"
+                        break;
+                    }
+                case (10):
+                    {
+                        Sfx = "Y"
+                        break;
+                    }
+            }
+            if (txt.toUpperCase() === Sfx) {
+                return true;
+            }
+            else {
+                alert("Invalid Army No.");
+                return false;
+            }
+        }
+
+
     }
+
 }
 
 async function SubmitsEncry1(result) {
@@ -171,17 +176,20 @@ async function SubmitsEncry1(result) {
     if (result) {
         // Get the password value
         let txtpassword = $("#Password").val();
+        let ArmyNo = document.getElementById('ICNo').value;
         let skey = $('#spnhdns').html();
 
         if (txtpassword == "" || $('#ConfirmPassword').val() == "" || $('#ICNo').val() == "") {
             alert('Please enter Army No / Password / ConfirmPassword.');
             return false;
         }
+
         let result = await ChkSfx();
+
         if (!result) {
-            alert("Invalid Army No.");
             return false; // Stop submission if suffix check fails
         }
+
         if ($('#Password').val() == $('#ConfirmPassword').val()) {
 
             // Regular expression to check password rules
@@ -191,7 +199,8 @@ async function SubmitsEncry1(result) {
             if (passwordPattern.test(txtpassword)) {
 
                 var encryptedpassword = encryptData(txtpassword, skey);
-
+                var encryptedArmyNo = encryptData(ArmyNo, skey);
+                $('#ICNo').val(encryptedArmyNo);
                 $('#Password').val(encryptedpassword);
                 $('#ConfirmPassword').val(encryptedpassword);
                 return true;
@@ -208,6 +217,7 @@ async function SubmitsEncry1(result) {
     }
     else {
         let txtpassword = $('#Password').val();
+        let ArmyNo = document.getElementById('ICNo').value;
         let skey = $('#spnhdns').html();
 
         if (txtpassword == "" || $('#ICNo').val() == "") {
@@ -217,11 +227,12 @@ async function SubmitsEncry1(result) {
         else {
             let result = await ChkSfx();
             if (!result) {
-                alert("Invalid Army No.");
                 return false; // Stop submission if suffix check fails
             }
 
             var encryptedpassword = encryptData(txtpassword, skey);
+            var encryptedArmyNo = encryptData(ArmyNo, skey);
+            $('#ICNo').val(encryptedArmyNo);
 
             $('#Password').val(encryptedpassword);
             return true;

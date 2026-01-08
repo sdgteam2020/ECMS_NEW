@@ -30,6 +30,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using Web.Validation;
 using Web.WebHelpers;
@@ -59,6 +60,7 @@ namespace Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IIAMSettingBL _iAMSettingBL;
         private readonly IHostEnvironment _hostEnv;
+        private static readonly Regex armyNoRegex = new Regex(@"^[A-Z]{2}\d{5,6}[A-Z]$", RegexOptions.IgnoreCase);
 
         public AccountController(IConfiguration configuration,IUnitOfWork unitOfWork,IUnitBL unitBL, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
             IDataProtectionProvider dataProtectionProvider, IService service, IMapper mapper, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor, IIAMSettingBL iAMSettingBL, IHostEnvironment hostEnv)
@@ -268,8 +270,8 @@ namespace Web.Controllers
         /// Delegates to the business layer; logs exceptions with event ID 1001.
         /// </remarks>
         [Authorize(Roles = "admin")]
-        [HttpGet]
-        public async Task<IActionResult> GetAllClaims()
+        [HttpPost]
+        public async Task<IActionResult> GetAllClaimsForDD()
         {
             try
             {
@@ -277,11 +279,10 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Account->GetAllClaims");
+                _logger.LogError(1001, ex, "Account->GetAllClaimsForDD");
                 return Json(KeyConstants.InternalServerError);
             }
         }
-        
         /// Returns the count of accounts as a JSON payload.
         /// </summary>
         /// <returns>
@@ -1116,7 +1117,27 @@ namespace Web.Controllers
                 {
                     ViewBag.hdns = dd;
                     string Password = AESEncrytDecry.DecryptAES(model.Password, dd);  //decrypt password
+                    string ICNo = AESEncrytDecry.DecryptAES(model.ICNo, dd);  //decrypt ICNo
+                    model.ICNo = ICNo;
                     model.Password = Password;
+
+                    if (string.IsNullOrWhiteSpace(model.ICNo))
+                    {
+                        ModelState.AddModelError("ICNo", "Army No is required.");
+                        goto End;
+                    }
+                    if (model.ICNo.Length < 8 || model.ICNo.Length > 9)
+                    {
+                        ModelState.AddModelError("ICNo", "Invalid Army No.");
+                        goto End;
+                    }
+
+                    if (!armyNoRegex.IsMatch(model.ICNo))
+                    {
+                        ModelState.AddModelError("ICNo", "Invalid format.");
+                        goto End;
+                    }
+
                 }
 
                 DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData"); // Get Session Object
@@ -2756,27 +2777,39 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetAllClaims(DTODataTablesRequest dTO)
         {
+            List<DTOClaimsStoreResponse> dTOClaims = new List<DTOClaimsStoreResponse>();
             try
             {
-                // Attempt to retrieve all claims ordered as per DataTables request parameters
-                return Json(await _iAccountBL.GetAllClaimsOrderBy(dTO));
+                if (ModelState.IsValid)
+                {
+                    // Attempt to retrieve all claims ordered as per DataTables request parameters
+                    return Json(await _iAccountBL.GetAllClaimsOrderBy(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTOClaimsStoreResponse>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOClaims
+                    };
+                    return Json(responseData);
+                }
             }
             catch (Exception ex)
             {
-                // Prepare an empty response in case of an error
-                List<DTOClaimsStoreResponse> dTOClaimsStoreResponses = new List<DTOClaimsStoreResponse>();
                 var responseData = new DTODataTablesResponse<DTOClaimsStoreResponse>
                 {
                     draw = 0,
                     recordsTotal = 0,
                     recordsFiltered = 0,
-                    data = dTOClaimsStoreResponses
+                    data = dTOClaims
                 };
-                _logger.LogError(1001, ex, "Account->Claims");
+                _logger.LogError(1001, ex, "Account->GetAllClaims");
                 return Json(responseData);
             }
         }
-
 
         /// <summary>
         /// Retrieves all users associated with claims and returns them in a format suitable for DataTables.
@@ -2798,24 +2831,36 @@ namespace Web.Controllers
         [HttpPost()]
         public async Task<IActionResult> GetAllUsersByClaim(DTODataTablesRequest dTO)
         {
+            List<DTOUsersByClaim> dTOUsers = new List<DTOUsersByClaim>();
             try
             {
-                // Call the business logic layer to fetch users grouped by claims
-                // Returns data in a structure compatible with DataTables
-                return Json(await _iAccountBL.GetAllUsersByClaim(dTO));
+                if (ModelState.IsValid)
+                {
+                    // Call the business logic layer to fetch users grouped by claims
+                    // Returns data in a structure compatible with DataTables
+                    return Json(await _iAccountBL.GetAllUsersByClaim(dTO));
+                }
+                else
+                {
+                    var responseData = new DTODataTablesResponse<DTOUsersByClaim>
+                    {
+                        draw = 0,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = dTOUsers
+                    };
+                    return Json(responseData);
+                }
             }
             catch (Exception ex)
             {
-                // Initialize an empty list in case of failure
-                List<DTOUsersByClaim> dTOClaimsStoreResponses = new List<DTOUsersByClaim>();
-
                 // Prepare an empty DataTables response
                 var responseData = new DTODataTablesResponse<DTOUsersByClaim>
                 {
                     draw = 0,
                     recordsTotal = 0,
                     recordsFiltered = 0,
-                    data = dTOClaimsStoreResponses
+                    data = dTOUsers
                 };
                 // Log the exception with a unique event ID for troubleshooting
                 _logger.LogError(1001, ex, "Account->UsersByClaim");

@@ -29,7 +29,9 @@ using Web.Healpers.BaseInterfaces;
 using ApplicationUser = DataTransferObject.Domain.Identitytable.ApplicationUser;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var configration = builder.Configuration;
+var corsSettings = builder.Configuration.GetSection("CorsSettings");
 
 
 builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(configration.GetConnectionString("AFSACDBConnection")).UseExceptionProcessor());
@@ -60,13 +62,45 @@ builder.Services.Configure<SecurityStampValidatorOptions>(opt =>
     opt.ValidationInterval = TimeSpan.FromSeconds(0)
 );
 
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy",
-        builder => builder.WithOrigins("http://localhost", "*")
-        .AllowAnyMethod()
-        .AllowAnyHeader());
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.SetIsOriginAllowed(origin =>
+        {
+            // Get allowed origins from configuration
+            var allowedOrigins = corsSettings["AllowedOrigins"]?.Split(',')
+                ?? Array.Empty<string>();
+
+            // Always allow localhost in development
+            if (builder.Environment.IsDevelopment() &&
+                origin.StartsWith("http://localhost"))
+            {
+                return true;
+            }
+
+            // Check against configured list
+            return allowedOrigins.Contains(origin) ||
+                   allowedOrigins.Contains("*");
+        });
+
+        // Only allow specific methods
+        policy.WithMethods("GET", "POST", "PUT", "DELETE");
+
+        // Only allow specific headers
+        policy.WithHeaders("Authorization", "Content-Type", "X-Requested-With");
+
+        // Allow credentials (cookies, auth headers)
+        policy.AllowCredentials();
+
+        // Cache preflight for 1 hour
+        policy.SetPreflightMaxAge(TimeSpan.FromHours(1));
+    });
 });
+
+
+
 
 builder.Services.AddScoped<IService, ServiceRepository>();
 builder.Services.AddScoped<IImageEncryptAndDecrypt, ImageEncryptAndDecrypt>();
@@ -111,7 +145,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                // Configure cookie options if needed
                options.Cookie.HttpOnly = true;
       
-               options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+               options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
                options.LoginPath = "/Account/IMLoginSelf";
                options.AccessDeniedPath = "/Account/AccessDenied";
                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
@@ -121,7 +155,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.IdleTimeout = TimeSpan.FromMinutes(15);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     // When the code is published on IAM, these two lines are commented out.
@@ -140,7 +174,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     //options.Cookie.Expiration 
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
     options.LoginPath = "/Account/IMLoginSelf";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
@@ -212,7 +246,7 @@ app.UseCookiePolicy(new CookiePolicyOptions
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();    
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     //app.UseHsts();
 }
@@ -225,15 +259,31 @@ else
 }
 app.Use(async (ctx, next) =>
 {
+    // ========== 0) BLOCK DANGEROUS HTTP METHODS FIRST ==========
+    var blockedMethods = new[] { "OPTIONS", "TRACE", "TRACK", "CONNECT" };
+
+    if (blockedMethods.Contains(ctx.Request.Method, StringComparer.OrdinalIgnoreCase))
+    {
+        // Log for monitoring (optional)
+        app.Logger.LogWarning($"Security: Blocked {ctx.Request.Method} request to {ctx.Request.Path}");
+
+        ctx.Response.StatusCode = StatusCodes.Status405MethodNotAllowed;
+        ctx.Response.Headers["Allow"] = "GET, HEAD, POST, PUT, DELETE, PATCH"; // Only allowed methods
+        await ctx.Response.WriteAsync("Method Not Allowed");
+        return; // Stop further processing
+    }
+
+
+
     // 1) Content Security Policy
     ctx.Response.Headers["Content-Security-Policy"] =
-        //"default-src 'self'; " +
+        "default-src 'self'; " +
         "script-src 'self'; " +
         "style-src 'self'; " + // allow Bootstrap inline styles
         "img-src 'self' data:; " +
         "font-src 'self' data:; " +
-        //"connect-src 'self'; " +
-        "frame-ancestors 'none'; " +
+        "connect-src 'self'; " +
+        "frame-ancestors 'self'; " +
         "base-uri 'self'; " +
         "form-action 'self';";
 

@@ -21,32 +21,32 @@ toastr.options = {
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    const myHeadersIncrement = new Headers();
-    myHeadersIncrement.append("X-API-KEY", 'b03aae18-4c63-44e4-93a3-eba447270157');
+    //const myHeadersIncrement = new Headers();
+    //myHeadersIncrement.append("X-API-KEY", 'b03aae18-4c63-44e4-93a3-eba447270157');
 
-    const requestIncrement = {
-        method: "POST",
-        redirect: "follow",
-        headers: myHeadersIncrement
-    };
+    //const requestIncrement = {
+    //    method: "POST",
+    //    redirect: "follow",
+    //    headers: myHeadersIncrement
+    //};
 
-    fetch("https://hitcounter.army.mil/api/ApplicationHit/IncrementHits", requestIncrement)
-        .then((response) => response.text())
-        .then((result) => console.log(result))
-        .catch((error) => console.error(error));
+    //fetch("https://hitcounter.army.mil/api/ApplicationHit/IncrementHits", requestIncrement)
+    //    .then((response) => response.text())
+    //    .then((result) => console.log(result))
+    //    .catch((error) => console.error(error));
 
-    const myHeadersIncrementStart = new Headers();
-    myHeadersIncrementStart.append("X-API-KEY", 'b03aae18-4c63-44e4-93a3-eba447270157');
-    const requestStart = {
-        method: "POST",
-        redirect: "follow",
-        headers: myHeadersIncrementStart
-    };
+    //const myHeadersIncrementStart = new Headers();
+    //myHeadersIncrementStart.append("X-API-KEY", 'b03aae18-4c63-44e4-93a3-eba447270157');
+    //const requestStart = {
+    //    method: "POST",
+    //    redirect: "follow",
+    //    headers: myHeadersIncrementStart
+    //};
 
-    fetch("https://hitcounter.army.mil/api/Application/ApplicationSessionStart", requestStart)
-        .then((response) => response.text())
-        .then((result) => console.log(result))
-        .catch((error) => console.error(error));
+    //fetch("https://hitcounter.army.mil/api/Application/ApplicationSessionStart", requestStart)
+    //    .then((response) => response.text())
+    //    .then((result) => console.log(result))
+    //    .catch((error) => console.error(error));
 
 
 
@@ -57,7 +57,8 @@ $(function () {
         }
     });
     $(window).on('resize', function () {
-        if ($.fn.DataTable.isDataTable('#tbldata')) {
+        // Check if element exists AND is a DataTable
+        if ($('#tbldata').length && $.fn.DataTable.isDataTable('#tbldata')) {
             $('#tbldata').DataTable().columns.adjust();
         }
     });

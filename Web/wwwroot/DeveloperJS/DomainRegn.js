@@ -1,4 +1,10 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
+var tabledialog; // Declare tabledialog variable outside the function to preserve the instance
+var UnitMapId = 0;
+var ApptId = 0;
+var TDMId = 0;
+var DomainRegId = 0;
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -51,9 +57,8 @@ $(function () {
     $("#txtAppointmentName").autocomplete({
         source: function (request, response) {
             if (request.term.length > 1) {
-                $("#spnUnitAppointmentId").html('');
+                ApptId = 0;
                 var param = { "AppointmentName": request.term };
-                $("#spnUnitAppointmentId").html(0);
                 $.ajax({
                     url: '/Master/GetALLByAppointmentName',
                     contentType: 'application/x-www-form-urlencoded',
@@ -70,7 +75,7 @@ $(function () {
                         }
                         else {
                             $("#txtAppointmentName").val("");
-                            $("#spnUnitAppointmentId").html("");
+                            ApptId = 0;
                             alert("Appointment not found.")
                         }
                     },
@@ -86,7 +91,7 @@ $(function () {
         select: function (e, i) {
             e.preventDefault();
             $("#txtAppointmentName").val(i.item.label);
-            $("#spnUnitAppointmentId").html(i.item.value);
+            ApptId = i.item.value;
             return false;
         }
     });
@@ -102,9 +107,8 @@ $(function () {
             $("#lblBde").html('');
             $("#lblFmn").html('');
             if (request.term.length > 2) {
-                $("#spnUnitMapId").html('');
+                UnitMapId = 0;
                 var param = { "UnitName": request.term };
-                $("#spnUnitMapId").html(0);
                 $.ajax({
                     url: '/Master/GetALLByUnitName',
                     contentType: 'application/x-www-form-urlencoded',
@@ -121,8 +125,8 @@ $(function () {
                         }
                         else {
                             $("#txtUnitName").val("");
-                            $("#spnUnitMapId").html("");
-                            $("#spnTDMUnitType").html("");
+                            UnitMapId = 0;
+                            UnitType = 0;
                             alert("Unit not found.")
                         }
                     },
@@ -146,8 +150,8 @@ $(function () {
                 type: 'POST',
                 headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
                 success: function (data) {
-                    $("#spnTDMUnitType").html(data.UnitType);
-                    $("#spnUnitMapId").html(data.UnitMapId);
+                    UnitType = data.UnitType;
+                    UnitMapId = data.UnitMapId;
                     $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
 
                     if (data.UnitType == 1) {
@@ -199,9 +203,9 @@ $(function () {
 
     $('#txtUnitName').on("keyup", function (e) {
         if (e.which == 46) {
-            $("#spnUnitMapId").html('0');
+            UnitMapId = 0;
             $("#txtUnitName").val("");
-            $("#spnTDMUnitType").html("");
+            UnitType = 0;
 
             $("#lblSusno").html('');
             $("#lblPso").html('');
@@ -247,6 +251,19 @@ $(function () {
             alert("Select Choice");
         }
     });
+    // Add modal shown event handler
+    $('#DataTableDialog').on('shown.bs.modal', function () {
+        if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
+            // Multiple adjustments for reliability
+            setTimeout(function () {
+                tabledialog.columns.adjust().draw();
+                tabledialog.responsive && tabledialog.responsive.recalc();
+
+                // Force redraw
+                $(window).trigger('resize');
+            }, 200);
+        }
+    });
 
     $("#btnUser").on("click", function () {
 
@@ -254,7 +271,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Users');
             $("#DataTableDialog").modal('show');
-            BindDialog("User");
+            setTimeout(function () {
+                BindDialog("User");
+            }, 100);
         }
     });
 
@@ -264,7 +283,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Mapped Users');
             $("#DataTableDialog").modal('show');
-            BindDialog("MappedUser");
+            setTimeout(function () {
+                BindDialog("MappedUser");
+            }, 100);
         }
     });
 
@@ -273,7 +294,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total UnMapped Users');
             $("#DataTableDialog").modal('show');
-            BindDialog("UnMappedUser");
+            setTimeout(function () {
+                BindDialog("UnMappedUser");
+            }, 100);
         }
     });
 
@@ -282,7 +305,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Active Users');
             $("#DataTableDialog").modal('show');
-            BindDialog("ActiveUser");
+            setTimeout(function () {
+                BindDialog("ActiveUser");
+            }, 100);
         }
     });
 
@@ -291,7 +316,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total InActive Users');
             $("#DataTableDialog").modal('show');
-            BindDialog("InActiveUser");
+            setTimeout(function () {
+                BindDialog("InActiveUser");
+            }, 100);
         }
     });
 
@@ -300,7 +327,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Verified Users');
             $("#DataTableDialog").modal('show');
-            BindDialog("Verified");
+            setTimeout(function () {
+                BindDialog("Verified");
+            }, 100);
         }
     });
 
@@ -309,7 +338,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
-            BindDialog("NotVerifiedUser");
+            setTimeout(function () {
+                BindDialog("NotVerifiedUser");
+            }, 100);
         }
     });
 
@@ -318,7 +349,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
-            BindDialog("IO");
+            setTimeout(function () {
+                BindDialog("IO");
+            }, 100);
         }
         else {
             BindData("IO");
@@ -330,7 +363,10 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
-            BindDialog("CO");
+            setTimeout(function () {
+                BindDialog("CO");
+            }, 100);
+
         }
     });
 
@@ -353,14 +389,24 @@ $(function () {
 });
 
 function BindDialog(Choice) {
-    $("#tbldatadialog").DataTable({
+    if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
+        $("#tbldatadialog").DataTable().destroy();
+        $("#tbldatadialog").empty(); // Clear old thead/tbody
+    }
+
+    tabledialog = $("#tbldatadialog").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
+        stateSave: false,
+
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: {
             url: "/Account/GetDataForDataTable",
@@ -380,36 +426,68 @@ function BindDialog(Choice) {
         columns: [
             // Serial number column
             {
+                title: "S No",
                 data: null,
                 name: "SerialNumber",
                 orderable: false, // Disable sorting for this column
+                className: "text-center col-sno",
+                width: "60px",
                 render: function (data, type, row, meta) {
                     // Calculate serial number based on row index
-                    return meta.row + (meta.settings?._iDisplayStart || 0) + 1;
+                    return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "Id", name: "Id" },
-            { data: "DomainId", name: "DomainId" },
-            { data: "ArmyNo", name: "ArmyNo" },
             {
+                title: "Reg Id",
+                data: "Id",
+                name: "Id",
+                className: "nowrap",
+                width: "120px",
+            },
+            {
+                title: "Domain Id",
+                data: "DomainId",
+                name: "DomainId",
+                className: "nowrap",
+                width: "180px",
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "IC No",
+                data: "ArmyNo",
+                name: "ArmyNo"
+            },
+            {
+                title: "Role",
                 data: "RoleNames",
                 name: "RoleNames",
                 orderable: false, // Disable sorting for this column
+                className: "nowrap",
+                width: "150px",
                 render: function (data, type, row) {
                     return data ? data.join(', ') : '';  // Convert array to string
                 }
             },
             {
+                title: "Requested Genr On (DT)",
                 data: "UpdatedOn",
                 name: "UpdatedOn",
+                className: "text-wrap requested-generated-col",
+                width: "220px",
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
                 },
             },
             // Display user-friendly value for Mapped
             {
+                title: "Mapping",
                 data: "Mapped",
                 name: "Mapped",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -417,8 +495,11 @@ function BindDialog(Choice) {
             },
             // Display user-friendly value for AdminFlag
             {
+                title: "Approval",
                 data: "AdminFlag",
                 name: "AdminFlag",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -426,8 +507,11 @@ function BindDialog(Choice) {
             },
             // Display user-friendly value for Active
             {
+                title: "Active",
                 data: "Active",
                 name: "Active",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -435,8 +519,11 @@ function BindDialog(Choice) {
             },
             // Display user-friendly value for IsIO
             {
+                title: "IO",
                 data: "IsIO",
                 name: "IsIO",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -444,8 +531,11 @@ function BindDialog(Choice) {
             },
             // Display user-friendly value for IsCO
             {
+                title: "Approver",
                 data: "IsCO",
                 name: "IsCO",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -453,6 +543,24 @@ function BindDialog(Choice) {
             },
             //{ data: "IsRO", name: "IsRO" },
             //{ data: "IsORO", name: "IsORO" }
+        ],
+        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+        columnDefs: [
+            { targets: 0, width: "60px", },
+            { targets: 1, width: "120px" },
+            { targets: 2, width: "180px" },
+            { targets: 3, width: "150px" },
+            { targets: 4, width: "220px" },
+            { targets: 5, width: "100px" },
+            { targets: 6, width: "100px" },
+            { targets: 7, width: "100px" },
+            { targets: 8, width: "100px" },
+            { targets: 9, width: "100px" },
+            { targets: 10, width: "100px" },
+            {
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+            },
         ],
         language: {
             search: "", // Remove the default "Search:" label
@@ -483,7 +591,37 @@ function BindDialog(Choice) {
                 customize: function (doc) {
                     WaterMarkOnPdf(doc)
                 }
-            }]
+            }],
+        // Add these parameters for better rendering
+        deferRender: true,
+        scrollCollapse: true,
+        scroller: true,
+        initComplete: function () {
+            // Add tooltip to the search input box
+            let searchBox = $('div.dataTables_filter input');
+            searchBox.attr('title', 'Search Domain ID');
+
+            // Adjust columns after initialization
+            setTimeout(() => {
+                this.api().columns.adjust().draw();
+            }, 300);
+
+        },
+        drawCallback: function (settings) {
+
+            const api = this.api();
+            // Adjust columns every time data is drawn
+            setTimeout(() => {
+                api.columns.adjust();
+            }, 100);
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+        }
     });
 }
 function Proceed() {
@@ -562,16 +700,13 @@ function ValidateInput() {
     //    $("#IsORO-error").html("");
     //}
 
-    var AppointmentId = $("#spnUnitAppointmentId").html();
-
-    if ((AppointmentId == 0 || AppointmentId == '') && $("#txtAppointmentName").val().length > 0) {
+    if ((ApptId == 0 ) && $("#txtAppointmentName").val().length > 0) {
         $("#txtAppointmentName").val('');
         $("#txtAppointmentName-error").html("Appointment name is invalid.");
         toastr.error('Appointment name is invalid.');
     }
 
-    var UnitMapId = $("#spnUnitMapId").html();
-    if ((UnitMapId == 0 || UnitMapId == '') && $("#txtUnitName").val().length > 0) {
+    if ((UnitMapId == 0 ) && $("#txtUnitName").val().length > 0) {
         $("#txtUnitName").val('');
         $("#txtAppointmentName-error").html("Unit name is invalid.");
         toastr.error('Unit name is invalid.');
@@ -579,10 +714,10 @@ function ValidateInput() {
 }
 
 function BindData() {
-    $("#tbldata").DataTable().destroy();
-    //if ($.fn.DataTable.isDataTable("#tbldata")) {
-    //    $("#tbldata").DataTable().destroy();
-    //}
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        $("#tbldata").DataTable().destroy();
+        $("#tbldata").empty(); // Clear old thead/tbody
+    }
 
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
@@ -624,29 +759,54 @@ function BindData() {
         columns: [
             // Serial number column
             {
+                title: "S No",
                 data: null,
                 name: "SerialNumber",
                 orderable: false, // Disable sorting for this column
+                className: "text-center col-sno",
+                width: "60px",
                 render: function (data, type, row, meta) {
                     // Calculate serial number based on row index
-                    return meta.row + (meta.settings?._iDisplayStart || 0) + 1;
+                    return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "Id", name: "Id" },
-            { data: "DomainId", name: "DomainId" },
             {
+                title: "Registered ID",
+                data: "Id",
+                name: "Id",
+                className: "nowrap",
+                width: "120px",
+            },
+            {
+                title: "Domain ID",
+                data: "DomainId",
+                name: "DomainId",
+                className: "nowrap",
+                width: "180px",
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "Role",
                 data: "RoleNames",
                 name: "RoleNames",
                 orderable: false, // Disable sorting for this column
+                className: "nowrap",
+                width: "150px",
                 render: function (data, type, row) {
                     return data ? data.join(', ') : '';  // Convert array to string
                 }
             },
             // Display user-friendly value for ClaimTypes
             {
+                title: "Claims",
                 data: "ClaimTypes",
                 name: "ClaimTypes",
                 orderable: false, // Disable sorting for this column
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, rowata) {
                     if (Array.isArray(data) && data.length > 0) {
                         return `<button type='button' class='cls-claimtypes btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i></button>`;
@@ -655,16 +815,22 @@ function BindData() {
                 }
             },
             {
+                title: "Requested Generated On (Dt)",
                 data: "UpdatedOn",
                 name: "UpdatedOn",
+                className: "text-wrap requested-generated-col",
+                width: "220px",
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
                 },
             },
             // Display user-friendly value for Mapped
             {
+                title: "Mapping",
                 data: "Mapped",
                 name: "Mapped",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -672,8 +838,11 @@ function BindData() {
             },
             // Display user-friendly value for AdminFlag
             {
+                title: "Approval",
                 data: "AdminFlag",
                 name: "AdminFlag",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -681,8 +850,11 @@ function BindData() {
             },
             // Display user-friendly value for Active
             {
+                title: "Active",
                 data: "Active",
                 name: "Active",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -690,8 +862,11 @@ function BindData() {
             },
             // Display user-friendly value for IsIO
             {
+                title: "IO",
                 data: "IsIO",
                 name: "IsIO",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -699,8 +874,11 @@ function BindData() {
             },
             // Display user-friendly value for IsCO
             {
+                title: "Approver",
                 data: "IsCO",
                 name: "IsCO",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
@@ -708,12 +886,34 @@ function BindData() {
             },
             // Additional column for Edit action
             {
+                title: "Action",
                 data: null,
                 orderable: false,
+                className: "noExport text-center col-action",
+                width: "100px",
                 render: function (data, type, row) {
                     return "<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>";
                 }
             }
+        ],
+        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+        columnDefs: [
+            { targets: 0,width: "60px",  },
+            { targets: 1, width: "120px" },
+            { targets: 2, width: "180px" },
+            { targets: 3, width: "150px" },
+            { targets: 4, width: "220px" },
+            { targets: 5, width: "100px" },
+            { targets: 6, width: "100px" },
+            { targets: 7, width: "100px" },
+            { targets: 8, width: "100px" },
+            { targets: 9, width: "100px" },
+            { targets: 10, width: "100px" },
+            { targets: 11, width: "100px" },
+            {
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+            },
         ],
         language: {
             search: "", // Remove the default "Search:" label
@@ -746,13 +946,22 @@ function BindData() {
                 }
             }],
         drawCallback: function (settings) {
+
+            this.api().columns.adjust();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
 
                 if (rowData != null) {
-                    $("#spnUnitMapId").html(rowData.UnitMapId);
-                    $("#spnUnitId").html(rowData.UnitId);
+                    UnitMapId = rowData.UnitMapId;
                     $("#lblUnit").html(rowData.UnitName);
                     $("#txtSusno").val(rowData.Sus_no);
 
@@ -763,7 +972,7 @@ function BindData() {
                     ResetErrorMessage();
                     $("#txtDomainId").val(rowData.DomainId);
                     $("#txtRole").val($(this).closest("tr").find("#roleName").html());
-                    $("#spnDomainRegId").html(rowData.Id);
+                    DomainRegId = rowData.Id;
                     if (rowData.AdminFlag == true) {
                         $("#txtapprovalyes").prop("checked", true);
                     }
@@ -795,7 +1004,7 @@ function BindData() {
 
 
                     if (rowData.TrnDomainMappingId > 0) {
-                        $("#spnTrnDomainMappingId").html(rowData.TrnDomainMappingId);
+                        TDMId = rowData.TrnDomainMappingId;
                         GetALLByUnitById(rowData.TrnDomainMappingUnitId);
                     }
 
@@ -835,7 +1044,7 @@ function Save() {
         url: '/Account/SaveDomainRegn',
         type: 'POST',
         data: {
-            "Id": $("#spnDomainRegId").html(),
+            "Id": DomainRegId,
             "DomainId": $("#txtDomainId").val(),
             "RoleIds": $('#ddlRoles').val(),
             "ClaimValues": $('#ddClaims').val(),
@@ -845,9 +1054,9 @@ function Save() {
             "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
             //"IsRO": $('input:radio[name=IsRO]:checked').val(),
             //"IsORO": $('input:radio[name=IsORO]:checked').val(),
-            "TDMId": $("#spnTrnDomainMappingId").html(),
-            "ApptId": $("#spnUnitAppointmentId").html(),
-            "UnitMappId": $("#spnUnitMapId").html(),
+            "TDMId": TDMId,
+            "ApptId": ApptId,
+            "UnitMappId": UnitMapId,
         }, //get the search string
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
@@ -900,17 +1109,15 @@ function Save() {
 function Reset() {
     $("#btnDomainAddDialog").val("Save");
     $("#txtSearch").val("");
-
-    $("#spnDomainRegId").html("0");
+    DomainRegId = 0;
     $("#txtDomainId").val("");
     //$("#ddlRoles").select2('data', null);
 
     $('#ddlRoles').val(null).trigger('change');
     $('#ddClaims').val(null).trigger('change');
 
-
-    $("#spnTrnDomainMappingId").html("0");
-    $("#spnUnitMapId").html("0");
+    TDMId = 0;
+    UnitMapId = 0;
     $("#txtUnitName").val("");
     $("#lblSusno").html("");
     $("#lblPso").html("");
@@ -922,7 +1129,7 @@ function Reset() {
     $("#lblFmn").html("");
 
 
-    $("#spnUnitAppointmentId").html("0");
+    ApptId = 0;
     $("#txtAppointmentName").val("");
 
     $("#txtapprovalyes").prop("checked", false);
@@ -964,7 +1171,7 @@ function GetALLByUnitById(param1) {
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
-            $("#spnUnitMapId").html(data.UnitMapId);
+            UnitMapId = data.UnitMapId;
             $("#lblSusno").html(data.Sus_no + '' + data.Suffix);
             /*$("#txtUnitName").val(data.UnitName);*/
             $("#txtUnitName").val(data.UnitName + ' ' + data.Sus_no + data.Suffix);
@@ -1018,7 +1225,7 @@ function GetNameByApptId(param1) {
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
-            $("#spnUnitAppointmentId").html(data.ApptId);
+            ApptId = data.ApptId;
             $("#txtAppointmentName").val(data.AppointmentName);
         }
     });
@@ -1039,8 +1246,8 @@ function BindRoles() {
 }
 function BindClaims() {
     $.ajax({
-        url: "/Account/GetAllClaims",
-        type: "GET",
+        url: "/Account/GetAllClaimsForDD",
+        method: "POST",
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             var list = "";

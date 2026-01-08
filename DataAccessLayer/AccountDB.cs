@@ -1,4 +1,6 @@
-﻿using DataAccessLayer.BaseInterfaces;
+﻿using Dapper;
+using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Logger;
 using DataTransferObject.Domain;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 
 namespace DataAccessLayer
@@ -16,6 +19,7 @@ namespace DataAccessLayer
     public class AccountDB : GenericRepositoryDL<ApplicationUser>, IAccountDB
     {
         protected new readonly ApplicationDbContext _context;
+        private readonly DapperContext _contextDP;// For Dapper operations
         private readonly ILogger<AccountDB> _logger;
         private readonly IDataProtector protector;
         private readonly UserManager<ApplicationUser> userManager;
@@ -23,9 +27,10 @@ namespace DataAccessLayer
         private readonly IDomainMapDB domainMapDB;
         private readonly ITrnMappingUnMappingLogDB _trnMappingUnMappingLogDB;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
-        public AccountDB(ApplicationDbContext context, IPasswordHasher<ApplicationUser> passwordHasher, ILogger<AccountDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, ITrnMappingUnMappingLogDB trnMappingUnMappingLogDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        public AccountDB(ApplicationDbContext context, IPasswordHasher<ApplicationUser> passwordHasher, ILogger<AccountDB> logger, UserManager<ApplicationUser> userManager, IUserProfileDB userProfileDB, IDomainMapDB domainMapDB, ITrnMappingUnMappingLogDB trnMappingUnMappingLogDB, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings, DapperContext contextDP) : base(context)
         {
             _context = context;
+            _contextDP = contextDP;
             _logger = logger;
             _passwordHasher = passwordHasher;
             this.userManager = userManager;
@@ -1549,7 +1554,6 @@ namespace DataAccessLayer
             }
             return lst;
         }
-
 
         /// <summary>
         /// Saves the profile and domain mapping for a user based on the provided <paramref name="model"/> and session details.

@@ -25,3 +25,6 @@
 .requested-generated-col {
     width: 6rem;
 }
+#tbldatadialog td {
+    cursor: pointer;
+}

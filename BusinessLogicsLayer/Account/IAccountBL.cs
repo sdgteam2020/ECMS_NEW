@@ -1,6 +1,5 @@
 ﻿using DataAccessLayer;
 using DataTransferObject.Domain.Identitytable;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 

@@ -103,12 +103,12 @@ $(function () {
         
     });
 
-    $('#txtUnitName').keyup(function (e) {
-        if (e.keyCode == 46) {
-            $("#txtUnitName").val("");
+    $('#txtUnitName').on('keyup', function (e) {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+            $(this).val('');
             UnitMapId = 0;
-            $("#ddlTDMId").find("option").not(":first").remove();
-            $("#ddlTDMId").val("0");
+            $('#ddlTDMId').find('option:not(:first)').remove();
+            $('#ddlTDMId').val('0');
         }
     });
 });
@@ -593,7 +593,7 @@ function getColumnsForRecordOffice() {
                     return Action;
                 }
                 else {
-                    return `<span class='badge rounded-pill bg-success'>View Only</span>`;
+                    return `<span class='badge rounded-pill bg-success'></span>`;
                 }
 
             }
