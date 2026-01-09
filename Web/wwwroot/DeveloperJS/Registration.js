@@ -204,6 +204,11 @@
     var someNumbers = [4];
     GetRemarks("ddlRemarks", 0, someNumbers);
 
+    $('#ddlRemarks').select2({
+        placeholder: "Please select",
+        width: '100%',
+        closeOnSelect: false
+    });
 
     $('#ddlRemarks').on('change', function () {
         $("#RemarksIds").val($('#ddlRemarks').val());
