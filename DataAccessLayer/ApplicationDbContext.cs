@@ -63,7 +63,6 @@ namespace DataAccessLayer
         /// </summary>
         public DbSet<BasicDetailTemp> BasicDetailTemps { get; set; } = null!;// For temporary basic details
         public DbSet<MUserProfile> UserProfile { get; set; } = null!;// For user profile details
-        public DbSet<MMappingProfile> MMappingProfile { get; set; } = null!;// For mapping profile details
         public DbSet<MRegimental> MRegimental { get; set; } = null!;// For regimental details
         public DbSet<MRecordOffice> MRecordOffice { get; set; } = null!;    // For record office details
         public DbSet<MApiData> MApiData { get; set; }// For API data details

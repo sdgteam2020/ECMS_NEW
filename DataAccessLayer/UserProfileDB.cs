@@ -523,44 +523,6 @@ namespace DataAccessLayer
         }
 
         /// <summary>
-        /// Retrieves all user profiles related to a given DomainId and UserId.
-        /// </summary>
-        /// <param name="DomainId">The Domain ID associated with the user profile.</param>
-        /// <param name="UserId">The User ID of the person requesting the data.</param>
-        /// <returns>
-        /// A task that represents the asynchronous operation. The task result contains 
-        /// a list of DTO user profile responses, or an empty list if an error occurs.
-        /// </returns>
-        public async Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId)
-        {
-            // return _context.UserProfile.Where(P => P.ArmyNo == ArmyNo).SingleOrDefault();
-            string query = "select map.id MapId,users.ArmyNo,users.UserId,appo.ApptId,appo.AppointmentName, ran.RankAbbreviation Rank,"+
-                            " users.Name,dmap.UnitId,Uni.UnitName,Uni.Sus_no + Uni.Suffix SusNo,dmap.IsRO,dmap.IsIO,dmap.IsCO" +
-                            " from UserProfile users "+
-                            " inner join TrnDomainMapping dmap on dmap.UserId = users.UserId "+
-                            " inner join MUnit Uni on Uni.UnitId = dmap.UnitId "+
-                            " inner join MAppointment appo on appo.ApptId = dmap.ApptId "+
-                            " inner join MRank ran on ran.RankId = users.RankId "+
-                            " left join MMappingProfile map on map.UserId = users.UserId "+
-                            " where dmap.AspNetUsersId = @DomainId";
-
-            try 
-            {
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    var BasicDetailList = await connection.QueryAsync<DTOUserProfileResponse>(query, new { DomainId });
-                    return BasicDetailList.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "UserProfileDB->GetDataForFwd");
-                return new List<DTOUserProfileResponse>();
-            }
-        }
-
-
-        /// <summary>
         /// Retrieves basic details for a given RequestId.
         /// </summary>
         /// <param name="RequestId">The Request ID to fetch related basic details.</param>

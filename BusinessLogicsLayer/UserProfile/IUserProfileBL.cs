@@ -1,15 +1,8 @@
 ﻿using DataAccessLayer;
 using DataTransferObject.Domain;
-using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicsLayer.Master
 {
@@ -25,7 +18,6 @@ namespace BusinessLogicsLayer.Master
         public Task<MUserProfile> GetByIsWithoutTokenApply(int UserId);
         public Task<List<MUserProfile>> GetByMArmyNo(string ArmyNo, int UserId);
         public Task<DTOProfileResponse?> GetUserProfileByArmyNo(string ArmyNo);
-        public Task<List<DTOUserProfileResponse>> GetAll(int DomainId, int UserId);
         public Task<List<DTOFwdICardResponse>> GetDataForFwd(int StepId,int UnitId,string Name,int TypeId, int IsRO, int IsORO, int DomainMapId);
         public Task<List<DTOFwdICardResponse>> GetOffrsByUnitMapId(int UnitId, int IsRO,int IsORO, int IsAfsacCell, int BasicDetailsId,int DomainMapId);
         public Task<List<BasicDetailVM>> GetByRequestId(int RequestId);

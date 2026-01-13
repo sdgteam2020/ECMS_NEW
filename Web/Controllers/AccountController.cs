@@ -3,7 +3,7 @@ using BusinessLogicsLayer;
 using BusinessLogicsLayer.Account;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Helpers;
-using BusinessLogicsLayer.IAMSetting;
+using BusinessLogicsLayer.IAMSetting;   
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.TrnLoginLog;

@@ -7,6 +7,14 @@ $(function () {
     BindData(cvalue, function () {
     });
 
+
+    $(window).on('resize', function () {
+        // Check if element exists AND is a DataTable
+        if ($('#tbldatadialogLot').length && $.fn.DataTable.isDataTable('#tbldatadialogLot')) {
+            $('#tbldatadialogLot').DataTable().columns.adjust();
+        }
+    });
+
     $("#searchText").autocomplete({
         source: function (request, response) {
             if (cvalue === 2 || cvalue === 3) {
@@ -459,12 +467,14 @@ function BindDialog(rowData, cvalue, callback) {
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
         fixedHeader: false,       // ❌ disable when using scrollY
-        autoWidth: false, // Let us handle width via CSS
-        responsive: true, // Responsive breaks layout for width control
+
         processing: true,
         serverSide: true,
         filter: true,
         stateSave: false,
+
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
 
@@ -695,6 +705,8 @@ function getColumnsForDispatchCard(choice) {
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -704,6 +716,8 @@ function getColumnsForDispatchCard(choice) {
                     title: "In / Out",
                     data: "Step",
                     name: "Step",
+                    className: "nowrap",
+                    width: "60px",
                     render: function (data, type, row) {
                         return data == 1 ? "In" : "Out";
                     }
@@ -712,20 +726,28 @@ function getColumnsForDispatchCard(choice) {
                     title: "Lot No",
                     data: "DispatchCardId",
                     name: "DispatchCardId",
+                    className: "nowrap",
+                    width: "80px",
                 },
                 {
                     title: "Unit",
                     data: null,
                     name: "ToUnit",
+                    className: "nowrap",
+                    width: "150px",
                     orderable: false,
                     render: function (data, type, row) {
-                        return row.Step == 1 ? row.FromUnit : row.ToUnit;
+                        let Unit = row.Step == 1 ? row.FromUnit : row.ToUnit;
+                        if (!Unit) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${Unit}">${Unit}</span>`;
                     }
                 },
                 {
                     title: "To SUS No",
                     data: "ToSUSNo",
                     name: "ToSUSNo",
+                    className: "nowrap",
+                    width: "100px",
                     render: function (data, type, row) {
                         return row.Step == 2 ? data : "";
                     }
@@ -734,6 +756,8 @@ function getColumnsForDispatchCard(choice) {
                     title: "From SUS No",
                     data: "FromSUSNo",
                     name: "FromSUSNo",
+                    className: "nowrap",
+                    width: "100px",
                     render: function (data, type, row) {
                         return row.Step == 1 ? data : "";
                     }
@@ -742,6 +766,8 @@ function getColumnsForDispatchCard(choice) {
                     title: "Dispatch On",
                     data: "DispatchDate",
                     name: "Dispatch On",
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -750,6 +776,8 @@ function getColumnsForDispatchCard(choice) {
                     title: "Received On",
                     data: "ReceiptDate",
                     name: "Dispatch In",
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
                         return data != null ? DateFormateddMMyyyyhhmmss(data) : "";
                     }
@@ -760,6 +788,8 @@ function getColumnsForDispatchCard(choice) {
                     data: "IsComplete",
                     name: "Action",
                     orderable: false,
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
                         let Action = `<div class='d-flex'><button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
                         if (data == false && row.Step == 1) {

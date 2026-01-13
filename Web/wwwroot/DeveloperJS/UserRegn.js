@@ -495,10 +495,14 @@ function BindData() {
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
-        stateSave: true,
+        stateSave: false,
+
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {

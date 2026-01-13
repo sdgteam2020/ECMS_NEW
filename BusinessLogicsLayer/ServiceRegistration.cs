@@ -88,8 +88,6 @@ namespace BusinessLogicsLayer
             services.AddTransient<IRankBL, RankBL>();
             services.AddTransient<IRankDB, RankDB>();
 
-            services.AddTransient<IUserProfileMappingBL, UserProfileMappingBL>();
-
             services.AddTransient<IRegistrationBL, RegistrationBL>();
             services.AddTransient<IRegistrationDB, RegistrationDB>();
 

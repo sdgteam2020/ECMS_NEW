@@ -3333,8 +3333,8 @@ namespace DataAccessLayer
 							inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId where faulty.RequestId=@RequestId
 
 
-                            select trnclose.Authority,trnclose.Remarks,res.Reasons from TrnApplClose trnclose
-                            inner join MReasons res on trnclose.ReasonId=res.ReasonId where trnclose.RequestId=@RequestId";
+                            select trnclose.Authority,trnclose.Remarks,res.Reason from TrnApplClose trnclose
+                            inner join MPostingReason res on trnclose.ReasonId=res.Id where trnclose.RequestId=@RequestId";
             try
             {
                 ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();

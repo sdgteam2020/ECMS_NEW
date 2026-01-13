@@ -24,7 +24,6 @@ namespace Web.Controllers
     public class UserProfileController : Controller
     {
         private readonly IUserProfileBL _userProfileBL;// Business logic layer for user profile operations
-        private readonly IUserProfileMappingBL _userProfileMappingBL;// Business logic layer for user profile mapping operations
         private readonly IDomainMapBL _iDomainMapBL;// Business logic layer for domain mapping operations
         private readonly ITrnMappingUnMappingLogBL _iTrnMappingUnMappingLogBL;// Business logic layer for transaction mapping and unmapping log operations
         private readonly ILogger<UserProfileController> _logger;// Logger for logging information and errors
@@ -39,10 +38,9 @@ namespace Web.Controllers
         /// <param name="domainMapBL"></param>
         /// <param name="trnMappingUnMappingLogBL"></param>
         /// <param name="configuration"></param>
-        public UserProfileController(IUserProfileBL userProfileBL, ILogger<UserProfileController> logger, IUserProfileMappingBL userProfileMappingBL, IDomainMapBL domainMapBL,ITrnMappingUnMappingLogBL trnMappingUnMappingLogBL, IConfiguration configuration)
+        public UserProfileController(IUserProfileBL userProfileBL, ILogger<UserProfileController> logger, IDomainMapBL domainMapBL,ITrnMappingUnMappingLogBL trnMappingUnMappingLogBL, IConfiguration configuration)
         {
             _userProfileBL=userProfileBL;
-            _userProfileMappingBL = userProfileMappingBL;
             _iDomainMapBL = domainMapBL;
             _iTrnMappingUnMappingLogBL = trnMappingUnMappingLogBL;
             _logger = logger;
@@ -283,70 +281,6 @@ namespace Web.Controllers
                 response.Message="Internal Server Error";
                 response.Result = false;
                 return Json(response);
-            }
-        }
-
-        /// <summary>
-        /// This method maps a profile to the specified unit and updates or saves the mapping.
-        /// It handles both new mappings and updates for existing profiles.
-        /// </summary>
-        /// <param name="dTO">The profile data to be mapped to the unit.</param>
-        /// <returns>Returns a JSON response indicating the result of the operation.</returns>
-        [HttpPost]
-        public async Task<IActionResult> MappingIOGSOUNIT(MMappingProfile dTO)
-        {
-            try
-            {
-                dTO.IsActive = true; // Set the mapping as active
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); // Set the user who is updating the mapping
-                dTO.UpdatedOn = DateTime.Now; // Set the updated time
-
-                if (ModelState.IsValid)
-                {
-                    if (dTO.Id > 0) // If the mapping already exists, update it
-                    {
-                        await _userProfileMappingBL.Update(dTO);
-                        return Json(KeyConstants.Update); // Return success message "Update"
-                    }
-                    else
-                    {
-                        // If the mapping does not exist, save a new one
-                        await _userProfileMappingBL.Add(dTO);
-                        return Json(KeyConstants.Save); // Return success message "Save"
-                    }
-                }
-                else
-                {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); // Return validation errors
-                }
-            }
-            catch (Exception ex)
-            {
-                return Json(KeyConstants.InternalServerError); // Return error message if an exception occurs
-            }
-        }
-
-        /// <summary>
-        /// This method retrieves all user profiles associated with the current domain.
-        /// It fetches the profiles based on the DomainId and returns the result as JSON.
-        /// </summary>
-        /// <param name="Id">The identifier for the domain (unused in the method body but expected as part of the signature).</param>
-        /// <returns>Returns a JSON response containing a list of user profiles.</returns>
-        [HttpPost]
-        public async Task<IActionResult> GetAll(string Id)
-        {
-            try
-            {
-                // Retrieve the current user's DomainId from the claims
-                int DomainId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-                // Fetch the user profiles based on DomainId
-                return Json(await _userProfileBL.GetAll(DomainId, 0));
-            }
-            catch (Exception ex)
-            {
-                // In case of an exception, return an internal server error response
-                return Json(KeyConstants.InternalServerError);
             }
         }
 

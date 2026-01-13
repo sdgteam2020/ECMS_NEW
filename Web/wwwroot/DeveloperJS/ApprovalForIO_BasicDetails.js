@@ -14,6 +14,12 @@ $(function () {
         globalThis.searchChanged = false;
         globalThis.globalAllChecked = false;
     });
+    $(window).on('resize', function () {
+        // Check if element exists AND is a DataTable
+        if ($('#tbldatatabledata_Fwd').length && $.fn.DataTable.isDataTable('#tbldatatabledata_Fwd')) {
+            $('#tbldatatabledata_Fwd').DataTable().columns.adjust();
+        }
+    });
 });
 function BindData(Type, StepCounter, JCOOR, cvalue) {
     globalThis.selectedIds = [];
@@ -32,10 +38,14 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
         stateSave: false,
+
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
         order: [[2, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
 
@@ -125,6 +135,12 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
             }
         },
         columns: columns,
+        columnDefs: [
+            {
+                targets: '_all',
+                orderSequence: ["asc", "desc"]  // Only global settings
+            }
+        ],
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No / Appl ID" // Add custom placeholder
@@ -229,6 +245,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     <label class="custom-control-label" for="chkAll_ApprovalForIO"></label>
                     </div></div>`,
                     className: "noExport",
+                    width: "40px",
                     data: null,
                     name: "Id",
                     orderable: false, // Disable sorting for this column
@@ -249,10 +266,12 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 // Serial number column
                 {
-                    title: "Sno",
+                    title: "S No",
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -262,11 +281,15 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     title: "Appl Id",
                     data: "ApplId",
                     name: "ApplId",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "ServiceNo",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -283,41 +306,59 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     title: "Rank & Name",
                     data: null,
                     name: "Name",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
                 {
                     title: "Unit",
                     data: "UnitName",
                     name: "UnitName",
+                    className: "nowrap",
+                    width: "150px",
                     orderable: false,
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Regtl Centre",
                     data: "RegimentalName",
                     name: "RegimentalName",
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
-                        return data != null ? data : "";
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
                     }
                 },
                 {
                     title: "Type",
                     data: "ApplyFor",
-                    name: "ApplyFor"
+                    name: "ApplyFor",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Reason for Requisition",
                     data: "ICardType",
                     name: "ICardType",
+                    className: "nowrap",
+                    width: "180px",
                 },
                 {
                     title: `<div>History</div>`,
-                    className: "noExport",
                     data: null,
                     name: "History",
+                    className: "noExport",
+                    width: "100px",
+                    orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
                     }
@@ -325,9 +366,10 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 // Additional column for Edit action
                 {
                     title: `<div>Print | Fwd</div>`,
-                    className: "noExport",
                     data: null,
                     name: "Action",
+                    className: "noExport",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         // Always include the Print Preview button
@@ -355,6 +397,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     <label class="custom-control-label" for="chkAll_ApprovalForIO"></label>
                     </div></div>`,
                     className: "noExport",
+                    width: "40px",
                     data: null,
                     name: "Id",
                     orderable: false, // Disable sorting for this column
@@ -375,10 +418,12 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 // Serial number column
                 {
-                    title: "Sno",
+                    title: "S No",
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -388,6 +433,8 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     title: "Appl Id",
                     data: "ApplId",
                     name: "ApplId",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "ServiceNo",
@@ -412,30 +459,47 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
                 {
                     title: "Unit",
                     data: "UnitName",
                     name: "UnitName",
+                    className: "nowrap",
+                    width: "150px",
                     orderable: false,
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Type",
                     data: "ApplyFor",
-                    name: "ApplyFor"
+                    name: "ApplyFor",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Reason for Requisition",
                     data: "ICardType",
                     name: "ICardType",
+                    className: "nowrap",
+                    width: "180px",
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: `<div>History</div>`,
                     className: "noExport",
+                    width: "100px",
                     data: null,
                     name: "History",
+                    orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
                     }
@@ -444,6 +508,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 {
                     title: `<div>Print | Fwd</div>`,
                     className: "noExport",
+                    width: "210px",
                     data: null,
                     name: "Action",
                     orderable: false,

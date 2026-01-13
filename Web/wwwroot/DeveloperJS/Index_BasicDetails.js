@@ -7,6 +7,13 @@ $(function () {
     let VBId = $("#spnVBId").html();
     BindData(Type, StepCounter, JCOOR, VBId, function () {
     });
+
+    $(window).on('resize', function () {
+        // Check if element exists AND is a DataTable
+        if ($('#tbldatatabledata_Fwd').length && $.fn.DataTable.isDataTable('#tbldatatabledata_Fwd')) {
+            $('#tbldatatabledata_Fwd').DataTable().columns.adjust();
+        }
+    });
 });
 function BindData(Type, StepCounter, JCOOR, VBId) {
     if ($.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
@@ -21,12 +28,14 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
-        stateSave: true,
-        responsive: true,
-        autoWidth: false,
+        stateSave: false,
+
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -65,10 +74,12 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
         columns: [
             // Serial number column
             {
-                title: "Sno",
+                title: "S No",
                 data: null,
                 name: "SerialNumber",
                 orderable: false, // Disable sorting for this column
+                className: "text-center col-sno",
+                width: "60px",
                 render: function (data, type, row, meta) {
                     // Calculate serial number based on row index
                     return meta.row + meta.settings._iDisplayStart + 1;
@@ -78,11 +89,15 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 title: "Appl ID",
                 data: "ApplId",
                 name: "ApplId",
+                className: "nowrap",
+                width: "100px",
             },
             {
                 title: "ServiceNo",
                 data: "ServiceNo",
                 name: "ServiceNo",
+                className: "nowrap",
+                width: "120px",
                 render: function (data, type, row) {
                     let displayText = data;
 
@@ -98,33 +113,51 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 title: "Rank & Name",
                 data: null,
                 name: "Name",
+                className: "nowrap",
+                width: "180px",
                 orderable: false,
                 render: function (data, type, row) {
                     let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                    return (fullName);
+                    if (!fullName) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                 }
             },
             {
                 title: "Unit",
                 data: "UnitName",
                 name: "UnitName",
+                className: "nowrap",
+                width: "150px",
                 orderable: false,
+                render: function (data, type, row) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
             },
             {
                 title: "Type",
                 data: "ApplyFor",
-                name: "ApplyFor"
+                name: "ApplyFor",
+                className: "nowrap",
+                width: "100px",
             },
             {
                 title: "Reason for Requisition",
                 data: "ICardType",
                 name: "ICardType",
+                className: "nowrap",
+                width: "180px",
+                render: function (data, type, row) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
             },
             {
                 title: "Posting",
-                className: "noExport",
                 data: "IsPosting",
                 name: "IsPosting",
+                className: "noExport nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     if (data > 0) {
                         return ` <span class="badge badge-pill badge-danger">Yes</span> `;
@@ -137,8 +170,9 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
             {
                 title: "Application History",
                 data: null,
-                className: "noExport",
                 name: "Application History",
+                className: "noExport",
+                width: "100px",
                 orderable: false,
                 render: function (data, type, row) {
                     return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -146,10 +180,11 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
             },
             {
                 title: "Card History",
-                className: "noExport",
                 data: null,
                 name: "Card History",
                 orderable: false,
+                className: "noExport",
+                width: "100px",
                 render: function (data, type, row) {
                     return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
                 }
@@ -157,10 +192,11 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
             // Additional column for Edit action
             {
                 title: "Print | Edit | Fwd",
-                className: "noExport",
                 data: null,
                 name: "Action",
                 orderable: false,
+                className: "noExport nowrap",
+                width: "210px",
                 render: function (data, type, row) {
                     // Always include the Print Preview button
                     let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-ICardPrintPreviewByRequestId"><i class="fa fa-print mt-2"></i></button>`;
@@ -189,6 +225,23 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     return html; // Return the full HTML string
                 }
             }
+        ],
+        columnDefs: [
+            { targets: 0, width: "60px", },
+            { targets: 1, width: "100px" },
+            { targets: 2, width: "120px" },
+            { targets: 3, width: "180px" },
+            { targets: 4, width: "150px" },
+            { targets: 5, width: "100px" },
+            { targets: 6, width: "180px" },
+            { targets: 7, width: "100px" },
+            { targets: 8, width: "100px" },
+            { targets: 9, width: "100px" },
+            { targets: 10, width: "210px" },
+            {
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+            },
         ],
         language: {
             search: "", // Remove the default "Search:" label
@@ -221,6 +274,15 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 }
             }],
         drawCallback: function (settings) {
+            this.api().columns.adjust();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+
             $("#tbldatatabledata_Fwd tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
                 var rowData = table_Fwd.row($(this).closest("tr")).data();
                 if (rowData != null) {
