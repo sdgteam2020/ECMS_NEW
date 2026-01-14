@@ -230,16 +230,28 @@ function validateCsvFileOnChange() {
 }
 
 function BindData() {
-    $("#tblData").DataTable().destroy();
+    if ($.fn.DataTable.isDataTable("#tblData")) {
+        // Destroy the DataTable and clear the table content
+        $("#tblData").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tblData thead").empty(); // Clear old thead
+        $("#tblData tbody").empty(); // Clear old tbody
+    }
+
     table = $("#tblData").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
+        stateSave: false,
+
+        autoWidth: false, // Let us handle width via CSS
+        responsive: false, // ✅ IMPORTANT (disable)
         order: [[7, 'desc']],// Default sorting on the first column
+        deferRender: true,// ✅ Handle zoom changes
         searching: false,
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -275,37 +287,80 @@ function BindData() {
         columns: [
             // Serial number column
             {
+                title: "S No",
                 data: null,
                 name: "SerialNumber",
                 orderable: false, // Disable sorting for this column
+                className: "text-center col-sno",
+                width: "60px",
                 render: function (data, type, row, meta) {
                     // Calculate serial number based on row index
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "FileName", name: "FileName"},
-            { data: "TotalRecords", name: "TotalRecords" },
-            { data: "ValidRecords", name: "ValidRecords" },
-            { data: "DbInvalidRecords", name: "DbInvalidRecords" },
-            { data: "SheetInvalidRecords", name: "SheetInvalidRecords" },
             {
+                title: "File Name",
+                data: "FileName",
+                name: "FileName",
+                className: "nowrap",
+                width: "100px",
+            },
+            {
+                title: "Total Records",
+                data: "TotalRecords",
+                name: "TotalRecords",
+                className: "nowrap",
+                width: "100px",
+            },
+            {
+                title: "Valid Records",
+                data: "ValidRecords",
+                name: "ValidRecords",
+                className: "nowrap",
+                width: "100px",
+            },
+            {
+                title: "DB Invalid",
+                data: "DbInvalidRecords",
+                name: "DbInvalidRecords",
+                className: "nowrap",
+                width: "100px",
+
+            },
+            {
+                title: "Sheet Invalid",
+                data: "SheetInvalidRecords",
+                name: "SheetInvalidRecords",
+                className: "nowrap",
+                width: "100px",
+            },
+            {
+                title: "Inject Status",
                 data: "DBUpdated",
                 name: "DBUpdated",
+                className: "nowrap",
+                width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
                 }
             },
             {
+                title: "Uploaded On",
                 data: "ImportedOn",
                 name: "ImportedOn",
+                className: "nowrap",
+                width: "150px",
                 render: function (data, type, row) {
                     return data ? DateFormateddMMyyyyhhmmss(data) : "NA";
                 },
             },
             {
+                title: "Uploaded CSV",
                 data: null,
                 orderable: false,
+                className: "noExport nowrap",
+                width: "100px",
                 render: function (data, type, row, meta) {
                     return `
                     <button class="cls-uploadedCsv btn btn-sm btn-success download-btn" title="Download">
@@ -314,8 +369,11 @@ function BindData() {
                 }
             },
             {
+                title: "Validated CSV",
                 data: null,
                 orderable: false,
+                className: "noExport nowrap",
+                width: "100px",
                 render: function (data, type, row, meta) {
                     return `
                     <button class="cls-validatedCsv btn btn-sm btn-success download-btn" title="Download">
@@ -323,6 +381,22 @@ function BindData() {
                     </button>`;
                 }
             }
+        ],
+        columnDefs: [
+            { targets: 0, width: "60px", },
+            { targets: 1, width: "100px" },
+            { targets: 2, width: "100px" },
+            { targets: 3, width: "100px" },
+            { targets: 4, width: "100px" },
+            { targets: 5, width: "100px" },
+            { targets: 6, width: "100px" },
+            { targets: 7, width: "150px" },
+            { targets: 8, width: "100px" },
+            { targets: 9, width: "100px" },
+            {
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+            },
         ],
         language: {
             search: "", // Remove the default "Search:" label
@@ -354,7 +428,15 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
+        initComplete: function () {
+            // ✅ Handle window resize for zoom
+            $(window).on('resize', function () {
+                table.columns.adjust();
+            });
+        },
         drawCallback: function (settings) {
+            this.api().columns.adjust();
+
             $("#tblData tbody").off("click", ".cls-uploadedCsv").on("click", ".cls-uploadedCsv", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 DownloadCSV("CSVWithoutRemarks", rowData.FileName);

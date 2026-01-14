@@ -86,7 +86,7 @@ builder.Services.AddCors(options =>
         });
 
         // Only allow specific methods
-        policy.WithMethods("GET", "POST", "PUT", "DELETE");
+        policy.WithMethods("GET", "POST", "HEAD");
 
         // Only allow specific headers
         policy.WithHeaders("Authorization", "Content-Type", "X-Requested-With");
@@ -94,8 +94,8 @@ builder.Services.AddCors(options =>
         // Allow credentials (cookies, auth headers)
         policy.AllowCredentials();
 
-        // Cache preflight for 1 hour
-        policy.SetPreflightMaxAge(TimeSpan.FromHours(1));
+        // Cache preflight for 20 minutes
+        policy.SetPreflightMaxAge(TimeSpan.FromMinutes(20));
     });
 });
 
@@ -268,11 +268,19 @@ app.Use(async (ctx, next) =>
         app.Logger.LogWarning($"Security: Blocked {ctx.Request.Method} request to {ctx.Request.Path}");
 
         ctx.Response.StatusCode = StatusCodes.Status405MethodNotAllowed;
-        ctx.Response.Headers["Allow"] = "GET, HEAD, POST, PUT, DELETE, PATCH"; // Only allowed methods
+        ctx.Response.Headers["Allow"] = "GET, HEAD, POST"; // Only allowed methods
         await ctx.Response.WriteAsync("Method Not Allowed");
         return; // Stop further processing
     }
-
+    ctx.Response.OnStarting(() =>
+    {
+        // Remove Server header
+        ctx.Response.Headers.Remove("Server");
+        ctx.Response.Headers.Remove("Expires");
+        ctx.Response.Headers.Remove("X-Powered-By");
+        ctx.Response.Headers.Remove("x-aspnet-version");
+        return Task.CompletedTask;
+    });
 
 
     // 1) Content Security Policy
