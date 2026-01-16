@@ -1331,7 +1331,7 @@ div.dt-top {
 }
 /* Prevent global stretching */
 table.dataTable {
-    table-layout: fixed !important;
+    table-layout: auto;
     width: 100% !important;
 }
 
@@ -1365,6 +1365,10 @@ table.dataTable {
     text-overflow: ellipsis;
     vertical-align: middle;
 }
+.dataTables_scrollHeadInner,
+.dataTables_scrollBody > table {
+    width: 100% !important;
+}
 /* Firefox zoom fix */
 @-moz-document url-prefix() {
     table.dataTable {
@@ -1375,4 +1379,8 @@ table.dataTable {
         table.dataTable td {
             box-sizing: border-box;
         }
+}
+.dataTables_scrollBody {
+    overflow-x: scroll !important; /* Force horizontal scrollbar */
+    overflow-y: scroll !important; /* Force vertical scrollbar */
 }

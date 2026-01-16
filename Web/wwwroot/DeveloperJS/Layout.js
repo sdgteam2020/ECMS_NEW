@@ -56,12 +56,12 @@ $(function () {
             this.src = fallback;
         }
     });
-    $(window).on('resize', function () {
-        // Check if element exists AND is a DataTable
-        if ($('#tbldata').length && $.fn.DataTable.isDataTable('#tbldata')) {
-            $('#tbldata').DataTable().columns.adjust();
-        }
-    });
+    //$(window).on('resize', function () {
+    //    // Check if element exists AND is a DataTable
+    //    if ($('#tbldata').length && $.fn.DataTable.isDataTable('#tbldata')) {
+    //        $('#tbldata').DataTable().columns.adjust();
+    //    }
+    //});
 
     $('[data-toggle="tooltip"]').tooltip();
 

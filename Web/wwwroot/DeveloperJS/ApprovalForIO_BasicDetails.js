@@ -37,6 +37,8 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
+        scroller: true,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
@@ -44,8 +46,8 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
         filter: true,
         stateSave: false,
 
-        autoWidth: false, // Let us handle width via CSS
-        responsive: false, // ✅ IMPORTANT (disable)
+        autoWidth: true, //Set autoWidth to true (let DataTables decide)
+        responsive: false, // Columns can hide on small screens
         order: [[2, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
 
