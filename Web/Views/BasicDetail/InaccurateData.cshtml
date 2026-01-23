@@ -32,15 +32,13 @@
         <div class="card-body card-body-min-height">
                 <div class="row">
                     <div class="col-xl-12">
-                    <table id="tbldatatabledata" class="table border border-purple table-striped no-footer table-hover full-width">
+                    <table id="tbldatatabledata" class="table table-striped table-hover border border-purple">
                         <thead>
                             <tr>
                                 <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
                                 <th>Army No</th>
                                 <th>Name</th>
                                 <th>Created On</th>
-                                @*  <th class="wrap">Dt of Commissioning/Enrolment</th> *@
-                                @* <th>@Html.DisplayNameFor(model => model[0].PermanentAddress)</th> *@
                                 <th>Observation</th>
                                 <th class="noExport">Action</th>
                             </tr>
@@ -57,20 +55,6 @@
                                     <td>@item.ServiceNo</td>
                                     <td>@item.RankName @item.FName @(item.LName == null ? "" : item.LName)</td>
                                     <td>@item.UpdatedOn.ToString().Replace("-", "/").Replace("00:00:00", "")</td>
-                                    @*  <td>@item.DateOfCommissioning.ToString("dd/MMM/yyyy")</td> *@
-                                    @*  <td>
-                                            <span>@item.Village , @item.Tehsil</span>
-                                            <span>@item.PO , @item.PS</span><br><br>
-                                            <span>@item.State , @item.District </span><br><br>
-                                            <span>@item.PinCode</span>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                </td> *@
                                     <td>
                                         <ul>
                                             @if (rem != null)
@@ -90,12 +74,6 @@
                                         <span id="ArmyNo" class="d-none">@item.ServiceNo</span>
                                         <button class="cls-btnRetry btn btn-success" id="btnRetry">Retry</button>
                                     </td>
-                                    @*                                 <td>
-                                        <div class="d-flex p-2">
-                                        <a asp-controller="BasicDetail" asp-action="RegistrationEdit" asp-route-Id="@item.EncryptedId" class="text-primary mr-2"><i class="fas fa-edit fa-lg"></i></a>
-                                        </div>
-
-                                        </td> *@
                                 </tr>
                             }
                         </tbody>

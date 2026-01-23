@@ -28,3 +28,9 @@
 #tbldatadialog td {
     cursor: pointer;
 }
+#tbldatadialog {
+    table-layout: fixed !important;
+}
+#tbldata {
+    table-layout: fixed !important;
+}

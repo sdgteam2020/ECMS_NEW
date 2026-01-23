@@ -46,8 +46,9 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
         filter: true,
         stateSave: false,
 
-        autoWidth: true, //Set autoWidth to true (let DataTables decide)
+        autoWidth: false, //Set autoWidth to true (let DataTables decide)
         responsive: false, // Columns can hide on small screens
+        deferRender: true,// ✅ Handle zoom changes
         order: [[2, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
 
@@ -178,8 +179,29 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
             if (typeof callback === "function") {
                 callback(); // show modal now
             }
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table_Fwd.columns.adjust().responsive.recalc();
+                }, 100);
+            });
         },
         drawCallback: function (settings) {
+
+            // Recalculate widths on each data load
+            this.api().columns.adjust().responsive.recalc();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
 
             updateUICheckboxes('#tbldatatabledata_Fwd', 'chkRequestId', '#chkAll_ApprovalForIO');
 

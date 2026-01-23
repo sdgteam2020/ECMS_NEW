@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccessLayer;
+﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
@@ -28,7 +23,7 @@ namespace BusinessLogicsLayer.LostCard
             return await _iLostCardDB.CheckServiceNoRequestInLost(ServiceNo);
         }
 
-        public async Task<DTODataTablesResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequest dTO)
+        public async Task<DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequestForCommanCheckAll dTO)
         {
             return await _iLostCardDB.GetAllLost(dTO);
         }

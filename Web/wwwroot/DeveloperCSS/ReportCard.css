@@ -39,3 +39,6 @@
     background: linear-gradient(to right, rgb(0, 123, 255), rgb(0, 86, 179));
     padding: 10px 16px;
 }
+#CardReport_tbldatadialog {
+    table-layout: fixed !important;
+}

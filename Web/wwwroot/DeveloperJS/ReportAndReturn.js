@@ -489,177 +489,258 @@ function GetCount() {
 }
 
 function GetReportReturnHistory(spnStepId, applyTypeId, IsApproveId) {
-    if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
-        $("#tbldatadialog").DataTable().destroy();
-    }
-    var userdata =
-    {
-        "TableId": 0,
-        "ComdId": $('#ddlCommand').val(),
-        "CorpsId": $('#ddlCorps').val(),
-        "DivId": $('#ddlDiv').val(),
-        "BdeId": $('#ddlBde').val(),
-        "FmnBranchID": $('#ddlFmnBranch').val(),
-        "PsoId": $('#ddlPSODte').val(),
-        "SubDteId": $('#ddlDgSubDte').val(),
-        "UnitMapId": $('#ddlUnit').val()
-    };
-    tableView = $("#tbldatadialog").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        fixedHeader: false,       // ❌ disable when using scrollY
-        processing: true,
-        serverSide: true,
-        filter: true,
-        order: [[1, 'desc']], // Default sorting on the first column
-        responsive: true,
-        autoWidth: false,
-        ajax: async function (data, callback, settings) {
-            let requestData = {
-                draw: data.draw,
-                start: data.start,
-                length: data.length,
-                searchValue: data.search.value,
-                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                applyForId: applyTypeId,
-                stepId: spnStepId,
-                isApproveId: IsApproveId,
-                data: {
-                    //tableId: 0,
-                    //comdId: $('#ddlCommand').val(),
-                    //corpsId: $('#ddlCorps').val(),
-                    //divId: $('#ddlDiv').val(),
-                    //bdeId: $('#ddlBde').val(),
-                    //fmnBranchID: $('#ddlFmnBranch').val(),
-                    //psoId: $('#ddlPSODte').val(),
-                    //subDteId: $('#ddlDgSubDte').val(),
-                    //unitMapId: $('#ddlUnit').val()
-                    userdata
-                }
-            };
-            try {
-                let response = await fetch("/Home/GetRecordHistory", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        'RequestVerificationToken': globalThis.RequestVerificationToken
-                    },
-                    body: JSON.stringify(requestData)
-                });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-                let result = await response.json();
-                $("#lblTotal").html(result.recordsTotal);
-                callback(result); // Sends data to DataTables
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        },
-        columns: [
-            // Serial number column
-            //{ data: "RequestId", name: "RequestId", visible: false },
-            {
-                data: null,
-                name: "SerialNumber",
-                orderable: false, // Disable sorting for this column
-                render: function (data, type, row, meta) {
-                    // Calculate serial number based on row index
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            { data: "ServiceNo", name: "ServiceNo" },
-            {
-                data: null,
-                name: null,
-                orderable: false,
-                render: function (data, type, row) {
-                    return `${row.RankName} ${row.FName} ${row.LName != null ? row.LName : ""}`;
-                }
-            },
-            {
-                data: null,
-                name: null,
-                orderable: false,
-                render: function (data, type, row) {
-                    return row.RankFrom != null ? `<span id='divName'>${row.RankFrom} ${row.NameFrom} (${row.ArmyNoFrom}) (${row.DomainIdFrom})</span>` : "<span id='divName'></span>";
-                }
-            },
-            {
-                data: null,
-                name: null,
-                orderable: false,
-                render: function (data, type, row) {
-                    return row.RankTo != null ? `<span id='divName'>${row.RankTo} ${row.NameTo} (${row.ArmyNoTo}) (${row.DomainIdTo})</span>` : "<span id='divName'></span>";
-                }
-            },
-            {
-                data: 'RequestId',
-                name: 'RequestId',
-                render: function (data, type, row) {
-                    return data ? `<span id='comdName'>${data}</span>` : '';
-                }
-            },
-            {
-                data: "UpdatedOn",
-                name: "UpdatedOn",
-                render: function (data, type, row) {
-                    return `<span id='comdName'>${DateFormateddMMyyyyhhmmss(data)}</span>`;
-                }
-            },
-            {
-                data: "StatusName",
-                name: "StatusName",
-                render: function (data, type, row) {
-                    let color = 'primary';
-                    if (data == "Pending") {
-                        color = 'warning';
-                    }
-                    else if (data == "Rejected") {
-                        color = 'danger';
-                    }
-                    else {
-                        color = 'success'
-                    }
-                    return data ? `<span id='comdName'><span class='badge badge-${color} mr-1' >${row.StatusName}</span></span>` : `<span id='comdName'><span class='badge badge-primary mr-1' >Action Pending</span></span>`;
-                }
-            }
-        ],
-        language: {
-            search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search Army No" // Add custom placeholder
-        },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-        buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-            {
-                extend: 'excel',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-                orientation: 'landscape',
-                pageSize: 'LEGAL',
-                title: 'E-IASC_Claim',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                },
-                customize: function (doc) {
-                    WaterMarkOnPdf(doc)
-                }
-            }],
-        drawCallback: function (settings) {
+    // STEP 1: Move ALL DataTable code into shown.bs.modal
+    $("#RepotReturnHistory").one('shown.bs.modal', function () {
+        if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
+            // Destroy the DataTable and clear the table content
+            $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+            $("#tbldatadialog thead").empty(); // Clear old thead
+            $("#tbldatadialog tbody").empty(); // Clear old tbody
         }
+        var userdata =
+        {
+            "TableId": 0,
+            "ComdId": $('#ddlCommand').val(),
+            "CorpsId": $('#ddlCorps').val(),
+            "DivId": $('#ddlDiv').val(),
+            "BdeId": $('#ddlBde').val(),
+            "FmnBranchID": $('#ddlFmnBranch').val(),
+            "PsoId": $('#ddlPSODte').val(),
+            "SubDteId": $('#ddlDgSubDte').val(),
+            "UnitMapId": $('#ddlUnit').val()
+        };
+        tableView = $("#tbldatadialog").DataTable({
+            scrollY: '65vh',          // ✅ vertical scroll
+            scrollX: true,            // ✅ horizontal scroll
+            scrollCollapse: true,
+            scroller: true,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: true,        // ✅ Improve scrolling performance
+            fixedHeader: false,       // ❌ disable when using scrollY
+
+            processing: true,
+            serverSide: true,
+            filter: true,
+            stateSave: false,
+
+            autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+            responsive: false, // Columns can hide on small screens
+            deferRender: true,// ✅ Handle zoom changes
+            order: [[1, 'desc']], // Default sorting on the first column
+            ajax: async function (data, callback, settings) {
+                let requestData = {
+                    draw: data.draw,
+                    start: data.start,
+                    length: data.length,
+                    searchValue: data.search.value,
+                    sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                    sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                    applyForId: applyTypeId,
+                    stepId: spnStepId,
+                    isApproveId: IsApproveId,
+                    data: {
+                        //tableId: 0,
+                        //comdId: $('#ddlCommand').val(),
+                        //corpsId: $('#ddlCorps').val(),
+                        //divId: $('#ddlDiv').val(),
+                        //bdeId: $('#ddlBde').val(),
+                        //fmnBranchID: $('#ddlFmnBranch').val(),
+                        //psoId: $('#ddlPSODte').val(),
+                        //subDteId: $('#ddlDgSubDte').val(),
+                        //unitMapId: $('#ddlUnit').val()
+                        userdata
+                    }
+                };
+                try {
+                    let response = await fetch("/Home/GetRecordHistory", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            'RequestVerificationToken': globalThis.RequestVerificationToken
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                    let result = await response.json();
+                    $("#lblTotal").html(result.recordsTotal);
+                    callback(result); // Sends data to DataTables
+
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            },
+            columns: [
+                {
+                    title: "S No",
+                    data: null,
+                    name: "SerialNumber",
+                    className: "text-center col-sno",
+                    width: "60px",
+                    orderable: false, // Disable sorting for this column
+                    render: function (data, type, row, meta) {
+                        // Calculate serial number based on row index
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    title: "Army No",
+                    data: "ServiceNo",
+                    name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
+                },
+                {
+                    title: "Rank,Name",
+                    data: null,
+                    name: null,
+                    className: "nowrap",
+                    width: "180px",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
+                    }
+                },
+                {
+                    title: "From",
+                    data: null,
+                    name: null,
+                    className: "nowrap",
+                    width: "180px",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let From = `${row.RankFrom} ${row.NameFrom} (${row.ArmyNoFrom}) (${row.DomainIdFrom})`.trim();
+                        if (row.RankFrom != null) {
+                            return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${From}">${From}</span>`;
+                        }
+                        else {
+                            return '';
+                        }
+                    }
+                },
+                {
+                    title: "Sent To",
+                    data: null,
+                    name: null,
+                    className: "nowrap",
+                    width: "180px",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        let SentTo = `${row.RankTo} ${row.NameTo} (${row.ArmyNoTo}) (${row.DomainIdTo})`.trim();
+                        if (row.RankTo != null) {
+                            return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${SentTo}">${SentTo}</span>`;
+                        }
+                        else {
+                            return '';
+                        }
+                    }
+                },
+                {
+                    title: "Appl Id",
+                    data: 'RequestId',
+                    name: 'RequestId',
+                    className: "nowrap",
+                    width: "100px",
+                },
+                {
+                    title: "Action On",
+                    data: "UpdatedOn",
+                    name: "UpdatedOn",
+                    className: "",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        return DateFormateddMMyyyyhhmmss(data);
+                    }
+                },
+                {
+                    title: "Status",
+                    data: "StatusName",
+                    name: "StatusName",
+                    className: "",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        let color = 'primary';
+                        if (data == "Pending") {
+                            color = 'warning';
+                        }
+                        else if (data == "Rejected") {
+                            color = 'danger';
+                        }
+                        else {
+                            color = 'success'
+                        }
+                        return data ? `<span class='badge badge-${color} mr-1' >${row.StatusName}</span>` : `<span class='badge badge-primary mr-1' >Action Pending</span>`;
+                    }
+                }
+            ],
+            columnDefs: [
+                {
+                    targets: '_all',  // Apply to all visible columns
+                    orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+                },
+            ],
+            language: {
+                search: "", // Remove the default "Search:" label
+                searchPlaceholder: "Search Army No" // Add custom placeholder
+            },
+            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    title: 'E-IASC_Report',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    },
+                    customize: function (doc) {
+                        WaterMarkOnPdf(doc)
+                    }
+                }],
+            // 👇 Show modal only after table (header + data) is fully rendered
+            initComplete: function () {
+                // Force DataTables to calculate optimal widths
+                this.api().columns.adjust();
+
+                // Handle zoom/resize
+                var resizeTimer;
+                $(window).on('resize', function () {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function () {
+                        tableView.columns.adjust().responsive.recalc();
+                    }, 100);
+                });
+            },
+            drawCallback: function (settings) {
+                // Recalculate widths on each data load
+                this.api().columns.adjust().responsive.recalc();
+
+                const tooltipTriggerList = [].slice.call(
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                );
+                tooltipTriggerList.forEach(el => {
+                    new bootstrap.Tooltip(el);
+                });
+            }
+        });
     });
+
+    // STEP 2: Show modal (this triggers the above)
+    $("#RepotReturnHistory").modal("show");
+
 }
 
 

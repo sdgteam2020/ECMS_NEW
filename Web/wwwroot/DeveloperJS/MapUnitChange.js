@@ -11,20 +11,28 @@ $(function () {
 });
 
 function BindData() {
-    $("#tbldata").DataTable().destroy();
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        // Destroy the DataTable and clear the table content
+        $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldata thead").empty(); // Clear old thead
+        $("#tbldata tbody").empty(); // Clear old tbody
+    }
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
+        scroller: true,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
         serverSide: true,
         filter: true,
-        stateSave: true,
+        stateSave: false,
 
-        autoWidth: false,      // ✅ REQUIRED
-        responsive: false,    // ✅ REQUIRED
+        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+        responsive: false, // Columns can hide on small screens
+        deferRender: true,// ✅ Handle zoom changes
         order: [[0, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -82,7 +90,7 @@ function BindData() {
                 data: "UnitName",
                 name: "UnitName",
                 orderable: false,
-                width: "190px",
+                width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -251,9 +259,24 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
+        // 👇 Show modal only after table (header + data) is fully rendered
+        initComplete: function () {
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table.columns.adjust().responsive.recalc();
+                }, 100);
+            });
+        },
         drawCallback: function (settings) {
 
-            this.api().columns.adjust();
+            // Recalculate widths on each data load
+            this.api().columns.adjust().responsive.recalc();
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')

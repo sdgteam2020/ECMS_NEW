@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BusinessLogicsLayer.FaultyCard;
-using DataAccessLayer;
+﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
@@ -23,7 +17,7 @@ namespace BusinessLogicsLayer.DistributeCard
         {
             return await _iDistributeCardDB.FindAnyRequestId(RequestId);
         }
-        public async Task<DTODataTablesResponse<DTODistributeCardGetResponse>> GetAllDistribute(DTODataTablesRequest dTO)
+        public async Task<DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>> GetAllDistribute(DTODataTablesRequestForCommanCheckAll dTO)
         {
             return await _iDistributeCardDB.GetAllDistribute(dTO);
         }

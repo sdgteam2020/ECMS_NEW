@@ -12,16 +12,29 @@ $(function () {
     });
 });
 function BindData() {
-    $("#tbldata").DataTable().destroy();
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        // Destroy the DataTable and clear the table content
+        $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldata thead").empty(); // Clear old thead
+        $("#tbldata tbody").empty(); // Clear old tbody
+    }
+
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
+        scroller: true,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
-        stateSave: true,
+        stateSave: false,
+
+        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+        responsive: false, // Columns can hide on small screens
+        deferRender: true,// ✅ Handle zoom changes
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -55,17 +68,23 @@ function BindData() {
         columns: [
             // Serial number column
             {
+                title: "S No",
                 data: null,
                 name: "SerialNumber",
-                orderable: false, // Disable sorting for this column
+                orderable: false, 
+                className: "text-center col-sno",
+                width: "60px",
                 render: function (data, type, row, meta) {
                     // Calculate serial number based on row index
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
             {
+                title: "Army No",
                 data: "ServiceNo",
                 name: "ServiceNo",
+                className: "nowrap",
+                width: "120px",
                 render: function (data, type, row) {
                     // Check if first two characters are alphabets
                     if (/^[A-Za-z]{2}/.test(data)) {
@@ -78,29 +97,46 @@ function BindData() {
                 }
             },
             {
+                title: "Rk & Name",
                 data: null,
                 name: "FromName",
+                className: "nowrap",
+                width: "180px",
                 orderable: false,
                 render: function (data, type, row) {
                     let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                    return (fullName);
+                    if (!fullName) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                 }
             },
             {
+                title: "Unit",
                 data: "UnitAbbreviation",
                 name: "UnitAbbreviation",
+                className: "nowrap",
+                width: "150px",
                 orderable: false,
+                render: function (data, type, row) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
             },
             {
+                title: "Date & Time",
                 data: "UpdatedOn",
                 name: "UpdatedOn",
+                className: "",
+                width: "150px",
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
                 }
             },
             {
+                title: "Reason",
                 data: "RemarksIds",
                 name: "RemarksIds",
+                className: "",
+                width: "100px",
                 orderable: false,
                 render: function (data, type, row) {
                     if (data != null) {
@@ -113,41 +149,34 @@ function BindData() {
                 }
             },
             {
+                title: "Remark",
                 data: "FromRemark",
                 name: "FromRemark",
+                className: "",
+                width: "150px",
                 render: function (data, type, row) {
-                    if (data != null) {
-                        let sentence = data;
-                        let words = sentence.split(" ");
-
-                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
-                        return `<span class='cls-FromRemark'>${truncatedSentence}</span>`;
-                    } else {
-                        return `NA`;
-                    }
-
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
                 }
             },
             {
+                title: "AFSAC Remark",
                 data: "ToRemark",
                 name: "ToRemark",
+                className: "",
+                width: "150px",
                 render: function (data, type, row) {
-                    if (data != null) {
-                        let sentence = data;
-                        let words = sentence.split(" ");
-
-                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : sentence;
-                        return `<span class='cls-ToRemark'>${truncatedSentence}</span>`;
-                    } else {
-                        return `NA`;
-                    }
-
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
                 }
             },
             // Additional column for Edit action
             {
+                title: "Action",
                 data: "IsEditAction",
                 name: "Action",
+                className: "noExport nowrap",
+                width: "150px",
                 orderable: false,
                 render: function (data, type, row) {
                     if (data == false) {
@@ -157,6 +186,12 @@ function BindData() {
                     }
                 }
             }
+        ],
+        columnDefs: [
+            {
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+            },
         ],
         language: {
             search: "", // Remove the default "Search:" label
@@ -180,7 +215,7 @@ function BindData() {
                 extend: 'pdfHtml5',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
-                title: 'E-IASC_MapUnitChange',
+                title: 'E-IASC_FaultyCard',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 },
@@ -188,7 +223,30 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
+        // 👇 Show modal only after table (header + data) is fully rendered
+        initComplete: function () {
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table.columns.adjust().responsive.recalc();
+                }, 100);
+            });
+        },
         drawCallback: function (settings) {
+            // Recalculate widths on each data load
+            this.api().columns.adjust().responsive.recalc();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -204,26 +262,6 @@ function BindData() {
                     GetRemarksData(rowData.RemarksIds);
                 }
             });
-
-
-            $("#tbldata tbody").off("click", ".cls-FromRemark").on("click", ".cls-FromRemark", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    $("#MessageDialogLabel").html('Remark');
-                    $("#MessageDialogBody").html(rowData.FromRemark);
-                    $("#MessageDialog").modal('show');
-                }
-            });
-
-            $("#tbldata tbody").off("click", ".cls-ToRemark").on("click", ".cls-ToRemark", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    $("#MessageDialogLabel").html('AFSAC Remark');
-                    $("#MessageDialogBody").html(rowData.ToRemark);
-                    $("#MessageDialog").modal('show');
-                }
-            });
-
         }
     });
     if ($("#spnClaimValue").html().toLowerCase() === "true") {

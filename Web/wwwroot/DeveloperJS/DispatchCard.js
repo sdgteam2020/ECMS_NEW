@@ -7,14 +7,6 @@ $(function () {
     BindData(cvalue, function () {
     });
 
-
-    $(window).on('resize', function () {
-        // Check if element exists AND is a DataTable
-        if ($('#tbldatadialogLot').length && $.fn.DataTable.isDataTable('#tbldatadialogLot')) {
-            $('#tbldatadialogLot').DataTable().columns.adjust();
-        }
-    });
-
     $("#searchText").autocomplete({
         source: function (request, response) {
             if (cvalue === 2 || cvalue === 3) {
@@ -286,14 +278,18 @@ function BindData(cvalue, callback) {
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
+        scroller: true,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
-        autoWidth: false, // Let us handle width via CSS
-        responsive: true, // Responsive breaks layout for width control
+
         processing: true,
         serverSide: true,
         filter: true,
-        stateSave: true,
-        responsive: true,
+        stateSave: false,
+
+        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+        responsive: false, // Columns can hide on small screens
+        deferRender: true,// ✅ Handle zoom changes
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -325,6 +321,13 @@ function BindData(cvalue, callback) {
             }
         },
         columns: columns,
+        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+        columnDefs: [
+            {
+                targets: '_all',
+                orderSequence: ["asc", "desc"]
+            },
+        ],
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
@@ -367,9 +370,31 @@ function BindData(cvalue, callback) {
             else {
                 searchBox.attr('title', 'Search Cat/SUS NO/Lot No/ORO/Reg');
             }
+
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table.columns.adjust().responsive.recalc();
+                }, 100);
+            });
             
         },
         drawCallback: function (settings) {
+
+            // Recalculate widths on each data load
+            this.api().columns.adjust().responsive.recalc();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -452,167 +477,200 @@ function BindData(cvalue, callback) {
     });
 }
 function BindDialog(rowData, cvalue, callback) {
-    var table2 = "";
-    globalThis.selectedIds = [];
-    if ($.fn.DataTable.isDataTable("#tbldatadialogLot")) {
-        // Destroy the DataTable and clear the table content
-        $("#tbldatadialogLot").DataTable().clear().destroy(); // Clear and destroy DataTable properly
-        $("#tbldatadialogLot thead").empty(); // Clear old thead
-        $("#tbldatadialogLot tbody").empty(); // Clear old tbody
-    }
+    // STEP 1: Move ALL DataTable code into shown.bs.modal
+    $("#DataTableDialogForLot").one('shown.bs.modal', function () {
+        var table2 = "";
+        globalThis.selectedIds = [];
+        if ($.fn.DataTable.isDataTable("#tbldatadialogLot")) {
+            // Destroy the DataTable and clear the table content
+            $("#tbldatadialogLot").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+            $("#tbldatadialogLot thead").empty(); // Clear old thead
+            $("#tbldatadialogLot tbody").empty(); // Clear old tbody
+        }
 
-    const columns = getColumnsByChoice(cvalue);
-    table2 = $("#tbldatadialogLot").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        fixedHeader: false,       // ❌ disable when using scrollY
+        const columns = getColumnsByChoice(cvalue);
 
-        processing: true,
-        serverSide: true,
-        filter: true,
-        stateSave: false,
+        table2 = $("#tbldatadialogLot").DataTable({
+            scrollY: '65vh',          // ✅ vertical scroll
+            scrollX: true,            // ✅ horizontal scroll
+            scrollCollapse: true,
+            scroller: true,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: true,        // ✅ Improve scrolling performance
+            fixedHeader: false,       // ❌ disable when using scrollY
 
-        autoWidth: false, // Let us handle width via CSS
-        responsive: false, // ✅ IMPORTANT (disable)
-        order: [[1, 'desc']], // Default sorting on the first column
-        ajax: async function (data, callback, settings) {
+            processing: true,
+            serverSide: true,
+            filter: true,
+            stateSave: false,
 
-            let searchStatus = getSearchStatusForBindDialog(data.search.value);
+            autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+            responsive: false, // Columns can hide on small screens
+            deferRender: true,// ✅ Handle zoom changes
+            order: [[1, 'desc']], // Default sorting on the first column
+            ajax: async function (data, callback, settings) {
 
-            // Clear old selectedIds on search change, but keep globalAllChecked state
-            if (searchStatus.searchChanged) {
-                globalThis.selectedIds = [];
+                let searchStatus = getSearchStatusForBindDialog(data.search.value);
 
-                // Mark for re-fetch if needed
-                if (globalThis.globalAllChecked) {
-                    globalThis.isFirstSelectAll = true;
+                // Clear old selectedIds on search change, but keep globalAllChecked state
+                if (searchStatus.searchChanged) {
+                    globalThis.selectedIds = [];
+
+                    // Mark for re-fetch if needed
+                    if (globalThis.globalAllChecked) {
+                        globalThis.isFirstSelectAll = true;
+                    }
                 }
-            }
 
-            // ✅ Determine if a fetch is needed
-            const shouldFetchSelectedIds =
-                globalThis.globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) ||
-                (!globalThis.globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
+                // ✅ Determine if a fetch is needed
+                const shouldFetchSelectedIds =
+                    globalThis.globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) ||
+                    (!globalThis.globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
 
-            // If fetch is needed, manually set searchChanged to true
-            if (shouldFetchSelectedIds) {
-                searchStatus.searchChanged = true; // Manually set to true to ensure data fetch
-            }
+                // If fetch is needed, manually set searchChanged to true
+                if (shouldFetchSelectedIds) {
+                    searchStatus.searchChanged = true; // Manually set to true to ensure data fetch
+                }
 
-            let requestData = {
-                draw: data.draw,
-                start: data.start,
-                length: data.length,
-                searchValue: searchStatus.currentSearchText,
-                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                DispatchCardId: rowData.DispatchCardId,
-                searchTextChanged: searchStatus.searchChanged,
-                AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
-            };
-            try {
-                let response = await fetch("/BasicDetail/GetDispatchCardDataForDialog", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                let requestData = {
+                    draw: data.draw,
+                    start: data.start,
+                    length: data.length,
+                    searchValue: searchStatus.currentSearchText,
+                    sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                    sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                    DispatchCardId: rowData.DispatchCardId,
+                    searchTextChanged: searchStatus.searchChanged,
+                    AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
+                };
+                try {
+                    let response = await fetch("/BasicDetail/GetDispatchCardDataForDialog", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            'RequestVerificationToken': globalThis.RequestVerificationToken
+                        },
+                        body: new URLSearchParams(requestData).toString()
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                    let result = await response.json();
+
+                    // 🔁 If no data returned, always clear selection
+                    if (result.data.length === 0) {
+                        globalThis.selectedIds = [];
+                        console.log("No results. Cleared selectedIds.");
+                    }
+
+                    // Only update selectedIds if server returns new ones
+                    if (shouldFetchSelectedIds) {
+                        if (result.selectedIds != null && result.selectedIds.length > 0) {
+                            //selectedIds = result.selectedIds;
+                            globalThis.selectedIds = result.selectedIds.map(x => x.toString());
+                            console.log("Fetched selectedIds from server:", globalThis.selectedIds);
+                            // If user hadn’t checked Select All, now we just load into selectedIds silently
+                            if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
+                        }
+                        else {
+                            //selectedIds = [];
+                            if (globalThis.globalAllChecked) {
+                                globalThis.globalAllChecked = false;
+                                $('#chkAll_BindDialog').prop('checked', false);
+                            }
+                            console.warn("⚠️ No valid Pending IDs found.");
+                        }
+                    }
+
+                    callback(result); // Sends data to DataTables
+
+
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            },
+            columns: columns,
+            language: {
+                search: "", // Remove the default "Search:" label
+                searchPlaceholder: "Search" // Add custom placeholder
+            },
+            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    title: 'E-IASC_DispathCard',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
                     },
-                    body: new URLSearchParams(requestData).toString()
+                    customize: function (doc) {
+                        WaterMarkOnPdf(doc)
+                    }
+                }],
+            // 👇 Show modal only after table (header + data) is fully rendered
+            initComplete: function () {
+                if (typeof callback === "function") {
+                    callback(); // show modal now
+                }
+                // Add tooltip to the search input box
+                let searchBox = $('div.dataTables_filter input');
+                searchBox.attr('title', 'Search Appl Id/Arm/Army No/Chip No/Card Serial No');
+
+                // Force DataTables to calculate optimal widths
+                this.api().columns.adjust();
+
+                // Handle zoom/resize
+                var resizeTimer;
+                $(window).on('resize', function () {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function () {
+                        table2.columns.adjust().responsive.recalc();
+                    }, 100);
+                });
+            },
+            drawCallback: function (settings) {
+                // Recalculate widths on each data load
+                this.api().columns.adjust().responsive.recalc();
+
+                const tooltipTriggerList = [].slice.call(
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                );
+                tooltipTriggerList.forEach(el => {
+                    new bootstrap.Tooltip(el);
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-                let result = await response.json();
-
-                // 🔁 If no data returned, always clear selection
-                if (result.data.length === 0) {
-                    globalThis.selectedIds = [];
-                    console.log("No results. Cleared selectedIds.");
-                }
-
-                // Only update selectedIds if server returns new ones
-                if (shouldFetchSelectedIds) {
-                    if (result.selectedIds != null && result.selectedIds.length > 0) {
-                        //selectedIds = result.selectedIds;
-                        globalThis.selectedIds = result.selectedIds.map(x => x.toString());
-                        console.log("Fetched selectedIds from server:", globalThis.selectedIds);
-                        // If user hadn’t checked Select All, now we just load into selectedIds silently
-                        if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
-                    }
-                    else {
-                        //selectedIds = [];
-                        if (globalThis.globalAllChecked) {
-                            globalThis.globalAllChecked = false;
-                            $('#chkAll_BindDialog').prop('checked', false);
-                        }
-                        console.warn("⚠️ No valid Pending IDs found.");
-                    }
-                }
-
-                callback(result); // Sends data to DataTables
-
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
+                updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog');
             }
-        },
-        columns: columns,
-        language: {
-            search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search" // Add custom placeholder
-        },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-        buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-            {
-                extend: 'excel',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-                orientation: 'landscape',
-                pageSize: 'LEGAL',
-                title: 'E-IASC_DispathCard',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                },
-                customize: function (doc) {
-                    WaterMarkOnPdf(doc)
-                }
-            }],
-        // 👇 Show modal only after table (header + data) is fully rendered
-        initComplete: function () {
-            if (typeof callback === "function") {
-                callback(); // show modal now
+        });
+
+        $(document).on('change', '.chkRequestId', async function () {
+            await updateSelectedIds('#tbldatadialogLot', 'chkRequestId');
+            updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog'); // Sync master checkbox state
+        });
+        $('#chkAll_BindDialog').on('change', function () {
+            globalThis.selectedIds = [];
+            globalThis.globalAllChecked = $(this).prop('checked');
+            if (globalThis.globalAllChecked) {
+                globalThis.isFirstSelectAll = true; // Force fresh fetch
             }
-            // Add tooltip to the search input box
-            let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search Appl Id/Arm/Army No/Chip No/Card Serial No');
-        },
-        drawCallback: function (settings) {
-            updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog');
-        }
+            table2.ajax.reload();
+        });
     });
-    $(document).on('change', '.chkRequestId', async function () {
-        await updateSelectedIds('#tbldatadialogLot', 'chkRequestId');
-        updateUICheckboxes('#tbldatadialogLot', 'chkRequestId', '#chkAll_BindDialog'); // Sync master checkbox state
-    });
-    $('#chkAll_BindDialog').on('change', function () {
-        globalThis.selectedIds = [];
-        globalThis.globalAllChecked = $(this).prop('checked');
-        if (globalThis.globalAllChecked) {
-            globalThis.isFirstSelectAll = true; // Force fresh fetch
-        }
-        table2.ajax.reload();
-    });
+
+    // STEP 2: Show modal (this triggers the above)
+    $("#DataTableDialogForLot").modal("show");
 }
 function getColumnsForDispatchCard(choice) {
     let columns = [];
@@ -625,6 +683,8 @@ function getColumnsForDispatchCard(choice) {
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -634,43 +694,71 @@ function getColumnsForDispatchCard(choice) {
                     title: "Category",
                     data: "ApplyFor",
                     name: "Categery",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Lot No",
                     data: "DispatchCardId",
                     name: "DispatchCardId",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Unit",
                     data: "ToUnit",
                     name: "ToUnit",
+                    className: "nowrap",
+                    width: "150px",
                     orderable: false,
+                    render: function (data, type, row) {
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "SUS No",
                     data: "ToSUSNo",
                     name: "ToSUSNo",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "ORO",
                     data: "RecordOfficeName",
                     name: "RecordOfficeName",
+                    className: "nowrap",
+                    width: "180px",
                     render: function (data, type, row) {
-                        return (data ?? "");
+                        if (data != null) {
+                            return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                        }
+                        else {
+                            return ``;
+                        }
+                        
                     }
                 },
                 {
                     title: "Reg",
                     data: "RegimentalName",
                     name: "RegimentalName",
+                    className: "nowrap",
+                    width: "180px",
                     render: function (data, type, row) {
-                        return (data??"");
+                        if (data != null) {
+                            return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                        }
+                        else {
+                            return ``;
+                        }
                     }
                 },
                 {
                     title: "Dispatch On",
                     data: "DispatchDate",
                     name: "Dispatch On",
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -679,6 +767,8 @@ function getColumnsForDispatchCard(choice) {
                     title: "Received On",
                     data: "ReceiptDate",
                     name: "Dispatch In",
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
                         return data != null ? DateFormateddMMyyyyhhmmss(data) : "";
                     }
@@ -689,6 +779,8 @@ function getColumnsForDispatchCard(choice) {
                     data: "IsComplete",
                     name: "Action",
                     orderable: false,
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
                         let Action = `<div class='d-flex'><button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
                         return Action;
@@ -810,6 +902,8 @@ function getColumnsForDispatchCard(choice) {
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -819,43 +913,70 @@ function getColumnsForDispatchCard(choice) {
                     title: "Category",
                     data: "ApplyFor",
                     name: "Categery",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Lot No",
                     data: "DispatchCardId",
                     name: "DispatchCardId",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Unit",
                     data: "FromUnit",
                     name: "FromUnit",
                     orderable: false,
+                    width: "150px",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "SUS No",
                     data: "FromSUSNo",
                     name: "FromSUSNo",
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "ORO",
                     data: "RecordOfficeName",
                     name: "RecordOfficeName",
+                    className: "nowrap",
+                    width: "180px",
                     render: function (data, type, row) {
-                        return (data ?? "");
+                        if (data != null) {
+                            return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                        }
+                        else {
+                            return ``;
+                        }
                     }
                 },
                 {
                     title: "Reg",
                     data: "RegimentalName",
                     name: "RegimentalName",
+                    className: "nowrap",
+                    width: "180px",
                     render: function (data, type, row) {
-                        return (data ?? "");
+                        if (data != null) {
+                            return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                        }
+                        else {
+                            return ``;
+                        }
                     }
                 },
                 {
                     title: "Dispatch On",
                     data: "DispatchDate",
                     name: "Dispatch On",
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -864,6 +985,8 @@ function getColumnsForDispatchCard(choice) {
                     title: "Received On",
                     data: "ReceiptDate",
                     name: "Dispatch In",
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
                         return data != null ? DateFormateddMMyyyyhhmmss(data) : "";
                     }
@@ -874,6 +997,8 @@ function getColumnsForDispatchCard(choice) {
                     data: "IsComplete",
                     name: "Action",
                     orderable: false,
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
                         let Action = `<div class='d-flex'><button type='button' class='cls-btnDialog btn btn-icon btn-round btn-primary mr-1'><i class='fa fa-eye'></i></button>`;
                         if (data == false && row.Step == 2) {
@@ -902,6 +1027,7 @@ function getColumnsByChoice(choice) {
                     data: null,
                     name: "Id",
                     orderable: false, // Disable sorting for this column
+                    width: "40px",
                     render: function (data, type, row, meta) {
                         if ($("#chkAll_BindDialog").prop('checked')) {
                             return `<div class="custom-control custom-checkbox small">
@@ -923,6 +1049,8 @@ function getColumnsByChoice(choice) {
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -931,38 +1059,60 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Card Serial No",
                     data: "CardSerialNo",
-                    name: "CardSerialNo"
+                    name: "CardSerialNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Chip No",
                     data: "ChipNo",
-                    name: "ChipNo"
+                    name: "ChipNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Appl Id",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "110px",
+                    render: function (data, type, row, meta) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Unit",
                     data: "UnitAbbreviation",
                     name: "UnitAbbreviation",
-                    orderable: false
+                    className: "nowrap",
+                    width: "120px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "SUS No",
                     data: "SUSNo",
-                    name: "SUSNo"
+                    name: "SUSNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -978,10 +1128,13 @@ function getColumnsByChoice(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
             ];
@@ -997,6 +1150,7 @@ function getColumnsByChoice(choice) {
                     </div>`,
                     data: null,
                     name: "Id",
+                    width: "40px",
                     orderable: false, // Disable sorting for this column
                     render: function (data, type, row, meta) {
                         if ($("#chkAll_BindDialog").prop('checked')) {
@@ -1019,6 +1173,8 @@ function getColumnsByChoice(choice) {
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -1027,38 +1183,60 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Card Serial No",
                     data: "CardSerialNo",
-                    name: "CardSerialNo"
+                    name: "CardSerialNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Chip No",
                     data: "ChipNo",
-                    name: "ChipNo"
+                    name: "ChipNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Appl Id",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "110px",
+                    render: function (data, type, row, meta) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Unit",
                     data: "UnitAbbreviation",
                     name: "UnitAbbreviation",
-                    orderable: false
+                    className: "nowrap",
+                    width: "120px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "SUS No",
                     data: "SUSNo",
-                    name: "SUSNo"
+                    name: "SUSNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -1075,9 +1253,12 @@ function getColumnsByChoice(choice) {
                     data: null,
                     name: null,
                     orderable: false,
+                    className: "nowrap",
+                    width: "180px",
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
 
@@ -1094,6 +1275,7 @@ function getColumnsByChoice(choice) {
                     data: null,
                     name: "Id",
                     orderable: false, // Disable sorting for this column
+                    width: "40px",
                     render: function (data, type, row, meta) {
                         if ($("#chkAll_BindDialog").prop('checked')) {
                             return `<div class="custom-control custom-checkbox small">
@@ -1115,6 +1297,8 @@ function getColumnsByChoice(choice) {
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -1123,27 +1307,41 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Card Serial No",
                     data: "CardSerialNo",
-                    name: "CardSerialNo"
+                    name: "CardSerialNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Chip No",
                     data: "ChipNo",
-                    name: "ChipNo"
+                    name: "ChipNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Appl Id",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "110px",
+                    render: function (data, type, row, meta) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -1159,10 +1357,13 @@ function getColumnsByChoice(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
 
@@ -1172,241 +1373,281 @@ function getColumnsByChoice(choice) {
     return columns;
 }
 function DispatchCardStatusListBindDialog(cvalue, callback) {
-    var table2;
-    globalThis.selectedIds = [];
-    if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
-        // Destroy the DataTable and clear the table content
-        $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
-        $("#tbldatadialog thead").empty(); // Clear old thead
-        $("#tbldatadialog tbody").empty(); // Clear old tbody
-    }
-    let columns = getColumnsForListBindDialog(cvalue);
-    table2 = $("#tbldatadialog").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        fixedHeader: false,       // ❌ disable when using scrollY
-        autoWidth: false, // Let us handle width via CSS
-        searching: false,
-        responsive: true, // Responsive breaks layout for width control
-        processing: true,
-        serverSide: true,
-        filter: true,
-        stateSave: true,
-        order: [[1, 'desc']], // Default sorting on the first column
-        ajax: async function (data, callback, settings) {
+    // STEP 1: Move ALL DataTable code into shown.bs.modal
+    $("#DataTableDialog").one('shown.bs.modal', function () {
+        var table2;
+        globalThis.selectedIds = [];
+        if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
+            // Destroy the DataTable and clear the table content
+            $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+            $("#tbldatadialog thead").empty(); // Clear old thead
+            $("#tbldatadialog tbody").empty(); // Clear old tbody
+        }
+        let columns = getColumnsForListBindDialog(cvalue);
 
-            let searchStatus = getSearchStatus(cvalue);
+        table2 = $("#tbldatadialog").DataTable({
+            scrollY: '65vh',          // ✅ vertical scroll
+            scrollX: true,            // ✅ horizontal scroll
+            scrollCollapse: true,
+            scroller: true,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: true,        // ✅ Improve scrolling performance
+            fixedHeader: false,       // ❌ disable when using scrollY
 
-            // Clear old selectedIds on search change, but keep globalAllChecked state
-            if (searchStatus.searchChanged) {
-                globalThis.selectedIds = [];
+            processing: true,
+            serverSide: true,
+            filter: true,
+            stateSave: false,
 
-                // Mark for re-fetch if needed
-                if (globalThis.globalAllChecked) {
-                    globalThis.isFirstSelectAll = true;
+            autoWidth: false, //Set autoWidth to true (let DataTables decide)
+            responsive: false, // Columns can hide on small screens
+            deferRender: true,// ✅ Handle zoom changes
+            order: [[1, 'desc']], // Default sorting on the first column
+            ajax: async function (data, callback, settings) {
+
+                let searchStatus = getSearchStatus(cvalue);
+
+                // Clear old selectedIds on search change, but keep globalAllChecked state
+                if (searchStatus.searchChanged) {
+                    globalThis.selectedIds = [];
+
+                    // Mark for re-fetch if needed
+                    if (globalThis.globalAllChecked) {
+                        globalThis.isFirstSelectAll = true;
+                    }
                 }
-            }
 
-            // ✅ Determine if a fetch is needed
-            const shouldFetchSelectedIds =
-                globalThis.globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) ||
-                (!globalThis.globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
+                // ✅ Determine if a fetch is needed
+                const shouldFetchSelectedIds =
+                    globalThis.globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) ||
+                    (!globalThis.globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
 
-            // If fetch is needed, manually set searchChanged to true
-            if (shouldFetchSelectedIds) {
-                searchStatus.searchChanged = true; // Manually set to true to ensure data fetch
-            }
+                // If fetch is needed, manually set searchChanged to true
+                if (shouldFetchSelectedIds) {
+                    searchStatus.searchChanged = true; // Manually set to true to ensure data fetch
+                }
 
-            let requestData = {
-                draw: data.draw,
-                start: data.start,
-                length: data.length,
-                //searchValue: data.search.value,
-                sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                searchField: searchStatus.currentSearchField,
-                searchText: searchStatus.currentSearchText,
-                searchTextChanged: searchStatus.searchChanged,
-                AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
-            };
-            try {
-                let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        'RequestVerificationToken': globalThis.RequestVerificationToken
-                    }, // Change Content-Type to JSON
-                    body: JSON.stringify(requestData) // Send data as JSON
+                let requestData = {
+                    draw: data.draw,
+                    start: data.start,
+                    length: data.length,
+                    //searchValue: data.search.value,
+                    sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                    sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                    searchField: searchStatus.currentSearchField,
+                    searchText: searchStatus.currentSearchText,
+                    searchTextChanged: searchStatus.searchChanged,
+                    AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
+                };
+                try {
+                    let response = await fetch("/BasicDetail/GetDispatchCardStatusListForDialog", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            'RequestVerificationToken': globalThis.RequestVerificationToken
+                        }, // Change Content-Type to JSON
+                        body: JSON.stringify(requestData) // Send data as JSON
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                    let result = await response.json();
+
+                    // 🔁 If no data returned, always clear selection
+                    if (result.data.length === 0) {
+                        globalThis.selectedIds = [];
+                        console.log("No results. Cleared selectedIds.");
+                    }
+
+                    // Only update selectedIds if server returns new ones
+                    if (shouldFetchSelectedIds) {
+                        if (result.selectedIds != null && result.selectedIds.length > 0) {
+                            //selectedIds = result.selectedIds;
+                            globalThis.selectedIds = result.selectedIds.map(x => x.toString());
+                            console.log("Fetched selectedIds from server:", globalThis.selectedIds);
+                            // If user hadn’t checked Select All, now we just load into selectedIds silently
+                            if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
+                        }
+                        else {
+                            //selectedIds = [];
+                            if (globalThis.globalAllChecked) {
+                                globalThis.globalAllChecked = false;
+                                $('#chkAll').prop('checked', false);
+                            }
+                            console.warn("⚠️ No valid Pending IDs found.");
+                        }
+                    }
+
+                    callback(result); // Sends data to DataTables
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            },
+            columns: columns,
+            language: {
+                search: "", // Remove the default "Search:" label
+                searchPlaceholder: "Search ReqId/Arm/SUSNo/ORO/Regt" // Add custom placeholder
+            },
+            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    title: 'E-IASC_DispathCard',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    },
+                    customize: function (doc) {
+                        WaterMarkOnPdf(doc)
+                    }
+                }],
+            // 👇 Show modal only after table (header + data) is fully rendered
+            initComplete: function () {
+                // Force DataTables to calculate optimal widths
+                this.api().columns.adjust();
+
+                // Handle zoom/resize
+                var resizeTimer;
+                $(window).on('resize', function () {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function () {
+                        table2.columns.adjust().responsive.recalc();
+                    }, 100);
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-                let result = await response.json();
-
-                // 🔁 If no data returned, always clear selection
-                if (result.data.length === 0) {
-                    globalThis.selectedIds = [];
-                    console.log("No results. Cleared selectedIds.");
+                if (typeof callback === "function") {
+                    callback(); // Show modal after DataTable is initialized
                 }
-
-                // Only update selectedIds if server returns new ones
-                if (shouldFetchSelectedIds) {
-                    if (result.selectedIds != null && result.selectedIds.length > 0) {
-                        //selectedIds = result.selectedIds;
-                        globalThis.selectedIds = result.selectedIds.map(x => x.toString());
-                        console.log("Fetched selectedIds from server:", globalThis.selectedIds);
-                        // If user hadn’t checked Select All, now we just load into selectedIds silently
-                        if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
-                    }
-                    else {
-                        //selectedIds = [];
-                        if (globalThis.globalAllChecked) {
-                            globalThis.globalAllChecked = false;
-                            $('#chkAll').prop('checked', false);
-                        }
-                        console.warn("⚠️ No valid Pending IDs found.");
-                    }
-                }
-
-                callback(result); // Sends data to DataTables
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        },
-        columns: columns,
-        language: {
-            search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search ReqId/Arm/SUSNo/ORO/Regt" // Add custom placeholder
-        },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-        buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
+                // Add tooltip to the search input box
+                let searchBox = $('div.dataTables_filter input');
+                searchBox.attr('title', 'Search ReqId/Arm/SUSNo/ORO/Regt/Army No/Chip No/Card Serial No');
             },
-            {
-                extend: 'excel',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-                orientation: 'landscape',
-                pageSize: 'LEGAL',
-                title: 'E-IASC_DispathCard',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                },
-                customize: function (doc) {
-                    WaterMarkOnPdf(doc)
-                }
-            }],
-        // 👇 Show modal only after table (header + data) is fully rendered
-        initComplete: function () {
-            if (typeof callback === "function") {
-                callback(); // Show modal after DataTable is initialized
+            drawCallback: function (settings) {
+                // Recalculate widths on each data load
+                this.api().columns.adjust().responsive.recalc();
+
+                const tooltipTriggerList = [].slice.call(
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                );
+                tooltipTriggerList.forEach(el => {
+                    new bootstrap.Tooltip(el);
+                });
+
+                updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll');
             }
-            // Add tooltip to the search input box
-            let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search ReqId/Arm/SUSNo/ORO/Regt/Army No/Chip No/Card Serial No');
-        },
-        drawCallback: function (settings) {
-            updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll');
-        }
-    });
+        });
 
-    $('#btnSearch').on('click', function () {
-        // Get search field and search text values
-        const searchField = $('#searchField').val()?.trim();
-        const searchText = $('#searchText').val()?.trim();
 
-        // If no search field is selected or no search text entered, prevent the search
-        if (!searchField || !searchText) {
-            toastr.error('Please select a search field and enter a value.');
-            return; // Exit the function and prevent table reload
-        }
 
-        // Proceed with table reload if search criteria is valid
-        table2.ajax.reload();
-    });
-    $('#btnClear').on('click', function () {
-        $('#searchText').val('');
-        $('#searchField').val([]).trigger('change');
 
-        table2.ajax.reload();
-    });
-    $(document).on('change', '.chkRequestId', async function () {
-        await updateSelectedIds('#tbldatadialog', 'chkRequestId');
-        updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll'); // Sync master checkbox state
-    });
-    // Restrict typing
-    $('#searchText').on('keypress', function (e) {
-        let field = $('#searchField').val();
-        let char = String.fromCharCode(e.which);
+        $('#btnSearch').on('click', function () {
+            // Get search field and search text values
+            const searchField = $('#searchField').val()?.trim();
+            const searchText = $('#searchText').val()?.trim();
 
-        if (e.which === 13) {
+            // If no search field is selected or no search text entered, prevent the search
+            if (!searchField || !searchText) {
+                toastr.error('Please select a search field and enter a value.');
+                return; // Exit the function and prevent table reload
+            }
+
+            // Proceed with table reload if search criteria is valid
             table2.ajax.reload();
-        }
+        });
 
-        // Allow navigation keys
-        if (e.ctrlKey || e.metaKey || e.altKey || e.which < 32) return;
+        $('#btnClear').on('click', function () {
+            $('#searchText').val('');
+            $('#searchField').val([]).trigger('change');
 
-        //if (field === "requestid") {
-        //    // Allow only digits
-        //    if (!/[0-9]/.test(char)) {
-        //        e.preventDefault();
-        //    }
-        //} else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
-        //    // Allow alphanumeric and space only, block special characters
-        //    if (!/^[a-zA-Z0-9_/ ]$/.test(char)) {
-        //        e.preventDefault();
-        //    }
-        //}
-        if (["susno", "regimentalname", "recordofficename"].includes(field)) {
-            // Allow alphanumeric and space only, block special characters
-            if (!/^[a-zA-Z0-9_/ ]$/.test(char)) {
-                e.preventDefault();
+            table2.ajax.reload();
+        });
+
+        $(document).on('change', '.chkRequestId', async function () {
+            await updateSelectedIds('#tbldatadialog', 'chkRequestId');
+            updateUICheckboxes('#tbldatadialog', 'chkRequestId', '#chkAll'); // Sync master checkbox state
+        });
+        // Restrict typing
+        $('#searchText').on('keypress', function (e) {
+            let field = $('#searchField').val();
+            let char = String.fromCharCode(e.which);
+
+            if (e.which === 13) {
+                table2.ajax.reload();
             }
-        }
-    });
-    // Sanitize pasted value
-    $('#searchText').on('input', function () {
-        let field = $('#searchField').val();
-        let currentVal = $(this).val();
 
-        //if (field === "requestid") {
-        //    // Allow digits only
-        //    let cleaned = currentVal.replace(/[^0-9]/g, '');
-        //    if (cleaned !== currentVal) {
-        //        $(this).val(cleaned);
-        //    }
-        //} else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
-        //    // Allow only letters, numbers, and space
-        //    let cleaned = currentVal.replace(/[^a-zA-Z0-9_/ ]/g, '');
-        //    if (cleaned !== currentVal) {
-        //        $(this).val(cleaned);
-        //    }
-        //}
-        if (["susno", "regimentalname", "recordofficename"].includes(field)) {
-            // Allow only letters, numbers, and space
-            let cleaned = currentVal.replace(/[^a-zA-Z0-9_/ ]/g, '');
-            if (cleaned !== currentVal) {
-                $(this).val(cleaned);
+            // Allow navigation keys
+            if (e.ctrlKey || e.metaKey || e.altKey || e.which < 32) return;
+
+            //if (field === "requestid") {
+            //    // Allow only digits
+            //    if (!/[0-9]/.test(char)) {
+            //        e.preventDefault();
+            //    }
+            //} else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
+            //    // Allow alphanumeric and space only, block special characters
+            //    if (!/^[a-zA-Z0-9_/ ]$/.test(char)) {
+            //        e.preventDefault();
+            //    }
+            //}
+            if (["susno", "regimentalname", "recordofficename"].includes(field)) {
+                // Allow alphanumeric and space only, block special characters
+                if (!/^[a-zA-Z0-9_/ ]$/.test(char)) {
+                    e.preventDefault();
+                }
             }
-        }
+        });
+
+        // Sanitize pasted value
+        $('#searchText').on('input', function () {
+            let field = $('#searchField').val();
+            let currentVal = $(this).val();
+
+            //if (field === "requestid") {
+            //    // Allow digits only
+            //    let cleaned = currentVal.replace(/[^0-9]/g, '');
+            //    if (cleaned !== currentVal) {
+            //        $(this).val(cleaned);
+            //    }
+            //} else if (["categery", "serviceno", "susno", "regimentalname", "recordofficename", "chipno", "cardserialno", "status"].includes(field)) {
+            //    // Allow only letters, numbers, and space
+            //    let cleaned = currentVal.replace(/[^a-zA-Z0-9_/ ]/g, '');
+            //    if (cleaned !== currentVal) {
+            //        $(this).val(cleaned);
+            //    }
+            //}
+            if (["susno", "regimentalname", "recordofficename"].includes(field)) {
+                // Allow only letters, numbers, and space
+                let cleaned = currentVal.replace(/[^a-zA-Z0-9_/ ]/g, '');
+                if (cleaned !== currentVal) {
+                    $(this).val(cleaned);
+                }
+            }
+        });
+
+        $('#chkAll').on('change', function () {
+            globalThis.selectedIds = [];
+            globalThis.globalAllChecked = $(this).prop('checked');
+            if (globalThis.globalAllChecked) {
+                globalThis.isFirstSelectAll = true; // Force fresh fetch
+            }
+            table2.ajax.reload();
+        });
     });
-    $('#chkAll').on('change', function () {
-        globalThis.selectedIds = [];
-        globalThis.globalAllChecked = $(this).prop('checked');
-        if (globalThis.globalAllChecked) {
-            globalThis.isFirstSelectAll = true; // Force fresh fetch
-        }
-        table2.ajax.reload();
-    });
+
+    // STEP 2: Show modal (this triggers the above)
+    $("#DataTableDialog").modal("show");
 }
 function getColumnsForListBindDialog(choice) {
     let columns = [];
@@ -1423,6 +1664,7 @@ function getColumnsForListBindDialog(choice) {
                     data: null,
                     name: "Id",
                     orderable: false, // Disable sorting for this column
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         if ($("#chkAll").prop('checked')) {
                             return `<div class="custom-control custom-checkbox small">
@@ -1444,6 +1686,8 @@ function getColumnsForListBindDialog(choice) {
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "70px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
 
@@ -1453,17 +1697,23 @@ function getColumnsForListBindDialog(choice) {
                 {
                     title: "Card Serial No",
                     data: "CardSerialNo",
-                    name: "CardSerialNo"
+                    name: "CardSerialNo",
+                    className: "",
+                    width: "110px",
                 },
                 {
                     title: "Chip No",
                     data: "ChipNo",
-                    name: "ChipNo"
+                    name: "ChipNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Category",
                     data: "ApplyForId",
                     name: "Category",
+                    className: "nowrap",
+                    width: "110px",
                     render: function (data, type, row) {
                         return (row.ApplyFor);
                     }
@@ -1472,27 +1722,46 @@ function getColumnsForListBindDialog(choice) {
                     title: "Appl Id",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "110px",
+                    render: function (data, type, row, meta) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
+
                 },
                 {
                     title: "Unit",
                     data: "UnitAbbreviation",
                     name: "UnitAbbreviation",
-                    orderable: false
+                    className: "nowrap",
+                    width: "120px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "SUS No",
                     data: "SUSNo",
-                    name: "SUSNo"
+                    name: "SUSNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -1508,10 +1777,13 @@ function getColumnsForListBindDialog(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
             ];
@@ -1526,6 +1798,7 @@ function getColumnsForListBindDialog(choice) {
                     data: null,
                     name: "Id",
                     orderable: false, // Disable sorting for this column
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         if ($("#chkAll").prop('checked')) {
                             return `<div class="custom-control custom-checkbox small">
@@ -1547,6 +1820,8 @@ function getColumnsForListBindDialog(choice) {
                     data: null,
                     name: "SerialNumber",
                     orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "70px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
 
@@ -1556,17 +1831,23 @@ function getColumnsForListBindDialog(choice) {
                 {
                     title: "Card Serial No",
                     data: "CardSerialNo",
-                    name: "CardSerialNo"
+                    name: "CardSerialNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Chip No",
                     data: "ChipNo",
-                    name: "ChipNo"
+                    name: "ChipNo",
+                    className: "",
+                    width: "110px",
                 },
                 {
                     title: "Category",
                     data: "ApplyForId",
                     name: "Category",
+                    className: "nowrap",
+                    width: "110px",
                     render: function (data, type, row) {
                         return (row.ApplyFor);
                     }
@@ -1575,43 +1856,65 @@ function getColumnsForListBindDialog(choice) {
                     title: "Appl Id",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "110px",
+                    render: function (data, type, row, meta) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Unit",
                     data: "UnitAbbreviation",
                     name: "UnitAbbreviation",
-                    orderable: false
+                    className: "nowrap",
+                    width: "120px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "SUS No",
                     data: "SUSNo",
-                    name: "SUSNo"
+                    name: "SUSNo",
+                    className: "nowrap",
+                    width: "110px",
                 },
                 {
                     title: "ORO",
                     data: "RecordOfficeName",
                     name: "RecordOfficeName",
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
-                        return (row.ApplyForId == 1 ? data : "");
+                        return (row.ApplyForId == 1 ? `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>` : "");
                     }
                 },
                 {
                     title: "Regt",
                     data: "RegimentalName",
                     name: "RegimentalName",
+                    className: "nowrap",
+                    width: "150px",
                     render: function (data, type, row) {
-                        return (row.ApplyForId == 2 ? data : "");
+                        return (row.ApplyForId == 2 ? `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>` : "");
                     }
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -1627,10 +1930,13 @@ function getColumnsForListBindDialog(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
             ];
@@ -1720,20 +2026,4 @@ function ProceedToDispatch(searchField, searchText) {
                 reject(new Error("Proceed To Dispatch: " + error.message));
             });
     });
-}
-function getSearchStatusForBindDialog(search) {
-    const currentSearchText = search.trim();
-
-    // Ensure searchChanged is only true when the actual search field or text changes.
-    globalThis.searchChanged = (
-        (currentSearchText !== globalThis.previousSearchText )
-    );
-
-    // Update previous values after comparison
-    globalThis.previousSearchText = currentSearchText;
-
-    return {
-        searchChanged: globalThis.searchChanged,
-        currentSearchText
-    };
 }

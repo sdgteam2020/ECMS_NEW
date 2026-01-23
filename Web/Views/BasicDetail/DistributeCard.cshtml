@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-
+<link asp-href-include="~/developercss/distributecard.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -46,32 +46,12 @@
                         <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm mr-2"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
                     </div>
                 </div>
-                <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
-                    <thead>
-                        <tr>
-                            <th class="noExport wd-30-f">
-                                <div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input" id="chkAll">
-                                    <label class="custom-control-label font-weight-bold" for="chkAll"></label>
-                                </div>
-                            </th>
-                            <th class="noExport d-none"></th>
-                            <th class="wd-60-f">S No</th>
-                            <th class="nowrap">Army No</th>
-                            <th class="nowrap">Rk & Name</th>
-                            <th class="nowrap">Unit</th>
-                            <th class="nowrap">Date & Time</th>
-                            <th class="nowrap">Distributed On</th>
-                            <th class="nowrap">Remark</th>
-                        </tr>
-                    </thead>
-                    <tbody id="DetailBody">
-                    </tbody>
+                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
                 </table>
             </div>
         </div>
     </div>
 </div>
 <script asp-src-include="~/developerjs/DistributeCard.js"></script>
-
+<script asp-src-include="~/developerjs/CheckedFunction.js"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

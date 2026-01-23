@@ -29,3 +29,9 @@
 .textarea-auto-height {
     height: auto !important;
 }
+#tbldata {
+    table-layout: fixed !important;
+}
+#tbldatadialog {
+    table-layout: fixed !important;
+}

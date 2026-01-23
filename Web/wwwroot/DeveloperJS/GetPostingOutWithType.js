@@ -16,18 +16,30 @@ $(function () {
 });
 
 function BindData() {
-    $("#tbldata").DataTable().destroy();
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        // Destroy the DataTable and clear the table content
+        $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldata thead").empty(); // Clear old thead
+        $("#tbldata tbody").empty(); // Clear old tbody
+    }
+
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
+        scroller: true,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
+        stateSave: false,
+
+        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+        responsive: false, // Columns can hide on small screens
+        deferRender: true,// ✅ Handle zoom changes
         order: [[1, 'desc']], // Default sorting on the first column
-        responsive: true,
-        autoWidth: false,
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -58,8 +70,11 @@ function BindData() {
         },
         columns: [
             {
+                title: "S No",
                 data: null,
                 name: "SerialNumber",
+                className: "text-center col-sno",
+                width: "60px",
                 orderable: false, // Disable sorting for this column
                 render: function (data, type, row, meta) {
                     // Calculate serial number based on row index
@@ -67,50 +82,91 @@ function BindData() {
                 }
             },
             {
+                title: "Updated On",
                 data: "UpdatedOn",
                 name: "UpdatedOn",
+                className: "",
+                width: "150px",
                 defaultContent: '',
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
                 }
             },
             {
+                title: "Army No , Rank , Name",
                 data: null,
                 name: null,
+                name: "Reason",
+                className: "nowrap",
+                width: "180px",
                 orderable: false,
                 render: function (data, type, row) {
-                    return `${row.ServiceNo}</br>${row.Rank || ""} ${row.FName || ""} ${row.LName || ""}`;
+                    let fullName = `${row.ServiceNo} ${row.Rank || ""} ${row.FName || ""} ${row.LName || ""}`;
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
+
                 }
             },
-            { data: "Reason", name: "Reason", defaultContent: '' },
             {
+                title: "Reason",
+                data: "Reason",
+                name: "Reason",
+                className: "nowrap",
+                width: "180px",
+                defaultContent: ''
+            },
+            {
+                title: "SOS Dt",
                 data: "SOSDate",
                 name: "SOSDate",
+                className: "",
+                width: "150px",
                 defaultContent: '',
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
                 }
             },
             {
+                title: "From Unit",
                 data: null,
                 name: null,
+                className: "nowrap",
+                width: "180px",
                 orderable: false,
                 render: function (data, type, row) {
-                    return `${row.FromUnitName}</br>${row.FromDomainId}`;
+                    let FromUnit = `${row.FromUnitName}</br>${row.FromDomainId}`;
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${row.FromUnitName} ${row.FromDomainId}">${FromUnit}</To>`;
+
                 }
             },
             {
+                title: "To Unit",
                 data: null,
                 name: null,
+                className: "nowrap",
+                width: "180px",
                 orderable: false,
                 render: function (data, type, row) {
-                    return `${row.ToUnitName}</br>${row.ToDomainId}`;
+                    let ToUnit = `${row.ToUnitName}</br>${row.ToDomainId}`;
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${row.ToUnitName} ${row.ToDomainId}">${ToUnit}</To>`;
                 }
             },
-            { data: "Authority", name: "Authority" },
             {
+                title: "Auth",
+                data: "Authority",
+                name: "Authority",
+                className: "",
+                width: "150px",
+                render: function (data, type, row) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "Dispatch Details",
                 data: null,
                 name: null,
+                className: "noExport",
+                width: "120px",
                 orderable: false,
                 render: function (data, type, row) {
                     let returnStr = ``;
@@ -136,6 +192,12 @@ function BindData() {
                     return returnStr;
                 }
             }
+        ],
+        columnDefs: [
+            {
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+            },
         ],
         language: {
             search: "", // Remove the default "Search:" label
@@ -167,21 +229,43 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
+        // 👇 Show modal only after table (header + data) is fully rendered
+        initComplete: function () {
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table.columns.adjust().responsive.recalc();
+                }, 100);
+            });
+        },
         drawCallback: function (settings) {
-            $("body").on("click", ".cls-btneyedispatchdetails", function () {
+            // Recalculate widths on each data load
+            this.api().columns.adjust().responsive.recalc();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+            $("#tbldata tbody").off("click", ".cls-btneyedispatchdetails").on("click", ".cls-btneyedispatchdetails", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 let htmlBody = `${GetHtmlLabel('Dispatched Dt', DateFormateddMMyyyyhhmmss(rowData.DispatchedOn))}
-                                ${GetHtmlLabel('Ref No Regd SDS', rowData.RefNo) }
-                                ${GetHtmlLabel('Updated On', DateFormateddMMyyyyhhmmss(rowData.DispatchUpdatedOn)) }
-                                ${GetHtmlLabel('Updated By', rowData.DispatchUpdatedBy) }
+                                ${GetHtmlLabel('Ref No Regd SDS', rowData.RefNo)}
+                                ${GetHtmlLabel('Updated On', DateFormateddMMyyyyhhmmss(rowData.DispatchUpdatedOn))}
+                                ${GetHtmlLabel('Updated By', rowData.DispatchUpdatedBy)}
                             `;
                 $('#MessageDialog .modal-dialog').removeClass('modal-sm');
                 $("#MessageDialogLabel").html('Dispatch Details');
                 $("#MessageDialogBody").html(htmlBody);
                 $("#MessageDialog").modal('show');
             });
-
-            $("body").on("click", ".cls-btnAddDispatchDetails", function () {
+            $("#tbldata tbody").off("click", ".cls-btnAddDispatchDetails").on("click", ".cls-btnAddDispatchDetails", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     Reset();

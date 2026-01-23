@@ -129,4 +129,9 @@ namespace DataTransferObject.Requests
         public byte? SubDteId { get; set; }
         public int? UnitMapId { get; set; }
     }
+    public class DTODataTablesRequestForCommanCheckAll : DTODataTablesRequest
+    {
+        public bool AllChecked { get; set; } = false;
+        public bool SearchTextChanged { get; set; } = false;
+    }
 }

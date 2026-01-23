@@ -457,192 +457,177 @@ $(async function () {
     });
 });
 function GetReportReturnHistory(Choice, ApplyForId, callback) {
-    if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
-        $("#CardReport_tbldatadialog").DataTable().destroy();
-        $("#CardReport_tbldatadialog").empty(); // Clear old thead/tbody
-    }
-    function parseVal(val) {
-        if (val === "null" || val === undefined || val === "") {
-            return null;
+    // STEP 1: Move ALL DataTable code into shown.bs.modal
+    $("#CardReport").one('shown.bs.modal', function () {
+        if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
+            // Destroy the DataTable and clear the table content
+            $("#CardReport_tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+            $("#CardReport_tbldatadialog thead").empty(); // Clear old thead
+            $("#CardReport_tbldatadialog tbody").empty(); // Clear old tbody
         }
-        return val;
-    }
-    var userdata =
-    {
-        "Choice": Choice,
-        "ApplyForId": ApplyForId,
-        "UnitType": $("input[type='radio'][name=UnitTyperdi]").length > 0 ? parseVal($("input[type='radio'][name=UnitTyperdi]:checked").val()) : null,
-        "ComdId": $('#ddlCommand').length > 0 ? parseVal($('#ddlCommand').val()) : null,
-        "CorpsId": $('#ddlCorps').length > 0 ? parseVal($('#ddlCorps').val()) : null,
-        "DivId": $('#ddlDiv').length > 0 ? parseVal($('#ddlDiv').val()) : null,
-        "BdeId": $('#ddlBde').length > 0 ? parseVal($('#ddlBde').val()) : null,
-        "FmnBranchID": $('#ddlFmnBranch').length > 0 ? parseVal($('#ddlFmnBranch').val()) : null,
-        "PsoId": $('#ddlPSODte').length > 0 ? parseVal($('#ddlPSODte').val()) : null,
-        "SubDteId": $('#ddlDgSubDte').length > 0 ? parseVal($('#ddlDgSubDte').val()) : null,
-        "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null
-    };
 
-    const columns = getColumnsByChoice(Choice);
-    table = $("#CardReport_tbldatadialog").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        fixedHeader: false,       // ❌ disable when using scrollY
-        autoWidth: false, // Let us handle width via CSS
-        responsive: true, // Responsive breaks layout for width control
-        processing: true,
-        serverSide: true,
-        filter: true,
-        order: [[1, 'desc']], // Default sorting on the first column
-
-        ajax: async function (data, callback, settings) {
-
-            let requestData = {
-                Draw: data.draw,
-                Start: data.start,
-                Length: data.length,
-                SearchValue: data.search.value,
-                SortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                SortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                ...userdata
-            };
-            try {
-                let response = await fetch("/Home/GetReportCardData", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        'RequestVerificationToken': globalThis.RequestVerificationToken
-                    },
-                    body: JSON.stringify(requestData)
-                });
-                if (!response.ok) {
-                    $("#CardReport").modal("hide");
-                    const error = await response.json();
-                    toastr.error(error.message || `Error ${response.status}`, "Error");
-                    throw new Error(error.message || `HTTP error! Status: ${response.status}`);
-                }
-
-
-                let result = await response.json();
-                //$("#lblTotal").html(result.recordsTotal);
-                callback(result); // Sends data to DataTables
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
+        function parseVal(val) {
+            if (val === "null" || val === undefined || val === "") {
+                return null;
             }
-        },
-        columns: columns,
-        language: {
-            search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search Army No" // Add custom placeholder
-        },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-        buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-            {
-                extend: 'excel',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-                orientation: 'landscape',
-                pageSize: 'LEGAL',
-                title: 'E-IASC_Report',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                },
-                customize: function (doc) {
-                    WaterMarkOnPdf(doc)
-                }
-            }],
-        // 👇 Show modal only after table (header + data) is fully rendered
-        initComplete: function () {
-            if (typeof callback === "function") {
-                callback(); // show modal now
-            }
-        },
-        drawCallback: function (settings) {
+            return val;
+        }
 
+        var userdata =
+        {
+            "Choice": Choice,
+            "ApplyForId": ApplyForId,
+            "UnitType": $("input[type='radio'][name=UnitTyperdi]").length > 0 ? parseVal($("input[type='radio'][name=UnitTyperdi]:checked").val()) : null,
+            "ComdId": $('#ddlCommand').length > 0 ? parseVal($('#ddlCommand').val()) : null,
+            "CorpsId": $('#ddlCorps').length > 0 ? parseVal($('#ddlCorps').val()) : null,
+            "DivId": $('#ddlDiv').length > 0 ? parseVal($('#ddlDiv').val()) : null,
+            "BdeId": $('#ddlBde').length > 0 ? parseVal($('#ddlBde').val()) : null,
+            "FmnBranchID": $('#ddlFmnBranch').length > 0 ? parseVal($('#ddlFmnBranch').val()) : null,
+            "PsoId": $('#ddlPSODte').length > 0 ? parseVal($('#ddlPSODte').val()) : null,
+            "SubDteId": $('#ddlDgSubDte').length > 0 ? parseVal($('#ddlDgSubDte').val()) : null,
+            "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null
+        };
 
-            $("#CardReport_tbldatadialog tbody").off("click", ".cls-remarks").on("click", ".cls-remarks", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData.RemarksNameList != null) {
-                    var remarksArray = rowData.RemarksNameList.split('#');
-                    if (remarksArray != null) {
-                        var listItem = "";
-                        listItem += "<ul>";
-                        for (var j = 0; j < remarksArray.length; j++) {
-                            listItem += "<li>" + remarksArray[j] + "</li>";
-                        }
-                        listItem += "</ul>";
-                        $("#MessageDialogLabel").html('Reason');
-                        $("#MessageDialogBody").html(listItem);
-                        $("#MessageDialog").modal('show');
+        const columns = getColumnsByChoice(Choice);
+        table = $("#CardReport_tbldatadialog").DataTable({
+            scrollY: '65vh',          // ✅ vertical scroll
+            scrollX: true,            // ✅ horizontal scroll
+            scrollCollapse: true,
+            scroller: true,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: true,        // ✅ Improve scrolling performance
+            fixedHeader: false,       // ❌ disable when using scrollY
+
+            processing: true,
+            serverSide: true,
+            filter: true,
+            stateSave: false,
+
+            autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+            responsive: false, // Columns can hide on small screens
+            deferRender: true,// ✅ Handle zoom changes
+            order: [[1, 'desc']], // Default sorting on the first column
+
+            ajax: async function (data, callback, settings) {
+
+                let requestData = {
+                    Draw: data.draw,
+                    Start: data.start,
+                    Length: data.length,
+                    SearchValue: data.search.value,
+                    SortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
+                    SortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                    ...userdata
+                };
+                try {
+                    let response = await fetch("/Home/GetReportCardData", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            'RequestVerificationToken': globalThis.RequestVerificationToken
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+                    if (!response.ok) {
+                        $("#CardReport").modal("hide");
+                        const error = await response.json();
+                        toastr.error(error.message || `Error ${response.status}`, "Error");
+                        throw new Error(error.message || `HTTP error! Status: ${response.status}`);
                     }
-                }
-            });
 
 
-            $("#CardReport_tbldatadialog tbody").off("click", ".cls-Faulty-FromRemark").on("click", ".cls-Faulty-FromRemark", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    $("#MessageDialogLabel").html('Remark');
-                    $("#MessageDialogBody").html(rowData.FromRemark);
-                    $("#MessageDialog").modal('show');
-                }
-            });
+                    let result = await response.json();
+                    //$("#lblTotal").html(result.recordsTotal);
+                    callback(result); // Sends data to DataTables
 
-            $("#CardReport_tbldatadialog tbody").off("click", ".cls-Faulty-ToRemark").on("click", ".cls-Faulty-ToRemark", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    $("#MessageDialogLabel").html('AFSAC Remark');
-                    $("#MessageDialogBody").html(rowData.ToRemark);
-                    $("#MessageDialog").modal('show');
+                } catch (error) {
+                    console.error("Error fetching data:", error);
                 }
-            });
-            $("#CardReport_tbldatadialog tbody").off("click", ".cls-Lost-FromRemark").on("click", ".cls-Lost-FromRemark", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    $("#MessageDialogLabel").html('Remark');
-                    $("#MessageDialogBody").text(rowData.FromRemark);
-                    $("#MessageDialog").modal('show');
+            },
+            columns: columns,
+            columnDefs: [
+                {
+                    targets: '_all',  // Apply to all visible columns
+                    orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+                },
+            ],
+            language: {
+                search: "", // Remove the default "Search:" label
+                searchPlaceholder: "Search Army No" // Add custom placeholder
+            },
+            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    title: 'E-IASC_Report',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    },
+                    customize: function (doc) {
+                        WaterMarkOnPdf(doc)
+                    }
+                }],
+            // 👇 Show modal only after table (header + data) is fully rendered
+            initComplete: function () {
+                if (typeof callback === "function") {
+                    callback(); // show modal now
                 }
-            });
+                // Force DataTables to calculate optimal widths
+                this.api().columns.adjust();
 
-            $("#CardReport_tbldatadialog tbody").off("click", ".cls-Lost-uploadedDoc").on("click", ".cls-Lost-uploadedDoc", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                const baseUrl = window.location.origin;
-                const downloadUrl = `${baseUrl}/LostCardSupportingDoc/${encodeURIComponent(rowData.SupportDocName)}`;
-                const link = document.createElement('a');
-                link.href = downloadUrl;
-                link.download = "LostCard_SupportiveDocument.pdf";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                //window.location.href = downloadUrl;
-            });
-            $("#CardReport_tbldatadialog tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    GetRequestHistory(rowData.RequestId);
-                }
-            });
-            $("#CardReport_tbldatadialog tbody").off("click", ".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    GetMovementHistory(rowData.RequestId);
-                }
-            });
+                // Handle zoom/resize
+                var resizeTimer;
+                $(window).on('resize', function () {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function () {
+                        table.columns.adjust().responsive.recalc();
+                    }, 100);
+                });
+            },
+            drawCallback: function (settings) {
+                // Recalculate widths on each data load
+                this.api().columns.adjust().responsive.recalc();
 
-        }
+                const tooltipTriggerList = [].slice.call(
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                );
+                tooltipTriggerList.forEach(el => {
+                    new bootstrap.Tooltip(el);
+                });
+
+                $("#CardReport_tbldatadialog tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
+                    var rowData = table.row($(this).closest("tr")).data();
+                    if (rowData != null) {
+                        GetRequestHistory(rowData.RequestId);
+                    }
+                });
+                $("#CardReport_tbldatadialog tbody").off("click", ".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {
+                    var rowData = table.row($(this).closest("tr")).data();
+                    if (rowData != null) {
+                        GetMovementHistory(rowData.RequestId);
+                    }
+                });
+
+            }
+        });
     });
+    // STEP 2: Show modal (this triggers the above)
+    $("#CardReport").modal("show");
+
+
 }
 function getColumnsByChoice(choice) {
     let columns = [];
@@ -654,7 +639,9 @@ function getColumnsByChoice(choice) {
                     title: "S No",
                     data: null,
                     name: "SerialNumber",
-                    orderable: false, // Disable sorting for this column
+                    orderable: false,
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -664,16 +651,27 @@ function getColumnsByChoice(choice) {
                     title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "150px",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -689,16 +687,21 @@ function getColumnsByChoice(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
                 {
                     title: "Exported On",
                     data: "ActionOn",
                     name: "ActionOn",
+                    className: "",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -706,8 +709,9 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Application History",
                     data: null,
-                    className: "noExport",
                     name: "Application History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -715,9 +719,10 @@ function getColumnsByChoice(choice) {
                 },
                 {
                     title: "Card History",
-                    className: "noExport",
                     data: null,
                     name: "Card History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -733,7 +738,9 @@ function getColumnsByChoice(choice) {
                     title: "S No",
                     data: null,
                     name: "SerialNumber",
-                    orderable: false, // Disable sorting for this column
+                    orderable: false,
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -743,16 +750,26 @@ function getColumnsByChoice(choice) {
                     title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -768,16 +785,21 @@ function getColumnsByChoice(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
                 {
                     title: "Printed On",
                     data: "ActionOn",
                     name: "ActionOn",
+                    className: "",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -785,8 +807,9 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Application History",
                     data: null,
-                    className: "noExport",
                     name: "Application History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -794,9 +817,10 @@ function getColumnsByChoice(choice) {
                 },
                 {
                     title: "Card History",
-                    className: "noExport",
                     data: null,
                     name: "Card History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -811,7 +835,9 @@ function getColumnsByChoice(choice) {
                     title: "S No",
                     data: null,
                     name: "SerialNumber",
-                    orderable: false, // Disable sorting for this column
+                    orderable: false,
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -821,16 +847,27 @@ function getColumnsByChoice(choice) {
                     title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "150px",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -846,36 +883,45 @@ function getColumnsByChoice(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
                 {
                     title: "From",
                     data: "null",
                     name: "null",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, rowData) {
                         let From = `${`${rowData.FromDID} (${rowData.FromRankName} ${rowData.FromName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.FromServiceNo) ? `${rowData.FromServiceNo.slice(0, 2)}  ${rowData.FromServiceNo.slice(2)}` : rowData.FromServiceNo}`;
-                        return From;
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${From}">${From}</span>`;
                     }
                 },
                 {
                     title: "Sent To",
                     data: "null",
                     name: "null",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, rowData) {
                         let To = `${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo) ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo}`;
-                        return To;
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${To}">${To}</span>`;
                     }
                 },
                 {
                     title: "Dispatch On",
                     data: "ActionOn",
                     name: "ActionOn",
+                    className: "",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -883,8 +929,9 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Application History",
                     data: null,
-                    className: "noExport",
                     name: "Application History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -892,9 +939,10 @@ function getColumnsByChoice(choice) {
                 },
                 {
                     title: "Card History",
-                    className: "noExport",
                     data: null,
                     name: "Card History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -909,6 +957,8 @@ function getColumnsByChoice(choice) {
                     title: "S No",
                     data: null,
                     name: "SerialNumber",
+                    className: "text-center col-sno",
+                    width: "60px",
                     orderable: false, // Disable sorting for this column
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
@@ -919,16 +969,27 @@ function getColumnsByChoice(choice) {
                     title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "150px",
+                    orderable: false,
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -944,36 +1005,45 @@ function getColumnsByChoice(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
                 {
                     title: "From",
                     data: "null",
                     name: "null",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, rowData) {
                         let From = `${`${rowData.FromDID} (${rowData.FromRankName} ${rowData.FromName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.FromServiceNo) ? `${rowData.FromServiceNo.slice(0, 2)}  ${rowData.FromServiceNo.slice(2)}` : rowData.FromServiceNo}`;
-                        return From;
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${From}">${From}</span>`;
                     }
                 },
                 {
                     title: "Sent To",
                     data: "null",
                     name: "null",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, rowData) {
                         let To = `${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo) ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo}`;
-                        return To;
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${To}">${To}</span>`;
                     }
                 },
                 {
                     title: "Received On",
                     data: "ActionOn",
                     name: "ActionOn",
+                    className: "",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -981,8 +1051,9 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Application History",
                     data: null,
-                    className: "noExport",
                     name: "Application History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -990,9 +1061,10 @@ function getColumnsByChoice(choice) {
                 },
                 {
                     title: "Card History",
-                    className: "noExport",
                     data: null,
                     name: "Card History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -1007,7 +1079,9 @@ function getColumnsByChoice(choice) {
                     title: "S No",
                     data: null,
                     name: "SerialNumber",
-                    orderable: false, // Disable sorting for this column
+                    orderable: false,
+                    className: "text-center col-sno",
+                    width: "60px",
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -1017,16 +1091,26 @@ function getColumnsByChoice(choice) {
                     title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -1042,36 +1126,45 @@ function getColumnsByChoice(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
                 {
                     title: "From",
                     data: "null",
                     name: "null",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, rowData) {
                         let From = `${`${rowData.FromDID} (${rowData.FromRankName} ${rowData.FromName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.FromServiceNo) ? `${rowData.FromServiceNo.slice(0, 2)}  ${rowData.FromServiceNo.slice(2)}` : rowData.FromServiceNo}`;
-                        return From;
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${From}">${From}</span>`;
                     }
                 },
                 {
                     title: "Sent To",
                     data: "null",
                     name: "null",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, rowData) {
                         let To = `${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo) ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo}`;
-                        return To;
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${To}">${To}</span>`;
                     }
                 },
                 {
                     title: "Dispatch On",
                     data: "ActionOn",
                     name: "ActionOn",
+                    className: "",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -1079,8 +1172,9 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Application History",
                     data: null,
-                    className: "noExport",
                     name: "Application History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -1088,9 +1182,10 @@ function getColumnsByChoice(choice) {
                 },
                 {
                     title: "Card History",
-                    className: "noExport",
                     data: null,
                     name: "Card History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -1105,7 +1200,9 @@ function getColumnsByChoice(choice) {
                     title: "S No",
                     data: null,
                     name: "SerialNumber",
-                    orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
+                    orderable: false,
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -1115,16 +1212,26 @@ function getColumnsByChoice(choice) {
                     title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -1140,36 +1247,45 @@ function getColumnsByChoice(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
                 {
                     title: "From",
                     data: "null",
                     name: "null",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, rowData) {
                         let From = `${`${rowData.FromDID} (${rowData.FromRankName} ${rowData.FromName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.FromServiceNo) ? `${rowData.FromServiceNo.slice(0, 2)}  ${rowData.FromServiceNo.slice(2)}` : rowData.FromServiceNo}`;
-                        return From;
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${From}">${From}</span>`;
                     }
                 },
                 {
                     title: "Sent To",
                     data: "null",
                     name: "null",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, rowData) {
                         let To = `${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo) ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo}`;
-                        return To;
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${To}">${To}</To>`;
                     }
                 },
                 {
                     title: "Received On",
                     data: "ActionOn",
                     name: "ActionOn",
+                    className: "",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -1177,8 +1293,9 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Application History",
                     data: null,
-                    className: "noExport",
                     name: "Application History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -1186,9 +1303,10 @@ function getColumnsByChoice(choice) {
                 },
                 {
                     title: "Card History",
-                    className: "noExport",
                     data: null,
                     name: "Card History",
+                    className: "noExport",
+                    width: "120px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -1203,7 +1321,9 @@ function getColumnsByChoice(choice) {
                     title: "S No",
                     data: null,
                     name: "SerialNumber",
-                    orderable: false, // Disable sorting for this column
+                    className: "text-center col-sno",
+                    width: "60px",
+                    orderable: false,
                     render: function (data, type, row, meta) {
                         // Calculate serial number based on row index
                         return meta.row + meta.settings._iDisplayStart + 1;
@@ -1213,16 +1333,26 @@ function getColumnsByChoice(choice) {
                     title: "Appl ID",
                     data: 'RequestId',
                     name: 'RequestId',
+                    className: "nowrap",
+                    width: "100px",
                 },
                 {
                     title: "Arm / Service",
                     data: "ArmedAbbreviation",
-                    name: "ArmedAbbreviation"
+                    name: "ArmedAbbreviation",
+                    className: "nowrap",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Army No",
                     data: "ServiceNo",
                     name: "ServiceNo",
+                    className: "nowrap",
+                    width: "120px",
                     render: function (data, type, row) {
                         // Check if first two characters are alphabets
                         if (/^[A-Za-z]{2}/.test(data)) {
@@ -1238,26 +1368,33 @@ function getColumnsByChoice(choice) {
                     title: "Rank & Name",
                     data: null,
                     name: null,
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, row) {
                         let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
-                        return (fullName);
+                        if (!fullName) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                     }
                 },
                 {
                     title: "Distributed By",
                     data: "null",
                     name: "null",
+                    className: "nowrap",
+                    width: "180px",
                     orderable: false,
                     render: function (data, type, rowData) {
                         let To = `${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo) ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo}`;
-                        return To;
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${To}">${To}</To>`;
                     }
                 },
                 {
                     title: "Distributed On",
                     data: "ActionOn",
                     name: "ActionOn",
+                    className: "",
+                    width: "150px",
                     render: function (data, type, row) {
                         return DateFormateddMMyyyyhhmmss(data);
                     }
@@ -1265,8 +1402,9 @@ function getColumnsByChoice(choice) {
                 {
                     title: "Application History",
                     data: null,
-                    className: "noExport",
                     name: "Application History",
+                    className: "noExport",
+                    width: "110px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
@@ -1274,9 +1412,10 @@ function getColumnsByChoice(choice) {
                 },
                 {
                     title: "Card History",
-                    className: "noExport",
                     data: null,
                     name: "Card History",
+                    className: "noExport",
+                    width: "110px",
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`

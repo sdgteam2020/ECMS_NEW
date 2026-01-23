@@ -112,30 +112,13 @@ $(function () {
         }
     });
 
-    // Add modal shown event handler
-    $('#DataTableDialog').on('shown.bs.modal', function () {
-        if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
-            // Multiple adjustments for reliability
-            setTimeout(function () {
-                tabledialog.columns.adjust().draw();
-                tabledialog.responsive && tabledialog.responsive.recalc();
-
-                // Force redraw
-                $(window).trigger('resize');
-            }, 200);
-        }
-    });
-
     $("#btnUser").on("click",function () {
 
         if ($("#lblUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Users');
             $("#DataTableDialog").modal('show');
-            // Initialize DataTable after a short delay
-            setTimeout(function () {
-                BindDialog("User");
-            }, 100);
+            BindDialog("User");
         }
     });
     $("#btnMappedUser").on("click", function () {
@@ -144,10 +127,7 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Mapped Users');
             $("#DataTableDialog").modal('show');
-            // Initialize DataTable after a short delay
-            setTimeout(function () {
-                BindDialog("MappedUser");
-            }, 100);
+            BindDialog("MappedUser");
         }
     });
     $("#btnUnMappedUser").on("click", function () {
@@ -155,11 +135,7 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total UnMapped Users');
             $("#DataTableDialog").modal('show');
-            // Initialize DataTable after a short delay
-            setTimeout(function () {
-                BindDialog("UnMappedUser");
-            }, 100);
-
+            BindDialog("UnMappedUser");
         }
     });
     $("#btnActiveUser").on("click", function () {
@@ -167,11 +143,7 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Active Users');
             $("#DataTableDialog").modal('show');
-            // Initialize DataTable after a short delay
-            setTimeout(function () {
-                BindDialog("ActiveUser");
-            }, 100);
-
+            BindDialog("ActiveUser");
         }
     });
     $("#btnInActiveUser").on("click", function () {
@@ -179,11 +151,7 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total InActive Users');
             $("#DataTableDialog").modal('show');
-            // Initialize DataTable after a short delay
-            setTimeout(function () {
-                BindDialog("InActiveUser");
-            }, 100);
-
+            BindDialog("InActiveUser");
         }
     });
     $("#btnVerified").on("click", function () {
@@ -191,9 +159,7 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Verified Users');
             $("#DataTableDialog").modal('show');
-            setTimeout(function () {
-                BindDialog("Verified");
-            }, 100);
+            BindDialog("Verified");
         }
     });
     $("#btnNotVerifiedUser").on("click", function () {
@@ -201,9 +167,7 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
-            setTimeout(function () {
-                BindDialog("NotVerifiedUser");
-            }, 100);
+            BindDialog("NotVerifiedUser");
         }
     });
     $("#btnIO").on("click", function () {
@@ -211,9 +175,7 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
-            setTimeout(function () {
-                BindDialog("IO");
-            }, 100);
+            BindDialog("IO");
         }
         else {
             BindData("IO");
@@ -224,9 +186,7 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
-            setTimeout(function () {
-                BindDialog("CO");
-            }, 100);
+            BindDialog("CO");
          }
     });
     //$("#btnRO").click(function () {
@@ -247,14 +207,21 @@ $(function () {
     //});
 });
 function BindDialog(Choice) {
-    if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
-        $("#tbldatadialog").DataTable().destroy();
-        $("#tbldatadialog").empty(); // Clear old thead/tbody
-    }
-    tabledialog = $("#tbldatadialog").DataTable({
+    // STEP 1: Move ALL DataTable code into shown.bs.modal
+    $("#DataTableDialog").one('shown.bs.modal', function () {
+        if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
+            // Destroy the DataTable and clear the table content
+            $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+            $("#tbldatadialog thead").empty(); // Clear old thead
+            $("#tbldatadialog tbody").empty(); // Clear old tbody
+        }
+
+        tabledialog = $("#tbldatadialog").DataTable({
             scrollY: '65vh',          // ✅ vertical scroll
             scrollX: true,            // ✅ horizontal scroll
             scrollCollapse: true,
+            scroller: true,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: true,        // ✅ Improve scrolling performance
             fixedHeader: false,       // ❌ disable when using scrollY
 
             processing: true,
@@ -262,8 +229,9 @@ function BindDialog(Choice) {
             filter: true,
             stateSave: false,
 
-            autoWidth: false, // Let us handle width via CSS
-            responsive: false, // ✅ IMPORTANT (disable)
+            autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+            responsive: false, // Columns can hide on small screens
+            deferRender: true,// ✅ Handle zoom changes
             order: [[1, 'desc']], // Default sorting on the first column
             ajax: {
                 url: "/Account/GetDataForDataTable",
@@ -299,14 +267,14 @@ function BindDialog(Choice) {
                     data: "Id",
                     name: "Id",
                     className: "nowrap",
-                    width: "120px",
+                    width: "100px",
                 },
                 {
                     title: "Domain Id",
                     data: "DomainId",
                     name: "DomainId",
                     className: "nowrap",
-                    width: "180px",
+                    width: "150px",
                     render: function (data, type, row, meta) {
                         if (!data) return '';
                         return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -328,7 +296,7 @@ function BindDialog(Choice) {
                     name: "RoleNames",
                     orderable: false, // Disable sorting for this column
                     className: "nowrap",
-                    width: "150px",
+                    width: "100px",
                     render: function (data, type, row) {
                         return data ? data.join(', ') : '';  // Convert array to string
                     }
@@ -338,7 +306,7 @@ function BindDialog(Choice) {
                     data: "UpdatedOn",
                     name: "UpdatedOn",
                     className: "text-wrap requested-generated-col",
-                    width: "220px",
+                    width: "150px",
                     render: function (data, type, row) {
                         return data ? DateFormateddMMyyyyhhmmss(data) : "NA";
                     },
@@ -406,11 +374,11 @@ function BindDialog(Choice) {
             ],
             columnDefs: [
                 { targets: 0, width: "60px", },
-                { targets: 1, width: "120px" },
-                { targets: 2, width: "180px" },
+                { targets: 1, width: "100px" },
+                { targets: 2, width: "150px" },
                 { targets: 3, width: "120px" },
-                { targets: 4, width: "150px" },
-                { targets: 5, width: "220px" },
+                { targets: 4, width: "100px" },
+                { targets: 5, width: "150px" },
                 { targets: 6, width: "100px" },
                 { targets: 7, width: "100px" },
                 { targets: 8, width: "100px" },
@@ -450,29 +418,27 @@ function BindDialog(Choice) {
                     customize: function (doc) {
                         WaterMarkOnPdf(doc)
                     }
-            }],
-        // Add these parameters for better rendering
-            deferRender: true,
-            scrollCollapse: true,
-            scroller: true,
+                }],
             initComplete: function () {
                 // Add tooltip to the search input box
                 let searchBox = $('div.dataTables_filter input');
                 searchBox.attr('title', 'Search Domain ID');
 
-                // Adjust columns after initialization
-                setTimeout(() => {
-                    this.api().columns.adjust().draw();
-                }, 300);
+                // Force DataTables to calculate optimal widths
+                this.api().columns.adjust();
 
+                // Handle zoom/resize
+                var resizeTimer;
+                $(window).on('resize', function () {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function () {
+                        tabledialog.columns.adjust().responsive.recalc();
+                    }, 100);
+                });
             },
             drawCallback: function (settings) {
-
-                const api = this.api();
-                // Adjust columns every time data is drawn
-                setTimeout(() => {
-                    api.columns.adjust();
-                }, 100);
+                // Recalculate widths on each data load
+                this.api().columns.adjust().responsive.recalc();
 
                 const tooltipTriggerList = [].slice.call(
                     document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -481,19 +447,26 @@ function BindDialog(Choice) {
                     new bootstrap.Tooltip(el);
                 });
             }
+        });
     });
+    // STEP 2: Show modal (this triggers the above)
+    $("#DataTableDialog").modal("show");
+
     
 }
 function BindData() {
-
     if ($.fn.DataTable.isDataTable("#tbldata")) {
-        $("#tbldata").DataTable().destroy();
-        $("#tbldata").empty(); // Clear old thead/tbody
+        // Destroy the DataTable and clear the table content
+        $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldata thead").empty(); // Clear old thead
+        $("#tbldata tbody").empty(); // Clear old tbody
     }
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
+        scroller: true,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
@@ -501,8 +474,9 @@ function BindData() {
         filter: true,
         stateSave: false,
 
-        autoWidth: false, // Let us handle width via CSS
-        responsive: false, // ✅ IMPORTANT (disable)
+        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+        responsive: false, // Columns can hide on small screens
+        deferRender: true,// ✅ Handle zoom changes
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -557,7 +531,7 @@ function BindData() {
                 data: "DomainId",
                 name: "DomainId",
                 className: "nowrap",
-                width: "180px",
+                width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -579,7 +553,7 @@ function BindData() {
                 name: "RoleNames",
                 orderable: false, // Disable sorting for this column
                 className: "nowrap",
-                width: "150px",
+                width: "120px",
                 render: function (data, type, row) {
                     return data ? data.join(', ') : '';  // Convert array to string
                 }
@@ -589,7 +563,7 @@ function BindData() {
                 data: "UpdatedOn",
                 name: "UpdatedOn",
                 className: "text-wrap requested-generated-col",
-                width: "220px",
+                width: "150px",
                 render: function (data, type, row) {
                     return data ? DateFormateddMMyyyyhhmmss(data) : "NA";
                 },
@@ -660,6 +634,8 @@ function BindData() {
                 title: "Action",
                 data: null,
                 name: "Id",
+                className: "nowrap",
+                width: "120px",
                 orderable: false,
                 className: "noExport text-center col-action",
                 render: function (data, type, row) {
@@ -671,10 +647,10 @@ function BindData() {
         columnDefs: [
             { targets: 0, width: "60px", },
             { targets: 1, width: "120px" },
-            { targets: 2, width: "180px" },
+            { targets: 2, width: "150px" },
             { targets: 3, width: "120px" },
-            { targets: 4, width: "150px" },
-            { targets: 5, width: "220px" },
+            { targets: 4, width: "120px" },
+            { targets: 5, width: "150px" },
             { targets: 6, width: "100px" },
             { targets: 7, width: "100px" },
             { targets: 8, width: "100px" },
@@ -715,6 +691,19 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
+        initComplete: function () {
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table.columns.adjust().responsive.recalc();
+                }, 100);
+            });
+        },
         drawCallback: function (settings) {
 
             this.api().columns.adjust();
@@ -822,7 +811,6 @@ function BindData() {
             });
         }
     });
-
 }
 function ProceedForMapping() {
     ResetErrorMessageForMapping();

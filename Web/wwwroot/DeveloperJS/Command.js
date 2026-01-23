@@ -39,9 +39,12 @@ $(function () {
 
 function BindData(callback) {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
-        $("#tbldata").DataTable().destroy();
-        $("#tbldata").empty(); // Clear old thead/tbody
+        // Destroy the DataTable and clear the table content
+        $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldata thead").empty(); // Clear old thead
+        $("#tbldata tbody").empty(); // Clear old tbody
     }
+
     const columns = getColumnsForCommand();
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
@@ -56,7 +59,7 @@ function BindData(callback) {
         filter: true,
         stateSave: false,
 
-        autoWidth: true,  //Set autoWidth to true (let DataTables decide)
+        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
         order: [[2, 'asc']], // Default sorting on the first column
@@ -142,8 +145,28 @@ function BindData(callback) {
             // Add tooltip to the search input box
             let searchBox = $('div.dataTables_filter input');
             searchBox.attr('title', 'Search Comd/Abbreviation');
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table.columns.adjust().responsive.recalc();
+                }, 100);
+            });
         },
         drawCallback: function (settings) {
+            // Recalculate widths on each data load
+            this.api().columns.adjust().responsive.recalc();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -576,6 +599,9 @@ function getColumnsForCommand() {
             className: "nowrap",
             width: "200px",
             orderable: true,
+            render: function (data, type, rowData) {
+                return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+            }
         },
         {
             title: "Abbreviation",
@@ -584,6 +610,9 @@ function getColumnsForCommand() {
             className: "nowrap",
             width: "200px",
             orderable: true,
+            render: function (data, type, rowData) {
+                return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+            }
         },
         {
             title: `Order`,

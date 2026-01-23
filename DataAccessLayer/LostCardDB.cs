@@ -104,14 +104,15 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="dTO">The data transfer object containing the search, sorting, and pagination parameters.</param>
         /// <returns>A <see cref="DTODataTablesResponse{DTOLostCardGetResponse}"/> containing the paginated Lost Card records.</returns>
-        public async Task<DTODataTablesResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequest dTO)
+        public async Task<DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequestForCommanCheckAll dTO)
         {
             List<DTOLostCardGetResponse> dTOLostCardGetResponses = new List<DTOLostCardGetResponse>();
-            var responseData = new DTODataTablesResponse<DTOLostCardGetResponse>
+            var responseData = new DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>
             {
                 draw = 0,
                 recordsTotal = 0,
                 recordsFiltered = 0,
+                selectedIds = null,
                 data = dTOLostCardGetResponses
             };
             try
@@ -157,6 +158,7 @@ namespace DataAccessLayer
                             select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
                         )
                         SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {whereClause}";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -171,11 +173,24 @@ namespace DataAccessLayer
                     var records = (await ret.ReadAsync<DTOLostCardGetResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 
-                    responseData = new DTODataTablesResponse<DTOLostCardGetResponse>
+                    List<int>? selectedIds = new List<int>();
+
+                    if (dTO.AllChecked == true && (string.IsNullOrEmpty(dTO.searchValue) || dTO.SearchTextChanged == true))
+                    {
+                        var result = await connection.QueryMultipleAsync(queryRequestIds, parameters);
+                        selectedIds = (await result.ReadAsync<int>()).ToList();
+                    }
+                    else
+                    {
+                        selectedIds = null;
+                    }
+
+                    responseData = new DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>
                     {
                         draw = dTO.Draw,
                         recordsTotal = totalFilteredRecords.GetValueOrDefault(),
                         recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        selectedIds = selectedIds,
                         data = (from e in records
                                 select new DTOLostCardGetResponse()
                                 {

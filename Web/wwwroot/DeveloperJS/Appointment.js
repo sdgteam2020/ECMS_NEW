@@ -74,23 +74,28 @@ $(function () {
 });
 function BindData() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
-        $("#tbldata").DataTable().destroy();
-        $("#tbldata").empty(); // Clear old thead/tbody
+        // Destroy the DataTable and clear the table content
+        $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldata thead").empty(); // Clear old thead
+        $("#tbldata tbody").empty(); // Clear old tbody
     }
     const columns = getColumnsForAppointment();
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
+        scroller: true,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
         serverSide: true,
         filter: true,
-        stateSave: true,
+        stateSave: false,
 
-        autoWidth: false, // Let us handle width via CSS
-        responsive: false, // ✅ IMPORTANT (disable)
+        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+        responsive: false, // Columns can hide on small screens
+        deferRender: true,// ✅ Handle zoom changes
         order: [[2, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -174,10 +179,23 @@ function BindData() {
             // Add tooltip to the search input box
             let searchBox = $('div.dataTables_filter input');
             searchBox.attr('title', 'Search Comd/Abbreviation');
+
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table.columns.adjust().responsive.recalc();
+                }, 100);
+            });
         },
         drawCallback: function (settings) {
 
-            this.api().columns.adjust();
+            // Recalculate widths on each data load
+            this.api().columns.adjust().responsive.recalc();
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')

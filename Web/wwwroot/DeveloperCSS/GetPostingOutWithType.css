@@ -43,3 +43,6 @@
 .card-body-min-height {
     min-height: 150px;
 }
+#tbldata {
+    table-layout: fixed !important;
+}

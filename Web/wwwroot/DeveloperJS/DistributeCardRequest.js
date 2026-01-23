@@ -34,7 +34,7 @@
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
         $("#unitoffrsModal").modal("show");
-        $("#armynosearchTypeId").val(HoltlistCardRequest);
+        $("#armynosearchTypeId").val(DistributeCardRequest);
     });
 
 

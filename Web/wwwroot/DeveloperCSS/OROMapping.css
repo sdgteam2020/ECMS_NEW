@@ -10,3 +10,6 @@
 .modal .modal-body .table-responsive {
     max-height: 500px;
 }
+#tbldata {
+    table-layout: fixed !important;
+}

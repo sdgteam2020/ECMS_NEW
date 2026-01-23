@@ -2,9 +2,8 @@
     ViewData["Title"] = "List of Unit Move Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-
+<link asp-href-include="~/developercss/mapunitchange.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -50,7 +49,7 @@
                         <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
                     </div>
                 </div>
-                <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
+                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
                 </table>
             </div>
         </div>

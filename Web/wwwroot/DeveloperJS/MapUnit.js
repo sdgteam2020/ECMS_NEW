@@ -282,23 +282,28 @@ async function GetUnitDetails(val, flag) {
 }
 function BindDataMapUnit() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
-        $("#tbldata").DataTable().destroy();
-        $("#tbldata").empty(); // Clear old thead/tbody
+        // Destroy the DataTable and clear the table content
+        $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldata thead").empty(); // Clear old thead
+        $("#tbldata tbody").empty(); // Clear old tbody
     }
 
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
+        scroller: true,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
         serverSide: true,
         filter: true,
-        stateSave: true,
+        stateSave: false,
 
-        autoWidth: false,      // ✅ REQUIRED
-        responsive: false,    // ✅ REQUIRED
+        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+        responsive: false, // Columns can hide on small screens
+        deferRender: true,// ✅ Handle zoom changes
         order: [[0, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -374,6 +379,7 @@ function BindDataMapUnit() {
                 name: "UnitType",
                 className: "nowrap",
                 orderable: true, 
+                width: "130px",
                 render: function (data, type, row, meta) {
                     let types = { 1: "Unit", 2: "Fmn HQ", 3: "Dte/Br" };
                     return `<span class='badge bg-primary'>${types[data] || ""}</span>`;
@@ -384,6 +390,7 @@ function BindDataMapUnit() {
                 data: "BdeName",
                 name: "BdeName",
                 orderable: false,
+                width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -394,6 +401,7 @@ function BindDataMapUnit() {
                 data: "DivName",
                 name: "DivName",
                 orderable: true, 
+                width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -404,6 +412,7 @@ function BindDataMapUnit() {
                 data: "CorpsName",
                 name: "CorpsName",
                 orderable: true, 
+                width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -414,6 +423,7 @@ function BindDataMapUnit() {
                 data: "ComdName",
                 name: "ComdName",
                 orderable: true, 
+                width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -424,6 +434,7 @@ function BindDataMapUnit() {
                 data: "BranchName",
                 name: "BranchName",
                 orderable: true, 
+                width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -434,6 +445,7 @@ function BindDataMapUnit() {
                 data: "SubDteName",
                 name: "SubDteName",
                 orderable: true, 
+                width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -444,6 +456,7 @@ function BindDataMapUnit() {
                 data: "PSOName",
                 name: "PSOName",
                 orderable: true, 
+                width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -455,6 +468,7 @@ function BindDataMapUnit() {
                 data: "IsVerify",
                 name: "IsVerify",
                 orderable: true, 
+                width: "120px",
                 render: function (data, type, row, meta) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-success'>Verifed</span>" : "<span class='badge badge-danger'>Not Verify</span>";
@@ -465,6 +479,7 @@ function BindDataMapUnit() {
                 title: "Action",
                 data: null,
                 orderable: false,
+                width: "150px",
                 className: "noExport text-center col-action",
                 render: function (data, type, row, meta) {
                     return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
@@ -484,7 +499,7 @@ function BindDataMapUnit() {
             { targets: 3, width: "190px" },
             { targets: 4, width: "100px" },
             { targets: -2, width: "110px" },
-            { targets: -1, width: "110px" },
+            { targets: -1, width: "150px" },
             {
                 targets: '_all',
                 orderSequence: ["asc", "desc"]
@@ -520,7 +535,23 @@ function BindDataMapUnit() {
                     WaterMarkOnPdf(doc)
                 }
             }],
+        // ✅ ADD: initComplete for zoom handling
+        initComplete: function () {
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table.columns.adjust().responsive.recalc();
+                }, 100);
+            });
+        },
         drawCallback: function (settings) {
+            // Recalculate widths on each data load
+            this.api().columns.adjust().responsive.recalc();
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -603,6 +634,7 @@ function BindDataMapUnit() {
 
                 }
             });
+
             $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {

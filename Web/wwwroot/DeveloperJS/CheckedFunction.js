@@ -78,3 +78,19 @@ async function getAllIds(tableSelector, checkboxClass) {
         }
     });
 }
+function getSearchStatusForBindDialog(search) {
+    const currentSearchText = search.trim();
+
+    // Ensure searchChanged is only true when the actual search field or text changes.
+    globalThis.searchChanged = (
+        (currentSearchText !== globalThis.previousSearchText)
+    );
+
+    // Update previous values after comparison
+    globalThis.previousSearchText = currentSearchText;
+
+    return {
+        searchChanged: globalThis.searchChanged,
+        currentSearchText
+    };
+}

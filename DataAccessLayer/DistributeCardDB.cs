@@ -71,14 +71,15 @@ namespace DataAccessLayer
         /// The method constructs a dynamic query to fetch destruction card records based on the provided parameters (e.g., search, sort, pagination).
         /// It uses SQL Common Table Expressions (CTEs) to calculate the total filtered records and paginate the results efficiently.
         /// </remarks>
-        public async Task<DTODataTablesResponse<DTODistributeCardGetResponse>> GetAllDistribute(DTODataTablesRequest dTO)
+        public async Task<DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>> GetAllDistribute(DTODataTablesRequestForCommanCheckAll dTO)
         {
             List<DTODistributeCardGetResponse> dTODistributeCardGetResponses = new List<DTODistributeCardGetResponse>();
-            var responseData = new DTODataTablesResponse<DTODistributeCardGetResponse>
+            var responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
             {
                 draw = 0,
                 recordsTotal = 0,
                 recordsFiltered = 0,
+                selectedIds = null,
                 data = dTODistributeCardGetResponses
             };
             try
@@ -124,6 +125,7 @@ namespace DataAccessLayer
                             select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
                         )
                         SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+                string queryRequestIds = $@"SELECT req.RequestId {fromJoinClause} {whereClause}";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -139,12 +141,25 @@ namespace DataAccessLayer
                     var records = (await ret.ReadAsync<DTODistributeCardGetResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 
+                    List<int>? selectedIds = new List<int>();
+
+                    if (dTO.AllChecked == true && (string.IsNullOrEmpty(dTO.searchValue) || dTO.SearchTextChanged == true))
+                    {
+                        var result = await connection.QueryMultipleAsync(queryRequestIds, parameters);
+                        selectedIds = (await result.ReadAsync<int>()).ToList();
+                    }
+                    else
+                    {
+                        selectedIds = null;
+                    }
+
                     // Prepare the response data
-                    responseData = new DTODataTablesResponse<DTODistributeCardGetResponse>
+                    responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
                     {
                         draw = dTO.Draw,
                         recordsTotal = totalFilteredRecords.GetValueOrDefault(),
                         recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        selectedIds = selectedIds,
                         data = (from e in records
                                 select new DTODistributeCardGetResponse()
                                 {
@@ -166,13 +181,15 @@ namespace DataAccessLayer
                                     DistributedOn = e.DistributedOn
                                 }).ToList()
                     };
+                    return responseData;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "DistributeCardDB->GetAllDistribute");
+                return responseData;
             }
-            return responseData;
+            
         }
 
 

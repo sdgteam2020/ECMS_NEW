@@ -64,18 +64,29 @@ $(function () {
 
 });
 function BindData() {
-    $("#tbldata").DataTable().destroy();
+    if ($.fn.DataTable.isDataTable("#tbldata")) {
+        // Destroy the DataTable and clear the table content
+        $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+        $("#tbldata thead").empty(); // Clear old thead
+        $("#tbldata tbody").empty(); // Clear old tbody
+    }
     table = $("#tbldata").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
+        scroller: true,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
+
         processing: true,
         serverSide: true,
         filter: true,
-        order: [[7, 'desc']], // Default sorting on the first column
-        responsive: true,
-        autoWidth: false,
+        stateSave: false,
+
+        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+        responsive: false, // Columns can hide on small screens
+        deferRender: true,// ✅ Handle zoom changes
+        order: [[5, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -106,39 +117,49 @@ function BindData() {
         },
         columns: [
             {
+                title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
+                    <input type="checkbox" class="custom-control-input" id="chkAll_HotlistCard">
+                    <label class="custom-control-label" for="chkAll_HotlistCard"></label>
+                    </div></div>`,
                 data: "RequestId",
                 targets: 0,
                 orderable: false,
+                className: "text-center",
+                width: "40px",
                 searchable: false,
                 render: function (data, type, row) {
-                    return `<div class="custom-control custom-checkbox small">
-                                <input type="checkbox" class="custom-control-input customcheckbox" id="${data}">
-                                <label class="custom-control-label" for="${data}"></label>
-                            </div>`;
+                    if ($("#chkAll_HotlistCard").prop('checked')) {
+                        return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                    } else {
+
+                        return `<div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                                </div>`;
+                    }
                 }
             },
             {
-                data: null,
-                name: null,
-                visible: false,
-                render: function (data, type, row) {
-                    return `<span id='spnTrnFaultyCardId'> ${row.HotlistCardId}</span><span id='spnEncryptedId'>${row.EncryptedId}</span><span id='spnRequestId'>${row.RequestId}</span><span id='spnServiceNo'>${row.ServiceNo}</span>`;
-                }
-            },
-            {
+                title: "S No",
                 data: null,
                 name: "SerialNumber",
                 orderable: false, // Disable sorting for this column
+                className: "text-center col-sno",
+                width: "60px",
                 render: function (data, type, row, meta) {
                     // Calculate serial number based on row index
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            //{ data: "RequestId", name: "RequestId" },
             {
                 title: "Army No",
                 data: "ServiceNo",
                 name: "ServiceNo",
+                className: "nowrap",
+                width: "120px",
                 render: function (data, type, row) {
                     // Check if first two characters are alphabets
                     if (/^[A-Za-z]{2}/.test(data)) {
@@ -151,38 +172,68 @@ function BindData() {
                 }
             },
             {
+                title: "Rk & Name",
                 data: null,
                 name: null,
+                width: "180px",
+                orderable: false,
                 orderable: false,
                 render: function (data, type, row) {
-                    return `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`;
+                    let fullName = `${row.RankName || ""} ${row.FName || ""} ${row.LName || ""}`.trim();
+                    if (!fullName) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${fullName}">${fullName}</span>`;
                 }
             },
-            { data: "UnitAbbreviation", name: "UnitAbbreviation", orderable: false },
             {
+                title: "Unit",
+                data: "UnitAbbreviation",
+                name: "UnitAbbreviation",
+                className: "nowrap",
+                width: "150px",
+                orderable: false,
+                render: function (data, type, row) {
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                }
+            },
+            {
+                title: "Date & Time",
                 data: "UpdatedOn",
                 name: "UpdatedOn",
+                className: "",
+                width: "150px",
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
                 }
             },
             {
+                title: "Reason",
                 data: 'RemarksNameList',
                 name: 'RemarksNameList',
+                className: "",
+                width: "100px",
                 orderable: false,
                 render: function (data, type, row) {
                     return "<button type='button' class='cls-remarks btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i><span id='spnRemarks' class='d-none'></span></button>";
                 }
             },
             {
+                title: "Remark",
                 data: "Remark",
                 name: "Remark",
+                className: "",
+                width: "150px",
                 render: function (data, type, row) {
-                    let words = data.split(" ");
-                    let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : data;
-                    return `<span class='cls-FromRemark'>${truncatedSentence}</span>`;
+                    if (!data) return '';
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
                 }
             }
+        ],
+        columnDefs: [
+            {
+                targets: '_all',  // Apply to all visible columns
+                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+            },
         ],
         language: {
             search: "", // Remove the default "Search:" label
@@ -214,10 +265,29 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
+        // 👇 Show modal only after table (header + data) is fully rendered
+        initComplete: function () {
+            // Force DataTables to calculate optimal widths
+            this.api().columns.adjust();
+
+            // Handle zoom/resize
+            var resizeTimer;
+            $(window).on('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    table.columns.adjust().responsive.recalc();
+                }, 100);
+            });
+        },
         drawCallback: function (settings) {
-            // Add 'align-middle' class to all td elements in the body
-            $('#tbldata tbody tr').each(function () {
-                $(this).find('td').addClass('align-middle');
+            // Recalculate widths on each data load
+            this.api().columns.adjust().responsive.recalc();
+
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
             });
 
             $("body").on("click", ".cls-remarks", function () {
@@ -234,14 +304,6 @@ function BindData() {
                 }
                 $("#MessageDialogLabel").html(Label);
                 $("#MessageDialogBody").html(listItem);
-                $("#MessageDialog").modal('show');
-            });
-
-            $("body").on("click", ".cls-FromRemark", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                let Label = `Request Id :- ${rowData.RequestId}`;
-                $("#MessageDialogLabel").html(Label);
-                $("#MessageDialogBody").html(rowData.Remark);
                 $("#MessageDialog").modal('show');
             });
 

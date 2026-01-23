@@ -77,8 +77,8 @@ function validateCsvFileOnChange() {
             html: `<p class="csv-preview-intro">
                   These are the top records from the uploaded CSV file. Please ensure that the correct file has been uploaded.
                 </p>
-                <div class ="table-responsive csv-preview-table-wrapper">
-                     <table id="myTable" class="table border border-purple table-striped no-footer dataTable table-hover" role="grid">
+                <div class ="">
+                     <table id="myTable" class="table table-striped table-hover border border-purple" role="grid">
                        <thead>
                          <tr>
                            ${tableHeader}
@@ -272,8 +272,8 @@ function BindData() {
 
         autoWidth: true,  //Set autoWidth to true (let DataTables decide)
         responsive: false, // Columns can hide on small screens
-        order: [[7, 'desc']],// Default sorting on the first column
         deferRender: true,// ✅ Handle zoom changes
+        order: [[7, 'desc']],// Default sorting on the first column
         searching: false,
         ajax: async function (data, callback, settings) {
             let requestData = {

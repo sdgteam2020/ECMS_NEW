@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessLogicsLayer;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
@@ -4252,10 +4253,39 @@ namespace Web.Controllers
         /// <param name="dTO">DataTables request object containing paging, sorting, and filtering info.</param>
         /// <returns>JSON result containing the list of lost card records.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetAllLost(DTODataTablesRequest dTO)
+        public async Task<IActionResult> GetAllLost(DTODataTablesRequestForCommanCheckAll dTO)
         {
-            // Call the business layer to get all lost card records and return as JSON
-            return Json(await _lostCardBL.GetAllLost(dTO));
+            // If an exception occurs, return an empty response to avoid breaking the UI
+            List<DTOLostCardGetResponse> dTOLosts = new List<DTOLostCardGetResponse>();
+            var responseData = new DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>
+            {
+                draw = 0,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                selectedIds = null,
+                data = dTOLosts
+            };
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Call the business layer to get all lost card records and return as JSON
+                    return Json(await _lostCardBL.GetAllLost(dTO));
+                }
+                else
+                {
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging and tracking
+                _logger.LogError(1001, ex, "BasicDetail->GetAllLost");
+
+                // Return JSON with empty data
+                return Json(responseData);
+            }
         }
 
 
@@ -4543,9 +4573,39 @@ namespace Web.Controllers
         /// <param name="dTO">The DataTables request object containing paging, sorting, and filter information.</param>
         /// <returns>A JSON result containing the list of distributed cards.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetAllDistribute(DTODataTablesRequest dTO)
+        public async Task<IActionResult> GetAllDistribute(DTODataTablesRequestForCommanCheckAll dTO)
         {
-            return Json(await _distributeCardBL.GetAllDistribute(dTO));
+            // If an exception occurs, return an empty response to avoid breaking the UI
+            List<DTODistributeCardGetResponse> dTODistributes = new List<DTODistributeCardGetResponse>();
+            var responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
+            {
+                draw = 0,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                selectedIds = null,
+                data = dTODistributes
+            };
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Call business layer to retrieve dispatch card data for dialog
+                    return Json(await _distributeCardBL.GetAllDistribute(dTO));
+                }
+                else
+                {
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging and tracking
+                _logger.LogError(1001, ex, "BasicDetail->GetAllDistribute");
+
+                // Return JSON with empty data
+                return Json(responseData);
+            }
         }
 
 
