@@ -1,5 +1,4 @@
 ﻿var table;
-let checkedDataIds = [];
 let dataExportType = 1;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
@@ -15,7 +14,12 @@ $(function () {
 
 
     $('#btnDataExports').on("click", function () {
-        if (checkedDataIds.length > 0) {
+        if (globalThis.selectedIds.length == 0) {
+            Swal.fire({
+                text: "Please select atleast 1 data to Export."
+            });
+        }
+        else {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Export",
@@ -30,41 +34,15 @@ $(function () {
                     DataExport();
                 }
             });
-        } else {
-            Swal.fire({
-                text: "Please select atleast 1 data to Export."
-            });
         }
     });
-
-    $('#btnDataExportsEncry').on("click", function () {
-        var lst = new Array();
-
-        if (checkedDataIds.length > 0) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You want to Export",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#072697',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Export it!'
-            }).then((result) => {
-                if (result.value) {
-                    dataExportType = 1;
-                    DataExport();
-                }
-            });
-        } else {
-            Swal.fire({
-                text: "Please select atleast 1 data to Export."
-            });
-        }
-    });
-
 });
 function BindData() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
+        var table = "";
+        globalThis.selectedIds = [];
+        resetSelectedFields();
+
         // Destroy the DataTable and clear the table content
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
@@ -88,6 +66,27 @@ function BindData() {
         deferRender: true,// ✅ Handle zoom changes
         order: [[6, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
+
+            let searchStatus = getSearchStatusForBindDialog(data.search.value);
+
+            // Clear old selectedIds on search change, but keep globalAllChecked state
+            if (searchStatus.searchChanged) {
+                globalThis.selectedIds = [];
+
+                // Mark for re-fetch if needed
+                if (globalThis.globalAllChecked) {
+                    globalThis.isFirstSelectAll = true;
+                }
+            }
+
+            // ✅ Determine if a fetch is needed
+            const shouldFetchSelectedIds = globalThis.globalAllChecked && (globalThis.isFirstSelectAll || searchStatus.searchChanged) || (!globalThis.globalAllChecked && searchStatus.searchChanged && globalThis.isFirstSelectAll);
+
+            // If fetch is needed, manually set searchChanged to true
+            if (shouldFetchSelectedIds) {
+                searchStatus.searchChanged = true; // Manually set to true to ensure data fetch
+            }
+
             let requestData = {
                 draw: data.draw,
                 start: data.start,
@@ -95,6 +94,8 @@ function BindData() {
                 searchValue: data.search.value,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
+                searchTextChanged: searchStatus.searchChanged,
+                AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
             };
             try {
                 let response = await fetch("/BasicDetail/GetAllDestruction", {
@@ -108,6 +109,32 @@ function BindData() {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
+
+                // 🔁 If no data returned, always clear selection
+                if (result.data.length === 0) {
+                    globalThis.selectedIds = [];
+                    console.log("No results. Cleared selectedIds.");
+                }
+
+                // Only update selectedIds if server returns new ones
+                if (shouldFetchSelectedIds) {
+                    if (result.selectedIds != null && result.selectedIds.length > 0) {
+                        //selectedIds = result.selectedIds;
+                        globalThis.selectedIds = result.selectedIds.map(x => x.toString());
+                        console.log("Fetched selectedIds from server:", globalThis.selectedIds);
+                        // If user hadn’t checked Select All, now we just load into selectedIds silently
+                        if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
+                    }
+                    else {
+                        //selectedIds = [];
+                        if (globalThis.globalAllChecked) {
+                            globalThis.globalAllChecked = false;
+                            $('#chkAll_DistributeCard').prop('checked', false);
+                        }
+                        console.warn("⚠️ No valid Pending IDs found.");
+                    }
+                }
+
                 $("#lblTotal").html(result.recordsTotal);
                 callback(result); // Sends data to DataTables
 
@@ -316,30 +343,20 @@ function BindData() {
                 $("#MessageDialogBody").html(listItem);
                 $("#MessageDialog").modal('show');
             });
-
-            
-            $("#tbldata #chkAll_DestructionCard").on("click", function () {
-                checkedDataIds = [];
-                const isChecked = this.checked;
-                $('.chkRequestId').each(function () {
-                    $(this).prop('checked', isChecked);
-                    if (isChecked) {
-                        const id = $(this).attr('id');
-                        checkedDataIds.push(id);
-                    }
-                });
-            });
-
-            $('#DetailBody .chkRequestId').on('change', function () {
-                const id = $(this).attr('id');
-                const isChecked = this.checked;
-                if (isChecked) {
-                    if (!checkedDataIds.includes(id)) checkedDataIds.push(id);
-                } else {
-                    checkedDataIds = checkedDataIds.filter(x => x !== id);
-                }
-            });
+            updateUICheckboxes('#tbldata', 'chkRequestId', '#chkAll_DestructionCard');
         }
+    });
+    $(document).on('change', '.chkRequestId', async function () {
+        await updateSelectedIds('#tbldata', 'chkRequestId');
+        updateUICheckboxes('#tbldata', 'chkRequestId', '#chkAll_DestructionCard'); // Sync master checkbox state
+    });
+    $('#chkAll_DestructionCard').on('change', function () {
+        globalThis.selectedIds = [];
+        globalThis.globalAllChecked = $(this).prop('checked');
+        if (globalThis.globalAllChecked) {
+            globalThis.isFirstSelectAll = true; // Force fresh fetch
+        }
+        table.ajax.reload();
     });
 }
 
@@ -377,4 +394,20 @@ function DataExport() {
                 });
             }
     });
+}
+function resetSelectedFields() {
+    // Reset global variables as explained
+    globalThis.selectedIds = [];
+    globalThis.previousSearchText = "";
+    globalThis.isFirstSelectAll = true;
+    globalThis.searchChanged = false;
+    globalThis.globalAllChecked = false;
+
+    // Uncheck all checkboxes
+    $('#tbldata tbody input[type="checkbox"].chkRequestId').prop('checked', false);
+
+    // Reset "Select All" checkbox
+    $('#chkAll_DestructionCard').prop('checked', false);
+
+    console.log("Reset selectedIds and checkboxes.");
 }

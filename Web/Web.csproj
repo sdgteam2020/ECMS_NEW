@@ -27,7 +27,6 @@
     <None Include="wwwroot\css\Sidemenu\feather\fonts\feather-webfont.svg" />
     <None Include="wwwroot\css\Sidemenu\ti-icons\fonts\themify.svg" />
     <None Include="wwwroot\DeveloperJS\ReportAndReturn.js" />
-    <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map" />

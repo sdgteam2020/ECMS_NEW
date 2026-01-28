@@ -5751,10 +5751,39 @@ namespace Web.Controllers
         /// Returns a JSON result containing the destruction card records.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> GetAllDestruction(DTODataTablesRequest dTO)
+        public async Task<IActionResult> GetAllDestruction(DTODataTablesRequestForCommanCheckAll dTO)
         {
-            // Call the business layer to fetch all destruction card records and return as JSON
-            return Json(await _destructionCardBL.GetAllDestruction(dTO));
+            // If an exception occurs, return an empty response to avoid breaking the UI
+            List<DTODestructionCardGetResponse> dTODestructions = new List<DTODestructionCardGetResponse>();
+            var responseData = new DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>
+            {
+                draw = 0,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                selectedIds = null,
+                data = dTODestructions
+            };
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Call the business layer to fetch all destruction card records and return as JSON
+                    return Json(await _destructionCardBL.GetAllDestruction(dTO));
+                }
+                else
+                {
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging and tracking
+                _logger.LogError(1001, ex, "BasicDetail->GetAllDestruction");
+
+                // Return JSON with empty data
+                return Json(responseData);
+            }
         }
 
 

@@ -35,31 +35,6 @@ $(function () {
             });
         }
     });
-
-    $('#btnDataExportsEncry').on("click", function () {
-        if (globalThis.selectedIds.length == 0) {
-            Swal.fire({
-                text: "Please select atleast 1 data to Export."
-            });
-        }
-        else {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You want to Export",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#072697',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Export it!'
-            }).then((result) => {
-                if (result.value) {
-                    dataExportType = 1;
-                    DataExport();
-                }
-            });
-        }
-    });
-
 });
 function BindData() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {

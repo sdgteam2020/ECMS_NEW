@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BusinessLogicsLayer.FaultyCard;
-using DataAccessLayer;
+﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
@@ -23,7 +17,7 @@ namespace BusinessLogicsLayer.DestructionCard
         {
             return await _iDestructionCardDB.FindAnyRequestId(RequestId);
         }
-        public async Task<DTODataTablesResponse<DTODestructionCardGetResponse>> GetAllDestruction(DTODataTablesRequest dTO)
+        public async Task<DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>> GetAllDestruction(DTODataTablesRequestForCommanCheckAll dTO)
         {
             return await _iDestructionCardDB.GetAllDestruction(dTO);
         }
