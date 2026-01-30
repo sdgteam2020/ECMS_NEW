@@ -152,6 +152,7 @@ namespace DataAccessLayer
                                      {
                                          UnitId = u.UnitId,
                                          Sus_no = u.Sus_no,
+                                         Prefix= u.Prefix,
                                          Suffix = u.Suffix,
                                          UnitName = u.UnitName,
                                          Abbreviation = u.Abbreviation,
@@ -165,25 +166,17 @@ namespace DataAccessLayer
                 if (!string.IsNullOrEmpty(request.searchValue))
                 {
                     string searchValue = request.searchValue.ToLower();
-                    queryableData = queryableData.Where(x => x.Sus_no.ToLower().Contains(searchValue));
+                    queryableData = queryableData.Where(x => x.Prefix.ToLower().Contains(searchValue));
                 }
 
                 // Apply sorting
 
                 if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                 {
-                    if (request.sortColumn == "UnitName" || request.sortColumn == "Abbreviation")
-                    {
-
-                    }
-                    else 
-                    {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
-                        queryableData = request.sortDirection.ToLower() == "asc"
-                        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
-                    }
-
+                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                    queryableData = request.sortDirection.ToLower() == "asc"
+                    ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                    : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
                 }
 
                 // Total records after filtering
@@ -231,21 +224,25 @@ namespace DataAccessLayer
         /// </remarks>
         public async Task<List<DTOUnitResponse>?> GetTopBySUSNo(string SUSNo)
         {
+            if (string.IsNullOrWhiteSpace(SUSNo))
+                return new List<DTOUnitResponse>();
+
+            var normalized = SUSNo.Trim();
+            var prefix = normalized[..Math.Min(3, normalized.Length)];
+
             try
             {
-                // Query to find units where the combined SUSNo and Suffix match the input SUSNo
-                var Unit = await (from unit in _context.MUnit.Where(x => (x.Sus_no + x.Suffix).Contains(SUSNo))
-                                  select new DTOUnitResponse
-                                  {
-                                      UnitId = unit.UnitId,
-                                      Sus_no = unit.Sus_no + unit.Suffix,
-                                      UnitName = unit.UnitName,
-                                      Abbreviation = unit.Abbreviation,
-                                      IsVerify = unit.IsVerify,
-                                  }).Take(5).ToListAsync();
-
-                // Return the list of matching units
-                return Unit;
+                var Unit = await _context.MUnit.Where(x => x.Prefix == prefix)
+                                .Select(unit => new DTOUnitResponse
+                                {
+                                    UnitId = unit.UnitId,
+                                    Sus_no = unit.Sus_no,
+                                    Suffix = unit.Suffix,
+                                    UnitName = unit.UnitName,
+                                    Abbreviation = unit.Abbreviation,
+                                    IsVerify = unit.IsVerify
+                                }).AsNoTracking().ToListAsync();
+                return Unit.Where(x => (x.Sus_no + x.Suffix).Contains(SUSNo)).Take(10).ToList();
             }
             catch (Exception ex)
             {

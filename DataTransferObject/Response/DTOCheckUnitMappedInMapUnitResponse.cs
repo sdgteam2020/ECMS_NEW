@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransferObject.Response
+﻿namespace DataTransferObject.Response
 {
     public class DTOCheckUnitMappedInMapUnitResponse
     {
         public int? UnitId { get; set; }
         public bool IsVerify { get; set; }
         public int? UnitMapId { get; set; }
+        public string Sus_no { get; set; } = string.Empty;
+        public string Suffix { get; set; } = string.Empty;
+        public string Prefix { get; set; } = string.Empty;
     }
 }

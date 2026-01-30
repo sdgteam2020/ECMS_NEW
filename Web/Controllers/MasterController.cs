@@ -2122,6 +2122,9 @@ namespace Web.Controllers
                 dTO.UnitName = dTO.UnitName.Trim();
                 dTO.Abbreviation = dTO.Abbreviation != null ? dTO.Abbreviation.Trim() : dTO.Abbreviation;
                 dTO.Suffix = dTO.Suffix.Trim();
+                var susNo = dTO.Sus_no?.Trim();
+                dTO.Prefix = string.IsNullOrEmpty(susNo)? string.Empty : susNo[..Math.Min(3, susNo.Length)];
+
                 if (ModelState.IsValid)
                 {
                     if (!await unitOfWork.Unit.GetByName(dTO))

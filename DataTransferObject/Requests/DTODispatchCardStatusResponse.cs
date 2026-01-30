@@ -21,6 +21,7 @@
         public string ChipNo { get; set; } = string.Empty;
         public string CardSerialNo { get; set; } = string.Empty;
         public string SUSNo { get; set; } = string.Empty;
+        public string Suffix { get; set; } = string.Empty;
         public string UnitAbbreviation { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
     }

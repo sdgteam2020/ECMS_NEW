@@ -34,6 +34,7 @@ function BindData() {
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
         order: [[0, 'desc']], // Default sorting on the first column
+        searching:false,
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -101,10 +102,10 @@ function BindData() {
                 data: "Sus_no",
                 name: "Sus_no",
                 width: "110px",
-                orderable: true, 
+                orderable: false, 
                 render: function (data, type, row, meta) {
                     if (!data) return '';
-                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}${row.Suffix}">${data}${row.Suffix}</span>`;
                 }
             },
             {

@@ -16,6 +16,7 @@
         public int DivId { get; set; }
         public string DivName { get; set; } = string.Empty;
         public string Sus_no { get; set; } = string.Empty;
+        public string Prefix { get; set; } = string.Empty;
         public int UnitType { get; set; }
         public string Suffix { get; set; } = string.Empty;
         public byte PsoId { get; set; }

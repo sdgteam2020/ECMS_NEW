@@ -44,13 +44,24 @@ namespace DataAccessLayer
         /// </remarks>
         public async Task<DTOCheckUnitMappedInMapUnitResponse?> CheckUnitMappedInMapUnit(string SUSNo)
         {
-            string query = "Select MUnit.UnitId,MUnit.IsVerify,MapUnit.UnitMapId from MUnit " +
-                            " LEFT JOIN MapUnit on MUnit.UnitId = MapUnit.UnitId " +
-                            " where CONCAT(Sus_no,UPPER(Suffix)) =@SUSNo ";
-            using (var connection = _contextDP.CreateConnection())
+            var normalized = SUSNo.Trim();
+            var Prefix = normalized[..Math.Min(3, normalized.Length)];
+
+            string query = @"Select MUnit.UnitId,MUnit.Sus_no,MUnit.Suffix,MUnit.Prefix,MUnit.IsVerify,MapUnit.UnitMapId from MUnit
+                            LEFT JOIN MapUnit on MUnit.UnitId = MapUnit.UnitId
+                            where MUnit.Prefix =@Prefix";
+            try
             {
-                var ret = await connection.QueryAsync<DTOCheckUnitMappedInMapUnitResponse>(query, new { SUSNo });
-                return ret.FirstOrDefault();
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var Unit = await connection.QueryAsync<DTOCheckUnitMappedInMapUnitResponse>(query, new { Prefix });
+                    return Unit.FirstOrDefault(x =>string.Concat(x.Sus_no, x.Suffix).Equals(normalized, StringComparison.OrdinalIgnoreCase));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "MapUnitDB->CheckUnitMappedInMapUnit");
+                return null;
             }
         }
 
@@ -142,7 +153,8 @@ namespace DataAccessLayer
                                            ComdName = Com.ComdName,
                                            ComdId = Com.ComdId,
                                            Suffix = MUni.Suffix,
-                                           Sus_no = MUni.Sus_no + MUni.Suffix,
+                                           Sus_no = MUni.Sus_no,
+                                           Prefix = MUni.Prefix,
                                            UnitType = uni.UnitType,
                                            PsoId = pso.PsoId,
                                            PSOName = pso.PSOName,
@@ -161,24 +173,17 @@ namespace DataAccessLayer
                 if (!string.IsNullOrEmpty(request.searchValue))
                 {
                     string searchValue = request.searchValue.ToLower();
-                    queryableData = queryableData.Where(x => (x.Sus_no + x.Suffix).ToLower().Contains(searchValue));
+                    queryableData = queryableData.Where(x => x.Prefix.ToLower().Contains(searchValue));
                 }
 
                 // Apply sorting
 
                 if (!string.IsNullOrEmpty(request.sortColumn) && !string.IsNullOrEmpty(request.sortDirection))
                 {
-                    if (request.sortColumn == "UnitName" || request.sortColumn == "BdeName")
-                    {
-
-                    }
-                    else
-                    {
-                        //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
-                        queryableData = request.sortDirection.ToLower() == "asc"
-                        ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
-                        : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
-                    }
+                    //queryableData = queryableData.OrderBy(request.SortColumn + " " + request.SortColumnDirection);
+                    queryableData = request.sortDirection.ToLower() == "asc"
+                    ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
+                    : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
 
                 }
 
@@ -219,24 +224,35 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="UnitName">The name of the unit to search for. The search is case-insensitive.</param>
         /// <returns>A task representing the asynchronous operation. The task result contains a list of <see cref="DTOMapUnitResponse"/> objects.</returns>
-        public Task<List<DTOMapUnitResponse>> GetALLByUnitName(string UnitName)
+        public async Task<List<DTOMapUnitResponse>> GetALLByUnitName(string UnitName)
         {
-            var Div = (from uni in _context.MapUnit
-                           //where (unit.ComdId == 0 ? uni.ComdId == uni.ComdId : uni.ComdId == unit.ComdId)
-                           //&& (unit.CorpsId == 0 ? uni.CorpsId == uni.CorpsId : uni.CorpsId == unit.CorpsId)
-                           //&& (unit.DivId == 0 ? uni.DivId == uni.DivId : uni.DivId == unit.DivId)
-                           //&& (unit.BdeId == 0 ? uni.BdeId == uni.BdeId : uni.BdeId == unit.BdeId)
-                       join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
-                       where MUni.Sus_no.ToLower().Contains(UnitName.ToLower()) && MUni.IsVerify==true
-                       select new DTOMapUnitResponse
-                       {
-                           UnitMapId = uni.UnitMapId,
-                           UnitName = MUni.UnitName,
-                           Suffix=MUni.Suffix,
-                           Sus_no=MUni.Sus_no,
-                       }
-                     ).Distinct().Take(5).ToList(); ;
-            return Task.FromResult(Div);
+            if (string.IsNullOrWhiteSpace(UnitName))
+                return new List<DTOMapUnitResponse>();
+
+            var normalized = UnitName.Trim();
+            var prefix = normalized[..Math.Min(3, normalized.Length)];
+            try
+            {
+                var Unit = await (from uni in _context.MapUnit
+                           join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
+                           where MUni.Prefix == prefix && MUni.IsVerify == true
+                           select new DTOMapUnitResponse
+                           {
+                               UnitMapId = uni.UnitMapId,
+                               UnitName = MUni.UnitName,
+                               Suffix = MUni.Suffix,
+                               Sus_no = MUni.Sus_no,
+                           }).AsNoTracking().ToListAsync();
+                return Unit.Where(x => (x.Sus_no + x.Suffix).Contains(UnitName)).Take(10).ToList();
+            }
+            catch (Exception ex)
+            {
+                // Log the error in case of an exception
+                _logger.LogError(1001, ex, "MapUnitDB->GetALLByUnitName");
+                // Return null in case of an error
+                return new List<DTOMapUnitResponse>();
+            }
+
         }
 
         

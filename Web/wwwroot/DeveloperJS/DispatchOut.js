@@ -308,7 +308,7 @@ async function GetDispatchToData(CategeryId, RecordRegimentId) {
         const result = await response.json();
 
         if (Boolean(result.Result)) {
-            $("#lblToUnitName").text(`${result.Value.Sus_no} ${result.Value.UnitAbbreviation}`);
+            $("#lblToUnitName").text(`${result.Value.Sus_no}${result.Value.Suffix} ${result.Value.UnitAbbreviation}`);
             ToUnitId = result.Value.UnitId;
             ToUserId = result.Value.UserId;
 
@@ -353,7 +353,7 @@ async function GetddlRecordRegiment() {
         const result = await response.json();
 
         if (Boolean(result.Result)) {
-            $("#lblToUnitName").text(`${result.Value.SUSNo} ${result.Value.UnitAbbreviation}`);
+            $("#lblToUnitName").text(`${result.Value.SUSNo}${result.Value.Suffix} ${result.Value.UnitAbbreviation}`);
             $("#lblRecordRegiment").text(result.Value.Name);
             RecordRegimentId = result.Value.Id;
 

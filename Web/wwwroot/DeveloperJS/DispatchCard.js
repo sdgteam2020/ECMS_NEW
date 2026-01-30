@@ -413,7 +413,7 @@ function BindData(cvalue, callback) {
                     let summary = '';
                     if (cvalue == 1) {
                         summary =
-                            `<strong>Unit & SUS No : </strong> ${rowData.ToUnit} ${rowData.ToSUSNo} |
+                            `<strong>Unit & SUS No : </strong> ${rowData.ToUnit} ${rowData.ToSUSNo}${rowData.ToSuffix} |
                              ${rowData.ApplyForId == 1 ? `<strong>ORO : </strong> ${rowData.RecordOfficeName}` : `<strong>Regiment : </strong> ${rowData.RegimentalName}`} |
                              <strong>Name Of Courier Incharge : </strong> ${rowData.NameOfCourierIncharge} |
                              <strong>Dispatch To : </strong > ${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo)? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo} |
@@ -423,7 +423,7 @@ function BindData(cvalue, callback) {
                     }
                     else if (cvalue == 2 || cvalue == 3) {
                         summary =
-                            `<strong>Unit & SUS No : </strong> ${rowData.Step == 1 ? `${rowData.FromUnit} ${rowData.FromSUSNo }` : `${ rowData.ToUnit } ${ rowData.ToSUSNo }`} |
+                            `<strong>Unit & SUS No : </strong> ${rowData.Step == 1 ? `${rowData.FromUnit} ${rowData.FromSUSNo}${rowData.FromSuffix}` : `${rowData.ToUnit} ${rowData.ToSUSNo}${rowData.ToSuffix}`} |
                              <strong>Name Of Courier Incharge : </strong> ${rowData.NameOfCourierIncharge} |
                              ${rowData.Step == 1 ?
                                 `<strong>Dispatch From : </strong >${`${rowData.FromDID} (${rowData.FromRankName} ${rowData.FromName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.FromServiceNo) ? `${rowData.FromServiceNo.slice(0, 2)}  ${rowData.FromServiceNo.slice(2)}` : rowData.FromServiceNo} |`
@@ -435,7 +435,7 @@ function BindData(cvalue, callback) {
                     }
                     else {
                         summary =
-                            `<strong>Unit & SUS No : </strong> ${rowData.ToUnit} ${rowData.ToSUSNo} |
+                            `<strong>Unit & SUS No : </strong> ${rowData.ToUnit} ${rowData.ToSUSNo}${rowData.ToSuffix} |
                              ${rowData.ApplyForId == 1 ? `<strong>ORO : </strong> ${rowData.RecordOfficeName}` : `<strong>Regiment : </strong> ${rowData.RegimentalName}`} |
                              <strong>Name Of Courier Incharge :</strong> ${rowData.NameOfCourierIncharge} |
                              <strong>Dispatch From : </strong > ${`${rowData.FromDID} (${rowData.FromRankName} ${rowData.FromName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.FromServiceNo) ? `${rowData.FromServiceNo.slice(0, 2)}  ${rowData.FromServiceNo.slice(2)}` : rowData.FromServiceNo} |
@@ -721,6 +721,10 @@ function getColumnsForDispatchCard(choice) {
                     name: "ToSUSNo",
                     className: "nowrap",
                     width: "100px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        return row.ToSUSNo + row.ToSuffix
+                    }
                 },
                 {
                     title: "ORO",
@@ -840,8 +844,9 @@ function getColumnsForDispatchCard(choice) {
                     name: "ToSUSNo",
                     className: "nowrap",
                     width: "100px",
+                    orderable: false,
                     render: function (data, type, row) {
-                        return row.Step == 2 ? data : "";
+                        return row.Step == 2 ? row.ToSUSNo + row.ToSuffix : "";
                     }
                 },
                 {
@@ -850,8 +855,9 @@ function getColumnsForDispatchCard(choice) {
                     name: "FromSUSNo",
                     className: "nowrap",
                     width: "100px",
+                    orderable: false,
                     render: function (data, type, row) {
-                        return row.Step == 1 ? data : "";
+                        return row.Step == 1 ? row.FromSUSNo + row.FromSuffix : "";
                     }
                 },
                 {
@@ -940,6 +946,10 @@ function getColumnsForDispatchCard(choice) {
                     name: "FromSUSNo",
                     className: "nowrap",
                     width: "100px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        return row.FromSUSNo + row.FromSuffix
+                    }
                 },
                 {
                     title: "ORO",
@@ -1106,6 +1116,10 @@ function getColumnsByChoice(choice) {
                     name: "SUSNo",
                     className: "nowrap",
                     width: "110px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        return row.SUSNo + row.Suffix
+                    }
                 },
                 {
                     title: "Army No",
@@ -1230,6 +1244,10 @@ function getColumnsByChoice(choice) {
                     name: "SUSNo",
                     className: "nowrap",
                     width: "110px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        return row.SUSNo + row.Suffix
+                    }
                 },
                 {
                     title: "Army No",
@@ -1755,6 +1773,10 @@ function getColumnsForListBindDialog(choice) {
                     name: "SUSNo",
                     className: "nowrap",
                     width: "110px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        return row.SUSNo + row.Suffix
+                    }
                 },
                 {
                     title: "Army No",
@@ -1888,6 +1910,10 @@ function getColumnsForListBindDialog(choice) {
                     name: "SUSNo",
                     className: "nowrap",
                     width: "110px",
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        return row.SUSNo + row.Suffix
+                    }
                 },
                 {
                     title: "ORO",

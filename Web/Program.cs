@@ -310,6 +310,7 @@ app.Use(async (ctx, next) =>
         "max-age=31536000; includeSubDomains; preload";
 
     // Hide tech details where possible
+    ctx.Response.Headers.Remove("Server");
     ctx.Response.Headers.Remove("X-Powered-By");
     ctx.Response.Headers.Remove("x-aspnet-version");
 

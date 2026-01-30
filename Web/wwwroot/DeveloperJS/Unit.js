@@ -99,6 +99,7 @@ function BindData() {
         autoWidth: false,  //Set autoWidth to true (let DataTables decide)
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
+        searching:false,
         order: [[0, 'desc']], // Default sorting on the first column
                 ajax: async function (data, callback, settings) {
                     let requestData = {

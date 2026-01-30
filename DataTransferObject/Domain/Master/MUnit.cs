@@ -50,5 +50,10 @@ namespace DataTransferObject.Domain.Master
         [RegularExpression(@"^[\d]+$", ErrorMessage = "UnregdUserId is number.")]
         public short? UnregdUserId { get; set; }
         public TrnUnregdUser? TrnUnregdUser { get; set; }
+
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "Numbers allowed.")]
+        [MaxLength(3, ErrorMessage = "Maximum length of Prefix of SUS no is three digit.")]
+        [Column(TypeName = "varchar(3)")]
+        public string Prefix { get; set; } = string.Empty;
     }
 }

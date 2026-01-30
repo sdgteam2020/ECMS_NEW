@@ -21,8 +21,10 @@ namespace DataTransferObject.Response
         public string? ToRemark { get; set; }
         public string FromUnit { get; set; } = string.Empty;
         public string? FromSUSNo { get; set; }
+        public string? FromSuffix { get; set; }
         public string ToUnit { get; set; } = string.Empty;
         public string? ToSUSNo { get; set; }
+        public string? ToSuffix { get; set; }
         public string FromRankName { get; set; } = string.Empty;
         public string ToRankName { get; set; } = string.Empty;
         public string FromName { get; set; } = string.Empty;

@@ -22,7 +22,8 @@ $(function () {
                         if (data.length != 0) {
                             response($.map(data, function (item) {
                                 $("#loading").addClass("d-none");
-                                return { label: item.Sus_no, value: item.UnitId };
+                                return {
+                                    label: `${item.Sus_no}${item.Suffix}`, value: item.UnitId };
                             }))
                         }
                         else {
@@ -305,6 +306,7 @@ function BindDataMapUnit() {
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
         order: [[0, 'desc']], // Default sorting on the first column
+        searching: false,
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -357,9 +359,13 @@ function BindDataMapUnit() {
                 title: "SUS No",
                 data: "Sus_no",
                 name: "Sus_no",
+                orderable: false,
                 className: "nowrap",
                 width: "110px",
-                orderable: true, 
+                orderable: false,
+                render: function (data, type, row, meta) {
+                    return row.Sus_no + row.Suffix
+                }
             },
             {
                 title: "Unit Name",
@@ -568,7 +574,7 @@ function BindDataMapUnit() {
                     $("#spnUnitMapId").html(rowData.UnitMapId);
                     $("#spnUnitId").html(rowData.UnitId);
                     $("#lblUnit").html(rowData.UnitName);
-                    $("#txtSusno").val(rowData.Sus_no);
+                    $("#txtSusno").val(`${rowData.Sus_no}${rowData.Suffix}`);
 
                     var lst = '<option value="1">Please Select</option>';
 
