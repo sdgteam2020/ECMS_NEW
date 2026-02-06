@@ -290,7 +290,7 @@ app.Use(async (ctx, next) =>
         "style-src 'self'; " + // allow Bootstrap inline styles
         "img-src 'self' data:; " +
         "font-src 'self' data:; " +
-        "connect-src 'self'; " +
+        "connect-src 'self' https://dgisapp.army.mil:55102; " +
         "frame-ancestors 'self'; " +
         "base-uri 'self'; " +
         "form-action 'self';";

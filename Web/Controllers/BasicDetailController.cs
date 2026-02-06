@@ -6663,7 +6663,8 @@ namespace Web.Controllers
                 // Determine the claim value based on user's permissions
                 byte ClaimValue;
                 DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                dTO.TDMId= dtoSession != null ? dtoSession.TrnDomainMappingId : 0; 
+                dTO.TDMId= dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+                dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
                 {
                     ClaimValue = 1; // User can export ICard data

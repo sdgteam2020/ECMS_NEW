@@ -136,7 +136,6 @@ namespace DataAccessLayer
                 ["RegimentalName"] = "regi.Abbreviation",
                 ["ChipNo"] = "req.ChipNo",
                 ["CardSerialNo"] = "req.CardSerialNo",
-                ["SUSNo"] = "munit.Sus_no"
             };
             // Depending on the ClaimValue, we adjust the SELECT, JOIN, and WHERE clauses
             if (ClaimValue == 1)
@@ -182,7 +181,7 @@ namespace DataAccessLayer
                                     INNER JOIN MRank ranks on ranks.RankId=basi.RankId
                                     INNER JOIN MapUnit unit on basi.UnitId=unit.UnitMapId
                                     INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
-                                    INNER JOIN MRegimental regi on regi.RegId=basi.RegimentalId";
+                                    INNER JOIN MRegimental regi on regi.RegId=basi.RegimentalId AND regi.UnitId=@UnitId";
                 whereClause = @"WHERE
                                 (stepc.StepId=12)";
             }
@@ -257,6 +256,7 @@ namespace DataAccessLayer
 
                         parameters.Add("@FinalStepId", finalValue, DbType.Byte, ParameterDirection.Input);
                         parameters.Add("@TDMId", dTO.TDMId , DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@UnitId", dTO.UnitId, DbType.Int32, ParameterDirection.Input);
                     //parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);

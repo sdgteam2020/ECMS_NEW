@@ -279,7 +279,7 @@ namespace Web.Controllers
                 // Constants for hardcoded values
                 const string CERT_SERIAL_1 = "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3";
                 const string CERT_SERIAL_2 = "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448";
-                const string ARMY_NO_1 = "IC71150A";
+                const string ARMY_NO_1 = "IC75695P";
                 const string ARMY_NO_2 = "IC60056W";
 
                 // Retrieve client IP address
