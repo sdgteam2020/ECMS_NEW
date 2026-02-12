@@ -24,100 +24,107 @@
 <div class="containerMain mt-n10">
     <div class="row">
         <div class="card  section_to_report_toPrint" id="section_to_report_toPrint">
-            <div class="row pt-1 SearchTab d-print-none">
-                <div class="form-group row mb-2">
-                    <span id="spnclaimId" class="d-none">@(claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports") ? "Army Level Reports" : "")</span>
-                    <label class="col-form-label col-md-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
-                    <div class="col-md-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" disabled>
-                            <label class="form-check-label" for="UnitType1">Unit</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2" disabled>
-                            <label class="form-check-label" for="UnitType2">
-                                Unit(Fmn HQ)
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3" disabled>
-                            <label class="form-check-label" for="UnitType3">Unit(Dte/Branch)</label>
+            @if (claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports" || i.Value == "Fmn Level Reports"))
+            {
+                <div class="row pt-1 SearchTab d-print-none">
+                    <div class="form-group row mb-2">
+                        <span id="spnclaimId" class="d-none">@(claims.Any(i => i.Value == "Army Level Reports") ? "Army Level Reports" : "Fmn Level Reports")</span>
+                        <label class="col-form-label col-md-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
+                        <div class="col-md-10">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled")>
+                                <label class="form-check-label" for="UnitType1">Unit</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled")>
+                                <label class="form-check-label" for="UnitType2">
+                                    Unit(Fmn HQ)
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled")>
+                                <label class="form-check-label" for="UnitType3">Unit(Dte/Branch)</label>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="row SearchTab">
+                    <div class="col-sm-3 unittype">
+                        <label class="col-form-label fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
+                        <select class="form-select" name="ddlCommand" required id="ddlCommand">
+                            <option value="">All</option>
+                        </select>
+
+                    </div>
+                    <div class="col-sm-3 unittype">
+                        <label class="col-form-label fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
+
+                        <select class="form-select" name="ddlCorps" required id="ddlCorps">
+                            <option value="">All</option>
+                        </select>
+
+                    </div>
+                    <div class="col-sm-3 unittype">
+                        <label class="col-form-label fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
+
+                        <select class="form-select" name="ddlDiv" required id="ddlDiv">
+                            <option value="">All</option>
+                        </select>
+
+                    </div>
+                    <div class="col-sm-3 unittype">
+                        <label class="col-form-label fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
+
+                        <select class="form-select" name="ddlBde" required id="ddlBde">
+                            <option value="">All</option>
+                        </select>
+
+                    </div>
+                    <div class="col-sm-3 FmnBranch  d-none">
+                        <label class="col-form-label fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
+
+                        <select class="form-select" name="ddlFmnBranch" required id="ddlFmnBranch">
+                            <option value="1">All</option>
+                        </select>
+
+                    </div>
+                    <div class="col-sm-3 DteBranchDteBranch d-none">
+                        <label class="col-form-label fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
+
+                        <select class="form-select" name="ddlPSODte" required id="ddlPSODte">
+                            <option value="1">All</option>
+                        </select>
+
+                    </div>
+                    <div class="col-sm-3 DteBranch d-none">
+                        <label class="col-form-label fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
+
+                        <select class="form-select" name="ddlDgSubDte" required id="ddlDgSubDte">
+                            <option value="1">All</option>
+                        </select>
+
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="col-form-label fw-bold">Unit <i class="fas fa-asterisk mand1"></i></label>
+
+                        <select class="form-select" name="ddlUnit" required id="ddlUnit">
+                            <option value="">All</option>
+                        </select>
+
+                    </div>
+                    <div class="col-sm-3">
+
+                        <input type="button" value="Search" id="btnSearch" class="btn btn-primary mt-5 d-print-none" />
+                        <button class="btn btn-warning  mt-5 d-none d-print-none" id="btnprintreport">Print</button>
+                    </div>
                 </div>
-            <div class="row SearchTab">
-                <div class="col-sm-3 unittype">
-                    <label class="col-form-label fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
-                    <select class="form-select"  name="ddlCommand" required id="ddlCommand">
-                        <option value="">All </option>
-                    </select>
-
-                </div>
-                <div class="col-sm-3 unittype">
-                    <label class="col-form-label fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
-
-                    <select class="form-select"  name="ddlCorps" required id="ddlCorps">
-                        <option value="">All </option>
-                    </select>
-
-                </div>
-                <div class="col-sm-3 unittype">
-                    <label class="col-form-label fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
-
-                    <select class="form-select"   name="ddlDiv" required id="ddlDiv">
-                        <option value="">All </option>
-                    </select>
-
-                </div>
-                <div class="col-sm-3 unittype">
-                    <label class="col-form-label fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
-
-                    <select class="form-select"   name="ddlBde" required id="ddlBde">
-                        <option value="">All </option>
-                    </select>
-
-                </div>
-                <div class="col-sm-3 FmnBranch1  d-none">
-                    <label class="col-form-label fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
-
-                    <select class="form-select"  name="ddlFmnBranch" required id="ddlFmnBranch">
-                        <option value="1">All </option>
-                    </select>
-
-                </div>
-                <div class="col-sm-3 DteBranch1 d-none">
-                    <label class="col-form-label fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
-
-                    <select class="form-select"   name="ddlPSODte" required id="ddlPSODte">
-                        <option value="1">All </option>
-                    </select>
-
-                </div>
-                <div class="col-sm-3 DteBranch1 d-none">
-                    <label class="col-form-label fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
-
-                    <select class="form-select"   name="ddlDgSubDte" required id="ddlDgSubDte">
-                        <option value="1">All</option>
-                    </select>
-
-                </div>
+            }
+            else
+            {
                 <div class="col-sm-3">
-                    <label class="col-form-label fw-bold">Unit <i class="fas fa-asterisk mand1"></i></label>
-
-                    <select class="form-select"  name="ddlUnit" required id="ddlUnit">
-                        <option value="">All</option>
-                    </select>
-
+                    <button class="btn btn-warning  mt-5 d-none d-print-none" id="btnprintreport">Print</button>
                 </div>
-                <div class="col-sm-3">
-                   
-                    <input type="button" value="Search" id="btnSearch" class="btn btn-primary mt-5 d-print-none" />
-                    <button class="btn btn-warning  mt-5 d-none d-print-none" id="btnprintreport"> Print</button>
-                </div>
-            </div>
-            
-           
+            }
 
 
             <div id="root">

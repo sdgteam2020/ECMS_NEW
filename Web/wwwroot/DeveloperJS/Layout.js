@@ -472,13 +472,11 @@ function GetNotification() {
 }
 
 function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
-    var listItem = ""; 
     var tot = "0";
     var userdata =
     {
         "TypeId": NotificationTypeId,
         "applyForId": ApplyForId,
-
     };
     $.ajax({
         url: '/Home/GetNotificationRequestId',
@@ -538,11 +536,9 @@ function GetNotificationRequestId(NotificationTypeId,ApplyForId) {
 }
 
 function UpdateNotification(DisplayId) {
-    var listItem = "";
     var userdata =
     {
         "DisplayId": DisplayId,
-
     };
     $.ajax({
         url: '/Home/UpdateNotification',

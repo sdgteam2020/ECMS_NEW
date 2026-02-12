@@ -135,4 +135,12 @@ namespace DataTransferObject.Requests
         public bool AllChecked { get; set; } = false;
         public bool SearchTextChanged { get; set; } = false;
     }
+    public class DTODataTableRequestForAppCloseList: DTODataTablesRequest
+    {
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "apply is number.")]
+        public int apply { get; set; }
+        
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitMapId is number.")]
+        public int UnitMapId { get; set; }
+    }
 }

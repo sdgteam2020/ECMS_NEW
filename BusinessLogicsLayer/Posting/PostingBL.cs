@@ -32,9 +32,9 @@ namespace BusinessLogicsLayer.Posting
         {
             return await postingDB.UpdateForPosting(Data);
         }
-        public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int UnitMapId, int apply)
+        public async Task<DTODataTablesResponse<DTOAppClosedListResponse>> GetAppClosedList(DTODataTableRequestForAppCloseList dTORecord)
         {
-            return await postingDB.GetAppClosedList(UnitMapId, apply);
+            return await postingDB.GetAppClosedList(dTORecord);
         }
         public async Task<DTOPostingOutDetailByIdResponse> GetPostingDetailById(string Id) { 
             return await postingDB.GetPostingDetailById(Id);

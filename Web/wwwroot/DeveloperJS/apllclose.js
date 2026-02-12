@@ -1,4 +1,5 @@
 ﻿var applyforId = 0;
+var RequestId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -61,7 +62,7 @@ function Save() {
         data: {
             "ReasonId": $("#ddlpostingReason").val(),
             "Authority": $("#txtAuthority").val(),
-            "RequestId": $(".spnRequestId").html(),
+            "RequestId": RequestId,
             "Remarks": $("#txtremarks").val(),
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
@@ -70,10 +71,10 @@ function Save() {
             if (result.Result == true) {
                 toastr.success(result.Message);
                 if (applyforId == 1) {
-                    window.location.href = "/Posting/AppCloseList/MQ==";
+                    window.location.href = "/Posting/AppCloseList/";
                 }
                 else {
-                    window.location.href = "/Posting/AppCloseList/?Id=MQ==&jcoor=SmNvL09ycw==";
+                    window.location.href = "/Posting/AppCloseList/?jcoor=SmNvL09ycw==";
                 }
             }
              else {
@@ -113,12 +114,7 @@ function GetdataPostingData(ArmyNo) {
                 $("#lblRegdUser").html(response.Users_ArmyNo);
                 $("#lblFromName").html(response.Users_RankName + ' ' + response.Users_Name );
                 $("#lblFromDomainId").html(response.Users_DomainId);
-
-        
-                $(".spnRequestId").html(response.RequestId);
-
-
-
+                RequestId = response.RequestId;
             }
 
         }

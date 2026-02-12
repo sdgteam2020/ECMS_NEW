@@ -66,6 +66,7 @@ $(async function () {
             }
         });
     }
+
     if ($('#ddlCorps').length > 0) {
         $('#ddlCorps').on('change', async function () {
             corId = $(this).val();
@@ -83,6 +84,7 @@ $(async function () {
             $("#ddlUnit").html(lst);
         });
     }
+
     if ($('#ddlDiv').length > 0) {
         $('#ddlDiv').on('change', async function () {
             divId = $(this).val();
@@ -99,6 +101,7 @@ $(async function () {
             $("#ddlUnit").html(lst);
         });
     }
+
     if ($('#ddlBde').length > 0) {
         $('#ddlBde').on('change', async function () {
             bdeId = $(this).val();
@@ -117,6 +120,7 @@ $(async function () {
 
         });
     }
+
     if ($('#ddlFmnBranch').length > 0) {
         $('#ddlFmnBranch').on('change', async function () {
             FmnBranchId = $(this).val();
@@ -125,12 +129,14 @@ $(async function () {
 
         });
     }
+
     if ($('#ddlDgSubDte').length > 0) {
         $('#ddlDgSubDte').on('change', async function () {
             SubDteId = $(this).val();
             await GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, PsoId, $("#ddlDgSubDte").val());
         });
     }
+
     if ($('#ddlPSODte').length > 0) {
         $('#ddlPSODte').on('change', async function () {
             PsoId = $(this).val();
@@ -138,6 +144,7 @@ $(async function () {
             await GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, $("#ddlPSODte").val(), SubDteId);
         });
     }
+
     $('input[name="UnitTyperdi"]').on("click",async function () {
 
         UnitType = $("input[type='radio'][name=UnitTyperdi]:checked").val();
@@ -249,7 +256,7 @@ $(async function () {
     });
 
 
-        $('#txtMonthYear').datepicker({
+    $('#txtMonthYear').datepicker({
             dateFormat: 'mm/yy',
             changeMonth: true,
             changeYear: true,
@@ -1391,6 +1398,7 @@ async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
         console.error("mMsater error:", error);
     }
 }
+
 async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
     const payload = {
         TableId: TableId ? Number(TableId) : null,

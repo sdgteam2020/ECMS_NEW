@@ -116,10 +116,21 @@ namespace DataAccessLayer
 
                 // SQL query to update the status of the RequestId in the TrnICardRequest table.
                 string query1 = "UPDATE TrnICardRequest SET StatusId = 3 WHERE RequestId = @RequestId";
+                
+                var query1_parameters = new DynamicParameters();
+                query1_parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
 
                 // Execute the update query asynchronously with transaction.
-                var query1_parameters = new { RequestId = Data.RequestId };
                 await db.ExecuteAsync(query1, query1_parameters, transaction: transaction);
+
+                // SQL query to update the status of the RequestId in the TrnICardRequest table.
+                string query2 = "UPDATE TrnNotification SET [Read] = 1 WHERE RequestId = @RequestId  AND [Read] = 0";
+
+                var query2_parameters = new DynamicParameters();
+                query2_parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+
+                // Execute the update query asynchronously with transaction.
+                await db.ExecuteAsync(query2, query2_parameters, transaction: transaction);
 
                 // Commit the transaction if both operations succeed.
                 transaction.Commit();

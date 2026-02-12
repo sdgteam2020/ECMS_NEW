@@ -49,11 +49,29 @@ namespace DataAccessLayer
                         LEFT JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId  
                         LEFT JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId 
                         WHERE 
-                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
-                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
-                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
-                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                            AND unit.UnitType =@UnitType
                         GROUP BY fwd.StepId, fwd.IsComplete, fwd.TrnFwdId;
 
                         CREATE TABLE #tempStep (
@@ -92,11 +110,29 @@ namespace DataAccessLayer
                                 LEFT JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId  
 								LEFT JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId 
                                 WHERE 
-                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
-                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
-                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
-                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    (
+                                        (@UnitType = 1 AND
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                        )
+                                        OR
+                                        (@UnitType = 2 AND
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                            AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                        )
+                                        OR
+                                        (@UnitType = 3 AND
+                                            unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                            AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                        )
+                                    )
                                     AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                    AND unit.UnitType =@UnitType
                                     AND step.ApplyForId = @ApplyForId 
                                     AND step.StepId = @StepId;
 
@@ -163,6 +199,7 @@ namespace DataAccessLayer
                 parameters.Add("@PsoId", Data.PsoId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@SubDteId", Data.SubDteId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@UnitMapId", Data.UnitMapId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@UnitType", Data.UnitType, DbType.Int32, ParameterDirection.Input);
 
                 var ret = await db.QueryAsync<DTOReportReturnCount>(query, parameters, transaction: transaction);
                 // Commit the transaction if all operations succeed
@@ -296,17 +333,46 @@ namespace DataAccessLayer
                             inner join OROMapping mrec on req.RecordOfficeId=mrec.RecordOfficeId 
                             inner join  BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=1
                             left join MapUnit unit on basi.UnitId=unit.UnitMapId 
-                            where unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
-                            and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
-                            and unit.DivId=ISNULL(@DivId,unit.DivId)
-                            and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
-                            and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
+                            where 
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                            AND unit.UnitType =@UnitType
                             group by fwdsts.Name,fwdsts.FwdStatusId,mrec.RecordOfficeId";
             try 
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.FmnBranchID, Data.PsoId, Data.SubDteId, Data.UnitMapId });
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UnitType", Data.UnitType, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UnitMapId", Data.UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@ComdId", Data.ComdId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@CorpsId", Data.CorpsId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@DivId", Data.DivId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@BdeId", Data.BdeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@FmnBranchID", Data.FmnBranchID, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@PsoId", Data.PsoId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@SubDteId", Data.SubDteId, DbType.Byte, ParameterDirection.Input);
+                    var ret = await connection.QueryAsync<DTOReportReturnCount>(query, parameters);
                     return ret.ToList();
                 }
             }
@@ -357,12 +423,31 @@ namespace DataAccessLayer
                             inner join TrnStepCounter step on req.RequestId=step.RequestId 
                             inner join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId and basi.ApplyForId=2
                             left join MapUnit unit on basi.UnitId=unit.UnitMapId
-                            where unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
-                            and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
-                            and unit.DivId=ISNULL(@DivId,unit.DivId)
-                            and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
-                            and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
-                            and recf.ArmedId!=@ArmedIdForORO group by recf.RecordOfficeId,recf.Name,step.StepId";
+                            where 
+                            (
+                                (@UnitType = 1 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                )
+                                OR
+                                (@UnitType = 2 AND
+                                    unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                    AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                    AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                    AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                )
+                                OR
+                                (@UnitType = 3 AND
+                                    unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                    AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                )
+                            )
+                            AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                            AND unit.UnitType =@UnitType
+                            AND recf.ArmedId!=@ArmedIdForORO group by recf.RecordOfficeId,recf.Name,step.StepId";
             try 
             {
                 using (var connection = _contextDP.CreateConnection())
@@ -370,6 +455,7 @@ namespace DataAccessLayer
                     var parameters = new DynamicParameters();
                     parameters.Add("@IsComplete", IsComplete, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@ArmedIdForORO", ArmedIdForORO, DbType.Int16, ParameterDirection.Input);
+                    parameters.Add("@UnitType", Data.UnitType, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@UnitMapId", Data.UnitMapId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@ComdId", Data.ComdId, DbType.Byte, ParameterDirection.Input);
                     parameters.Add("@CorpsId", Data.CorpsId, DbType.Byte, ParameterDirection.Input);
@@ -439,12 +525,31 @@ namespace DataAccessLayer
                             left join MRank ranks on ranks.RankId=basi.RankId 
                             left join MapUnit unit on basi.UnitId=unit.UnitMapId";
                     
-                    wherequery = @"WHERE unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
-                                and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
-                                and unit.DivId=ISNULL(@DivId,unit.DivId)
-                                and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
-                                and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
-                                and step.ApplyForId=2 and fwd.IsComplete=0 and fwd.StepId=3 and mrec.RecordOfficeId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%' ";
+                    wherequery = @"WHERE 
+                                (
+                                    (@UnitType = 1 AND
+                                        unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                        AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                        AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                        AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    )
+                                    OR
+                                    (@UnitType = 2 AND
+                                        unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                        AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                        AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                        AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                        AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                    )
+                                    OR
+                                    (@UnitType = 3 AND
+                                        unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                        AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                    )
+                                )
+                                AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                AND unit.UnitType =@UnitType
+                                AND step.ApplyForId=2 AND fwd.IsComplete=0 AND fwd.StepId=3 AND mrec.RecordOfficeId=@ApplyForId AND ServiceNo like '%' + @SearchTerm + '%' ";
                 }
                 else if (dTORecord.IsApproveId == 1)
                 {
@@ -468,12 +573,31 @@ namespace DataAccessLayer
                             left join MRank ranks on ranks.RankId=basi.RankId
                             left join MapUnit unit on basi.UnitId=unit.UnitMapId";
                     
-                    wherequery = @"WHERE unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
-                                and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
-                                and unit.DivId=ISNULL(@DivId,unit.DivId)
-                                and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
-                                and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
-                                and step.ApplyForId=@ApplyForId and step.StepId=@StepId and fwd.StepId=@StepId and ServiceNo like '%' + @SearchTerm + '%'";
+                    wherequery = @"WHERE 
+                                (
+                                    (@UnitType = 1 AND
+                                        unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                        AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                        AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                        AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                    )
+                                    OR
+                                    (@UnitType = 2 AND
+                                        unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                        AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                        AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                        AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                        AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                    )
+                                    OR
+                                    (@UnitType = 3 AND
+                                        unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                        AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                    )
+                                )
+                                AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                AND unit.UnitType =@UnitType
+                                AND step.ApplyForId=@ApplyForId AND step.StepId=@StepId AND fwd.StepId=@StepId AND ServiceNo like '%' + @SearchTerm + '%'";
 
                 }
                 else
@@ -500,12 +624,31 @@ namespace DataAccessLayer
                                 LEFT join MRank ranks on ranks.RankId=basi.RankId
                                 LEFT join MapUnit unit on basi.UnitId=unit.UnitMapId";
                         
-                        wherequery = @"where unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
-                                    and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
-                                    and unit.DivId=ISNULL(@DivId,unit.DivId)
-                                    and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
-                                    and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
-                                    and step.ApplyForId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%'";
+                        wherequery = @"where 
+                                    (
+                                        (@UnitType = 1 AND
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                        )
+                                        OR
+                                        (@UnitType = 2 AND
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                            AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                        )
+                                        OR
+                                        (@UnitType = 3 AND
+                                            unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                            AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                        )
+                                    )
+                                    AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                    AND unit.UnitType =@UnitType
+                                    AND step.ApplyForId=@ApplyForId AND ServiceNo like '%' + @SearchTerm + '%'";
                     }
                     else
                     {
@@ -530,12 +673,31 @@ namespace DataAccessLayer
                                 LEFT JOIN MRank ranks on ranks.RankId=basi.RankId
                                 LEFT JOIN MapUnit unit on basi.UnitId=unit.UnitMapId";
                         
-                        wherequery = @"where unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
-                                    and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
-                                    and unit.DivId=ISNULL(@DivId,unit.DivId)
-                                    and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
-                                    and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
-                                    and step.ApplyForId=@ApplyForId and fwd.StepId=@StepId and ServiceNo like '%' + @SearchTerm + '%'";
+                        wherequery = @"where 
+                                    (
+                                        (@UnitType = 1 AND
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                        )
+                                        OR
+                                        (@UnitType = 2 AND
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                            AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                        )
+                                        OR
+                                        (@UnitType = 3 AND
+                                            unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                            AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                        )
+                                    )
+                                    AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                    AND unit.UnitType =@UnitType
+                                    AND step.ApplyForId=@ApplyForId AND fwd.StepId=@StepId AND ServiceNo like '%' + @SearchTerm + '%'";
                     }
                       
                 }
@@ -564,12 +726,31 @@ namespace DataAccessLayer
                             left join MRank ranks on ranks.RankId=basi.RankId 
                             left join MapUnit unit on basi.UnitId=unit.UnitMapId";
 
-                    wherequery = @"where unit.ComdId=ISNULL(@ComdId,unit.ComdId) 
-                                and unit.CorpsId=ISNULL(@CorpsId,unit.CorpsId)
-                                and unit.DivId=ISNULL(@DivId,unit.DivId)
-                                and unit.BdeId=ISNULL(@BdeId,unit.BdeId)
-                                and unit.UnitMapId=ISNULL(@UnitMapId,unit.UnitMapId)
-                                and mrec.RecordOfficeId=@ApplyForId and ServiceNo like '%' + @SearchTerm + '%'";
+                    wherequery = @"where 
+                                    (
+                                        (@UnitType = 1 AND
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                        )
+                                        OR
+                                        (@UnitType = 2 AND
+                                            unit.ComdId = ISNULL(@ComdId, unit.ComdId)
+                                            AND unit.CorpsId = ISNULL(@CorpsId, unit.CorpsId)
+                                            AND unit.DivId = ISNULL(@DivId, unit.DivId)
+                                            AND unit.BdeId = ISNULL(@BdeId, unit.BdeId)
+                                            AND unit.FmnBranchID = ISNULL(@FmnBranchID, unit.FmnBranchID)
+                                        )
+                                        OR
+                                        (@UnitType = 3 AND
+                                            unit.PsoId = ISNULL(@PsoId, unit.PsoId)
+                                            AND unit.SubDteId = ISNULL(@SubDteId, unit.SubDteId)
+                                        )
+                                    )
+                                    AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                    AND unit.UnitType =@UnitType
+                                    AND mrec.RecordOfficeId=@ApplyForId AND ServiceNo like '%' + @SearchTerm + '%'";
 
             }
             try

@@ -1,4 +1,5 @@
-﻿using BusinessLogicsLayer.Bde;
+﻿using BusinessLogicsLayer.BasicDet;
+using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.Service;
 using DataAccessLayer;
@@ -6,6 +7,7 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
@@ -581,19 +583,12 @@ namespace Web.Controllers
         /// Returns a view containing the list of closed applications based on the parameters.
         /// </returns>
         [HttpGet]
-        public async Task<ActionResult> AppCloseList(string Id, string jcoor)
+        public async Task<ActionResult> AppCloseList(string jcoor)
         {
-            int retint = 0;
             var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             string role = SessionHelper.GetRoleFromSession(HttpContext);
 
             // Validate the input parameters
-            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
-            {
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
             if (jcoor != null)
             {
                 if (!service.IsValidBase64(jcoor))
@@ -606,63 +601,30 @@ namespace Web.Controllers
 
             try
             {
-                DtoSession? dtoSession = new DtoSession();
-                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-                {
-                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                }
-                int UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+                ViewBag.Title = "List of Closed Appl";
 
-                // Decode the ID from Base64
-                if (!string.IsNullOrEmpty(Id))
+                if (role == "user")
                 {
-                    var base64EncodedBytes = Convert.FromBase64String(Id);
-                    var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
-                    retint = Convert.ToInt32(decodedString);
-                }
-
-                // Set the view title based on the decoded ID
-                if (retint == 1)
-                {
-                    ViewBag.Title = "List of Closed Appl";
-                }
-
-                // Fetch the list of closed applications based on jcoor value
-                if (string.IsNullOrEmpty(jcoor))
-                {
-                    var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 1));
-
-                    if (role == "user")
+                    if (string.IsNullOrEmpty(jcoor))
                     {
-                        return View(allrecord);
-                    }
+                        ViewBag.applyFor = 1;                    }
                     else
                     {
-                        TempData["error"] = "Switch to user role.";
-                        TempData.Keep("error");
-                        return RedirectToAction("ContactUs", "Home");
+                        ViewBag.applyFor = 2;
                     }
+                    return View();
                 }
                 else
                 {
-
-                    if (role == "user")
-                    {
-                        var allrecord = await Task.Run(() => _iPostingBL.GetAppClosedList(UnitMapId, 2));
-                        return View(allrecord);
-                    }
-                    else
-                    {
-                        TempData["error"] = "Switch to user role.";
-                        TempData.Keep("error");
-                        return RedirectToAction("ContactUs", "Home");
-                    }
+                    TempData["error"] = "Switch to user role.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
                 }
             }
             catch (FormatException ex)
             {
                 // Handle invalid Base64 format exception and return an error message
-                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id} & jcoor: {jcoor} ", Id, jcoor);
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for jcoor: {jcoor} ", jcoor);
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
@@ -674,6 +636,47 @@ namespace Web.Controllers
                 TempData["error"] = "Invalid Input.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllAppCloseList(DTODataTableRequestForAppCloseList dTORecord)
+        {
+            // If an exception occurs, return an empty response to avoid breaking the UI
+            List<DTOAppClosedListResponse> dTOApps = new List<DTOAppClosedListResponse>();
+            var responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
+            {
+                draw = 0,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = dTOApps
+            };
+            try
+            {
+                DtoSession? dtoSession = new DtoSession();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
+                dTORecord.UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
+
+                if (ModelState.IsValid)
+                {
+                    var allrecord = await _iPostingBL.GetAppClosedList(dTORecord);
+                    return Json(allrecord);
+                }
+                else
+                {
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging and tracking
+                _logger.LogError(1001, ex, "Posting->GetAllAppCloseList");
+
+                // Return JSON with empty data
+                return Json(responseData);
             }
         }
 

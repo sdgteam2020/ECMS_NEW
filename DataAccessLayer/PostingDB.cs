@@ -384,46 +384,85 @@ namespace DataAccessLayer
         /// <param name="apply">The apply type ID to filter the closed applications by.</param>
         /// <returns>A list of <see cref="DTOAppClosedListResponse"/> objects representing the closed applications.</returns>
         /// <exception cref="Exception">Throws an exception if an error occurs while retrieving the closed applications.</exception>
-        public async Task<List<DTOAppClosedListResponse>> GetAppClosedList(int UnitMapId, int apply)
+        public async Task<DTODataTablesResponse<DTOAppClosedListResponse>> GetAppClosedList(DTODataTableRequestForAppCloseList dTO)
         {
+            List<DTOAppClosedListResponse> dTOAppCloseds = new List<DTOAppClosedListResponse>();
+            var responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
+            {
+                draw = 0,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = dTOAppCloseds
+            };
+
             try
             {
-                string query = "";
-                query = @"Select appcl.UpdatedOn,bd.ServiceNo,mr.RankAbbreviation as RankName,bd.FName,bd.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority from TrnApplClose appcl
-                            inner join BasicDetails bd on bd.BasicDetailId=appcl.BasicDetailId and bd.UnitId =@UnitMapId
-                            inner join MRank mr on mr.RankId = bd.RankId
-                            inner join MApplyFor mappl on mappl.ApplyForId = bd.ApplyForId
-                            inner join MPostingReason mpr on mpr.Id= appcl.ReasonId
-                            where mappl.ApplyForId=@apply";
+                // Map allowed sort columns to DB fields
+                var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["ServiceNo"] = "bd.ServiceNo",
+                    ["UpdatedOn"] = "appcl.UpdatedOn",
+                    ["Authority"] = "appcl.Authority",
+                    ["Remarks"] = "appcl.Remarks"
+                };
+
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
+                    ? allowedSortColumns[dTO.sortColumn!]
+                    : "appcl.UpdatedOn";
+
+                var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
+
+                string selectFields = @"appcl.UpdatedOn,bd.ServiceNo,mr.RankAbbreviation as RankName,bd.FName,bd.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority";
+                string fromJoinClause = @"from TrnApplClose appcl
+                                        inner join BasicDetails bd on bd.BasicDetailId=appcl.BasicDetailId and bd.UnitId =@UnitMapId
+                                        inner join MRank mr on mr.RankId = bd.RankId
+                                        inner join MApplyFor mappl on mappl.ApplyForId = bd.ApplyForId
+                                        inner join MPostingReason mpr on mpr.Id= appcl.ReasonId";
+                string whereClause = @"where
+                                       mappl.ApplyForId=@apply
+                                       AND (
+                                            bd.ServiceNo LIKE '%' + @SearchTerm + '%' OR
+                                            appcl.Authority LIKE '%' + @SearchTerm + '%'
+                                        )";
+
+                var multiQuery = $@"
+                        WITH RecordCTE AS (
+                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
+                        )
+                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var result = await connection.QueryAsync<DTOAppClosedListResponse>(query, new { UnitMapId, apply });
-                    int sno = 1;
-                    var allrecord = (from e in result
-                                     select new DTOAppClosedListResponse()
-                                     {
-                                         Sno=sno++,
-                                         UpdatedOn=e.UpdatedOn,
-                                         ServiceNo=e.ServiceNo,
-                                         RankName=e.RankName,
-                                         FName=e.FName,
-                                         LName = e.LName,
-                                         Reason =e.Reason,
-                                         ApplyFor=e.ApplyFor,
-                                         Remarks=e.Remarks,
-                                         Authority=e.Authority,
-                                     }).ToList();
+                    // Parameters for SQL query
+                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@apply", dTO.apply, DbType.Int32, ParameterDirection.Input);
 
-                    return await Task.FromResult(allrecord);
+                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
+                    var records = (await ret.ReadAsync<DTOAppClosedListResponse>()).ToList();
+                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
+                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        data = records,
+                    };
 
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "PostingDB->GetAppClosedList");
-                return new List<DTOAppClosedListResponse>();
             }
+            return responseData;
         }
         public async Task<DTOBeforePostingOutCheckedInputDataResponse> BeforePostingOutCheckedInputData(TrnPostingOut trnPostingOut)
         {
