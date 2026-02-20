@@ -10,5 +10,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<bool> GetByName(OROMapping Dto);
         public Task<List<DTOAllOROResponse>> GetAllORO();
         public Task<DTODataTablesResponse<DTOOROMappingResponse>> GetAllOROMapping_Pagination(DTODataTablesRequest dTO);
+        public Task<bool> ValidateTDMIdInOROMapping(int TDMId);
     }
 }

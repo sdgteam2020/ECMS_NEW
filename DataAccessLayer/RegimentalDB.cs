@@ -157,5 +157,10 @@ namespace DataAccessLayer
                 return responseData;
             }
         }
+        public async Task<bool> ValidateUnitIdInRegimental(int UnitId)
+        {
+            var ret = await _context.MRegimental.AnyAsync(x => x.UnitId == UnitId);
+            return ret;
+        }
     }
 }

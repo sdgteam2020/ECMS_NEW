@@ -18,6 +18,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOGenericResponse<DTODispatchToResponse?>> GetUserIdWithName(int AspNetUsersId);
         public Task<DTOGenericResponse<DTODispatchToResponse?>> GetDispatchToData(byte CategeryId, int Id);
         public Task<DTOGenericResponse<DTOOROWithRegimentAndUnitResponse>> GetddlRecordRegiment(byte ClaimValue, int TDMId, int UnitId, int ToUnitId);
+        public Task<DTORecordRegimentIdResponse?> GetRecordRegimentId(byte ClaimValue, int TDMId, int UnitId);
         public Task<byte?> GetRecordOfficeId(byte ApplyForId, string ServiceNo, byte ArmedId, short RankId, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<bool> CheckArmyNO(string ArmyNo);
         public Task<string?> GetCSVString(DTOCSVExportRequest Data);

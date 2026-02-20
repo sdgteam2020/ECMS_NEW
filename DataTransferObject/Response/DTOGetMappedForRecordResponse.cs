@@ -12,6 +12,7 @@ namespace DataTransferObject.Response
         public string ArmyNo { get; set; } = string.Empty;
         public string RankAbbreviation { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public int UserId { get; set; }
         public int TDMId { get; set; }
         public int AspNetUsersId { get; set; }
     }

@@ -19,10 +19,6 @@
       "destination": "wwwroot/select2/"
     },
     {
-      "library": "datatables@1.10.21",
-      "destination": "wwwroot/datatables/"
-    },
-    {
       "library": "crypto-js@4.2.0",
       "destination": "wwwroot/lib/crypto-js/"
     },

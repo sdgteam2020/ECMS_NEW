@@ -11,5 +11,6 @@ namespace BusinessLogicsLayer.Master
         public Task<List<DTORegimentalResponse>> GetByArmedId(byte ArmedId);
         public Task<List<DTORegimentalResponse>> GetAllData();
         public Task<DTODataTablesResponse<DTORegimentalResponse>> GetAllRegimental_Pagination(DTODataTablesRequest dTO);
+        public Task<bool> ValidateUnitIdInRegimental(int UnitId);
     }
 }

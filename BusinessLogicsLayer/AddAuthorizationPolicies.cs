@@ -40,6 +40,13 @@ namespace BusinessLogicsLayer
                         (context.User.HasClaim(c => c.Type == "Dispatch Card") && context.User.HasClaim(c => c.Type == "Appl Approver"))
                     );
                 });
+                options.AddPolicy("ddlRecordRegimentPolicy", policy =>
+                {
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == "Dispatch Card") ||
+                        (context.User.HasClaim(c => c.Type == "Dispatch Card") && context.User.HasClaim(c => c.Type == "Appl Approver"))
+                    );
+                });
 
             });
         }

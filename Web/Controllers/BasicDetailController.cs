@@ -14,6 +14,8 @@ using BusinessLogicsLayer.FaultyCard;
 using BusinessLogicsLayer.HotlistCard;
 using BusinessLogicsLayer.LostCard;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.OROMapp;
+using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.TrnICardHold;
 using BusinessLogicsLayer.TrnLoginLog;
@@ -112,6 +114,9 @@ namespace Web.Controllers
         private readonly IDispatchCardMappingBL dispatchCardMappingBL;// For Dispatch Card Mapping
         private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// For Image Encrypt and Decrypt
         private readonly IEncryptionSettingBL encryptionSettingBL;// For Encryption Setting
+        private readonly IOROMappingBL oROMappingBL;// For ORO Mapping
+        private readonly IRegimentalBL regimentalBL;// For Regimental Database
+        private readonly IRecordOfficeBL recordOfficeBL; // For Record Office
 
         /// <summary>
         /// This is the constructor for the BasicDetailController class, 
@@ -124,7 +129,9 @@ namespace Web.Controllers
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL,
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             , IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
-           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL, IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL, IImageEncryptAndDecrypt imageEncryptAndDecrypt, IEncryptionSettingBL encryptionSettingBL)
+           , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,
+           IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL, IImageEncryptAndDecrypt imageEncryptAndDecrypt, IEncryptionSettingBL encryptionSettingBL,
+           IOROMappingBL oROMappingBL, IRegimentalBL regimentalBL, IRecordOfficeBL recordOfficeBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -162,6 +169,9 @@ namespace Web.Controllers
             this.dispatchCardMappingBL = dispatchCardMappingBL;
             this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
             this.encryptionSettingBL = encryptionSettingBL;
+            this.oROMappingBL = oROMappingBL;
+            this.regimentalBL = regimentalBL;
+            this.recordOfficeBL = recordOfficeBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -4680,6 +4690,7 @@ namespace Web.Controllers
         /// <returns>
         /// A JSON response indicating the result of the operation and any relevant messages.
         /// </returns>
+        [HttpPost]
         public async Task<IActionResult> SaveDistributeCardRequest(TrnDistributeCard model)
         {
             DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
@@ -5965,6 +5976,7 @@ namespace Web.Controllers
         /// <param name="RecordRegimentId">The regiment ID for the dispatch record.</param>
         /// <returns>JSON containing a generic response with dispatch-to details.</returns>
         [HttpPost]
+        [Authorize(Policy = "ICardExportDataPolicy")]
         public async Task<IActionResult> GetDispatchToData(byte CategeryId, byte RecordRegimentId)
         {
             // Initialize the generic response object
@@ -5984,6 +5996,7 @@ namespace Web.Controllers
         /// <param name="ToUnitId">The target unit ID for which regiments are fetched.</param>
         /// <returns>JSON containing a generic response with regiment and unit details.</returns>
         [HttpPost]
+        [Authorize(Policy = "ddlRecordRegimentPolicy")]
         public async Task<IActionResult> GetddlRecordRegiment(int ToUnitId)
         {
             // Initialize the session object
@@ -6081,39 +6094,21 @@ namespace Web.Controllers
                 var UserClaims = await userManager.GetClaimsAsync(user);
 
                 // Check user claims and set appropriate ClaimValue for the view
-                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                if (UserClaims.Count > 0)
                 {
-                    ViewBag.ClaimValue = 1; // User can export ICard data
-                    if (role == "user")
+                    if (UserClaims.Any(i => i.Value == "ICard Export Data"))
                     {
-                        return View();
+                        ViewBag.ClaimValue = 1; // User can export ICard data
                     }
-                    else
+                    else if (UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
                     {
-                        TempData["error"] = "Switch to user role.";
-                        TempData.Keep("error");
-                        return RedirectToAction("ContactUs", "Home");
+                        ViewBag.ClaimValue = 2; // User is Dispatch Card + Application Approver
                     }
-                }
-                else if (UserClaims.Count > 0 &&
-                         UserClaims.Any(i => i.Value == "Dispatch Card") &&
-                         UserClaims.Any(i => i.Value == "Appl Approver"))
-                {
-                    ViewBag.ClaimValue = 2; // User is Dispatch Card + Application Approver
-                    if (role == "user")
+                    else if (UserClaims.Any(i => i.Value == "Dispatch Card"))
                     {
-                        return View();
+                        ViewBag.ClaimValue = 3; // User is Dispatch Card only
                     }
-                    else
-                    {
-                        TempData["error"] = "Switch to user role.";
-                        TempData.Keep("error");
-                        return RedirectToAction("ContactUs", "Home");
-                    }
-                }
-                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
-                {
-                    ViewBag.ClaimValue = 3; // User is Dispatch Card only
+
                     if (role == "user")
                     {
                         return View();
@@ -6158,7 +6153,7 @@ namespace Web.Controllers
         {
             // Retrieve temporary session object for DispatchLot
             DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
-
+            bool Valid = false;
             if (dTOTempSession1 != null)
             {
                 DtoSession? dtoSession = new DtoSession();
@@ -6183,6 +6178,7 @@ namespace Web.Controllers
                     dTO.FromAspNetUsersId = AspNetUsersId;
                     dTO.FromUserId = dtoSession.UserId;
                     dTO.FromUnitId = dtoSession.UnitId;
+                    dTO.FromTDMId = dtoSession.TrnDomainMappingId;
                     dTO.IsActive = true;
                     dTO.IsComplete = false;
                     dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
@@ -6194,20 +6190,30 @@ namespace Web.Controllers
                         var UserClaims = await userManager.GetClaimsAsync(user);
 
                         // Determine claim type and set corresponding step value
-                        if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                        if (UserClaims.Count > 0)
                         {
-                            dTO.Step = 1;
-                            ClaimValue = 1;
-                        }
-                        else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
-                        {
-                            dTO.Step = 2;
-                            ClaimValue = 2;
-                        }
-                        else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
-                        {
-                            dTO.Step = 2;
-                            ClaimValue = 3;
+                            if (UserClaims.Any(i => i.Value == "ICard Export Data"))
+                            {
+                                dTO.RecordOfficeId = dTO.ApplyForId == 1 ? dTO.RecordOfficeId : null;
+                                dTO.RegId = dTO.ApplyForId == 2 ? dTO.RegId : null;
+                                dTO.Step = 1;
+                                ClaimValue = 1;
+                            }
+                            else if (UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                            {
+                                dTO.ApplyForId = 1;
+                                dTO.Step = 2;
+                                dTO.RegId=null;
+                                ClaimValue = 2;
+                            }
+                            else if (UserClaims.Any(i => i.Value == "Dispatch Card"))
+                            {
+                                dTO.ApplyForId = 2;
+                                dTO.Step = 2;
+                                dTO.RecordOfficeId = null;
+                                ClaimValue = 3;
+                            }
+
                         }
                         else
                         {
@@ -6216,6 +6222,141 @@ namespace Web.Controllers
                             response.Message = "Unauthorized User.";
                             response.Value = ret;
                             return Ok(response);
+                        }
+
+                        //Check data before proceeding to dispatch and get validation results
+
+                        if (ClaimValue == 1)
+                        {
+                            DTOGenericResponse<DTODispatchToResponse?> dTOGeneric = new DTOGenericResponse<DTODispatchToResponse?>();
+
+                            if (dTO.ApplyForId == 1) //Officer
+                            {
+                                if (dTO.RecordOfficeId == null)
+                                {
+                                    response.Result = false;
+                                    response.Message = "The Record Office field is required when dispatch lot.";
+                                    response.Value = ret;
+                                    return Ok(response);
+                                }
+                                else
+                                {
+                                    dTOGeneric = await basicDetailBL.GetDispatchToData(dTO.ApplyForId, Convert.ToInt32(dTO.RecordOfficeId));
+                                    if (dTOGeneric.Result == true && dTOGeneric.Value != null)
+                                    {
+                                        if (dTOGeneric.Value.UnitId == dTO.ToUnitId && dTOGeneric.Value.AspNetUsersId == dTO.ToAspNetUsersId && dTOGeneric.Value.UserId == dTO.ToUserId)
+                                        {
+                                            Valid = true;
+                                        }
+                                        else
+                                        {
+                                            Valid = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Valid = false;
+                                    }
+
+                                    if (Valid == false)
+                                    {
+                                        response.Result = false;
+                                        response.Message = "Invalid Officr Record Office Id.";
+                                        response.Value = ret;
+                                        return Ok(response);
+                                    }
+                                }
+                            }
+                            else // JCO/ORO
+                            {
+                                if (dTO.RegId == null)
+                                {
+                                    response.Result = false;
+                                    response.Message = "The Regiment field is required when dispatch lot.";
+                                    response.Value = ret;
+                                    return Ok(response);
+                                }
+                                else
+                                {
+                                    dTOGeneric = await basicDetailBL.GetDispatchToData(dTO.ApplyForId, Convert.ToInt32(dTO.RegId));
+                                    if (dTOGeneric.Result == true && dTOGeneric.Value != null)
+                                    {
+                                        if (dTOGeneric.Value.UnitId == dTO.ToUnitId && dTOGeneric.Value.AspNetUsersId == dTO.ToAspNetUsersId && dTOGeneric.Value.UserId == dTO.ToUserId)
+                                        {
+                                            Valid = true;
+                                        }
+                                        else
+                                        {
+                                            Valid = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Valid = false;
+                                    }
+
+                                    if (Valid == false)
+                                    {
+                                        response.Result = false;
+                                        response.Message = "Invalid Regiment Id.";
+                                        response.Value = ret;
+                                        return Ok(response);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (dTO.ToUnitId == 0)
+                            {
+                                response.Result = false;
+                                response.Message = "The Unit Id is required when you dispatch lot.";
+                                response.Value = ret;
+                                return Ok(response);
+                            }
+                            else
+                            {
+                                // Verifiy Sender
+                                if (ClaimValue == 2) 
+                                {
+                                    Valid = await oROMappingBL.ValidateTDMIdInOROMapping(dTO.FromTDMId);
+                                }
+                                else if (ClaimValue == 3)
+                                {
+                                    Valid = await regimentalBL.ValidateUnitIdInRegimental(dTO.FromUnitId);
+                                }
+
+                                if (Valid == false)
+                                {
+                                    response.Result = false;
+                                    response.Message = "Unauthorized User.";
+                                    response.Value = ret;
+                                    return Ok(response);
+                                }
+
+                                //Validate User Id based of ToUnitId
+                                Valid = false;
+                                List<DTOGetMappedForRecordResponse>? dTOGets =await recordOfficeBL.GetDDMappedForRecord(dTO.ToUnitId);
+                                if (dTOGets != null && dTOGets.Count > 0)
+                                {
+                                    foreach (var item in dTOGets)
+                                    {
+                                        if (item.AspNetUsersId == dTO.ToAspNetUsersId && item.UserId == dTO.ToUserId)
+                                        {
+                                            Valid = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (Valid == false)
+                                {
+                                    response.Result = false;
+                                    response.Message = "Invalid User.";
+                                    response.Value = ret;
+                                    return Ok(response);
+                                }
+                            }
                         }
 
                         // Generate a timestamped CSV file name
@@ -6312,11 +6453,11 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        // Gather ModelState validation errors
-                        var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                            .SelectMany(x => x.Value!.Errors)
-                            .Select(e => e.ErrorMessage)
-                            .ToList();
+                        var errors = ModelState
+                                    .Where(x => x.Value?.Errors?.Count > 0)
+                                    .SelectMany(x => x.Value!.Errors.Select(e =>
+                                        $"{x.Key}: {e.ErrorMessage}"))
+                                    .ToList();
 
                         if (errors.Any())
                         {
@@ -6505,28 +6646,69 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
         {
+            List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
+            // If an exception occurs, return an empty response to avoid breaking the UI
+            var responseData = new DTODataTablesWithSelectedIdsResponse<DTOCardDispatchDialogResponse>
+            {
+                draw = 0,               // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                selectedIds = null,     // No selected IDs
+                data = dTOCards         // Empty list of data
+            };
             try
             {
-                // Call business layer to retrieve dispatch card data for dialog
-                return Json(await basicDetailBL.GetDispatchCardDataForDialog(dTO));
+                if (ModelState.IsValid)
+                {
+                    // Get the current logged-in user's ASP.NET Identity Id
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                    // Fetch the user object from UserManager
+                    var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
+                    // Retrieve all claims associated with the user
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+
+                    DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                    dTO.TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+
+                    dTO.StepId = 2;
+                    dTO.ClaimValue = 0; // User has no relevant claims
+                    
+                    if (UserClaims.Count > 0)
+                    {
+                        if (UserClaims.Any(i => i.Value == "ICard Export Data"))
+                        {
+                            dTO.StepId = 1;
+                            dTO.ClaimValue = 1; // User can export ICard data
+                        }
+                        else if (UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                        {
+                            dTO.ClaimValue = 2; // User is Dispatch Card and Application Approver
+                            var recordRegiment = await basicDetailBL.GetRecordRegimentId(dTO.ClaimValue, dTO.TDMId, dTO.UnitId);
+                            dTO.RecordOfficeId = recordRegiment?.Id ?? 0;
+                        }
+                        else if (UserClaims.Any(i => i.Value == "Dispatch Card"))
+                        {
+                            dTO.ClaimValue = 3; // User is only Dispatch Card role
+                            var recordRegiment = await basicDetailBL.GetRecordRegimentId(dTO.ClaimValue, dTO.TDMId, dTO.UnitId);
+                            dTO.RegId = recordRegiment?.Id ?? 0;
+                        }
+                    }
+                    // Call business layer to retrieve dispatch card data for dialog
+                    return Json(await basicDetailBL.GetDispatchCardDataForDialog(dTO));
+                }
+                else
+                {
+                    return Json(responseData);
+                }
+
             }
             catch (Exception ex)
             {
-                // If an exception occurs, return an empty response to avoid breaking the UI
-                List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
-
-                var responseData = new DTODataTablesWithSelectedIdsResponse<DTOCardDispatchDialogResponse>
-                {
-                    draw = 0,               // DataTables draw counter (0 since error)
-                    recordsTotal = 0,       // Total records (0 since error)
-                    recordsFiltered = 0,    // Filtered records (0 since error)
-                    selectedIds = null,     // No selected IDs
-                    data = dTOCards         // Empty list of data
-                };
-
                 // Log the exception for debugging and tracking
                 _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
-
                 // Return JSON with empty data
                 return Json(responseData);
             }
@@ -6544,13 +6726,11 @@ namespace Web.Controllers
         public async Task<ActionResult> DispatchCardIn([FromForm] DTODispatchInRequest dTO)
         {
             // Initialize the response object
+            DTORecordRegimentIdResponse? dTORecordRegimentId = new DTORecordRegimentIdResponse();
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
 
             // Set the receipt date to current India Standard Time
-            dTO.ReceiptDate = TimeZoneInfo.ConvertTimeFromUtc(
-                DateTime.UtcNow,
-                TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")
-            );
+            dTO.ReceiptDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
             // Mark the dispatch as complete
             dTO.IsComplete = true;
@@ -6560,60 +6740,134 @@ namespace Web.Controllers
             {
                 try
                 {
-                    // Fetch the dispatch card from the database using the provided DispatchCardId
-                    TrnDispatchCard? trnDispatchCard = await dispatchCardBL.Get(dTO.DispatchCardId);
+                    // Get current user and session data
+                    var userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    var user = await userManager.FindByIdAsync(userId.ToString());
 
-                    if (trnDispatchCard != null)
+                    if (user == null)
                     {
-                        // Check if the action has already been performed
-                        if (trnDispatchCard.IsComplete == true && trnDispatchCard.ReceiptDate != null)
+                        response.Message = "User not found";
+                        response.Result = false;
+                        return Ok(response);
+                    }
+
+                    // Retrieve all claims associated with the user
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+                    DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                    // Set session data
+                    dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                    dTO.TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+
+                    dTO.StepId = 2;
+                    dTO.ClaimValue = 0;
+
+                    if (UserClaims.Count > 0)
+                    {
+                        if (UserClaims.Any(i => i.Value == "ICard Export Data"))
                         {
-                            response.Result = false;
-                            response.Message = "Action has already been taken by you.";
-                            response.Value = string.Empty;
+                            dTO.StepId = 1;
+                            dTO.ClaimValue = 1; // User can export ICard data
                         }
-                        else
+                        else if (UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
                         {
-                            // Determine the step ID based on the current step of the dispatch card
-                            byte StepId = 0;
-                            if (trnDispatchCard.Step == 1)
-                            {
-                                StepId = 12;
-                            }
-                            else if (trnDispatchCard.Step == 2)
-                            {
-                                StepId = 14;
-                            }
-
-                            // Retrieve all related dispatch card requests for processing
-                            List<DTODispatchCardInRequest> dTODispatchCards = new List<DTODispatchCardInRequest>();
-                            dTODispatchCards.AddRange(await dispatchCardMappingBL.GetRequestIds(trnDispatchCard.DispatchCardId));
-
-                            // Process the dispatch card using the business logic layer
-                            response = await basicDetailBL.DispatchCardIn(
-                                dTODispatchCards,
-                                StepId,
-                                dTO.DispatchCardId,
-                                dTO.ToRemark
-                            );
-
-                            // Clear the Value field in the response
-                            response.Value = string.Empty;
+                            dTO.ClaimValue = 2; // User is Dispatch Card and Application Approver
+                            dTO.StepId = 1;
+                            var recordRegiment = await basicDetailBL.GetRecordRegimentId(dTO.ClaimValue, dTO.TDMId, dTO.UnitId);
+                            dTO.RecordOfficeId = recordRegiment?.Id ?? 0;
                         }
+                        else if (UserClaims.Any(i => i.Value == "Dispatch Card"))
+                        {
+                            dTO.ClaimValue = 3; // User is only Dispatch Card role
+                            dTO.StepId = 1;
+                            var recordRegiment = await basicDetailBL.GetRecordRegimentId(dTO.ClaimValue, dTO.TDMId, dTO.UnitId);
+                            dTO.RegId = recordRegiment?.Id ?? 0;
+                        }
+                    }
+
+                    // Fetch the dispatch card from the database using the provided DispatchCardId
+                    var dispatchCard = await dispatchCardBL.Get(dTO.DispatchCardId);
+
+                    if (dispatchCard == null)
+                    {
+                        response.Message = "Invalid Id";
+                        response.Result = false;
+                        response.Value = string.Empty;
+                        return Ok(response);
+                    }
+
+                    // Check if the action has already been performed
+                    if (dispatchCard.IsComplete == true && dispatchCard.ReceiptDate != null)
+                    {
+                        response.Result = false;
+                        response.Message = "Action has already been taken by you.";
+                        response.Value = string.Empty;
+                        return Ok(response);
+                    }
+                    
+                    bool shouldProcess = false;
+
+                    if (dTO.ClaimValue == 1)
+                    {
+                        response.Result = false;
+                        response.Message = "You are not authorized to take Action.";
+                        response.Value = string.Empty;
+                        return Ok(response);
+                    }
+                    else if (dTO.ClaimValue == 2 && dispatchCard.Step == dTO.StepId && dispatchCard.RecordOfficeId == dTO.RecordOfficeId)
+                    {
+                        shouldProcess = true;
+                    }
+                    else if (dTO.ClaimValue == 3 && dispatchCard.Step == dTO.StepId && dispatchCard.RegId == dTO.RegId)
+                    {
+                        shouldProcess = true;
+                    }
+                    else if (dTO.ClaimValue == 0 && dispatchCard.Step == dTO.StepId && dispatchCard.ToUnitId == dTO.UnitId)
+                    {
+                        shouldProcess = true;
                     }
                     else
                     {
-                        // Dispatch card ID is invalid
                         response.Result = false;
-                        response.Message = "Invalid Id";
+                        response.Message = "You are not authorized to take Action.";
+                        response.Value = string.Empty;
+                        return Ok(response);
+                    }
+
+                    if (shouldProcess)
+                    {
+                        // Determine the step ID based on the current step of the dispatch card
+                        byte StepId = dispatchCard.Step == 1 ? (byte)12 : dispatchCard.Step == 2 ? (byte)14 : (byte)0;
+                        // Get related requests
+                        var dispatchRequests = (await dispatchCardMappingBL.GetRequestIds(dispatchCard.DispatchCardId)).ToList();
+
+                        // Process the dispatch card using the business logic layer
+                        response = await basicDetailBL.DispatchCardIn(
+                            dispatchRequests,
+                            StepId,
+                            dTO.DispatchCardId,
+                            dTO.ToRemark
+                        );
+
+                        // Clear the Value field in the response
                         response.Value = string.Empty;
                     }
+                    else
+                    {
+                        response.Result = false;
+                        response.Message = "You are not authorized to take Action.";
+                        response.Value = string.Empty;
+                        return Ok(response);
+                    }
+
                 }
                 catch (Exception ex)
                 {
                     // Log any unexpected exceptions
                     _logger.LogError(1001, ex, "BasicDetail->DispatchCardIn");
                     response.Message = "Internal Server Error!";
+                    response.Result = false;
+                    response.Value = string.Empty;
                 }
             }
             else
@@ -6665,21 +6919,21 @@ namespace Web.Controllers
                 DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                 dTO.TDMId= dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
                 dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
-                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                ClaimValue = 0; // User has no relevant claims
+                if (UserClaims.Count > 0)
                 {
-                    ClaimValue = 1; // User can export ICard data
-                }
-                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
-                {
-                    ClaimValue = 2; // User is Dispatch Card and Application Approver
-                }
-                else if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Dispatch Card"))
-                {
-                    ClaimValue = 3; // User is only Dispatch Card role
-                }
-                else
-                {
-                    ClaimValue = 0; // User has no relevant claims
+                    if (UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    {
+                        ClaimValue = 1; // User can export ICard data
+                    }
+                    else if (UserClaims.Any(i => i.Value == "Dispatch Card") && UserClaims.Any(i => i.Value == "Appl Approver"))
+                    {
+                        ClaimValue = 2; // User is Dispatch Card and Application Approver
+                    }
+                    else if (UserClaims.Any(i => i.Value == "Dispatch Card"))
+                    {
+                        ClaimValue = 3; // User is only Dispatch Card role
+                    }
                 }
 
                 // Call the business layer to get the dispatch card status list based on the claim value
@@ -6794,6 +7048,7 @@ namespace Web.Controllers
         /// <param name="dTO">The request object containing dispatch check data.</param>
         /// <returns>An <see cref="IActionResult"/> containing a JSON response indicating success or failure.</returns>
         [HttpPost]
+        [Authorize(Policy = "ICardDispatchPolicy")]
         public IActionResult BeforeProceedToDispatchCheck([FromBody] DTOBeforeProceedToDispatchCheckRequest dTO)
         {
             // Initialize the generic response object

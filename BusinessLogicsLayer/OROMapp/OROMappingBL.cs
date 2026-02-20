@@ -29,5 +29,9 @@ namespace BusinessLogicsLayer.OROMapp
         {
             return await _OROMappingDB.GetAllOROMapping_Pagination(dTO);
         }
+        public async Task<bool> ValidateTDMIdInOROMapping(int TDMId)
+        {
+            return await _OROMappingDB.ValidateTDMIdInOROMapping(TDMId);
+        }
     }
 }

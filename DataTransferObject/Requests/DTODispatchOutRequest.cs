@@ -53,9 +53,11 @@ namespace DataTransferObject.Requests
         public int FromUnitId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        [Required(ErrorMessage = "UnitId is required.")]
         public int ToUnitId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        [Required(ErrorMessage = "UserId is required.")]
         public int ToUserId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
@@ -63,8 +65,12 @@ namespace DataTransferObject.Requests
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
         public int FromAspNetUsersId { get; set; }
-        
+
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        public int FromTDMId { get; set; }
+
+        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        [Required(ErrorMessage = "Id is required.")]
         public int ToAspNetUsersId { get; set; }
         public bool IsComplete { get; set; } = false;
         public bool IsActive { get; set; } = true;

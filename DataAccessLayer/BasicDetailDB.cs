@@ -190,7 +190,7 @@ namespace DataAccessLayer
                 selectFields = @"req.RequestId,stepc.StepId,mappl.Name as ApplyFor,mappl.ApplyForId,basi.NameAsPerRecord,ranks.RankAbbreviation as RankName ,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation as RegimentalName,regi.RegId,mrec.Abbreviation as RecordOfficeName,mrec.RecordOfficeId,req.ChipNo,req.CardSerialNo,munit.Abbreviation as UnitAbbreviation,munit.Sus_no as SUSNo,munit.Suffix as Suffix";
                 fromJoinClause = @"from TrnStepCounter stepc
                             INNER JOIN TrnICardRequest req on stepc.RequestId=req.RequestId
-                            INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                            INNER JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId AND basi.UnitId=@UnitId
                             INNER JOIN MApplyFor mappl on mappl.ApplyForId=basi.ApplyForId
                             INNER JOIN MArmedType marmed on basi.ArmedId=marmed.ArmedId
                             INNER JOIN MRank ranks on ranks.RankId=basi.RankId
@@ -489,7 +489,23 @@ namespace DataAccessLayer
                                 INNER JOIN MUnit munit on unit.UnitId = munit.UnitId
                                 LEFT JOIN MRegimental regi on regi.RegId=basi.RegimentalId
                                 LEFT JOIN MRecordOffice mrec on dcard.RecordOfficeId = mrec.RecordOfficeId";
-            whereClause = @"WHERE dcm.DispatchCardId=@DispatchCardId";
+            if (dTO.ClaimValue == 1)
+            {
+                whereClause = @"WHERE dcm.DispatchCardId=@DispatchCardId AND dcard.Step = @StepId";
+            }
+            else if (dTO.ClaimValue == 2) 
+            {
+                whereClause = @"WHERE dcm.DispatchCardId=@DispatchCardId AND dcard.RecordOfficeId = @RecordOfficeId";
+            }
+            else if (dTO.ClaimValue == 3)
+            {
+                whereClause = @"WHERE dcm.DispatchCardId=@DispatchCardId AND dcard.RegId = @RegId";
+            }
+            else
+            {
+                whereClause = @"WHERE dcm.DispatchCardId=@DispatchCardId AND dcard.Step = @StepId AND dcard.ToUnitId = @UnitId";
+            }
+
             searchFilter = @"AND (
                                 req.RequestId LIKE '%' + @SearchTerm + '%' OR
                                 marmed.Abbreviation LIKE '%' + @SearchTerm + '%' OR
@@ -513,6 +529,11 @@ namespace DataAccessLayer
                 {
                     dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
                     var parameters = new DynamicParameters();
+                    parameters.Add("@ClaimValue", dTO.ClaimValue, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@RecordOfficeId", dTO.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@RegId", dTO.RegId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@StepId", dTO.StepId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@UnitId", dTO.UnitId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@DispatchCardId", dTO.DispatchCardId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
@@ -619,8 +640,6 @@ namespace DataAccessLayer
                 {
                     ["Step"] = "dcard.Step",
                     ["DispatchCardId"] = "dcard.DispatchCardId",
-                    //["FromSUSNo"] = "fromMuni.Sus_no",
-                    //["ToSUSNo"] = "toMuni.Sus_no",
                     ["DispatchDate"] = "dcard.DispatchDate",
                     ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
@@ -645,12 +664,7 @@ namespace DataAccessLayer
                                 AND (
                                     dcard.Step LIKE '%' + @SearchTerm + '%' OR
                                     dcard.DispatchCardId LIKE '%' + @SearchTerm + '%'
-
                                 )";
-                /*
-                                    concat(fromMuni.Sus_no,fromMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
-                                    concat(toMuni.Sus_no,toMuni.Suffix) LIKE '%' + @SearchTerm + '%'
-                 */
             }
             else if (dTO.ClaimValue == 3)
             {
@@ -658,8 +672,6 @@ namespace DataAccessLayer
                 {
                     ["Step"] = "dcard.Step",
                     ["DispatchCardId"] = "dcard.DispatchCardId",
-                    //["FromSUSNo"] = "fromMuni.Sus_no",
-                    //["ToSUSNo"] = "toMuni.Sus_no",
                     ["DispatchDate"] = "dcard.DispatchDate",
                     ["ReceiptDate"] = "dcard.ReceiptDate"
                 };
@@ -684,10 +696,6 @@ namespace DataAccessLayer
                                 dcard.Step LIKE '%' + @SearchTerm + '%' OR
                                 dcard.DispatchCardId LIKE '%' + @SearchTerm + '%'
                                 )";
-                /*
-                                concat(fromMuni.Sus_no,fromMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
-                                concat(toMuni.Sus_no,toMuni.Suffix) LIKE '%' + @SearchTerm + '%'
-                 */
             }
             else
             {
@@ -695,7 +703,6 @@ namespace DataAccessLayer
                 {
                     ["ApplyFor"] = "mappl.Name",
                     ["DispatchCardId"] = "dcard.DispatchCardId",
-                    //["FromSUSNo"] = "fromMuni.Sus_no",
                     ["RecordOfficeName"] = "mrec.Name",
                     ["RegimentalName"] = "regi.Abbreviation",
                     ["DispatchDate"] = "dcard.DispatchDate",
@@ -726,7 +733,6 @@ namespace DataAccessLayer
                                     mrec.Name LIKE '%' + @SearchTerm + '%' OR
                                     regi.Abbreviation LIKE '%' + @SearchTerm + '%'
                                 )";
-                //  concat(fromMuni.Sus_no,fromMuni.Suffix) LIKE '%' + @SearchTerm + '%' OR
             }
             try
             {
@@ -858,23 +864,46 @@ namespace DataAccessLayer
                             }
                             else
                             {
-                                return (from record in batchRecords
-                                        join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
-                                        from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
-                                        join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
-                                        from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
-                                        join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
-                                        from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
-                                        select new DTOCardDispatchCheckRequest
-                                        {
-                                            ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
-                                            ApplId = RequestIdExists?.RequestId ?? 0,
-                                            IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
-                                            Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
-                                            Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
-                                                      (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Unit; " : "") +
-                                                      (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
-                                        }).ToList();
+                                if (dTO.ApplyForId == 1)
+                                {
+                                    return (from record in batchRecords
+                                            join RequestIdMatch in context.TrnICardRequest on new { RequestId = record, RecordOfficeId = dTO.RecordOfficeId ?? 0}  equals new { RequestIdMatch.RequestId, RequestIdMatch.RecordOfficeId} into RequestIdJoin
+                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
+                                            join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
+                                            from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
+                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
+                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
+                                            select new DTOCardDispatchCheckRequest
+                                            {
+                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
+                                                ApplId = RequestIdExists?.RequestId ?? 0,
+                                                IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
+                                                Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                                Remarks = (RequestIdExists == null ? "Appl number not exists / Invalid ORO Id ; " : "") +
+                                                          (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Unit; " : "") +
+                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
+                                            }).ToList();
+                                }
+                                else
+                                {
+                                    return (from record in batchRecords
+                                            join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
+                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
+                                            join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId, bdMatch.RegimentalId } into bdMatchJoin
+                                            from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
+                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
+                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
+                                            select new DTOCardDispatchCheckRequest
+                                            {
+                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
+                                                ApplId = RequestIdExists?.RequestId ?? 0,
+                                                IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
+                                                Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                                Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
+                                                          (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Unit / Invalid Regiment Id; " : "") +
+                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
+                                            }).ToList();
+                                }
                             }
 
                         });
@@ -1150,6 +1179,34 @@ namespace DataAccessLayer
                 response.Value = ret;
             }
             return response;
+        }
+        public async Task<DTORecordRegimentIdResponse?> GetRecordRegimentId(byte ClaimValue, int TDMId, int UnitId)
+        {
+            DTORecordRegimentIdResponse? ret = new DTORecordRegimentIdResponse();
+            string query = string.Empty;
+            
+            if (ClaimValue == 2)
+            {
+                query = @"Select TOP 1 oro.RecordOfficeId as Id,mrec.Name from OROMapping oro
+                        inner join MRecordOffice mrec on oro.RecordOfficeId = mrec.RecordOfficeId WHERE oro.TDMId=@TDMId";
+            }
+            else if (ClaimValue == 3)
+            {
+                query = @"Select TOP 1 RegId as Id, Name  from MRegimental WHERE UnitId=@UnitId";
+            }
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    ret = await connection.QueryFirstOrDefaultAsync<DTORecordRegimentIdResponse?>(query, new { TDMId, UnitId });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetRecordRegimentId");
+            }
+            return ret;
         }
 
 
@@ -1926,14 +1983,6 @@ namespace DataAccessLayer
                                 where ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
                 }
-                //else if (dto.Claim == 2)
-                //{
-
-                //}
-                //else if (dto.Claim == 3)
-                //{
-
-                //}
                 else
                 {
                     query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo

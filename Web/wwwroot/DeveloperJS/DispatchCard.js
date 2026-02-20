@@ -3,7 +3,7 @@
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    let cvalue = parseInt($("#spnClaimValue").html());
+    let cvalue = parseInt($("#spnCValue").html());
     BindData(cvalue, function () {
     });
 
@@ -1029,31 +1029,31 @@ function getColumnsByChoice(choice) {
     switch (choice) {
         case 1:
             columns = [
-                {
-                    title: `<div class="noExport wd-30-f"><div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_BindDialog">
-                    <label class="custom-control-label" for="chkAll_BindDialog"></label>
-                    </div></div>`,
-                    data: null,
-                    name: "Id",
-                    orderable: false, // Disable sorting for this column
-                    width: "40px",
-                    render: function (data, type, row, meta) {
-                        if ($("#chkAll_BindDialog").prop('checked')) {
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        } else {
+                //{
+                //    title: `<div class="noExport wd-30-f"><div class="custom-control custom-checkbox small">
+                //    <input type="checkbox" class="custom-control-input" id="chkAll_BindDialog">
+                //    <label class="custom-control-label" for="chkAll_BindDialog"></label>
+                //    </div></div>`,
+                //    data: null,
+                //    name: "Id",
+                //    orderable: false, // Disable sorting for this column
+                //    width: "40px",
+                //    render: function (data, type, row, meta) {
+                //        if ($("#chkAll_BindDialog").prop('checked')) {
+                //            return `<div class="custom-control custom-checkbox small">
+                //                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+                //                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                //                </div>`;
+                //        } else {
 
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                        }
+                //            return `<div class="custom-control custom-checkbox small">
+                //                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+                //                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                //                </div>`;
+                //        }
 
-                    }
-                },
+                //    }
+                //},
                 {
                     title: "S No",
                     data: null,

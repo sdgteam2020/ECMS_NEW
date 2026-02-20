@@ -170,5 +170,10 @@ namespace DataAccessLayer
             }
 
         }
+        public async Task<bool> ValidateTDMIdInOROMapping(int TDMId)
+        {
+            var ret = await _context.OROMapping.AnyAsync(x => x.TDMId == TDMId);
+            return ret;
+        }
     }
 }

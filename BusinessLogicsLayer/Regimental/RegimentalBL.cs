@@ -33,5 +33,9 @@ namespace BusinessLogicsLayer.Master
         {
             return await _RegimentalDB.GetAllRegimental_Pagination(dTO); 
         }
+        public async Task<bool> ValidateUnitIdInRegimental(int UnitId)
+        {   
+            return await _RegimentalDB.ValidateUnitIdInRegimental(UnitId);
+        }
     }
 }

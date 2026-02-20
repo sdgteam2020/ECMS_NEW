@@ -68,7 +68,7 @@ $(async function () {
     });    
 
     mMsater(0, "ddlDispatch", DispatchMode, "");
-    ClaimValue = parseInt($("#spnClaimValue").html());
+    ClaimValue = parseInt($("#spnCValue").html());
     Field = $("#spnField").html();
     SearchText = $("#spnSearchText").html();
     if (ClaimValue == 1) {
