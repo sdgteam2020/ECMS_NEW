@@ -1,4 +1,5 @@
-﻿$(async function () {
+﻿var spnHotlistCardRequestId = 0;
+$(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     var RemarkTypeID = [6];
@@ -15,16 +16,16 @@
     });
 
     $("#btnCardPreview").on("click", function () {
-        GetICardPrintPreviewByRequestId($("#spnHotlistCardRequestId").html());
+        GetICardPrintPreviewByRequestId(spnHotlistCardRequestId);
     });
 
 
     $("#btnXMLDownload").on("click", function () {
-        DownloadPdf($("#spnHotlistCardRequestId").html());
+        DownloadPdf(spnHotlistCardRequestId);
     });
 
     $("#btnApplMoveHistory").on("click", function () {
-        GetRequestHistory($("#spnHotlistCardRequestId").html());
+        GetRequestHistory(spnHotlistCardRequestId);
         $("#exampleModal").modal('show');
     });
 
@@ -57,11 +58,9 @@
                 if (response.Result === true) {
                     let ArmyNo = response.Value.ArmyNo;
                     let RequestIdForFaulty = response.Value.RequestIdForFaulty;
-                    let MaxTrnFwdId = response.Value.MaxTrnFwdId
 
                     $("#spnArmyNo").html(ArmyNo);
-                    $("#spnHotlistCardRequestId").html(RequestIdForFaulty);
-                    $("#spnMaxTrnFwdId").html(MaxTrnFwdId);
+                    spnHotlistCardRequestId = RequestIdForFaulty;
                     $("#lblFaultyRequestId").html(RequestIdForFaulty);
 
                     GetBasicDetailForParitalViewByRequestId(RequestIdForFaulty);
@@ -81,38 +80,6 @@
 
 });
 function Proceed() {
-    //ResetErrorMessage();
-
-    //let formId = '#SaveRecordOffice';
-    //$.validator.unobtrusive.parse($(formId));
-
-    //if ($(formId).valid()) {
-    //    Swal.fire({
-    //        title: 'Are you sure?',
-    //        text: "",
-    //        icon: 'warning',
-    //        showCancelButton: true,
-    //        confirmButtonColor: '#3085d6',
-    //        cancelButtonColor: '#d33',
-    //        confirmButtonText: 'Yes, Save it!'
-    //    }).then((result) => {
-    //        if (result.isConfirmed) {
-    //            Save();
-    //        }
-    //    })
-    //}
-    //else {
-    //    Swal.fire({
-    //        icon: 'error',
-    //        title: 'Oops...',
-    //        text: 'Please fill required field.',
-
-    //    })
-    //    toastr.error('Please fill required field.');
-    //    return false;
-    //}
-
-
     if ($("#ddlHotlistRemark").val().length == 0 ) {
         toastr.error('Reason is required.');
         return false;
@@ -164,15 +131,13 @@ function Proceed() {
     }
 }
 function Save() {
-    var HotlistRemarkIds = "" + $("#ddlHotlistRemark").val() + "";
+    var HotlistRemarkIds = $("#ddlHotlistRemark").val();
     $.ajax({
         url: '/BasicDetail/SaveHotlistCardRequest' ,
         type: 'POST',
         data: {
-            "HotlistCardId": 0,
-            "RequestId": $("#spnHotlistCardRequestId").html(),
-            "TrnFwdId": $("#spnMaxTrnFwdId").html(),
-            "RemarksIds": $("#ddlHotlistRemark").val().length > 0 ? HotlistRemarkIds : null,
+            "RequestId": spnHotlistCardRequestId,
+            "RemarksIds": HotlistRemarkIds && HotlistRemarkIds.length > 0 ? HotlistRemarkIds.map(Number) : null,
             "Remark": $("#txtHotlistRemark").val()
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
@@ -182,7 +147,7 @@ function Save() {
                 const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));
                 const btnSearchNew = document.getElementById("btnSearchNew");
                 const btnBackDashboard = document.getElementById("btnBackDashboard");
-                let Message = `Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+                let Message = `Record successfully inserted in DB with ID : <strong>${result.Value.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.Value.CurrentTime)}</strong>.`;
 
                 document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
                 btnSearchNew.textContent = "Search New";

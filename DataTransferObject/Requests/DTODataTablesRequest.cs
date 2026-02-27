@@ -210,6 +210,9 @@ namespace DataTransferObject.Requests
         
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public bool SearchTextChanged { get; set; } = false;
+
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public int UnitMapId { get; set; }
     }
     public class DTODataTableRequestForAppCloseList: DTODataTablesRequest
     {

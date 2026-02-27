@@ -73,8 +73,13 @@ namespace DataAccessLayer
 
                             select @TotLostCards=COUNT(LostCardId) from TrnLostCards
                             select @TotHotlistCards=COUNT(HotlistCardId) from TrnHotlistCards
-                            select @TotDistCards=COUNT(DistributeCardId) from TrnDistributeCards
-                            select @TotDestCards=COUNT(DestructedCardId) from TrnDestructionCards
+                            select @TotDestCards=COUNT(DestructedCardId) from TrnDestructionCards                            
+                            
+                            select @TotDistCards=COUNT(dist.DistributeCardId) from TrnDistributeCards dist
+                            INNER JOIN TrnICardRequest  trnicard on dist.RequestId = trnicard.RequestId
+                            INNER JOIN BasicDetails bd on trnicard.BasicDetailId = bd.BasicDetailId
+                            WHERE bd.UnitId=@MapUnitId
+                            
 
                             select @TotLostCards TotLostCards,@TotHotlistCards TotHotlistCards,@TotUnitChangeRequest TotUnitChangeRequest,@TotMisprintedCard TotMisprintedCard,@TotDistCards TotDistCards,@TotDestCards TotDestCards,@TotDispatchCards TotDispatchCards";
 

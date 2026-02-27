@@ -25,5 +25,9 @@ namespace BusinessLogicsLayer.DestructionCard
         {
             return await _iDestructionCardDB.GetDetailsByRequestIds(Data);
         }
+        public async Task<DTOGenericResponse<string>> CheckBeforeDestructionCardReport(int RequestId)
+        {
+            return await _iDestructionCardDB.CheckBeforeDestructionCardReport(RequestId);
+        }
     }
 }

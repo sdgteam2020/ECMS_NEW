@@ -1,4 +1,5 @@
-﻿$(async function () {
+﻿var spnDestructionCardRequestId = 0;
+$(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     let oldText = "";
@@ -80,23 +81,23 @@
     });
 
     $("#btnCardPreview").on("click", function () {
-        GetICardPrintPreviewByRequestId($("#spnDestructionCardRequestId").html());
+        GetICardPrintPreviewByRequestId(spnDestructionCardRequestId);
     });
 
     $("#btnDestructionCardsList").on("click", function () {
         window.location.href = '/BasicDetail/DestructionCard';
     });
     $("#btnXMLDownload").on("click", function () {
-        DownloadPdf($("#spnDestructionCardRequestId").html());
+        DownloadPdf(spnDestructionCardRequestId);
     });
 
     $("#btnApplMoveHistory").on("click", function () {
-        GetRequestHistory($("#spnDestructionCardRequestId").html());
+        GetRequestHistory(spnDestructionCardRequestId);
         $("#exampleModal").modal('show');
     });
 
     $("#btnCardHistory").on("click", function () {
-        GetMovementHistory($("#spnDestructionCardRequestId").html());
+        GetMovementHistory(spnDestructionCardRequestId);
         $("#exampleModal").modal('show');
     });
 
@@ -134,7 +135,7 @@
                     let MaxTrnFwdId = response.Value.MaxTrnFwdId
 
                     $("#spnArmyNo").html(ArmyNo);
-                    $("#spnDestructionCardRequestId").html(RequestIdForFaulty);
+                    spnDestructionCardRequestId = RequestIdForFaulty;
                     $("#spnMaxTrnFwdId").html(MaxTrnFwdId);
                     $("#lblFaultyRequestId").html(RequestIdForFaulty);
 
@@ -202,13 +203,13 @@ function Proceed() {
 }
 function Save() {
     let inputDate = $("#txtDestructiononinp").val();
-    var DestructionlistRemarkIds = "" + $("#ddlDestructionRemark").val() + "";
+    var DestructionlistRemarkIds = $("#ddlDestructionRemark").val();
     $.ajax({
         url: '/BasicDetail/SaveDestructionCardRequest' ,
         type: 'POST',
         data: {
-            "RequestId": $("#spnDestructionCardRequestId").html(),
-            "RemarksIds": $("#ddlDestructionRemark").val().length > 0 ? DestructionlistRemarkIds : null,
+            "RequestId": spnDestructionCardRequestId,
+            "RemarksIds": DestructionlistRemarkIds && DestructionlistRemarkIds.length > 0 ? DestructionlistRemarkIds.map(Number) : null,
             "DestructedOn": formatDateToSqlString(inputDate),
             "Remark": $("#txtDestructionRemark").val()
         },
@@ -219,7 +220,7 @@ function Save() {
                 const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));
                 const btnSearchNew = document.getElementById("btnSearchNew");
                 const btnBackDashboard = document.getElementById("btnBackDashboard");
-                let Message = `Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+                let Message = `Record successfully inserted in DB with ID : <strong>${result.Value.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.Value.CurrentTime)}</strong>.`;
 
                 document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
                 btnSearchNew.textContent = "Search New";

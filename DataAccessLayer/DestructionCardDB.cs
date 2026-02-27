@@ -107,13 +107,10 @@ namespace DataAccessLayer
                                 req.RequestId,tdc.DestructedCardId,
                                 bas.ServiceNo,ranks.RankAbbreviation RankName,
                                 bas.FName,bas.LName,
-                                Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                                tdc.UpdatedOn,tdc.Remark,tdc.IsActive,
-                                bas.NameAsPerRecord,
-                                regi.Abbreviation RegimentalName,
+                                Muni.Abbreviation UnitAbbreviation,
+                                tdc.UpdatedOn,tdc.Remark,
                                 tdc.DestructedOn,
-                                (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(tdc.RemarksIds,','))) RemarksNameList,
-                                tdc.RemarksIds";
+                                (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(tdc.RemarksIds,','))) RemarksNameList";
                 fromJoinClause = @"from TrnDestructionCards tdc
                                 inner join TrnICardRequest req on req.RequestId = tdc.RequestId
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
@@ -121,8 +118,7 @@ namespace DataAccessLayer
                                 inner join MRank ranks on ranks.RankId=bas.RankId
                                 inner join MapUnit uni on uni.UnitMapId=bas.UnitId
                                 inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                                left join MRegimental regi on regi.RegId=bas.RegimentalId";
+                                inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId";
                 whereClause = @"Where bas.ServiceNo like '%' + @SearchTerm + '%' ";
 
                 var multiQuery = $@"
@@ -162,28 +158,7 @@ namespace DataAccessLayer
                         recordsTotal = totalFilteredRecords.GetValueOrDefault(),
                         recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
                         selectedIds = selectedIds,
-                        data = (from e in records
-                                select new DTODestructionCardGetResponse()
-                                {
-                                    EncryptedId = protector.Protect(e.DestructedCardId.ToString()),
-                                    NameAsPerRecord = e.NameAsPerRecord,
-                                    FName = e.FName,
-                                    LName = e.LName,
-                                    ServiceNo = e.ServiceNo,
-                                    UnitName = e.UnitName,
-                                    UnitAbbreviation = e.UnitAbbreviation,
-                                    RankName = e.RankName,
-                                    ArmedName = e.ArmedName,
-                                    RequestId = e.RequestId,
-                                    UpdatedOn = e.UpdatedOn,
-                                    ApplyFor = e.ApplyFor,
-                                    DestructedCardId = e.DestructedCardId,
-                                    Remark = e.Remark,
-                                    RemarksIds = e.RemarksIds,
-                                    RemarksNameList = e.RemarksNameList,
-                                    IsActive = e.IsActive,
-                                    DestructedOn = e.DestructedOn
-                                }).ToList()
+                        data = records,
                     };
                 }
             }
@@ -241,6 +216,49 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "DestructionCardDB->GetDetailsByRequestIds");
             }
             return records;
+        }
+        public async Task<DTOGenericResponse<string>> CheckBeforeDestructionCardReport(int RequestId)
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            try
+            {
+                string query = @"SELECT CASE
+                                            WHEN dest.RequestId = @RequestId THEN 0
+                                            WHEN currentReq.StatusId IN (1,3)  THEN 0
+                                            WHEN stepcount.StepId != 15 THEN 0
+                                            ELSE 1
+                                        END AS Result,
+		                                case
+                                            WHEN hot.RequestId = @RequestId THEN 'This card has already been reported as destroyed in the system.'
+                                            WHEN currentReq.StatusId IN (1,3) THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId != 15 THEN 'The application is currently being processed.'
+		                                    ELSE 'Valid'
+		                                END as Message
+                                FROM TrnICardRequest currentReq
+                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
+                                LEFT JOIN TrnDestructionCards dest on dest.RequestId = currentReq.RequestId
+                                WHERE currentReq.RequestId = @RequestId;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
+                    var result = await connection.QueryFirstOrDefaultAsync<DTOGenericResponse<string>>(query, parameters);
+                    return result ?? new DTOGenericResponse<string>
+                    {
+                        Result = false,
+                        Message = "Request not found",
+                    };
+                }
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "DestructionCardDB->CheckBeforeDestructionCardReport");
+                response.Result = false;
+                response.Message = "Something went wrong";
+                response.Value = string.Empty;
+                return response;
+            }
         }
     }
 }

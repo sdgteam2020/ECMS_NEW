@@ -91,6 +91,7 @@
     <Folder Include="wwwroot\WriteReadData\Document\" />
     <Folder Include="wwwroot\WriteReadData\ExportAFSACCell\" />
     <Folder Include="wwwroot\WriteReadData\CSVFile\" />
+    <Folder Include="wwwroot\WriteReadData\LostCardSupportingDoc\" />
     <Folder Include="wwwroot\WriteReadData\Photo\" />
     <Folder Include="wwwroot\WriteReadData\Signature\" />
   </ItemGroup>

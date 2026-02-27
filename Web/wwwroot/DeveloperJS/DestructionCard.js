@@ -143,32 +143,32 @@ function BindData() {
             }
         },
         columns: [
-            {
-                title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_DestructionCard">
-                    <label class="custom-control-label" for="chkAll_DestructionCard"></label>
-                    </div></div>`,
-                data: "RequestId",
-                targets: 0,
-                orderable: false,
-                className: "text-center",
-                width: "40px",
-                searchable: false,
-                render: function (data, type, row) {
-                    if ($("#chkAll_DestructionCard").prop('checked')) {
-                        return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                    } else {
+            //{
+            //    title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
+            //        <input type="checkbox" class="custom-control-input" id="chkAll_DestructionCard">
+            //        <label class="custom-control-label" for="chkAll_DestructionCard"></label>
+            //        </div></div>`,
+            //    data: "RequestId",
+            //    targets: 0,
+            //    orderable: false,
+            //    className: "text-center",
+            //    width: "40px",
+            //    searchable: false,
+            //    render: function (data, type, row) {
+            //        if ($("#chkAll_DestructionCard").prop('checked')) {
+            //            return `<div class="custom-control custom-checkbox small">
+            //                        <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+            //                        <label class="custom-control-label" for="${row.RequestId}"></label>
+            //                    </div>`;
+            //        } else {
 
-                        return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                    }
-                }
-            },
+            //            return `<div class="custom-control custom-checkbox small">
+            //                        <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+            //                        <label class="custom-control-label" for="${row.RequestId}"></label>
+            //                    </div>`;
+            //        }
+            //    }
+            //},
             {
                 title: "S No",
                 data: null,

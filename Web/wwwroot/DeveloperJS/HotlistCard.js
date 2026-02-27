@@ -37,30 +37,6 @@ $(function () {
         }
     });
 
-    $('#btnDataExportsEncry').on("click", function () {
-        var lst = new Array();
-
-        if (checkedDataIds.length > 0) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You want to Export",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#072697',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Export it!'
-            }).then((result) => {
-                if (result.value) {
-                    dataExportType = 1;
-                    DataExport();
-                }
-            });
-        } else {
-            Swal.fire({
-                text: "Please select atleast 1 data to Export."
-            });
-        }
-    });
 
 });
 function BindData() {
@@ -116,32 +92,32 @@ function BindData() {
             }
         },
         columns: [
-            {
-                title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_HotlistCard">
-                    <label class="custom-control-label" for="chkAll_HotlistCard"></label>
-                    </div></div>`,
-                data: "RequestId",
-                targets: 0,
-                orderable: false,
-                className: "text-center",
-                width: "40px",
-                searchable: false,
-                render: function (data, type, row) {
-                    if ($("#chkAll_HotlistCard").prop('checked')) {
-                        return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                    } else {
+            //{
+            //    title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
+            //        <input type="checkbox" class="custom-control-input" id="chkAll_HotlistCard">
+            //        <label class="custom-control-label" for="chkAll_HotlistCard"></label>
+            //        </div></div>`,
+            //    data: "RequestId",
+            //    targets: 0,
+            //    orderable: false,
+            //    className: "text-center",
+            //    width: "40px",
+            //    searchable: false,
+            //    render: function (data, type, row) {
+            //        if ($("#chkAll_HotlistCard").prop('checked')) {
+            //            return `<div class="custom-control custom-checkbox small">
+            //                        <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+            //                        <label class="custom-control-label" for="${row.RequestId}"></label>
+            //                    </div>`;
+            //        } else {
 
-                        return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                    }
-                }
-            },
+            //            return `<div class="custom-control custom-checkbox small">
+            //                        <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+            //                        <label class="custom-control-label" for="${row.RequestId}"></label>
+            //                    </div>`;
+            //        }
+            //    }
+            //},
             {
                 title: "S No",
                 data: null,

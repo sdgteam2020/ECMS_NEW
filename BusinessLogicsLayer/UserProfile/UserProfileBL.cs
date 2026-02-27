@@ -123,5 +123,9 @@ namespace BusinessLogicsLayer.Master
         {
             return await _iUserProfileDB.CheckedBeforeUpdateProfile(dTO);
         }
+        public async Task<DTOGenericResponse<DTOTokenStatusResponse?>> GetTokenStatus(int AspNetUsersId)
+        {
+            return await _iUserProfileDB.GetTokenStatus(AspNetUsersId);
+        }
     }
 }

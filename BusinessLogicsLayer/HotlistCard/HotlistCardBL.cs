@@ -31,5 +31,9 @@ namespace BusinessLogicsLayer.HotlistCard
         {
             return await _iHotlistCardDB.GetDetailsByRequestIds(Data);
         }
+        public async Task<DTOGenericResponse<string>> CheckBeforeHotListCardReport(int RequestId)
+        {
+            return await _iHotlistCardDB.CheckBeforeHotListCardReport(RequestId);
+        }
     }
 }

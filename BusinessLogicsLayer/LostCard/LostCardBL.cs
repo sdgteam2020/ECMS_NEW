@@ -32,5 +32,14 @@ namespace BusinessLogicsLayer.LostCard
         {
             return await _iLostCardDB.GetDetailsByRequestIds(Data);
         }
+        public async Task<DTOCheckBeforeLostReportResponse> CheckBeforeLostReport(int requestId, int TDMId)
+        {
+            return await _iLostCardDB.CheckBeforeLostReport(requestId, TDMId);
+    
+        }
+        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data)
+        {
+            return await _iLostCardDB.SaveLostCardRequest(Data);
+        }
     }
 }

@@ -4160,54 +4160,55 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="model">The hotlist card request model submitted by the user.</param>
         /// <returns>A JSON object containing the result, message, and relevant metadata.</returns>
-        public async Task<IActionResult> SaveHotlistCardRequest(TrnHotlistCard model)
+        [HttpPost]
+        public async Task<IActionResult> SaveHotlistCardRequest(DTOTrnHotListCardRequest dTOTrnHot)
         {
-            // Initialize response object
-            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
-
+            var dTOFaulty = new DTOGenericResponse<DTOCommonResponse>();
             try
             {
-                // Retrieve current session data if available
-                DtoSession? dtoSession = new DtoSession();
-                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-                {
-                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                }
-
-                // Set common audit fields
-                model.IsActive = true; // Mark record as active
-                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); // Current ASP.NET user ID
-                model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0; // Session user ID if available
-                model.UpdatedOn = DateTime.Now; // Timestamp of update
-
                 // Check model validation state
                 if (ModelState.IsValid)
                 {
-                    // Check if a record with the same RequestId already exists
-                    bool checkduplicate = await _hotlistCardBL.FindRequestId(model.RequestId);
-                    if (checkduplicate)
+                    var checkCardBeforeHotList = await _hotlistCardBL.CheckBeforeHotListCardReport(dTOTrnHot.RequestId);
+                    if (checkCardBeforeHotList.Result)
                     {
-                        // Duplicate found, return failure response
-                        dTOFaulty.Result = false;
-                        dTOFaulty.Message = "The hotlist request already exists!";
-                    }
-                    else
-                    {
+                        // Retrieve current session data if available
+                        DtoSession? dtoSession = new DtoSession();
+                        if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                        {
+                            dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                        }
+
+                        var model = new TrnHotlistCard();
+                        model.RequestId = dTOTrnHot.RequestId;
+                        model.RemarksIds = dTOTrnHot.RemarksIds != null && dTOTrnHot.RemarksIds.Any() ? string.Join(",", dTOTrnHot.RemarksIds) : string.Empty;
+                        model.Remark = dTOTrnHot.Remark;
+                        model.IsActive = true; // Mark record as active
+                        model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)); // Current ASP.NET user ID
+                        model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0; // Session user ID if available
+                        model.UpdatedOn = DateTime.Now; // Timestamp of update
+
                         // Save the record and return success response
                         var result = await _hotlistCardBL.AddWithReturn(model);
                         dTOFaulty.Result = true;
                         dTOFaulty.Message = "Record created!";
-                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault(); // Return saved record timestamp
-                        dTOFaulty.Id = result.HotlistCardId.ToString(); // Return saved record ID
+                        dTOFaulty.Value.CurrentTime = result.UpdatedOn.GetValueOrDefault(); // Return saved record timestamp
+                        dTOFaulty.Value.Id = result.HotlistCardId.ToString(); // Return saved record ID
+                    }
+                    else
+                    {
+                        // Duplicate found, return failure response
+                        dTOFaulty.Result = checkCardBeforeHotList.Result;
+                        dTOFaulty.Message = checkCardBeforeHotList.Message;
                     }
                 }
                 else
                 {
                     // If ModelState is invalid, extract all validation errors
-                    var errors = ModelState
-                        .Where(x => x.Value?.Errors?.Count > 0)
-                        .SelectMany(x => x.Value!.Errors)
-                        .Select(e => e.ErrorMessage)
+
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors.Select(e =>
+                            $"{x.Key}: {e.ErrorMessage}"))
                         .ToList();
 
                     if (errors.Any())
@@ -4239,6 +4240,7 @@ namespace Web.Controllers
         /// This is typically the page where users can view or submit lost card requests.
         /// </summary>
         /// <returns>The LostCard view.</returns>
+        [HttpGet]
         public IActionResult LostCard()
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
@@ -4364,6 +4366,7 @@ namespace Web.Controllers
         /// Returns the Lost Card Request view for the user to submit new requests.
         /// </summary>
         /// <returns>The Lost Card Request view.</returns>
+        [HttpGet]
         public ActionResult LostCardRequest()
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
@@ -4398,82 +4401,88 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveLostCardRequest([FromForm] DTOLostCardAddRequest model)
         {
-            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
+            var dTOResponse = new DTOGenericResponse<DTOCommonResponse?>();
             try
             {
-                var trnLostCard = new TrnLostCard();
-
+                int TDMId;
                 if (ModelState.IsValid)
                 {
-                    #region Upload Supporting Document
-                    string fileName = string.Empty;
-                    if (model.File != null)
+                    if (!string.IsNullOrWhiteSpace(model.SignedXML))
                     {
-                        /// Generate unique filename using timestamp
-                        fileName = $"{DateTime.Now:yyyyMMddHHmmss}.pdf";
-                        var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "LostCardSupportingDoc");
+                        Span<byte> buffer = new Span<byte>(new byte[model.SignedXML.Length]);
 
-                        // Ensure folder exists
-                        if (!Directory.Exists(uploadsFolder))
+                        if (!Convert.TryFromBase64String(model.SignedXML, buffer, out int bytesWritten))
                         {
-                            Directory.CreateDirectory(uploadsFolder);
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "Invalid format.";
+                            return Json(dTOResponse);
                         }
 
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-
-                        // Save uploaded file to server
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await model.File.CopyToAsync(stream);
-                        }
+                        string xmlString = Encoding.UTF8.GetString(buffer.Slice(0, bytesWritten));
+                        model.SignedXML = xmlString;
                     }
-                    #endregion
-
                     // Retrieve user session
                     DtoSession? dtoSession = new DtoSession();
                     if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                     {
                         dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                     }
+                    TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+                    var checkCardBeforeLost = await _lostCardBL.CheckBeforeLostReport(model.RequestId, TDMId);
 
-                    // Map DTO to entity
-                    trnLostCard.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
-                    trnLostCard.RequestId = model.RequestId;
-                    trnLostCard.Remark = model.Remark;
-                    trnLostCard.LostOn = model.LostOn;
-                    trnLostCard.IsFIRLogged = model.IsFIRLogged;
-                    trnLostCard.SignedXML = model.SignedXML ?? string.Empty;
-                    trnLostCard.SupportDocName = string.IsNullOrEmpty(fileName) ? "" : fileName;
-                    trnLostCard.IsActive = true;
-                    trnLostCard.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    trnLostCard.UpdatedOn = DateTime.Now;
-
-                    // Check for duplicate requests
-                    bool checkduplicate = await _lostCardBL.FindAnyRequestId(model.RequestId);
-                    if (checkduplicate)
+                    if (checkCardBeforeLost.Result)
                     {
-                        dTOResponse.Result = false;
-                        dTOResponse.Message = "The lost request already exists!";
+                        #region Upload Supporting Document
+                        string fileName = string.Empty;
+                        if (model.File != null)
+                        {
+                            /// Generate unique filename using timestamp
+                            fileName = $"{DateTime.Now:yyyyMMddHHmmss}.pdf";
+                            var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "LostCardSupportingDoc");
+
+                            // Ensure folder exists
+                            if (!Directory.Exists(uploadsFolder))
+                            {
+                                Directory.CreateDirectory(uploadsFolder);
+                            }
+
+                            var filePath = Path.Combine(uploadsFolder, fileName);
+
+                            // Save uploaded file to server
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await model.File.CopyToAsync(stream);
+                            }
+                        }
+                        #endregion
+
+                        model.IsActive = true;
+                        model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                        model.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                        model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
+                        model.SupportDocName = string.IsNullOrEmpty(fileName) ? "" : fileName;
+                        model.SignedXML = model.SignedXML ?? string.Empty;
+                        model.StatusId = checkCardBeforeLost.StatusId;
+                        model.BasicDetailId = checkCardBeforeLost.BasicDetailId;
+                        model.AppointmentName = checkCardBeforeLost.AppointmentName;
+                        model.HotlistCardId = checkCardBeforeLost.HotlistCardId;
+
+                        // Save entity and trigger related business logic
+                        dTOResponse = await _lostCardBL.SaveLostCardRequest(model);
                     }
                     else
                     {
-                        // Save entity and trigger related business logic
-                        var result = await _lostCardBL.AddWithReturn(trnLostCard);
-                        await HotlistLostCard(trnLostCard); // Optional post-save processing
-
-                        dTOResponse.Result = true;
-                        dTOResponse.Message = "Record created!";
-                        dTOResponse.CurrentTime = result.UpdatedOn.GetValueOrDefault();
-                        dTOResponse.Id = result.LostCardId.ToString();
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = checkCardBeforeLost.Message;
                     }
                 }
                 else
                 {
                     // Collect and return model validation errors
                     var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                                           .SelectMany(x => x.Value!.Errors)
-                                           .Select(e => e.ErrorMessage)
-                                           .ToList();
+                                            .SelectMany(x => x.Value!.Errors.Select(e =>
+                                                $"{x.Key}: {e.ErrorMessage}"))
+                                            .ToList();
                     if (errors.Any())
                     {
                         dTOResponse.Message = string.Join("; ", errors);
@@ -4485,7 +4494,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 // Log exception and return generic error message
-                _logger.LogError(1001, ex, "BasicDetail->SaveHotlistCardRequest");
+                _logger.LogError(1001, ex, "BasicDetail->SaveLostCardRequest");
                 dTOResponse.Result = false;
                 dTOResponse.Message = "Internal Server Error!";
             }
@@ -4493,65 +4502,7 @@ namespace Web.Controllers
             return Json(dTOResponse);
         }
 
-
-        /// <summary>
-        /// Handles the creation of a hotlist entry when a lost card is reported.
-        /// </summary>
-        /// <param name="lostCard">The lost card entity containing request details and metadata.</param>
-        /// <remarks>
-        /// The method performs the following actions:
-        /// 1. Checks the current status of the card using <see cref="basicDetailBL.CheckCardStatus"/>.
-        /// 2. If the card status is 1 (active), updates it to 3 (lost) using <see cref="basicDetailBL.UpdateCardStatus"/>.
-        /// 3. If the card is not already hotlisted:
-        ///     a. Checks for an existing hotlist record using <see cref="_hotlistCardBL.FindRequestId"/>.
-        ///     b. Creates a new <see cref="TrnHotlistCard"/> record using data from the lost card.
-        ///     c. Saves the hotlist record via <see cref="_hotlistCardBL.Add"/>.
-        /// 4. Logs any exceptions encountered during processing.
-        /// </remarks>
-        private async Task HotlistLostCard(TrnLostCard lostCard)
-        {
-            try
-            {
-                // Check the current status of the card
-                var cardStatus = await basicDetailBL.CheckCardStatus(lostCard.RequestId);
-
-                if (cardStatus == 1)
-                {
-                    // Card is active, update status to 'lost'
-                    await basicDetailBL.UpdateCardStatus(lostCard.RequestId, 3);
-                }
-                else
-                {
-                    // Check if a hotlist entry already exists for this request
-                    var isHotlistExists = await _hotlistCardBL.FindRequestId(lostCard.RequestId);
-
-                    if (!isHotlistExists)
-                    {
-                        // Create new hotlist entry based on lost card details
-                        TrnHotlistCard trnHotlistCard = new TrnHotlistCard()
-                        {
-                            RequestId = lostCard.RequestId,
-                            RemarksIds = "65", // Fixed remark code for lost card
-                            Remark = lostCard.Remark,
-                            IsActive = lostCard.IsActive,
-                            Updatedby = lostCard.Updatedby,
-                            UpdatedbyUserId = lostCard.UpdatedbyUserId,
-                            UpdatedOn = lostCard.UpdatedOn
-                        };
-
-                        // Add new hotlist entry
-                        await _hotlistCardBL.Add(trnHotlistCard);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log exceptions for troubleshooting
-                _logger.LogError(1001, ex, "BasicDetail->HotlistLostCard");
-            }
-        }
-
-        #endregion HotlistCard
+        #endregion LostCard
 
         #region DistributeCard
         /// <summary>
@@ -4599,6 +4550,8 @@ namespace Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    dTO.UnitMapId = dtoSession != null ? dtoSession.UnitId : 0;
                     // Call business layer to retrieve dispatch card data for dialog
                     return Json(await _distributeCardBL.GetAllDistribute(dTO));
                 }
@@ -4696,6 +4649,7 @@ namespace Web.Controllers
             DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();
             try
             {
+                int UnitId;
                 // Retrieve user session information
                 DtoSession? dtoSession = new DtoSession();
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
@@ -4709,42 +4663,34 @@ namespace Web.Controllers
                 model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
                 model.UpdatedOn = DateTime.Now;
                 model.DistributedOn = DateTime.Now;
+                UnitId = dtoSession != null ? dtoSession.UnitId : 0;
 
                 // Validate model state
                 if (ModelState.IsValid)
                 {
                     // Check whether the card can be distributed based on previous card status
-                    var checkCardBeforeDist = await basicDetailBL.CheckBeforeDistribution(model.RequestId);
+                    var checkCardBeforeDist = await basicDetailBL.CheckBeforeDistribution(model.RequestId, UnitId);
                     if (checkCardBeforeDist.Result)
                     {
-                        // Check for duplicate distribution requests
-                        bool checkduplicate = await _distributeCardBL.FindRequestId(model.RequestId);
-                        if (checkduplicate)
-                        {
-                            dTOResponse.Result = false;
-                            dTOResponse.Message = "The distribute request already exists!";
-                        }
-                        else
-                        {
-                            // Fetch card history to record distribution details
-                            ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
-                            // Save the distribution record and get the response
-                            dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
-                        }
+                        // Fetch card history to record distribution details
+                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
+                        // Save the distribution record and get the response
+                        dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
                     }
                     else
                     {
                         // Inform user if previous card entry is missing
-                        dTOResponse.Message = $"Please create a {checkCardBeforeDist.Message} entry for previous card!";
+                        dTOResponse.Message = checkCardBeforeDist.Message;
                     }
                 }
                 else
                 {
                     // Gather all model validation errors
-                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                                           .SelectMany(x => x.Value!.Errors)
-                                           .Select(e => e.ErrorMessage)
-                                           .ToList();
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e =>
+                                    $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
                     if (errors.Any())
                     {
                         dTOResponse.Message = string.Join("; ", errors); // Concatenate all error messages
@@ -5030,7 +4976,7 @@ namespace Web.Controllers
             // Check the current status of the card for the given request
             var cardStatus = await basicDetailBL.CheckCardStatus(RequestId);
 
-            if (cardStatus.GetValueOrDefault() == 1)
+            if (cardStatus.GetValueOrDefault() == 1 || cardStatus.GetValueOrDefault() == 3)
             {
                 // If card is pending, fetch pending card history
                 cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
@@ -5875,56 +5821,57 @@ namespace Web.Controllers
         /// <param name="model">The destruction card model to save.</param>
         /// <returns>JSON containing the result, messages, record ID, and timestamp.</returns>
         [HttpPost]
-        public async Task<IActionResult> SaveDestructionCardRequest(TrnDestructionCard model)
+        public async Task<IActionResult> SaveDestructionCardRequest(DTOTrnDestructionCardSaveRequest dTOTrnDestruction)
         {
             // Initialize the response object for front-end
-            DTOCommonSaveResponse dTOFaulty = new DTOCommonSaveResponse();
+            var dTOFaulty = new DTOGenericResponse<DTOCommonResponse>();
 
             try
             {
-                // Initialize session DTO
-                DtoSession? dtoSession = new DtoSession();
-
-                // Retrieve session token if available
-                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-                {
-                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                }
-
-                // Set audit fields on the model
-                model.IsActive = true;
-                model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
-                model.UpdatedOn = DateTime.Now;
-
                 // Check if the model passed server-side validation
                 if (ModelState.IsValid)
                 {
-                    // Check for duplicate destruction request by RequestId
-                    bool checkduplicate = await _destructionCardBL.FindAnyRequestId(model.RequestId);
-                    if (checkduplicate)
+                    var checkCardBeforeDistruction = await _destructionCardBL.CheckBeforeDestructionCardReport(dTOTrnDestruction.RequestId);
+                    if (checkCardBeforeDistruction.Result)
                     {
-                        // Duplicate found, return error
-                        dTOFaulty.Result = false;
-                        dTOFaulty.Message = "The destruction request already exists!";
-                    }
-                    else
-                    {
+                        // Initialize session DTO
+                        DtoSession? dtoSession = new DtoSession();
+
+                        // Retrieve session token if available
+                        if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                        {
+                            dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                        }
+                        var model = new TrnDestructionCard();
+                        model.RequestId = dTOTrnDestruction.RequestId;
+                        model.RemarksIds = dTOTrnDestruction.RemarksIds != null && dTOTrnDestruction.RemarksIds.Any() ? string.Join(",", dTOTrnDestruction.RemarksIds) : string.Empty;
+                        model.Remark = dTOTrnDestruction.Remark;
+                        model.DestructedOn = dTOTrnDestruction.DestructedOn;
+                        model.IsActive = true;
+                        model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                        model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
+                        model.UpdatedOn = DateTime.Now;
+
                         // Add the new destruction card and return success response
                         var result = await _destructionCardBL.AddWithReturn(model);
                         dTOFaulty.Result = true;
                         dTOFaulty.Message = "Record created!";
-                        dTOFaulty.CurrentTime = result.UpdatedOn.GetValueOrDefault();
-                        dTOFaulty.Id = result.DestructedCardId.ToString();
+                        dTOFaulty.Value.CurrentTime = result.UpdatedOn.GetValueOrDefault();
+                        dTOFaulty.Value.Id = result.DestructedCardId.ToString();
+                    }
+                    else
+                    {
+                        // Duplicate found, return failure response
+                        dTOFaulty.Result = checkCardBeforeDistruction.Result;
+                        dTOFaulty.Message = checkCardBeforeDistruction.Message;
                     }
                 }
                 else
                 {
                     // Collect and return all model validation errors
-                    var errors = ModelState
-                        .Where(x => x.Value?.Errors?.Count > 0)
-                        .SelectMany(x => x.Value!.Errors)
-                        .Select(e => e.ErrorMessage)
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors.Select(e =>
+                            $"{x.Key}: {e.ErrorMessage}"))
                         .ToList();
 
                     if (errors.Any())

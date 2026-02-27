@@ -15,5 +15,6 @@ namespace BusinessLogicsLayer.HotlistCard
         Task<bool> FindRequestId(int RequestId);
         Task<DTODataTablesResponse<DTOHotlistCardGetResponse>> GetAllHotlist(DTODataTablesRequest dTO);
         Task<List<DTOHotlistCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data);
+        public Task<DTOGenericResponse<string>> CheckBeforeHotListCardReport(int RequestId);
     }
 }

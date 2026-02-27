@@ -104,10 +104,8 @@ namespace DataAccessLayer
                                         req.RequestId,tdc.DistributeCardId,
                                         bas.ServiceNo,ranks.RankAbbreviation RankName,
                                         bas.FName,bas.LName,
-                                        Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                                        tdc.UpdatedOn,tdc.Remark,tdc.IsActive,
-                                        bas.NameAsPerRecord,
-                                        regi.Abbreviation RegimentalName,
+                                        Muni.Abbreviation UnitAbbreviation,
+                                        tdc.UpdatedOn,tdc.Remark,
                                         tdc.DistributedOn";
                 string fromJoinClause = @"from TrnDistributeCards tdc
                                         inner join TrnICardRequest req on req.RequestId = tdc.RequestId
@@ -116,9 +114,8 @@ namespace DataAccessLayer
                                         inner join MRank ranks on ranks.RankId=bas.RankId
                                         inner join MapUnit uni on uni.UnitMapId=bas.UnitId
                                         inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                                        left join MRegimental regi on regi.RegId=bas.RegimentalId";
-                string whereClause = @"Where bas.ServiceNo like '%' + @SearchTerm + '%' ";
+                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId";
+                string whereClause = @"Where bas.UnitId = @UnitMapId AND bas.ServiceNo like '%' + @SearchTerm + '%' ";
 
                 var multiQuery = $@"
                         WITH RecordCTE AS (
@@ -135,6 +132,7 @@ namespace DataAccessLayer
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
 
                     // Execute the SQL query to get the records and total count
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
@@ -160,26 +158,7 @@ namespace DataAccessLayer
                         recordsTotal = totalFilteredRecords.GetValueOrDefault(),
                         recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
                         selectedIds = selectedIds,
-                        data = (from e in records
-                                select new DTODistributeCardGetResponse()
-                                {
-                                    EncryptedId = protector.Protect(e.DistributeCardId.ToString()),
-                                    NameAsPerRecord = e.NameAsPerRecord,
-                                    FName = e.FName,
-                                    LName = e.LName,
-                                    ServiceNo = e.ServiceNo,
-                                    UnitName = e.UnitName,
-                                    UnitAbbreviation = e.UnitAbbreviation,
-                                    RankName = e.RankName,
-                                    ArmedName = e.ArmedName,
-                                    RequestId = e.RequestId,
-                                    UpdatedOn = e.UpdatedOn,
-                                    ApplyFor = e.ApplyFor,
-                                    DistributeCardId = e.DistributeCardId,
-                                    Remark = e.Remark,
-                                    IsActive = e.IsActive,
-                                    DistributedOn = e.DistributedOn
-                                }).ToList()
+                        data = records
                     };
                     return responseData;
                 }

@@ -119,7 +119,6 @@ function BindData() {
                 // 🔁 If no data returned, always clear selection
                 if (result.data.length === 0) {
                     globalThis.selectedIds = [];
-                    console.log("No results. Cleared selectedIds.");
                 }
 
                 // Only update selectedIds if server returns new ones
@@ -127,7 +126,6 @@ function BindData() {
                     if (result.selectedIds != null && result.selectedIds.length > 0) {
                         //selectedIds = result.selectedIds;
                         globalThis.selectedIds = result.selectedIds.map(x => x.toString());
-                        console.log("Fetched selectedIds from server:", globalThis.selectedIds);
                         // If user hadn’t checked Select All, now we just load into selectedIds silently
                         if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
                     }
@@ -154,32 +152,32 @@ function BindData() {
             }
         },
         columns: [
-            {
-                title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_LostCard">
-                    <label class="custom-control-label" for="chkAll_LostCard"></label>
-                    </div></div>`,
-                data: "RequestId",
-                targets: 0,
-                orderable: false,
-                className: "text-center",
-                width: "40px",
-                searchable: false,
-                render: function (data, type, row) {
-                    if ($("#chkAll_LostCard").prop('checked')) {
-                        return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                    } else {
+            //{
+            //    title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
+            //        <input type="checkbox" class="custom-control-input" id="chkAll_LostCard">
+            //        <label class="custom-control-label" for="chkAll_LostCard"></label>
+            //        </div></div>`,
+            //    data: "RequestId",
+            //    targets: 0,
+            //    orderable: false,
+            //    className: "text-center",
+            //    width: "40px",
+            //    searchable: false,
+            //    render: function (data, type, row) {
+            //        if ($("#chkAll_LostCard").prop('checked')) {
+            //            return `<div class="custom-control custom-checkbox small">
+            //                        <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+            //                        <label class="custom-control-label" for="${row.RequestId}"></label>
+            //                    </div>`;
+            //        } else {
 
-                        return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                    }
-                }
-            },
+            //            return `<div class="custom-control custom-checkbox small">
+            //                        <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+            //                        <label class="custom-control-label" for="${row.RequestId}"></label>
+            //                    </div>`;
+            //        }
+            //    }
+            //},
             {
                 title: "S No",
                 data: null,
@@ -255,20 +253,20 @@ function BindData() {
                     return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
                 }
             },
-            {
-                title: "Supported Document",
-                data: "SupportDocName",
-                name: "SupportDocName",
-                className: "",
-                width: "150px",
-                orderable: false,
-                render: function (data, type, row, meta) {
-                    return data ? `
-                    <button class="cls-uploadedDoc btn btn-sm btn-success download-btn" title="Download">
-                        <i class="fa fa-download"></i>
-                    </button>` : "";
-                }
-            },
+            //{
+            //    title: "Supported Document",
+            //    data: "SupportDocName",
+            //    name: "SupportDocName",
+            //    className: "",
+            //    width: "150px",
+            //    orderable: false,
+            //    render: function (data, type, row, meta) {
+            //        return data ? `
+            //        <button class="cls-uploadedDoc btn btn-sm btn-success download-btn" title="Download">
+            //            <i class="fa fa-download"></i>
+            //        </button>` : "";
+            //    }
+            //},
             {
                 title: "Date & Time",
                 data: "UpdatedOn",
@@ -277,6 +275,17 @@ function BindData() {
                 width: "150px",
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
+                }
+            },
+            {
+                title: "Reason",
+                data: 'RemarksNameList',
+                name: 'RemarksNameList',
+                className: "",
+                width: "100px",
+                orderable: false,
+                render: function (data, type, row) {
+                    return "<button type='button' class='cls-remarks btn btn-icon btn-round btn-warning mr-1'><i class='fa fa-eye'></i><span id='spnRemarks' class='d-none'></span></button>";
                 }
             },
             {
@@ -319,7 +328,7 @@ function BindData() {
                 extend: 'pdfHtml5',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
-                title: 'E-IASC_LostCard',
+                title: 'EISAC_LostCard',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 },
@@ -352,11 +361,28 @@ function BindData() {
                 new bootstrap.Tooltip(el);
             });
 
+            $("body").on("click", ".cls-remarks", function () {
+                var rowData = table.row($(this).closest("tr")).data();
+                let Label = `Request Id :- ${rowData.RequestId}`;
+                var remarksArray = rowData.RemarksNameList.split('#');
+                let listItem = "";
+                if (remarksArray != null) {
+                    listItem += "<ul>";
+                    for (var j = 0; j < remarksArray.length; j++) {
+                        listItem += "<li>" + remarksArray[j] + "</li>";
+                    }
+                    listItem += "</ul>";
+                }
+                $("#MessageDialogLabel").html(Label);
+                $("#MessageDialogBody").html(listItem);
+                $("#MessageDialog").modal('show');
+            });
+
 
             $(".cls-uploadedDoc").on("click", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 const baseUrl = window.location.origin;
-                const downloadUrl = `${baseUrl}/LostCardSupportingDoc/${encodeURIComponent(rowData.SupportDocName)}`;
+                const downloadUrl = `${baseUrl}/WriteReadData/LostCardSupportingDoc/${encodeURIComponent(rowData.SupportDocName)}`;
                 const link = document.createElement('a');
                 link.href = downloadUrl;
                 link.download = "LostCard_SupportiveDocument.pdf";
@@ -433,5 +459,4 @@ function resetSelectedFields() {
     // Reset "Select All" checkbox
     $('#chkAll_LostCard').prop('checked', false);
 
-    console.log("Reset selectedIds and checkboxes.");
 }

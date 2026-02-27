@@ -2017,7 +2017,7 @@ namespace DataAccessLayer
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,2)
                                 inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,11,12,13,14,15)
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
                                 Left join TrnDestructionCards tld on req.RequestId = tld.RequestId
@@ -2044,7 +2044,7 @@ namespace DataAccessLayer
                                 inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                                 inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
                                 inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (15)
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 Left join TrnDestructionCards tlc on req.RequestId = tlc.RequestId
                                 where tlc.RequestId is null and ServiceNo like @ServiceNo
@@ -4417,51 +4417,65 @@ namespace DataAccessLayer
         /// <exception cref="Exception">
         /// Logs any exceptions encountered during the execution of the method, such as database query issues.
         /// </exception>
-        public async Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId)
+        public async Task<DTOGenericResponse<string>> CheckBeforeDistribution(int requestId, int UnitId)
         {
-            DTOUploadChipAndSerialResponse response = new DTOUploadChipAndSerialResponse();
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
             try
             {
                 string query = @"SELECT CASE
-                                WHEN currentReq.TypeId = 1 THEN 1
+                                            WHEN tdm.UnitId != @MapUnitId THEN 0
+                                            WHEN dist.RequestId = @RequestId THEN 0
+                                            WHEN currentReq.StatusId IN (2,3) THEN 0
+                                            WHEN stepcount.StepId != 14 THEN 0
+                                            WHEN currentReq.TypeId = 1 THEN 1
 
-                                WHEN currentReq.TypeId = 5 AND EXISTS (
-                                    SELECT 1 FROM TrnLostCards lc
-                                    WHERE lc.RequestId = (
-                                        SELECT TIR1.RequestId
-									    FROM TrnICardRequest TIR1
-									    JOIN BasicDetails BD ON TIR1.BasicDetailId = BD.PreviousBasicDetailId
-									    JOIN TrnICardRequest TIR2 ON BD.BasicDetailId = TIR2.BasicDetailId
-									    WHERE TIR2.RequestId = currentReq.RequestId
-                                    ) AND lc.IsActive = 1
-                                ) THEN 1
+                                            WHEN currentReq.TypeId = 5 AND EXISTS (
+                                                SELECT 1 FROM TrnLostCards lc
+                                                WHERE lc.RequestId = (
+                                                    SELECT TIR1.RequestId
+					                                FROM TrnICardRequest TIR1
+					                                JOIN BasicDetails BD ON TIR1.BasicDetailId = BD.PreviousBasicDetailId
+					                                JOIN TrnICardRequest TIR2 ON BD.BasicDetailId = TIR2.BasicDetailId
+					                                WHERE TIR2.RequestId = currentReq.RequestId
+                                                ) AND lc.IsActive = 1
+                                            ) THEN 1
 
-                                WHEN currentReq.TypeId IN (2, 3, 4) AND EXISTS (
-                                    SELECT 1 FROM TrnDestructionCards dc
-                                    WHERE dc.RequestId = (
-                                        SELECT TIR1.RequestId
-									    FROM TrnICardRequest TIR1
-									    JOIN BasicDetails BD ON TIR1.BasicDetailId = BD.PreviousBasicDetailId
-									    JOIN TrnICardRequest TIR2 ON BD.BasicDetailId = TIR2.BasicDetailId
-									    WHERE TIR2.RequestId = currentReq.RequestId
-                                    ) AND dc.IsActive = 1
-                                ) THEN 1
+                                            WHEN currentReq.TypeId IN (2, 3, 4) AND EXISTS (
+                                                SELECT 1 FROM TrnDestructionCards dc
+                                                WHERE dc.RequestId = (
+                                                    SELECT TIR1.RequestId
+					                                FROM TrnICardRequest TIR1
+					                                JOIN BasicDetails BD ON TIR1.BasicDetailId = BD.PreviousBasicDetailId
+					                                JOIN TrnICardRequest TIR2 ON BD.BasicDetailId = TIR2.BasicDetailId
+					                                WHERE TIR2.RequestId = currentReq.RequestId
+                                                ) AND dc.IsActive = 1
+                                            ) THEN 1
 
-                                ELSE 0
-                            END AS Result,
-						    case 
-						    WHEN currentReq.TypeId = 1 then '' 
-						    WHEN currentReq.TypeId IN (2, 3, 4) THEN 'Destruction' 
-						    WHEN currentReq.TypeId = 5 THEN 'Lost'
-						    ELSE ''
-						    END as Message
-                            FROM TrnICardRequest currentReq
-                            WHERE currentReq.RequestId = @RequestId;";
+                                            ELSE 0
+                                        END AS Result,
+		                                case
+                                        WHEN tdm.UnitId != @MapUnitId THEN 'You are not an authorized user.'
+                                        WHEN dist.RequestId = @RequestId THEN 'This card has already been distributed.'
+                                        WHEN currentReq.StatusId IN (2,3) THEN 'The application is not running.'
+                                        WHEN stepcount.StepId != 14 THEN 'The application is currently being processed.'
+		                                WHEN currentReq.TypeId = 1 then 'Valid' 
+		                                WHEN currentReq.TypeId IN (2, 3, 4) THEN 'Please create a destruction entry for previous card!' 
+		                                WHEN currentReq.TypeId = 5 THEN 'Please create a lost entry for previous card!'
+		                                ELSE ''
+		                                END as Message
+                                        FROM TrnICardRequest currentReq
+                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
+                                INNER JOIN TrnDomainMapping tdm on tdm.Id=currentReq.TrnDomainMappingId
+                                LEFT JOIN TrnDistributeCards dist on dist.RequestId = currentReq.RequestId
+                                WHERE currentReq.RequestId = @RequestId;";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                   var list = await connection.QueryAsync<DTOUploadChipAndSerialResponse>(query, new {RequestId = requestId });
-                    response = list.FirstOrDefault();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RequestId", requestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@MapUnitId", UnitId, DbType.Int32, ParameterDirection.Input);
+                    var ret = await connection.QueryAsync<DTOGenericResponse<string>>(query, parameters);
+                    response = ret.FirstOrDefault() ?? new DTOGenericResponse<string>();
                 }
             }
             catch (Exception ee)

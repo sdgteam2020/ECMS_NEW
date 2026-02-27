@@ -54,7 +54,7 @@ namespace BusinessLogicsLayer.BasicDet
         Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId);
         Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId);
         Task UpdateCardStatus(int requestId, byte status);
-        Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId);
+        public Task<DTOGenericResponse<string>> CheckBeforeDistribution(int requestId, int UnitId);
         public Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId, string ToRemark);
         public Task<DTOPreventBasicDetailEditResponse?> GetPreventBasicDetailEdit(int BasicDetailId);
     }

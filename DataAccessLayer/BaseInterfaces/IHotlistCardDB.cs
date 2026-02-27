@@ -14,6 +14,7 @@ namespace DataAccessLayer.BaseInterfaces
         Task<bool> FindAnyRequestId(int RequestId);
         Task<DTODataTablesResponse<DTOHotlistCardGetResponse>> GetAllHotlist(DTODataTablesRequest dTO);
         Task<List<DTOHotlistCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data);
+        public Task<DTOGenericResponse<string>> CheckBeforeHotListCardReport(int RequestId);
 
     }
 }

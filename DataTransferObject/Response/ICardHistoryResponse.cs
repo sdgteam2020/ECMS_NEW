@@ -46,7 +46,7 @@ namespace DataTransferObject.Response
     {
         public int? RequestId { get; set; }
         public string? Authority { get; set; }
-        public int Remarks { get; set; }
+        public string? Remarks { get; set; }
         public string? Reasons { get; set; }
     }
     public class ICardHistoryResponseAll

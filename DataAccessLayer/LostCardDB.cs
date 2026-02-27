@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
+using System.Reflection.Metadata;
 
 namespace DataAccessLayer
 {
@@ -137,11 +138,10 @@ namespace DataAccessLayer
                                         req.RequestId,lost.LostCardId,
                                         bas.ServiceNo,ranks.RankAbbreviation RankName,
                                         bas.FName,bas.LName,
-                                        Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                                        lost.UpdatedOn,lost.Remark,lost.IsActive,
-                                        bas.NameAsPerRecord,lost.LostOn,
-                                        regi.Abbreviation RegimentalName,
-                                        lost.IsFIRLogged,lost.SupportDocName";
+                                        Muni.Abbreviation UnitAbbreviation,
+                                        lost.UpdatedOn,lost.Remark,lost.LostOn,
+                                        lost.IsFIRLogged,lost.SupportDocName,
+                                        (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(lost.RemarksIds,','))) RemarksNameList";
                 string fromJoinClause = @"from TrnLostCards lost
                                         inner join TrnICardRequest req on req.RequestId = lost.RequestId
                                         inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
@@ -149,8 +149,7 @@ namespace DataAccessLayer
                                         inner join MRank ranks on ranks.RankId=bas.RankId
                                         inner join MapUnit uni on uni.UnitMapId=bas.UnitId
                                         inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                                        left join MRegimental regi on regi.RegId=bas.RegimentalId";
+                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId";
                 string whereClause = @"Where bas.ServiceNo like '%' + @SearchTerm + '%'";
 
                 var multiQuery = $@"
@@ -191,28 +190,7 @@ namespace DataAccessLayer
                         recordsTotal = totalFilteredRecords.GetValueOrDefault(),
                         recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
                         selectedIds = selectedIds,
-                        data = (from e in records
-                                select new DTOLostCardGetResponse()
-                                {
-                                    EncryptedId = protector.Protect(e.LostCardId.ToString()),
-                                    NameAsPerRecord = e.NameAsPerRecord,
-                                    FName = e.FName,
-                                    LName = e.LName,
-                                    ServiceNo = e.ServiceNo,
-                                    UnitName = e.UnitName,
-                                    UnitAbbreviation = e.UnitAbbreviation,
-                                    RankName = e.RankName,
-                                    ArmedName = e.ArmedName,
-                                    RequestId = e.RequestId,
-                                    UpdatedOn = e.UpdatedOn,
-                                    ApplyFor = e.ApplyFor,
-                                    LostCardId = e.LostCardId,
-                                    LostOn = e.LostOn,
-                                    Remark = e.Remark,
-                                    IsActive = e.IsActive,
-                                    SupportDocName = e.SupportDocName,
-                                    IsFIRLogged = e.IsFIRLogged
-                                }).ToList()
+                        data = records,
                     };
                 }
             }
@@ -267,6 +245,162 @@ namespace DataAccessLayer
             }
             // Return the list of records (could be empty if no matching records found)
             return records;
+        }
+        public async Task<DTOCheckBeforeLostReportResponse> CheckBeforeLostReport(int requestId, int TDMId)
+        {
+            DTOCheckBeforeLostReportResponse response = new DTOCheckBeforeLostReportResponse();
+            try
+            {
+                string query = @"SELECT currentReq.StatusId,currentReq.BasicDetailId,apt.AppointmentName,hot.HotlistCardId,
+                                       CASE
+                                            WHEN lost.RequestId = @RequestId THEN 0
+                                            WHEN dest.RequestId = @RequestId THEN 0
+                                            WHEN currentReq.StatusId = 3 THEN 0
+                                            WHEN stepcount.StepId NOT IN (6, 11, 12 ,13, 14, 15) THEN 0
+                                            ELSE 1
+                                        END AS Result,
+		                                case
+                                            WHEN lost.RequestId = @RequestId THEN 'This card has already been reported as lost.'
+                                            WHEN dest.RequestId = @RequestId THEN 'This card has already been destroyed.'
+                                            WHEN currentReq.StatusId = 3 THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId NOT IN (6, 11, 12 ,13, 14, 15) THEN 'The application is currently being processed.'
+		                                    ELSE 'Valid'
+		                                END as Message
+                                FROM TrnICardRequest currentReq
+                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
+                                LEFT JOIN TrnLostCards lost on lost.RequestId = currentReq.RequestId
+                                LEFT JOIN TrnDestructionCards dest on dest.RequestId = currentReq.RequestId
+                                LEFT JOIN TrnDomainMapping tdm on tdm.Id = @TDMId
+                                LEFT JOIN MAppointment apt on apt.ApptId = tdm.ApptId
+                                LEFT JOIN TrnHotlistCards hot on hot.RequestId=currentReq.RequestId
+                                WHERE currentReq.RequestId = @RequestId;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RequestId", requestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@TDMId", TDMId, DbType.Int32, ParameterDirection.Input);
+                    var result = await connection.QueryFirstOrDefaultAsync<DTOCheckBeforeLostReportResponse>(query, parameters);
+                    return result ?? new DTOCheckBeforeLostReportResponse
+                    {
+                        Result = false,
+                        Message = "Request not found",
+                    };
+                }
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "LostCardDB->CheckBeforeLostReport");
+                return new DTOCheckBeforeLostReportResponse
+                {
+                    Result = false,
+                    Message = "Something went wrong",
+                };
+            }
+        }
+        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data)
+        {
+            var dTOResponse = new DTOGenericResponse<DTOCommonResponse?>();
+            string LostRemarksId = "65";
+            byte StatusId = 3;
+            byte ReasonId = 8;
+            string remarkIds = Data.RemarksIds != null && Data.RemarksIds.Any() ? string.Join(",", Data.RemarksIds) : string.Empty;
+            // Initialize transaction for multiple database operations
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+
+            try
+            {
+                var insertLostCard = @$" INSERT INTO TrnLostCards (RequestId, Remark, LostOn, IsActive, Updatedby, UpdatedOn, IsFIRLogged, SignedXML, SupportDocName, UpdatedbyUserId,RemarksIds)
+                                         OUTPUT INSERTED.LostCardId 
+                                         VALUES (@RequestId, @Remark, @LostOn, @IsActive, @Updatedby, @UpdatedOn, @IsFIRLogged, @SignedXML, @SupportDocName, @UpdatedbyUserId,@RemarksIds);";
+                var parameters = new DynamicParameters();
+                parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@Remark", Data.Remark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@LostOn", Data.LostOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@IsFIRLogged", Data.IsFIRLogged, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@SignedXML", Data.SignedXML, DbType.String, ParameterDirection.Input);
+                parameters.Add("@SupportDocName", Data.SupportDocName, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@UpdatedbyUserId", Data.UpdatedbyUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@RemarksIds", remarkIds, DbType.String, ParameterDirection.Input, 100);
+
+                // Insert the new posting record and get its ID
+                var LostCardId = await db.QuerySingleAsync<int>(insertLostCard, parameters, transaction: transaction);
+
+                if (Data.HotlistCardId == null)
+                {
+                    var insertHotlistCard = @$" INSERT INTO TrnHotlistCards (RequestId, RemarksIds, Remark, IsActive, Updatedby, UpdatedOn, UpdatedbyUserId)
+                                         VALUES (@RequestId, @RemarksIds, @Remark, @IsActive, @Updatedby, @UpdatedOn, @UpdatedbyUserId);";
+
+                    var parameters2 = new DynamicParameters();
+                    parameters2.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters2.Add("@RemarksIds", LostRemarksId, DbType.String, ParameterDirection.Input, 100);
+                    parameters2.Add("@Remark", Data.Remark, DbType.String, ParameterDirection.Input, 100);
+                    parameters2.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                    parameters2.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                    parameters2.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                    parameters2.Add("@UpdatedbyUserId", Data.UpdatedbyUserId, DbType.Int32, ParameterDirection.Input);
+
+                    await db.ExecuteAsync(insertHotlistCard, parameters2, transaction: transaction);
+                }
+
+                if (Data.StatusId ==1)
+                {
+                    string query = "UPDATE TrnICardRequest SET StatusId = @StatusId WHERE RequestId = @RequestId";
+
+                    var parameters4 = new DynamicParameters();
+                    parameters4.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters4.Add("@StatusId", StatusId, DbType.Int32, ParameterDirection.Input);
+
+                    await db.ExecuteAsync(query, parameters4, transaction: transaction);
+
+
+                    var insertApplClose = @$" INSERT INTO TrnApplClose (BasicDetailId, ReasonId, Authority, Remarks, RequestId, IsActive, Updatedby, UpdatedOn, UserId)
+                                         VALUES (@BasicDetailId, @ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @Updatedby, @UpdatedOn, @UserId);";
+
+                    var parameters3 = new DynamicParameters();
+                    parameters3.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                    parameters3.Add("@ReasonId", ReasonId, DbType.Byte, ParameterDirection.Input);
+                    parameters3.Add("@Authority", Data.AppointmentName, DbType.String, ParameterDirection.Input, 50);
+                    parameters3.Add("@Remarks", Data.Remark, DbType.String, ParameterDirection.Input, 100);
+                    parameters3.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters3.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                    parameters3.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                    parameters3.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+                    parameters3.Add("@UserId", Data.UpdatedbyUserId, DbType.Int32, ParameterDirection.Input);
+
+                    await db.ExecuteAsync(insertApplClose, parameters3, transaction: transaction);
+                }
+
+
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
+                dTOResponse.Result = true;
+                dTOResponse.Message = "Lost card request saved successfully.";
+                dTOResponse.Value = new DTOCommonResponse
+                {
+                    Id = LostCardId.ToString(),
+                    CurrentTime = Data.UpdatedOn.GetValueOrDefault()
+                };
+                return dTOResponse;
+            }
+            catch (Exception ex)
+            {
+                // Rollback the transaction if any operation fails
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "LostCardDB->SaveLostCardRequest");
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error";
+                dTOResponse.Value = new DTOCommonResponse();
+                return dTOResponse;
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
+            }
         }
     }
 }

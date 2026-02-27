@@ -10,7 +10,7 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessage = "RequestId is number.")]
         public int RequestId { get; set; }
 
-        [RegularExpression(@"^[A-Za-z0-9+/=\s]+$", ErrorMessage = "Invalid Base64 string.")]
+        [RegularExpression(@"^[A-Za-z0-9+/=\s]+$", ErrorMessage = "Invalid string.")]
         public string XmlFiles { get; set; } = string.Empty;
         
         [RegularExpression(@"^[\d]+$", ErrorMessage = "Updatedby is number.")]

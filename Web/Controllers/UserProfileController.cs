@@ -342,6 +342,18 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> GetTokenStatus()
+        {
+            var response = new DTOGenericResponse<DTOTokenStatusResponse?>();
+
+            // Retrieve the current user's ID from the claims
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            
+            response = await _userProfileBL.GetTokenStatus(AspNetUsersId);
+            
+            return Json(response);
+        }
 
         /// <summary>
         /// This method retrieves the profile of a user based on their UserId.

@@ -113,7 +113,7 @@ function BindData() {
                 // 🔁 If no data returned, always clear selection
                 if (result.data.length === 0) {
                     globalThis.selectedIds = [];
-                    console.log("No results. Cleared selectedIds.");
+                    //console.log("No results. Cleared selectedIds.");
                 }
 
                 // Only update selectedIds if server returns new ones
@@ -121,7 +121,7 @@ function BindData() {
                     if (result.selectedIds != null && result.selectedIds.length > 0) {
                         //selectedIds = result.selectedIds;
                         globalThis.selectedIds = result.selectedIds.map(x => x.toString());
-                        console.log("Fetched selectedIds from server:", globalThis.selectedIds);
+                        //console.log("Fetched selectedIds from server:", globalThis.selectedIds);
                         // If user hadn’t checked Select All, now we just load into selectedIds silently
                         if (globalThis.globalAllChecked) globalThis.isFirstSelectAll = false;
                     }
@@ -143,32 +143,32 @@ function BindData() {
             }
         },
         columns: [
-            {
-                title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_DistributeCard">
-                    <label class="custom-control-label" for="chkAll_DistributeCard"></label>
-                    </div></div>`,
-                data: "RequestId",
-                targets: 0,
-                orderable: false,
-                className: "text-center",
-                width: "40px",
-                searchable: false,
-                render: function (data, type, row) {
-                    if ($("#chkAll_DistributeCard").prop('checked')) {
-                        return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                    } else {
+            //{
+            //    title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
+            //        <input type="checkbox" class="custom-control-input" id="chkAll_DistributeCard">
+            //        <label class="custom-control-label" for="chkAll_DistributeCard"></label>
+            //        </div></div>`,
+            //    data: "RequestId",
+            //    targets: 0,
+            //    orderable: false,
+            //    className: "text-center",
+            //    width: "40px",
+            //    searchable: false,
+            //    render: function (data, type, row) {
+            //        if ($("#chkAll_DistributeCard").prop('checked')) {
+            //            return `<div class="custom-control custom-checkbox small">
+            //                        <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
+            //                        <label class="custom-control-label" for="${row.RequestId}"></label>
+            //                    </div>`;
+            //        } else {
 
-                        return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
-                                </div>`;
-                    }
-                }
-            },
+            //            return `<div class="custom-control custom-checkbox small">
+            //                        <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
+            //                        <label class="custom-control-label" for="${row.RequestId}"></label>
+            //                    </div>`;
+            //        }
+            //    }
+            //},
             {
                 title: "S No",
                 data: null,
@@ -384,5 +384,5 @@ function resetSelectedFields() {
     // Reset "Select All" checkbox
     $('#chkAll_DistributeCard').prop('checked', false);
 
-    console.log("Reset selectedIds and checkboxes.");
+    //console.log("Reset selectedIds and checkboxes.");
 }

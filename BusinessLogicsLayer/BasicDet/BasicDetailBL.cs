@@ -362,9 +362,9 @@ namespace BusinessLogicsLayer.BasicDet
              await _iBasicDetailDB.UpdateCardStatus(requestId, status);
         }
 
-        public async Task<DTOUploadChipAndSerialResponse> CheckBeforeDistribution(int requestId)
+        public async Task<DTOGenericResponse<string>> CheckBeforeDistribution(int requestId, int UnitId)
         {
-            return await _iBasicDetailDB.CheckBeforeDistribution(requestId);
+            return await _iBasicDetailDB.CheckBeforeDistribution(requestId, UnitId);
         }
         public async Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId,string ToRemark)
         {

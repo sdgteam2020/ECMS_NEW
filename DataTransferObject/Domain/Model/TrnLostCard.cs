@@ -15,6 +15,10 @@ namespace DataTransferObject.Domain.Model
 
         [StringLength(100)]
         [Column(TypeName = "varchar(100)")]
+        public string RemarksIds { get; set; } = string.Empty;
+
+        [StringLength(100)]
+        [Column(TypeName = "varchar(100)")]
         public string? Remark { get; set; }
 
         [Required]
@@ -30,9 +34,8 @@ namespace DataTransferObject.Domain.Model
         [Required]
         [DataType(DataType.Date)]
         [Column(TypeName = "datetime")]
-        public DateTime? LostOn { get; set; }
+        public DateTime LostOn { get; set; }
         [ForeignKey("UserProfileUserUpdate"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int? UpdatedbyUserId { get; set; }
-        public MUserProfile? UserProfileUserUpdate { get; set; }
     }
 }

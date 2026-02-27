@@ -398,6 +398,40 @@ namespace DataAccessLayer
             
         }
 
+        public async Task<DTOGenericResponse<DTOTokenStatusResponse?>> GetTokenStatus(int AspNetUsersId)
+        {
+            var response = new DTOGenericResponse<DTOTokenStatusResponse?>();
+            try
+            {
+                string query = @"SELECT TOP 1 prof.IsToken,prof.IsWithTokenApply from UserProfile prof 
+                                INNER JOIN TrnDomainMapping trnd  on trnd.UserId = prof.UserId 
+                                where trnd.AspNetUsersId=@AspNetUsersId";
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var tokenStatus = await connection.QueryFirstOrDefaultAsync<DTOTokenStatusResponse?>(query, new { AspNetUsersId });
+                    if (tokenStatus == null)
+                    {
+                        response.Result = false;
+                        response.Message = "No token status found for the given Id.";
+                    }
+                    else
+                    {
+                        response.Result = true;
+                        response.Message = "found";
+                        response.Value = tokenStatus;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Result = false;
+                response.Message = "Internal Server Error.";
+                _logger.LogError(1001, ex, "UserProfileDB->GetTokenStatus");
+            }
+            return response;
+        }
+
 
 
         /// <summary>
@@ -778,6 +812,7 @@ namespace DataAccessLayer
                 return new MUserProfile(); 
             }
         }
+
         public async Task<DTOCheckedBeforeUpdateProfileResponse> CheckedBeforeUpdateProfile(DTOUpdateProfileWithMappingRequest dTO)
         {
             DTOCheckedBeforeUpdateProfileResponse dTOCheckedBeforeUpdate = new DTOCheckedBeforeUpdateProfileResponse();

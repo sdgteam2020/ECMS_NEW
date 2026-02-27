@@ -1362,85 +1362,74 @@ function xmlToBase64(xmlData) {
     return base64Encoded;
 }
 function GetByArmyNoIsToken(ArmyNo, OffType, RegApplyFor, stepCounter) {
-    var userdata = {
-        "ArmyNo": ArmyNo,
-    };
     $.ajax({
-        url: '/UserProfile/GetByArmyNoOrAspnetuserId',
+        url: '/UserProfile/GetTokenStatus',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
-            if (response != "null" && response != null) {
+            if (Boolean(response.Result)) {
+                IsToken = response.Value.IsToken;
+                IsWithTokenApply = response.Value.IsWithTokenApply
 
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                } else if (response == 0) {
-
-                } else {
-                    IsToken = response.IsToken;
-                    IsWithTokenApply = response.IsWithTokenApply
-
-                    if (parseInt(OffType) == 1) {
-                        if (parseInt(RegApplyFor) == 2 || parseInt(RegApplyFor) == 3 || parseInt(RegApplyFor) == 4 || parseInt(RegApplyFor) == 10) {
-                            //  Other Officer Appl Request
-                            if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7) {
-                                if (IsWithTokenApply == true) {
-                                    $("#btntokenTofwd").removeClass("d-none");
-                                }
-                                else {
-                                    $("#btntokenTofwd").addClass("d-none");
-                                }
-                            }
-                            else {
-                                if (IsToken == true) {
-                                    $("#btntokenTofwd").removeClass("d-none");
-                                } else {
-                                    $("#btntokenTofwd").addClass("d-none");
-                                }
-                            }
-                        }
-                        else {
-                            // Self Officer Appl Request
-                            if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7) {
-                                if (IsToken == true && parseInt(RegApplyFor) == 1) {
-                                    $("#btntokenTofwd").removeClass("d-none");
-                                }
-                                else {
-                                    $("#btntokenTofwd").addClass("d-none");
-                                }
-                            } else {
-                                if (IsToken == true) {
-                                    $("#btntokenTofwd").removeClass("d-none");
-                                } else {
-                                    $("#btntokenTofwd").addClass("d-none");
-                                }
-                            }
-
-                        }
-                    }
-                    else {
-
-                        // JCO/OR Appl Request
-                        if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 7 || parseInt(stepCounter) == 8 || parseInt(stepCounter) == 9 || parseInt(stepCounter) == 10) {
-                            $("#btntokenTofwd").addClass("d-none");
-                        } else {
-                            if (IsToken == true) {
+                if (parseInt(OffType) == 1) {
+                    if (parseInt(RegApplyFor) == 2 || parseInt(RegApplyFor) == 3 || parseInt(RegApplyFor) == 4 || parseInt(RegApplyFor) == 10) {
+                        //  Other Officer Appl Request
+                        if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7) {
+                            if (IsWithTokenApply == true) {
                                 $("#btntokenTofwd").removeClass("d-none");
                             }
                             else {
                                 $("#btntokenTofwd").addClass("d-none");
                             }
-
                         }
+                        else {
+                            if (IsToken == true) {
+                                $("#btntokenTofwd").removeClass("d-none");
+                            } else {
+                                $("#btntokenTofwd").addClass("d-none");
+                            }
+                        }
+                    }
+                    else {
+                        // Self Officer Appl Request
+                        if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 2 || parseInt(stepCounter) == 7) {
+                            if (IsToken == true && parseInt(RegApplyFor) == 1) {
+                                $("#btntokenTofwd").removeClass("d-none");
+                            }
+                            else {
+                                $("#btntokenTofwd").addClass("d-none");
+                            }
+                        } else {
+                            if (IsToken == true) {
+                                $("#btntokenTofwd").removeClass("d-none");
+                            } else {
+                                $("#btntokenTofwd").addClass("d-none");
+                            }
+                        }
+
+                    }
+                }
+                else {
+
+                    // JCO/OR Appl Request
+                    if (parseInt(stepCounter) == 1 || parseInt(stepCounter) == 7 || parseInt(stepCounter) == 8 || parseInt(stepCounter) == 9 || parseInt(stepCounter) == 10) {
+                        $("#btntokenTofwd").addClass("d-none");
+                    } else {
+                        if (IsToken == true) {
+                            $("#btntokenTofwd").removeClass("d-none");
+                        }
+                        else {
+                            $("#btntokenTofwd").addClass("d-none");
+                        }
+
                     }
                 }
             }
-
+            else {
+                toastr.error(`${response.Message}`);
+            }
         },
         error: function (result) {
             Swal.fire({

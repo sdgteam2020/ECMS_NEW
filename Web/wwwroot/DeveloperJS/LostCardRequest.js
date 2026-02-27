@@ -2,6 +2,8 @@
 var data = {};
 var TokenArmyNo = "";
 var token;
+var spnLostCardRequestId = 0;
+var spnMaxTrnFwdId = 0;
 
 $(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
@@ -12,13 +14,14 @@ $(async function () {
     if ($('#txtlostoninp').data('DateTimePicker')) {
         $('#txtlostoninp').data('DateTimePicker').destroy();
     }
-
+    
     $('#txtlostoninp').datetimepicker({
         format: 'DD/MM/YYYY HH:mm',
         sideBySide: true,
         stepping: 5,
         useCurrent: false,
-        maxDate: moment(),
+        maxDate: moment(),                 // Today (no future date)
+        minDate: moment().subtract(1, 'months'), // 1 month back from today
         showClear: false,
         showClose: false
     }).on('dp.show', function () {
@@ -79,16 +82,16 @@ $(async function () {
     });
 
     $("#btnCardPreview").on("click", function () {
-        GetICardPrintPreviewByRequestId($("#spnLostCardRequestId").html());
+        GetICardPrintPreviewByRequestId(spnLostCardRequestId);
     });
 
 
     $("#btnXMLDownload").on("click", function () {
-        DownloadPdf($("#spnLostCardRequestId").html());
+        DownloadPdf(spnLostCardRequestId);
     });
 
     $("#btnApplMoveHistory").on("click", function () {
-        GetRequestHistory($("#spnLostCardRequestId").html());
+        GetRequestHistory(spnLostCardRequestId);
         $("#exampleModal").modal('show');
     });
 
@@ -126,8 +129,9 @@ $(async function () {
 
                     // Updating UI elements with the received data
                     $("#spnArmyNo").text(ArmyNo);
-                    $("#spnLostCardRequestId").text(RequestIdForFaulty);
-                    $("#spnMaxTrnFwdId").text(MaxTrnFwdId);
+                    spnLostCardRequestId = RequestIdForFaulty;
+                    spnMaxTrnFwdId = MaxTrnFwdId;
+
                     $("#lblFaultyRequestId").text(RequestIdForFaulty);
 
                     // Fetching additional details
@@ -208,15 +212,12 @@ $("input[name='isFIRLogged']").change(function () {
 
 async function Save() {
     let inputDate = $("#txtlostoninp").val();
-    var lostlistRemarkIds = "" + $("#ddlLostRemark").val() + "";
+    var lostlistRemarkIds = $("#ddlLostRemark").val();
     data = {
-        "RequestId": $("#spnLostCardRequestId").html(),
-        "RemarksIds": $("#ddlLostRemark").val().length > 0 ? lostlistRemarkIds : null,
+        "RequestId": spnLostCardRequestId,
         "LostOn": formatDateToSqlString(inputDate),
         "IsFIRLogged": $('input[name="isFIRLogged"]:checked').val(),
         "Remark": $("#txtLostRemark").val(),
-        //"LostCardId": 0,
-        //"TrnFwdId": $("#spnMaxTrnFwdId").html(),
     }
 
     if (await CheckTokenRequired()) {
@@ -228,10 +229,16 @@ async function Save() {
         }
 
     }
-    data.SignedXML = signedXML;
+    var base64Encoded = btoa(signedXML); 
+
+    data.SignedXML = base64Encoded;
 
     var formData = jsonToFormData(data);
     formData.append("File", $('#supportingDoc')[0].files[0]);
+
+    for (var i = 0; i < lostlistRemarkIds.length; i++) {
+        formData.append("RemarksIds", lostlistRemarkIds[i]);
+    }
 
     // -------------------------------
     // File validation (client-side)
@@ -277,13 +284,12 @@ async function Save() {
                 const myModal = new bootstrap.Modal(document.getElementById("ConfirmationDialog"));
                 const btnSearchNew = document.getElementById("btnSearchNew");
                 const btnBackDashboard = document.getElementById("btnBackDashboard");
-                let Message = `Record successfully inserted in DB with ID : <strong>${result.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.CurrentTime)}</strong>.`;
+                let Message = `Record successfully inserted in DB with ID : <strong>${result.Value.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.Value.CurrentTime)}</strong>.`;
 
                 document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
                 btnSearchNew.textContent = "Search New";
                 btnBackDashboard.textContent = "Back to Dashboard";
 
-                
                 myModal.show();
             }
             else {
@@ -422,39 +428,21 @@ async function GetTokenSignXml(xml) {
     });
 }
 
-async function CheckTokenRequired(ArmyNo) {
-    var userdata =
-    {
-        "ArmyNo": ArmyNo,
-
-    };
-
+async function CheckTokenRequired() {
     return new Promise((resolve) => {
         let res = false;
         $.ajax({
-            url: '/UserProfile/GetByArmyNoIsWithoutTokenApply',
+            url: '/UserProfile/GetTokenStatus',
             contentType: 'application/x-www-form-urlencoded',
-            data: userdata,
             type: 'POST',
             headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             success: function (response) {
-                if (response != "null" && response != null) {
-
-                    if (response == InternalServerError) {
-                        Swal.fire({
-                            text: errormsg
-                        });
-                    }
-                    else if (response == 0) {
-
-                    }
-                    else {
-                        res = response.IsToken;
-                    }
+                if (Boolean(response.Result)) {
+                    res = response.Value.IsToken;
                 }
                 resolve(res);
             },
-            error: function (result) {
+            error: function (response) {
                 Swal.fire({
                     text: errormsg002
                 });
@@ -502,13 +490,13 @@ async function GetTokenDetails(ApiId, xml) {
                 const datef2 = new Date();
                 let [day, month, year, hours, minutes, seconds] = data[0].ValidTo.match(/\d+/g).map(Number);
                 let validTo = new Date(year, month - 1, day, hours, minutes, seconds);
-                if (validTo >= datef2) {
+                if (validTo >= datef2) { //datef2 >= validTo
                     toastr.error("Token Expired");
                     return false;
                 } else {
 
-                    if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996") {
-                        TokenArmyNo = "IC71150A";
+                    if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3") { //"7f33df8ac6540b5cf7ccfd041d8c837641226444d9f1a4aa30a01924c0610996"
+                        TokenArmyNo = "IC75695P";
                     } else if (keyValuePairs.SERIALNUMBER.toLowerCase().trim() === "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448".toLowerCase().trim()) {
                         TokenArmyNo = "IC60056W";
                     } else {

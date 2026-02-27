@@ -97,10 +97,8 @@ namespace DataAccessLayer
                                         req.RequestId,hotlist.HotlistCardId,
                                         bas.ServiceNo,ranks.RankAbbreviation RankName,
                                         bas.FName,bas.LName,
-                                        Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                                        hotlist.UpdatedOn,hotlist.RemarksIds,hotlist.Remark,hotlist.IsActive,
-                                        bas.NameAsPerRecord,
-                                        regi.Abbreviation RegimentalName,
+                                        Muni.Abbreviation UnitAbbreviation,
+                                        hotlist.UpdatedOn,hotlist.Remark,
                                         (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(hotlist.RemarksIds,','))) RemarksNameList";
 
                 // Join tables for the query
@@ -111,8 +109,7 @@ namespace DataAccessLayer
                                         inner join MRank ranks on ranks.RankId=bas.RankId
                                         inner join MapUnit uni on uni.UnitMapId=bas.UnitId
                                         inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                                        left join MRegimental regi on regi.RegId=bas.RegimentalId";
+                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId";
 
                 // Filter clause for the search term
                 string whereClause = @"Where bas.ServiceNo like '%' + @SearchTerm + '%' ";
@@ -148,27 +145,7 @@ namespace DataAccessLayer
                         draw = dTO.Draw,
                         recordsTotal = totalFilteredRecords.GetValueOrDefault(),
                         recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
-                        data = (from e in records
-                                select new DTOHotlistCardGetResponse()
-                                {
-                                    EncryptedId = protector.Protect(e.HotlistCardId.ToString()),
-                                    NameAsPerRecord = e.NameAsPerRecord,
-                                    FName = e.FName,
-                                    LName = e.LName,
-                                    ServiceNo = e.ServiceNo,
-                                    UnitName = e.UnitName,
-                                    UnitAbbreviation = e.UnitAbbreviation,
-                                    RankName = e.RankName,
-                                    ArmedName = e.ArmedName,
-                                    RequestId = e.RequestId,
-                                    UpdatedOn = e.UpdatedOn,
-                                    ApplyFor = e.ApplyFor,
-                                    HotlistCardId = e.HotlistCardId,
-                                    RemarksIds = e.RemarksIds,
-                                    RemarksNameList = e.RemarksNameList,
-                                    Remark = e.Remark,
-                                    IsActive = e.IsActive,
-                                }).ToList()
+                        data = records,
                     };
                 }
             }
@@ -223,6 +200,49 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ex, "HotlistCardDB->GetBesicdetailsByRequestId");
             }
             return records;
+        }
+        public async Task<DTOGenericResponse<string>> CheckBeforeHotListCardReport(int RequestId)
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            try
+            {
+                string query = @"SELECT CASE
+                                            WHEN hot.RequestId = @RequestId THEN 0
+                                            WHEN currentReq.StatusId IN (1,3)  THEN 0
+                                            WHEN stepcount.StepId != 15 THEN 0
+                                            ELSE 1
+                                        END AS Result,
+		                                case
+                                            WHEN hot.RequestId = @RequestId THEN 'This card has already been reported as hot list.'
+                                            WHEN currentReq.StatusId IN (1,3) THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId != 15 THEN 'The application is currently being processed.'
+		                                    ELSE 'Valid'
+		                                END as Message
+                                FROM TrnICardRequest currentReq
+                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
+                                LEFT JOIN TrnHotlistCards hot on hot.RequestId = currentReq.RequestId
+                                WHERE currentReq.RequestId = @RequestId;";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
+                    var result = await connection.QueryFirstOrDefaultAsync<DTOGenericResponse<string>>(query, parameters);
+                    return result ?? new DTOGenericResponse<string>
+                    {
+                        Result = false,
+                        Message = "Request not found",
+                    };
+                }
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "HotlistCardDB->CheckBeforeLostReport");
+                response.Result = false;
+                response.Message = "Something went wrong";
+                response.Value = string.Empty;  
+                return response;
+            }
         }
     }
 }
