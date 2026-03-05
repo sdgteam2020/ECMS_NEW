@@ -17,5 +17,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOFaultyCardListResponse>?> GetAllFaulty(bool Claim, int MapUnitId);
         public Task<DTODataTablesResponse<DTOFaultyCardListResponse>> GetAllFaulty(DTODataTablesRequestForFaultyCard request);
         public Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd);
+        public Task<DTOBeforeFaultyCardReportResponse> CheckBeforeFaultyCardReport(DTOFaultyCardRequest dTOFaulty);
     }
 }

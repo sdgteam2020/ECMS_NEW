@@ -44,7 +44,7 @@ namespace BusinessLogicsLayer.FaultyCard
         {
             return await _iFaultyCardDB.GetAllFaulty(request);
         }
-        public async Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd,bool Claim) 
+        public async Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd) 
         {
             if (dTO.TrnFaultyCardId > 0)
             {
@@ -54,7 +54,7 @@ namespace BusinessLogicsLayer.FaultyCard
             }
             else
             {
-                if (Claim)
+                if (dTO.Claim)
                 {
                     dTO.IsComplete = true;
                 }
@@ -77,11 +77,17 @@ namespace BusinessLogicsLayer.FaultyCard
                 }
                 else
                 {
+                    dTO.CategoryId = 2; //request by Unit level
                     dTO.IsEditAction = false;
                     dTO.ToRemark = null;
                     return await _iFaultyCardDB.SaveFaultyCard(dTO, mTrnFwd);
                 }
             }
+        }
+
+        public async Task<DTOBeforeFaultyCardReportResponse> CheckBeforeFaultyCardReport(DTOFaultyCardRequest dTOFaulty)
+        {
+            return await _iFaultyCardDB.CheckBeforeFaultyCardReport(dTOFaulty);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿$(async function () {
+﻿var spnFaultyCardRequestId = 0;
+$(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     var selectionButton;
@@ -27,16 +28,16 @@
     });
 
     $("#btnCardPreview").on("click", function () {
-        GetICardPrintPreviewByRequestId($("#spnFaultyCardRequestId").html());
+        GetICardPrintPreviewByRequestId(spnFaultyCardRequestId);
     });
 
 
     $("#btnXMLDownload").on("click", function () {
-        DownloadPdf($("#spnFaultyCardRequestId").html());
+        DownloadPdf(spnFaultyCardRequestId);
     });
 
     $("#btnApplMoveHistory").on("click", function () {
-        GetRequestHistory($("#spnFaultyCardRequestId").html());
+        GetRequestHistory(spnFaultyCardRequestId);
         $("#exampleModal").modal('show');
     });
 
@@ -56,7 +57,7 @@
         window.location.href = '/BasicDetail/FaultyCard';
     });
 
-    if ($("#spnClaimValue").html().toLowerCase() === "true") {
+    if ($("#spnCValue").html().toLowerCase() === "true") {
         $("#btnSubmit").addClass("d-none");
         $("#btnAccept").removeClass("d-none");
         $("#btnReject").removeClass("d-none");
@@ -96,11 +97,9 @@
                     if (response.Result === true) {
                         let ArmyNo = response.Value.ArmyNo;
                         let RequestIdForFaulty = response.Value.RequestIdForFaulty;
-                        let MaxTrnFwdId = response.Value.MaxTrnFwdId
 
                         $("#spnArmyNo").html(ArmyNo);
-                        $("#spnFaultyCardRequestId").html(RequestIdForFaulty);
-                        $("#spnMaxTrnFwdId").html(MaxTrnFwdId);
+                        spnFaultyCardRequestId = RequestIdForFaulty;
                         $("#lblFaultyRequestId").html(RequestIdForFaulty);
 
                         GetBasicDetailForParitalViewByRequestId(RequestIdForFaulty);
@@ -143,7 +142,7 @@ function Proceed(choice) {
             html: `
                     <div class="swal-details">
                         <p><strong>Applicant Name:</strong> ${ApplicantNameWithRank}</p>
-                        <p><strong>Request ID:</strong> ${$("#spnFaultyCardRequestId").html() }</p>
+                        <p><strong>Request ID:</strong> ${spnFaultyCardRequestId}</p>
                         <p><strong>${choice === 1 ? "Issues Related to Card Misprint/Faulty" : "AFSAC Cell Remark"}:</strong> ${choice === 1 ? FromRemark : ToRemark}</p>
                         <p><strong>Logged In Details:</strong> ${UserName}</p>
                     </div>
@@ -175,12 +174,11 @@ function Proceed(choice) {
     }
 }
     function Save(choice) {
-        var FaultyRemarkIds = "" + $("#ddlFaultyRemark").val() + "";
+        var FaultyRemarkIds = $("#ddlFaultyRemark").val();
         let data = {
             "TrnFaultyCardId": $("#spnTrnFaultyCardId").html(),
-            "RequestId": $("#spnFaultyCardRequestId").html(),
-            "TrnFwdId": $("#spnMaxTrnFwdId").html(),
-            "RemarksIds": $("#ddlFaultyRemark").val().length > 0 ? FaultyRemarkIds : null,
+            "RequestId": spnFaultyCardRequestId,
+            "RemarksIds": FaultyRemarkIds && FaultyRemarkIds.length > 0 ? FaultyRemarkIds.map(Number) : null,
             "FromRemark": $("#txtFromRemark").val(),
             "ToRemark": $("#txtToRemark").val(),
             "CategoryId": $("#ddlStage").val(),
@@ -202,7 +200,7 @@ function Proceed(choice) {
             headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
             success: function (result) {
-                if ($("#spnClaimValue").html().toLowerCase() === "true" && result.Result == true)
+                if ($("#spnCValue").html().toLowerCase() === "true" && result.Result == true)
                 {
                     $("#spnTrnFaultyCardId").html(result.Id);
                 }
@@ -281,7 +279,7 @@ async function GetTrnFaultyCardDetail(TrnFaultyCardId) {
         if (result != null) {
 
             $("#spnArmyNo").text(result.ServiceNo);
-            $("#spnFaultyCardRequestId").html(result.RequestId);
+            spnFaultyCardRequestId = result.RequestId;
             $("#lblFaultyRequestId").html(result.RequestId);
             $("#txtFromRemark").text(result.FromRemark);
             $("#txtFromRemark").prop("disabled", true);

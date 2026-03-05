@@ -153,15 +153,11 @@ namespace DataAccessLayer
                                          select new DTOFaultyCardListResponse()
                                          {
                                              EncryptedId = protector.Protect(e.TrnFaultyCardId.ToString()),
-                                             NameAsPerRecord = e.NameAsPerRecord,
                                              FName=e.FName,
                                              LName=e.LName,
                                              ServiceNo=e.ServiceNo,
-                                             ModifiedServiceNo=e.ModifiedServiceNo,
-                                             UnitName=e.UnitName,
                                              UnitAbbreviation=e.UnitAbbreviation,
                                              RankName=e.RankName,
-                                             ArmedName=e.ArmedName,
                                              RequestId=e.RequestId,
                                              UpdatedOn=e.UpdatedOn,
                                              ApplyFor=e.ApplyFor,
@@ -214,18 +210,13 @@ namespace DataAccessLayer
                                      join mapunit in _context.MapUnit on bas.UnitId equals mapunit.UnitMapId
                                      join munit in _context.MUnit on mapunit.UnitId equals munit.UnitId
                                      join appl in _context.MApplyFor on bas.ApplyForId equals appl.ApplyForId
-                                     join regi in _context.MRegimental on bas.RegimentalId equals regi.RegId into regi_jointable
-                                     from xregi in regi_jointable.DefaultIfEmpty()
                                      select new DTOFaultyCardListResponse()
                                      {
                                          EncryptedId = protector.Protect(faulty.TrnFaultyCardId.ToString()),
-                                         NameAsPerRecord = bas.NameAsPerRecord,
                                          FName = bas.FName,
                                          LName = bas.LName,
                                          ServiceNo = bas.ServiceNo,
-                                         ModifiedServiceNo = bas.ServiceNo,
                                          UnitMapId = mapunit.UnitMapId,
-                                         UnitName = munit.UnitName,
                                          UnitAbbreviation = munit.Abbreviation,
                                          RankName = ranks.RankAbbreviation,
                                          RequestId = req.RequestId,
@@ -366,6 +357,7 @@ namespace DataAccessLayer
         {
             DTOCommonSaveResponse saveResponse = new DTOCommonSaveResponse();
 
+            string RemarksIds = dTO.RemarksIds != null && dTO.RemarksIds.Any() ? string.Join(",", dTO.RemarksIds) : string.Empty;
             // Open a database connection and start a transaction
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
 
@@ -407,7 +399,7 @@ namespace DataAccessLayer
                     // Set parameters for the insert query
                     var parameters = new DynamicParameters();
                     parameters.Add("@TrnFaultyCardId", dTO.TrnFaultyCardId, DbType.Int32, ParameterDirection.Output);
-                    parameters.Add("@RemarksIds", dTO.RemarksIds, DbType.String, ParameterDirection.Input, 100);
+                    parameters.Add("@RemarksIds", RemarksIds, DbType.String, ParameterDirection.Input, 100);
                     parameters.Add("@FromRemark", dTO.FromRemark, DbType.String, ParameterDirection.Input, 100);
                     parameters.Add("@ToRemark", dTO.ToRemark, DbType.String, ParameterDirection.Input, 100);
                     parameters.Add("@CategoryId", dTO.CategoryId, DbType.Byte, ParameterDirection.Input);
@@ -512,5 +504,108 @@ namespace DataAccessLayer
                 db.Dispose();
             }
         }
+
+        public async Task<DTOBeforeFaultyCardReportResponse> CheckBeforeFaultyCardReport(DTOFaultyCardRequest dTOFaulty)
+        {
+            var response = new DTOBeforeFaultyCardReportResponse();
+            try
+            {
+                string query="";
+                if (dTOFaulty.Claim == true)
+                {
+                    if (dTOFaulty.TrnFaultyCardId > 0)
+                    {
+                        query = @"SELECT COALESCE(MAX(fwd.TrnFwdId), NULL) AS TrnFwdId,currentReq.RequestId,
+                                       CASE
+                                            WHEN faul.IsEditAction = 1 THEN 0
+                                            WHEN currentReq.StatusId IN (2,3) THEN 0
+                                            WHEN stepcount.StepId != 6 THEN 0
+                                            ELSE 1
+                                        END AS Result,
+		                                case
+                                            WHEN faul.IsEditAction = 1 THEN 'This action has already been completed by you.'
+                                            WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId != 6 THEN 'The application is currently being processed.'
+		                                    ELSE 'Valid'
+		                                END as Message
+                                FROM TrnFaultyCard faul
+                                INNER JOIN TrnICardRequest currentReq on faul.RequestId=currentReq.RequestId
+                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = currentReq.RequestId
+                                WHERE faul.TrnFaultyCardId = @TrnFaultyCardId;";
+                    }
+                    else
+                    {
+                        query = @"SELECT COALESCE(MAX(fwd.TrnFwdId), NULL) AS TrnFwdId,currentReq.RequestId,
+                                       CASE
+                                            WHEN faul.IsEditAction = 0 THEN 0
+                                            WHEN currentReq.StatusId IN (2,3) THEN 0
+                                            WHEN stepcount.StepId != 6 THEN 0
+                                            ELSE 1
+                                        END AS Result,
+		                                case
+                                            WHEN faul.IsEditAction = 0 THEN 'The faulty request already exists, first take action!'
+                                            WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId != 6 THEN 'The application is currently being processed.'
+		                                    ELSE 'Valid'
+		                                END as Message
+                                FROM TrnICardRequest currentReq
+                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
+                                INNER JOIN BasicDetails bs on currentReq.BasicDetailId=bs.BasicDetailId
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = currentReq.RequestId
+                                LEFT JOIN TrnFaultyCard faul on faul.RequestId = currentReq.RequestId
+                                WHERE currentReq.RequestId = @RequestId;";
+                    }
+
+                }
+                else
+                {
+                    query = @"SELECT COALESCE(MAX(fwd.TrnFwdId), NULL) AS TrnFwdId,
+                                       CASE
+                                            WHEN bs.UnitId != @UnitId THEN 0
+                                            WHEN faul.RequestId = @RequestId THEN 0
+                                            WHEN currentReq.StatusId IN (2,3) THEN 0
+                                            WHEN stepcount.StepId != 14 THEN 0
+                                            ELSE 1
+                                        END AS Result,
+		                                case
+                                            WHEN bs.UnitId != @UnitId THEN 'You are not an authorized user.'
+                                            WHEN hot.RequestId = @RequestId THEN 'The faulty request already exists!'
+                                            WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId != 14 THEN 'The application is currently being processed.'
+		                                    ELSE 'Valid'
+		                                END as Message
+                                FROM TrnICardRequest currentReq
+                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
+                                INNER JOIN BasicDetails bs on currentReq.BasicDetailId=bs.BasicDetailId
+                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = currentReq.RequestId
+                                LEFT JOIN TrnFaultyCard faul on faul.RequestId = currentReq.RequestId AND faul.IsComplete = 0
+                                WHERE currentReq.RequestId = @RequestId;";
+                }
+
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RequestId", dTOFaulty.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UnitId", dTOFaulty.UnitId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@TrnFaultyCardId", dTOFaulty.TrnFaultyCardId, DbType.Int32, ParameterDirection.Input);
+                    var result = await connection.QueryFirstOrDefaultAsync<DTOBeforeFaultyCardReportResponse>(query, parameters);
+                    return result ?? new DTOBeforeFaultyCardReportResponse
+                    {
+                        Result = false,
+                        Message = "Application not found",
+                    };
+                }
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "DestructionCardDB->CheckBeforeDestructionCardReport");
+                response.Result = false;
+                response.Message = "Something went wrong";
+                return response;
+            }
+        }
+
     }
 }
