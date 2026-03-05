@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using Azure.Core;
+using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
@@ -8,6 +9,9 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -367,6 +371,8 @@ namespace DataAccessLayer
             string query2 = "";
             string query3 = "";
             string query4 = "";
+            string query5 = "";
+            string query6 = "";
 
             try
             {
@@ -467,6 +473,32 @@ namespace DataAccessLayer
 
                         // Execute the forward insertion query
                         var Id = await db.QuerySingleAsync<int>(insert, parameters, transaction: transaction);
+
+                        query6 = @"INSERT INTO TrnNotification([Read],DisplayId,SentAspNetUsersId,ReciverAspNetUsersId,Url,RequestId,StepId,UpdatedOn)
+                             VALUES(@Read,@DisplayId,@SentAspNetUsersId,@ReciverAspNetUsersId,@Url,@RequestId,@StepId,@UpdatedOn)";
+
+                        int DisplayId = 0;
+
+                        if (dTO.ApplyForId == 1)
+                        {
+                            DisplayId = mTrnFwd.StepId;
+                        }
+                        else
+                        {
+                            DisplayId = mTrnFwd.StepId + 10;
+                        }
+
+                        var parameters2 = new DynamicParameters();
+                        parameters2.Add("@Read", false, DbType.Boolean, ParameterDirection.Input);
+                        parameters2.Add("@DisplayId", DisplayId, DbType.Int32, ParameterDirection.Input);
+                        parameters2.Add("@SentAspNetUsersId", mTrnFwd.FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                        parameters2.Add("@ReciverAspNetUsersId", mTrnFwd.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                        parameters2.Add("@Url", null, DbType.String, ParameterDirection.Input);
+                        parameters2.Add("@RequestId", mTrnFwd.RequestId, DbType.Int32, ParameterDirection.Input);
+                        parameters2.Add("@StepId", mTrnFwd.StepId, DbType.Byte, ParameterDirection.Input);
+                        parameters2.Add("@UpdatedOn", mTrnFwd.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+
+                        await db.ExecuteAsync(query6, parameters2, transaction: transaction);
                     }
                     // SQL queries to reset the XmlFiles and update the step counter for rejection
                     query3 = @"UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles='' WHERE RequestId=@RequestId";
@@ -478,6 +510,11 @@ namespace DataAccessLayer
                     // Reset card fields on rejection
                     query4 = @"UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null where RequestId=@RequestId ";
                     await db.ExecuteAsync(query4, new { dTO.RequestId }, transaction: transaction);
+
+                    query5 = @"Update BasicDetails set IsLock = 0 where BasicDetailId=@BasicDetailId";
+                    await db.ExecuteAsync(query5, new { dTO.BasicDetailId }, transaction: transaction);
+
+
                 }
 
 
@@ -515,28 +552,36 @@ namespace DataAccessLayer
                 {
                     if (dTOFaulty.TrnFaultyCardId > 0)
                     {
-                        query = @"SELECT COALESCE(MAX(fwd.TrnFwdId), NULL) AS TrnFwdId,currentReq.RequestId,
+                        query = @"SELECT 
+                              (SELECT MAX(TrnFwdId) 
+                                FROM TrnFwds 
+                                WHERE RequestId = currentReq.RequestId) AS TrnFwdId,
+                                currentReq.RequestId,stepcount.ApplyForId,bs.BasicDetailId,
                                        CASE
                                             WHEN faul.IsEditAction = 1 THEN 0
                                             WHEN currentReq.StatusId IN (2,3) THEN 0
-                                            WHEN stepcount.StepId != 6 THEN 0
+                                            WHEN stepcount.StepId != 14 THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
                                             WHEN faul.IsEditAction = 1 THEN 'This action has already been completed by you.'
                                             WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
-                                            WHEN stepcount.StepId != 6 THEN 'The application is currently being processed.'
+                                            WHEN stepcount.StepId != 14 THEN 'The application is currently being processed.'
 		                                    ELSE 'Valid'
 		                                END as Message
                                 FROM TrnFaultyCard faul
                                 INNER JOIN TrnICardRequest currentReq on faul.RequestId=currentReq.RequestId
-                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
-                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = currentReq.RequestId
-                                WHERE faul.TrnFaultyCardId = @TrnFaultyCardId;";
+                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId
+                                INNER JOIN BasicDetails bs on currentReq.BasicDetailId=bs.BasicDetailId
+                                 WHERE faul.TrnFaultyCardId = @TrnFaultyCardId;";
                     }
                     else
                     {
-                        query = @"SELECT COALESCE(MAX(fwd.TrnFwdId), NULL) AS TrnFwdId,currentReq.RequestId,
+                        query = @"SELECT 
+                                (SELECT MAX(TrnFwdId) 
+                                    FROM TrnFwds 
+                                    WHERE RequestId = currentReq.RequestId) AS TrnFwdId,
+                                    currentReq.RequestId,stepcount.ApplyForId,bs.BasicDetailId,
                                        CASE
                                             WHEN faul.IsEditAction = 0 THEN 0
                                             WHEN currentReq.StatusId IN (2,3) THEN 0
@@ -552,15 +597,18 @@ namespace DataAccessLayer
                                 FROM TrnICardRequest currentReq
                                 INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
                                 INNER JOIN BasicDetails bs on currentReq.BasicDetailId=bs.BasicDetailId
-                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = currentReq.RequestId
-                                LEFT JOIN TrnFaultyCard faul on faul.RequestId = currentReq.RequestId
+                                LEFT JOIN TrnFaultyCard faul on faul.TrnFaultyCardId = (SELECT MAX(fal.TrnFaultyCardId) FROM TrnFaultyCard fal WHERE fal.RequestId =currentReq.RequestId)
                                 WHERE currentReq.RequestId = @RequestId;";
                     }
 
                 }
                 else
                 {
-                    query = @"SELECT COALESCE(MAX(fwd.TrnFwdId), NULL) AS TrnFwdId,
+                    query = @"SELECT
+                                (SELECT MAX(TrnFwdId) 
+                                    FROM TrnFwds 
+                                    WHERE RequestId = currentReq.RequestId) AS TrnFwdId,
+                                    currentReq.RequestId,stepcount.ApplyForId,bs.BasicDetailId,
                                        CASE
                                             WHEN bs.UnitId != @UnitId THEN 0
                                             WHEN faul.RequestId = @RequestId THEN 0
@@ -570,7 +618,7 @@ namespace DataAccessLayer
                                         END AS Result,
 		                                case
                                             WHEN bs.UnitId != @UnitId THEN 'You are not an authorized user.'
-                                            WHEN hot.RequestId = @RequestId THEN 'The faulty request already exists!'
+                                            WHEN faul.RequestId = @RequestId THEN 'The faulty request already exists!'
                                             WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
                                             WHEN stepcount.StepId != 14 THEN 'The application is currently being processed.'
 		                                    ELSE 'Valid'
@@ -578,7 +626,6 @@ namespace DataAccessLayer
                                 FROM TrnICardRequest currentReq
                                 INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
                                 INNER JOIN BasicDetails bs on currentReq.BasicDetailId=bs.BasicDetailId
-                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = currentReq.RequestId
                                 LEFT JOIN TrnFaultyCard faul on faul.RequestId = currentReq.RequestId AND faul.IsComplete = 0
                                 WHERE currentReq.RequestId = @RequestId;";
                 }

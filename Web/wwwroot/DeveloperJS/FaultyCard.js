@@ -264,7 +264,7 @@ function BindData() {
             });
         }
     });
-    if ($("#spnClaimValue").html().toLowerCase() === "true") {
+    if ($("#spnCValue").html().toLowerCase() === "true") {
         table.column(8).visible(true);
     }
     else {

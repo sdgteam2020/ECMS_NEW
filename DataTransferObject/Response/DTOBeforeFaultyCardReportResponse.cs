@@ -11,6 +11,8 @@ namespace DataTransferObject.Response
         public int? TrnFaultyCardId { get; set; }
         public int RequestId { get; set; }
         public int? TrnFwdId { get; set; }
+        public int BasicDetailId { get; set; }
+        public byte ApplyForId { get; set; }
         public bool Result { get; set; }
         public string Message { get; set; } = string.Empty;
     }

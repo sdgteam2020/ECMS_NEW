@@ -3729,6 +3729,12 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
+                if (dTO.Choice == 1)
+                {
+                    ModelState.AddModelError("Choice", "Please select a valid choice.");
+                }
+
+
                 // Validate the incoming model
                 if (ModelState.IsValid)
                 {
@@ -3748,81 +3754,63 @@ namespace Web.Controllers
 
                     int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     dTO.Claim = true;
-                    // Handle update of an existing faulty card
-                    if (dTO.TrnFaultyCardId > 0)
+                    var dTOBeforeFaulty = await faultyCardBL.CheckBeforeFaultyCardReport(dTO);
+                    
+                    dTO.TrnFwdId = dTOBeforeFaulty.TrnFwdId;
+                    dTO.RequestId = dTOBeforeFaulty.RequestId;
+                    dTO.BasicDetailId = dTOBeforeFaulty.BasicDetailId;
+                    dTO.ApplyForId = dTOBeforeFaulty.ApplyForId;
+
+                    if (dTOBeforeFaulty.Result)
                     {
-                        var dTOBeforeFaulty = await faultyCardBL.CheckBeforeFaultyCardReport(dTO);
-                        if (dTOBeforeFaulty.Result)
+                        // Handle rejection scenario (Choice == 3)
+                        if (dTO.Choice == 3)
                         {
-                            dTO.RequestId = dTOBeforeFaulty.RequestId;
-                            dTO.TrnFwdId = dTOBeforeFaulty.TrnFwdId;
+                            mTrnFwd.RequestId = dTO.RequestId;
+                            mTrnFwd.FromUserId = dTO.UserId;
+                            mTrnFwd.UnitId = dTO.UnitId;
+                            mTrnFwd.Remark = dTO.ToRemark;
+                            mTrnFwd.FwdStatusId = Convert.ToByte(3); // Reject status
+                            mTrnFwd.TypeId = Convert.ToByte(1);
+                            mTrnFwd.StepId = Convert.ToByte(9);
+                            mTrnFwd.IsComplete = false;
+                            mTrnFwd.RemarksIds = dTO.RemarksIds != null && dTO.RemarksIds.Any() ? string.Join(",", dTO.RemarksIds) : string.Empty;
+                            mTrnFwd.FromAspNetUsersId = AspNetUsersId;
+                            mTrnFwd.UpdatedOn = DateTime.Now;
+                            mTrnFwd.Updatedby = AspNetUsersId;
+                            mTrnFwd.IsActive = true;
 
-                            // Handle rejection scenario (Choice == 3)
-                            if (dTO.Choice == 3)
+                            // Fetch domain mapping for the request
+                            TrnDomainMapping? Domain = new TrnDomainMapping();
+                            Domain = await iDomainMapBL.GetByRequestId(dTO.RequestId);
+
+                            if (Domain != null)
                             {
-                                mTrnFwd.RequestId = dTO.RequestId;
-                                mTrnFwd.FromUserId = dTO.UserId;
-                                mTrnFwd.UnitId = dTO.UnitId;
-                                mTrnFwd.Remark = dTO.ToRemark;
-                                mTrnFwd.FwdStatusId = Convert.ToByte(3); // Reject status
-                                mTrnFwd.TypeId = Convert.ToByte(1);
-                                mTrnFwd.StepId = Convert.ToByte(9);
-                                mTrnFwd.IsComplete = false;
-                                mTrnFwd.RemarksIds = dTO.RemarksIds != null && dTO.RemarksIds.Any() ? string.Join(",", dTO.RemarksIds) : string.Empty;
-                                mTrnFwd.FromAspNetUsersId = AspNetUsersId;
-                                mTrnFwd.UpdatedOn = DateTime.Now;
-                                mTrnFwd.Updatedby = AspNetUsersId;
-                                mTrnFwd.IsActive = true;
-
-                                // Fetch domain mapping for the request
-                                TrnDomainMapping? Domain = new TrnDomainMapping();
-                                Domain = await iDomainMapBL.GetByRequestId(dTO.RequestId);
-
-                                if (Domain != null)
+                                // Check if domain is mapped to a user
+                                if (Domain.UserId.GetValueOrDefault() == 0)
                                 {
-                                    // Check if domain is mapped to a user
-                                    if (Domain.UserId.GetValueOrDefault() == 0)
-                                    {
-                                        dTOFaulty.Message = "Profile is not mapped with domain Id!";
-                                        dTOFaulty.Result = false;
-                                        return Ok(dTOFaulty);
-                                    }
-                                    else
-                                    {
-                                        // Assign the target user and AspNetUser IDs for forwarding
-                                        mTrnFwd.ToAspNetUsersId = Domain.AspNetUsersId;
-                                        mTrnFwd.ToUserId = Convert.ToInt32(Domain.UserId);
-                                    }
+                                    dTOFaulty.Message = "Profile is not mapped with domain Id!";
+                                    dTOFaulty.Result = false;
+                                    return Ok(dTOFaulty);
+                                }
+                                else
+                                {
+                                    // Assign the target user and AspNetUser IDs for forwarding
+                                    mTrnFwd.ToAspNetUsersId = Domain.AspNetUsersId;
+                                    mTrnFwd.ToUserId = Convert.ToInt32(Domain.UserId);
                                 }
                             }
+                        }
 
-                            // Save the new faulty card request
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
-                            return Json(dTOFaulty);
-                        }
-                        else
-                        {
-                            dTOFaulty.Result = dTOBeforeFaulty.Result;
-                            dTOFaulty.Message = dTOBeforeFaulty.Message;
-                            return Json(dTOFaulty);
-                        }
+                        // Save the new faulty card request
+                        dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
+                        return Json(dTOFaulty);
                     }
                     else
                     {
-                        var dTOBeforeFaulty = await faultyCardBL.CheckBeforeFaultyCardReport(dTO);
-                        if (dTOBeforeFaulty.Result)
-                        {
-                            dTO.TrnFwdId = dTOBeforeFaulty.TrnFwdId;
-                            // Save the new faulty card request
-                            dTOFaulty = await faultyCardBL.SaveFaultyCard(dTO, mTrnFwd);
-                            return Json(dTOFaulty);
-                        }
-                        else
-                        {
-                            dTOFaulty.Result = dTOBeforeFaulty.Result;
-                            dTOFaulty.Message = dTOBeforeFaulty.Message;
-                            return Json(dTOFaulty);
-                        }
+                        dTOFaulty.Result = dTOBeforeFaulty.Result;
+                        dTOFaulty.Message = dTOBeforeFaulty.Message;
+                        return Json(dTOFaulty);
                     }
                 }
                 else

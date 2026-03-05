@@ -38,6 +38,10 @@ namespace DataTransferObject.Requests
         public int RequestId { get; set; }
 
         [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public int BasicDetailId { get; set; }
+
+
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "Choice is required.")]
@@ -58,6 +62,9 @@ namespace DataTransferObject.Requests
 
         [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
         public int UnitId { get; set; }
+
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public byte ApplyForId { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public bool IsActive { get; set; } = true;
