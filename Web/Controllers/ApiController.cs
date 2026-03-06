@@ -51,9 +51,19 @@ namespace Web.Controllers
                 {
                     throw new InvalidOperationException("Encryption key record not found."); // Throw error if key record is missing
                 }
-                // Retrieve configuration values from appsettings.json
-                bool FromApiJCO = Convert.ToBoolean(_configuration["ApiCall:FromApiJCO"]);
-                bool FromApiOffr = Convert.ToBoolean(_configuration["ApiCall:FromApiOffr"]);
+                // Retrieve configuration values from Environment variables
+                string? _FromApiJCO = Environment.GetEnvironmentVariable("ApiCall__FromApiJCO");
+                string? _FromApiOffr = Environment.GetEnvironmentVariable("ApiCall__FromApiOffr");
+                bool FromApiJCO = false;
+                bool FromApiOffr = false;
+                if (!string.IsNullOrEmpty(_FromApiJCO))
+                {
+                    FromApiJCO = Convert.ToBoolean(_FromApiJCO);
+                }
+                if (!string.IsNullOrEmpty(_FromApiOffr))
+                {
+                    FromApiOffr = Convert.ToBoolean(_FromApiOffr);
+                }
 
                 // Get the remote IP address from the HTTP context
                 var remoteIpAddress = HttpContext.Connection.RemoteIpAddress;
@@ -65,9 +75,9 @@ namespace Web.Controllers
                 if (FromApiOffr == true && Type == 1)
                 {
                     // Configure API URLs and access key for officers
-                    data.LoginUrl = _configuration["ApiCall:ApioffsLoginUrl"] ?? string.Empty;
-                    data.ApiUrl = _configuration["ApiCall:OffrsApiUrl"] ?? string.Empty;
-                    data.accessKey = _configuration["ApiCall:ApiaccessKeyOffrApiUrl"] ?? string.Empty;
+                    data.LoginUrl = Environment.GetEnvironmentVariable("ApiCall__ApioffsLoginUrl") ?? string.Empty;
+                    data.ApiUrl = Environment.GetEnvironmentVariable("ApiCall__OffrsApiUrl") ?? string.Empty;
+                    data.accessKey = Environment.GetEnvironmentVariable("ApiCall__ApiaccessKeyOffrApiUrl") ?? string.Empty;
 
                     // Make authentication API call for officers
                     DTOLoginAPIResponse ret = await _aPIBL.Getauthentication(data);
@@ -85,7 +95,7 @@ namespace Web.Controllers
 
                         // Get the last 4 digits of the IC number for decryption purposes
                         string PubKeyForDesc = retdat.Pers_Army_No.Substring(retdat.Pers_Army_No.Length - 4, 4);
-                        retdat.ApiUrl = _configuration["ApiCall:OffrsApiUrl"] ?? string.Empty;
+                        retdat.ApiUrl = Environment.GetEnvironmentVariable("ApiCall__OffrsApiUrl") ?? string.Empty;
 
                         // Call to retrieve personnel data
                         DTOApiPersDataResponse res = await _aPIBL.GetData(retdat);
@@ -143,9 +153,9 @@ namespace Web.Controllers
                 else if (FromApiJCO == true && Type == 2)
                 {
                     // Configure API URLs and access key for JCOs
-                    data.LoginUrl = _configuration["ApiCall:ApiJcoLoginUrl"] ?? string.Empty;
-                    data.ApiUrl = _configuration["ApiCall:JCOApiUrl"] ?? string.Empty;
-                    data.accessKey = _configuration["ApiCall:ApiaccessKeyJCOApiUrl"] ?? string.Empty;
+                    data.LoginUrl = Environment.GetEnvironmentVariable("ApiCall__ApiJcoLoginUrl") ?? string.Empty;
+                    data.ApiUrl = Environment.GetEnvironmentVariable("ApiCall__JCOApiUrl") ?? string.Empty;
+                    data.accessKey = Environment.GetEnvironmentVariable("ApiCall__ApiaccessKeyJCOApiUrl") ?? string.Empty;
 
                     // Make authentication API call for JCOs
                     DTOLoginAPIResponse ret = await _aPIBL.Getauthentication(data);
@@ -162,7 +172,7 @@ namespace Web.Controllers
 
                         // Get the last 4 digits of the IC number for decryption purposes
                         string PubKeyForDesc = retdat.Pers_Army_No.Substring(retdat.Pers_Army_No.Length - 4, 4);
-                        retdat.ApiUrl = _configuration["ApiCall:JCOApiUrl"] ?? string.Empty;
+                        retdat.ApiUrl = Environment.GetEnvironmentVariable("ApiCall__JCOApiUrl") ?? string.Empty;
 
                         // Call to retrieve personnel data
                         DTOApiPersDataResponse? res = await _aPIBL.GetData(retdat);

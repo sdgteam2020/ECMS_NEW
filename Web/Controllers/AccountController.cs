@@ -1167,7 +1167,6 @@ namespace Web.Controllers
 
                             if (usera != null)
                             {
-                                //default Password - Admin123#
                                 var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, lockoutOnFailure: true); // Sign in user
                                 if (result.Succeeded)
                                 {
@@ -2176,7 +2175,7 @@ namespace Web.Controllers
                 {
                     // Clean up ICNo input and set default password
                     model.ICNo = model.ICNo.Trim();
-                    model.Password = "Admin123#";
+                    model.Password = Environment.GetEnvironmentVariable("Common__Password") ?? string.Empty;
 
                     // Validate model
                     if (ModelState.IsValid)
@@ -2195,7 +2194,6 @@ namespace Web.Controllers
                             await userManager.UpdateSecurityStampAsync(usera);
                             if (usera != null)
                             {
-                                //default Password - Admin123#
                                 // Attempt sign-in with default password
                                 var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, lockoutOnFailure: true);
                                 if (result.Succeeded)
@@ -2432,8 +2430,16 @@ namespace Web.Controllers
                     // Create a SAML response object
                     OneLogin.Saml.Response samlResponse = new OneLogin.Saml.Response(accountSettings);
 
+                    var certPath = Environment.GetEnvironmentVariable("Cert__Path");
+                    var certPassword = Environment.GetEnvironmentVariable("Cert__Password");
+
+                    if (string.IsNullOrWhiteSpace(certPath))
+                    {
+                        throw new Exception("Certificate path not found in environment variable.");
+                    }
+
                     // Decrypt the SAML request using the specified certificate and password
-                    string decryptedsamlresponse = DecryptSAmlResponseNew(EncryptedResponse, "C:\\Cert\\App Certificate\\eisac.army.mil.pfx", "Abc@2022");
+                    string decryptedsamlresponse = DecryptSAmlResponseNew(EncryptedResponse, certPath, certPassword);
                     samlResponse.LoadXmlFromBase64(decryptedsamlresponse);
 
 
@@ -2539,8 +2545,16 @@ namespace Web.Controllers
 
                     try
                     {
+                        var certPath = Environment.GetEnvironmentVariable("Cert__Path");
+                        var certPassword = Environment.GetEnvironmentVariable("Cert__Password");
+
+                        if (string.IsNullOrWhiteSpace(certPath))
+                        {
+                            throw new Exception("Certificate path not found in environment variable.");
+                        }
+
                         // Load certificate from specified path and password
-                        myCert2 = new X509Certificate2(@"C:\\Cert\\App Certificate\\eisac.army.mil.pfx", "Abc@2022");
+                        myCert2 = new X509Certificate2(certPath, certPassword);
                         // rsa = (RSACryptoServiceProvider)myCert2.PrivateKey;
                         #region test
                         // Decrypt the key using RSA private key

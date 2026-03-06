@@ -3329,7 +3329,7 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult RecordOffice()
         {
-            short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]); //Get from appsettings.json
+            short ArmedIdForORO = Convert.ToInt16(Environment.GetEnvironmentVariable("HardCodeId__ArmedIdForORO")); //Get from appsettings.json
             //if (ArmedIdForORO == 0) ArmedIdForORO = 56;
             ViewBag.ArmedIdForORO = ArmedIdForORO;
 

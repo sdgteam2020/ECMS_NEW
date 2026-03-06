@@ -1385,7 +1385,7 @@ namespace DataAccessLayer
                             LockoutEnabled = true
                         };
 
-                        userAdd.PasswordHash = _passwordHasher.HashPassword(userAdd, "Admin123#");//Default Password
+                        userAdd.PasswordHash = _passwordHasher.HashPassword(userAdd, Environment.GetEnvironmentVariable("Common__Password") ?? string.Empty);//Default Password
                         await _context.Users.AddAsync(userAdd);
                         await _context.SaveChangesAsync();
                         int Id = userAdd.Id;

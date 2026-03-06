@@ -2,9 +2,9 @@
 {
     public class DTOApplFwdConditionRequest
     {
-        public required MPRSO MPRSO { get; set; }
-        public required MP6F MP6F { get; set; }
-        public required MP6A MP6A { get; set; }
+        public MPRSO MPRSO { get; set; } = new MPRSO();
+        public MP6F MP6F { get; set; } = new MP6F();
+        public MP6A MP6A { get; set; } = new MP6A();
     }
     public class MPRSO
     {

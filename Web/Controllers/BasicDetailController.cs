@@ -756,18 +756,34 @@ namespace Web.Controllers
                 if (typeId == 1 || typeId == 2)
                 {
                     // Retrieve hardcoded ArmedId from configuration
-                    short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
+                    short ArmedIdForORO = Convert.ToInt16(Environment.GetEnvironmentVariable("HardCodeId__ArmedIdForORO"));
+
                     // If not set, fallback could be hardcoded (commented-out sample code)
 
                     // Load application forward condition settings from configuration
-                    DTOApplFwdConditionRequest? dTOApplFwdCondition =
-                        _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>()
-                        ?? new DTOApplFwdConditionRequest
+
+                    DTOApplFwdConditionRequest dTOApplFwdCondition;
+
+                    // Retrieve the encryption key record from the database
+                    var keyRecord = await encryptionSettingBL.Get(1);
+                    if (keyRecord != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition))
                         {
-                            MPRSO = new MPRSO(),
-                            MP6F = new MP6F(),
-                            MP6A = new MP6A()
-                        };
+                            dTOApplFwdCondition = !string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition)
+                                ? JsonConvert.DeserializeObject<DTOApplFwdConditionRequest>(keyRecord.ApplFwdCondition) ?? new DTOApplFwdConditionRequest()
+                                : new DTOApplFwdConditionRequest();
+                        }
+                        else
+                        {
+                            dTOApplFwdCondition = new DTOApplFwdConditionRequest();
+                        }
+                    }
+                    else
+                    {
+                        // Throw exception if encryption keys are not found
+                        throw new InvalidOperationException("Encryption key record not found.");
+                    }
 
                     // Validate configuration values: must not be empty/zero
                     if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name)
@@ -1500,12 +1516,28 @@ namespace Web.Controllers
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 // Retrieve application forward condition settings from configuration
-                DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
+                DTOApplFwdConditionRequest dTOApplFwdCondition;
+
+                // Retrieve the encryption key record from the database
+                var keyRecord = await encryptionSettingBL.Get(1);
+                if (keyRecord != null)
                 {
-                    MPRSO = new MPRSO(),
-                    MP6F = new MP6F(),
-                    MP6A = new MP6A()
-                };
+                    if (!string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition))
+                    {
+                        dTOApplFwdCondition = !string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition)
+                            ? JsonConvert.DeserializeObject<DTOApplFwdConditionRequest>(keyRecord.ApplFwdCondition) ?? new DTOApplFwdConditionRequest()
+                            : new DTOApplFwdConditionRequest();
+                    }
+                    else
+                    {
+                        dTOApplFwdCondition = new DTOApplFwdConditionRequest();
+                    }
+                }
+                else
+                {
+                    // Throw exception if encryption keys are not found
+                    throw new InvalidOperationException("Encryption key record not found.");
+                }
 
                 // Validate that essential configuration values are present before proceeding
                 if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
@@ -3083,26 +3115,30 @@ namespace Web.Controllers
         {
             try
             {
+                DTOApplFwdConditionRequest dTOApplFwdCondition;
+
                 // Retrieve the encryption key record from the database
                 var keyRecord = await encryptionSettingBL.Get(1);
                 if (keyRecord != null)
                 {
                     Data.publicKey = keyRecord.PublicKey;
                     Data.privateKey = keyRecord.PrivateKey;
+                    if (!string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition))
+                    {
+                        dTOApplFwdCondition = !string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition)
+                            ? JsonConvert.DeserializeObject<DTOApplFwdConditionRequest>(keyRecord.ApplFwdCondition) ?? new DTOApplFwdConditionRequest()
+                            : new DTOApplFwdConditionRequest();
+                    }
+                    else
+                    {
+                        dTOApplFwdCondition = new DTOApplFwdConditionRequest();
+                    }
                 }
                 else
                 {
                     // Throw exception if encryption keys are not found
                     throw new InvalidOperationException("Encryption key record not found.");
                 }
-
-                // Get application forward condition configuration from appsettings
-                DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
-                {
-                    MPRSO = new MPRSO(),
-                    MP6F = new MP6F(),
-                    MP6A = new MP6A()
-                };
 
                 // Validate critical fields in configuration
                 if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||

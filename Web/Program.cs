@@ -31,10 +31,15 @@ using ApplicationUser = DataTransferObject.Domain.Identitytable.ApplicationUser;
 var builder = WebApplication.CreateBuilder(args);
 
 var configration = builder.Configuration;
-var corsSettings = builder.Configuration.GetSection("CorsSettings");
 
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__AFSACDBConnection");
 
-builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(configration.GetConnectionString("AFSACDBConnection")).UseExceptionProcessor());
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new Exception("Connection string not found in environment variables.");
+}
+
+builder.Services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(connectionString).UseExceptionProcessor());
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(option =>
 {
@@ -70,7 +75,7 @@ builder.Services.AddCors(options =>
         policy.SetIsOriginAllowed(origin =>
         {
             // Get allowed origins from configuration
-            var allowedOrigins = corsSettings["AllowedOrigins"]?.Split(',')
+            var allowedOrigins = Environment.GetEnvironmentVariable("CorsSettings__AllowedOrigins")?.Split(',')
                 ?? Array.Empty<string>();
 
             // Always allow localhost in development
@@ -215,24 +220,6 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxRequestBodySize = 100*1024*1024; // 100MB
 });
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-//})
-//.AddCookie()
-//.AddOpenIdConnect(options =>
-//{
-//    options.Authority = "https://localhost:7023/Account/Logout";
-//    options.ClientId = "your-client-id";
-//    options.ClientSecret = "your-client-secret";
-//    options.ResponseType = "code";
-//    options.Scope.Add("openid");
-//    options.Scope.Add("profile");
-//    options.CallbackPath = "/signin-oidc";
-
-//    // Additional configurations as needed
-//});
 builder.Services.AddResponseCompression();
 
 var app = builder.Build();
@@ -247,8 +234,6 @@ app.UseCookiePolicy(new CookiePolicyOptions
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();    
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    //app.UseHsts();
 }
 else
 {

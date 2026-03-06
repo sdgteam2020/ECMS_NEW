@@ -1,5 +1,6 @@
 ﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.EncryptionSetting;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.RecordOffice;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Management.Smo;
+using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
 using System.Security.Claims;
@@ -55,13 +57,14 @@ namespace Web.Controllers
         private readonly IConfiguration _configuration;//Configuration interface for accessing application settings
         private readonly IWebHostEnvironment hostingEnvironment;// For Hosting Environment
         private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// For Image Encrypt and Decrypt
+        private readonly IEncryptionSettingBL encryptionSettingBL;// For Encryption Setting
 
         //constructor to initialize dependencies and configuration settings.
         public HomeController(IRegistrationBL registrationBL, IUserProfileBL userProfileBL,
             IBasicDetailBL basicDetailBL, INotificationBL notificationBL, ITrnICardRequestBL iTrnICardRequestBL,
             IHomeBL home, IRecordOfficeBL recordOfficeBL, SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor,
-            IReportReturnBL reportReturnBL, IService service, IConfiguration configuration, IMapUnitBL mapUnitBL, IWebHostEnvironment hostingEnvironment, IImageEncryptAndDecrypt imageEncryptAndDecrypt
+            IReportReturnBL reportReturnBL, IService service, IConfiguration configuration, IMapUnitBL mapUnitBL, IWebHostEnvironment hostingEnvironment, IImageEncryptAndDecrypt imageEncryptAndDecrypt, IEncryptionSettingBL encryptionSettingBL
             )
         {
             _userProfileBL = userProfileBL;
@@ -80,6 +83,7 @@ namespace Web.Controllers
             _mapUnitBL = mapUnitBL;
             this.hostingEnvironment = hostingEnvironment;
             this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
+            this.encryptionSettingBL = encryptionSettingBL;
         }
 
 
@@ -616,13 +620,29 @@ namespace Web.Controllers
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             // Retrieve configuration values for ArmedIdForORO and ApplFwdCondition
-            short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
-            DTOApplFwdConditionRequest? dTOApplFwdCondition = _configuration.GetSection("ApplFwdCondition").Get<DTOApplFwdConditionRequest>() ?? new DTOApplFwdConditionRequest
+            short ArmedIdForORO = Convert.ToInt16(Environment.GetEnvironmentVariable("HardCodeId__ArmedIdForORO"));
+            DTOApplFwdConditionRequest dTOApplFwdCondition;
+
+            // Retrieve the encryption key record from the database
+            var keyRecord = await encryptionSettingBL.Get(1);
+            if (keyRecord != null)
             {
-                MPRSO = new MPRSO(),
-                MP6F = new MP6F(),
-                MP6A = new MP6A()
-            };
+                if (!string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition))
+                {
+                    dTOApplFwdCondition = !string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition)
+                        ? JsonConvert.DeserializeObject<DTOApplFwdConditionRequest>(keyRecord.ApplFwdCondition) ?? new DTOApplFwdConditionRequest()
+                        : new DTOApplFwdConditionRequest();
+                }
+                else
+                {
+                    dTOApplFwdCondition = new DTOApplFwdConditionRequest();
+                }
+            }
+            else
+            {
+                // Throw exception if encryption keys are not found
+                throw new InvalidOperationException("Encryption key record not found.");
+            }
 
             // Validate the configuration values
             if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
@@ -931,7 +951,7 @@ namespace Web.Controllers
                 int UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 // Get the hardcoded value for ArmedIdForORO from the configuration
-                short ArmedIdForORO = Convert.ToInt16(_configuration["HardCodeId:ArmedIdForORO"]);
+                short ArmedIdForORO = Convert.ToInt16(Environment.GetEnvironmentVariable("HardCodeId__ArmedIdForORO"));
 
                 // Check if the ArmedIdForORO is valid (non-zero)
                 if (ArmedIdForORO == 0)
