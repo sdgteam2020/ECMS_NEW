@@ -1,6 +1,7 @@
 ﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.EncryptionSetting;
+using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.RecordOffice;
@@ -53,6 +54,7 @@ namespace Web.Controllers
         private readonly IMapUnitBL _mapUnitBL;//Interface for map unit business logic layer
         private const string CounterFilePath = "wwwroot/counter.txt";// File path for storing the visitor counter
         private const string SessionKey = "SessionHit";// Session key for tracking user sessions
+        public const string SessionKeySalt = "_Salt";
         private readonly string[] IgnoredIPs = { "127.0.0.2", "127.0.0.3" }; // Add IPs to ignore
         private readonly IConfiguration _configuration;//Configuration interface for accessing application settings
         private readonly IWebHostEnvironment hostingEnvironment;// For Hosting Environment
@@ -1423,6 +1425,9 @@ namespace Web.Controllers
 
             if (role == "user")
             {
+                string dd = AESEncrytDecry.GetSalt();
+                HttpContext.Session.SetString(SessionKeySalt, dd);
+                ViewBag.hdns = dd;
                 return View();
             }
             else

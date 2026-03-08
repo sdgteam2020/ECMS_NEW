@@ -1,5 +1,8 @@
-﻿$(function () {
+﻿var skey = "";
+$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
+    skey = $('#spnhdns').html();
 
     $("#btnsave").on("click", function () {
         CheckValidation();
@@ -105,9 +108,9 @@
         const encryptedOffType = sessionStorage.getItem("OffType");
         const encryptedlCardType = sessionStorage.getItem("lCardType");
 
-        const decryptedArmyNo = decryptData(encryptedArmyNo);
-        const decryptedOffType = decryptData(encryptedOffType);
-        const decryptedlCardType = decryptData(encryptedlCardType);
+        const decryptedArmyNo = decryptData(encryptedArmyNo, skey);
+        const decryptedOffType = decryptData(encryptedOffType, skey);
+        const decryptedlCardType = decryptData(encryptedlCardType, skey);
 
 
 

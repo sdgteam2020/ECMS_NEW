@@ -252,13 +252,3 @@ function encryptData(plainText, secretKey) {
 
     return encrypted.toString();   // Base64 output
 }
-function decryptData(cipherText, secretKey) {
-    const key = CryptoJS.enc.Utf8.parse(secretKey);
-    const iv = CryptoJS.enc.Utf8.parse(secretKey.substring(0, 16));
-
-    return CryptoJS.AES.decrypt(cipherText, key, {
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-    }).toString(CryptoJS.enc.Utf8);
-}

@@ -117,6 +117,7 @@ namespace Web.Controllers
         private readonly IOROMappingBL oROMappingBL;// For ORO Mapping
         private readonly IRegimentalBL regimentalBL;// For Regimental Database
         private readonly IRecordOfficeBL recordOfficeBL; // For Record Office
+        public const string SessionKeySalt = "_Salt";
 
         /// <summary>
         /// This is the constructor for the BasicDetailController class, 
@@ -990,7 +991,20 @@ namespace Web.Controllers
 
             if (role == "user")
             {
-                return View();
+                string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
+                if (dd != null)
+                {
+                    ViewBag.hdns = dd;
+                    return View();
+                }
+                else
+                {
+                    TempData["error"] = "Session expired. Please try again.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
+
+
             }
             else
             {
@@ -1023,6 +1037,18 @@ namespace Web.Controllers
                 // Extract userId from claims and assign as UpdatedBy
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 model.Updatedby = Convert.ToInt32(userId);
+
+                string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
+                if (dd != null)
+                {
+                    ViewBag.hdns = dd;
+                }
+                else
+                {
+                    TempData["error"] = "Session expired. Please try again.";
+                    TempData.Keep("error");
+                    goto end;
+                }
 
                 // Validate ModelState
                 if (ModelState.IsValid)
@@ -1148,7 +1174,6 @@ namespace Web.Controllers
                                 }
                             }
                         }
-
                         // Store Registration model temporarily and redirect to BasicDetail with protected Id=0
                         TempData["Registration"] = JsonConvert.SerializeObject(model);
                         return RedirectToAction("BasicDetail", "BasicDetail", new { Id = protector.Protect("0") });
@@ -1193,6 +1218,11 @@ namespace Web.Controllers
                         else
                         {
                             await basicDetailTempBL.Add(basicDetailTemp);
+                        }
+
+                        if (dd != null)
+                        {
+                            HttpContext.Session.Remove(SessionKeySalt);
                         }
 
                         TempData["success"] = "Request Submited Successfully.";
@@ -1277,6 +1307,8 @@ namespace Web.Controllers
             // Retrieve the user's role from the session
             string role = SessionHelper.GetRoleFromSession(HttpContext);
 
+            string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
+
             // If Id is provided, attempt to decrypt and validate it
             if (Id != null)
             {
@@ -1315,6 +1347,16 @@ namespace Web.Controllers
             // Case 1: New record creation (Id is null or decryptedId == "0")
             if (Id == null || decryptedId == "0")
             {
+                if (dd != null)
+                {
+                    ViewBag.hdns = dd;
+                }
+                else
+                {
+                    TempData["error"] = "Session expired. Please try again.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
+                }
                 DTORegistrationRequest? model = new DTORegistrationRequest();
 
                 // If registration data exists in TempData, pre-populate the form
@@ -1512,6 +1554,8 @@ namespace Web.Controllers
         {
             try
             {
+                string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
+
                 // Fetch current logged-in user ID from claims
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -1752,6 +1796,11 @@ namespace Web.Controllers
                                 BasicDetail basicDetail = await basicDetailBL.Get(model.BasicDetailId);
                                 if (ret1.Result == true)
                                 {
+                                    if (dd != null)
+                                    {
+                                        HttpContext.Session.Remove(SessionKeySalt);
+                                    }
+
                                     TempData["success"] = "Updated Successfully.";
                                     //return RedirectToAction("Index");
                                     if (newBasicDetail.ApplyForId == 1)
@@ -1809,6 +1858,16 @@ namespace Web.Controllers
                 }
                 else // Case 2: Create new BasicDetail (when BasicDetailId == 0)
                 {
+                    if (dd != null)
+                    {
+                        ViewBag.hdns = dd;
+                    }
+                    else
+                    {
+                        TempData["error"] = "Session expired. Please try again.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
                     // Similar flow: validate, map VM to entity, handle file uploads (mandatory), create request & step counter, save via BL
                     model.Updatedby = Convert.ToInt32(userId);
                     model.StatusLevel = 0;
@@ -2016,6 +2075,11 @@ namespace Web.Controllers
                         if (ret1.Result == true)
                         {
                             await basicDetailTempBL.UpdateByArmyNo(newBasicDetail.ServiceNo);
+
+                            if (dd != null)
+                            {
+                                HttpContext.Session.Remove(SessionKeySalt);
+                            }
 
                             TempData["success"] = "Successfully created.";
                             if (newBasicDetail.ApplyForId == 1)

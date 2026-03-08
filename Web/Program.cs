@@ -60,7 +60,7 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
 {
-    opt.TokenLifespan = TimeSpan.FromMinutes(20);
+    opt.TokenLifespan = TimeSpan.FromMinutes(10);
 });
 
 builder.Services.Configure<SecurityStampValidatorOptions>(opt =>

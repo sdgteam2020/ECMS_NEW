@@ -574,8 +574,8 @@ function formatDateToSqlString(inputDate) {
         `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.` +
         `${pad(date.getMilliseconds(), 3)}`;
 }
-function encryptData(plainText) {
-    const secretKey = spnUniqueKey;
+function encryptData(plainText, skey) {
+    const secretKey = skey;
     if (!secretKey) return "";
 
     const key = CryptoJS.enc.Utf8.parse(secretKey);
@@ -589,11 +589,11 @@ function encryptData(plainText) {
 
     return encrypted.toString();   // Base64 output
 }
-function decryptData(cipherText) {
+function decryptData(cipherText, skey) {
 
     if (!cipherText) return "";
 
-    const secretKey = spnUniqueKey;
+    const secretKey = skey;
     if (!secretKey) return "";
 
     const key = CryptoJS.enc.Utf8.parse(secretKey);

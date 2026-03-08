@@ -1,5 +1,6 @@
 ﻿var table_Fwd; // Declare table variable outside the function to preserve the instance
 $(function () {
+    sessionStorage.clear();
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     let Type = parseInt($("#spnType").html());
     let StepCounter = parseInt($("#spnStepCounter").html());

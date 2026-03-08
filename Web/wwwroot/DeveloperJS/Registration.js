@@ -1,6 +1,7 @@
-﻿$(function () {
+﻿var skey = "";
+$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
-
+    skey = $('#spnhdns').html();
     $(function () {
         var dtToday = new Date();
 
@@ -116,11 +117,11 @@
         const encryptedRegistrationApplyFor = sessionStorage.getItem("RegistrationApplyFor");
         const encryptedlCardType = sessionStorage.getItem("lCardType");
 
-        const decryptedArmyNo = decryptData(encryptedArmyNo);
-        const decryptedOldArmyNo = decryptData(encryptedOldArmyNo);
-        const decryptedOffType = decryptData(encryptedOffType);
-        const decryptedRegistrationApplyFor = decryptData(encryptedRegistrationApplyFor);
-        const decryptedlCardType = decryptData(encryptedlCardType);
+        const decryptedArmyNo = decryptData(encryptedArmyNo, skey);
+        const decryptedOldArmyNo = decryptData(encryptedOldArmyNo, skey);
+        const decryptedOffType = decryptData(encryptedOffType, skey);
+        const decryptedRegistrationApplyFor = decryptData(encryptedRegistrationApplyFor, skey);
+        const decryptedlCardType = decryptData(encryptedlCardType, skey);
 
         $("#ServiceNumber").val(decryptedArmyNo);
         $("#OldServiceNo").val(decryptedOldArmyNo);
@@ -410,7 +411,7 @@ function Proceed(id) {
     }
 
     const encryptedRegistrationApplyFor = sessionStorage.getItem("RegistrationApplyFor");
-    const decryptedRegistrationApplyFor = decryptData(encryptedRegistrationApplyFor);
+    const decryptedRegistrationApplyFor = decryptData(encryptedRegistrationApplyFor, skey);
 
 
     if (decryptedRegistrationApplyFor === "4" || decryptedRegistrationApplyFor === "9") {
