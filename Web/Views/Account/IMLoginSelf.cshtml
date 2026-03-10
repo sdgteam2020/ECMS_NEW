@@ -35,6 +35,20 @@
                                                 <span asp-validation-for="Role" class="text-danger"></span>
                                             </div>
                                             <button type="submit" class="btn btn-primary text-uppercase py-2 fs-5 w-100 mt-2">Next</button>
+                                            @if (TempData["success"] != null)
+                                            {
+                                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                    <span class="text-success">@Html.Raw(@TempData["success"])</span>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            }
+                                            @if (TempData["error"] != null)
+                                            {
+                                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                    <span class="text-danger">@Html.Raw(@TempData["error"])</span>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            }
                                         </form>
                                     </div>
                                 </div>

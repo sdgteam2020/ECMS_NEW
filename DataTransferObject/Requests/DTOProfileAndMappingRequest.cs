@@ -12,24 +12,12 @@ namespace DataTransferObject.Requests
 {
     public class DTOProfileAndMappingRequest
     {
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "UserId is number.")]
-        public int UserId { get; set; }
-        
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "TDMId is number.")]
-        public int TDMId { get; set; }
-
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [MinLength(8, ErrorMessage = "Minimum length of Offr Army No is eight character.")]
-        [MaxLength(10, ErrorMessage = "Maximum length of Offr Army No is ten character.")]
-        [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string ArmyNo { get; set; } = string.Empty;
-
         [Required(ErrorMessage = "Rank is required.")]
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "RankId is number.")]
+        [Range(1, short.MaxValue, ErrorMessage = "RankId must be a positive number.")]
         public short RankId { get; set; }
 
         [Required(ErrorMessage = "Armed is required.")]
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "ArmedId is number.")]
+        [Range(1, short.MaxValue, ErrorMessage = "ArmedId must be a positive number.")]
         public byte ArmedId { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -40,11 +28,11 @@ namespace DataTransferObject.Requests
 
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "ApptId is number.")]
+        [Range(1, short.MaxValue, ErrorMessage = "ApptId must be a positive number.")]
         public short ApptId { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitMapId is number.")]
+        [Range(1, short.MaxValue, ErrorMessage = "UnitMapId must be a positive number.")]
         public int UnitMapId { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
@@ -68,6 +56,7 @@ namespace DataTransferObject.Requests
 
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]
+        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]
         public string? Thumbprint { get; set; }
         public DateTime UpdatedOn { get; set; }
 

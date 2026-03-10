@@ -60,7 +60,7 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
 {
-    opt.TokenLifespan = TimeSpan.FromMinutes(20);
+    opt.TokenLifespan = TimeSpan.FromMinutes(5);
 });
 
 builder.Services.Configure<SecurityStampValidatorOptions>(opt =>
@@ -99,8 +99,8 @@ builder.Services.AddCors(options =>
         // Allow credentials (cookies, auth headers)
         policy.AllowCredentials();
 
-        // Cache preflight for 20 minutes
-        policy.SetPreflightMaxAge(TimeSpan.FromMinutes(20));
+        // Cache preflight for 5 minutes
+        policy.SetPreflightMaxAge(TimeSpan.FromMinutes(5));
     });
 });
 
@@ -144,23 +144,9 @@ var mapperConfig = new MapperConfiguration(mc =>
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-           .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-           {
-               // Configure cookie options if needed
-               options.Cookie.HttpOnly = true;
-      
-               options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
-               options.LoginPath = "/Account/IMLoginSelf";
-               options.AccessDeniedPath = "/Account/AccessDenied";
-               options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-               // Add other configuration options as needed
-           });
-
-
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(15);
+    options.IdleTimeout = TimeSpan.FromMinutes(5);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     // When the code is published on IAM, these two lines are commented out.
@@ -168,24 +154,24 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Strict;
     //------------------- End Instructions----------------------
 });
-builder.Services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
 builder.Services.AddAntiforgery(options =>
 {
+    options.SuppressXFrameOptionsHeader = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    // Cookie settings
     options.Cookie.HttpOnly = true;
-    //options.Cookie.Expiration 
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    options.Cookie.SameSite = SameSiteMode.Strict;
+
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+    options.SlidingExpiration = false;
+
     options.LoginPath = "/Account/IMLoginSelf";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
-    options.SlidingExpiration = false; 
 
-    //options.ReturnUrlParameter=""
 });
 
 builder.Services.AddAuthorizationPolicies();
@@ -220,7 +206,6 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxRequestBodySize = 100*1024*1024; // 100MB
 });
-builder.Services.AddResponseCompression();
 
 var app = builder.Build();
 

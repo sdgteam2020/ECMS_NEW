@@ -1616,7 +1616,7 @@ namespace DataAccessLayer
                         trnDomainMapping.Updatedby = user.Id;
                         trnDomainMapping.UpdatedOn = model.UpdatedOn;
 
-                        if (model.UserId > 0)
+                        if (dTOTempSession.UserId > 0)
                         {
                             MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
                             if (uptUserProfile != null)
@@ -1713,7 +1713,7 @@ namespace DataAccessLayer
                             trnDomainMapping.IsORO = model.IsORO;
                             trnDomainMapping.Updatedby = dTOTempSession.AspNetUsersId;
                             trnDomainMapping.UpdatedOn = model.UpdatedOn;
-                            if (model.UserId > 0)
+                            if (dTOTempSession.UserId > 0)
                             {
                                 MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
                                 if (uptUserProfile != null)
@@ -1809,7 +1809,7 @@ namespace DataAccessLayer
                             ApplicationUser? applicationUser = await _context.Users.FindAsync(trnDomainMapping.AspNetUsersId);
                             if(applicationUser!=null)
                             {
-                                if (model.UserId > 0)
+                                if (dTOTempSession.UserId > 0)
                                 {
                                     MUserProfile? uptUserProfile = await _context.UserProfile.FindAsync(dTOTempSession.UserId);
                                     if (uptUserProfile != null)
