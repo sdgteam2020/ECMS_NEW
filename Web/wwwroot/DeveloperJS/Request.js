@@ -5,9 +5,11 @@ var IsValid = 0;
 var Message = "";
 var IsToken = true;
 var IsWithTokenApply = true;
+var skey = "";
 $(document).ready(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    skey = $('#spnhdns').html();
 
     // For both fields, convert to uppercase on input
     $('#txtApplyForOldArmyNo, #txtApplyForArmyNo').on('input', function () {
@@ -588,11 +590,11 @@ function CheckArmyNOExist() {
                 }).then((result) => {
                     if (result.isConfirmed) {
 
-                        var encryptedArmyNo = encryptData($("#txtApplyForArmyNo").val());
-                        var encryptedOldArmyNo = encryptData($("#txtApplyForOldArmyNo").val());
-                        var encryptedOffType = encryptData(OffType.toString());
-                        var encryptedRegistrationApplyFor = encryptData(RegistrationApplyFor.toString());
-                        var encryptedlCardType = encryptData(lCardType.toString());
+                        var encryptedArmyNo = encryptData($("#txtApplyForArmyNo").val(), skey);
+                        var encryptedOldArmyNo = encryptData($("#txtApplyForOldArmyNo").val(), skey);
+                        var encryptedOffType = encryptData(OffType.toString(), skey);
+                        var encryptedRegistrationApplyFor = encryptData(RegistrationApplyFor.toString(), skey);
+                        var encryptedlCardType = encryptData(lCardType.toString(), skey);
 
                         sessionStorage.setItem("OffType", encryptedOffType);
                         sessionStorage.setItem("RegistrationApplyFor", encryptedRegistrationApplyFor);
