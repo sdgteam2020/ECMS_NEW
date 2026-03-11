@@ -63,8 +63,7 @@ namespace DataTransferObject.Requests
         [MaxLength(100, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string UnitName { get; set; } = string.Empty;
 
-        [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
-        [Range(typeof(int), "1", "3", ErrorMessage = "Invalid Unit Type.")]
+        [Range(1, 3, ErrorMessage = "Invalid Unit Type.")]
         public int UnitType { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
