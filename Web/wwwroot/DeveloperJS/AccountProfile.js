@@ -584,10 +584,8 @@ function UnitSave() {
         url: '/Account/SaveUnitWithMapping',
         type: 'POST',
         data: {
-            "ServiceNo": $("#spnServiceNo").html(),
             "Name": $("#spnName").html(),
             "Rank": $("#spnRank").html(),
-            "DomainId": $("#spnDomainId").html(),
             "UnitId": $("#spnUnitId").html(),
             "Sus_no": $("#txtSusno").val().substring(0, 7),
             "Suffix": $("#txtSusno").val().substring(8, 7),

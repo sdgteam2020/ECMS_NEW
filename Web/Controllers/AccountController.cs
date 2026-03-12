@@ -1635,24 +1635,42 @@ namespace Web.Controllers
         {
             try
             {
-                dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-
-                if (ModelState.IsValid) // Valid Model State
+                DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData"); // Get Session Object
+                if (dTOTempSession != null) // Valid Session
                 {
-                    string SUSNo = dTO.Sus_no + dTO.Suffix.ToUpper();
-                    DTOCheckUnitMappedInMapUnitResponse? response = await _IMapUnitBL.CheckUnitMappedInMapUnit(SUSNo); // Check if Unit is already mapped
-                    if (response != null)
+                    dTO.ServiceNo = dTOTempSession.ICNOInput;
+                    dTO.DomainId = dTOTempSession.DomainId;
+                    dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
+                    if (ModelState.IsValid) // Valid Model State
                     {
-                        if(response.UnitMapId != null) // Unit already mapped
+                        string SUSNo = dTO.Sus_no + dTO.Suffix.ToUpper();
+                        DTOCheckUnitMappedInMapUnitResponse? response = await _IMapUnitBL.CheckUnitMappedInMapUnit(SUSNo); // Check if Unit is already mapped
+                        if (response != null)
                         {
-                            //Unit already mapped
-                            return Json(KeyConstants.Exists);
-                        }
-                        else if (response.IsVerify == false)
-                        {
-                            //Unit not verify
-                            return Json(5);
+                            if (response.UnitMapId != null) // Unit already mapped
+                            {
+                                //Unit already mapped
+                                return Json(KeyConstants.Exists);
+                            }
+                            else if (response.IsVerify == false)
+                            {
+                                //Unit not verify
+                                return Json(5);
+                            }
+                            else
+                            {
+                                bool result = (bool)await _iAccountBL.SaveUnitWithMapping(dTO); // Save Unit with Mapping
+                                if (result == true)
+                                {
+                                    return Json(KeyConstants.Save);
+                                }
+                                else
+                                {
+                                    return Json(KeyConstants.InternalServerError);
+                                }
+                            }
                         }
                         else
                         {
@@ -1669,29 +1687,20 @@ namespace Web.Controllers
                     }
                     else
                     {
-                        bool result = (bool)await _iAccountBL.SaveUnitWithMapping(dTO); // Save Unit with Mapping
-                        if (result == true)
-                        {
-                            return Json(KeyConstants.Save);
-                        }
-                        else
-                        {
-                            return Json(KeyConstants.InternalServerError);
-                        }
+                        return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
                     }
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); 
+                    TempData["error"] = "You are not authorized this page.";
+                    return RedirectToActionPermanent("TokenValidate", "Account");
                 }
-
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Account->SaveUnitWithMapping");
                 return Json(KeyConstants.InternalServerError);
             }
-
         }
 
         /// <summary>

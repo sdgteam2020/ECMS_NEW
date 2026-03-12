@@ -277,10 +277,11 @@ namespace Web.Controllers
             try
             {
                 // Constants for hardcoded values
-                const string CERT_SERIAL_1 = "9a4beb14b87de35d6bba98e2b16ad4eb341d52bda2bb3b7eadb064baf676cbd3";
-                const string CERT_SERIAL_2 = "A2A7D3ED10E454CDD66285EBDFCC293549762148F74D4A65221250769C8E6448";
-                const string ARMY_NO_1 = "IC75695P";
-                const string ARMY_NO_2 = "IC60056W";
+                //Environment.GetEnvironmentVariable("Common__Password") ?? string.Empty
+                var CERT_SERIAL_1 = Environment.GetEnvironmentVariable("CERT_SERIAL_1") ?? string.Empty;
+                var CERT_SERIAL_2 = Environment.GetEnvironmentVariable("CERT_SERIAL_2") ?? string.Empty;
+                var ARMY_NO_1 = Environment.GetEnvironmentVariable("ARMY_NO_1") ?? string.Empty;
+                var ARMY_NO_2 = Environment.GetEnvironmentVariable("ARMY_NO_2") ?? string.Empty;
 
                 // Retrieve client IP address
                 string ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
@@ -333,9 +334,9 @@ namespace Web.Controllers
             var digitalSignList = new List<DTOFwdLastRecForDigitalSign>();
             var certificateNodes = xmlDoc.GetElementsByTagName("X509Certificate");
 
-            // Precompute lowercase serials for comparison
-            var serial1Lower = certSerial1.ToLower();
-            var serial2Lower = certSerial2.ToLower();
+            // Precompute Uppercase serials for comparison
+            var serial1 = certSerial1.ToUpper();
+            var serial2 = certSerial2.ToUpper();
 
             foreach (XmlNode node in certificateNodes)
             {
@@ -355,11 +356,11 @@ namespace Web.Controllers
                             subjectDict[kv[0]] = kv[1];
                     }
 
-                    var serialNumber = subjectDict.GetValueOrDefault("SERIALNUMBER", "").ToLower();
+                    var serialNumber = subjectDict.GetValueOrDefault("SERIALNUMBER", "").ToUpper();
                     string armyNo = serialNumber switch
                     {
-                        string s when s == serial1Lower => armyNo1,
-                        string s when s == serial2Lower => armyNo2,
+                        string s when s == serial1 => armyNo1.ToUpper(),
+                        string s when s == serial2 => armyNo2.ToUpper(),
                         _ => serialNumber
                     };
 
@@ -382,7 +383,12 @@ namespace Web.Controllers
             var result = new List<DTODigitalSignPlusLog>();
             XmlNodeList forwardDetails = xmlDoc.GetElementsByTagName("RecForDigitalSign");
 
-            var orderedNodes = forwardDetails.Cast<XmlNode>().OrderBy(x => int.Parse(x.SelectSingleNode("StepId").InnerText)).ToList();
+            var orderedNodes = forwardDetails.Cast<XmlNode>()
+                                .OrderBy(x => 
+                                {
+                                    int.TryParse(x.SelectSingleNode("StepId")?.InnerText, out int stepId);
+                                    return stepId;
+                                }).ToList();
 
             for (int i = 0; i < orderedNodes.Count; i++)
             {
@@ -395,24 +401,24 @@ namespace Web.Controllers
                     FromDomain = node["FromDomain"]?.InnerText,
                     FromRank = node["FromRank"]?.InnerText,
                     FromProfile = node["FromProfile"]?.InnerText,
-                    FromArmyNo = node["FromArmyNo"]?.InnerText,
+                    FromArmyNo = node["FromArmyNo"]?.InnerText?.ToUpperInvariant() ?? string.Empty,
                     FromDate = Convert.ToDateTime(node["FromDate"]?.InnerText),
                     LevelMessage = levelDictionary.GetValueOrDefault(i + 1, "Unknown Level")
                 };
 
                 // Find matching digital signature
-                var digitalSignature = digitalSignList.FirstOrDefault(x =>x.FromArmyNo.Contains(logEntry.FromArmyNo));
+                var digitalSignature = digitalSignList.FirstOrDefault(x =>x.FromArmyNo.Contains(logEntry.FromArmyNo,StringComparison.OrdinalIgnoreCase));
 
                 if (stepId == 2 && digitalSignature == null)
                 {
-                    digitalSignature = digitalSignList.FirstOrDefault(x =>x.FromArmyNo.Contains(db.ServiceNo));
+                    digitalSignature = digitalSignList.FirstOrDefault(x =>x.FromArmyNo.Contains(db.ServiceNo, StringComparison.OrdinalIgnoreCase));
                 }
 
                 if (digitalSignature != null)
                 {
                     logEntry.IsLogWithSign = true;
                     logEntry.DSProfile = digitalSignature.FromProfile;
-                    logEntry.DSArmyNo = digitalSignature.FromArmyNo;
+                    logEntry.DSArmyNo = digitalSignature.FromArmyNo.ToUpper();
                 }
 
                 result.Add(logEntry);
