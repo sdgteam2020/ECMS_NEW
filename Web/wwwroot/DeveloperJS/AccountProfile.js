@@ -1,4 +1,5 @@
 ﻿var RequestVerificationToken;
+var spnUnitId = 0;
 $(function () {
 
     RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
@@ -230,9 +231,8 @@ $(function () {
         source: function (request, response) {
             $("#txtUnit").val("");
             if (request.term.length > 2) {
-                $("#spnUnitId").html('');
+                spnUnitId = 0;
                 var param = { "SUSNo": request.term };
-                $("#spnUnitId").html("0");
                 $.ajax({
                     url: '/Master/GetTopBySUSNo',
                     contentType: 'application/x-www-form-urlencoded',
@@ -247,11 +247,8 @@ $(function () {
                             }))
                         }
                         else {
-                            //$("#txtSusno").val("");
-                            //$("#txtUnit").val("");
-                            $("#spnUnitId").html("0");
+                            spnUnitId = 0;
                             $("#txtUnit").prop('readOnly', false);
-                            /*                            alert("SUS No not found.")*/
                         }
                     },
                     error: function (response) {
@@ -265,10 +262,9 @@ $(function () {
         },
         select: function (e, i) {
             e.preventDefault();
-
-            $("#spnUnitId").html(i.item.value);
+            spnUnitId = i.item.value;
             $("#txtSusno").val(i.item.label);
-            var param1 = { "UnitId": i.item.value };
+            var param1 = { "UnitId": spnUnitId };
             $.ajax({
                 url: '/Master/GetUnitByUnitId',
                 method: 'POST',
@@ -295,10 +291,8 @@ $(function () {
 
     $('#txtSusno').on('keyup',function (e) {
         if (e.key === 'Delete' || e.key === 'Backspace') {
-            $("#spnUnitId").html('0');
+            spnUnitId = 0;
             $("#txtUnit").prop('readOnly', false);
-            //$("#txtSusno").val('');
-            //$("#txtUnit").val('');
         }
     });
 
@@ -586,7 +580,7 @@ function UnitSave() {
         data: {
             "Name": $("#spnName").html(),
             "Rank": $("#spnRank").html(),
-            "UnitId": $("#spnUnitId").html(),
+            //"UnitId": spnUnitId, // “UnitId is fetched using SUSNo on the server side.”
             "Sus_no": $("#txtSusno").val().substring(0, 7),
             "Suffix": $("#txtSusno").val().substring(8, 7),
             "UnitName": $("#txtUnit").val(),
@@ -601,47 +595,22 @@ function UnitSave() {
         },
         headers: { 'RequestVerificationToken': RequestVerificationToken },
         success: function (result) {
-            if (result == DataSave) {
+            if (result.Result == true) {
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
-                    html: 'Unit has been saved.<br/>Please wait for the Admin Approval.',
+                    html: result.Message,
                 })
                 $("#AddNewUnitmap").modal('hide');
                 Reset();
             }
-            else if (result == DataExists) {
-                Swal.fire({
-                    icon: 'error',
-                    text: 'Unit already mapped!',
-                })
+            else {
+                if (result.Message.length > 0) {
 
-            }
-            else if (result == 5) {
-                Swal.fire({
-                    icon: 'error',
-                    html: 'Unit not verified by Admin.',
-                })
-
-            }
-            else if (result == InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    var err = "";
-                    for (var i = 0; i < result.length; i++) {
-                        err = err + result[i][0].ErrorMessage + '<br />';
-                    }
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        html: err,
-                    })
+                    let messages = result.Message.split(';');
+                    messages.forEach(msg => {
+                        toastr.error(msg);
+                    });
                 }
             }
         }

@@ -3,6 +3,7 @@ using Azure;
 using BusinessLogicsLayer;
 using BusinessLogicsLayer.Account;
 using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.IAMSetting;   
 using BusinessLogicsLayer.Master;
@@ -1633,9 +1634,11 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO)
         {
+            var final_response = new DTOGenericResponse<string>();
             try
             {
                 DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData"); // Get Session Object
+                var response = new DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>();
                 if (dTOTempSession != null) // Valid Session
                 {
                     dTO.ServiceNo = dTOTempSession.ICNOInput;
@@ -1646,48 +1649,65 @@ namespace Web.Controllers
                     if (ModelState.IsValid) // Valid Model State
                     {
                         string SUSNo = dTO.Sus_no + dTO.Suffix.ToUpper();
-                        DTOCheckUnitMappedInMapUnitResponse? response = await _IMapUnitBL.CheckUnitMappedInMapUnit(SUSNo); // Check if Unit is already mapped
-                        if (response != null)
+
+                        response = await _IMapUnitBL.CheckUnitMappedInMapUnit(SUSNo); // Check if Unit is already mapped
+                        if (response.Result)
                         {
-                            if (response.UnitMapId != null) // Unit already mapped
+                            dTO.UnitId = response.Value.UnitId ?? 0;
+                            if (dTO.UnitType == 1)
                             {
-                                //Unit already mapped
-                                return Json(KeyConstants.Exists);
+                                dTO.FmnBranchID = 1;
+                                dTO.PsoId = 1;
+                                dTO.SubDteId = 1;
                             }
-                            else if (response.IsVerify == false)
+                            else if (dTO.UnitType == 2)
                             {
-                                //Unit not verify
-                                return Json(5);
+                                dTO.PsoId = 1;
+                                dTO.SubDteId = 1;
                             }
                             else
                             {
-                                bool result = (bool)await _iAccountBL.SaveUnitWithMapping(dTO); // Save Unit with Mapping
-                                if (result == true)
-                                {
-                                    return Json(KeyConstants.Save);
-                                }
-                                else
-                                {
-                                    return Json(KeyConstants.InternalServerError);
-                                }
+                                dTO.ComdId = 1;
+                                dTO.CorpsId = 1;
+                                dTO.DivId = 1;
+                                dTO.BdeId = 1;
+                                dTO.FmnBranchID = 1;
                             }
+                            bool result = await _iAccountBL.SaveUnitWithMapping(dTO); // Save Unit with Mapping
+                            if (result)
+                            {
+                                final_response.Result = result;
+                                final_response.Message = "Unit has been saved.<br/>Please wait for the Admin Approval.";
+                            }
+                            else
+                            {
+                                final_response.Result = false;
+                                final_response.Message = "Failed to save unit mapping.";
+
+                            }
+                            return Json(final_response);
                         }
                         else
                         {
-                            bool result = (bool)await _iAccountBL.SaveUnitWithMapping(dTO); // Save Unit with Mapping
-                            if (result == true)
-                            {
-                                return Json(KeyConstants.Save);
-                            }
-                            else
-                            {
-                                return Json(KeyConstants.InternalServerError);
-                            }
+                            final_response.Result = response.Result;
+                            final_response.Message= response.Message;
+                            final_response.Value = string.Empty;
+                            return Json(final_response);
                         }
                     }
                     else
                     {
-                        return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                        final_response.Result = false;
+                        // Collect and return model validation errors
+                        var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                                                .SelectMany(x => x.Value!.Errors.Select(e =>
+                                                    $"{x.Key}: {e.ErrorMessage}"))
+                                                .ToList();
+                        if (errors.Any())
+                        {
+                            final_response.Message = string.Join("; ", errors);
+                        }
+                        return Json(final_response);
                     }
                 }
                 else
@@ -1699,7 +1719,9 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Account->SaveUnitWithMapping");
-                return Json(KeyConstants.InternalServerError);
+                final_response.Result = false;
+                final_response.Message = "Internal Server Error";
+                return Json(final_response);
             }
         }
 

@@ -1995,70 +1995,75 @@ namespace DataAccessLayer
         /// - Timestamps are saved in India Standard Time (IST).
         /// - Errors are logged using the application's logger.
         /// </remarks>
-        public async Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO)
+        public async Task<bool> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                try
+                var indiaTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                var trnRegUser = new TrnUnregdUser
                 {
-                    var trnRegUser = new TrnUnregdUser
-                    {
-                        Name = dTO.Name,
-                        ServiceNo = dTO.ServiceNo,
-                        Rank = dTO.Rank,
-                        DomainId =dTO.DomainId,
-                        IsActive=true,
-                        UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
-                    };
-                    await _context.TrnUnregdUser.AddAsync(trnRegUser);
-                    await _context.SaveChangesAsync();
-                    MUnit mUnit = new MUnit();
-                    if (dTO.UnitId == 0)
-                    {
-                        mUnit.Sus_no = dTO.Sus_no;
-                        mUnit.Suffix = dTO.Suffix;
-                        mUnit.UnitName = dTO.UnitName;
-                        mUnit.IsVerify = false;
-                        mUnit.IsActive = true;
-                        mUnit.Updatedby = null;
-                        mUnit.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                        mUnit.UnregdUserId = trnRegUser.UnregdUserId;
-
-                        await _context.MUnit.AddAsync(mUnit);
-                        await _context.SaveChangesAsync();
-                    }
-                    else 
-                    {
-                        mUnit.UnitId = dTO.UnitId;
-                    }
-
-                    var mapUnit = new MapUnit
-                    {
-                        UnitId = mUnit.UnitId,
-                        UnitType= dTO.UnitType,
-                        ComdId = dTO.ComdId,
-                        CorpsId = dTO.CorpsId,
-                        DivId = dTO.DivId,
-                        BdeId= dTO.BdeId,
-                        FmnBranchID = dTO.FmnBranchID,
-                        PsoId =dTO.PsoId,
-                        SubDteId= dTO.SubDteId,
-                        IsActive=true,
-                        Updatedby=null,
-                        UpdatedOn= TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
-                    };
-                    await _context.MapUnit.AddAsync(mapUnit);
-                    await _context.SaveChangesAsync();
-
-                    transaction.Commit();
-                    return true;
-                }
-                catch (Exception ex)
+                    Name = dTO.Name,
+                    ServiceNo = dTO.ServiceNo,
+                    Rank = dTO.Rank,
+                    DomainId = dTO.DomainId,
+                    IsActive = true,
+                    UpdatedOn = indiaTime,
+                };
+                await _context.TrnUnregdUser.AddAsync(trnRegUser);
+                await _context.SaveChangesAsync();
+                
+                MUnit mUnit = new MUnit();
+                
+                if (dTO.UnitId == 0)
                 {
-                    transaction.Rollback();
-                    _logger.LogError(1001, ex, "AccountDB->SaveDomainRegn");
-                    return null;
+                    mUnit = new MUnit
+                    {
+                        Sus_no = dTO.Sus_no,
+                        Suffix = dTO.Suffix,
+                        UnitName = dTO.UnitName,
+                        IsVerify = false,
+                        IsActive = true,
+                        Updatedby = null,
+                        UpdatedOn = indiaTime,
+                        UnregdUserId = trnRegUser.UnregdUserId
+                    };
+
+                    await _context.MUnit.AddAsync(mUnit);
+                    await _context.SaveChangesAsync();
                 }
+                else
+                {
+                    mUnit.UnitId = dTO.UnitId;
+                }
+
+                var mapUnit = new MapUnit
+                {
+                    UnitId = mUnit.UnitId,
+                    UnitType = dTO.UnitType,
+                    ComdId = dTO.ComdId,
+                    CorpsId = dTO.CorpsId,
+                    DivId = dTO.DivId,
+                    BdeId = dTO.BdeId,
+                    FmnBranchID = dTO.FmnBranchID,
+                    PsoId = dTO.PsoId,
+                    SubDteId = dTO.SubDteId,
+                    IsActive = true,
+                    Updatedby = null,
+                    UpdatedOn = indiaTime,
+                };
+                await _context.MapUnit.AddAsync(mapUnit);
+                await _context.SaveChangesAsync();
+
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "AccountDB->SaveUnitWithMapping");
+                return false;
             }
         }
 

@@ -42,8 +42,9 @@ namespace DataAccessLayer
         /// - Query concatenates <c>Sus_no</c> and uppercased <c>Suffix</c> to match the input <paramref name="SUSNo"/>.
         /// - Intended for use before saving a unit mapping to prevent duplicates.
         /// </remarks>
-        public async Task<DTOCheckUnitMappedInMapUnitResponse?> CheckUnitMappedInMapUnit(string SUSNo)
+        public async Task<DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>> CheckUnitMappedInMapUnit(string SUSNo)
         {
+            var response = new DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>();
             var normalized = SUSNo.Trim();
             var Prefix = normalized[..Math.Min(3, normalized.Length)];
 
@@ -55,14 +56,45 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var Unit = await connection.QueryAsync<DTOCheckUnitMappedInMapUnitResponse>(query, new { Prefix });
-                    return Unit.FirstOrDefault(x =>string.Concat(x.Sus_no, x.Suffix).Equals(normalized, StringComparison.OrdinalIgnoreCase));
+                    var result =  Unit.FirstOrDefault(x =>string.Concat(x.Sus_no, x.Suffix).Equals(normalized, StringComparison.OrdinalIgnoreCase));
+                    if(result != null)
+                    {
+                        if (result.UnitMapId == null)
+                        {
+                            response.Result = true;
+                            response.Message = "ok";
+                        }
+                        else
+                        {
+                            if (result.IsVerify == false)
+                            {
+                                response.Result = false;
+                                response.Message = "Unit not verified by Admin.";
+                            }
+                            else
+                            {
+                                response.Result = false;
+                                response.Message = "Unit already mapped!";
+                            }
+                        }
+                        response.Value = result;
+                    }
+                    else
+                    {
+                        response.Result = true;
+                        response.Message = "ok";
+                        response.Value = new DTOCheckUnitMappedInMapUnitResponse();
+                    }
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "MapUnitDB->CheckUnitMappedInMapUnit");
-                return null;
+                response.Result = false;
+                response.Message = "An error occurred while checking the unit mapping.";
+                response.Value = new DTOCheckUnitMappedInMapUnitResponse();
             }
+            return response;
         }
 
         

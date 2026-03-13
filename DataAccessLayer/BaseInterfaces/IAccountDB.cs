@@ -21,7 +21,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOClaimsResponse>> GetAllClaims();
         public Task<DTOTempSession?> ProfileAndMappingSaving(DTOProfileAndMappingRequest model, DTOTempSession dTOTempSession);
         public Task<DTOAccountCountResponse> AccountCount();
-        public Task<bool?> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO);
+        public Task<bool> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO);
         public Task<DTODataTablesResponse<DTOUserRegnResponse>> GetDataForDataTable(DTODataTablesRequest request);
 
         Task<DTODataTablesResponse<DTOClaimsStoreResponse>> GetAllClaimsOrderBy(DTODataTablesRequest request);
