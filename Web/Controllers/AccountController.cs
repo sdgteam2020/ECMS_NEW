@@ -844,7 +844,7 @@ namespace Web.Controllers
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
                     dTOTempSession.IsIO = _trnDomainMapping.IsIO;
                     dTOTempSession.IsCO = _trnDomainMapping.IsCO;
-                    dTOTempSession.IsRO = _trnDomainMapping.IsRO;
+                    dTOTempSession.IsRO = _trnDomainMapping.IsRO; 
                     dTOTempSession.IsORO = _trnDomainMapping.IsORO;
                     dTOTempSession.IsToken = _trnDomainMapping.IsToken;
 
