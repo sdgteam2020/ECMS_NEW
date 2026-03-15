@@ -14,9 +14,9 @@ namespace BusinessLogicsLayer.Unit
         {
             _UnitDB = UnitDB;
         }
-        public async Task<DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>> CheckUnitMappedInMapUnit(string SUSNo)
+        public async Task<DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>> CheckUnitMappedInMapUnit(DTOSaveUnitWithMappingRequest dTO)
         {
-            return await _UnitDB.CheckUnitMappedInMapUnit(SUSNo);
+            return await _UnitDB.CheckUnitMappedInMapUnit(dTO);
         }
 
         public Task<DTOMapUnitResponse> GetALLByUnitById(int UnitId)

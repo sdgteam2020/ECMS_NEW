@@ -230,6 +230,7 @@ $(function () {
     $("#txtSusno").autocomplete({
         source: function (request, response) {
             $("#txtUnit").val("");
+            $("#txtUnitAbbr").val("");
             if (request.term.length > 2) {
                 spnUnitId = 0;
                 var param = { "SUSNo": request.term };
@@ -249,6 +250,7 @@ $(function () {
                         else {
                             spnUnitId = 0;
                             $("#txtUnit").prop('readOnly', false);
+                            $("#txtUnitAbbr").prop('readOnly', false);
                         }
                     },
                     error: function (response) {
@@ -275,13 +277,18 @@ $(function () {
                 success: function (data) {
                     $("#txtUnit").prop('readOnly', true);
                     $("#txtUnit").val(data.UnitName);
+
+                    $("#txtUnitAbbr").prop('readOnly', true);
+                    $("#txtUnitAbbr").val(data.Abbreviation);
                 },
                 error: function (response) {
                     $("#txtUnit").prop('readOnly', false);
+                    $("#txtUnitAbbr").prop('readOnly', false);
                     alert(response.responseText);
                 },
                 failure: function (response) {
                     $("#txtUnit").prop('readOnly', false);
+                    $("#txtUnitAbbr").prop('readOnly', false);
                     alert(response.responseText);
                 }
             });
@@ -293,6 +300,7 @@ $(function () {
         if (e.key === 'Delete' || e.key === 'Backspace') {
             spnUnitId = 0;
             $("#txtUnit").prop('readOnly', false);
+            $("#txtUnitAbbr").prop('readOnly', false);
         }
     });
 
@@ -584,6 +592,7 @@ function UnitSave() {
             "Sus_no": $("#txtSusno").val().substring(0, 7),
             "Suffix": $("#txtSusno").val().substring(8, 7),
             "UnitName": $("#txtUnit").val(),
+            "Abbreviation": $("#txtUnitAbbr").val(),
             "UnitType": $("input[type='radio'][name=UnitTyperdi]:checked").val(),
             "ComdId": $("#ddlCommand").val(),
             "CorpsId": $("#ddlCorps").val(),
@@ -606,10 +615,10 @@ function UnitSave() {
             }
             else {
                 if (result.Message.length > 0) {
-
-                    let messages = result.Message.split(';');
-                    messages.forEach(msg => {
-                        toastr.error(msg);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: result.Message
                     });
                 }
             }
@@ -703,6 +712,7 @@ function AppointmentSave() {
 function Reset() {
     $("#spnDomainRegId").html("0");
     $("#txtUnit").prop('readOnly', false);
+    $("#txtUnitAbbr").prop('readOnly', false);
     $("#txtSusno").val("");
     $("#txtUnit").val("");
     $("#ddlCommand").val("");

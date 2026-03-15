@@ -1,14 +1,12 @@
 ﻿using DataTransferObject.Localize;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataTransferObject.Requests
 {
     public class DTOSaveUnitWithMappingRequest
     {
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        [MinLength(8, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
-        [MaxLength(9, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string ServiceNo { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -21,13 +19,11 @@ namespace DataTransferObject.Requests
         [MaxLength(50, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string Rank { get; set; } = string.Empty;
 
-        [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w\-]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         [MaxLength(20, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string DomainId { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        //[RegularExpression("^[0-9]{7}[a-zA-Z]{1}$", ErrorMessage = "Use Seven digit numbers and one alphabet in capital letter without space")]
         [RegularExpression("^[0-9]{7}$", ErrorMessage = "Use Seven digit numbers")]
         [MaxLength(7, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string Sus_no { get; set; } = string.Empty;
@@ -44,6 +40,14 @@ namespace DataTransferObject.Requests
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [MaxLength(100, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string UnitName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Unit Abbreviation is required.")]
+        [MaxLength(10, ErrorMessage = "Maximum length of Abbreviation is ten characters.")]
+        [RegularExpression(@"^[a-zA-Z0-9]+( [a-zA-Z0-9]+){0,2}$", ErrorMessage = "Only alphabets, numbers and maximum two spaces allowed.")]
+        public string Abbreviation { get; set; } = string.Empty;
+
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "Numbers allowed.")]
+        public string Prefix { get; set; } = string.Empty;
 
         [Range(1, 3, ErrorMessage = "Invalid Unit Type.")]
         public int UnitType { get; set; }

@@ -2023,6 +2023,8 @@ namespace DataAccessLayer
                         Sus_no = dTO.Sus_no,
                         Suffix = dTO.Suffix,
                         UnitName = dTO.UnitName,
+                        Abbreviation= dTO.Abbreviation,
+                        Prefix = dTO.Prefix,
                         IsVerify = false,
                         IsActive = true,
                         Updatedby = null,

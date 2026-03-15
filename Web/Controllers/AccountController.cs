@@ -1643,14 +1643,17 @@ namespace Web.Controllers
                 {
                     dTO.ServiceNo = dTOTempSession.ICNOInput;
                     dTO.DomainId = dTOTempSession.DomainId;
+                    dTO.UnitName = (dTO.UnitName ?? "").Trim();
+                    dTO.Abbreviation = (dTO.Abbreviation ?? "").Trim();
                     dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
                     if (ModelState.IsValid) // Valid Model State
                     {
                         string SUSNo = dTO.Sus_no + dTO.Suffix.ToUpper();
+                        dTO.Prefix = string.IsNullOrEmpty(SUSNo) ? string.Empty : SUSNo[..Math.Min(3, SUSNo.Length)];
 
-                        response = await _IMapUnitBL.CheckUnitMappedInMapUnit(SUSNo); // Check if Unit is already mapped
+                        response = await _IMapUnitBL.CheckUnitMappedInMapUnit(dTO); // Check if Unit is already mapped
                         if (response.Result)
                         {
                             dTO.UnitId = response.Value.UnitId ?? 0;
@@ -1705,7 +1708,7 @@ namespace Web.Controllers
                                                 .ToList();
                         if (errors.Any())
                         {
-                            final_response.Message = string.Join("; ", errors);
+                            final_response.Message = string.Join("<br/>", errors);
                         }
                         return Json(final_response);
                     }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
 using static Dapper.SqlMapper;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -42,8 +43,9 @@ namespace DataAccessLayer
         /// - Query concatenates <c>Sus_no</c> and uppercased <c>Suffix</c> to match the input <paramref name="SUSNo"/>.
         /// - Intended for use before saving a unit mapping to prevent duplicates.
         /// </remarks>
-        public async Task<DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>> CheckUnitMappedInMapUnit(string SUSNo)
+        public async Task<DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>> CheckUnitMappedInMapUnit(DTOSaveUnitWithMappingRequest dTO)
         {
+            string SUSNo = dTO.Sus_no + dTO.Suffix.ToUpper();
             var response = new DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>();
             var normalized = SUSNo.Trim();
             var Prefix = normalized[..Math.Min(3, normalized.Length)];
@@ -81,9 +83,21 @@ namespace DataAccessLayer
                     }
                     else
                     {
-                        response.Result = true;
-                        response.Message = "ok";
-                        response.Value = new DTOCheckUnitMappedInMapUnitResponse();
+                        // Retrieve all units from the database without tracking them in memory (for performance reasons).
+                        List<MUnit> mUnits = await _context.MUnit.AsNoTracking().ToListAsync();
+                        bool exists = mUnits.Any(x =>x.UnitName.Equals(dTO.UnitName, StringComparison.OrdinalIgnoreCase) || x.Abbreviation.Equals(dTO.Abbreviation, StringComparison.OrdinalIgnoreCase));
+                        if (exists)
+                        {
+                            response.Result = false;
+                            response.Message = "Unit Name or Abbreviation already exists.";
+                            response.Value = new DTOCheckUnitMappedInMapUnitResponse();
+                        }
+                        else
+                        {
+                            response.Result = true;
+                            response.Message = "ok";
+                            response.Value = new DTOCheckUnitMappedInMapUnitResponse();
+                        }
                     }
                 }
             }
