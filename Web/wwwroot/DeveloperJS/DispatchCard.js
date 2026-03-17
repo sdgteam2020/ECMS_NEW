@@ -334,12 +334,12 @@ function BindData(cvalue, callback) {
         },
         dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
+            //{
+            //    extend: 'copy',
+            //    exportOptions: {
+            //        columns: "thead th:not(.noExport)"
+            //    }
+            //},
             {
                 extend: 'excel',
                 exportOptions: {
@@ -595,12 +595,12 @@ function BindDialog(rowData, cvalue, callback) {
             },
             dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
             buttons: [
-                {
-                    extend: 'copy',
-                    exportOptions: {
-                        columns: "thead th:not(.noExport)"
-                    }
-                },
+                //{
+                //    extend: 'copy',
+                //    exportOptions: {
+                //        columns: "thead th:not(.noExport)"
+                //    }
+                //},
                 {
                     extend: 'excel',
                     exportOptions: {
@@ -1507,12 +1507,12 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
             },
             dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
             buttons: [
-                {
-                    extend: 'copy',
-                    exportOptions: {
-                        columns: "thead th:not(.noExport)"
-                    }
-                },
+                //{
+                //    extend: 'copy',
+                //    exportOptions: {
+                //        columns: "thead th:not(.noExport)"
+                //    }
+                //},
                 {
                     extend: 'excel',
                     exportOptions: {

@@ -367,31 +367,32 @@ function BindData() {
                 render: function (data, type, row) {
                     return data ? DateFormateddMMyyyyhhmmss(data) : "NA";
                 },
-            },
-            {
-                title: "Uploaded CSV",
-                data: null,
-                orderable: false,
-                className: "nowrap text-center",
-                render: function (data, type, row, meta) {
-                    return `
-                    <button class="cls-uploadedCsv btn btn-sm btn-success download-btn" title="Download">
-                        <i class="fa fa-download"></i>
-                    </button>`;
-                }
-            },
-            {
-                title: "Validated CSV",
-                data: null,
-                orderable: false,
-                className: "nowrap text-center",
-                render: function (data, type, row, meta) {
-                    return `
-                    <button class="cls-validatedCsv btn btn-sm btn-success download-btn" title="Download">
-                        <i class="fa fa-download"></i>
-                    </button>`;
-                }
             }
+            //,
+            //{
+            //    title: "Uploaded CSV",
+            //    data: null,
+            //    orderable: false,
+            //    className: "nowrap text-center",
+            //    render: function (data, type, row, meta) {
+            //        return `
+            //        <button class="cls-uploadedCsv btn btn-sm btn-success download-btn" title="Download">
+            //            <i class="fa fa-download"></i>
+            //        </button>`;
+            //    }
+            //},
+            //{
+            //    title: "Validated CSV",
+            //    data: null,
+            //    orderable: false,
+            //    className: "nowrap text-center",
+            //    render: function (data, type, row, meta) {
+            //        return `
+            //        <button class="cls-validatedCsv btn btn-sm btn-success download-btn" title="Download">
+            //            <i class="fa fa-download"></i>
+            //        </button>`;
+            //    }
+            //}
         ],
         columnDefs: [
             {
@@ -405,12 +406,12 @@ function BindData() {
         },
         dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
+            //{
+            //    extend: 'copy',
+            //    exportOptions: {
+            //        columns: "thead th:not(.noExport)"
+            //    }
+            //},
             {
                 extend: 'excel',
                 exportOptions: {

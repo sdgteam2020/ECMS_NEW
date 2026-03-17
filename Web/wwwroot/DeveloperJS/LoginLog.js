@@ -21,8 +21,8 @@ $(function () {
     });
 
     $("body").on("click", ".cls-btnhistory", function () {
-       
-        $(".loginlodetails").html($(this).closest("tr").find(".DomainID").html() + '(' + $(this).closest("tr").find(".ArmyNo").html() +' ' + $(this).closest("tr").find(".RankName").html() + '' + $(this).closest("tr").find(".Name").html() + ') ');
+
+        $(".loginlodetails").html($(this).closest("tr").find(".DomainID").html() + '(' + $(this).closest("tr").find(".ArmyNo").html() + ' ' + $(this).closest("tr").find(".RankName").html() + '' + $(this).closest("tr").find(".Name").html() + ') ');
 
         var fmdate = new Date($("#FmDate").val());
         var todate = new Date($("#ToDate").val());
@@ -34,14 +34,14 @@ $(function () {
             if ($("#FmDate").val() == "" && $("#ToDate").val() == "") {
                 $("#modalLoginLog").modal('show');
                 GetLog($(this).closest("tr").find("#AspNetUsersId").html())
-            }else
+            } else
                 toastr.error('Please Select Valid date');
         }
     });
 
 });
-function GetLog(AspNetUsersId, FmDate,ToDate) {
-    
+function GetLog(AspNetUsersId, FmDate, ToDate) {
+
     var userdata =
     {
         "AspNetUsersId": AspNetUsersId,
@@ -81,14 +81,14 @@ function GetLog(AspNetUsersId, FmDate,ToDate) {
                     var colorTime = "";
                     var headerlve = 0;
 
-                   
+
                     for (var i = 0; i < response.length; i++) {
                         listItem2 += '<tr>';
-                        listItem2 += '<td>' + response[i].RoleName +'</td>';
-                        listItem2 += '<td>' + response[i].DomainID +'</td>';
-                        listItem2 += '<td>' + response[i].ArmyNo +'</td>';
-                        listItem2 += '<td>' + response[i].RankName +'</td>';
-                        listItem2 += '<td>' + response[i].Name +'</td>';
+                        listItem2 += '<td>' + response[i].RoleName + '</td>';
+                        listItem2 += '<td>' + response[i].DomainID + '</td>';
+                        listItem2 += '<td>' + response[i].ArmyNo + '</td>';
+                        listItem2 += '<td>' + response[i].RankName + '</td>';
+                        listItem2 += '<td>' + response[i].Name + '</td>';
                         listItem2 += '<td>' + DateFormateddMMyyyyhhmmss(response[i].UpdatedOn) + '</td>';
                         listItem2 += '<td>' + response[i].IP + '</td>';
                         listItem2 += '</tr>';
@@ -106,7 +106,7 @@ function GetLog(AspNetUsersId, FmDate,ToDate) {
 
                         }
                         years = datef2.getFullYear();
-                        
+
 
                         listItem += ' <div class="timeline-item">';
                         listItem += '<div class="timeline-point timeline-point"></div>';
@@ -163,17 +163,19 @@ function GetLog(AspNetUsersId, FmDate,ToDate) {
                         lengthChange: false,
                         searching: false,
                         paging: false, info: false,
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }]
+                        buttons: [
+                            //{
+                            //    extend: 'copy',
+                            //    exportOptions: {
+                            //        columns: "thead th:not(.noExport)"
+                            //    }
+                            //},
+                            {
+                                extend: 'excel',
+                                exportOptions: {
+                                    columns: "thead th:not(.noExport)"
+                                }
+                            }]
                     });
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
                 }

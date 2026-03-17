@@ -117,12 +117,12 @@ function BindData(callback) {
         },
         dom: "<'dt-top'lBf>rtip",
         buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
+            //{
+            //    extend: 'copy',
+            //    exportOptions: {
+            //        columns: "thead th:not(.noExport)"
+            //    }
+            //},
             {
                 extend: 'excel',
                 exportOptions: {
