@@ -1384,3 +1384,15 @@ table.dataTable {
     overflow-x: scroll !important; /* Force horizontal scrollbar */
     overflow-y: scroll !important; /* Force vertical scrollbar */
 }
+
+table.dataTable tbody tr,
+table.dataTable tbody td {
+    cursor: default !important;
+}
+
+table.dataTable tbody a,
+table.dataTable tbody .btn,
+table.dataTable tbody button,
+table.dataTable tbody i {
+    cursor: pointer !important;
+}
