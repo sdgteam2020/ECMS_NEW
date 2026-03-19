@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 namespace Web.Healpers
@@ -186,13 +185,23 @@ namespace Web.Healpers
         {
             string returnTxt = plainText.Trim();
             returnTxt = (returnTxt + " - 1504170979800609").ToUpper();
-            var hash = (new SHA256Managed()).ComputeHash(Encoding.UTF8.GetBytes(returnTxt));
-            returnTxt = string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
-            returnTxt = (returnTxt + "**42314925074701##").ToUpper();
-            var hash1 = (new SHA1Managed()).ComputeHash(Encoding.UTF8.GetBytes(returnTxt.ToUpper()));
-            string txt = string.Join("", hash1.Select(b => b.ToString("x2")).ToArray()).ToUpper();
 
-            return txt;
+            byte[] firstHash;
+            using (var sha256 = SHA256.Create())
+            {
+                firstHash = sha256.ComputeHash(Encoding.UTF8.GetBytes(returnTxt));
+            }
+
+            returnTxt = Convert.ToHexString(firstHash).ToUpperInvariant(); 
+            returnTxt = (returnTxt + "**42314925074701##").ToUpper();
+
+            byte[] secondHash;
+            using (var sha256 = SHA256.Create())
+            {
+                secondHash = sha256.ComputeHash(Encoding.UTF8.GetBytes(returnTxt));
+            }
+
+            return Convert.ToHexString(secondHash).ToUpperInvariant();
         }
     }
 }
