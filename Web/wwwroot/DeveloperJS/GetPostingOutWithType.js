@@ -205,12 +205,12 @@ function BindData() {
         },
         dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
+            //{
+            //    extend: 'copy',
+            //    exportOptions: {
+            //        columns: "thead th:not(.noExport)"
+            //    }
+            //},
             {
                 extend: 'excel',
                 exportOptions: {

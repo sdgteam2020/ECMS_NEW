@@ -6,7 +6,7 @@
         dropdownParent: $('#AddICardRequestHold'),
         closeOnSelect: false
     });
-    $("#btnRequestHoldAdd").on("click", function (){
+    $("#btnRequestHoldAdd").on("click", function () {
         Reset();
         ResetErrorMessage();
         $("#gpUnHoldReason").addClass("d-none");
@@ -104,7 +104,7 @@
                 }
             });
         },
-        
+
     });
 
     $('#txtArmyNo').on("keyup", function (e) {
@@ -166,7 +166,7 @@ function BindData() {
                         if ($("#spnFlagICardAppl").html() == 'Flag ICard Appl') {
                             listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span></td>";
                         }
-                        
+
                         listItem += "</tr>";
 
                     }
@@ -182,28 +182,30 @@ function BindData() {
                         lengthChange: false,
                         stateSave: true,
                         "order": [[1, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_ICardRequestHold',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
+                        buttons: [
+                            //{
+                            //    extend: 'copy',
+                            //    exportOptions: {
+                            //        columns: "thead th:not(.noExport)"
+                            //    }
+                            //},
+                            {
+                                extend: 'excel',
+                                exportOptions: {
+                                    columns: "thead th:not(.noExport)"
+                                }
+                            }, {
+                                extend: 'pdfHtml5',
+                                orientation: 'portrait',
+                                pageSize: 'A4',
+                                title: 'E-IASC_ICardRequestHold',
+                                exportOptions: {
+                                    columns: "thead th:not(.noExport)"
+                                },
+                                customize: function (doc) {
+                                    WaterMarkOnPdf(doc)
+                                }
+                            }]
                     });
 
                     memberTable.buttons().container().appendTo('#tblData_wrapper .col-md-6:eq(0)');
@@ -247,7 +249,7 @@ function BindData() {
                 $("#tblData").DataTable().destroy();
 
                 $("#DetailBody").html(listItem);
-               var memberTable = $('#tblData').DataTable({
+                var memberTable = $('#tblData').DataTable({
                     "language": {
                         "emptyTable": "No data available"
                     }
@@ -273,8 +275,8 @@ function Save() {
             "RequestId": $('#spnRequestId').html(),
             "IsHold": $('input:radio[name=IsHold]:checked').val(),
             "HoldReason": $("#txtHoldReason").val(),
-            "UnHoldReason": $("#txtUnHoldReason").val().length > 0 ?$("#txtUnHoldReason").val() : null,
-        }, 
+            "UnHoldReason": $("#txtUnHoldReason").val().length > 0 ? $("#txtUnHoldReason").val() : null,
+        },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if (result == DataSave) {

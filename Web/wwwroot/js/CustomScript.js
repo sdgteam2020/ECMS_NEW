@@ -5,7 +5,7 @@ var oTable;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    $("#icardPrint").on("click",function () {
+    $("#icardPrint").on("click", function () {
         window.print();
     });
     //$('#RegistrationId').on('change', function () {
@@ -22,7 +22,7 @@ $(function () {
 
     //});
     /* alert(sessionStorage.getItem("OffType"))*/
- 
+
 });
 $("body").on("click", ".cls-btnRetry", function () {
     Swal.fire({
@@ -79,7 +79,7 @@ function getUserData() {
         }
     });
 }
-function getData1(id) {  
+function getData1(id) {
     let formId = '#' + id;
     // Check if the form exists
     if ($(formId).length === 0) {
@@ -92,7 +92,7 @@ function getData1(id) {
     if ($(formId).valid()) {
         var formData = $(formId).serialize();
     }
-     else {
+    else {
         return false;
     }
     let regId = $("#RegistrationId").find(":selected").val();
@@ -112,8 +112,8 @@ function getData1(id) {
             //return { label: item.ArmyNo, value: item.UserId };
             if (data.length > 0) {
 
-               
-              
+
+
                 $.ajax({
                     url: "/BasicDetail/GetData",
                     type: "POST",
@@ -178,7 +178,7 @@ function getData1(id) {
         }
     });
 
-   
+
 }
 function confirmDelete(uniqueId, isDeleteClicked) {
     var deleteSpan = '#deleteSpan_' + uniqueId;
@@ -224,7 +224,7 @@ function printDiv() {
 
     newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
     newWin.document.write('<link href="" rel="stylesheet" type="text/css" />');
-    newWin.document.write('<link rel="\"stylesheet\"" href = "\"../lib/twitter-bootstrap/css/site.css\"" type = "\"text/css\"/" > ' );
+    newWin.document.write('<link rel="\"stylesheet\"" href = "\"../lib/twitter-bootstrap/css/site.css\"" type = "\"text/css\"/" > ');
 
     newWin.document.close();
 
@@ -237,24 +237,26 @@ function LoadJDTK(selector) {
         retrieve: true,
         lengthChange: false,
         "order": [[2, "asc"]],
-        buttons: [{
-            extend: 'copy',
-            exportOptions: {
-                columns: "thead th:not(.noExport)"
-            }
-        }, {
-            extend: 'excel',
-            exportOptions: {
-                columns: "thead th:not(.noExport)"
-            }
-        }, {
-            extend: 'pdfHtml5',
-            orientation: 'landscape',
-            pageSize: 'LEGAL',
-            exportOptions: {
-                columns: "thead th:not(.noExport)"
-            }
-        }]
+        buttons: [
+            //{
+            //    extend: 'copy',
+            //    exportOptions: {
+            //        columns: "thead th:not(.noExport)"
+            //    }
+            //},
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            }, {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL',
+                exportOptions: {
+                    columns: "thead th:not(.noExport)"
+                }
+            }]
     });
 
     memberTable.buttons().container().appendTo('#myProjectTable_wrapper .col-md-6:eq(0)');
@@ -394,7 +396,7 @@ function LoadDOC(selector, title) {
         ]
     });
 }
-function LoadDOCCustomPageLength(selector, title, pageLength ,orien, pagesize) {
+function LoadDOCCustomPageLength(selector, title, pageLength, orien, pagesize) {
     function getBase64FromImageUrl(url) {
         var img = new Image();
         img.crossOrigin = "anonymous";
@@ -706,7 +708,7 @@ function LoadJDTWithCustomCols(selector, args) {
     });
 }
 /*With Custom*/
-function LoadJDTCustom(selector, args,orien,pagesize) {
+function LoadJDTCustom(selector, args, orien, pagesize) {
     oTable = $(selector).DataTable({
         /*dom: 'Blfrtip',*/
         dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',

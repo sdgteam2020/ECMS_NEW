@@ -5,10 +5,10 @@ $(function () {
 
     Reset();
     BindData()
-    $("#txtSerachunit").on("keyup",function () {
+    $("#txtSerachunit").on("keyup", function () {
         BindData()
     });
-    $("#btnReset").on("click",function () {
+    $("#btnReset").on("click", function () {
         Reset();
     });
     $("#btnsave").on("click", function () {
@@ -99,36 +99,36 @@ function BindData() {
         autoWidth: false,  //Set autoWidth to true (let DataTables decide)
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
-        searching:false,
+        searching: false,
         order: [[0, 'desc']], // Default sorting on the first column
-                ajax: async function (data, callback, settings) {
-                    let requestData = {
-                        draw: data.draw,
-                        start: data.start,
-                        length: data.length,
-                        searchValue: data.search.value,
-                        sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',
-                        sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
-                    };
-                    try {
-                        let response = await fetch("/Master/GetAllUnit", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/x-www-form-urlencoded",
-                                'RequestVerificationToken': globalThis.RequestVerificationToken
-                            },
-                            body: new URLSearchParams(requestData).toString()
-                        });
+        ajax: async function (data, callback, settings) {
+            let requestData = {
+                draw: data.draw,
+                start: data.start,
+                length: data.length,
+                searchValue: data.search.value,
+                sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',
+                sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
+            };
+            try {
+                let response = await fetch("/Master/GetAllUnit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        'RequestVerificationToken': globalThis.RequestVerificationToken
+                    },
+                    body: new URLSearchParams(requestData).toString()
+                });
 
-                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-                        let result = await response.json();
-                        callback(result); // Sends data to DataTables
+                let result = await response.json();
+                callback(result); // Sends data to DataTables
 
-                    }catch (error) {
-                        console.error("Error fetching data:", error);
-                    }
-                },
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },
         columns: [
             {
                 title: "Unit Id",
@@ -156,14 +156,14 @@ function BindData() {
                 data: "Sus_no",
                 name: "Sus_no",
                 width: "110px",
-                orderable: true, 
+                orderable: true,
             },
             {
                 title: "Suffix",
                 data: "Suffix",
                 name: "Suffix",
                 width: "80px",
-                orderable: true, 
+                orderable: true,
             },
             {
                 title: "Unit Name",
@@ -193,7 +193,7 @@ function BindData() {
                 data: "IsVerify",
                 name: "IsVerify",
                 width: "100px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
                     return data ? "<span class='badge badge-pill badge-success'>Verifed</span>" : "<span class='badge badge-pill badge-danger'>Not Verify</span>";
@@ -231,24 +231,24 @@ function BindData() {
                 orderSequence: ["asc", "desc"]
             },
         ],
-            language: {
-                search: "", // Remove the default "Search:" label
-                searchPlaceholder: "UNIT SUS No" // Add custom placeholder
-            },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-            buttons: [
-                {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
-                {
+        language: {
+            search: "", // Remove the default "Search:" label
+            searchPlaceholder: "UNIT SUS No" // Add custom placeholder
+        },
+        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        buttons: [
+            //{
+            //    extend: 'copy',
+            //    exportOptions: {
+            //        columns: "thead th:not(.noExport)"
+            //    }
+            //},
+            {
                 extend: 'excel',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 }
-            }, 
+            },
             {
                 extend: 'pdfHtml5',
                 orientation: 'landscape',
@@ -345,7 +345,7 @@ function Save() {
                 toastr.success('Unit has been saved');
 
                 /*  $("#AddNewM").modal('hide');*/
-               /* $("#tbldata").DataTable().destroy();*/    
+                /* $("#tbldata").DataTable().destroy();*/
                 BindData();
                 Reset();
             }
@@ -353,7 +353,7 @@ function Save() {
                 toastr.success('Unit has been Updated');
 
                 /*  $("#AddNewM").modal('hide');*/
-                $("#tbldata").DataTable().destroy();    
+                $("#tbldata").DataTable().destroy();
                 BindData();
                 Reset();
             }

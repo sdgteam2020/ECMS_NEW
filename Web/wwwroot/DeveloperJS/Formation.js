@@ -8,8 +8,8 @@ $(function () {
     //    $("#AddNew").modal('show');
 
     //});
-   
-    $("#btnsave").on("click",function () {
+
+    $("#btnsave").on("click", function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -25,14 +25,14 @@ $(function () {
                     Save();
                 }
             })
-           
+
         } else {
             $("#SaveForm")[0].reportValidity();
         }
 
-       
-       
-       // 
+
+
+        // 
 
     });
 
@@ -43,13 +43,13 @@ $(function () {
 
             memberTable.$('input[type="checkbox"]:checked').each(function () {
 
-                
+
                 var id = $(this).attr("Id");
                 lst.push(id);
                 console.log(id);
 
             });
-          
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Delete",
@@ -60,7 +60,7 @@ $(function () {
                 confirmButtonText: 'Yes, Delete it!'
             }).then((result) => {
                 if (result.value) {
-                   
+
                     DeleteMultiple(lst);
 
                 }
@@ -102,58 +102,60 @@ function BindData() {
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(0);
                 }
-               
+
                 else {
 
                     /*$("#tblcommnd").DataTable().destroy();*/
-                   
+
                     for (var i = 0; i < response.length; i++) {
-                       
-                            listItem += "<tr>";
-                            listItem += "<td class='d-none'><span id='spnTformationId'>" + response[i].FormationId + "</span></td>";
-                            listItem += "<td>";
-                            listItem += "<div class='custom-control custom-checkbox small'>";
-                            listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].FormationId + "'>";
-                            listItem += "<label class='custom-control-label' for='" + response[i].FormationId + "'></label>";
-                            listItem += "</div>";
-                            listItem += "</td>";
-                            listItem += "<td class='align-middle'>" + (i+1) + "</td>";
-                            listItem += "<td class='align-middle'><span id='formationName'>" + response[i].FormationName + "</span></td>";
-                            
 
-                            listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
+                        listItem += "<tr>";
+                        listItem += "<td class='d-none'><span id='spnTformationId'>" + response[i].FormationId + "</span></td>";
+                        listItem += "<td>";
+                        listItem += "<div class='custom-control custom-checkbox small'>";
+                        listItem += "<input type='checkbox' class='custom-control-input' id='" + response[i].FormationId + "'>";
+                        listItem += "<label class='custom-control-label' for='" + response[i].FormationId + "'></label>";
+                        listItem += "</div>";
+                        listItem += "</td>";
+                        listItem += "<td class='align-middle'>" + (i + 1) + "</td>";
+                        listItem += "<td class='align-middle'><span id='formationName'>" + response[i].FormationName + "</span></td>";
 
 
-                            /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
-                            listItem += "</tr>";
-                        
+                        listItem += "<td class='align-middle'><span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button></td>";
+
+
+                        /*    listItem += "<td class='nowrap'><button type='button' class='cls-btnSend btn btn-outline-success mr-1'>Send To Verification</button></td>";*/
+                        listItem += "</tr>";
+
                     }
 
                     $("#DetailBody").html(listItem);
                     $("#lblTotal").html(response.length);
-                  
-                   var memberTable = $('#tbldata').DataTable({
+
+                    var memberTable = $('#tbldata').DataTable({
                         retrieve: true,
                         lengthChange: false,
                         "order": [[2, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'landscape',
-                            pageSize: 'LEGAL',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }]
+                        buttons: [
+                            //{
+                            //    extend: 'copy',
+                            //    exportOptions: {
+                            //        columns: "thead th:not(.noExport)"
+                            //    }
+                            //},
+                            {
+                                extend: 'excel',
+                                exportOptions: {
+                                    columns: "thead th:not(.noExport)"
+                                }
+                            }, {
+                                extend: 'pdfHtml5',
+                                orientation: 'landscape',
+                                pageSize: 'LEGAL',
+                                exportOptions: {
+                                    columns: "thead th:not(.noExport)"
+                                }
+                            }]
                     });
 
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
@@ -179,9 +181,9 @@ function BindData() {
                     });
 
                     $("body").on("click", ".cls-btnedit", function () {
-                      /*  $("#AddNewM").modal('show');*/
+                        /*  $("#AddNewM").modal('show');*/
                         $("#txtFormation").val($(this).closest("tr").find("#formationName").html());
-               
+
                         $("#spnFormationId").html($(this).closest("tr").find("#spnTformationId").html());
                         $("#btnsave").val("Update");
                     });
@@ -199,7 +201,7 @@ function BindData() {
                             confirmButtonText: 'Yes, Delete It!'
                         }).then((result) => {
                             if (result.value) {
-                                
+
                                 Delete($(this).closest("tr").find("#spnTformationId").html());
 
                             }
@@ -227,7 +229,7 @@ function BindData() {
 function Save() {
 
     /*  alert($('#bdaymonth').val());*/
-   
+
     $.ajax({
         url: '/Master/SaveFormation',
         type: 'POST',
@@ -280,7 +282,7 @@ function Save() {
 
 function Reset() {
     $("#txtFormation").val("");
-    
+
     $("#spnFormationId").html("0");
 }
 
@@ -329,7 +331,7 @@ function Delete(FormationId) {
 }
 
 function DeleteMultiple(ComdId) {
-   
+
     var userdata =
     {
         "ints": ComdId,
@@ -351,13 +353,13 @@ function DeleteMultiple(ComdId) {
                 else if (response == Success) {
                     //lol++;
                     //if (lol == Tot) {
-                     toastr.error('Deleted Selected');
+                    toastr.error('Deleted Selected');
                     BindData();
                 }
 
                 //}
             }
-           
+
         },
         error: function (result) {
             Swal.fire({
