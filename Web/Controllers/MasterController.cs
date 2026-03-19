@@ -2470,10 +2470,18 @@ namespace Web.Controllers
         [AllowAnonymous]
         [AnySessionRequired]
         [HttpPost]
-        public async Task<IActionResult> SaveAppointment(MAppointment dTO)
+        public async Task<IActionResult> SaveAppointment(DTOSaveAppointmentRequest data)
         {
             try
             {
+                var dTO = new MAppointment();
+                dTO.ApptId = data.ApptId;
+                dTO.Approved = data.Approved;
+                dTO.AppointmentAbbreviation = (data.AppointmentAbbreviation ?? "").Trim();
+                dTO.AppointmentName = (data.AppointmentName ?? "").Trim();
+                dTO.IsActive = true;
+                dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+
                 var user = await _userManager.GetUserAsync(User);
 
                 if (user != null)
@@ -2493,10 +2501,6 @@ namespace Web.Controllers
                     dTO.Updatedby = null;
                 }
                    
-                dTO.IsActive = true;
-                dTO.UpdatedOn = DateTime.Now;
-                dTO.AppointmentName = dTO.AppointmentName.Trim();
-                
                 if (ModelState.IsValid)
                 {
                     if (!await unitOfWork.Appt.GetByName(dTO)) // Check if an appointment with the same name already exists
@@ -2511,20 +2515,27 @@ namespace Web.Controllers
 
                             await unitOfWork.Appt.Add(dTO); // Add new appointment
                             return Json(KeyConstants.Save);
-
-
                         }
                     }
                     else
                     {
                         return Json(KeyConstants.Exists);
                     }
-
                 }
                 else
                 {
+                    var Message=string.Empty;
+                    // Collect and return model validation errors
+                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
+                                            .SelectMany(x => x.Value!.Errors.Select(e =>
+                                                $"{x.Key}: {e.ErrorMessage}"))
+                                            .ToList();
+                    if (errors.Any())
+                    {
+                        Message = string.Join("<br/>", errors);
+                    }
 
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); // Return validation errors
+                    return Json (Message); // Return validation errors
                 }
 
             }

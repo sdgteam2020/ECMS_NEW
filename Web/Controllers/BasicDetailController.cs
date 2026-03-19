@@ -20,6 +20,7 @@ using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.TrnICardHold;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
+using BusinessLogicsLayer.User;
 using CsvHelper;
 using CsvHelper.Configuration;
 using DataAccessLayer;
@@ -669,6 +670,7 @@ namespace Web.Controllers
             string decryptedId = string.Empty; // will hold decrypted string value
             int decryptedIntId = 0;            // will hold decrypted integer value
 
+
             try
             {
                 // Attempt to decrypt the provided Id using Unprotect method
@@ -730,40 +732,35 @@ namespace Web.Controllers
         /// if validation passes, or redirects to ContactUs with an error message if input or configuration is invalid.
         /// </returns>
         [HttpGet]
-        public async Task<ActionResult> InaccurateData(string Id)
+        public async Task<ActionResult> InaccurateData()
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
-
-            // Extract current user identifier from claims
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            // Validate Id: must not be null/empty and must be a valid Base64 string
-            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            bool claim=false;
+            short ArmedIdForORO = 0;
+            if (role!= "user")
             {
-                TempData["error"] = "Invalid or tampered request.";
+                TempData["error"] = "Switch to user role.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
-
+            var dTOApplFwdCondition = new DTOApplFwdConditionRequest();
             try
             {
-                // Decode the Base64 Id into plain string
-                var base64EncodedBytes = Convert.FromBase64String(Id);
-                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
+                // Get current logged-in user's ID
+                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                // Convert decoded string to integer typeId (1 or 2 expected)
-                int typeId = Convert.ToInt32(decodedString);
+                // Fetch user object using UserManager
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
 
-                if (typeId == 1 || typeId == 2)
+                // Get all claims associated with the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+
+                // Check if user has both "Dispatch Card" and "Appl Approver" claims
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "View Indl Incorrect Data"))
                 {
+                    claim = true;
                     // Retrieve hardcoded ArmedId from configuration
-                    short ArmedIdForORO = Convert.ToInt16(Environment.GetEnvironmentVariable("HardCodeId__ArmedIdForORO"));
-
-                    // If not set, fallback could be hardcoded (commented-out sample code)
-
-                    // Load application forward condition settings from configuration
-
-                    DTOApplFwdConditionRequest dTOApplFwdCondition;
+                    ArmedIdForORO = Convert.ToInt16(Environment.GetEnvironmentVariable("HardCodeId__ArmedIdForORO"));
 
                     // Retrieve the encryption key record from the database
                     var keyRecord = await encryptionSettingBL.Get(1);
@@ -774,10 +771,6 @@ namespace Web.Controllers
                             dTOApplFwdCondition = !string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition)
                                 ? JsonConvert.DeserializeObject<DTOApplFwdConditionRequest>(keyRecord.ApplFwdCondition) ?? new DTOApplFwdConditionRequest()
                                 : new DTOApplFwdConditionRequest();
-                        }
-                        else
-                        {
-                            dTOApplFwdCondition = new DTOApplFwdConditionRequest();
                         }
                     }
                     else
@@ -803,47 +796,27 @@ namespace Web.Controllers
                     else
                     {
                         // Fetch inaccurate/observation records from business layer
-                        var allrecord = await Task.Run(() =>
-                            basicDetailTempBL.GetALLBasicDetailTemp(
-                                Convert.ToInt32(userId), typeId, dTOApplFwdCondition, ArmedIdForORO));
+                        var allrecord = await basicDetailTempBL.GetALLBasicDetailTemp(AspNetUsersId, claim, dTOApplFwdCondition, ArmedIdForORO);
 
                         // Set dynamic title depending on typeId
-                        ViewBag.Title = typeId == 1
-                            ? "Requests pending due to Incorrect Details/Data"
-                            : "List of Observation Raised";
-
-
-                        if (role == "user")
-                        {
-                            return View(allrecord);
-                        }
-                        else
-                        {
-                            TempData["error"] = "Switch to user role.";
-                            TempData.Keep("error");
-                            return RedirectToAction("ContactUs", "Home");
-                        }
+                        ViewBag.Title = "List of Observation Raised";
+                        return View(allrecord);
                     }
                 }
-
-                // If typeId is not valid, return error
-                TempData["error"] = "Invalid or tampered request.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
-            catch (FormatException ex)
-            {
-                // Handle Base64 decoding or int parsing errors
-                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
-                TempData["error"] = "Invalid or tampered request.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
+                else
+                {
+                    // Set dynamic title depending on typeId
+                    ViewBag.Title = "Requests pending due to Incorrect Details/Data";
+                    claim = false;
+                    var allrecord = await basicDetailTempBL.GetALLBasicDetailTemp(AspNetUsersId, claim, dTOApplFwdCondition, ArmedIdForORO);
+                    return View(allrecord);
+                }
             }
             catch (Exception ex)
             {
                 // Handle any other unexpected errors
                 _logger.LogError(1001, ex, "BasicDetailsController=>InaccurateData.");
-                TempData["error"] = "Invalid or tampered request.";
+                TempData["error"] = "Internal Server Error";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
@@ -866,6 +839,13 @@ namespace Web.Controllers
         public async Task<ActionResult> InaccurateDataView(string Id)
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
+            if (role != "user")
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
             // Validate Id: must not be null or empty
             if (string.IsNullOrEmpty(Id))
             {
@@ -902,16 +882,7 @@ namespace Web.Controllers
                 // If record found, render the view with retrieved details
                 if (dTOBasicDetail != null)
                 {
-                    if (role == "user")
-                    {
-                        return View(dTOBasicDetail);
-                    }
-                    else
-                    {
-                        TempData["error"] = "Switch to user role.";
-                        TempData.Keep("error");
-                        return RedirectToAction("ContactUs", "Home");
-                    }
+                    return View(dTOBasicDetail);
                 }
                 else
                 {
@@ -922,6 +893,7 @@ namespace Web.Controllers
                 }
             }
             catch (System.Security.Cryptography.CryptographicException ex)
+
             {
                 // Handle cryptographic errors (tampered/invalid encrypted Id)
                 _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
@@ -3113,10 +3085,19 @@ namespace Web.Controllers
         /// - ModelState error messages if the model is invalid.
         /// </returns>
         [Authorize(Policy = "FlagICardApplPolicy")]
-        public async Task<IActionResult> SaveICardRequestHold(MTrnICardHold dTO)
+        [HttpPost]
+        public async Task<IActionResult> SaveICardRequestHold(DTOSaveICardRequestHoldRequest dTOSave)
         {
+            var response = new DTOBeforeSaveICardRequestHoldResponse();
             try
             {
+                var dTO = new MTrnICardHold();
+                dTO.ICardHoldId = dTOSave.ICardHoldId;
+                dTO.RequestId = dTOSave.RequestId;
+                dTO.IsHold = dTOSave.IsHold;
+                dTO.HoldReason = dTOSave.HoldReason;
+                dTO.UnHoldReason = dTOSave.UnHoldReason;
+
                 // Retrieve session data for the current user
                 DtoSession? sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
@@ -3132,39 +3113,52 @@ namespace Web.Controllers
                 // Check if the model state is valid
                 if (ModelState.IsValid)
                 {
-                    // Check if a record with the given request ID already exists
-                    if (!await _iICardHoldBL.GetByRequestId(dTO))
+
+                    response = await _iICardHoldBL.CheckBeforeICardRequestHold(dTO);  // Call business logic to perform pre-save checks
+
+                    if (response.Result == true)
                     {
+                        dTO.RequestId = response.RequestId; //Overwrite RequestId with the one from the response to ensure consistency
+                        dTO.HoldReason = response.HoldReason; //Overwrite HoldReason with the one from the response to ensure consistency
+
                         // If the ICard hold record has an ID, update it, else add a new record
                         if (dTO.ICardHoldId > 0)
                         {
                             await _iICardHoldBL.Update(dTO);  // Update existing record
-                            return Json(KeyConstants.Save);   // Return success response
+                            response.Message = "ICard Request Hold has been Updated";
                         }
                         else
                         {
+                            dTO.UnHoldReason = null; // Ensure UnHoldReason is null when adding a new hold record
+                            dTO.IsHold = true;
                             await _iICardHoldBL.Add(dTO);    // Add new record
-                            return Json(KeyConstants.Update);  // Return success response
+                            response.Message = "ICard Request Hold has been saved";
                         }
-                    }
-                    else
-                    {
-                        // If the record with the same request ID already exists, return an "exists" response
-                        return Json(KeyConstants.Exists);
                     }
                 }
                 else
                 {
-                    // If model state is invalid, return the validation errors as a JSON response
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e =>
+                                    $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
+
+                    if (errors.Any())
+                    {
+                        response.Message = string.Join("<br/>", errors); // Concatenate all error messages
+                    }
+                    response.Result = false;
                 }
             }
             catch (Exception ex)
             {
                 // Log any exceptions and return an internal server error response
                 _logger.LogError(1001, ex, "BasicDetail->SaveICardRequestHold");
-                return Json(KeyConstants.InternalServerError);
+                response.Result = false;
+                response.Message = "Internal Server Error!";
             }
+            return Json(response);
         }
 
 
@@ -5320,6 +5314,15 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ICardRequestHold()
         {
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+
+            if (role != "user")
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
             // Retrieve the currently logged-in user's ID from claims
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -5331,19 +5334,7 @@ namespace Web.Controllers
 
             // Store the claims in ViewBag to make them available to the view
             ViewBag.UserClaims = UserClaims;
-
-            string role = SessionHelper.GetRoleFromSession(HttpContext);
-
-            if (role == "user")
-            {
-                return View();
-            }
-            else
-            {
-                TempData["error"] = "Switch to user role.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
+            return View();
         }
 
 
@@ -5357,29 +5348,53 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetAllICardRequestHold(DTODataTablesRequest dTO)
         {
+            var dTODispatchCardLists = new List<DTOICardRequestHoldResponse>();
+            var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
+            {
+                draw = 0,                 // Draw counter for DataTables
+                recordsTotal = 0,         // Total records count
+                recordsFiltered = 0,      // Filtered records count
+                data = dTODispatchCardLists // Empty data list
+            };
             try
             {
-                // Call the business layer to get all I-Card requests on hold based on the DataTables request
-                return Json(await basicDetailBL.GetAllICardRequestHold(dTO));
+                if (ModelState.IsValid)
+                {
+                    // Call the business layer to get all I-Card requests on hold based on the DataTables request
+                    responseData = await basicDetailBL.GetAllICardRequestHold(dTO);
+                    return Json(responseData);
+                }
+                else
+                {
+                    var errors = ModelState
+                                        .Where(x => x.Value?.Errors?.Count > 0)
+                                        .SelectMany(x => x.Value!.Errors.Select(e =>
+                                            $"{x.Key}: {e.ErrorMessage}"))
+                                        .ToList();
+
+                    if (errors.Any())
+                    {
+                        int draw = 0;
+                        int.TryParse(Request.Form["draw"], out draw);
+
+                        responseData.draw = draw;
+                        responseData.recordsTotal = 0;
+                        responseData.recordsFiltered = 0;
+                        responseData.data = new List<DTOICardRequestHoldResponse>();
+                        responseData.Message = string.Join("; ", errors); // Concatenate all error messages
+                    }
+                    responseData.Result = false;
+                }
+
             }
             catch (Exception ex)
             {
-                // In case of an exception, create an empty response for DataTables
-                List<DTOICardRequestHoldResponse> dTODispatchCardLists = new List<DTOICardRequestHoldResponse>();
-                var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
-                {
-                    draw = 0,                 // Draw counter for DataTables
-                    recordsTotal = 0,         // Total records count
-                    recordsFiltered = 0,      // Filtered records count
-                    data = dTODispatchCardLists // Empty data list
-                };
-
                 // Log the exception with an error code and method context
                 _logger.LogError(1001, ex, "BasicDetail->GetAllICardRequestHold");
-
-                // Return the empty response as JSON
-                return Json(responseData);
+                responseData.Result = false;
+                responseData.Message = "Internal Server Error!";
             }
+            return Json(responseData);
         }
 
 

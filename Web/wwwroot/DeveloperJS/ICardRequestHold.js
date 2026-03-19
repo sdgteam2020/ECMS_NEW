@@ -161,6 +161,16 @@ function BindData(cvalue, callback) {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
+                if (result.Result === false ) {
+                    toastr.error(result.Message);
+                    callback({
+                        draw: data.draw,
+                        recordsTotal: 0,
+                        recordsFiltered: 0,
+                        data: []
+                    });
+                    return;
+                }
                 callback(result); // Sends data to DataTables
 
 
@@ -203,6 +213,13 @@ function BindData(cvalue, callback) {
         },
         drawCallback: function (settings) {
 
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.ICardHoldId != null) {
@@ -236,14 +253,6 @@ function BindData(cvalue, callback) {
                 }
             });
 
-            $("#tbldata tbody").off("click", ".cls-HoldReason").on("click", ".cls-HoldReason", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    $("#MessageDialogLabel").html('Reason');
-                    $("#MessageDialogBody").html(rowData.HoldReason);
-                    $("#MessageDialog").modal('show');
-                }
-            });
             $("#tbldata tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
@@ -271,37 +280,22 @@ function Save() {
         }, 
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
-            if (result == DataSave) {
-                toastr.success('ICard Request Hold has been saved');
+
+            if (result.Result == true) {
+                toastr.success(result.Message);
 
                 $("#AddICardRequestHold").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == DataUpdate) {
-                toastr.success('ICard Request Hold has been Updated');
-
-                $("#AddICardRequestHold").modal('hide');
-                BindData();
-                Reset();
-                ResetErrorMessage();
-            }
-            else if (result == DataExists) {
-                toastr.error('Request Id Exits!');
-            }
-            else if (result == InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].Message)
-                    }
+            else {
+                if (result.Message.length > 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: result.Message
+                    });
                 }
             }
         }
@@ -369,9 +363,8 @@ function getColumnsData(choice) {
                     data: "HoldReason",
                     name: "HoldReason",
                     render: function (data, type, row) {
-                        let words = data.split(" ");
-                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : data;
-                        return `<span class='cls-HoldReason'>${truncatedSentence}</span>`;
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
                     }
                 },
                 {
@@ -470,6 +463,10 @@ function getColumnsData(choice) {
                     title: "Reason for Held",
                     data: "HoldReason",
                     name: "HoldReason",
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Hold",

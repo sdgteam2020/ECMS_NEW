@@ -607,7 +607,7 @@ function UnitSave() {
             if (result.Result == true) {
                 Swal.fire({
                     icon: 'info',
-                    title: 'Unit',
+                    title: 'Message',
                     html: result.Message,
                 })
                 $("#AddNewUnitmap").modal('hide');
@@ -681,7 +681,7 @@ function AppointmentSave() {
             else if (result == DataExists) {
                 Swal.fire({
                     icon: 'error',
-                    text: 'Appointment Name Exits!',
+                    text: 'Appointment / Abbreviation  Name Exits!',
                 })
 
             }
@@ -694,15 +694,11 @@ function AppointmentSave() {
 
             } else {
                 if (result.length > 0) {
-                    var err = "";
-                    for (var i = 0; i < result.length; i++) {
-                        err = err + result[i][0].ErrorMessage + '<br />';
-                    }
                     Swal.fire({
                         icon: 'error',
-                        title: 'Oops...',
-                        html: err,
-                    })
+                        title: 'Error',
+                        html: result
+                    });
                 }
             }
         }

@@ -2,6 +2,7 @@
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
+using DataTransferObject.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,10 @@ namespace BusinessLogicsLayer.TrnICardHold
         public async Task<bool> GetByRequestId(MTrnICardHold dTO)
         {
             return await _iICardHoldDB.GetByRequestId(dTO);
+        }
+        public async Task<DTOBeforeSaveICardRequestHoldResponse> CheckBeforeICardRequestHold(MTrnICardHold hold)
+        {
+            return await _iICardHoldDB.CheckBeforeICardRequestHold(hold);
         }
     }
 }
