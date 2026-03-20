@@ -1489,8 +1489,24 @@ namespace Web.Controllers
         [HttpPost]
         [AnySessionRequired]
         [AllowAnonymous]
-        public async Task<IActionResult> Profile(DTOProfileAndMappingRequest model)
+        public async Task<IActionResult> Profile(string EncryptedData, DTOProfileAndMappingRequest model)
         {
+            if (string.IsNullOrEmpty(EncryptedData))
+            {
+                
+             TempData["error"] = string.Join("; ", "Invalid Request"); // Concatenate all error messages
+              
+                return View(model);
+            }
+
+            model = await AESEncrytDecry.DecryptAESWithDTO<DTOProfileAndMappingRequest>(EncryptedData, SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData").Salt);
+            if (model==null)
+            {
+
+                TempData["error"] = string.Join("; ", "Invalid Request"); // Concatenate all error messages
+
+                return View(model);
+            }
             string? Footer = _configuration["Footer:Test"]; // Get Footer from config
             ViewBag.Footer = Footer;
 
@@ -1651,8 +1667,19 @@ namespace Web.Controllers
         [AllowAnonymous]
         [AnySessionRequired]
         [HttpPost]
-        public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingRequest dTO)
+        public async Task<IActionResult> SaveUnitWithMapping(string request)
         {
+            if (string.IsNullOrEmpty(request))
+            {
+                return Json(new { success = false, message = "Request is null or empty." });
+            }
+
+            DTOSaveUnitWithMappingRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOSaveUnitWithMappingRequest>(
+                request,
+                SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData").Salt
+            );
+            TryValidateModel(dTO);
+
             var final_response = new DTOGenericResponse<string>();
             try
             {
