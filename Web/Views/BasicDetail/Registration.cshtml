@@ -86,6 +86,7 @@
                                     <div class="row">
                                         <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="Registration" id="Registration" name="Registration" method="post" class="mt-3">
                                             <div class="card-body">
+                                                <input type="hidden" id="EncryptedData" name="EncryptedData" value="null" />
                                                 <input hidden asp-for="IdenMark1" />
                                                 <input hidden asp-for="IdenMark2" />
                                                 <input hidden asp-for="AadhaarNo" />

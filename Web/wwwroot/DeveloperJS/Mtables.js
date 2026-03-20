@@ -3,12 +3,19 @@
 });
 
 async function mMsater(sectid = '', ddl, TableId, ParentId) {
-
+   
+    let encryptedPayload = "";
     const payload = {
         tableName: "",
         id: TableId,
         parentId: ParentId ? Number(ParentId) : null   // ⭐ THIS IS IMPORTANT
     };
+
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+       
+    }
 
     try {
         const response = await fetch('/Master/GetAllMMaster', {
@@ -18,7 +25,8 @@ async function mMsater(sectid = '', ddl, TableId, ParentId) {
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
-            body: JSON.stringify(payload)
+            // body: JSON.stringify(payload)
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         const data = await response.json();
@@ -70,12 +78,18 @@ function mMsaterByParent(sectid = '', ddl, TableId, ComdId,CorpsId,DivId,BdeId) 
         DivId: DivId ? Number(DivId) : null,
         BdeId: BdeId ? Number(BdeId) : null
     };
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+
+    }
     $.ajax({
         url: '/Master/GetAllMMasterByParent',
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify(payload),
+        /*ata: JSON.stringify(payload),*/
+        body: JSON.stringify({ data: encryptedPayload }),
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
         success: function (response) {
@@ -153,11 +167,11 @@ function GetAllOffsByUnitId(ddl, sectid, UnitId, IsRO, IsORO, IsAfsacCell,BasicD
     var userdata =
     {
         "id": 0,
-        "UnitId": UnitId,
-        "IsRO": IsRO,
-        "IsORO": IsORO,
-        "IsAfsacCell": IsAfsacCell,
-        "BasicDetailsId": BasicDetailsId
+        "UnitIds": encryptPayloadData(UnitId),
+        "IsROs": encryptPayloadData(IsRO),
+        "IsOROs": encryptPayloadData(IsORO),
+        "IsAfsacCells": encryptPayloadData(IsAfsacCell),
+        "BasicDetailsIds": encryptPayloadData(BasicDetailsId)
     };
     $.ajax({
         url: '/UserProfile/GetOffrsByUnitMapId',

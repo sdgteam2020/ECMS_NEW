@@ -11,6 +11,7 @@ using BusinessLogicsLayer.DispatchCardMapping;
 using BusinessLogicsLayer.DistributeCard;
 using BusinessLogicsLayer.EncryptionSetting;
 using BusinessLogicsLayer.FaultyCard;
+using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.HotlistCard;
 using BusinessLogicsLayer.LostCard;
 using BusinessLogicsLayer.Master;
@@ -1002,10 +1003,12 @@ namespace Web.Controllers
         /// on success or re-renders the Registration view with errors.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> Registration(DTORegistrationRequest model)
+        public async Task<IActionResult> Registration(string EncryptedData, DTORegistrationRequest model)
         {
-            try
+            
+         try
             {
+                
                 // Extract userId from claims and assign as UpdatedBy
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 model.Updatedby = Convert.ToInt32(userId);
@@ -1021,7 +1024,14 @@ namespace Web.Controllers
                     TempData.Keep("error");
                     goto end;
                 }
+                model =await AESEncrytDecry.DecryptAESWithDTO<DTORegistrationRequest>(EncryptedData,SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
 
+                if (model == null)
+                {
+                    TempData["error"] = "Invalid data.";
+                    goto end;
+                }
+                
                 // Validate ModelState
                 if (ModelState.IsValid)
                 {
@@ -1352,20 +1362,26 @@ namespace Web.Controllers
                             DateOfCommissioning = model.DateOfCommissioning,
                             IdenMark1 = model.IdenMark1,
                             IdenMark2 = model.IdenMark2,
-                            AadhaarNo = Convert.ToInt64(model.AadhaarNo).ToString("D12"),
+
+                            AadhaarNo = string.IsNullOrWhiteSpace(model.AadhaarNo)
+        ? ""
+        : Convert.ToInt64(model.AadhaarNo).ToString("D12"),
+
                             ApplyForId = model.ApplyForId,
                             RegistrationId = model.RegistrationId,
                             TypeId = model.TypeId,
+
                             State = model.State,
                             District = model.District,
                             PS = model.PS,
                             PO = model.PO,
                             Tehsil = model.Tehsil,
                             Village = model.Village,
-                            PinCode = Convert.ToInt32(model.PinCode),
-                            PermanentAddress = "Village - " + model.Village + ", Post Office-" + model.PO + ", Tehsil- " + model.Tehsil +
-                                                ", District- " + model.District + ", State- " + model.State +
-                                                ", Pin Code- " + (model.PinCode == 0 ? "" : model.PinCode)
+
+                            PinCode = model.PinCode ?? 0,
+
+                            PermanentAddress =
+        $"Village - {model.Village}, Post Office - {model.PO}, Tehsil - {model.Tehsil}, District - {model.District}, State - {model.State}, Pin Code - {(model.PinCode ?? 0)}"
                         };
 
                         ViewBag.OptionsRankId = model.RankId;
@@ -1522,7 +1538,7 @@ namespace Web.Controllers
         /// Returns redirect to Index on success, otherwise re-renders the view with errors.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> BasicDetail(BasicDetailCrtAndUpdVM model)
+        public async Task<IActionResult> BasicDetail(string EncryptedData, BasicDetailCrtAndUpdVM model)
         {
             try
             {
@@ -1562,7 +1578,21 @@ namespace Web.Controllers
                 {
                     return Json(KeyConstants.InternalServerError);
                 }
+                 var  modeldec = await AESEncrytDecry.DecryptAESWithDTO<BasicDetailCrtAndUpdVM>(EncryptedData, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
 
+                if(modeldec==null)
+                {
+                    ModelState.AddModelError("", "Invalid Data.");
+                    goto end;
+                }
+                else
+                {
+                    IFormFile photoes = model.Photo_;
+                    IFormFile Signture = model.Signature_;
+                    model = modeldec;
+                    model.Photo_ = photoes;
+                    model.Signature_ = Signture;
+                }
                 // Case 1: Update existing BasicDetail (when BasicDetailId > 0)
                 if (model.BasicDetailId > 0)
                 {
@@ -2791,8 +2821,10 @@ namespace Web.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> ActionOnRequest(DTOActionOnRequest  dTOActionOn)
+        public async Task<IActionResult> ActionOnRequest(string  request)
         {
+            DTOActionOnRequest dTOActionOn = await AESEncrytDecry.DecryptAESWithDTO<DTOActionOnRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            
             DTOGenericResponse<DTOActionOnRequestResponse?> response = new DTOGenericResponse<DTOActionOnRequestResponse?>();
             DTOActionOnRequestResponse dTOAction = new DTOActionOnRequestResponse();
             try
@@ -3170,8 +3202,12 @@ namespace Web.Controllers
         /// <param name="Data">DTODataExportRequest object containing export parameters such as DataExportType, public/private keys, etc.</param>
         /// <returns>Returns a JSON response containing the last folder name of exported data, or an internal server error key in case of failure.</returns>
         [Authorize(Policy = "ICardExportDataPolicy")]
-        public async Task<IActionResult> DataExport(DTODataExportRequest Data)
+        [HttpPost]
+        public async Task<IActionResult> DataExport(string request)
         {
+            DTODataExportRequest Data = await AESEncrytDecry.DecryptAESWithDTO<DTODataExportRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if(Data==null)
+                return Json(KeyConstants.InternalServerError);
             try
             {
                 DTOApplFwdConditionRequest dTOApplFwdCondition;
@@ -3772,8 +3808,9 @@ namespace Web.Controllers
         /// Returns a PartialView "_BasicDetail_ParitalView" populated with DTOBasicDetailForParitalViewResponse.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(int RequestId)
+        public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(string Request)
         {
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             // Step 1: Fetch basic details from business layer
             DTOBasicDetailForParitalViewResponse? data = await basicDetailBL.GetBasicDetailForParitalViewByRequestId(RequestId);
             if (data != null)
@@ -4832,9 +4869,17 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetData(string ICNumber, byte lCardType)
         {
+           
             // Create a new DTO object to hold the response data
             DTOApiDataResponse dTOApiDataResponse = new DTOApiDataResponse();
-
+            ICNumber = AESEncrytDecry.DecryptAES(ICNumber, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);  //decrypt password
+            if (ICNumber == null)
+            {
+                // Loss not reported yet
+                dTOApiDataResponse.Message = "invalid ArmyNo.";
+                dTOApiDataResponse.Status = false; // Return error message for invalid ArmyNo
+                return Ok(dTOApiDataResponse);
+            }
             // Check if the ICNumber is provided
             if (ICNumber != null)
             {
@@ -5044,8 +5089,9 @@ namespace Web.Controllers
         /// <param name="RequestId">The request identifier for which the history is fetched.</param>
         /// <returns>Returns a JSON object containing the I-Card history details.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetRequestHistory(int RequestId)
+        public async Task<IActionResult> GetRequestHistory(string Request)
         {
+            int RequestId=await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             // Initialize the response object for card history
             ICardHistoryResponseAll? cardHistoryResponses = new ICardHistoryResponseAll();
 
@@ -5074,8 +5120,9 @@ namespace Web.Controllers
         /// <param name="RequestId">The request identifier for which the card movement history is fetched.</param>
         /// <returns>Returns a JSON object containing the card movement history details.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetCardMovementHistory(int RequestId)
+        public async Task<IActionResult> GetCardMovementHistory(string Request)
         {
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             // Fetch the card movement history from the business layer and return as JSON
             return Json(await basicDetailBL.GetCardMovementHistory(RequestId));
         }
@@ -5143,8 +5190,11 @@ namespace Web.Controllers
         /// <param name="model">DTO containing parameters for CSV export.</param>
         /// <returns>Returns JSON containing the temporary CSV file name or an error message.</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateCSV(DTOCSVExportRequest model)
+        public async Task<IActionResult> CreateCSV(string request)
         {
+            DTOCSVExportRequest model = await AESEncrytDecry.DecryptAESWithDTO<DTOCSVExportRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if(model==null)
+                return Json(KeyConstants.InternalServerError);
             try
             {
                 // Generate CSV string from the business layer
@@ -5191,8 +5241,9 @@ namespace Web.Controllers
         /// <param name="RequestId">The RequestId of the I-Card request.</param>
         /// <returns>Returns JSON containing the BasicDetailCrtAndUpdVM with decrypted images, or null if not found.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetICardPrintPreviewByRequestId(int RequestId)
+        public async Task<IActionResult> GetICardPrintPreviewByRequestId(string Request)
         {
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             // Initialize the generic response object
             DTOGenericResponse<BasicDetailCrtAndUpdVM?> response = new DTOGenericResponse<BasicDetailCrtAndUpdVM?>();
             try
@@ -6021,10 +6072,15 @@ namespace Web.Controllers
         /// <returns>JSON containing a generic response with dispatch-to details.</returns>
         [HttpPost]
         [Authorize(Policy = "ICardExportDataPolicy")]
-        public async Task<IActionResult> GetDispatchToData(byte CategeryId, byte RecordRegimentId)
+        public async Task<IActionResult> GetDispatchToData(string CategeryIds, string RecordRegimentIds)
         {
-            // Initialize the generic response object
             DTOGenericResponse<DTODispatchToResponse?> response = new DTOGenericResponse<DTODispatchToResponse?>();
+            byte CategeryId= await AESEncrytDecry.DecryptAESWithDTO<byte>(CategeryIds, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            byte RecordRegimentId = await AESEncrytDecry.DecryptAESWithDTO<byte>(RecordRegimentIds, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (CategeryId == 0 || RecordRegimentId == 0)
+                return BadRequest(response);
+            // Initialize the generic response object
+            
 
             // Call the business layer to get dispatch-to details
             response = await basicDetailBL.GetDispatchToData(CategeryId, RecordRegimentId);
@@ -6193,15 +6249,26 @@ namespace Web.Controllers
         /// </returns>
         [HttpPost]
         [Authorize(Policy = "ICardDispatchPolicy")]
-        public async Task<ActionResult> DispatchOut([FromForm] DTODispatchOutRequest dTO)
+        public async Task<ActionResult> DispatchOut(string request)
         {
+            DTOGenericResponse<DTOCardDispatchCheckResponse> response = new DTOGenericResponse<DTOCardDispatchCheckResponse>();
+            DTODispatchOutRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTODispatchOutRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             // Retrieve temporary session object for DispatchLot
+            if(dTO==null)
+            {
+                // Unauthorized user
+                response.Result = false;
+                response.Message = "Invalid Data.";
+                response.Value = null;
+                return Ok(response);
+            }
+            TryValidateModel(dTO);
             DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
             bool Valid = false;
             if (dTOTempSession1 != null)
             {
                 DtoSession? dtoSession = new DtoSession();
-                DTOGenericResponse<DTOCardDispatchCheckResponse> response = new DTOGenericResponse<DTOCardDispatchCheckResponse>();
+               
                 DTOCardDispatchCheckResponse ret = new DTOCardDispatchCheckResponse();
 
                 // Get the main user session token if available
@@ -6688,9 +6755,10 @@ namespace Web.Controllers
         /// If an exception occurs, returns an empty list with draw, recordsTotal, and recordsFiltered set to 0.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
+        public async Task<IActionResult> GetDispatchCardDataForDialog(string request)
         {
-            List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
+            DTODataTablesRequestForCardDispatchDialog dTO= await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForCardDispatchDialog>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            List <DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
             // If an exception occurs, return an empty response to avoid breaking the UI
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTOCardDispatchDialogResponse>
             {
@@ -6700,8 +6768,11 @@ namespace Web.Controllers
                 selectedIds = null,     // No selected IDs
                 data = dTOCards         // Empty list of data
             };
+            if (dTO == null)
+                return BadRequest();
             try
             {
+                TryValidateModel(dTO);
                 if (ModelState.IsValid)
                 {
                     // Get the current logged-in user's ASP.NET Identity Id
@@ -7093,10 +7164,21 @@ namespace Web.Controllers
         /// <returns>An <see cref="IActionResult"/> containing a JSON response indicating success or failure.</returns>
         [HttpPost]
         [Authorize(Policy = "ICardDispatchPolicy")]
-        public IActionResult BeforeProceedToDispatchCheck([FromBody] DTOBeforeProceedToDispatchCheckRequest dTO)
+        public async Task<IActionResult> BeforeProceedToDispatchCheck(string request)
         {
-            // Initialize the generic response object
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            //[FromBody] DTOBeforeProceedToDispatchCheckRequest dTO
+            DTOBeforeProceedToDispatchCheckRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOBeforeProceedToDispatchCheckRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+           if(dTO==null)
+            {
+                // Model is invalid, set response accordingly
+                response.Result = false;
+                response.Message = "Invalid Data.";
+                response.Value = string.Empty;
+                return Json(response); // Return early if model validation fails
+            }
+            // Initialize the generic response object
+            
             try
             {
                 // Check if the incoming model is valid

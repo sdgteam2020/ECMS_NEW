@@ -142,7 +142,7 @@ $(function () {
         select: function (e, i) {
             e.preventDefault();
             $("#txtUnitName").val(i.item.label);
-            var param1 = { "UnitMapId": i.item.value };
+            var param1 = { "UnitMapId": encryptPayloadData(i.item.value) };
             $.ajax({
                 url: '/Master/GetALLByUnitMapId',
                 contentType: 'application/x-www-form-urlencoded',
@@ -1175,7 +1175,7 @@ function GetALLByUnitById(param1) {
     $.ajax({
         url: '/Master/GetALLByUnitMapId',
         contentType: 'application/x-www-form-urlencoded',
-        data: { "UnitMapId": param1 },
+        data: { "UnitMapId": encryptPayloadData(param1) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {

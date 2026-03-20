@@ -170,7 +170,7 @@ $(function () {
         select: function (e, i) {
             e.preventDefault();
             $("#txtUnitName").val(i.item.label);
-            var param1 = { "UnitMapId": i.item.value };
+            var param1 = { "UnitMapId": encryptPayloadData(i.item.value) };
             $.ajax({
                 url: '/Master/GetALLByUnitMapId',
                 contentType: 'application/x-www-form-urlencoded',
@@ -487,7 +487,7 @@ function GetALLByUnitById(param1) {
     $.ajax({
         url: '/Master/GetALLByUnitMapId',
         contentType: 'application/x-www-form-urlencoded',
-        data: { "UnitMapId": param1 },
+        data: { "UnitMapId": encryptPayloadData(param1) },
         type: 'POST',
         headers: { 'RequestVerificationToken': RequestVerificationToken },
         success: function (data) {
@@ -739,13 +739,17 @@ function ResetErrorMessage() {
     $("#ddlDgSubDte-error").html("");
 }
 async function mMsater(sectid = '', ddl, TableId, ParentId) {
-
+    let encryptedPayload = "";
     const payload = {
         tableName: "",
         id: TableId,
         parentId: ParentId ? Number(ParentId) : null   // ⭐ THIS IS IMPORTANT
     };
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
 
+    }
     try {
         const response = await fetch('/Master/GetAllMMaster_Outer', {
             method: 'POST',
@@ -754,7 +758,7 @@ async function mMsater(sectid = '', ddl, TableId, ParentId) {
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         const data = await response.json();
@@ -799,7 +803,7 @@ async function mMsater(sectid = '', ddl, TableId, ParentId) {
 }
 
 function mMsaterByParent(sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeId) {
-
+    let encryptedPayload = "";
     const payload = {
         TableId: TableId ? Number(TableId) : null,
         ComdId: ComdId ? Number(ComdId) : null,
@@ -807,13 +811,22 @@ function mMsaterByParent(sectid = '', ddl, TableId, ComdId, CorpsId, DivId, BdeI
         DivId: DivId ? Number(DivId) : null,
         BdeId: BdeId ? Number(BdeId) : null
     };
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+
+    }
     $.ajax({
         url: '/Master/GetAllMMasterByParent',
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify(payload),
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        data: JSON.stringify({
+            data: encryptedPayload
+        }),
+        headers: {
+            'RequestVerificationToken': globalThis.RequestVerificationToken
+        },
 
         success: function (response) {
             if (response != "null" && response != null) {

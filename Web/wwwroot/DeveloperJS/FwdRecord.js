@@ -104,7 +104,7 @@ $(function () {
             $.ajax({
                 url: '/BasicDetail/CreateCSV',
                 contentType: 'application/x-www-form-urlencoded',
-                data: userdata,
+                data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
                 type: 'POST',
                 headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
@@ -342,68 +342,73 @@ $(function () {
     $("#txtFwdName").autocomplete({
 
         source: function (request, response) {
-            var TypeId = 1;
-            if ($("#intoffsArmyNo").prop("checked")) {
-                TypeId = 1;
-            } else if ($("#intoffName").prop("checked")) {
-                TypeId = 2;
-            } else if ($("#intoffDomainId").prop("checked")) {
-                TypeId = 3;
-            }
-            var IsRO = 0;
-            var IsORO = 0;
-            if (applyfor == 1 && StepCounter == 2)
-                IsORO = 1;
-            else if (applyfor == 2 && StepCounter == 2)
-                IsRO = 1;
-            var param = {
-                "Name": request.term,
-                "TypeId": TypeId,
-                "StepId": 1,
-                "UnitId": 0,
-                "IsRO": IsRO,
-                "IsORO": IsORO
-            };
+            if (request.term.length > 2) {
 
-            $("#spnFwdToAspNetUsersId").html(0);
-            $.ajax({
-                url: '/UserProfile/GetDataForFwd',
-                contentType: 'application/x-www-form-urlencoded',
-                data: param,
-                type: 'POST',
-                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-                success: function (data) {
-                    console.log(data);
-                    if (data.length != 0) {
-                        response($.map(data, function (item) {
 
-                            $("#loading").addClass("d-none");
-                            return {
-                                label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + item.Name + ' ' + item.DomainId,
-                                value: item.AspNetUsersId
-                            };
-
-                        }))
-                    } else {
-
-                        $(".spnFArmyNo").html("");
-                        $(".spnFtoname").html("");
-                        $(".spnFDomainName").html("");
-                        $(".spnFAppName").html("");
-
-                        $("#txtFwdName").val("");
-                        $("#spnFwdToAspNetUsersId").html("0");
-                        $("#spnFwdToUsersId").html("0");
-                        alert("Army No/Offr Name/Domain ID not found.")
-                    }
-                },
-                error: function (response) {
-                    alert(response.responseText);
-                },
-                failure: function (response) {
-                    alert(response.responseText);
+                var TypeId = 1;
+                if ($("#intoffsArmyNo").prop("checked")) {
+                    TypeId = 1;
+                } else if ($("#intoffName").prop("checked")) {
+                    TypeId = 2;
+                } else if ($("#intoffDomainId").prop("checked")) {
+                    TypeId = 3;
                 }
-            });
+                var IsRO = 0;
+                var IsORO = 0;
+                if (applyfor == 1 && StepCounter == 2)
+                    IsORO = 1;
+                else if (applyfor == 2 && StepCounter == 2)
+                    IsRO = 1;
+                var param = {
+                    "Name": request.term,
+                    "TypeId": TypeId,
+                    "StepId": 1,
+                    "UnitId": 0,
+                    "IsRO": IsRO,
+                    "IsORO": IsORO
+                };
+
+                $("#spnFwdToAspNetUsersId").html(0);
+                $.ajax({
+                    url: '/UserProfile/GetDataForFwd',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: { "request": encryptPayloadData(JSON.stringify(param)) },
+                    type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.length != 0) {
+                            response($.map(data, function (item) {
+
+                                $("#loading").addClass("d-none");
+                                return {
+                                    label: item.ArmyNo + ' ' + item.RankAbbreviation + ' ' + item.Name + ' ' + item.DomainId,
+                                    value: item.AspNetUsersId
+                                };
+
+                            }))
+                        } else {
+
+                            $(".spnFArmyNo").html("");
+                            $(".spnFtoname").html("");
+                            $(".spnFDomainName").html("");
+                            $(".spnFAppName").html("");
+
+                            $("#txtFwdName").val("");
+                            $("#spnFwdToAspNetUsersId").html("0");
+                            $("#spnFwdToUsersId").html("0");
+                            alert("Army No/Offr Name/Domain ID not found.")
+                        }
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+
+            }
         },
         select: function (e, i) {
             e.preventDefault();
@@ -656,7 +661,7 @@ function Reset() {
 }
 
 async function GetBasicDetailByRequestIdForFwd(RequestId) {
-    let param = new URLSearchParams({ RequestId: RequestId });
+    let param = new URLSearchParams({ Request: encryptPayloadData(RequestId) });
 
     fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
         method: 'POST',
@@ -677,7 +682,7 @@ async function GetBasicDetailByRequestIdForFwd(RequestId) {
 }
 function FwdData(AspNetUsersId) {
     var userdata = {
-        "AspNetUsersId": AspNetUsersId,
+        "AspNetUsersIds": encryptPayloadData(AspNetUsersId),
 
 
     };
@@ -768,15 +773,18 @@ function GetProfiledetailsByAspNetuserid(AspNetUsersId) {
     //else if ((StepCounter == 2 ||StepCounter == 3) && applyfor == 2)
     //    var param = { "Name": AspNetUsersId, "TypeId": 0, "UnitId": 0 };
     //else
+   
     var param = {
         "Name": AspNetUsersId,
         "TypeId": 0,
         "UnitId": 0
     };
+
+   
     $.ajax({
         url: '/UserProfile/GetDataForFwd',
         contentType: 'application/x-www-form-urlencoded',
-        data: param,
+        data: { "request": encryptPayloadData(JSON.stringify(param)) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
@@ -806,7 +814,7 @@ function GetProfiledetailsByAspNetuseridForInternalFwd(AspNetUsersId) {
     $.ajax({
         url: '/UserProfile/GetDataForFwd',
         contentType: 'application/x-www-form-urlencoded',
-        data: param,
+        data: { "request": encryptPayloadData(JSON.stringify(param)) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data) {
@@ -833,14 +841,18 @@ function ActionOnRequest(spnRequestId, Flag) {
         RequestId: spnRequestId,
         Flag: Flag,
         Remark: Flag === "A" ? $("#txtFRemarks").val() : $("#txtFrejectedRemarks").val(),
-        RemarksIds: Flag === "A" ? $("#ddlRemarks").val() : $("#ddlRRemarks").val(),
+        RemarksIds: Flag === "A"
+            ? ($("#ddlRemarks").val() || []).join(',')
+            : ($("#ddlRRemarks").val() || []).join(','),
         ToAspNetUsersId: Flag === "A" ? $("#spnFwdToAspNetUsersId").html() : 0,
         ToUserId: Flag === "A" ? $("#spnFwdToUsersId").html() : 0,
     };
+
+
     $.ajax({
         url: '/BasicDetail/ActionOnRequest',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
+        data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
@@ -902,7 +914,7 @@ function DataExport() {
     $.ajax({
         url: '/BasicDetail/DataExport',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
+        data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
@@ -1130,7 +1142,7 @@ function jsonToXml(json) {
 
 function DownloadXml(RequestId) {
     var userdata = {
-        "RequestId": RequestId,
+        "Request": encryptPayloadData(RequestId),
     };
     $.ajax({
         url: '/Log/CreateXml',
@@ -1161,7 +1173,7 @@ function DownloadXml(RequestId) {
 }
 function DownloadPdf(RequestId) {
     var userdata = {
-        "RequestId": RequestId,
+        "Request": encryptPayloadData(RequestId),
     };
     $.ajax({
         url: '/Log/CreatePdf',

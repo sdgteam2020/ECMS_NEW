@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer;
+using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.MapUnitChange;
 using BusinessLogicsLayer.Master;
 using DataAccessLayer;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Drawing.Imaging;
 using System.Security.Claims;
 using System.Text;
@@ -1434,11 +1436,16 @@ namespace Web.Controllers
         [AllowAnonymous]
         [AnySessionRequired]
         [HttpPost]
-        public async Task<IActionResult> GetALLByUnitMapId(int UnitMapId)
+        public async Task<IActionResult> GetALLByUnitMapId(string UnitMapId)
         {
+            int UnitMapIdDec = 0;
+            if(SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token")!=null)
+            UnitMapIdDec = await AESEncrytDecry.DecryptAESWithDTO<int>(UnitMapId, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            else if (SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData") != null)
+            UnitMapIdDec = await AESEncrytDecry.DecryptAESWithDTO<int>(UnitMapId, SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData").Salt);
             try
             {
-                return Json(await unitOfWork.MappUnit.GetALLByUnitMapId(UnitMapId)); // Fetch all map units filtered by unit map ID
+                return Json(await unitOfWork.MappUnit.GetALLByUnitMapId(UnitMapIdDec)); // Fetch all map units filtered by unit map ID
             }
             catch (Exception ex)
             {
@@ -4012,8 +4019,11 @@ namespace Web.Controllers
         [AllowAnonymous]
         [AnySessionRequired]
         [HttpPost]
-        public async Task<IActionResult> GetAllMMaster_Outer([FromBody] DTOMasterRequest data)
+        public async Task<IActionResult> GetAllMMaster_Outer([FromBody] EncryptedRequest request)
         {
+            DTOMasterRequest data = await AESEncrytDecry.DecryptAESWithDTO<DTOMasterRequest>(request.Data, SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData").Salt);
+            if (data == null)
+                return BadRequest(new { error = "Request body required." });
             if (data == null)
                 return BadRequest(new { error = "Request body required." });
 
@@ -4035,8 +4045,9 @@ namespace Web.Controllers
         /// <param name="Data">The data transfer object containing the request parameters for fetching master data.</param>
         /// <returns>A JSON response containing the result of the request. Returns an internal server error if an exception occurs.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetAllMMaster([FromBody] DTOMasterRequest data)
+        public async Task<IActionResult> GetAllMMaster([FromBody] EncryptedRequest request)
         {
+            DTOMasterRequest data = await AESEncrytDecry.DecryptAESWithDTO<DTOMasterRequest>(request.Data,SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             if (data == null)
                 return BadRequest(new { error = "Request body required." });
 
@@ -4061,8 +4072,14 @@ namespace Web.Controllers
         [AllowAnonymous]
         [AnySessionRequired]
         [HttpPost]
-        public async Task<IActionResult> GetAllMMasterByParent([FromBody]DTOParentChildIdRequest Data)
+        public async Task<IActionResult> GetAllMMasterByParent([FromBody] EncryptedRequest request)
         {
+            DTOParentChildIdRequest Data = null;
+            if (SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token") != null)
+                Data = await AESEncrytDecry.DecryptAESWithDTO<DTOParentChildIdRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            else if (SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData") != null)
+                Data = await AESEncrytDecry.DecryptAESWithDTO<DTOParentChildIdRequest>(request.Data, SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData").Salt);
+
             if (Data == null)
                 return BadRequest(new { error = "Request body required." });
             try

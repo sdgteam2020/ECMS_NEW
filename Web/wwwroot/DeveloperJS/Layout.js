@@ -371,6 +371,17 @@ function Getaspntokenarmyno() {
         }
     });
 }
+function toArray(val) {
+    if (!val) return [];
+
+    if (Array.isArray(val)) return val;
+
+    if (typeof val === "string") {
+        return val.split(',').map(x => x.trim()).filter(x => x !== "");
+    }
+
+    return [val]; // single value → array
+}
 function SaveNotification(StepId, DisplayId, ReciverAspNetUsersId, RequestIds) {
     var userdata =
     {
@@ -379,12 +390,13 @@ function SaveNotification(StepId, DisplayId, ReciverAspNetUsersId, RequestIds) {
         "DisplayId": DisplayId,
         "ReciverAspNetUsersId": ReciverAspNetUsersId,
         "Url": "",
-        "RequestIds": RequestIds
+        "RequestIds": toArray(RequestIds)
     };
+
     $.ajax({
         url: '/Home/SaveNotification',
         contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
+        data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
@@ -574,21 +586,7 @@ function formatDateToSqlString(inputDate) {
         `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.` +
         `${pad(date.getMilliseconds(), 3)}`;
 }
-function encryptData(plainText, skey) {
-    const secretKey = skey;
-    if (!secretKey) return "";
 
-    const key = CryptoJS.enc.Utf8.parse(secretKey);
-    const iv = CryptoJS.enc.Utf8.parse(secretKey.substring(0, 16)); // 16 bytes
-
-    const encrypted = CryptoJS.AES.encrypt(plainText, key, {
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-    });
-
-    return encrypted.toString();   // Base64 output
-}
 function decryptData(cipherText, skey) {
 
     if (!cipherText) return "";
@@ -610,4 +608,15 @@ function decryptData(cipherText, skey) {
 
     const result = decrypted.toString(CryptoJS.enc.Utf8);
     return result;
+} function encryptData(plainText, secretKey) {
+    const key = CryptoJS.enc.Utf8.parse(secretKey);
+    const iv = CryptoJS.enc.Utf8.parse(secretKey.substring(0, 16)); // 16 bytes
+
+    const encrypted = CryptoJS.AES.encrypt(plainText, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    return encrypted.toString();   // Base64 output
 }

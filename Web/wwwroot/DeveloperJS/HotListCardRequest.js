@@ -161,7 +161,7 @@ function Save() {
     });
 }
 function GetBasicDetailForParitalViewByRequestId(RequestId) {
-    let param = new URLSearchParams({ RequestId: RequestId });
+    let param = new URLSearchParams({ Request: encryptPayloadData(RequestId) });
 
     fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
         method: 'POST',
@@ -181,7 +181,7 @@ function GetBasicDetailForParitalViewByRequestId(RequestId) {
 }
 function DownloadPdf(RequestId) {
     var userdata = {
-        "RequestId": RequestId,
+        "RequestId": encryptPayloadData(RequestId),
     };
     $.ajax({
         url: '/Log/CreatePdf',

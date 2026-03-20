@@ -163,10 +163,23 @@ async function Save() {
         formData.append('ToAspNetUsersId', $("#ddlDID").val());
         formData.append('ToUserId', ToUserId);
 
+        
+
+        // convert FormData to plain object
+        let obj = Object.fromEntries(formData.entries());
+
+        // now stringify correctly
+        let jsonData = JSON.stringify(obj);
+
+        let encrypted = encryptPayloadData(jsonData);
+
         const response = await fetch('/BasicDetail/DispatchOut', {
             method: 'POST',
             headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-            body: formData
+            body: new URLSearchParams({
+                request: encrypted
+            })
+
         });
 
         if (!response.ok) {
@@ -287,8 +300,8 @@ async function GetUserIdWithName(AspNetUsersId) {
 
 async function GetDispatchToData(CategeryId, RecordRegimentId) {
     let param = new URLSearchParams({
-        "CategeryId": CategeryId,
-        "RecordRegimentId": RecordRegimentId
+        "CategeryIds": encryptPayloadData(CategeryId),
+        "RecordRegimentIds": encryptPayloadData(RecordRegimentId)
         });
 
     try {

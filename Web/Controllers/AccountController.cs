@@ -34,6 +34,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Web.Healpers;
 using Web.Validation;
 using Web.WebHelpers;
 using ApplicationRole = DataTransferObject.Domain.Identitytable.ApplicationRole;
@@ -1128,8 +1129,10 @@ namespace Web.Controllers
         {
             try
             {
+                string GetSalt = AESEncrytDecry.GetSalt();
                 DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData"); // Get Session Object
                 List<string> RoleNameList = new List<string>() { "user" };
+                dTOTempSession.Salt = GetSalt;
                 if (dTOTempSession != null)
                 {
                     string? Footer = _configuration["Footer:Test"];
@@ -1141,6 +1144,16 @@ namespace Web.Controllers
                         ViewBag.hdns = dd;
                         string Password = AESEncrytDecry.DecryptAES(model.Password, dd);  //decrypt password
                         string ICNo = AESEncrytDecry.DecryptAES(model.ICNo, dd);  //decrypt ICNo
+                        if (ICNo == null)
+                        {
+                            ModelState.AddModelError("ICNo", "Request Manipulated.");
+                            goto End;
+                        }
+                        else if (Password == null)
+                        {
+                            ModelState.AddModelError("Password", "Request Manipulated.");
+                            goto End;
+                        }
                         model.ICNo = ICNo;
                         model.Password = Password;
 
@@ -1188,6 +1201,8 @@ namespace Web.Controllers
                                 var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, lockoutOnFailure: true); // Sign in user
                                 if (result.Succeeded)
                                 {
+                                   
+                                    DTORsaKeyResponse dTORsaKeyResponse = RsaKeyGenerator.GenerateKeys();
                                     DtoSession dtoSession = new DtoSession();
                                     dtoSession.ICNO = dTOTempSession.ICNO;
                                     dtoSession.RoleName = dTOTempSession.RoleName.Trim();
@@ -1198,6 +1213,9 @@ namespace Web.Controllers
                                     dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
                                     dtoSession.RoleName = dTOTempSession.RoleName;
                                     dtoSession.DoaminId = dTOTempSession.DomainId;
+                                    dtoSession.Salt = GetSalt;
+                                    
+
                                     ///////////////login log//////////////////////
                                     TrnLogin_Log log = new TrnLogin_Log();
                                     log.AspNetUsersId = Convert.ToInt32(usera.Id);
@@ -1272,6 +1290,7 @@ namespace Web.Controllers
                                 dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
                                 dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
                                 dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
+
                                 //TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No- " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
                                 
                                 TempData["error"] = "Invalid Army No / Password.";
@@ -1286,7 +1305,7 @@ namespace Web.Controllers
                                 dTOTempSession.ICNoTDMUnitMapId = _dTOProfileResponse.UnitId;
                                 dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
                                 dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
-
+                              
                                 if (dTOTempSession.Status == 2) // New DomainId mapped with other Profile
                                     //TempData["error"] = "Your Profile Id -" + _dTOProfileResponse.UserId + " is mapped to Domain Id - " + _dTOProfileResponse.DomainId + " in Sys.<br/>Pl get yourself relieved first    and try again.";
                                     TempData["error"] = "Invalid Army No / Password.";
