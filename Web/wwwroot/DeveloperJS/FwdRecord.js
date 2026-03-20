@@ -599,8 +599,6 @@ function SaveInternalFwd() {
         "ToAspNetUsersId": $('#ddlfwdInternaloffrs').val(),
         "ToUserId": $("#spnFwdToInternalUsersId").html(),
         "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
-        "FwdStatusId": 4,
-        "TypeId": 3,
         "RemarksIds": remarks,
     };
     $.ajax({

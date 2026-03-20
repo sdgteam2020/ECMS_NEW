@@ -2528,7 +2528,8 @@ namespace Web.Controllers
                 data.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsActive = true;
-                data.TypeId = Convert.ToByte(data.TypeId);
+                data.FwdStatusId = 4;  // Set the forward status to 4 (indicating internal forward)
+                data.TypeId = 3; //"RO / ORO Forward" type
 
                 // Check if the model state is valid
                 if (ModelState.IsValid)

@@ -1,4 +1,6 @@
-﻿var table; // Declare table variable outside the function to preserve the instance
+﻿let spnICardHoldId = 0;
+let spnRequestId = 0;
+var table; // Declare table variable outside the function to preserve the instance
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -57,9 +59,8 @@ $(function () {
             $("#lblRank").html('');
             $("#lblUnitName").html('');
             if (request.term.length > 2) {
-                $("#spnRequestId").html('');
                 var param = { "ArmyNo": request.term };
-                $("#spnRequestId").html(0);
+                spnRequestId = 0;
                 $.ajax({
                     url: '/BasicDetail/GetTopArmyNoFromICardRequest',
                     contentType: 'application/x-www-form-urlencoded',
@@ -75,7 +76,7 @@ $(function () {
                         }
                         else {
                             $("#txtArmyNo").val("");
-                            $("#spnRequestId").html("");
+                            spnRequestId = 0;
                             alert("Army No not found.")
                         }
                     },
@@ -90,7 +91,7 @@ $(function () {
         },
         select: function (e, i) {
             e.preventDefault();
-            $("#spnRequestId").html(i.item.value);
+            spnRequestId = i.item.value;
             $("#txtArmyNo").val(i.item.label);
             var param1 = { "RequestId": i.item.value };
             $.ajax({
@@ -112,7 +113,7 @@ $(function () {
 
     $('#txtArmyNo').on("keyup", function (e) {
         if (e.which == 46) {
-            $("#spnRequestId").html('0');
+            spnRequestId = 0;
             $("#txtArmyNo").val('');
             $("#lblName").html('');
             $("#lblRank").html('');
@@ -229,8 +230,8 @@ function BindData(cvalue, callback) {
                     $("#gpUnHoldReason").removeClass("d-none");
                     $("#txtArmyNo").prop('readonly', true);
                     $("#txtHoldReason").prop('readonly', true);
-                    $("#spnICardHoldId").html(rowData.ICardHoldId);
-                    $("#spnRequestId").html(rowData.RequestId);
+                    spnICardHoldId = rowData.ICardHoldId;
+                    spnRequestId = rowData.RequestId;
                     $("#txtArmyNo").val(rowData.ServiceNo);
                     $("#lblRank").html(rowData.RankName);
                     $("#lblName").html(`${rowData.FName || ""} ${rowData.LName || ""}`.trim());
@@ -272,8 +273,8 @@ function Save() {
         url: '/BasicDetail/SaveICardRequestHold',
         type: 'POST',
         data: {
-            "ICardHoldId": $("#spnICardHoldId").html(),
-            "RequestId": $('#spnRequestId').html(),
+            "ICardHoldId": spnICardHoldId,
+            "RequestId": spnRequestId,
             "IsHold": $('input:radio[name=IsHold]:checked').val(),
             "HoldReason": $("#txtHoldReason").val(),
             "UnHoldReason": $("#txtUnHoldReason").val().length > 0 ?$("#txtUnHoldReason").val() : null,
@@ -498,7 +499,7 @@ function getColumnsData(choice) {
     return columns;
 }
 function Reset() {
-    $("#spnICardHoldId").html("0");
+    spnICardHoldId = 0
     $("#spnUserProfileId").html("0");
     $("#txtArmyNo").val("");
     $("#lblRank").html("");
