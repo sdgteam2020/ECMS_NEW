@@ -439,7 +439,20 @@ function Proceed() {
 
             let isTokenWaiver = $("input[type='radio'][name=IsTokenWaiver]:checked").length;
             if (result.isConfirmed && isTokenWaiver > 0 && isIO > 0 && isCO > 0) { // && isRO > 0 && isORO > 0
-                $(formId).submit();
+
+                let formData = {};
+
+                $("#Profile").serializeArray().forEach(function (item) {
+                    formData[item.name] = item.value;
+                });
+
+                let jsonData = JSON.stringify(formData);
+                let encrypted = encryptPayloadData(jsonData);
+
+                $("#EncryptedData").val(encrypted);
+
+                $("#Profile")[0].submit();
+                // $(formId).submit();
             }
             else {
                 ValidateRadioButton();
@@ -582,27 +595,36 @@ function ProceedUnitSave() {
     }
 }
 function UnitSave() {
+    let payload={
+        "Name": $("#spnName").html(),
+        "Rank": $("#spnRank").html(),
+        //"UnitId": spnUnitId, // “UnitId is fetched using SUSNo on the server side.”
+        "Sus_no": $("#txtSusno").val().substring(0, 7),
+        "Suffix": $("#txtSusno").val().substring(8, 7),
+        "UnitName": $("#txtUnit").val(),
+        "Abbreviation": $("#txtUnitAbbr").val(),
+        "UnitType": $("input[type='radio'][name=UnitTyperdi]:checked").val(),
+        "ComdId": $("#ddlCommand").val(),
+        "CorpsId": $("#ddlCorps").val(),
+        "DivId": $("#ddlDiv").val(),
+        "BdeId": $("#ddlBde").val(),
+        "PsoId": $("#ddlPSODte").val(),
+        "FmnBranchID": $("#ddlFmnBranch").val(),
+        "SubDteId": $("#ddlDgSubDte").val()
+    }
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+    }
     $.ajax({
         url: '/Account/SaveUnitWithMapping',
         type: 'POST',
         data: {
-            "Name": $("#spnName").html(),
-            "Rank": $("#spnRank").html(),
-            //"UnitId": spnUnitId, // “UnitId is fetched using SUSNo on the server side.”
-            "Sus_no": $("#txtSusno").val().substring(0, 7),
-            "Suffix": $("#txtSusno").val().substring(8, 7),
-            "UnitName": $("#txtUnit").val(),
-            "Abbreviation": $("#txtUnitAbbr").val(),
-            "UnitType": $("input[type='radio'][name=UnitTyperdi]:checked").val(),
-            "ComdId": $("#ddlCommand").val(),
-            "CorpsId": $("#ddlCorps").val(),
-            "DivId": $("#ddlDiv").val(),
-            "BdeId": $("#ddlBde").val(),
-            "PsoId": $("#ddlPSODte").val(),
-            "FmnBranchID": $("#ddlFmnBranch").val(),
-            "SubDteId": $("#ddlDgSubDte").val()
+            request: encryptedPayload
         },
-        headers: { 'RequestVerificationToken': RequestVerificationToken },
+        headers: {
+            'RequestVerificationToken': RequestVerificationToken
+        },
         success: function (result) {
             if (result.Result == true) {
                 Swal.fire({
