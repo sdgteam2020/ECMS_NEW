@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.TrnMappingUnMappingLog;
 using DataTransferObject.Constants;
@@ -9,6 +10,7 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing;
 using System.Security.Claims;
 using Web.Healpers;
 using Web.WebHelpers;
@@ -327,6 +329,12 @@ namespace Web.Controllers
         {
             try
             {
+                ArmyNo = AESEncrytDecry.DecryptAES(ArmyNo, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);  //decrypt password
+                if (ArmyNo == null)
+                {
+                   return Json(KeyConstants.IncorrectData); // Return error message for invalid ArmyNo
+
+                }
                 // Retrieve the current user's ID from the claims
                 int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
@@ -390,15 +398,20 @@ namespace Web.Controllers
         /// <param name="IsORO">Filter flag for ORO.</param>
         /// <returns>Returns a JSON response with the retrieved data or an error message.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetDataForFwd(string Name, int TypeId, int StepId, int UnitId, int ISRO, int IsORO)
+        public async Task<IActionResult> GetDataForFwd(string request)
         {
             try
             {
+                DTODataForFwd Data =await AESEncrytDecry.DecryptAESWithDTO<DTODataForFwd>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+                if (Data == null)
+                {
+                    return Json(KeyConstants.IncorrectData); // Return error message for invalid data
+                }
                 // Retrieve the user's DomainMapId from claims
                 int DomainMapId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 // Call the method to get data for forwarding based on the provided parameters
-                return Json(await _userProfileBL.GetDataForFwd(StepId, UnitId, Name, TypeId, ISRO, IsORO, DomainMapId));
+                return Json(await _userProfileBL.GetDataForFwd(Data.StepId, Data.UnitId, Data.Name, Data.TypeId, Data.ISRO, Data.IsORO, DomainMapId));
             }
             catch (Exception ex)
             {
@@ -419,8 +432,16 @@ namespace Web.Controllers
         /// <param name="BasicDetailsId">BasicDetailsId for filtering.</param>
         /// <returns>Returns a JSON response with the officer data or an error message.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetOffrsByUnitMapId(int id, int UnitId, int IsRO, int IsORO, int IsAfsacCell, int BasicDetailsId)
+        public async Task<IActionResult> GetOffrsByUnitMapId(string ids, string UnitIds, string IsROs, string IsOROs, string IsAfsacCells, string BasicDetailsIds)
         {
+            int id = await AESEncrytDecry.DecryptAESWithDTO<int>(ids, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            int UnitId = await AESEncrytDecry.DecryptAESWithDTO<int>(UnitIds, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            int IsRO = await AESEncrytDecry.DecryptAESWithDTO<int>(IsROs, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            int IsORO = await AESEncrytDecry.DecryptAESWithDTO<int>(IsOROs, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            int IsAfsacCell = await AESEncrytDecry.DecryptAESWithDTO<int>(IsAfsacCells, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            int BasicDetailsId = await AESEncrytDecry.DecryptAESWithDTO<int>(BasicDetailsIds, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+
+
             try
             {
                 // Retrieve the user's DomainMapId from claims
@@ -473,12 +494,14 @@ namespace Web.Controllers
         /// <param name="Data">The domain mapping data that contains the AspNetUserId.</param>
         /// <returns>Returns a JSON response with the domain mapping data.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetByAspnetUserIdBy(TrnDomainMapping Data)
+        public async Task<IActionResult> GetByAspnetUserIdBy(string AspNetUsersIds)
         {
             try
             {
+                int AspNetUsersId = await AESEncrytDecry.DecryptAESWithDTO<int>(AspNetUsersIds, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+
                 // Fetch domain mapping by AspNetUserId
-                return Json(await _iDomainMapBL.GetByAspnetUserIdBy(Data.AspNetUsersId));
+                return Json(await _iDomainMapBL.GetByAspnetUserIdBy(AspNetUsersId));
             }
             catch (Exception ex)
             {

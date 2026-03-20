@@ -1,11 +1,14 @@
 ﻿using BusinessLogicsLayer.API;
 using BusinessLogicsLayer.APIData;
 using BusinessLogicsLayer.EncryptionSetting;
+using BusinessLogicsLayer.Helpers;
+using DataTransferObject.Constants;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Healpers;
+using Web.WebHelpers;
 
 namespace Web.Controllers
 {
@@ -38,9 +41,16 @@ namespace Web.Controllers
         public async Task<IActionResult> LoginApi(string ICNumber, int Type)
         {
             DTOApiPersDataResponse res1 = new DTOApiPersDataResponse();
+            ICNumber = AESEncrytDecry.DecryptAES(ICNumber, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);  //decrypt password
+            if (ICNumber == null)
+            {
+                res1.Message = "invalid ArmyNo"; // Return error message for invalid ArmyNo
+
+            }
             string Pk = string.Empty;
             try
             {
+
                 // Retrieve the encryption key from the database
                 var keyRecord = await encryptionSettingBL.Get(1);
                 if (keyRecord != null)

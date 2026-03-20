@@ -8,7 +8,7 @@
 function GetICardPrintPreviewByRequestId(RequestId) {
     var userdata =
     {
-        "RequestId": RequestId,
+        "Request": encryptPayloadData(RequestId),
     }; 
     $.ajax({
         url: '/BasicDetail/GetICardPrintPreviewByRequestId',
@@ -52,7 +52,7 @@ function GetICardPrintPreviewByRequestId(RequestId) {
     })
 }
 function GetBasicDetailByRequestId(RequestId) {
-    let param = new URLSearchParams({ RequestId: RequestId });
+    let param = new URLSearchParams({ Request: encryptPayloadData(RequestId) });
 
     fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
         method: 'POST',

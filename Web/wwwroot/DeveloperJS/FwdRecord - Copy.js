@@ -103,7 +103,7 @@ $(function () {
             $.ajax({
                 url: '/BasicDetail/CreateCSV',
                 contentType: 'application/x-www-form-urlencoded',
-                data: userdata,
+                data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
                 type: 'POST',
                 headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
@@ -688,7 +688,7 @@ function Reset() {
 }
 
 async function GetBasicDetailByRequestIdForFwd(RequestId) {
-    let param = new URLSearchParams({ RequestId: RequestId });
+    let param = new URLSearchParams({ Request: encryptPayloadData(RequestId) });
 
     fetch('/BasicDetail/GetBasicDetailForParitalViewByRequestId', {
         method: 'POST',
@@ -709,7 +709,7 @@ async function GetBasicDetailByRequestIdForFwd(RequestId) {
 }
 function FwdData(AspNetUsersId) {
     var userdata = {
-        "AspNetUsersId": AspNetUsersId,
+        "AspNetUsersIds": encryptPayloadData(AspNetUsersId),
 
 
     };

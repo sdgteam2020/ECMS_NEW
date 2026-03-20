@@ -22,6 +22,7 @@
         m2.Append("ICNoDomainId : " + dTOTempSession.ICNoDomainId);
         m2.Append(",<br/>ICNoTDMUnitMapId : " + dTOTempSession.ICNoTDMUnitMapId);
     }
+    
 }
 <link href="~/developercss/account_profile.css" rel="stylesheet" />
 <div class="page">
@@ -31,6 +32,7 @@
     <div class="bg-white login-wrap align-items-center">
         <div class="login ">
             <div class="row">
+                <input type="hidden" id="hiddenSa" value="@dTOTempSession.Salt" />
                 <div class="card-sigin">
                     <div class="main-signup-header login-form">
                         <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1">Fill your  Details to Register Profile in Appl</p>
@@ -324,6 +326,9 @@
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/accountprofile.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
+    <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
+    <script asp-src-include="~/developerjs/encryptepayload.js"></script>
+
 }
 
 <div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" >

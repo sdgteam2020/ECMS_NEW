@@ -419,9 +419,11 @@ function AddAllCardType() {
     });
 }
 function GetByArmyNoIsToken(ArmyNo) {
+
+    let ArmyNoNew = encryptPayloadData(ArmyNo)
     var userdata =
     {
-        "ArmyNo": ArmyNo,
+        "ArmyNo": ArmyNoNew,
 
     };
     $.ajax({
@@ -438,8 +440,10 @@ function GetByArmyNoIsToken(ArmyNo) {
                         text: errormsg
                     });
                 }
-                else if (response == 0) {
-
+                else if (response == 4) {
+                    Swal.fire({
+                        text: "Invalid Army No."
+                    });
                 }
 
                 else {
@@ -565,11 +569,12 @@ function GetByArmyNoIsToken(ArmyNo) {
 }
 
 function CheckArmyNOExist() {
+    
     $.ajax({
         url: "/BasicDetail/GetData",
         type: "POST",
         data: {
-            "ICNumber": lCardType == 4 ? $("#txtApplyForOldArmyNo").val() : $("#txtApplyForArmyNo").val(),
+            "ICNumber": lCardType == 4 ? encryptPayloadData($("#txtApplyForOldArmyNo").val()) : encryptPayloadData($("#txtApplyForArmyNo").val()),
             "lCardType": lCardType
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },

@@ -1,4 +1,5 @@
 ﻿using BusinessLogicsLayer.BasicDet;
+using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.TrnLoginLog;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -213,8 +214,10 @@ namespace Web.Controllers
         /// <param name="RequestId">The ID of the request used to generate the XML file.</param>
         /// <returns>A JSON response containing the filename of the saved XML file, or 0 in case of an error.</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateXmlAsync(int RequestId)
+        public async Task<IActionResult> CreateXmlAsync(string Request)
         {
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+
             try
             {
                 // Generate date components for naming the file
@@ -272,10 +275,14 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePdfAsync(int RequestId)
+        public async Task<IActionResult> CreatePdfAsync(string Request)
         {
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (RequestId == 0)
+                return null;
             try
             {
+               
                 // Constants for hardcoded values
                 //Environment.GetEnvironmentVariable("Common__Password") ?? string.Empty
                 var CERT_SERIAL_1 = Environment.GetEnvironmentVariable("CERT_SERIAL_1") ?? string.Empty;

@@ -543,13 +543,16 @@ function BindDialog(rowData, cvalue, callback) {
                     AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked
                 };
                 try {
+                    let encrypted = encryptPayloadData(JSON.stringify(requestData));
                     let response = await fetch("/BasicDetail/GetDispatchCardDataForDialog", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded",
                             'RequestVerificationToken': globalThis.RequestVerificationToken
                         },
-                        body: new URLSearchParams(requestData).toString()
+                        body: new URLSearchParams({
+                            request: encrypted
+                        }).toString()
                     });
 
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -2032,10 +2035,12 @@ function ProceedToDispatch(searchField, searchText) {
         fetch('/BasicDetail/BeforeProceedToDispatchCheck', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json', // Tell the server we are sending JSON
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: JSON.stringify(requestData), // Convert the request     data to JSON
+            body: new URLSearchParams({
+                request: encryptPayloadData(JSON.stringify(requestData))
+            }),
         })
             .then(response => response.json())
             .then((response) => {

@@ -276,7 +276,7 @@ function Save(choice) {
 
 }
 async function GetUnitDetails(UnitMapId) {
-    let param = new URLSearchParams({ UnitMapId: UnitMapId });
+    let param = new URLSearchParams({ UnitMapId: encryptPayloadData(UnitMapId) });
 
     fetch('/Master/GetALLByUnitMapId', {
         method: 'POST',

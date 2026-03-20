@@ -23,6 +23,7 @@
     </div> *@
     <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="BasicDetail" id="SaveForm" method="post" class="">
         <div class="p-2">
+            <input type="hidden" id="EncryptedData" name="EncryptedData" value="null" />
             <input hidden asp-for="BasicDetailId" />
             <input hidden asp-for="NameAsPerRecord" />
             <input hidden asp-for="ExistingPhotoImagePath" />

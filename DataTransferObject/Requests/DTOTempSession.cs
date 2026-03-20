@@ -40,5 +40,7 @@ namespace DataTransferObject.Requests
         
         // AppName Stored in session for IAM
         public string AppName { get; set; } = string.Empty;
+        public string Salt { get; set; } = string.Empty;
+
     }
 }

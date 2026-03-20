@@ -92,7 +92,7 @@ function GetALLByUnitById(param1) {
     $.ajax({
         url: '/Master/GetALLByUnitMapId',
         contentType: 'application/x-www-form-urlencoded',
-        data: { "UnitMapId": param1 },
+        data: { "UnitMapId": encryptPayloadData(param1) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (data)

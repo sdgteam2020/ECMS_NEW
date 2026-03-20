@@ -297,8 +297,23 @@ function CheckValidation() {
     
     if ($("#TermsConditions").prop("checked")) {
         if ($("#SaveForm")[0].checkValidity()) {
+
+         
            // alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) + "" + $("#AadhaarNo").val().substr($("#AadhaarNo").val().length - 4));
         }
+        let formData = {};
+
+        $("#SaveForm").serializeArray().forEach(function (item) {
+            formData[item.name] = item.value;
+        });
+
+        let jsonData = JSON.stringify(formData);
+
+        let encrypted = encryptPayloadData(jsonData);
+
+        $("#EncryptedData").val(encrypted);
+
+        $("#SaveForm")[0].submit(); // native submit
         return true;
         
     }
@@ -327,8 +342,8 @@ function GetUnit() {
 }
 function getunitbymapid(value)
 {
-   
-    var param1 = { "UnitMapId": value };
+    const data = encryptData(value, $("#hiddenSa").val());
+    var param1 = { "UnitMapId": encryptPayloadData(data) };
     $.ajax({
         url: '/Master/GetALLByUnitMapId',
         contentType: 'application/x-www-form-urlencoded',

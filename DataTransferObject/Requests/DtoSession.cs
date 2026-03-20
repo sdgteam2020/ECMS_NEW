@@ -1,6 +1,8 @@
-﻿namespace DataTransferObject.Requests
+﻿using DataTransferObject.Response;
+
+namespace DataTransferObject.Requests
 {
-    public class DtoSession
+    public class DtoSession: DTORsaKeyResponse
     {
         public string ICNO { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
@@ -13,5 +15,6 @@
         public Boolean IsToken { get; set; }
         // DoaminId Stored in session for IAM
         public string DoaminId { get; set; } = string.Empty;
+        public string Salt { get; set; } = string.Empty;
     }
 }

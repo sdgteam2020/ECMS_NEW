@@ -264,7 +264,7 @@ function Getdatafromapi() {
         url: "/BasicDetail/GetData",
         type: "POST",
         data: {
-            "ICNumber": $("#ServiceNumber").val(),
+            "ICNumber": encryptPayloadData($("#ServiceNumber").val()),
             "lCardType": $("#TypeId").val()
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
@@ -284,7 +284,7 @@ function CallDataFromAPI() {
         url: "/Api/LoginApi",
         type: "POST",
         data: {
-            "ICNumber": $("#ServiceNumber").val(),
+            "ICNumber": encryptPayloadData($("#ServiceNumber").val()),
             "Type": $("#ApplyForId").val()
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
@@ -459,7 +459,20 @@ function Proceed(id) {
             }).then((result) => {
                 if (result.isConfirmed) {
 
-                    $("#Registration").submit();
+                    var formData = {};
+
+                    $("#Registration").serializeArray().forEach(function (item) {
+                        formData[item.name] = item.value;
+                    });
+
+                    var jsonData = JSON.stringify(formData);
+
+                    var encrypted = encryptPayloadData(jsonData);
+
+                    $("#EncryptedData").val(encrypted);
+
+                    $("#Registration")[0].submit(); // native submit
+                   // $("#Registration").submit();
                 }
                 else {
                     return false;

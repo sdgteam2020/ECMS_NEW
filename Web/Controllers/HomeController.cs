@@ -180,8 +180,13 @@ namespace Web.Controllers
         /// <param name="Data">The notification data to be saved.</param>
         /// <returns>A JSON response indicating success (1) or failure (0).</returns>
         [HttpPost]
-        public async Task<IActionResult> SaveNotification(DTOTrnNotificationRequest Data)
+        public async Task<IActionResult> SaveNotification(string request)
         {
+            DTOTrnNotificationRequest Data = await AESEncrytDecry.DecryptAESWithDTO<DTOTrnNotificationRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (Data == null)
+            {
+                return Json(0);
+            }
             try
             {
                 if(ModelState.IsValid)

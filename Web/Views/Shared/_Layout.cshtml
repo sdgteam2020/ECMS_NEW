@@ -116,6 +116,7 @@
         }
 
     }
+        <input type="hidden" value="@dtoSession.Salt" id="hiddenSa" />
     <div class="watermark yes-print"></div>
     <div class="d-none" id="IpaddresGloble">@(Context.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "0.0.0.0")</div>
     <div class="d-none" id="postingouthtml"></div>
@@ -219,6 +220,7 @@
 @*     <script asp-src-include="~/developerjs/chatbot.js"></script> *@
     <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
     <script asp-src-include="~/developerjs/_notifications.js"></script>
+    <script asp-src-include="~/developerjs/encryptepayload.js"></script>
     @RenderSection("Scripts", false)
 
 

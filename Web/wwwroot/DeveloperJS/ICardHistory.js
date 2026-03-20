@@ -4,7 +4,7 @@
 function GetRequestHistory(spnRequestId) {
     var userdata = {
 
-        "RequestId": spnRequestId,
+        "Request": encryptPayloadData(spnRequestId),
 
 
     };
@@ -180,7 +180,7 @@ function GetRequestHistory(spnRequestId) {
 
 function GetMovementHistory(spnRequestId) {
     var userdata = {
-        "RequestId": spnRequestId,
+        "Request": encryptPayloadData(spnRequestId),
     };
     var listItem = "";
     $.ajax({
