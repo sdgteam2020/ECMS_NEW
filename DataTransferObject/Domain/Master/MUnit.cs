@@ -24,13 +24,6 @@ namespace DataTransferObject.Domain.Master
         [Column(TypeName = "char(1)")]
         public string Suffix { get; set; } = string.Empty;
 
-        //[Required(ErrorMessage = "required!")]
-        //[RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
-        //[MaxLength(100, ErrorMessage = "Maximum length of UnitName is 100 character.")]
-        //[Column(TypeName = "varbinary(Max)")]
-        //public Byte[]? UnitDesc { get; set; }
-
-
         [Required(ErrorMessage = "required!")]
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [MaxLength(100, ErrorMessage = "Maximum length of UnitName is 100 character.")]

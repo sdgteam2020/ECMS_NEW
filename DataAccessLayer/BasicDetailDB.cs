@@ -1470,20 +1470,24 @@ namespace DataAccessLayer
                         recordsTotal = totalFilteredRecords.GetValueOrDefault(),
                         recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
                         data = records,
+                        Result = true,
+                        Message = "Data retrieved successfully."
                     };
                     return responseData;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetAllDispatchCard");
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllICardRequestHold");
                 List<DTOICardRequestHoldResponse> dTODispatchCardLists = new List<DTOICardRequestHoldResponse>();
                 var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
                 {
                     draw = 0,
                     recordsTotal = 0,
                     recordsFiltered = 0,
-                    data = dTODispatchCardLists
+                    data = dTODispatchCardLists,
+                    Result = false,
+                    Message = "An error occurred while fetching data."
                 };
                 return responseData;
             }

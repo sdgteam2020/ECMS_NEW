@@ -131,12 +131,12 @@ function BindData() {
         },
         dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: ':visible:not(.noExport)'
-                }
-            },
+            //{
+            //    extend: 'copy',
+            //    exportOptions: {
+            //        columns: ':visible:not(.noExport)'
+            //    }
+            //},
             {
                 extend: 'excel',
                 exportOptions: {

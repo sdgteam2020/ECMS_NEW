@@ -1,4 +1,6 @@
-﻿var table; // Declare table variable outside the function to preserve the instance
+﻿let spnICardHoldId = 0;
+let spnRequestId = 0;
+var table; // Declare table variable outside the function to preserve the instance
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -57,9 +59,8 @@ $(function () {
             $("#lblRank").html('');
             $("#lblUnitName").html('');
             if (request.term.length > 2) {
-                $("#spnRequestId").html('');
                 var param = { "ArmyNo": request.term };
-                $("#spnRequestId").html(0);
+                spnRequestId = 0;
                 $.ajax({
                     url: '/BasicDetail/GetTopArmyNoFromICardRequest',
                     contentType: 'application/x-www-form-urlencoded',
@@ -75,7 +76,7 @@ $(function () {
                         }
                         else {
                             $("#txtArmyNo").val("");
-                            $("#spnRequestId").html("");
+                            spnRequestId = 0;
                             alert("Army No not found.")
                         }
                     },
@@ -90,7 +91,7 @@ $(function () {
         },
         select: function (e, i) {
             e.preventDefault();
-            $("#spnRequestId").html(i.item.value);
+            spnRequestId = i.item.value;
             $("#txtArmyNo").val(i.item.label);
             var param1 = { "RequestId": i.item.value };
             $.ajax({
@@ -112,7 +113,7 @@ $(function () {
 
     $('#txtArmyNo').on("keyup", function (e) {
         if (e.which == 46) {
-            $("#spnRequestId").html('0');
+            spnRequestId = 0;
             $("#txtArmyNo").val('');
             $("#lblName").html('');
             $("#lblRank").html('');
@@ -161,6 +162,16 @@ function BindData(cvalue, callback) {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
+                if (result.Result === false ) {
+                    toastr.error(result.Message);
+                    callback({
+                        draw: data.draw,
+                        recordsTotal: 0,
+                        recordsFiltered: 0,
+                        data: []
+                    });
+                    return;
+                }
                 callback(result); // Sends data to DataTables
 
 
@@ -175,12 +186,12 @@ function BindData(cvalue, callback) {
         },
         dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
         buttons: [
-            {
-                extend: 'copy',
-                exportOptions: {
-                    columns: "thead th:not(.noExport)"
-                }
-            },
+            //{
+            //    extend: 'copy',
+            //    exportOptions: {
+            //        columns: "thead th:not(.noExport)"
+            //    }
+            //},
             {
                 extend: 'excel',
                 exportOptions: {
@@ -203,6 +214,13 @@ function BindData(cvalue, callback) {
         },
         drawCallback: function (settings) {
 
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.ICardHoldId != null) {
@@ -212,8 +230,8 @@ function BindData(cvalue, callback) {
                     $("#gpUnHoldReason").removeClass("d-none");
                     $("#txtArmyNo").prop('readonly', true);
                     $("#txtHoldReason").prop('readonly', true);
-                    $("#spnICardHoldId").html(rowData.ICardHoldId);
-                    $("#spnRequestId").html(rowData.RequestId);
+                    spnICardHoldId = rowData.ICardHoldId;
+                    spnRequestId = rowData.RequestId;
                     $("#txtArmyNo").val(rowData.ServiceNo);
                     $("#lblRank").html(rowData.RankName);
                     $("#lblName").html(`${rowData.FName || ""} ${rowData.LName || ""}`.trim());
@@ -236,14 +254,6 @@ function BindData(cvalue, callback) {
                 }
             });
 
-            $("#tbldata tbody").off("click", ".cls-HoldReason").on("click", ".cls-HoldReason", function () {
-                var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null) {
-                    $("#MessageDialogLabel").html('Reason');
-                    $("#MessageDialogBody").html(rowData.HoldReason);
-                    $("#MessageDialog").modal('show');
-                }
-            });
             $("#tbldata tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
@@ -263,45 +273,30 @@ function Save() {
         url: '/BasicDetail/SaveICardRequestHold',
         type: 'POST',
         data: {
-            "ICardHoldId": $("#spnICardHoldId").html(),
-            "RequestId": $('#spnRequestId').html(),
+            "ICardHoldId": spnICardHoldId,
+            "RequestId": spnRequestId,
             "IsHold": $('input:radio[name=IsHold]:checked').val(),
             "HoldReason": $("#txtHoldReason").val(),
             "UnHoldReason": $("#txtUnHoldReason").val().length > 0 ?$("#txtUnHoldReason").val() : null,
         }, 
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
-            if (result == DataSave) {
-                toastr.success('ICard Request Hold has been saved');
+
+            if (result.Result == true) {
+                toastr.success(result.Message);
 
                 $("#AddICardRequestHold").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == DataUpdate) {
-                toastr.success('ICard Request Hold has been Updated');
-
-                $("#AddICardRequestHold").modal('hide');
-                BindData();
-                Reset();
-                ResetErrorMessage();
-            }
-            else if (result == DataExists) {
-                toastr.error('Request Id Exits!');
-            }
-            else if (result == InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].Message)
-                    }
+            else {
+                if (result.Message.length > 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: result.Message
+                    });
                 }
             }
         }
@@ -369,9 +364,8 @@ function getColumnsData(choice) {
                     data: "HoldReason",
                     name: "HoldReason",
                     render: function (data, type, row) {
-                        let words = data.split(" ");
-                        let truncatedSentence = words.length > 4 ? words.slice(0, 4).join(" ") + "..." : data;
-                        return `<span class='cls-HoldReason'>${truncatedSentence}</span>`;
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
                     }
                 },
                 {
@@ -470,6 +464,10 @@ function getColumnsData(choice) {
                     title: "Reason for Held",
                     data: "HoldReason",
                     name: "HoldReason",
+                    render: function (data, type, row) {
+                        if (!data) return '';
+                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                    }
                 },
                 {
                     title: "Hold",
@@ -501,7 +499,7 @@ function getColumnsData(choice) {
     return columns;
 }
 function Reset() {
-    $("#spnICardHoldId").html("0");
+    spnICardHoldId = 0
     $("#spnUserProfileId").html("0");
     $("#txtArmyNo").val("");
     $("#lblRank").html("");

@@ -22,7 +22,7 @@ function BindData() {
                     $("#tbldata").DataTable().destroy();
 
                     $("#DetailBody").html(listItem);
-                   var memberTable = $('#tbldata').DataTable({
+                    var memberTable = $('#tbldata').DataTable({
                         "language": {
                             "emptyTable": "No data available"
                         }
@@ -71,28 +71,30 @@ function BindData() {
                         lengthChange: false,
                         searching: false,
                         "order": [[0, "asc"]],
-                        buttons: [{
-                            extend: 'copy',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'excel',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            }
-                        }, {
-                            extend: 'pdfHtml5',
-                            orientation: 'portrait',
-                            pageSize: 'A4',
-                            title: 'E-IASC_User_Regn',
-                            exportOptions: {
-                                columns: "thead th:not(.noExport)"
-                            },
-                            customize: function (doc) {
-                                WaterMarkOnPdf(doc)
-                            }
-                        }]
+                        buttons: [
+                            //{
+                            //    extend: 'copy',
+                            //    exportOptions: {
+                            //        columns: "thead th:not(.noExport)"
+                            //    }
+                            //},
+                            {
+                                extend: 'excel',
+                                exportOptions: {
+                                    columns: "thead th:not(.noExport)"
+                                }
+                            }, {
+                                extend: 'pdfHtml5',
+                                orientation: 'portrait',
+                                pageSize: 'A4',
+                                title: 'E-IASC_User_Regn',
+                                exportOptions: {
+                                    columns: "thead th:not(.noExport)"
+                                },
+                                customize: function (doc) {
+                                    WaterMarkOnPdf(doc)
+                                }
+                            }]
                     });
 
                     memberTable.buttons().container().appendTo('#tbldata_wrapper .col-md-6:eq(0)');
@@ -102,7 +104,7 @@ function BindData() {
                 $("#tbldata").DataTable().destroy();
 
                 $("#DetailBody").html(listItem);
-               var memberTable = $('#tbldata').DataTable({
+                var memberTable = $('#tbldata').DataTable({
                     "language": {
                         "emptyTable": "No data available"
                     }

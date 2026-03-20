@@ -7,6 +7,7 @@ using DataTransferObject.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -37,16 +38,13 @@ namespace DataAccessLayer
         /// <returns>
         /// Returns true if an appointment with the same AppointmentName but a different ApptId exists, otherwise false.
         /// </returns>
-        public async Task<bool> GetByName(MAppointment Data)
+        public async Task<bool> GetByName(MAppointment data)
         {
-            // LINQ query using AnyAsync() to check if there is any record in the MAppointment table
-            // where the AppointmentName matches the provided Data.AppointmentName (case-insensitive),
-            // and the ApptId is different from the current appointment's ApptId (i.e., excluding the current record).
-            var ret = await _context.MAppointment
-                                    .AnyAsync(p => p.AppointmentName.ToUpper() == Data.AppointmentName.ToUpper() && p.ApptId != Data.ApptId);
-
-            // Return true if a matching appointment is found, otherwise false.
-            return ret;
+            return await _context.MAppointment
+                .AnyAsync(p =>
+                    (p.AppointmentName == data.AppointmentName ||
+                     p.AppointmentAbbreviation == data.AppointmentAbbreviation)
+                    && p.ApptId != data.ApptId);
         }
 
 

@@ -11,7 +11,7 @@ namespace BusinessLogicsLayer.BasicDetTemp
 { 
     public interface IBasicDetailTempBL : IGenericRepositoryDL<BasicDetailTemp>
     {
-        public Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, int TypeId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO);
+        public Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, bool claim, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO);
         public Task<DTOBasicDetailTempRequest?> GetALLBasicDetailTempByBasicDetailId(int UserId,int BasicDetailId);
 
         public Task<bool> UpdateByArmyNo(string ArmyNo);

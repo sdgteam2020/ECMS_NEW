@@ -79,7 +79,7 @@
                         </div>
                     }
                     <div class="d-flex justify-content-end">
-                        <button type="button" id="btnCSVDownload" class="btn btn-warning font-weight-600 btn-sm mb-2">CSV Download</button>
+                        
                         @if (ViewBag.StepCounter == 3 && claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
                         {
                             <button type="button" id="btnInternalFwd" class="btn btn-warning font-weight-600 btn-sm mb-2 ml-2">Forward</button>
