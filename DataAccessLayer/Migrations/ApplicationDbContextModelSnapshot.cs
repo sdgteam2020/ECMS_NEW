@@ -39,7 +39,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("ErrorId");
 
-                    b.ToTable("Errors");
+                    b.ToTable("Errors", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Identitytable.ApplicationRole", b =>
@@ -228,7 +228,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("UserProfile");
+                    b.ToTable("UserProfile", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MApplyFor", b =>
@@ -245,7 +245,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("ApplyForId");
 
-                    b.ToTable("MApplyFor");
+                    b.ToTable("MApplyFor", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MAppointment", b =>
@@ -281,7 +281,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MAppointment");
+                    b.ToTable("MAppointment", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MArmedCat", b =>
@@ -312,7 +312,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MArmedCats");
+                    b.ToTable("MArmedCats", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MArmedType", b =>
@@ -354,7 +354,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MArmedType");
+                    b.ToTable("MArmedType", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MBde", b =>
@@ -398,7 +398,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MBde");
+                    b.ToTable("MBde", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MBloodGroup", b =>
@@ -414,7 +414,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("BloodGroupId");
 
-                    b.ToTable("MBloodGroup");
+                    b.ToTable("MBloodGroup", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MCategory", b =>
@@ -432,7 +432,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("MCategory");
+                    b.ToTable("MCategory", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MComd", b =>
@@ -469,7 +469,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MComd");
+                    b.ToTable("MComd", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MCorps", b =>
@@ -503,7 +503,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MCorps");
+                    b.ToTable("MCorps", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MDispatchMode", b =>
@@ -521,7 +521,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("DispatchModeId");
 
-                    b.ToTable("MDispatchMode");
+                    b.ToTable("MDispatchMode", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MDiv", b =>
@@ -560,7 +560,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MDiv");
+                    b.ToTable("MDiv", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MEncryptionSetting", b =>
@@ -601,7 +601,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MEncryptionSetting");
+                    b.ToTable("MEncryptionSetting", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MFmnBranches", b =>
@@ -638,7 +638,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MFmnBranches");
+                    b.ToTable("MFmnBranches", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MFormation", b =>
@@ -666,7 +666,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MFormation");
+                    b.ToTable("MFormation", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MICardType", b =>
@@ -683,7 +683,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("TypeId");
 
-                    b.ToTable("MICardType");
+                    b.ToTable("MICardType", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MIssuingAuthority", b =>
@@ -705,7 +705,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ApplyForId");
 
-                    b.ToTable("MIssuingAuthority");
+                    b.ToTable("MIssuingAuthority", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MPSO", b =>
@@ -742,7 +742,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MPso");
+                    b.ToTable("MPso", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MPostingReason", b =>
@@ -762,7 +762,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MPostingReason");
+                    b.ToTable("MPostingReason", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRank", b =>
@@ -807,7 +807,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MRank");
+                    b.ToTable("MRank", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRecordOffice", b =>
@@ -860,7 +860,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MRecordOffice");
+                    b.ToTable("MRecordOffice", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRegimental", b =>
@@ -909,7 +909,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MRegimental");
+                    b.ToTable("MRegimental", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRegistration", b =>
@@ -943,7 +943,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MRegistration");
+                    b.ToTable("MRegistration", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarkType", b =>
@@ -961,7 +961,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("RemarkTypeId");
 
-                    b.ToTable("MRemarkType");
+                    b.ToTable("MRemarkType", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarks", b =>
@@ -989,7 +989,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("RemarkTypeId");
 
-                    b.ToTable("MRemarks");
+                    b.ToTable("MRemarks", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MRemarksApply", b =>
@@ -1007,7 +1007,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("RemarkApplyId");
 
-                    b.ToTable("MRemarksApply");
+                    b.ToTable("MRemarksApply", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MStepCounterStep", b =>
@@ -1035,7 +1035,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("MStepCounterStep");
+                    b.ToTable("MStepCounterStep", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MSubDte", b =>
@@ -1072,7 +1072,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MSubDte");
+                    b.ToTable("MSubDte", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MTrnFwdStatus", b =>
@@ -1089,7 +1089,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("FwdStatusId");
 
-                    b.ToTable("MTrnFwdStatus");
+                    b.ToTable("MTrnFwdStatus", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MTrnFwdType", b =>
@@ -1106,7 +1106,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("TypeId");
 
-                    b.ToTable("MFwdType");
+                    b.ToTable("MFwdType", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MUnit", b =>
@@ -1163,7 +1163,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MUnit");
+                    b.ToTable("MUnit", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MapUnit", b =>
@@ -1230,7 +1230,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("MapUnit");
+                    b.ToTable("MapUnit", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.AfsacCellMapping", b =>
@@ -1253,7 +1253,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("AfsacCellMapping");
+                    b.ToTable("AfsacCellMapping", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetail", b =>
@@ -1350,7 +1350,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("BasicDetails");
+                    b.ToTable("BasicDetails", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetailTemp", b =>
@@ -1460,7 +1460,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("BasicDetailTemps");
+                    b.ToTable("BasicDetailTemps", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.CSVImport", b =>
@@ -1501,7 +1501,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ImportedBy");
 
-                    b.ToTable("CSVImports");
+                    b.ToTable("CSVImports", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.ClaimsStore", b =>
@@ -1522,7 +1522,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("ClaimsStoreId");
 
-                    b.ToTable("ClaimsStore");
+                    b.ToTable("ClaimsStore", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.CompletedICardRequest", b =>
@@ -1560,7 +1560,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UpdatedbyUserId");
 
-                    b.ToTable("CompletedICardRequests");
+                    b.ToTable("CompletedICardRequests", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.IAMSetting", b =>
@@ -1585,7 +1585,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("IAMSettingId");
 
-                    b.ToTable("IAMSetting");
+                    b.ToTable("IAMSetting", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MApiData", b =>
@@ -1640,7 +1640,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MApiData");
+                    b.ToTable("MApiData", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MApiDataOffrs", b =>
@@ -1695,7 +1695,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MApiDataOffrs");
+                    b.ToTable("MApiDataOffrs", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MApiLogin", b =>
@@ -1720,7 +1720,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MApiLogin");
+                    b.ToTable("MApiLogin", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MStepCounter", b =>
@@ -1759,7 +1759,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("TrnStepCounter");
+                    b.ToTable("TrnStepCounter", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnAddress", b =>
@@ -1798,7 +1798,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("BasicDetailId");
 
-                    b.ToTable("TrnAddress");
+                    b.ToTable("TrnAddress", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnFwd", b =>
@@ -1877,7 +1877,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("TrnFwds");
+                    b.ToTable("TrnFwds", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnICardHold", b =>
@@ -1921,7 +1921,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("MTrnICardHold");
+                    b.ToTable("MTrnICardHold", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnICardRequest", b =>
@@ -1989,7 +1989,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("TrnICardRequest");
+                    b.ToTable("TrnICardRequest", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnICardStatus", b =>
@@ -2006,7 +2006,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("StatusId");
 
-                    b.ToTable("MTrnICardStatus");
+                    b.ToTable("MTrnICardStatus", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnIdentityInfo", b =>
@@ -2043,7 +2043,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("BasicDetailId");
 
-                    b.ToTable("TrnIdentityInfo");
+                    b.ToTable("TrnIdentityInfo", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnNotification", b =>
@@ -2090,7 +2090,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("StepId");
 
-                    b.ToTable("TrnNotification");
+                    b.ToTable("TrnNotification", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnNotificationDisplay", b =>
@@ -2118,7 +2118,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("DisplayId");
 
-                    b.ToTable("TrnNotificationDisplay");
+                    b.ToTable("TrnNotificationDisplay", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnUpload", b =>
@@ -2146,7 +2146,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("BasicDetailId");
 
-                    b.ToTable("TrnUpload");
+                    b.ToTable("TrnUpload", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.OROMapping", b =>
@@ -2182,7 +2182,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("OROMapping");
+                    b.ToTable("OROMapping", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplClose", b =>
@@ -2235,7 +2235,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TrnApplClose");
+                    b.ToTable("TrnApplClose", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDestructionCard", b =>
@@ -2281,7 +2281,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UpdatedbyUserId");
 
-                    b.ToTable("TrnDestructionCards");
+                    b.ToTable("TrnDestructionCards", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDispatchCard", b =>
@@ -2393,7 +2393,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("TrnDispatchCard");
+                    b.ToTable("TrnDispatchCard", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDispatchCardMapping", b =>
@@ -2421,7 +2421,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("TrnDispatchCardMapping");
+                    b.ToTable("TrnDispatchCardMapping", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDistributeCard", b =>
@@ -2462,7 +2462,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UpdatedbyUserId");
 
-                    b.ToTable("TrnDistributeCards");
+                    b.ToTable("TrnDistributeCards", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDomainMapping", b =>
@@ -2524,7 +2524,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TrnDomainMapping");
+                    b.ToTable("TrnDomainMapping", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnFaultyCard", b =>
@@ -2587,7 +2587,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TrnFaultyCard");
+                    b.ToTable("TrnFaultyCard", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnHotlistCard", b =>
@@ -2630,7 +2630,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UpdatedbyUserId");
 
-                    b.ToTable("TrnHotlistCards");
+                    b.ToTable("TrnHotlistCards", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnLostCard", b =>
@@ -2688,7 +2688,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UpdatedbyUserId");
 
-                    b.ToTable("TrnLostCards");
+                    b.ToTable("TrnLostCards", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnMapUnitChangeRequest", b =>
@@ -2761,7 +2761,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("TrnMapUnitChangeRequest");
+                    b.ToTable("TrnMapUnitChangeRequest", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
@@ -2858,7 +2858,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("Updatedby");
 
-                    b.ToTable("TrnPostingOut");
+                    b.ToTable("TrnPostingOut", (string)null);
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnUnregdUser", b =>
@@ -2909,7 +2909,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("UnregdUserId");
 
-                    b.ToTable("TrnUnregdUser");
+                    b.ToTable("TrnUnregdUser", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
