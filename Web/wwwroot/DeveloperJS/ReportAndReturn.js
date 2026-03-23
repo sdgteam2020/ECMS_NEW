@@ -268,11 +268,15 @@ function GetCount() {
         "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null
 
     };
+    let jsonData = JSON.stringify(requestData);
+
+    let encrypted = encryptPayloadData(jsonData);
+
 
     $.ajax({
         url: '/Home/GetReportReturnCount',
         contentType: 'application/x-www-form-urlencoded',
-        data: requestData,
+        data: { "request": encrypted },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 
@@ -1009,6 +1013,12 @@ async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
         id: TableId,
         parentId: ParentId ? Number(ParentId) : null   // ⭐ THIS IS IMPORTANT
     };
+    let encryptedPayload = "";
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+
+    }
     try {
         const response = await fetch('/Master/GetAllMMaster', {
             method: 'POST',
@@ -1017,7 +1027,8 @@ async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
-            body: JSON.stringify(payload)
+            // body: JSON.stringify(payload)
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         const data = await response.json();
@@ -1056,6 +1067,12 @@ async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsI
         DivId: DivId ? Number(DivId) : null,
         BdeId: BdeId ? Number(BdeId) : null
     };
+    let encryptedPayload = "";
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+
+    }
     try {
         const response = await fetch('/Master/GetAllMMasterByParent', {
             method: 'POST',
@@ -1064,7 +1081,7 @@ async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsI
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         const data = await response.json();

@@ -1407,6 +1407,13 @@ async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsI
         DivId: DivId ? Number(DivId) : null,
         BdeId: BdeId ? Number(BdeId) : null
     };
+    let encryptedPayload = "";
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+
+    }
+    
     try {
         const response = await fetch('/Master/GetAllMMasterByParent', {
             method: 'POST',

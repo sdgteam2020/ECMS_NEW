@@ -179,27 +179,32 @@ function Proceed(choice) {
 }
 function Save(choice) {
     let urladd;
-
+    
     if (choice === 1) {
+        const payload = {
+            "MapUnitChangeRequestId": document.getElementById('spnMapUnitChangeRequestId')?.textContent || "",
+            "UnitMapId": document.getElementById('spnUnitMapId')?.textContent || "",
+            "Remark": document.getElementById('txtRemark')?.value || "",
+            "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
+            "Choice": choice || "",
+            "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "",
+            "ComdId": document.getElementById('ddlCommand')?.value || "",
+            "CorpsId": document.getElementById('ddlCorps')?.value || "",
+            "DivId": document.getElementById('ddlDiv')?.value || "",
+            "BdeId": document.getElementById('ddlBde')?.value || "",
+            "PsoId": document.getElementById('ddlPSODte')?.value || "",
+            "FmnBranchID": document.getElementById('ddlFmnBranch')?.value || "",
+            "SubDteId": document.getElementById('ddlDgSubDte')?.value || ""
+
+        }
+        let jsonData = JSON.stringify(payload);
+
+        let encrypted = encryptPayloadData(jsonData);
         urladd = '/Master/SaveMapUnitChangeRequest';
         $.ajax({
             url: urladd,
             type: 'POST',
-            data: {
-                "MapUnitChangeRequestId": document.getElementById('spnMapUnitChangeRequestId')?.textContent || "",
-                "UnitMapId": document.getElementById('spnUnitMapId')?.textContent || "",
-                "Remark": document.getElementById('txtRemark')?.value || "",
-                "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
-                "Choice": choice || "",
-                "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "",
-                "ComdId": document.getElementById('ddlCommand')?.value || "",
-                "CorpsId": document.getElementById('ddlCorps')?.value || "",
-                "DivId": document.getElementById('ddlDiv')?.value || "",
-                "BdeId": document.getElementById('ddlBde')?.value || "",
-                "PsoId": document.getElementById('ddlPSODte')?.value || "",
-                "FmnBranchID": document.getElementById('ddlFmnBranch')?.value || "",
-                "SubDteId": document.getElementById('ddlDgSubDte')?.value || ""
-            }, //get the search string
+            data: { request: encrypted }, //get the search string
             headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             success: function (result) {
                 if (result.Result == true) {
@@ -222,26 +227,29 @@ function Save(choice) {
         });
     }
     else {
+        const payload = {
+            "MapUnitChangeRequestId": document.getElementById('spnMapUnitChangeRequestId')?.textContent || "",
+            "UnitMapId": document.getElementById('spnUnitMapId')?.textContent || "",
+            "Remark": document.getElementById('txtRemark')?.value || "",
+            "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
+            "Choice": choice || "",
+            "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "",
+            "ComdId": document.getElementById('ddlCommand')?.value || "",
+            "CorpsId": document.getElementById('ddlCorps')?.value || "",
+            "DivId": document.getElementById('ddlDiv')?.value || "",
+            "BdeId": document.getElementById('ddlBde')?.value || "",
+            "PsoId": document.getElementById('ddlPSODte')?.value || "",
+            "FmnBranchID": document.getElementById('ddlFmnBranch')?.value || "",
+            "SubDteId": document.getElementById('ddlDgSubDte')?.value || ""
+        }
+        let jsonData = JSON.stringify(payload);
+
+        let encrypted = encryptPayloadData(jsonData);
         urladd = '/Master/UpdateMapUnitChangeRequest';
         $.ajax({
             url: urladd,
             type: 'POST',
-            data: {
-                "MapUnitChangeRequestId": document.getElementById('spnMapUnitChangeRequestId')?.textContent || "",
-                "UnitMapId": document.getElementById('spnUnitMapId')?.textContent || "",
-                "Remark": document.getElementById('txtRemark')?.value || "",
-                "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
-                "Choice": choice || "",
-                "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "",
-                "ComdId": document.getElementById('ddlCommand')?.value || "",
-                "CorpsId": document.getElementById('ddlCorps')?.value || "",
-                "DivId": document.getElementById('ddlDiv')?.value || "",
-                "BdeId": document.getElementById('ddlBde')?.value || "",
-                "PsoId": document.getElementById('ddlPSODte')?.value || "",
-                "FmnBranchID": document.getElementById('ddlFmnBranch')?.value || "",
-                "SubDteId": document.getElementById('ddlDgSubDte')?.value || ""
-
-            }, //get the search string
+            data: { request: encrypted }, //get the search string
             headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             success: function (result) {
                 if ($("#spnRoleName").html().toLowerCase() === "admin" && result.Result == true) {

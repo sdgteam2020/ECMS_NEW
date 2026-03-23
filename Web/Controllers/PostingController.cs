@@ -1,5 +1,6 @@
 ﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.Service;
 using DataAccessLayer;
@@ -289,12 +290,22 @@ namespace Web.Controllers
         /// - Returns `KeyConstants.IncorrectData` if the data is incorrect.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> SavePoasingOut(DTOPostingOutRequest dTO)
+        public async Task<IActionResult> SavePoasingOut(string request)
         {
+            DTOPostingOutRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOPostingOutRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+           
             DTOGenericResponse<DTOBeforePostingOutCheckedInputDataResponse?> response = new DTOGenericResponse<DTOBeforePostingOutCheckedInputDataResponse?>();
             DTOBeforePostingOutCheckedInputDataResponse closeResponse = new DTOBeforePostingOutCheckedInputDataResponse();
+            if (dTO == null)
+            {
+                response.Message = "Internal Server Error.";
+                response.Value = closeResponse;
+                response.Result = false;
+                return Ok(response);
+            }
             try
             {
+                TryValidateModel(dTO);
                 TrnPostingOut trnPostingOut = new TrnPostingOut();
                 int CurrentAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));  // Get the current user ID
                 DtoSession? dtoSession = new DtoSession();
@@ -317,7 +328,7 @@ namespace Web.Controllers
                 trnPostingOut.FromAspNetUsersId = CurrentAspNetUsersId;
                 trnPostingOut.Updatedby = CurrentAspNetUsersId;
                 trnPostingOut.UpdatedOn = DateTime.Now;  // Set the updated timestamp
-
+               
                 // Check if the model is valid
                 if (ModelState.IsValid)
                 {
@@ -485,12 +496,22 @@ namespace Web.Controllers
         /// - `KeyConstants.Exists` if the application close record already exists.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> SaveApplicationClose(DTOApplicationCloseRequest dTO)
+        public async Task<IActionResult> SaveApplicationClose(string request)
         {
+            DTOApplicationCloseRequest dTO=await AESEncrytDecry.DecryptAESWithDTO<DTOApplicationCloseRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            
             DTOGenericResponse<DTOApplicationCloseResponse?> response = new DTOGenericResponse<DTOApplicationCloseResponse?>();
             DTOApplicationCloseResponse closeResponse = new DTOApplicationCloseResponse();
+            if (dTO == null)
+            {
+                response.Message = "Internal Server Error.";
+                response.Value = closeResponse;
+                response.Result = false;
+                return Ok(response);
+            }
             try
             {
+               
                 TrnApplClose applClose = new TrnApplClose();
                 DtoSession? dtoSession = new DtoSession();
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
@@ -498,9 +519,10 @@ namespace Web.Controllers
                     dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
                     dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
                 }
-
+                
                 // Validate the model before saving
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     applClose.Id = 0;
                     applClose.ReasonId = dTO.ReasonId;
