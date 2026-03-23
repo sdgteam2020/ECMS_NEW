@@ -93,5 +93,9 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MArmedType")]
         public byte ArmedId { get; set; }
         public MArmedType? Armed { get; set; }
+
+        [ForeignKey("MRecordOffice"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte RecordOfficeId { get; set; }
+        public MRecordOffice? MRecordOffice { get; set; }
     }
 }

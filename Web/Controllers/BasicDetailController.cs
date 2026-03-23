@@ -1008,11 +1008,6 @@ namespace Web.Controllers
             
          try
             {
-                
-                // Extract userId from claims and assign as UpdatedBy
-                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                model.Updatedby = Convert.ToInt32(userId);
-
                 string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
                 if (dd != null)
                 {
@@ -1025,6 +1020,10 @@ namespace Web.Controllers
                     goto end;
                 }
                 model =await AESEncrytDecry.DecryptAESWithDTO<DTORegistrationRequest>(EncryptedData,SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+
+                // Extract userId from claims and assign as UpdatedBy
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                model.Updatedby = Convert.ToInt32(userId);
 
                 if (model == null)
                 {
@@ -1163,6 +1162,46 @@ namespace Web.Controllers
                     // Case 2: SubmitType != 1 (temporary save flow)
                     else
                     {
+                        // Retrieve application forward condition settings from configuration
+                        var dTOApplFwdCondition = new DTOApplFwdConditionRequest();
+
+                        if (model.ApplyForId == 1)
+                        {
+                            // Retrieve the encryption key record from the database
+                            var keyRecord = await encryptionSettingBL.Get(1);
+                            if (keyRecord != null)
+                            {
+                                if (!string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition))
+                                {
+                                    dTOApplFwdCondition = !string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition)
+                                        ? JsonConvert.DeserializeObject<DTOApplFwdConditionRequest>(keyRecord.ApplFwdCondition) ?? new DTOApplFwdConditionRequest()
+                                        : new DTOApplFwdConditionRequest();
+                                }
+                            }
+                            else
+                            {
+                                // Throw exception if encryption keys are not found
+                                throw new InvalidOperationException("Encryption key record not found.");
+                            }
+
+                            // Validate that essential configuration values are present before proceeding
+                            if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
+                                        string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
+                                        dTOApplFwdCondition.MP6A.RankOrderby == 0)
+                            {
+                                ModelState.AddModelError("", "Officer fwd condation not set by MP6");
+                                goto end;
+                            }
+                        }
+
+                        byte? RecordOfficeId = await basicDetailBL.GetRecordOfficeId(model.ApplyForId, model.ServiceNo, model.ArmedId, model.RankId, dTOApplFwdCondition);
+
+                        if (RecordOfficeId == null)
+                        {
+                            ModelState.AddModelError("", "Armed not mapped in Record Office / ORO .");
+                            goto end;
+                        }
+
                         BasicDetailTemp basicDetailTemp = new BasicDetailTemp
                         {
                             FName = model.FName,
@@ -1186,7 +1225,8 @@ namespace Web.Controllers
                             TypeId = model.TypeId,
                             RankId = model.RankId,
                             ArmedId = model.ArmedId,
-                            UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
+                            UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")),
+                            RecordOfficeId = (byte)RecordOfficeId
                         };
 
                         // Check if a temporary record already exists → Update; else → Add
@@ -1360,13 +1400,6 @@ namespace Web.Controllers
                             OldServiceNo = model.OldServiceNo,
                             DOB = model.DOB,
                             DateOfCommissioning = model.DateOfCommissioning,
-                            IdenMark1 = model.IdenMark1,
-                            IdenMark2 = model.IdenMark2,
-
-                            AadhaarNo = string.IsNullOrWhiteSpace(model.AadhaarNo)
-        ? ""
-        : Convert.ToInt64(model.AadhaarNo).ToString("D12"),
-
                             ApplyForId = model.ApplyForId,
                             RegistrationId = model.RegistrationId,
                             TypeId = model.TypeId,
