@@ -100,7 +100,7 @@ builder.Services.AddCors(options =>
         policy.AllowCredentials();
 
         // Cache preflight for 5 minutes
-        policy.SetPreflightMaxAge(TimeSpan.FromMinutes(60));
+        policy.SetPreflightMaxAge(TimeSpan.FromMinutes(5));
     });
 });
 
@@ -146,7 +146,7 @@ builder.Services.AddSingleton(mapper);
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.IdleTimeout = TimeSpan.FromMinutes(5);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     // When the code is published on IAM, these two lines are commented out.
@@ -165,7 +165,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Strict;
 
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
     options.SlidingExpiration = false;
 
     options.LoginPath = "/Account/IMLoginSelf";
