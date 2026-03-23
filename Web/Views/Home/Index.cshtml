@@ -5,42 +5,16 @@
 <link asp-href-include="~/developercss/homeindex.css" rel="stylesheet" />
 
 <div class="hero">
-    <div class="wrap">
-        @*     <div id="dir-control-left" class="dir-control">
-        <i class="fa fa-angle-left fa-5x" ></i>
-    </div> *@
-        <div id="slider">
-            @*<div class="slide slide1">
-            <div class="slide-content">
-            </div>
-        </div>
-        <div class="slide slide2">
-            <div class="slide-content">
-            </div>
-        </div>
-        <div class="slide slide3">
-            <div class="slide-content">
-            </div>
-        </div>
-         <div class="slide slide4">
-            <div class="slide-content">
-            </div>
-        </div>*@
-        </div>
-        @*     <div id="dir-control-right" class="dir-control">
-        <i class="fa fa-angle-right fa-5x" id="Next" ></i>
-    </div> *@
+    <div class="container-fluid h-100 d-flex align-items-end">
+        <div class="row w-100 justify-content-center g-1 pb-3 pb-md-4">
 
-        <div class="row">
-            <div class="col-md-2 col-sm-6">
-            </div>
-            <div class="col-md-8 col-sm-6 text-center">
-                <div class="a-box mr-2">
+            <div class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
+                <div class="a-box w-100">
                     <a href="/Home/Dashboard" class="clickable">
                         <div class="img-container">
                             <div class="img-inner">
                                 <div class="inner-skew">
-                                    <img src="~/images/asset/dashboard.png" />
+                                    <img src="~/images/asset/dashboard.png" alt="Dashboard" class="img-fluid" />
                                 </div>
                             </div>
                         </div>
@@ -52,14 +26,15 @@
                         </div>
                     </a>
                 </div>
+            </div>
 
-
-                <div class="a-box mr-2">
+            <div class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
+                <div class="a-box w-100">
                     <a href="/Home/Request" class="clickable">
                         <div class="img-container">
                             <div class="img-inner">
                                 <div class="inner-skew">
-                                    <img src="~/images/asset/request.png" />
+                                    <img src="~/images/asset/request.png" alt="Initiate Request" class="img-fluid" />
                                 </div>
                             </div>
                         </div>
@@ -71,46 +46,48 @@
                         </div>
                     </a>
                 </div>
-                <div class="a-box">
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
+                <div class="a-box w-100">
                     <a href="/Home/Task" class="clickable">
                         <div class="img-container">
                             <div class="img-inner">
                                 <div class="inner-skew">
-                                    <img src="~/images/asset/task-100.png" />
+                                    <img src="~/images/asset/task-100.png" alt="Task" class="img-fluid" />
                                 </div>
                             </div>
                         </div>
                         <div class="text-container">
                             <h3>Task</h3>
-                            <div class="">
+                            <div>
                                 Contains role based activity
-                                <br />.
                             </div>
                         </div>
                     </a>
                 </div>
-                <div class="a-box">
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
+                <div class="a-box w-100">
                     <a href="/Home/ContactUs" class="clickable">
                         <div class="img-container">
                             <div class="img-inner">
                                 <div class="inner-skew">
-                                    <img src="~/images/asset/contact-us-circle.png" />
+                                    <img src="~/images/asset/contact-us-circle.png" alt="Contact Us" class="img-fluid" />
                                 </div>
                             </div>
                         </div>
                         <div class="text-container">
                             <h3>Contact Us</h3>
-                            <div class="">
-                                <br />.
+                            <div>
+                                Contact information and support details
                             </div>
                         </div>
                     </a>
                 </div>
             </div>
-            <div class="col-md-2 col-sm-6">
-            </div>
-        </div>
 
+        </div>
     </div>
 </div>
-@* <script asp-src-include="~/developerjs/HomeIndex.js"></script> *@
