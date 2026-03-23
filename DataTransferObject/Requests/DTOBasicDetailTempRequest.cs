@@ -106,23 +106,6 @@ namespace DataTransferObject.Requests
         /// <summary>
         /// end address
         /// </summary> 
-        
-        [RegularExpression(@"^[\w\.\/ ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string? IdenMark1 { get; set; } = string.Empty;
-        
-        [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string? IdenMark2 { get; set; } = string.Empty;
-
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "AadhaarNo is number.")]
-        public string? AadhaarNo { get; set; }
-        //[NotMapped]
-        //public int? Height { get; set; }
-
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "BloodGroupId is number.")]
-        public byte BloodGroupId { get; set; }
-
-        [RegularExpression(@"^[\w\+\- ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        public string? BloodGroup { get; set; }
 
         [NotMapped]
         public string? EncryptedId { get; set; }

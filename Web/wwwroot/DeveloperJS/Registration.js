@@ -42,7 +42,6 @@ $(function () {
     });
     $('.paddress').on('change', function () {
         $("#PermanentAddress").val('Village - ' + $("#Village").val() + '\n Post Office-' + $("#PO").val() + ' \n Tehsil- ' + $("#Tehsil").val() + '\n District- ' + $("#District").val() + '\n State- ' + $("#State").val() + '\n Pin Code- ' + $("#PinCode").val());
-        $("#AadhaarNo").val("");
 
     });
 
@@ -342,20 +341,6 @@ function CallDataFromAPI() {
                 else {
                     $("#PinCode").val(response.Pers_Address.Pers_Pin_code);
                 }
-                $("#IdenMark1").val('');
-                $("#IdenMark2").val('');
-                $("#AadhaarNo").val('');
-                $("#BloodGroup").val('');
-
-                //$("#IdenMark1").val(response.pers_Iden_mark_1);
-                //$("#IdenMark2").val(response.pers_Iden_mark_2);
-                //$("#AadhaarNo").val(response.pers_UID);
-                //if (response.Pers_Height!="")
-                //    $("#Height").val(response.Pers_Height);
-                //else
-                //    $("#Height").val(0);
-
-                //$("#BloodGroup").val(response.pers_Blood_Gp);
             }
         }
     });
@@ -365,8 +350,6 @@ function registrationEnableDisabledField(val) {
     $("#RemarksIds").val("");
     if (val == 1) {
         $("#btnsubmit").prop('disabled', false);
-        $("#Observations").val('');
-        $("#Observations").prop('readonly', true);
         $(".Remarks").addClass("d-none");
         $("#btnsubmit").text("Process I-Card");
         $("#btnsubmit").removeClass("btn-danger");
@@ -374,7 +357,6 @@ function registrationEnableDisabledField(val) {
     }
     else {
         $("#btnsubmit").prop('disabled', false);
-        $("#Observations").prop('readonly', false);
         $(".Remarks").removeClass("d-none");
         $("#btnsubmit").text("Raised Obsn");
         $("#btnsubmit").removeClass("btn-success");
@@ -393,10 +375,7 @@ function Proceed(id) {
         return;
     }
     let stype = parseInt($("input[name='SubmitType']:checked").val());
-    if (stype != 1) {
-        $("#Observations").prop('required', true);
-        $("#lblObservations").text('Observations is required.')
-    }
+
     if ($("#DOB").val() == '') {
         $("#lblDOB").text('Date of Birth is required.')
     }
@@ -491,7 +470,20 @@ function Proceed(id) {
             }).then((result) => {
                 if (result.isConfirmed) {
 
-                    $("#Registration").submit();
+                    var formData = {};
+
+                    $("#Registration").serializeArray().forEach(function (item) {
+                        formData[item.name] = item.value;
+                    });
+
+                    var jsonData = JSON.stringify(formData);
+
+                    var encrypted = encryptPayloadData(jsonData);
+
+                    $("#EncryptedData").val(encrypted);
+
+                    $("#Registration")[0].submit(); // native submit
+                    // $("#Registration").submit();
                 }
                 else {
                     return false;
