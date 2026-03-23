@@ -342,8 +342,8 @@ function GetUnit() {
 }
 function getunitbymapid(value)
 {
-    const data = encryptData(value, $("#hiddenSa").val());
-    var param1 = { "UnitMapId": encryptPayloadData(data) };
+    
+    var param1 = { "UnitMapId": encryptPayloadData(value) };
     $.ajax({
         url: '/Master/GetALLByUnitMapId',
         contentType: 'application/x-www-form-urlencoded',

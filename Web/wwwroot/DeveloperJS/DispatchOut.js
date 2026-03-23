@@ -175,7 +175,10 @@ async function Save() {
 
         const response = await fetch('/BasicDetail/DispatchOut', {
             method: 'POST',
-            headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+            headers: {
+                'Content-Type': 'application/json', // Tell the server we are sending JSON
+                'RequestVerificationToken': globalThis.RequestVerificationToken
+            },
             body: new URLSearchParams({
                 request: encrypted
             })
@@ -264,7 +267,7 @@ async function GetUserIdWithName(AspNetUsersId) {
     let param = new URLSearchParams({
         "AspNetUsersId": AspNetUsersId
     });
-
+    
     try {
         const response = await fetch('/BasicDetail/GetUserIdWithName', {
             method: 'POST',
