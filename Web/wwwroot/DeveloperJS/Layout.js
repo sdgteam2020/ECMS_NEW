@@ -172,14 +172,18 @@ $(function () {
                     MaxTrnFwdId: $("#MaxTrnFwdId_unitoffrsModal").val()
                 };
 
-                // Send POST request using fetch
+                let jsonData = JSON.stringify(requestData);
+                let encrypted = encryptPayloadData(jsonData);
+
                 const response = await fetch('/BasicDetail/DataSendForSetSession', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json', // Tell the server we are sending JSON
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                         'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
-                    body: JSON.stringify(requestData), // Convert the request data to JSON
+                    body: new URLSearchParams({
+                        request: encrypted
+                    }).toString()
                 });
 
                 // Parse the response as JSON
@@ -214,7 +218,7 @@ $(function () {
                             break;
                     }
                 } else {
-                    toastr.error("Failed to Create Session: " + data.Message);
+                    toastr.error("Failed to Create Session: ");
                 }
             } catch (error) {
                 // Catch any errors during the fetch and display the error

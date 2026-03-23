@@ -7349,8 +7349,13 @@ namespace Web.Controllers
         /// Returns `true` if the session data was successfully set, otherwise returns `false` in case of any exception.
         /// </returns>
         [HttpPost]
-        public ActionResult DataSendForSetSession([FromBody] DTOEncypteDecryptedColumnRequest Data)
+        public async Task<ActionResult> DataSendForSetSessionAsync(string request)
         {
+            DTOEncypteDecryptedColumnRequest Data = await AESEncrytDecry.DecryptAESWithDTO<DTOEncypteDecryptedColumnRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt); ;
+            if(Data==null)
+            {
+                return Json(false);
+            }
             try
             {
                 // Store the provided DTO object in the session with key "DataSet"
