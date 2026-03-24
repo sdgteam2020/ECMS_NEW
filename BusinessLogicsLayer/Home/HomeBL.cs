@@ -23,9 +23,9 @@ namespace BusinessLogicsLayer.Home
         {
             return await _iHomeDB.GetTaskBoardCount(MapUnitId, Claim, TDM_Id);
         }
-        public async Task<DTODashboardCountResponse> GetDashBoardCount(int UserId, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
+        public async Task<DTODashboardCountResponse> GetDashBoardCount(int AspNetUsersId, bool claim)
         {
-          return  await _iHomeDB.GetDashBoardCount(UserId, dTOApplFwdCondition, ArmedIdForORO);
+          return  await _iHomeDB.GetDashBoardCount(AspNetUsersId, claim);
         }
         public async Task<DTORequestDashboardCountResponse> GetRequestDashboardCount(int UserId, string Type,int UnitMapId)
         {

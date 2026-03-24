@@ -1,14 +1,15 @@
 ﻿using BusinessLogicsLayer.BasicDet;
-using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer;
+using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
+using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataTransferObject.ViewModels;
 
 namespace BusinessLogicsLayer.BasicDetTemp
 {
@@ -19,14 +20,14 @@ namespace BusinessLogicsLayer.BasicDetTemp
         {
             _iBasicDetailTempDB = BasicDetailTemp;
         }
-        public async Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, bool claim, DTOApplFwdConditionRequest dTOApplFwdCondition, short ArmedIdForORO)
+        public async Task<List<DTOBasicDetailTempRequest>> GetALLBasicDetailTemp(int UserId, bool claim, short ArmedIdForORO, int typeId)
         {
-            return await _iBasicDetailTempDB.GetALLBasicDetailTemp(UserId, claim, dTOApplFwdCondition, ArmedIdForORO);
+            return await _iBasicDetailTempDB.GetALLBasicDetailTemp(UserId, claim, ArmedIdForORO, typeId);
         }
 
-        public Task<DTOBasicDetailTempRequest?> GetALLBasicDetailTempByBasicDetailId(int UserId, int BasicDetailId)
+        public Task<DTOGenericResponse<DTOBasicDetailTempRequest?>> GetALLBasicDetailTempByBasicDetailId(int AspNetUsersId, int BasicDetailId, bool claim)
         {
-            return _iBasicDetailTempDB.GetALLBasicDetailTempByBasicDetailId(UserId, BasicDetailId);
+            return _iBasicDetailTempDB.GetALLBasicDetailTempByBasicDetailId(AspNetUsersId, BasicDetailId, claim);
         }
 
         public Task<BasicDetailTemp?> GetByArmyNo(string ArmyNo)
