@@ -15,6 +15,7 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
@@ -189,7 +190,8 @@ namespace Web.Controllers
             }
             try
             {
-                if(ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(Data))
                 {
                     // Retrieve the user ID from the claims
                     int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -1276,8 +1278,13 @@ namespace Web.Controllers
         /// <param name="dTORecord">The request data for the report.</param>
         /// <returns>A JSON response containing the report data or an error message.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetReportData([FromBody] DTODataTablesRequestForReport dTORecord)
+        public async Task<IActionResult> GetReportData([FromBody]  EncryptedRequest request)
         {
+            DTODataTablesRequestForReport dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForReport>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTORecord == null)
+            {
+                return BadRequest(new { message = "Invalid Data." });
+            }
             // Retrieve the current user's ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(userId.ToString());
@@ -1746,8 +1753,13 @@ namespace Web.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> GetReportCardDashboardCount([FromBody] DTOMHierarchyRequest dTORecord)
+        public async Task<IActionResult> GetReportCardDashboardCount([FromBody] EncryptedRequest request)
         {
+            DTOMHierarchyRequest dTORecord= await AESEncrytDecry.DecryptAESWithDTO<DTOMHierarchyRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTORecord == null)
+            {
+                return BadRequest(new { message = "Invalid Data." });
+            }
             // Retrieve the current user's ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(userId.ToString());
@@ -1819,8 +1831,13 @@ namespace Web.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> GetReportCardData([FromBody] DTODataTablesRequestForReportCard dTORecord)
+        public async Task<IActionResult> GetReportCardData([FromBody] EncryptedRequest request)
         {
+            DTODataTablesRequestForReportCard dTORecord= await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForReportCard>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTORecord == null)
+            {
+                return BadRequest(new { message = "Invalid data." });
+            }
             // Retrieve the current user's ID from the claims
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var user = await userManager.FindByIdAsync(userId.ToString());

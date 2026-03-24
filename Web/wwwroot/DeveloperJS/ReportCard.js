@@ -518,6 +518,12 @@ function GetReportReturnHistory(Choice, ApplyForId, callback) {
                     SortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                     ...userdata
                 };
+                let encryptedPayload = "";
+                if (requestData) {
+                    const jsonData = JSON.stringify(requestData);
+                    encryptedPayload = encryptPayloadData(jsonData);
+
+                }
                 try {
                     let response = await fetch("/Home/GetReportCardData", {
                         method: "POST",
@@ -525,7 +531,7 @@ function GetReportReturnHistory(Choice, ApplyForId, callback) {
                             "Content-Type": "application/json",
                             'RequestVerificationToken': globalThis.RequestVerificationToken
                         },
-                        body: JSON.stringify(requestData)
+                        body: JSON.stringify({ data: encryptedPayload })
                     });
                     if (!response.ok) {
                         $("#CardReport").modal("hide");
@@ -1457,13 +1463,20 @@ async function GetReportCardDashboardCount() {
             "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null
 
         };
+        let encryptedPayload = "";
+        if (requestData) {
+            const jsonData = JSON.stringify(requestData);
+            encryptedPayload = encryptPayloadData(jsonData);
+
+        }
+
         const response = await fetch('/Home/GetReportCardDashboardCount', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: JSON.stringify(requestData)
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         const data = await response.json();
@@ -1635,14 +1648,19 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
             PsoId: normalize(PsoId),
             SubDteId: normalize(SubDteId)
         });
-
+        let encryptedPayload = "";
+        if (userdata) {
+            const jsonData = JSON.stringify(userdata);
+            encryptedPayload = encryptPayloadData(jsonData);
+        }
+        
         const response = await fetch('/Master/GetUnitByHierarchy', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: userdata
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         const result = await response.json();
@@ -1680,6 +1698,11 @@ async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
         id: TableId,
         parentId: ParentId ? Number(ParentId) : null   // ⭐ THIS IS IMPORTANT
     };
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+
+    }
     try {
         const response = await fetch('/Master/GetAllMMaster', {
             method: 'POST',
@@ -1688,7 +1711,8 @@ async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
-            body: JSON.stringify(payload)
+            // body: JSON.stringify(payload)
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         const data = await response.json();
@@ -1727,6 +1751,12 @@ async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsI
         DivId: DivId ? Number(DivId) : null,
         BdeId: BdeId ? Number(BdeId) : null
     };
+    let encryptedPayload = "";
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+
+    }
     try {
         const response = await fetch('/Master/GetAllMMasterByParent', {
             method: 'POST',
@@ -1735,7 +1765,7 @@ async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsI
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
             credentials: 'include',          // <--- IMPORTANT ensures the browser sends .AspNetCore.Session cookie with the request. when using fetch API
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         const data = await response.json();

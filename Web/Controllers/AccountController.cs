@@ -1536,8 +1536,8 @@ namespace Web.Controllers
                 {
                     ModelState.AddModelError("RankId", "Invalid Rank Id."); // Add Model Error
                 }
-
-                if (ModelState.IsValid) // Valid Model State
+                ModelState.Clear();
+                if (TryValidateModel(model)) // Valid Model State
                 {
                     DTOTempSession? resultfinal = await _iAccountBL.ProfileAndMappingSaving(model, dTOTempSession); // Save or Update Profile and Mapping
                     if (dTOTempSession.Status == 2) // New DomainId mapped with other Profile
@@ -1678,7 +1678,7 @@ namespace Web.Controllers
                 request,
                 SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData").Salt
             );
-            TryValidateModel(dTO);
+            
 
             var final_response = new DTOGenericResponse<string>();
             try
@@ -1693,8 +1693,8 @@ namespace Web.Controllers
                     dTO.Abbreviation = (dTO.Abbreviation ?? "").Trim();
                     dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-
-                    if (ModelState.IsValid) // Valid Model State
+                    ModelState.Clear();
+                    if (TryValidateModel(dTO)) // Valid Model State
                     {
                         string SUSNo = dTO.Sus_no + dTO.Suffix.ToUpper();
                         dTO.Prefix = string.IsNullOrEmpty(SUSNo) ? string.Empty : SUSNo[..Math.Min(3, SUSNo.Length)];

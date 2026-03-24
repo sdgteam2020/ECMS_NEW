@@ -305,7 +305,7 @@ namespace Web.Controllers
             }
             try
             {
-                TryValidateModel(dTO);
+                
                 TrnPostingOut trnPostingOut = new TrnPostingOut();
                 int CurrentAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));  // Get the current user ID
                 DtoSession? dtoSession = new DtoSession();
@@ -328,9 +328,10 @@ namespace Web.Controllers
                 trnPostingOut.FromAspNetUsersId = CurrentAspNetUsersId;
                 trnPostingOut.Updatedby = CurrentAspNetUsersId;
                 trnPostingOut.UpdatedOn = DateTime.Now;  // Set the updated timestamp
-               
+
                 // Check if the model is valid
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     closeResponse = await _iPostingBL.BeforePostingOutCheckedInputData(trnPostingOut);
                     if (closeResponse.Result == true)

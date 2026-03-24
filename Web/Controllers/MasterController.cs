@@ -1582,8 +1582,13 @@ namespace Web.Controllers
         /// This method retrieves units based on the provided hierarchy filter.
         /// </remarks>
         [HttpPost]
-        public async Task<IActionResult> GetUnitByHierarchy(DTOMHierarchyRequest Data)
+        public async Task<IActionResult> GetUnitByHierarchy([FromBody] EncryptedRequest request)
         {
+            DTOMHierarchyRequest Data=await AESEncrytDecry.DecryptAESWithDTO<DTOMHierarchyRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if(Data==null)
+            {
+                return BadRequest("Invalid Data");
+            }
             try
             {
                 return Json(await unitOfWork.MappUnit.GetUnitByHierarchy(Data));// Fetch units by their hierarchy based on the provided filter data
@@ -1925,8 +1930,9 @@ namespace Web.Controllers
             
             try
             {
-                TryValidateModel(dTO);
-                if (ModelState.IsValid)
+                
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     if (dTO.MapUnitChangeRequestId > 0 || dTO.MapUnitChangeRequestId < 0)
                     {
@@ -2061,8 +2067,8 @@ namespace Web.Controllers
             }
             try
             {
-                TryValidateModel(dTO);
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
 
                     TrnMapUnitChangeRequest? mapUnitChangeRequest = await _mapUnitChangeBL.Get(dTO.MapUnitChangeRequestId); // Retrieve the existing Map Unit Change Request by its ID

@@ -606,10 +606,17 @@ function SaveInternalFwd() {
         "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
         "RemarksIds": remarks,
     };
+    let encryptedPayload = "";
+    if (userdata) {
+        const jsonData = JSON.stringify(userdata);
+        encryptedPayload = encryptPayloadData(jsonData);
+
+    }
+    
     $.ajax({
         url: '/BasicDetail/SaveInternalFwd',
         type: 'POST',
-        data: userdata,
+        data: { Data: encryptedPayload },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response == true) {

@@ -616,8 +616,13 @@ namespace Web.Controllers
         /// or a BadRequest response with an error message if an exception occurs.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> GetAllApprovalForIOData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
+        public async Task<IActionResult> GetAllApprovalForIOData([FromBody] EncryptedRequest request)
         {
+            DTODataTablesRequestFor_BasicDetails_Index dTORecord= await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestFor_BasicDetails_Index>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTORecord == null)
+            {
+                return BadRequest(new { message = "Invalid Data" });
+            }
             // Extract userId from claims and assign it into the DTO
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             dTORecord.UserId = userId;
@@ -1030,9 +1035,11 @@ namespace Web.Controllers
                     TempData["error"] = "Invalid data.";
                     goto end;
                 }
-                
+                if (model.OldServiceNo == "")
+                    model.OldServiceNo =null;
                 // Validate ModelState
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(model))
                 {
                     // Case 1: SubmitType == 1 (new application flow)
                     if (model.SubmitType == 1)
@@ -1660,7 +1667,8 @@ namespace Web.Controllers
                             }
 
                             // If ModelState is valid, proceed with update logic
-                            if (ModelState.IsValid)
+                            ModelState.Clear();
+                            if (TryValidateModel(modeldec))
                             {
                                 // Map ViewModel to BasicDetail entity
                                 BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
@@ -2576,8 +2584,14 @@ namespace Web.Controllers
         /// Returns `true` if the save is successful, `false` if it fails, or `null` if no result is obtained.
         /// </returns>
         [Authorize(Policy = "InternalWkDistrPolicy")]
-        public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data)
+        [HttpPost]
+        public async Task<IActionResult> SaveInternalFwd(EncryptedRequest request)
         {
+            DTOSaveInternalFwdRequest data= await AESEncrytDecry.DecryptAESWithDTO<DTOSaveInternalFwdRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if(data==null)
+            {
+                return Json(false); // Failure
+            }
             try
             {
                 // Retrieve session data for user ID and unit ID
@@ -2862,7 +2876,8 @@ namespace Web.Controllers
             DTOActionOnRequestResponse dTOAction = new DTOActionOnRequestResponse();
             try
             {
-                if(ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTOAction))
                 {
                     MTrnICardRequest? mTrnICard = await iTrnICardRequestBL.Get(dTOActionOn.RequestId);
 
@@ -6295,7 +6310,7 @@ namespace Web.Controllers
                 response.Value = null;
                 return Ok(response);
             }
-            TryValidateModel(dTO);
+            
             DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 = SessionHeplers.GetObject<DTOBeforeProceedToDispatchCheckRequest>(HttpContext.Session, "DispatchLot");
             bool Valid = false;
             if (dTOTempSession1 != null)
@@ -6327,8 +6342,8 @@ namespace Web.Controllers
                     dTO.IsComplete = false;
                     dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                     dTO.Updatedby = AspNetUsersId;
-
-                    if (ModelState.IsValid)
+                    ModelState.Clear();
+                    if (TryValidateModel(dTO))
                     {
                         // Get all claims of the current user
                         var UserClaims = await userManager.GetClaimsAsync(user);
@@ -6805,8 +6820,8 @@ namespace Web.Controllers
                 return BadRequest();
             try
             {
-                TryValidateModel(dTO);
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     // Get the current logged-in user's ASP.NET Identity Id
                     int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -7215,7 +7230,8 @@ namespace Web.Controllers
             try
             {
                 // Check if the incoming model is valid
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     // Retrieve any existing DispatchLot session object
                     DTOBeforeProceedToDispatchCheckRequest? dTOTempSession1 =

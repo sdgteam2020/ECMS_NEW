@@ -90,6 +90,12 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
                 AllChecked: shouldFetchSelectedIds ? true : globalThis.globalAllChecked,
                 searchTextChanged: searchStatus.searchChanged
             };
+            let encryptedPayload = "";
+            if (requestData) {
+                const jsonData = JSON.stringify(requestData);
+                encryptedPayload = encryptPayloadData(jsonData);
+
+            }
             try {
                 let response = await fetch("/BasicDetail/GetAllApprovalForIOData", {
                     method: "POST",
@@ -97,7 +103,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
                         "Content-Type": "application/json",
                         'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
-                    body: JSON.stringify(requestData)
+                    body: JSON.stringify({ data: encryptedPayload })
                 });
 
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
