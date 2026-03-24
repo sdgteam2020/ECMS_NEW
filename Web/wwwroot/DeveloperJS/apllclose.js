@@ -55,15 +55,23 @@ $(function () {
     });
 });
 function Save() {
- 
+
+    const payload = {
+        "ReasonId": $("#ddlpostingReason").val(),
+        "Authority": $("#txtAuthority").val(),
+        "RequestId": RequestId,
+        "Remarks": $("#txtremarks").val(),
+    }
+    let jsonData = JSON.stringify(payload);
+
+    let encryptedPayload = encryptPayloadData(jsonData);
+
     $.ajax({
         url: '/Posting/SaveApplicationClose',
         type: 'POST',
-        data: {
-            "ReasonId": $("#ddlpostingReason").val(),
-            "Authority": $("#txtAuthority").val(),
-            "RequestId": RequestId,
-            "Remarks": $("#txtremarks").val(),
+        data: { request: encryptedPayload },
+        headers: {
+            'RequestVerificationToken': globalThis.RequestVerificationToken
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {

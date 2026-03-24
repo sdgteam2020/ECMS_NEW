@@ -78,20 +78,22 @@ function mMsaterByParent(sectid = '', ddl, TableId, ComdId,CorpsId,DivId,BdeId) 
         DivId: DivId ? Number(DivId) : null,
         BdeId: BdeId ? Number(BdeId) : null
     };
+    let encryptedPayload = "";
     if (payload) {
         const jsonData = JSON.stringify(payload);
         encryptedPayload = encryptPayloadData(jsonData);
 
     }
+    
     $.ajax({
         url: '/Master/GetAllMMasterByParent',
         type: 'POST',
-        contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        /*ata: JSON.stringify(payload),*/
-        body: JSON.stringify({ data: encryptedPayload }),
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-
+        data: JSON.stringify({ data: encryptedPayload }),
+        contentType: 'application/json; charset=utf-8',
+        headers: {
+            'RequestVerificationToken': globalThis.RequestVerificationToken
+        },
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == InternalServerError) {

@@ -224,22 +224,30 @@
 });
 function Save() {
     const trnFwdId = parseInt($(".spnTrnFwdId").html());
+    const payload = {
+        "ReasonId": $("#ddlpostingReason").val(),
+        "Authority": $("#txtAuthority").val(),
+        "SOSDate": convertToISOWithTime($("#txtSosDate").val()),
+        "ToAspNetUsersId": $("#ddlaspnetiserpostout").val(),
+        "ToUnitID": $("#postingoutUnitId").html(),
+        "ToUserID": $(".spnToUserID").html(),
+        "RequestId": $(".spnRequestId").html(),
+        "TrnFwdId": trnFwdId > 0 ? trnFwdId : null,
+        "DispatchedOn": formatDateToSqlString($("#txtDispatchDate").val()),
+        "RefNo": $("#txtRefNo").val(),
+    }
+    let  encryptedPayload="";
+    if (payload) {
+        const jsonData = JSON.stringify(payload);
+        encryptedPayload = encryptPayloadData(jsonData);
+    }
     $.ajax({
         url: '/Posting/SavePoasingOut',
         type: 'POST',
-        data: {
-            "ReasonId": $("#ddlpostingReason").val(),
-            "Authority": $("#txtAuthority").val(),
-            "SOSDate": convertToISOWithTime($("#txtSosDate").val()),
-            "ToAspNetUsersId": $("#ddlaspnetiserpostout").val(),
-            "ToUnitID": $("#postingoutUnitId").html(),
-            "ToUserID": $(".spnToUserID").html(),
-            "RequestId": $(".spnRequestId").html(),
-            "TrnFwdId": trnFwdId > 0 ? trnFwdId : null,
-            "DispatchedOn": formatDateToSqlString($("#txtDispatchDate").val()),
-            "RefNo": $("#txtRefNo").val(),
-        }, //get the search string
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        data: { request: encryptedPayload },
+        headers: {
+            'RequestVerificationToken': globalThis.RequestVerificationToken
+        },
         success: function (result) {
             if (result.Result == true) {
                 toastr.success(result.Message);

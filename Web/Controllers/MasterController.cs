@@ -1911,11 +1911,21 @@ namespace Web.Controllers
         /// <param name="dTO">The DTO containing the MapUnitChangeRequest data.</param>
         /// <returns>Returns a response indicating the success or failure of the save operation.</returns>
         [HttpPost]
-        public async Task<IActionResult> SaveMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO)
+        public async Task<IActionResult> SaveMapUnitChangeRequest(string request)
         {
             DTOCommonSaveResponse dTOCommon = new DTOCommonSaveResponse();
+            DTOSaveMapUnitChangeRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOSaveMapUnitChangeRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTO == null)
+            {
+                dTOCommon.Result = false;
+                dTOCommon.Message = "Invalid Data.";
+                return Json(dTOCommon);
+
+            }
+            
             try
             {
+                TryValidateModel(dTO);
                 if (ModelState.IsValid)
                 {
                     if (dTO.MapUnitChangeRequestId > 0 || dTO.MapUnitChangeRequestId < 0)
@@ -2037,11 +2047,21 @@ namespace Web.Controllers
         /// <returns>A JSON response indicating the result of the update action.</returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> UpdateMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO)
+        public async Task<IActionResult> UpdateMapUnitChangeRequest(string request)
         {
+
+            DTOSaveMapUnitChangeRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOSaveMapUnitChangeRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             DTOCommonSaveResponse dTOCommon = new DTOCommonSaveResponse();
+            if (dTO == null)
+            {
+                dTOCommon.Result = false;
+                dTOCommon.Message = "Invalid Data.";
+                return Json(dTOCommon);
+
+            }
             try
             {
+                TryValidateModel(dTO);
                 if (ModelState.IsValid)
                 {
 

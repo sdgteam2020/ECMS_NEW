@@ -950,8 +950,16 @@ namespace Web.Controllers
         /// <param name="Data">The data used to retrieve the report return count.</param>
         /// <returns>A JSON response containing the report return count or an error message.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetReportReturnCount(DTOMHierarchyRequest dTORecord)
+        public async Task<IActionResult> GetReportReturnCount(string request)
         {
+            DTOMHierarchyRequest dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTOMHierarchyRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTORecord == null)
+            {
+                // Set an error message in TempData and return an internal server error
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return Json(KeyConstants.InternalServerError);
+            }
             try
             {
                 // Retrieve the user ID from the claims of the current user
