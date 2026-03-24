@@ -414,6 +414,12 @@ $(function () {
             e.preventDefault();
             //alert(i.item.value)
             $("#txtFwdName").val(i.item.label);
+
+            $("#ErrMess1").addClass("d-none");
+            $("#ErrMess1").html("");
+
+            $("#btnForward").prop("disabled", false);
+
             //alert(i.item.value)
             // var param1 = { "UnitMapId": i.item.value };
             //$("#btnIOProfileSerch").addClass('d-none');
