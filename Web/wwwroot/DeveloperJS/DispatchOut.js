@@ -179,9 +179,7 @@ async function Save() {
                 'Content-Type': 'application/json', // Tell the server we are sending JSON
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: new URLSearchParams({
-                request: encrypted
-            })
+            body: JSON.stringify({ data: encrypted })
 
         });
 

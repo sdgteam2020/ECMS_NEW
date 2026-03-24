@@ -6297,10 +6297,10 @@ namespace Web.Controllers
         /// </returns>
         [HttpPost]
         [Authorize(Policy = "ICardDispatchPolicy")]
-        public async Task<ActionResult> DispatchOut(string request)
+        public async Task<ActionResult> DispatchOut([FromBody] EncryptedRequest request)
         {
             DTOGenericResponse<DTOCardDispatchCheckResponse> response = new DTOGenericResponse<DTOCardDispatchCheckResponse>();
-            DTODispatchOutRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTODispatchOutRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            DTODispatchOutRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTODispatchOutRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             // Retrieve temporary session object for DispatchLot
             if(dTO==null)
             {
