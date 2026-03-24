@@ -622,48 +622,27 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetDashboardCount()
         {
+            bool claim = false;
+            // Get current logged-in user's ID
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            // Fetch user object using UserManager
+            var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
 
-            // Retrieve configuration values for ArmedIdForORO and ApplFwdCondition
-            short ArmedIdForORO = Convert.ToInt16(Environment.GetEnvironmentVariable("HardCodeId__ArmedIdForORO"));
-            DTOApplFwdConditionRequest dTOApplFwdCondition;
+            // Get all claims associated with the user
+            var UserClaims = await userManager.GetClaimsAsync(user);
 
-            // Retrieve the encryption key record from the database
-            var keyRecord = await encryptionSettingBL.Get(1);
-            if (keyRecord != null)
+            // Check if user has both "Dispatch Card" and "Appl Approver" claims
+            if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "View Indl Incorrect Data"))
             {
-                if (!string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition))
-                {
-                    dTOApplFwdCondition = !string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition)
-                        ? JsonConvert.DeserializeObject<DTOApplFwdConditionRequest>(keyRecord.ApplFwdCondition) ?? new DTOApplFwdConditionRequest()
-                        : new DTOApplFwdConditionRequest();
-                }
-                else
-                {
-                    dTOApplFwdCondition = new DTOApplFwdConditionRequest();
-                }
+                claim = true;
             }
             else
             {
-                // Throw exception if encryption keys are not found
-                throw new InvalidOperationException("Encryption key record not found.");
+                claim = false;
             }
-
-            // Validate the configuration values
-            if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name) || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0 ||
-                string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name) || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix) ||
-                string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name) || dTOApplFwdCondition.MP6A.RankOrderby == 0 || ArmedIdForORO == 0)
-            {
-                // If configuration values are invalid, return an error
-                TempData["error"] = "Invalid Input.";
-                TempData.Keep("error");
-                return Json(KeyConstants.InternalServerError);
-            }
-
-            // Fetch dashboard count from the business logic layer
-            return Json(await _home.GetDashBoardCount(userId, dTOApplFwdCondition, ArmedIdForORO));
+            var result = await _home.GetDashBoardCount(AspNetUsersId, claim);
+            return Json(result);
         }
 
 

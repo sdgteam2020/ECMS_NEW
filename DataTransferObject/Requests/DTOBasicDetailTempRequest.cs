@@ -161,5 +161,7 @@ namespace DataTransferObject.Requests
         [Required]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "TypeId is number.")]
         public byte TypeId { get; set; }
+
+        public byte RecordOfficeId { get; set; }
     }
 }

@@ -733,7 +733,7 @@ namespace Web.Controllers
         /// if validation passes, or redirects to ContactUs with an error message if input or configuration is invalid.
         /// </returns>
         [HttpGet]
-        public async Task<ActionResult> InaccurateData()
+        public async Task<ActionResult> InaccurateData(string Id)
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
             bool claim=false;
@@ -744,74 +744,76 @@ namespace Web.Controllers
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
-            var dTOApplFwdCondition = new DTOApplFwdConditionRequest();
+
+            // Validate Id: must not be null/empty and must be a valid Base64 string
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
             try
             {
-                // Get current logged-in user's ID
-                int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                // Decode the Base64 Id into plain string
+                var base64EncodedBytes = Convert.FromBase64String(Id);
+                var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
 
-                // Fetch user object using UserManager
-                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+                // Convert decoded string to integer typeId (1 or 2 expected)
+                int typeId = Convert.ToInt32(decodedString);
 
-                // Get all claims associated with the user
-                var UserClaims = await userManager.GetClaimsAsync(user);
-
-                // Check if user has both "Dispatch Card" and "Appl Approver" claims
-                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "View Indl Incorrect Data"))
+                if (typeId == 1 || typeId == 2)
                 {
-                    claim = true;
-                    // Retrieve hardcoded ArmedId from configuration
-                    ArmedIdForORO = Convert.ToInt16(Environment.GetEnvironmentVariable("HardCodeId__ArmedIdForORO"));
+                    // Get current logged-in user's ID
+                    int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                    // Retrieve the encryption key record from the database
-                    var keyRecord = await encryptionSettingBL.Get(1);
-                    if (keyRecord != null)
+                    // Fetch user object using UserManager
+                    var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
+                    // Get all claims associated with the user
+                    var UserClaims = await userManager.GetClaimsAsync(user);
+
+                    if (typeId == 1)
                     {
-                        if (!string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition))
+                        claim = false;
+                        ViewBag.Title = "Requests pending due to Incorrect Details/Data";
+                    }
+                    else
+                    {
+                        // Check if user has "View Indl Incorrect Data" claims
+                        if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "View Indl Incorrect Data"))
                         {
-                            dTOApplFwdCondition = !string.IsNullOrWhiteSpace(keyRecord.ApplFwdCondition)
-                                ? JsonConvert.DeserializeObject<DTOApplFwdConditionRequest>(keyRecord.ApplFwdCondition) ?? new DTOApplFwdConditionRequest()
-                                : new DTOApplFwdConditionRequest();
+                            claim = true;
+                            // Retrieve hardcoded ArmedId from configuration
+                            ArmedIdForORO = Convert.ToInt16(Environment.GetEnvironmentVariable("HardCodeId__ArmedIdForORO"));
+                            ViewBag.Title = "List of Observation Raised";
+
+                        }
+                        else
+                        {
+                            claim = false;
+                            ViewBag.Title = "Requests pending due to Incorrect Details/Data";
                         }
                     }
-                    else
-                    {
-                        // Throw exception if encryption keys are not found
-                        throw new InvalidOperationException("Encryption key record not found.");
-                    }
-
-                    // Validate configuration values: must not be empty/zero
-                    if (string.IsNullOrWhiteSpace(dTOApplFwdCondition.MPRSO.Name)
-                        || dTOApplFwdCondition.MPRSO.ArmedAbbreviation.Count == 0
-                        || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.Name)
-                        || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6F.ArmyNoPrefix)
-                        || string.IsNullOrWhiteSpace(dTOApplFwdCondition.MP6A.Name)
-                        || dTOApplFwdCondition.MP6A.RankOrderby == 0
-                        || ArmedIdForORO == 0)
-                    {
-                        // If validation fails, show error and redirect
-                        TempData["error"] = "Invalid Input.";
-                        TempData.Keep("error");
-                        return RedirectToAction("ContactUs", "Home");
-                    }
-                    else
-                    {
-                        // Fetch inaccurate/observation records from business layer
-                        var allrecord = await basicDetailTempBL.GetALLBasicDetailTemp(AspNetUsersId, claim, dTOApplFwdCondition, ArmedIdForORO);
-
-                        // Set dynamic title depending on typeId
-                        ViewBag.Title = "List of Observation Raised";
-                        return View(allrecord);
-                    }
+                    
+                    var allrecord = await basicDetailTempBL.GetALLBasicDetailTemp(AspNetUsersId, claim, ArmedIdForORO, typeId);
+                    return View(allrecord);
                 }
                 else
                 {
-                    // Set dynamic title depending on typeId
-                    ViewBag.Title = "Requests pending due to Incorrect Details/Data";
-                    claim = false;
-                    var allrecord = await basicDetailTempBL.GetALLBasicDetailTemp(AspNetUsersId, claim, dTOApplFwdCondition, ArmedIdForORO);
-                    return View(allrecord);
+                    // If typeId is not valid, return error
+                    TempData["error"] = "Invalid Selection.";
+                    TempData.Keep("error");
+                    return RedirectToAction("ContactUs", "Home");
                 }
+            }
+            catch (FormatException ex)
+            {
+                // Handle Base64 decoding or int parsing errors
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
+                TempData["error"] = "Invalid or tampered request.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
             }
             catch (Exception ex)
             {
@@ -839,6 +841,8 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<ActionResult> InaccurateDataView(string Id)
         {
+            var response = new DTOGenericResponse<DTOBasicDetailTempRequest?>();
+
             string role = SessionHelper.GetRoleFromSession(HttpContext);
             if (role != "user")
             {
@@ -846,6 +850,7 @@ namespace Web.Controllers
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
+            bool claim = false;
 
             // Validate Id: must not be null or empty
             if (string.IsNullOrEmpty(Id))
@@ -855,9 +860,8 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
 
-            // Retrieve current logged-in user's Id from claims (as string) and convert to integer
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            int userIntId = Convert.ToInt32(userId); // Assumes claim value is a valid integer
+            // Get current logged-in user's ID
+            int AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             string decryptedId = string.Empty;  // will hold decrypted string Id
             int decryptedIntId = 0;             // will hold decrypted integer Id
@@ -870,25 +874,43 @@ namespace Web.Controllers
                 // Validate decrypted Id: must be a valid integer
                 if (!int.TryParse(decryptedId, out decryptedIntId))
                 {
-                    _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, userId);
+                    _logger.LogWarning("Decrypted Id is not a valid integer: {DecryptedId}, UserId: {UserId}", decryptedId, AspNetUsersId);
                     TempData["error"] = "Invalid or tampered request.";
                     TempData.Keep("error");
                     return RedirectToAction("ContactUs", "Home");
                 }
 
+
+                // Fetch user object using UserManager
+                var user = await userManager.FindByIdAsync(AspNetUsersId.ToString());
+
+                // Get all claims associated with the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+
+                // Check if user has both "Dispatch Card" and "Appl Approver" claims
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "View Indl Incorrect Data"))
+                {
+                    claim = true;
+                }
+                else
+                {
+                    claim = false;
+                }
                 // Fetch records from business layer using userId and decryptedId
-                DTOBasicDetailTempRequest? dTOBasicDetail =
-                    await basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(userIntId, decryptedIntId);
+                response = await basicDetailTempBL.GetALLBasicDetailTempByBasicDetailId(AspNetUsersId, decryptedIntId, claim);
 
                 // If record found, render the view with retrieved details
-                if (dTOBasicDetail != null)
+                if (response.Result == true)
                 {
-                    return View(dTOBasicDetail);
+                    string dd = AESEncrytDecry.GetSalt();
+                    HttpContext.Session.SetString(SessionKeySalt, dd);
+                    ViewBag.hdns = dd;
+                    return View(response.Value);
                 }
                 else
                 {
                     // If no record found, show error and redirect
-                    TempData["error"] = "Id not found.";
+                    TempData["error"] = response.Message;
                     TempData.Keep("error");
                     return RedirectToAction("ContactUs", "Home");
                 }
@@ -958,33 +980,43 @@ namespace Web.Controllers
         /// An <see cref="IActionResult"/> rendering the Registration view.
         /// </returns>
         [HttpGet]
-        public IActionResult Registration(string Id)
+        public IActionResult Registration(string? Id)
         {
             string role = SessionHelper.GetRoleFromSession(HttpContext);
 
-            if (role == "user")
+            try
             {
-                string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
-                if (dd != null)
+                if (role == "user")
                 {
-                    ViewBag.hdns = dd;
-                    return View();
+                    string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
+                    if (dd != null)
+                    {
+                        ViewBag.hdns = dd;
+                        return View();
+                    }
+                    else
+                    {
+                        TempData["error"] = "Session expired. Please try again.";
+                        TempData.Keep("error");
+                        return RedirectToAction("ContactUs", "Home");
+                    }
                 }
                 else
                 {
-                    TempData["error"] = "Session expired. Please try again.";
+                    TempData["error"] = "Switch to user role.";
                     TempData.Keep("error");
                     return RedirectToAction("ContactUs", "Home");
                 }
-
-
             }
-            else
+            catch (FormatException ex)
             {
-                TempData["error"] = "Switch to user role.";
+                // Handle Base64 decoding or int parsing errors
+                _logger.LogError(1001, ex, message: "Invalid Base64 string for Id: {Id}", Id);
+                TempData["error"] = "Invalid or tampered request.";
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
+
         }
 
 
