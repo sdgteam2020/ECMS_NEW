@@ -1312,7 +1312,7 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
     try {
         const normalize = (val) => (val === "null" || val === "" || val === undefined ? null : val);
 
-        const userdata = new URLSearchParams({
+        const payload = {
             TableId: 0,
             UnitType: UnitType,
             ComdId: normalize(ComdId),
@@ -1322,15 +1322,20 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
             FmnBranchID: normalize(FmnBranchID),
             PsoId: normalize(PsoId),
             SubDteId: normalize(SubDteId)
-        });
+        };
+        let encryptedPayload = "";
 
+        if (payload) {
+            const jsonData = JSON.stringify(payload);
+            encryptedPayload = encryptPayloadData(jsonData);
+        }
         const response = await fetch('/Master/GetUnitByHierarchy', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: userdata
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         const result = await response.json();

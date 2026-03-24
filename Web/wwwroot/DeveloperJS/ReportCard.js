@@ -1637,7 +1637,7 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
     try {
         const normalize = (val) => (val === "null" || val === "" || val === undefined ? null : val);
 
-        const userdata = new URLSearchParams({
+        const userdata = {
             TableId: 0,
             UnitType: UnitType,
             ComdId: normalize(ComdId),
@@ -1647,7 +1647,7 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
             FmnBranchID: normalize(FmnBranchID),
             PsoId: normalize(PsoId),
             SubDteId: normalize(SubDteId)
-        });
+        };
         let encryptedPayload = "";
         if (userdata) {
             const jsonData = JSON.stringify(userdata);
