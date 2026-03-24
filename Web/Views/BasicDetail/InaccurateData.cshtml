@@ -31,6 +31,7 @@
         </div>
         <div class="card-body card-body-min-height">
                 <div class="row">
+                <span id="spnhdns" class="d-none">@ViewBag.hdns</span>
                     <div class="col-xl-12">
                     <table id="tbldatatabledata" class="table table-striped table-hover border border-purple">
                         <thead>
@@ -72,7 +73,7 @@
                                         <span id="OffType" class="d-none">@item.ApplyForId</span>
                                         <span id="lCardType" class="d-none">@item.TypeId</span>
                                         <span id="ArmyNo" class="d-none">@item.ServiceNo</span>
-                                        <button class="cls-btnRetry btn btn-success" id="btnRetry">Retry</button>
+                                        @* <button class="cls-btnRetry btn btn-success" id="btnRetry">Retry</button> *@
                                     </td>
                                 </tr>
                             }
@@ -85,7 +86,6 @@
     </div>
 </div>
 @section Scripts{
-    <script asp-src-include="~/js/CustomScript.js"></script>
     <script asp-src-include="~/developerjs/inaccuratedata.js"></script>
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }

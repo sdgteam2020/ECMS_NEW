@@ -12,5 +12,6 @@ namespace DataTransferObject.Requests
         public int AspNetUsersId { get; set; }
         public string Name { get; set; } = string.Empty;
         public byte ArmedId { get; set; }
+        public byte RecordOfficeId { get; set; }
     }
 }

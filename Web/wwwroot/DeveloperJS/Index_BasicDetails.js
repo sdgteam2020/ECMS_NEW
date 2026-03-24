@@ -195,7 +195,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
             },
             // Additional column for Edit action
             {
-                title: "Print | Edit | Fwd",
+                title: "Preview | Edit | Fwd",
                 data: null,
                 name: "Action",
                 orderable: false,
@@ -203,7 +203,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 width: "210px",
                 render: function (data, type, row) {
                     // Always include the Print Preview button
-                    let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-ICardPrintPreviewByRequestId"><i class="fa fa-print mt-2"></i></button>`;
+                    let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-ICardPrintPreviewByRequestId"><i class="fa fa-eye mt-2"></i></button>`;
 
                     // Case 1: Editable + Forward
                     if ((row.StepCounter == 1 || row.StepCounter == 7 || row.StepCounter == 8 || row.StepCounter == 9 || row.StepCounter == 10) && (VBId == 0 || VBId == 1 || VBId == 11 || row.IsFwdStatusId == 3))
