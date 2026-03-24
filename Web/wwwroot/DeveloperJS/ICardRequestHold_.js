@@ -180,7 +180,7 @@ function BindData() {
                         fixedHeader: false,       // ❌ disable when using scrollY
                         retrieve: true,
                         lengthChange: false,
-                        stateSave: true,
+                        stateSave: false,
                         "order": [[1, "asc"]],
                         buttons: [
                             //{

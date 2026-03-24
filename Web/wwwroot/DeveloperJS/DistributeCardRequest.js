@@ -182,30 +182,22 @@ function GetBasicDetailForParitalViewByRequestId(RequestId) {
 
 
 function DownloadPdf(RequestId) {
-    var userdata = {
-        "RequestId": encryptPayloadData(RequestId),
-    };
     $.ajax({
         url: '/Log/CreatePdf',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                } else {
-
-                    var url = "https://" + window.location.host + '/DigitallysignaturePdf/' + response;
-                    window.open(url, '_blank');
-
-                }
-            }
+        data: {
+            "Request": encryptPayloadData(RequestId)
         },
-        error: function (result) {
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (response, status, xhr) {
+            var blob = new Blob([response], { type: 'application/pdf' });
+            var fileURL = window.URL.createObjectURL(blob);
+            window.open(fileURL, '_blank');
+        },
+        error: function () {
             Swal.fire({
                 text: errormsg002
             });

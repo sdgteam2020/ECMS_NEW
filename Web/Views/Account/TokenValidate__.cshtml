@@ -79,11 +79,11 @@
                                                     <label class="labeltoken">Army No</label>
                                                     @if (dTOTempSession.IsToken==true)
                                                     {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" readonly /> @* value="@dTOTempSession.ICNO" *@
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" readonly />  
                                                     }
                                                     else
                                                     {
-                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" oninput="this.value = this.value.toUpperCase();" /> @* value="@dTOTempSession.ICNO" *@
+                                                        <input asp-for="ICNo" class="form-control" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" oninput="this.value = this.value.toUpperCase();" /> 
                                                     }
 
                                                     <span asp-validation-for="ICNo" class="text-danger"></span>
@@ -97,8 +97,7 @@
                                                     @if (dTOTempSession != null)
                                                     {
                                                         <button type="submit" class="btn btn-primary mt-2">Proceed</button>
-                                                    }
-                                                    @*  <a class="btn btn-warning" href="/ApplicationStatus/AppStatus">Check Appl Status</a> *@
+                                                    } 
                                                 </div>
                                                 
                                                 @if (TempData["success"] != null)
@@ -115,18 +114,7 @@
                                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
                                                 }
-                                              
-@*                                                 @if (dTOTempSession!=null)
-                                                {
-                                                   <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                                        <span class="text-info text-break">@Html.Raw(@m1)</span>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                                        <span class="text-info text-break">@Html.Raw(@m2)</span>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                                    </div>
-                                                }  *@
+                                               
                                             </form>
                                         </div>
                                     </div>
@@ -159,8 +147,7 @@
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
     <script asp-src-include="~/developerjs/KeyConstants.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
-    <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
-    @* <script src="~/fonts/feather/feather.min.js"></script> *@
+    <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script> 
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/developerjs/logoutlog.js"></script>
 

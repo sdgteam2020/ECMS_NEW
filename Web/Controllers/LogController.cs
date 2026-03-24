@@ -277,65 +277,107 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePdfAsync(string Request)
         {
-            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
-            if (RequestId == 0)
-                return null;
+            var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            if (session == null)
+                return Unauthorized();
+
+            int requestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, session.Salt);
+            if (requestId <= 0)
+                return BadRequest("Invalid RequestId");
+
             try
             {
-               
-                // Constants for hardcoded values
-                //Environment.GetEnvironmentVariable("Common__Password") ?? string.Empty
                 var CERT_SERIAL_1 = Environment.GetEnvironmentVariable("CERT_SERIAL_1") ?? string.Empty;
                 var CERT_SERIAL_2 = Environment.GetEnvironmentVariable("CERT_SERIAL_2") ?? string.Empty;
                 var ARMY_NO_1 = Environment.GetEnvironmentVariable("ARMY_NO_1") ?? string.Empty;
                 var ARMY_NO_2 = Environment.GetEnvironmentVariable("ARMY_NO_2") ?? string.Empty;
 
-                // Retrieve client IP address
                 string ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
 
-                // Define levels
                 var levelDictionary = new Dictionary<int, string>
-                {
-                    { 1, "1st Level" },
-                    { 2, "2nd Level" },
-                    { 3, "3rd Level" },
-                    { 4, "4th Level" }
-                };
+        {
+            { 1, "1st Level" },
+            { 2, "2nd Level" },
+            { 3, "3rd Level" },
+            { 4, "4th Level" }
+        };
 
-                // Generate timestamp components
                 var now = DateTime.Now;
                 string timestamp = $"{now:yyyy}{now:MMMM}{now:dd}{now:hh}{now:mm}{now:ss}";
 
-                /// Execute all async operations in parallel BUT avoid concurrent DbContext usage
-                var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(new[] { RequestId });
+                var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(new[] { requestId });
+                if (sata == null || string.IsNullOrWhiteSpace(sata.XmlFiles))
+                    return BadRequest("XML data not found.");
+
                 string sanitizedXml = sata.XmlFiles.Replace("&", "&amp;");
 
-                // Process XML once
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(sanitizedXml);
 
-                // Process certificates
                 var digitalSignList = ProcessDigitalSignatures(xmlDoc, CERT_SERIAL_1, CERT_SERIAL_2, ARMY_NO_1, ARMY_NO_2);
 
-                // Get basic details
-                BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
+                BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(requestId);
                 if (db == null)
-                    return Json(0);
+                    return NotFound();
 
-                // Process forwarding details
                 var digitalSignPlusLogList = ProcessForwardingDetails(xmlDoc, levelDictionary, digitalSignList, db);
 
-                // Generate PDF
-                string pdfName = await GeneratePdfDocument(db, digitalSignPlusLogList, ipAddress, timestamp, RequestId);
+                byte[] pdfBytes = await GeneratePdfDocument(db, digitalSignPlusLogList, ipAddress, timestamp, requestId);
 
-                return Json(pdfName);
+                string pdfName = $"{db.ServiceNo}_{requestId}_{timestamp}.pdf";
+
+                return File(pdfBytes, "application/pdf", pdfName);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating PDF for RequestId: {RequestId}", RequestId);
-                return Json(0);
+                _logger.LogError(ex, "Error creating PDF for RequestId: {RequestId}", requestId);
+                return StatusCode(500, "Error generating PDF");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadGeneratedPdf(int requestId)
+        {
+            try
+            {
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                if (session == null)
+                    return Unauthorized();
+
+                // Add your authorization check here if needed
+                // Example:
+                // bool allowed = await _logBL.UserCanAccessRequest(requestId, session.UserId);
+                // if (!allowed) return Forbid();
+
+                BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(requestId);
+                if (db == null)
+                    return NotFound();
+
+                string secureFolder = Path.Combine(hostingEnvironment.ContentRootPath, "SecurePdfFiles");
+                if (!Directory.Exists(secureFolder))
+                    return NotFound();
+
+                // find latest generated PDF for this request
+                string searchPattern = $"*_{requestId}_*.pdf";
+                string? latestFile = Directory.GetFiles(secureFolder, searchPattern)
+                                              .OrderByDescending(System.IO.File.GetCreationTime)
+                                              .FirstOrDefault();
+
+                if (string.IsNullOrWhiteSpace(latestFile) || !System.IO.File.Exists(latestFile))
+                    return NotFound();
+
+                byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(latestFile);
+                string fileName = Path.GetFileName(latestFile);
+
+                return File(fileBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error downloading PDF for RequestId: {RequestId}", requestId);
+                return StatusCode(500, "Unable to download PDF.");
+            }
+        }
+
         private List<DTOFwdLastRecForDigitalSign> ProcessDigitalSignatures(XmlDocument xmlDoc,string certSerial1, string certSerial2, string armyNo1, string armyNo2)
         {
             var digitalSignList = new List<DTOFwdLastRecForDigitalSign>();
@@ -434,21 +476,19 @@ namespace Web.Controllers
             return result;
         }
 
-        private async Task<string> GeneratePdfDocument(BasicDetailCrtAndUpdVM db,
-            List<DTODigitalSignPlusLog> digitalSignPlusLogList, string ipAddress,
-            string timestamp, int requestId)
+        private async Task<byte[]> GeneratePdfDocument(
+             BasicDetailCrtAndUpdVM db,
+             List<DTODigitalSignPlusLog> digitalSignPlusLogList,
+             string ipAddress,
+             string timestamp,
+             int requestId)
         {
-            string pdfName = $"{db.ServiceNo}_{requestId}_{timestamp}.pdf";
-            string filePath = Path.Combine(hostingEnvironment.WebRootPath, "DigitallysignaturePdf", pdfName);
-
-            // Ensure directory exists
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            using var memoryStream = new MemoryStream();
 
             var photoImage = await GetDecryptedImage(db.PhotoImagePath, "Photo", 60);
             var signatureImage = await GetDecryptedImage(db.SignatureImagePath, "Signature", 80);
 
-
-            using (PdfWriter writer = new PdfWriter(filePath))
+            using (PdfWriter writer = new PdfWriter(memoryStream))
             using (PdfDocument pdf = new PdfDocument(writer))
             using (Document document = new Document(pdf))
             {
@@ -456,17 +496,15 @@ namespace Web.Controllers
                 document.SetMargins(36, 36, 36, 36);
                 document.SetFontSize(12f);
 
-                // Add event handlers
                 pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new HeaderFooterHandler());
                 pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new BottomLeftDiagonalWatermarkHandler(ipAddress));
 
-                // Add content
                 AddDocumentHeader(document);
                 AddPersonalDetailsTable(document, db, photoImage, signatureImage);
                 AddDigitalSignatureTable(document, digitalSignPlusLogList);
             }
 
-            return pdfName;
+            return memoryStream.ToArray();
         }
 
         private void AddDocumentHeader(Document document)

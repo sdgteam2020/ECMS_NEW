@@ -389,7 +389,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 // Additional column for Edit action
                 {
-                    title: `<div>Print | Fwd</div>`,
+                    title: `<div>Preview | Fwd</div>`,
                     data: null,
                     name: "Action",
                     className: "noExport",
@@ -397,16 +397,14 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     orderable: false,
                     render: function (data, type, row) {
                         // Always include the Print Preview button
-                        let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-print mt-2"></i></button>`;
+                        let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-eye mt-2"></i></button>`;
 
                         if (parseInt($("#spnVBId").html()) == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
                             html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
                         }
                         // Case 2: Processed + Download
                         else if (row.StepCounter != 1 && row.StepCounter != 7 && row.StepCounter != 8 && row.StepCounter != 9 && row.StepCounter != 10) {
-                            html += `<button class="cls-btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
-                                <button class="cls-btndownloadxml ml-2" id="btndownloadxml" data-toggle="tooltip" data-placement="top" title="Download Details">Xml</button>
-                                `;
+                            html += `<button class="cls-btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>`;
                         }
                         return html; // Return the full HTML string
                     }
@@ -530,7 +528,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 // Additional column for Edit action
                 {
-                    title: `<div>Print | Fwd</div>`,
+                    title: `<div>Preview | Fwd</div>`,
                     className: "noExport",
                     width: "210px",
                     data: null,
@@ -538,16 +536,14 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     orderable: false,
                     render: function (data, type, row) {
                         // Always include the Print Preview button
-                        let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview"><i class="fa fa-print mt-2"></i></button>`;
+                        let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview"><i class="fa fa-eye mt-2"></i></button>`;
 
                         if (parseInt($("#spnVBId").html()) == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
                             html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
                         }
                         // Case 2: Processed + Download
                         else if (row.StepCounter != 1 && row.StepCounter != 7 && row.StepCounter != 8 && row.StepCounter != 9 && row.StepCounter != 10) {
-                            html += `<button class="cls-btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
-                                <button class="cls-btndownloadxml ml-2" id="btndownloadxml" data-toggle="tooltip" data-placement="top" title="Download Details">Xml</button>
-                                `;
+                            html += `<button class="cls-btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>`;
                         }
                         return html; // Return the full HTML string
                     }
