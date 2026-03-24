@@ -229,7 +229,7 @@ namespace DataAccessLayer
                                             ELSE 1
                                         END AS Result,
 		                                case
-                                            WHEN hot.RequestId = @RequestId THEN 'This card has already been reported as destroyed in the system.'
+                                            WHEN dest.RequestId = @RequestId THEN 'This card has already been reported as destroyed in the system.'
                                             WHEN currentReq.StatusId IN (1,3) THEN 'The application is no longer active.'
                                             WHEN stepcount.StepId != 15 THEN 'The application is currently being processed.'
 		                                    ELSE 'Valid'
