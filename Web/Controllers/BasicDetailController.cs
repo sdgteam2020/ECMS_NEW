@@ -1946,8 +1946,8 @@ namespace Web.Controllers
                     // Similar flow: validate, map VM to entity, handle file uploads (mandatory), create request & step counter, save via BL
                     model.Updatedby = Convert.ToInt32(userId);
                     model.StatusLevel = 0;
-
-                    if (ModelState.IsValid)
+                    ModelState.Clear();
+                    if (TryValidateModel(modeldec))
                     {
                         BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
                         newBasicDetail.IsLock= false;
@@ -2186,7 +2186,7 @@ namespace Web.Controllers
             {
                 // Catch unexpected errors and log
                 _logger.LogError(1006, ex, "Exception");
-                ModelState.AddModelError("", ex.Message);
+                ModelState.AddModelError("", "Internal Server Error");
                 goto end;
             }
 
