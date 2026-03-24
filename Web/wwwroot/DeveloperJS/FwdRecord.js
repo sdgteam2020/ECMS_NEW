@@ -1179,70 +1179,28 @@ function DownloadXml(RequestId) {
     });
 }
 function DownloadPdf(RequestId) {
-    var userdata = {
-        "Request": encryptPayloadData(RequestId),
-    };
     $.ajax({
         url: '/Log/CreatePdf',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
         type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                } else {
-
-
-                    //  window.open('/DigitallysignaturePdf/' + response, '_blank');
-                    //  if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {
-                    var url = "https://" + window.location.host + '/DigitallysignaturePdf/' + response;
-                    window.open(url, '_blank');
-                    // digitalpdfsignature($("#txtspnTokenthumbprint").val(), url, '40', '65', RequestId);
-
-                    // }
-                    //var blob = new Blob([JSON.stringify(response, null, "\t")], { type: "application/json" });
-
-                    //// Create a temporary anchor element
-                    //var link = document.createElement("a");
-                    //link.href = window.URL.createObjectURL(blob);
-
-
-
-
-                    //// GetTokenSignXml(blob);
-                    //// Set the file name
-                    //link.download = "data.json";
-
-                    //// Append the anchor to the body
-                    //document.body.appendChild(link);
-
-                    //// Trigger the click event
-                    //link.click();
-
-                    //// Remove the anchor from the body
-                    //document.body.removeChild(link);
-                }
-
-
-            }
-
-
-
-
+        data: {
+            "Request": encryptPayloadData(RequestId)
         },
-        error: function (result) {
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (response, status, xhr) {
+            var blob = new Blob([response], { type: 'application/pdf' });
+            var fileURL = window.URL.createObjectURL(blob);
+            window.open(fileURL, '_blank');
+        },
+        error: function () {
             Swal.fire({
                 text: errormsg002
             });
         }
     });
 }
-
 function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate, RequestId) {
     $("#loadingToken").show();
     $.ajax({

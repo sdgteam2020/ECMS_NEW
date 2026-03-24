@@ -1,162 +1,162 @@
-﻿#slider, .wrap, .slide-content {
+﻿html, body {
     margin: 0;
     padding: 0;
-    font-family: Cabin, Helvetica, sans-serif;
-    width: 100%;
-    height: 70vh;
-    overflow-x: inherit;
+    overflow-x: hidden;
+}
+
+body {
+    background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%);
 }
 
 .wrap {
-    position: fixed;
+    position: static;
 }
 
-.slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.hero {
+    margin-top:117px;
+    background-image: url("/Images/HomePage/2.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    transition: all 0s;
+    min-height: calc(100vh - 140px);
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 12px 20px 12px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-.slide1 {
-    background-image: url('/images/slider/indian-army1.jpg');
+/* card outer */
+.a-box {
+    width: 100%;
+    max-width: 300px; /* increased card size */
+    text-align: center;
+    position: relative;
+    margin: 0 auto;
 }
 
-.slide2 {
-    background-image: url('/images/slider/indian-army2.jpg');
+/* clickable full card */
+.clickable {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    position: relative;
+    padding-top: 38px; /* creates space for top icon overlap */
 }
 
-.slide3 {
-    background-image: url('/images/slider/indian-army  3.jpg');
-}
-.slide4 {
-    background-image: url('/images/slider/indian-army4.jpg');
+/* icon circle */
+.img-container {
+    width: 92px;
+    height: 92px;
+    margin: 0 auto;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    background: transparent;
 }
 
-.slide-content {
+.img-inner,
+.inner-skew {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.img-container img {
+    max-width: 78px;
+    max-height: 78px;
+    transition: transform 0.3s ease;
+}
+
+    .img-container img:hover {
+        transform: scale(1.08);
+    }
+
+/* text card */
+.text-container {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    padding: 58px 22px 24px 22px; /* top padding for icon space */
+    min-height: 175px; /* increased card height */
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
     text-align: center;
-}
-
-    .slide-content span {
-        font-size: 5rem;
-        color: #fff;
-        background-color: rgba(0,0,0, .6);
-        padding: 10px 20px;
-    }
-
-.dir-control {
-    cursor: pointer;
-    position: absolute;
-    top: 50%;
-    margin-top: -30px;
-    width: 0;
-    height: 0;
-    z-index: 5;
-}
-
-#dir-control-left {
-    left: 0;
-    margin-left: 30px;
-}
-
-#dir-control-right {
-    right: 0;
-    margin-right: 60px;
-}
-
-.slider-active {
-    visibility: hidden;
-    opacity: 0;
-}
-
-.slide.slide-is-active {
-    visibility: visible;
-    opacity: 1;
-}
-
-.slide-transition {
-    transition: all .5s ease-in-out;
-}
-body {
-    background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%)
-}
-
-.a-box {
-    display: inline-block;
-    width: 300px;
-    text-align: center;
-}
-
-.img-container {
-    height: 180px;
-    width: 200px;
-    overflow: hidden;
-    border-radius: 0px 0px 20px 20px;
-    display: inline-block;
-}
-
-    .img-container img {
-        /* transform: skew(0deg, -13deg); */
-        height: 100px;
-        margin: 68px 0px 0px -18px;
-    }
-
-        .img-container img:hover {
-            transform: scale(1.1); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
-        }
-
-.inner-skew {
-    display: inline-block;
-    border-radius: 20px;
-    overflow: hidden;
-    padding: 0px;
-    /* transform: skew(0deg, 13deg); */
-    font-size: 0px;
-    margin: -46px 0px 0px 0px;
-    /* background: #c8c2c2; */
-    height: 250px;
-    width: 200px;
-}
-
-.text-container {
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-    padding: 50px 20px 20px 20px;
-    border-radius: 20px;
-    background: #fff;
-    margin: -120px 0px 0px 0px;
-    line-height: 19px;
+    line-height: 1.45;
     font-size: 14px;
 }
 
     .text-container h3 {
-        margin: 20px 0px 10px 0px;
+        margin: 0 0 10px 0;
         color: #04bcff;
-        font-size: 18px;
+        font-size: 20px;
+        font-weight: 700;
     }
-.clickable {
-    height: 180px !important;
-    width: 200px !important;
+
+/* reduce horizontal gap between cards */
+.row.w-100.justify-content-center {
+    --bs-gutter-x: 1rem !important; /* less gap */
+    --bs-gutter-y: 1rem !important;
 }
 
-.hero {
-    /* path to your image */
-    background-image: url("/Images/HomePage/2.png");
-    /* make it fill nicely */
-    background-size: cover; /* cover entire div */
-    background-position: top;
-    background-repeat: no-repeat;
-    /* optional: fixed parallax feel */
-    background-attachment: fixed;
-    /* size of the div */
-    min-height: 100vh; /* or a fixed height like 500px */
-    width: 100%;
+/* tablet */
+@media (max-width: 991.98px) {
+    .a-box {
+        max-width: 290px;
+    }
+
+    .text-container {
+        min-height: 170px;
+    }
+}
+
+/* mobile */
+@media (max-width: 575.98px) {
+    .hero {
+        min-height: auto;
+        padding: 12px 10px 20px;
+    }
+
+    .a-box {
+        max-width: 320px;
+    }
+
+    .clickable {
+        padding-top: 34px;
+    }
+
+    .img-container,
+    .img-inner,
+    .inner-skew {
+        width: 82px;
+        height: 82px;
+    }
+
+        .img-container img {
+            max-width: 68px;
+            max-height: 68px;
+        }
+
+    .text-container {
+        min-height: 160px;
+        padding: 52px 18px 20px 18px;
+    }
+
+        .text-container h3 {
+            font-size: 18px;
+        }
 }

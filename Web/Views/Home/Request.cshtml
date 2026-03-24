@@ -59,7 +59,7 @@
                                     </div>
                                 </a>
                             </div>
-                            @if (claims.Count > 0 && claims.Any(i => i.Value == "View Flagged ICard Appl"))//@if (ViewBag.Role == "DteAdmin" || ViewBag.Role == "AFSACUser")
+                            @if (claims.Count > 0 && claims.Any(i => i.Value == "View Flagged ICard Appl")) 
                             {
                                 <div class="col-md-2 col-sm-6">
                                     <a href="/BasicDetail/ICardRequestHold">
@@ -88,8 +88,7 @@
                             </div>
                         </div>
                     </div>
-                    @*  <button type="button" class="btn btn-outline-primary btn1" id="btnApplyCard">Apply for Smart I-Card</button>
-                    <button type="button" class="btn btn-outline-primary btn1" id="btnApplicantsPostingout">Applicants Posting out</button> *@
+                     
                 </div>
                 <div class="col-md-12 col-sm-6 text-center mt-4 ApplyCard d-none" id="btnarmytype">
                     <button type="button" class="btn btn-outline-primary btn1" id="btnaddOffrs">Offrs</button>

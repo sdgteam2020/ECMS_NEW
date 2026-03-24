@@ -138,7 +138,7 @@ function BindData(cvalue, callback) {
         processing: true,
         serverSide: true,
         filter: true,
-        stateSave: true,
+        stateSave: false,
         order: [[1, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
