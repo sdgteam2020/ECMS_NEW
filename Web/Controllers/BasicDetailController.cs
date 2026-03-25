@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BusinessLogicsLayer;
+﻿using BusinessLogicsLayer;
 using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
@@ -93,7 +92,6 @@ namespace Web.Controllers
         private readonly IRankBL rankBL;// For Rank and Type
         private readonly IBasicDetailTempBL basicDetailTempBL;// For Basic Detail Temp
         private readonly IService service;// For Service
-        private readonly IMapper _mapper;// For Auto Mapper
         private readonly IMapUnitBL mapUnitBL;// For Map Unit
         private readonly IWebHostEnvironment hostingEnvironment;// For Hosting Environment
         private readonly IDataProtector protector;// For Data Protection
@@ -127,7 +125,7 @@ namespace Web.Controllers
         /// Via dependency injection, it sets up services for user management, data protection, 
         /// logging, and business logic layers for managing I-Card details, notifications, and other related functionalities.
         /// </summary>        
-        public BasicDetailController(IConfiguration configuration, IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service, IMapper mapper,
+        public BasicDetailController(IConfiguration configuration, IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
                               DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL,
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
@@ -140,7 +138,6 @@ namespace Web.Controllers
             this.basicDetailBL = basicDetailBL;
             this.basicDetailTempBL = basicDetailTempBL;
             this.service = service;
-            this._mapper = mapper;
             this.mapUnitBL = mapUnitBL;
             //this.context = context;
             //this.contextTransaction = context;
@@ -1702,10 +1699,26 @@ namespace Web.Controllers
                             ModelState.Clear();
                             if (TryValidateModel(modeldec))
                             {
-                                // Map ViewModel to BasicDetail entity
-                                BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
+                                BasicDetail newBasicDetail = new BasicDetail();
+                                newBasicDetail.BasicDetailId = model.BasicDetailId;
+                                newBasicDetail.FName = model.FName;
+                                newBasicDetail.LName = model.LName;
+                                newBasicDetail.NameAsPerRecord = model.NameAsPerRecord;
+                                newBasicDetail.ArmedId = model.ArmedId;
+                                newBasicDetail.RankId = model.RankId;
+                                newBasicDetail.ServiceNo = model.ServiceNo;
+                                newBasicDetail.DOB = model.DOB;
+                                newBasicDetail.PlaceOfIssue = model.PlaceOfIssue;
                                 newBasicDetail.DateOfIssue = null;
+                                newBasicDetail.DateOfCommissioning = model.DateOfCommissioning;
+                                newBasicDetail.RegimentalId= model.RegimentalId;
+                                newBasicDetail.ApplyForId = model.ApplyForId;
+                                newBasicDetail.UnitId = model.UnitId;
+                                newBasicDetail.IssuingAuthorityId = model.IssuingAuthorityId;
+                                newBasicDetail.PaperIcardNo = model.PaperIcardNo;
+                                newBasicDetail.PreviousBasicDetailId = model.PreviousBasicDetailId;
                                 newBasicDetail.IsLock= false;
+                                newBasicDetail.IsActive = true;
                                 newBasicDetail.Updatedby = Convert.ToInt32(userId);
                                 newBasicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
@@ -1949,9 +1962,28 @@ namespace Web.Controllers
                     ModelState.Clear();
                     if (TryValidateModel(modeldec))
                     {
-                        BasicDetail newBasicDetail = _mapper.Map<BasicDetailCrtAndUpdVM, BasicDetail>(model);
-                        newBasicDetail.IsLock= false;
+                        BasicDetail newBasicDetail = new BasicDetail();
+                        newBasicDetail.BasicDetailId = model.BasicDetailId;
+                        newBasicDetail.FName = model.FName;
+                        newBasicDetail.LName = model.LName;
+                        newBasicDetail.NameAsPerRecord = model.NameAsPerRecord;
+                        newBasicDetail.ArmedId = model.ArmedId;
+                        newBasicDetail.RankId = model.RankId;
+                        newBasicDetail.ServiceNo = model.ServiceNo;
+                        newBasicDetail.DOB = model.DOB;
+                        newBasicDetail.PlaceOfIssue = model.PlaceOfIssue;
                         newBasicDetail.DateOfIssue = null;
+                        newBasicDetail.DateOfCommissioning = model.DateOfCommissioning;
+                        newBasicDetail.RegimentalId = model.RegimentalId;
+                        newBasicDetail.ApplyForId = model.ApplyForId;
+                        newBasicDetail.UnitId = model.UnitId;
+                        newBasicDetail.IssuingAuthorityId = model.IssuingAuthorityId;
+                        newBasicDetail.PaperIcardNo = model.PaperIcardNo;
+                        newBasicDetail.PreviousBasicDetailId = model.PreviousBasicDetailId;
+                        newBasicDetail.IsLock = false;
+                        newBasicDetail.IsActive = true;
+                        newBasicDetail.Updatedby = model.Updatedby;
+                        newBasicDetail.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
 
                         if (model.TypeId == 4)
                         {

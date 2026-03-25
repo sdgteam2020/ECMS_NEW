@@ -1,4 +1,3 @@
-using AutoMapper;
 using BusinessLogicsLayer;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Service;
@@ -135,14 +134,6 @@ builder.Services.Configure<IdentityOptions>(opts =>
     opts.Lockout.MaxFailedAccessAttempts = 3;
     opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
 });
-// Build MapperConfiguration
-var mapperConfig = new MapperConfiguration(mc =>
-{
-    mc.AddProfile(new MappingProfile());
-});
-
-IMapper mapper = mapperConfig.CreateMapper();
-builder.Services.AddSingleton(mapper);
 
 builder.Services.AddSession(options =>
 {

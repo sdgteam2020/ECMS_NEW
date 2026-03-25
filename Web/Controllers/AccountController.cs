@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Azure;
+﻿using Azure;
 using BusinessLogicsLayer;
 using BusinessLogicsLayer.Account;
 using BusinessLogicsLayer.Bde;
@@ -58,7 +57,6 @@ namespace Web.Controllers
         private readonly SignInManager<ApplicationUser> signInManager;
         public const string SessionKeySalt = "_Salt";
         private readonly ILogger<AccountController> _logger;
-        private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly IIAMSettingBL _iAMSettingBL;
@@ -66,7 +64,7 @@ namespace Web.Controllers
         private static readonly Regex armyNoRegex = new Regex(@"^[A-Z]{2}\d{5,6}[A-Z]$", RegexOptions.IgnoreCase);
 
         public AccountController(IConfiguration configuration,IUnitOfWork unitOfWork,IUnitBL unitBL, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
-            IDataProtectionProvider dataProtectionProvider, IService service, IMapper mapper, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor, IIAMSettingBL iAMSettingBL, IHostEnvironment hostEnv)
+            IDataProtectionProvider dataProtectionProvider, IService service, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor, IIAMSettingBL iAMSettingBL, IHostEnvironment hostEnv)
         {
             _configuration = configuration;
             this.roleManager = roleManager;
@@ -81,7 +79,6 @@ namespace Web.Controllers
             this.context = context;
             this.contextTransaction = contextTransaction;
             this.service = service;
-            this._mapper = mapper;
             this.protector = dataProtectionProvider.CreateProtector(
     dataProtectionPurposeStrings.AFSACIdRouteValue);
             _logger = logger;
