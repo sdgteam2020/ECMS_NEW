@@ -17,15 +17,6 @@ namespace BusinessLogicsLayer.BdeCate
         {
             _ITrnFwnDB = iTrnFwnDB;
         }
-        public async Task<bool> AddTrnFwdWithIsCompleteUpdate(MTrnFwd data)
-        {
-            return await _ITrnFwnDB.AddTrnFwdWithIsCompleteUpdate(data);
-        }
-
-        public Task<bool> UpdateAllBYRequestId(int RequestId)
-        {
-            return _ITrnFwnDB.UpdateAllBYRequestId(RequestId);
-        }
         public async Task<bool> UpdateFieldBYTrnFwdId(int TrnFwdId)
         {
             return await _ITrnFwnDB.UpdateFieldBYTrnFwdId(TrnFwdId);
@@ -45,6 +36,11 @@ namespace BusinessLogicsLayer.BdeCate
         public async Task<bool> ActionOnRequest(DTOActionOnRequest data, byte StepId)
         {
             return await _ITrnFwnDB.ActionOnRequest(data, StepId);
+        }
+        public async Task<DTOCheckUserIdBeforeInternalFwdResponse> CheckUserIdBeforeInternalFwd(int ToAspNetUsersId, int UnitId)
+        {
+            return await _ITrnFwnDB.CheckUserIdBeforeInternalFwd(ToAspNetUsersId, UnitId);
+
         }
     }
 }

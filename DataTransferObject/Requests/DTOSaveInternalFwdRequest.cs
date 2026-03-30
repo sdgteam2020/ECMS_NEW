@@ -6,10 +6,10 @@ namespace DataTransferObject.Requests
 {
     public class DTOSaveInternalFwdRequest
     {
-        //[RegularExpression(@"^[\w\,\'' ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public required int[] RequestIds { get; set; }
         
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "ToUserId is number.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Receiver UserId must be greater than 0.")]
+        [Required(ErrorMessage = "Receiver UserId is required.")]
         public int ToUserId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "FromUserId is number.")]
@@ -18,7 +18,9 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[\d]+$", ErrorMessage = "FromAspNetUsersId is number.")]
         public int FromAspNetUsersId { get; set; }
 
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "ToAspNetUsersId is number.")]
+        
+        [Range(1, int.MaxValue, ErrorMessage = "Receiver Id must be greater than 0.")]
+        [Required(ErrorMessage = "Receiver Id is required.")]
         public int ToAspNetUsersId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitId is number.")]

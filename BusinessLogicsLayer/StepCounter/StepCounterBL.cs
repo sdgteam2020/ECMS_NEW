@@ -23,11 +23,5 @@ namespace BusinessLogicsLayer.BdeCate
         {
             _iStepCounterDB = stepCounterDB;
         }
-      
-
-        public async Task<MStepCounter> UpdateStepCounter(MStepCounter Data)
-        {
-            return await _iStepCounterDB.UpdateStepCounter(Data);
-        }
     }
 }

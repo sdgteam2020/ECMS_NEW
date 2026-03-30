@@ -9,6 +9,5 @@ namespace DataAccessLayer.BaseInterfaces
 {
     public interface IStepCounterDB : IGenericRepositoryDL<MStepCounter>
     {
-        public Task<MStepCounter> UpdateStepCounter(MStepCounter Data);
     }
 }

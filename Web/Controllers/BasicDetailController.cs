@@ -81,7 +81,6 @@ namespace Web.Controllers
     {
         //private readonly ApplicationDbContext context, contextTransaction;
         private readonly UserManager<ApplicationUser> userManager;// For Identity
-        private readonly IStepCounterBL iStepCounterBL;// For Step Counter
         private readonly ITrnICardRequestBL iTrnICardRequestBL;// For ICard Request
         private readonly IDomainMapBL iDomainMapBL;// For Domain Mapping
         private readonly ITrnFwnBL iTrnFwnBL;// For Forwarding
@@ -127,7 +126,7 @@ namespace Web.Controllers
         /// </summary>        
         public BasicDetailController(IConfiguration configuration, IBasicDetailBL basicDetailBL, IMapUnitBL mapUnitBL, IBasicDetailTempBL basicDetailTempBL, IService service,
             UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider,
-                              DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger, IStepCounterBL iStepCounterBL,
+                              DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<BasicDetailController> logger,
                               ITrnFwnBL iTrnFwnBL, ITrnICardRequestBL iTrnICardRequestBL, IDomainMapBL iDomainMapBL
             , IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
            , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,
@@ -147,7 +146,6 @@ namespace Web.Controllers
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             _logger = logger;
-            this.iStepCounterBL = iStepCounterBL;
             this.iTrnFwnBL = iTrnFwnBL;
             this.iTrnICardRequestBL = iTrnICardRequestBL;
             this.iDomainMapBL = iDomainMapBL;
@@ -2173,7 +2171,6 @@ namespace Web.Controllers
                         mStepCounter.Updatedby = Convert.ToInt32(userId);
                         mStepCounter.IsActive = true;
                         mStepCounter.ApplyForId = newBasicDetail.ApplyForId;
-                        //  await iStepCounterBL.Add(mStepCounter);
 
 
                         BasicDetail ret = new BasicDetail();
@@ -2634,7 +2631,7 @@ namespace Web.Controllers
 
         #endregion
 
-        #region SaveInternalFwd/IcardFwd/IcardRejecte/UpdateStepCounter/SaveICardRequestHold/DataExport/DataDigitalXmlSign/GenerateLastRecordXml/MergeXmlDocuments/GenerateJsonResponse
+        #region SaveInternalFwd/ActionOnRequest/SaveICardRequestHold/DataExport/DataDigitalXmlSign/GenerateLastRecordXml/MergeXmlDocuments/GenerateJsonResponse
 
         /// <summary>
         /// Handles the saving of internal forward data, validates the request, and processes it.
@@ -2649,21 +2646,66 @@ namespace Web.Controllers
         /// </returns>
         [Authorize(Policy = "InternalWkDistrPolicy")]
         [HttpPost]
-        public async Task<IActionResult> SaveInternalFwd(EncryptedRequest request)
+        public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data) //EncryptedRequest request
         {
-            DTOSaveInternalFwdRequest data= await AESEncrytDecry.DecryptAESWithDTO<DTOSaveInternalFwdRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
-            if(data==null)
-            {
-                return Json(false); // Failure
-            }
+            //DTOSaveInternalFwdRequest data= await AESEncrytDecry.DecryptAESWithDTO<DTOSaveInternalFwdRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            //if(data==null)
+            //{
+            //    return Json(false); // Failure
+            //}
             try
             {
-                // Retrieve session data for user ID and unit ID
-                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                var dTOInternalFwd = new DTOGenericResponse<string>();
+
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState
+                        .Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                        .ToList();
+
+                    dTOInternalFwd.Result = false;
+                    dTOInternalFwd.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOInternalFwd);
+                }
+
+                DtoSession? dtoSession = null;
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
+
+                if (dtoSession == null)
+                {
+                    dTOInternalFwd.Result = false;
+                    dTOInternalFwd.Message = "Invalid user session.";
+                    return Json(dTOInternalFwd);
+                }
+
+                data.FromUserId = dtoSession.UserId;
+                data.UnitId = dtoSession.UnitId;
+
+                var CheckUserIdBeforeInternalFwd = await iTrnFwnBL.CheckUserIdBeforeInternalFwd(data.ToAspNetUsersId, data.UnitId);
+                if (!CheckUserIdBeforeInternalFwd.Result)
+                {
+                    dTOInternalFwd.Result = false;
+                    dTOInternalFwd.Message = CheckUserIdBeforeInternalFwd.Message;
+                    return Json(dTOInternalFwd);
+                }
+
+
+                var CheckRequestIdsBeforeInternalFwd = await iTrnFwnBL.CheckRequestIdsBeforeInternalFwd(data.RequestIds, data.FromAspNetUsersId);
+                if (!CheckUserIdBeforeInternalFwd.Result)
+                {
+                    dTOInternalFwd.Result = false;
+                    dTOInternalFwd.Message = CheckRequestIdsBeforeInternalFwd.Message;
+                    return Json(dTOInternalFwd);
+                }
+
 
                 // Set values for the data object using session data and user information
-                data.FromUserId = sessiondata.UserId;
-                data.UnitId = sessiondata.UnitId;
+                data.ToUserId = CheckUserIdBeforeInternalFwd.UserId;
                 data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsComplete = false;
                 data.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
@@ -2672,34 +2714,24 @@ namespace Web.Controllers
                 data.FwdStatusId = 4;  // Set the forward status to 4 (indicating internal forward)
                 data.TypeId = 3; //"RO / ORO Forward" type
 
-                // Check if the model state is valid
-                if (ModelState.IsValid)
-                {
-                    // Call the business logic layer to save the internal forward data
-                    bool? result = (bool)await iTrnFwnBL.SaveInternalFwd(data);
+                // Call the business logic layer to save the internal forward data
+                bool? result = (bool)await iTrnFwnBL.SaveInternalFwd(data);
 
-                    // Return appropriate JSON response based on the result
-                    if (result != null)
+                // Return appropriate JSON response based on the result
+                if (result != null)
+                {
+                    if (result == true)
                     {
-                        if (result == true)
-                        {
-                            return Json(true); // Success
-                        }
-                        else
-                        {
-                            return Json(false); // Failure
-                        }
+                        return Json(true); // Success
                     }
                     else
                     {
-                        return Json(null); // Null result case
+                        return Json(false); // Failure
                     }
-
                 }
                 else
                 {
-                    // Return validation errors as a JSON response if the model state is invalid
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    return Json(null); // Null result case
                 }
 
             }
@@ -2711,226 +2743,7 @@ namespace Web.Controllers
             }
         }
 
-
-        /// <summary>
-        /// Handles the forwarding of ICard data, updates the request details, and adds a new forward record.
-        /// If the update is successful, returns the new forward record. Otherwise, returns a bad request response.
-        /// </summary>
-        /// <param name="data">
-        /// The MTrnFwd data object containing the forward request details.
-        /// </param>
-        /// <returns>
-        /// A JSON response indicating success with the new forward record, or a bad request response in case of failure.
-        /// </returns>
-        [Authorize(Roles = "admin2")]
-        public async Task<IActionResult> IcardFwd(MTrnFwd data)
-        {
-            try
-            {
-                // Retrieve session data for user ID and unit ID
-                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-                // Set values for the forward data object using session data and user information
-                data.FromUserId = sessiondata.UserId;
-                data.UnitId = sessiondata.UnitId;
-                data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                data.UpdatedOn = DateTime.Now;
-                data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                data.IsActive = true;
-                data.TypeId = Convert.ToByte(data.TypeId);
-
-                // Check if all records by RequestId can be updated
-                if (await iTrnFwnBL.UpdateAllBYRequestId(data.RequestId))
-                {
-                    // If successful, reset TrnFwdId and add the new forward record
-                    data.TrnFwdId = 0;
-                    data = await iTrnFwnBL.AddWithReturn(data);
-
-                    // Return the new forward record as a successful response
-                    return Ok(data);
-                }
-                else
-                {
-                    // Return bad request if the update failed
-                    return BadRequest();
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log any exceptions and return a bad request response
-                _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
-                return BadRequest();
-            }
-        }
-
-
-        /// <summary>
-        /// Handles the rejection of an ICard forward request. Updates the forward details, performs domain mapping, 
-        /// processes XML digital sign data, and returns a success or failure response.
-        /// </summary>
-        /// <param name="data">
-        /// The MTrnFwd data object containing the forward request details to be rejected.
-        /// </param>
-        /// <returns>
-        /// A JSON response indicating success with the updated forward record or a bad request response in case of failure.
-        /// </returns>
-        [Authorize(Roles = "admin2")]
-        public async Task<IActionResult> IcardRejecte(MTrnFwd data)
-        {
-            // Initialize the generic response object
-            DTOGenericResponse<DTOApplicationRejecteResponse?> response = new DTOGenericResponse<DTOApplicationRejecteResponse?>();
-            DTOApplicationRejecteResponse dTOApplication = new DTOApplicationRejecteResponse();
-            try
-            {
-                DtoSession? dtoSession = new DtoSession();
-
-                //Retrieve session data if available
-                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-                {
-                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-                    // Set values for the forward data object using session data and user information
-                    data.FromUserId = dtoSession.UserId;
-                    data.UnitId = dtoSession.UnitId;
-                    data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    data.UpdatedOn = DateTime.Now;
-                    data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    data.IsActive = true;
-                    data.TypeId = Convert.ToByte(1); // Set the type to 1 for rejection
-                    data.FwdStatusId = 3; // Set the status to 3 for rejection
-                    data.IsComplete = false;
-
-                    // Retrieve domain mapping using the request ID
-                    TrnDomainMapping? Domain = new TrnDomainMapping();
-                    Domain = await iDomainMapBL.GetByRequestId(data.RequestId);
-
-                    if (Domain != null && Domain.UserId != null)
-                    {
-                        dTOApplication.ToAspNetUsersId = Domain.AspNetUsersId;
-
-                        // Set the recipient user ID and AspNetUsersId for the rejection
-                        data.ToAspNetUsersId = Domain.AspNetUsersId;
-                        data.ToUserId = Domain.UserId.GetValueOrDefault();
-
-                        bool result = await iTrnFwnBL.AddTrnFwdWithIsCompleteUpdate(data);
-
-                        if (result)
-                        {
-                            // Process digital sign XML files for the rejection
-                            int[] d = new int[1];
-                            d[0] = data.RequestId;
-                            var dataret = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
-
-                            if (dataret != null)
-                            {
-                                dataret.XmlFiles = ""; // Clear the XML files after processing
-
-                                // Save the processed XML digital sign
-                                await _iTrnLoginLogBL.XmlFileDigitalSign(dataret);
-                            }
-
-                            response.Result = true;
-                            response.Message = "Reject Application successfully.";
-                            response.Value = dTOApplication;
-                            return Json(response);
-                        }
-                        else
-                        {
-                            response.Result = false;
-                            response.Message = "Reject Application failed.";
-                            response.Value = dTOApplication;
-                            return Json(response);
-                        }
-
-                    }
-                    else
-                    {
-                        response.Result = false;
-                        response.Message = "At this time, the application was not rejected because Profile is not mapped with domain Id."; 
-                        response.Value = dTOApplication;
-                        return Json(response);
-                    }
-                }
-                else
-                {
-                    // Session has expired or not available, redirect to ContactUs with error
-                    TempData["error"] = "Invalid Session.";
-                    TempData.Keep("error");
-                    return RedirectToAction("ContactUs", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log any exceptions and return a bad request response
-                _logger.LogError(1001, ex, "BasicDetails=>IcardRejecte.");
-                response.Result = false;
-                response.Message = "failed";
-                response.Value = dTOApplication;
-                return Json(response);
-            }
-        }
-
-
-        /// <summary>
-        /// Updates the step counter information based on the provided MStepCounter object.
-        /// Performs necessary checks, such as verifying domain mapping, session data, and unit mapping.
-        /// Returns a response indicating success or failure along with a relevant message.
-        /// </summary>
-        /// <param name="mStepCounter">
-        /// The MStepCounter object containing the details to be updated.
-        /// </param>
-        /// <returns>
-        /// A JSON response indicating the result of the update operation. If successful, 
-        /// it returns `Result = true`, otherwise `Result = false` with an appropriate message.
-        /// </returns>
-        [Authorize(Roles = "admin2")]
-        public async Task<IActionResult> UpdateStepCounter(MStepCounter mStepCounter)
-        {
-            DTOBasicDetailsSaveResponse response = new DTOBasicDetailsSaveResponse();
-            try
-            {
-                // If the Flag is 'R', perform additional checks
-                if (mStepCounter.Flag == "R")
-                {
-                    // Retrieve domain mapping using the request ID
-                    TrnDomainMapping? Domain = new TrnDomainMapping();
-                    Domain = await iDomainMapBL.GetByRequestId(mStepCounter.RequestId);
-
-                    // If the UserId from the domain mapping is 0, return an error response
-                    if (Domain?.UserId.GetValueOrDefault() == 0)
-                    {
-                        response.Message = "Profile is not mapped with domain Id!";
-                        response.Result = false;
-                        return Ok(response);
-                    }
-                }
-
-                // Retrieve session data for unit ID
-                DtoSession sessiondata = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
-                // Get unit details based on the session's unit ID
-                DTOMapUnitResponse dTOMapUnitResponse = await mapUnitBL.GetALLByUnitMapId(sessiondata.UnitId);
-
-                // Update the step counter with the current date, user ID, and unit name
-                mStepCounter.UpdatedOn = DateTime.Now;
-                mStepCounter.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                mStepCounter.UnitName = dTOMapUnitResponse.UnitName;
-
-                // Call the service to update the step counter
-                await iStepCounterBL.UpdateStepCounter(mStepCounter);
-                response.Result = true;
-            }
-            catch (Exception ex)
-            {
-                // Log the exception and return a generic error message
-                _logger.LogError(1001, ex, "BasicDetails=>IcardFwd.");
-                response.Message = "Internal Server Error!";
-            }
-
-            // Return the response with the operation result
-            return Ok(response);
-        }
-        
+       
         [HttpPost]
         public async Task<IActionResult> ActionOnRequest(string  request)
         {
@@ -6084,63 +5897,78 @@ namespace Web.Controllers
         public async Task<IActionResult> SaveDestructionCardRequest(DTOTrnDestructionCardSaveRequest dTOTrnDestruction)
         {
             // Initialize the response object for front-end
-            var dTOFaulty = new DTOGenericResponse<DTOCommonResponse>();
+            var dTOFaulty = new DTOGenericResponse<DTOCommonResponse>
+            {
+                Value = new DTOCommonResponse()
+            };
 
             try
             {
-                // Check if the model passed server-side validation
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    var checkCardBeforeDistruction = await _destructionCardBL.CheckBeforeDestructionCardReport(dTOTrnDestruction.RequestId);
-                    if (checkCardBeforeDistruction.Result)
-                    {
-                        // Initialize session DTO
-                        DtoSession? dtoSession = new DtoSession();
-
-                        // Retrieve session token if available
-                        if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
-                        {
-                            dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                        }
-                        var model = new TrnDestructionCard();
-                        model.RequestId = dTOTrnDestruction.RequestId;
-                        model.RemarksIds = dTOTrnDestruction.RemarksIds != null && dTOTrnDestruction.RemarksIds.Any() ? string.Join(",", dTOTrnDestruction.RemarksIds) : string.Empty;
-                        model.Remark = dTOTrnDestruction.Remark;
-                        model.DestructedOn = dTOTrnDestruction.DestructedOn;
-                        model.IsActive = true;
-                        model.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                        model.UpdatedbyUserId = dtoSession != null ? dtoSession.UserId : 0;
-                        model.UpdatedOn = DateTime.Now;
-
-                        // Add the new destruction card and return success response
-                        var result = await _destructionCardBL.AddWithReturn(model);
-                        dTOFaulty.Result = true;
-                        dTOFaulty.Message = "Record created!";
-                        dTOFaulty.Value.CurrentTime = result.UpdatedOn.GetValueOrDefault();
-                        dTOFaulty.Value.Id = result.DestructedCardId.ToString();
-                    }
-                    else
-                    {
-                        // Duplicate found, return failure response
-                        dTOFaulty.Result = checkCardBeforeDistruction.Result;
-                        dTOFaulty.Message = checkCardBeforeDistruction.Message;
-                    }
-                }
-                else
-                {
-                    // Collect and return all model validation errors
-                    var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                        .SelectMany(x => x.Value!.Errors.Select(e =>
-                            $"{x.Key}: {e.ErrorMessage}"))
+                    var errors = ModelState
+                        .Where(x => x.Value?.Errors?.Count > 0)
+                        .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
                         .ToList();
 
-                    if (errors.Any())
-                    {
-                        dTOFaulty.Message = string.Join("; ", errors); // Concatenate all error messages
-                    }
-
                     dTOFaulty.Result = false;
+                    dTOFaulty.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOFaulty);
                 }
+
+                var checkCardBeforeDistruction = await _destructionCardBL.CheckBeforeDestructionCardReport(dTOTrnDestruction.RequestId);
+
+                if (!checkCardBeforeDistruction.Result)
+                {
+                    dTOFaulty.Result = false;
+                    dTOFaulty.Message = checkCardBeforeDistruction.Message;
+                    return Json(dTOFaulty);
+                }
+
+                // Initialize session DTO
+                DtoSession? dtoSession = null;
+
+                // Retrieve session token if available
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
+
+                var userIdClaim = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!int.TryParse(userIdClaim, out int updatedBy))
+                {
+                    dTOFaulty.Result = false;
+                    dTOFaulty.Message = "Invalid user session.";
+                    return Json(dTOFaulty);
+                }
+
+
+                var model = new TrnDestructionCard
+                {
+                    RequestId = dTOTrnDestruction.RequestId,
+                    RemarksIds = dTOTrnDestruction.RemarksIds != null && dTOTrnDestruction.RemarksIds.Any() ? string.Join(",", dTOTrnDestruction.RemarksIds) : string.Empty,
+                    Remark = dTOTrnDestruction.Remark,
+                    DestructedOn = dTOTrnDestruction.DestructedOn,
+                    IsActive = true,
+                    Updatedby = updatedBy,
+                    UpdatedbyUserId = dtoSession?.UserId ?? 0,
+                    UpdatedOn = DateTime.UtcNow
+                };
+
+                // Add the new destruction card and return success response
+                var result = await _destructionCardBL.AddWithReturn(model);
+
+                if (result == null)
+                {
+                    dTOFaulty.Result = false;
+                    dTOFaulty.Message = "Failed to save record.";
+                    return Json(dTOFaulty);
+                }
+
+                dTOFaulty.Result = true;
+                dTOFaulty.Message = "Record created!";
+                dTOFaulty.Value.CurrentTime = result.UpdatedOn.GetValueOrDefault();
+                dTOFaulty.Value.Id = result.DestructedCardId.ToString();
             }
             catch (Exception ex)
             {

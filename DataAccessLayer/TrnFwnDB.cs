@@ -30,73 +30,6 @@ namespace DataAccessLayer
         }
 
 
-        public async Task<bool> AddTrnFwdWithIsCompleteUpdate(MTrnFwd data)
-        {
-            // Initialize transaction for multiple database operations
-            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
-            try
-            {
-                // Update related TrnICardRequest with the new mapping
-                string query1 = "UPDATE TrnFwds set IsComplete=1 where RequestId=@RequestId";
-                await db.ExecuteAsync(query1, new { data.RequestId }, transaction: transaction);
-
-                // Insert new posting record
-                var insertSql = @$"INSERT INTO TrnFwds(RequestId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,UnitId,Remark,TypeId,IsComplete,IsActive,Updatedby,UpdatedOn,RemarksIds,FwdStatusId,StepId)
-                                VALUES (@RequestId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@UnitId,@Remark,@TypeId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@RemarksIds,@FwdStatusId,@StepId);";
-                var parameters = new DynamicParameters();
-                parameters.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@ToUserId", data.ToUserId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@FromUserId", data.FromUserId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@FromAspNetUsersId", data.FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@ToAspNetUsersId", data.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@UnitId", data.UnitId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@Remark", data.Remark, DbType.String, ParameterDirection.Input, 100);
-                parameters.Add("@TypeId", data.TypeId, DbType.Byte, ParameterDirection.Input);
-                parameters.Add("@IsComplete", data.IsComplete, DbType.Boolean, ParameterDirection.Input);
-                parameters.Add("@IsActive", data.IsActive, DbType.Boolean, ParameterDirection.Input);
-                parameters.Add("@Updatedby", data.Updatedby, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@UpdatedOn", data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
-                parameters.Add("@RemarksIds", data.RemarksIds, DbType.String, ParameterDirection.Input, 100);
-                parameters.Add("@FwdStatusId", data.FwdStatusId, DbType.Byte, ParameterDirection.Input);
-                parameters.Add("@StepId", data.StepId, DbType.Byte, ParameterDirection.Input);
-
-                // Insert the new TrnFwds record
-                await db.ExecuteAsync(insertSql, parameters, transaction: transaction);
-
-                // Commit the transaction if all operations succeed
-                transaction.Commit();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                // Rollback the transaction if any operation fails
-                transaction.Rollback();
-                _logger.LogError(1001, ex, "PostingDB->UpdateForPosting");
-                return false;
-            }
-            finally
-            {
-                // Dispose of the connection
-                db.Dispose();
-            }
-        }
-
-
-        /// <summary>
-        /// Updates the "IsComplete" status for all records with the specified RequestId in the "TrnFwds" table.
-        /// </summary>
-        /// <param name="RequestId">The RequestId of the records to be updated.</param>
-        /// <returns>Returns true if the update was successful, otherwise false.</returns>
-        public async Task<bool> UpdateAllBYRequestId(int RequestId)
-        {
-            using (var connection = _contextDP.CreateConnection())
-            {
-                connection.Execute("UPDATE TrnFwds set IsComplete=1 where RequestId=@RequestId", new { RequestId });
-                return await Task.FromResult(true);
-            }
-        }
-
-
         /// <summary>
         /// Updates a specific field in the "TrnFwds" table based on the "TrnFwdId". It checks conditions for FwdStatusId 
         /// and updates it accordingly while performing additional logic if needed.
@@ -391,6 +324,49 @@ namespace DataAccessLayer
                 // Dispose of the connection
                 db.Dispose();
                 db2.Dispose();
+            }
+        }
+
+        public async Task<DTOCheckUserIdBeforeInternalFwdResponse> CheckUserIdBeforeInternalFwd(int ToAspNetUsersId,int UnitId)
+        {
+            var response = new DTOCheckUserIdBeforeInternalFwdResponse();
+            try
+            {
+                string query = @"SELECT tdm.UserId,
+                                        CASE 
+                                            WHEN tdm.UnitId != @UnitId THEN 0
+                                            WHEN tdm.UserId = null  THEN 0
+                                            ELSE 1
+                                        END AS Result,
+		                                case
+                                            WHEN tdm.UnitId != @UnitId THEN 'The receiver unit does not match the sender unit.'
+                                            WHEN tdm.UserId = null THEN 'Profile is not mapped with domain Id!'
+		                                    ELSE 'Valid'
+		                                END as Message
+                                FROM TrnDomainMapping tdm
+                                WHERE tdm.AspNetUsersId = @ToAspNetUsersId";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ToAspNetUsersId", ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UnitId", UnitId, DbType.Int32, ParameterDirection.Input);
+                    var result = await connection.QueryFirstOrDefaultAsync<DTOCheckUserIdBeforeInternalFwdResponse>(query, parameters);
+                    return result ?? new DTOCheckUserIdBeforeInternalFwdResponse
+                    {
+                        Result = false,
+                        Message = "Receiver Id not found",
+                        UserId = null
+                    };
+                }
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "TrnFwnDB->CheckUserIdBeforeInternalFwd");
+                response.Result = false;
+                response.Message = "Something went wrong";
+                response.UserId = null;
+                return response;
             }
         }
     }

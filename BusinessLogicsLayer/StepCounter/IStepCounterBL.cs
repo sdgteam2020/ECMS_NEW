@@ -15,6 +15,5 @@ namespace BusinessLogicsLayer.Bde
     public interface IStepCounterBL : IGenericRepositoryDL<MStepCounter>
     {
 
-        public Task<MStepCounter> UpdateStepCounter(MStepCounter Data);
     }
 }

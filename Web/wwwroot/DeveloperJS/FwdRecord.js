@@ -612,17 +612,17 @@ function SaveInternalFwd() {
         "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
         "RemarksIds": remarks,
     };
-    let encryptedPayload = "";
-    if (userdata) {
-        const jsonData = JSON.stringify(userdata);
-        encryptedPayload = encryptPayloadData(jsonData);
+    //let encryptedPayload = "";
+    //if (userdata) {
+    //    const jsonData = JSON.stringify(userdata);
+    //    encryptedPayload = encryptPayloadData(jsonData);
 
-    }
+    //}
     
     $.ajax({
         url: '/BasicDetail/SaveInternalFwd',
         type: 'POST',
-        data: { Data: encryptedPayload },
+        data: { Data: userdata },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response == true) {
