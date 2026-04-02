@@ -2646,18 +2646,11 @@ namespace Web.Controllers
         /// </returns>
         [Authorize(Policy = "InternalWkDistrPolicy")]
         [HttpPost]
-        public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data) //EncryptedRequest request
+        public async Task<IActionResult> SaveInternalFwd(DTOSaveInternalFwdRequest data)
         {
-            //DTOSaveInternalFwdRequest data= await AESEncrytDecry.DecryptAESWithDTO<DTOSaveInternalFwdRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
-            //if(data==null)
-            //{
-            //    return Json(false); // Failure
-            //}
+            var dTOInternalFwd = new DTOGenericResponse<string>();
             try
             {
-                var dTOInternalFwd = new DTOGenericResponse<string>();
-
-
                 if (!ModelState.IsValid)
                 {
                     var errors = ModelState
@@ -2669,6 +2662,7 @@ namespace Web.Controllers
                     dTOInternalFwd.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
                     return Json(dTOInternalFwd);
                 }
+
 
                 DtoSession? dtoSession = null;
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
@@ -2685,6 +2679,14 @@ namespace Web.Controllers
 
                 data.FromUserId = dtoSession.UserId;
                 data.UnitId = dtoSession.UnitId;
+                data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                if (data.FromAspNetUsersId == data.ToAspNetUsersId)
+                {
+                    dTOInternalFwd.Result = false;
+                    dTOInternalFwd.Message = "The sender ID and receiver ID are not the same.";
+                    return Json(dTOInternalFwd);
+                }
 
                 var CheckUserIdBeforeInternalFwd = await iTrnFwnBL.CheckUserIdBeforeInternalFwd(data.ToAspNetUsersId, data.UnitId);
                 if (!CheckUserIdBeforeInternalFwd.Result)
@@ -2695,18 +2697,18 @@ namespace Web.Controllers
                 }
 
 
-                var CheckRequestIdsBeforeInternalFwd = await iTrnFwnBL.CheckRequestIdsBeforeInternalFwd(data.RequestIds, data.FromAspNetUsersId);
-                if (!CheckUserIdBeforeInternalFwd.Result)
+                var validateResult = await iTrnFwnBL.CheckRequestIdsBeforeInternalFwd(data.RequestIds, data.FromAspNetUsersId);
+                if (validateResult.Where(x => x.IsValid).Count() != data.RequestIds.Length)
                 {
                     dTOInternalFwd.Result = false;
-                    dTOInternalFwd.Message = CheckRequestIdsBeforeInternalFwd.Message;
+                    dTOInternalFwd.Message = "Invalid Application Id.";
                     return Json(dTOInternalFwd);
                 }
 
 
                 // Set values for the data object using session data and user information
+                data.RemarksIds = data.Remarks != null && data.Remarks.Any() ? string.Join(",", data.Remarks) : string.Empty;
                 data.ToUserId = CheckUserIdBeforeInternalFwd.UserId;
-                data.FromAspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 data.IsComplete = false;
                 data.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 data.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -2715,31 +2717,26 @@ namespace Web.Controllers
                 data.TypeId = 3; //"RO / ORO Forward" type
 
                 // Call the business logic layer to save the internal forward data
-                bool? result = (bool)await iTrnFwnBL.SaveInternalFwd(data);
+                DTOGenericResponse<string> response = await iTrnFwnBL.SaveInternalFwd(data, validateResult);
 
-                // Return appropriate JSON response based on the result
-                if (result != null)
+                if (response.Result)
                 {
-                    if (result == true)
-                    {
-                        return Json(true); // Success
-                    }
-                    else
-                    {
-                        return Json(false); // Failure
-                    }
+                    dTOInternalFwd.Result = true;
+                    dTOInternalFwd.Message = response.Message;
+                    return Json(dTOInternalFwd);
                 }
                 else
                 {
-                    return Json(null); // Null result case
+                    return Json(dTOInternalFwd);
                 }
-
             }
             catch (Exception ex)
             {
                 // Log the exception and return a BadRequest response if an error occurs
                 _logger.LogError(1001, ex, "BasicDetails=>SaveInternalFwd");
-                return BadRequest();
+                dTOInternalFwd.Result = false;
+                dTOInternalFwd.Message = "Internal Server Error.";
+                return Json(dTOInternalFwd);
             }
         }
 

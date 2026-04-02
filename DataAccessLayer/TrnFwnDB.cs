@@ -1,12 +1,15 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
+using DataAccessLayer.Healpers;
 using DataAccessLayer.Logger;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System.Data;
 using System.Transactions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -76,60 +79,58 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="dTO">The data transfer object containing the internal forward information to be saved.</param>
         /// <returns>Returns true if the save operation was successful, false if an error occurred, or null if an exception was thrown.</returns>
-        public async Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO)
+        public async Task<DTOGenericResponse<string>> SaveInternalFwd(DTOSaveInternalFwdRequest dTO, List<DTOCheckRequestIdsBeforeInternalFwdResponse> dTOChecks)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            try
             {
-                try
+                string[] columnsToIgnore = { "IsValid", "Remarks" };
+                byte StepId = 3;
+                using (var connection = _contextDP.CreateConnection())
                 {
-                    foreach (int item in dTO.RequestIds)
-                    {
-                        //MTrnFwd? mTrnFwd = await _context.TrnFwds.FindAsync(item);
-                        MTrnFwd? mTrnFwd = await _context.TrnFwds.Where(x=>x.RequestId == item && x.IsComplete==false).FirstOrDefaultAsync();
-                        if (mTrnFwd!=null)
-                        {
-                            mTrnFwd.IsComplete = true;
-                            mTrnFwd.Updatedby = dTO.FromAspNetUsersId;
-                            mTrnFwd.UpdatedOn = dTO.UpdatedOn;
-                            await _context.SaveChangesAsync();
 
-                            var trnfwd = new MTrnFwd
-                            {
-                                RequestId = mTrnFwd.RequestId,
-                                StepId = mTrnFwd.StepId,
-                                ToUserId = dTO.ToUserId,
-                                FromUserId = dTO.FromUserId,
-                                FromAspNetUsersId = dTO.FromAspNetUsersId,
-                                ToAspNetUsersId = dTO.ToAspNetUsersId,
-                                UnitId = dTO.UnitId,
-                                Remark = dTO.Remark,
-                                FwdStatusId = dTO.FwdStatusId,
-                                TypeId = dTO.TypeId,
-                                IsComplete = dTO.IsComplete,
-                                RemarksIds = dTO.RemarksIds,
-                                //PostingOutId = null,
-                                IsActive = dTO.IsActive,
-                                Updatedby = dTO.FromAspNetUsersId,
-                                UpdatedOn = dTO.UpdatedOn,
-                            };
-                            await _context.TrnFwds.AddAsync(trnfwd);
-                            await _context.SaveChangesAsync();
-                        }
-                        else
+                    foreach (var batchRecords in dTOChecks.Chunk(5000))
+                    {
+
+                        DataTable dataTable = DataTableHelper.ToDataTable(batchRecords, columnsToIgnore);
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@data", dataTable.AsTableValuedParameter("UT_InternalFwd"));
+                        parameters.Add("@StepId", StepId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@ToUserId", dTO.ToUserId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@FromUserId", dTO.FromUserId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@FromAspNetUsersId", dTO.FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@ToAspNetUsersId", dTO.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@UnitId", dTO.UnitId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@Remark", dTO.Remark, DbType.String, ParameterDirection.Input, 100);
+                        parameters.Add("@FwdStatusId", dTO.FwdStatusId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@TypeId", dTO.TypeId, DbType.Byte, ParameterDirection.Input);
+                        parameters.Add("@IsComplete", dTO.IsComplete, DbType.Boolean, ParameterDirection.Input);
+                        parameters.Add("@RemarksIds", dTO.RemarksIds, DbType.String, ParameterDirection.Input, 100);
+                        parameters.Add("@IsActive", dTO.IsActive, DbType.Boolean, ParameterDirection.Input);
+                        var batchResponse = await connection.QueryFirstOrDefaultAsync<DTOGenericResponse<string>>("CardInternalFwd", parameters, commandType: CommandType.StoredProcedure, commandTimeout: 180);
+
+                        if (batchResponse == null || !batchResponse.Result)
                         {
-                            return false;
+                            return new DTOGenericResponse<string>
+                            {
+                                Result = false,
+                                Message = batchResponse?.Message ?? "Batch failed."
+                            };
                         }
                     }
-                    transaction.Commit();
-                    return await Task.FromResult(true); ;
+                    response.Result = true;
+                    response.Message = "All ApplId fwd successfully.";
+                    response.Value = "Success";
                 }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    _logger.LogError(1001, ex, "TrnFwnDB->SaveInternalFwd");
-                    return null;
-                }
+
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "TrnFwnDB->SaveInternalFwd");
+                response.Message = "Internal Server Error";
+                response.Result = false;
+            }
+            return response;
         }
 
         public async Task<DTORequestRejectDetailResponse?> RequestRejectDetail(int RequestId)
@@ -356,7 +357,7 @@ namespace DataAccessLayer
                     {
                         Result = false,
                         Message = "Receiver Id not found",
-                        UserId = null
+                        UserId = 0
                     };
                 }
             }
@@ -365,8 +366,105 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ee, "TrnFwnDB->CheckUserIdBeforeInternalFwd");
                 response.Result = false;
                 response.Message = "Something went wrong";
-                response.UserId = null;
+                response.UserId = 0;
                 return response;
+            }
+        }
+        public async Task<List<DTOCheckRequestIdsBeforeInternalFwdResponse>> CheckRequestIdsBeforeInternalFwd(int[] RequestIds, int FromAspNetUsersId)
+        {
+            var response = new DTOCheckRequestIdsBeforeInternalFwdResponse();
+            try
+            {
+                if (RequestIds == null)
+                    return new List<DTOCheckRequestIdsBeforeInternalFwdResponse>();
+
+                var finalResult = new List<DTOCheckRequestIdsBeforeInternalFwdResponse>();
+
+                const string sql = @"
+                                    SELECT
+                                        ISNULL(fwd.TrnFwdId, 0) AS TrnFwdId,
+                                        ISNULL(req.RequestId, 0) AS ApplId,
+                                        CAST(
+                                            CASE
+                                                WHEN req.RequestId IS NOT NULL
+                                                        AND step.RequestId IS NOT NULL
+                                                        AND fwd.RequestId IS NOT NULL
+                                                        AND req.StatusId = 1 --Running
+                                                        AND step.StepId = 3 --Pending Appl </br> (Verifier Level )
+                                                        AND step.ApplyForId = 2 -- JCO/OR
+                                                        AND fwd.ToAspNetUsersId = @FromAspNetUsersId
+                                                THEN 1
+                                                ELSE 0
+                                            END AS bit
+                                        ) AS IsValid,
+                                        (
+                                            CASE
+                                                WHEN req.RequestId IS NULL
+                                                THEN 'Appl number not exists; '
+                                                ELSE ''
+                                            END
+                                            +
+                                            CASE
+                                                WHEN req.RequestId IS NOT NULL
+                                                        AND req.StatusId <> 1
+                                                THEN 'The application is not running; '
+                                                ELSE ''
+                                            END
+                                            +
+                                            CASE
+                                                WHEN step.RequestId IS NOT NULL
+                                                        AND step.ApplyForId <> 2
+                                                THEN 'The application is not JCO/OR; '
+                                                ELSE ''
+                                            END
+                                            +
+                                            CASE
+                                                WHEN step.RequestId IS NOT NULL
+                                                        AND step.StepId <> 3
+                                                THEN 'The application is currently being processed; '
+                                                ELSE ''
+                                            END
+                                            +
+                                            CASE
+                                                WHEN req.RequestId IS NOT NULL
+                                                        AND fwd.ToAspNetUsersId IS NOT NULL
+                                                        AND fwd.ToAspNetUsersId <> @FromAspNetUsersId
+                                                THEN 'You are not an authorized user; '
+                                                ELSE ''
+                                            END
+                                        ) AS Remarks
+                                    FROM @BatchRecords b
+                                    LEFT JOIN TrnICardRequest req ON b.RequestId = req.RequestId
+                                    LEFT JOIN TrnStepCounter step ON req.RequestId = step.RequestId
+                                    LEFT JOIN TrnFwds fwd on req.RequestId = fwd.RequestId AND fwd.IsComplete=0";
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    foreach (var chunk in RequestIds.Chunk(5000))
+                    {
+                        var table = new DataTable();
+                        table.Columns.Add("RequestId", typeof(int));
+
+                        foreach (var record in chunk)
+                        {
+                            table.Rows.Add(record);
+                        }
+
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@FromAspNetUsersId", FromAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                        parameters.Add("@BatchRecords", table.AsTableValuedParameter("dbo.RequestIdList"));
+
+                        var result = await connection.QueryAsync<DTOCheckRequestIdsBeforeInternalFwdResponse>(sql, parameters);
+                        finalResult.AddRange(result);
+                    }
+                    return finalResult;
+
+                }
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "TrnFwnDB->CheckUserIdBeforeInternalFwd");
+                return new List<DTOCheckRequestIdsBeforeInternalFwdResponse>();
             }
         }
     }

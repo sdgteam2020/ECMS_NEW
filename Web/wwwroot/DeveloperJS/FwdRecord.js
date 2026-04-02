@@ -604,51 +604,35 @@ function ProceedForInternalFwd() {
 }
 
 function SaveInternalFwd() {
-    var remarks = "" + $("#ddlInternalRemarks").val() + "";
+    var Remarks = $("#ddlInternalRemarks").val();
     var userdata = {
         "RequestIds": globalThis.selectedIds,
         "ToAspNetUsersId": $('#ddlfwdInternaloffrs').val(),
         "ToUserId": $("#spnFwdToInternalUsersId").html(),
         "Remark": $('#txtFRemarksInternal').val().length > 0 ? $('#txtFRemarksInternal').val() : null,
-        "RemarksIds": remarks,
+        "Remarks": Remarks && Remarks.length > 0 ? Remarks.map(Number) : [],
     };
-    //let encryptedPayload = "";
-    //if (userdata) {
-    //    const jsonData = JSON.stringify(userdata);
-    //    encryptedPayload = encryptPayloadData(jsonData);
-
-    //}
-    
+  
     $.ajax({
         url: '/BasicDetail/SaveInternalFwd',
         type: 'POST',
-        data: { Data: userdata },
+        data: userdata,
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
-            if (response == true) {
-                toastr.success('Fwd successfully.');
-
-                SaveNotification(3, 13, $('#ddlfwdInternaloffrs').val(), globalThis.selectedIds)
-
+            if (response.Result == true) {
+                toastr.success(response.Message);
                 $("#FwdInternalRecord").modal('hide');
                 setTimeout(function () {
                     location.reload();
                 }, 2000);
-            } else if (response == false) {
-                toastr.error('Something went wrong or Invalid Entry!');
+            } else{
+                toastr.error(response.Message);
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    html: 'Something went wrong or Invalid Entry!',
+                    html: response.Message,
                 })
-            } else if (response != "null" && response != null) {
-                toastr.error('Something went wrong or Invalid Entry!');
-            }
-            //else if (response.length > 1) {
-            //    for (var i = 0; i < response.length; i++) {
-            //        toastr.error(response[i][0])
-            //    }
-            //}
+            } 
         }
     });
 }

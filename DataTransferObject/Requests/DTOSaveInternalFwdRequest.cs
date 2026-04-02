@@ -40,8 +40,9 @@ namespace DataTransferObject.Requests
         [RegularExpression(@"^[a-zA-Z]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public bool IsComplete { get; set; } = false;
 
+        public List<int> Remarks { get; set; } = new();
+
         [Column(TypeName = "varchar(100)")]
-        [RegularExpression(@"^[\w\,]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string? RemarksIds { get; set; }
 
         [RegularExpression(@"^[a-zA-Z]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]

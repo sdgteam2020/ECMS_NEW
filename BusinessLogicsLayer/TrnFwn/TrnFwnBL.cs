@@ -21,9 +21,9 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return await _ITrnFwnDB.UpdateFieldBYTrnFwdId(TrnFwdId);
         }
-        public async Task<bool?> SaveInternalFwd(DTOSaveInternalFwdRequest dTO)
+        public async Task<DTOGenericResponse<string>> SaveInternalFwd(DTOSaveInternalFwdRequest dTO, List<DTOCheckRequestIdsBeforeInternalFwdResponse> dTOChecks)
         {
-            return await _ITrnFwnDB.SaveInternalFwd(dTO);
+            return await _ITrnFwnDB.SaveInternalFwd(dTO, dTOChecks);
         }
         public async Task<DTORequestRejectDetailResponse?> RequestRejectDetail(int RequestId)
         {
@@ -41,6 +41,10 @@ namespace BusinessLogicsLayer.BdeCate
         {
             return await _ITrnFwnDB.CheckUserIdBeforeInternalFwd(ToAspNetUsersId, UnitId);
 
+        }
+        public async Task<List<DTOCheckRequestIdsBeforeInternalFwdResponse>> CheckRequestIdsBeforeInternalFwd(int[] RequestIds, int FromAspNetUsersId)
+        {
+            return await _ITrnFwnDB.CheckRequestIdsBeforeInternalFwd(RequestIds, FromAspNetUsersId);
         }
     }
 }

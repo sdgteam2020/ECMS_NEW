@@ -242,7 +242,7 @@
                             <div class="row HProfileDetails">
                                 <span id="spnFwdToInternalUsersId" class="d-none">0</span>
                                 <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-4 fw-bold">Select Offr</label>
+                                    <label class="col-form-label col-sm-4 fw-bold">Select Offr<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-8">
                                         <select class="form-control" tabindex="-1" name="ddlfwdInternaloffrs" id="ddlfwdInternaloffrs" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offr is required.">
                                             <option value="0">Select Offr</option>
@@ -277,7 +277,7 @@
                                 <div class="form-group row mb-2 RemarksInternalFwd d-none">
                                     <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="ddlInternalRemarks" id="ddlInternalRemarks" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w ]*$">
+                                        <select class="form-control" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="ddlInternalRemarks" id="ddlInternalRemarks" data-val="true">
                                         </select>
                                         <span class="text-danger field-validation-valid" data-valmsg-for="ddlInternalRemarks" data-valmsg-replace="true"></span>
                                     </div>
@@ -285,7 +285,7 @@
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 fw-bold">Other Obsn</label>
                                     <div class="col-sm-8">
-                                        <textarea class="form-control" id="txtFRemarksInternal" rows="3" maxlength="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w ]*$"></textarea>
+                                        <textarea class="form-control1" id="txtFRemarksInternal" name="txtFRemarksInternal" rows="3" maxlength="100" data-val="true" data-val-regex="Only letters, numbers, space and full stop (.) are allowed." data-val-regex-pattern="^[a-zA-Z0-9. ]*$"></textarea>
                                         <span class="text-danger field-validation-valid" data-valmsg-for="txtFRemarksInternal" data-valmsg-replace="true"></span>
                                     </div>
                                 </div>
