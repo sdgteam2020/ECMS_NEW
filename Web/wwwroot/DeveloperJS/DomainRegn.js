@@ -1048,24 +1048,26 @@ function BindData() {
     });
 }
 function Save() {
+    let param = {
+        "Id": DomainRegId,
+        "DomainId": $("#txtDomainId").val(),
+        "RoleIds": $('#ddlRoles').val(),
+        "ClaimValues": $('#ddClaims').val(),
+        "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
+        "Active": $('input:radio[name=txtactive]:checked').val(),
+        "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
+        "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
+        //"IsRO": $('input:radio[name=IsRO]:checked').val(),
+        //"IsORO": $('input:radio[name=IsORO]:checked').val(),
+        "TDMId": TDMId,
+        "ApptId": ApptId,
+        "UnitMappId": UnitMapId,
+    }
     $.ajax({
         url: '/Account/SaveDomainRegn',
         type: 'POST',
-        data: {
-            "Id": DomainRegId,
-            "DomainId": $("#txtDomainId").val(),
-            "RoleIds": $('#ddlRoles').val(),
-            "ClaimValues": $('#ddClaims').val(),
-            "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
-            "Active": $('input:radio[name=txtactive]:checked').val(),
-            "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
-            "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
-            //"IsRO": $('input:radio[name=IsRO]:checked').val(),
-            //"IsORO": $('input:radio[name=IsORO]:checked').val(),
-            "TDMId": TDMId,
-            "ApptId": ApptId,
-            "UnitMappId": UnitMapId,
-        }, //get the search string
+        //data: param, //get the search string
+        data: { "request": encryptPayloadData(JSON.stringify(param)) },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if (result == DataSave) {

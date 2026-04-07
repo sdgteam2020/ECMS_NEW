@@ -1223,8 +1223,14 @@ namespace Web.Controllers
         /// </remarks>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> SaveUnitWithMapping(DTOSaveUnitWithMappingByAdminRequest dTO)
+        public async Task<IActionResult> SaveUnitWithMapping(string Request)
         {
+            DTOSaveUnitWithMappingByAdminRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOSaveUnitWithMappingByAdminRequest>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTO == null)
+            {
+                return Json(KeyConstants.IncorrectData); // Return error message for invalid data
+            }
+
             try
             {
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
