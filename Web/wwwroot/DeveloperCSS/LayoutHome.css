@@ -64,3 +64,19 @@ footer {
 .footer-placeholder {
     width: 20%;
 }
+@media (max-width: 767.98px) {
+    footer .d-flex {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+    }
+
+    .footer-placeholder {
+        display: none;
+    }
+
+    footer .text-end {
+        text-align: center !important;
+        font-size: 0.85rem;
+    }
+}
