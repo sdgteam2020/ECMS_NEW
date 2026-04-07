@@ -8,7 +8,6 @@
     <meta name="author" content="">
     <link rel="icon" type="image/x-icon" asp-href-include="/images/AFSAC.png">
     <title> E-ISAC </title>
-    @*  <link asp-href-include="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
 
     <link asp-href-include="~/css/style.css" rel="stylesheet" />
     <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
@@ -16,51 +15,47 @@
     <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
     <link asp-href-include="~/css/login.css" rel="stylesheet" />
-    <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
-
-    <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" /> 
+    <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" /> 
+    <link asp-href-include="~/css/normalize.min.css" rel="stylesheet" /> 
     <link asp-href-include="~/css/feed.css" rel="stylesheet" />
-
-    <link asp-href-include="~/css/normalize.min.css" rel="stylesheet" />
-    @*   <link asp-href-include="~/css/swiper.min.css" rel="stylesheet" /> *@
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
-    <link asp-href-include="~/css/main.css" rel="stylesheet" />
-    @*     <link asp-href-include="~/css/sliders/style.css" rel="stylesheet" /> *@
+    <link asp-href-include="~/css/main.css" rel="stylesheet" />         
     <link asp-href-include="~/developercss/layoutlogin.css" rel="stylesheet" />
+
 </head>
-<body>
-    @Html.AntiForgeryToken()
-    <div>
-    @*<div class="watermark">
-        <div>
-            <img src="/Images/dgislogo.png" alt="Watermark" loading="lazy">
-        </div>
-    </div> *@
-        @RenderBody()
-        <footer class="fixed-bottom">
-            <section class="page_copyright ls section_padding_25">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-12 text-center">
-                            <div class="footer-content">
-                                @if (ViewBag.Footer != null)
-                                {
-                                    @ViewBag.Footer
-                                }
+    <body>
+        @Html.AntiForgeryToken()
+
+        <div class="login-page-shell">
+            <partial name="~/Views/Shared/_CommonHeader.cshtml" />
+            <main class="login-main">
+                @RenderBody()
+            </main>
+
+            <footer class="login-footer">
+                <section class="page_copyright ls section_padding_25">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12 text-center">
+                                <div class="footer-content">
+                                    @if (ViewBag.Footer != null)
+                                    {
+                                        @ViewBag.Footer
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </footer>
-    </div>
-    <script asp-src-include="~/lib/jquery/jquery.js"></script>
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-    <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
-    <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
-    @RenderSection("Scripts", required: false)
-</body>
+                </section>
+            </footer>
+        </div>
+
+        <script asp-src-include="~/lib/jquery/jquery.js"></script>
+        <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
+        <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
+        <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
+        <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
+        @RenderSection("Scripts", required: false)
+    </body>
 </html>

@@ -6,10 +6,10 @@
     DTOTempSession? dTOTempSession = new DTOTempSession();
     StringBuilder m1 = new StringBuilder();
     StringBuilder m2 = new StringBuilder();
-    if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("IMData")))
+    if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext!.Session.GetString("IMData")))
     {
         dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContextAccessor.HttpContext.Session, "IMData");
-        m1.Append("Status : " + dTOTempSession.Status);
+        m1.Append("Status : " + dTOTempSession!.Status);
         m1.Append(",<br/>AdminFlag : " + dTOTempSession.AdminFlag);
         m1.Append(",<br/>DomainId : " + dTOTempSession.DomainId);
         m1.Append(",<br/>RoleName : " + dTOTempSession.RoleName);
@@ -25,290 +25,291 @@
     
 }
 <link href="~/developercss/account_profile.css" rel="stylesheet" />
-<div class="page">
-    <div class="container-fluid">
-        <partial name="~/Views/Shared/_CommonHeader.cshtml" />
-    </div>
-    <div class="bg-white login-wrap align-items-center">
-        <div class="login ">
-            <div class="row">
-                <input type="hidden" id="hiddenSa" value="@dTOTempSession.Salt" />
-                <div class="card-sigin">
-                    <div class="main-signup-header login-form">
-                        <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1">Fill your  Details to Register Profile in Appl</p>
-                        <div class="pb-3 mt-3">
-                            <div class="col-md-12 col-sm-6 " id="">
-                                <input class="form-control mb-2 d-none form-space" id="txtProfileForArmyNo" maxlength="9" value="1" placeholder="Enter Army No" />
-                            </div>
-                            <div class="col-md-12 col-lg-12 col-xl-12 p-4">
-                                <form asp-antiforgery="true" asp-controller="Account" asp-action="Profile" id="Profile" name="Profile" method="post" class="mt-3">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <input type="hidden" id="EncryptedData" name="EncryptedData" />
-                                            <input hidden asp-for="UnitMapId" />
-                                            <input hidden asp-for="ApptId" />
-                                            <div class="col-md-6 col-lg-6 col-xl-6">
-                                                <div class="row mb-2 required">
-                                                    <label class="col-sm-4 col-form-label form-label fw-bold">Army No<i class="fas fa-asterisk mand1"></i></label>
-                                                    <div class="col-sm-8">
-                                                        <input class="form-control text-uppercase" placeholder="" readonly value="@(dTOTempSession != null ? dTOTempSession.ICNO : "")" />
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-2 required">
-                                                    <span id="spnUnitAppointmentId" class="d-none">@(Model.ApptId > 0 ? Model.ApptId : 0)</span>
-                                                    <label class="col-form-label col-sm-4 fw-bold">Appointment<i class="fas fa-asterisk mand1 fw-bold"></i></label>
-                                                    <div class="col-sm-8">
-                                                        <div class="d-flex">
-                                                            <input class="form-control" placeholder="Type Appointment" id="txtAppointmentName" name="txtAppointmentName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Appointment Name is required." data-val-regex-pattern="^[\w \& \()]*$" /><button title="Add New Appointment" type="button" id="btnAddAppointment"><i class='fas fa-plus'></i></button>
-                                                        </div>
-                                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointmentName" data-valmsg-replace="true"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-2 required">
-                                                    <label asp-for="RankId" class="col-sm-4 col-form-label form-label fw-bold">Rank<i class="fas fa-asterisk mand1"></i></label>
-                                                    <div class="col-sm-8">
-                                                        <select asp-for="RankId" class="form-select" asp-items="ViewBag.OptionsRank">
-                                                        </select>
-                                                        <span asp-validation-for="RankId" class="text-danger"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-2 required">
-                                                    <label asp-for="Name" class="col-sm-4 col-form-label form-label fw-bold">Name<i class="fas fa-asterisk mand1"></i></label>
-                                                    <div class="col-sm-8">
-                                                        <input asp-for="Name" class="form-control-Alphabets" placeholder="" />
-                                                        <span asp-validation-for="Name" class="text-danger"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-4 fw-bold">Name of Arms, Service & Corps <i class="fas fa-asterisk mand1"></i></label>
-                                                    <div class="col-sm-8">
-                                                        <select asp-for="ArmedId" class="form-select" asp-items="ViewBag.OptionsArmedType">
-                                                        </select>
-                                                        <span asp-validation-for="ArmedId" class="text-danger"></span>
-                                                    </div>
-                                                </div>
 
-                                                <div class="row mb-2 required">
-                                                    <label asp-for="IsIO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of OC / CO / OC Tps?<i class="fas fa-asterisk mand1"></i></label>
-                                                    @if (dTOTempSession != null && dTOTempSession.TDMId > 0)
-                                                    {
-                                                        <div class="col-sm-3">
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="IsIO" value="true" id="IsIOyes" checked=@(Model.IsIO == true ? true : false) disabled="disabled">
-                                                                <label class="form-check-label" for="IsIOyes">
-                                                                    Yes
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="IsIO" value="false" id="IsIOno" checked=@(Model.IsIO == false ? true : false) disabled="disabled">
-                                                                <label class="form-check-label" for="IsIOno">
-                                                                    No
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="col-sm-3">
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="IsIO" value="true" id="IsIOyes">
-                                                                <label class="form-check-label" for="IsIOyes">
-                                                                    Yes
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="IsIO" value="false" id="IsIOno" checked="checked">
-                                                                <label class="form-check-label" for="IsIOno">
-                                                                    No
-                                                                </label>
-                                                            </div>
-                                                            <span class="text-danger field-validation-valid" id="IsIO-error"></span>
-                                                        </div>
-                                                    }
-
-                                                </div>
-                                                <div class="row mb-2 required">
-                                                    <label asp-for="IsCO" class="col-sm-9 col-form-label form-label fw-bold">Are you Commanding a Unit/ Sub Unit/ Fmn / Dte?<i class="fas fa-asterisk mand1"></i></label>
-                                                    @if (dTOTempSession != null && dTOTempSession.UserId > 0)
-                                                    {
-                                                        <div class="col-sm-3">
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="IsCO" value="true" id="IsCOyes" checked=@(Model.IsCO == true ? true : false) disabled="disabled">
-                                                                <label class="form-check-label" for="IsCOyes">
-                                                                    Yes
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="IsCO" value="false" id="IsCOno" checked=@(Model.IsCO == false ? true : false) disabled="disabled">
-                                                                <label class="form-check-label" for="IsCOno">
-                                                                    No
-                                                                </label>
-                                                            </div>
-                                                        </div>
-
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="col-sm-3">
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="IsCO" value="true" id="IsCOyes">
-                                                                <label class="form-check-label" for="IsCOyes">
-                                                                    Yes
-                                                                </label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="IsCO" value="false" id="IsCOno" checked="checked">
-                                                                <label class="form-check-label" for="IsCOno">
-                                                                    No
-                                                                </label>
-                                                            </div>
-                                                            <span class="text-danger field-validation-valid" id="IsCO-error"></span>
-                                                        </div>
-                                                    }
-
-                                                </div>
-                                                <div class="row mb-2 required d-none">
-                                                    <label asp-for="Thumbprint" class="col-sm-4 col-form-label form-label fw-bold"> Thumb print<i class="fas fa-asterisk mand1"></i></label>
-
-                                                    <div class="col-sm-8">
-                                                        <div class="form-check form-check-inline">
-                                                            <input asp-for="Thumbprint" class="form-control" />
-
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-lg-6 col-xl-6">
-
-                                                <div class="form-group row mb-2">
-                                                    <label class="col-form-label col-sm-9 fw-bold">Do You want IACA Token Waiver to access Appl?<i class="fas fa-asterisk mand1"></i></label>
-                                                    <div class="col-sm-3">
-                                                        <div class="form-check form-check-inline">
-                                                            <input class="form-check-input" type="radio" name="IsTokenWaiver" value="true" id="IsTokenWaiverYes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                                            <label class="form-check-label" for="IsTokenWaiverYes">
-                                                                Yes
-                                                            </label>
-                                                        </div>
-                                                        <div class="form-check form-check-inline">
-                                                            <input class="form-check-input" type="radio" name="IsTokenWaiver" value="false" id="IsTokenWaiverNo" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                                            <label class="form-check-label" for="IsTokenWaiverNo">
-                                                                No
-                                                            </label>
-                                                        </div>
-                                                        <span class="text-danger field-validation-valid" id="IsTokenWaiver-error" data-valmsg-for="IsTokenWaiver" data-valmsg-replace="true"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row mb-2 d-none" id="spnReasonTokenWaiver">
-                                                    <label class="col-form-label col-sm-4 fw-bold">Reason for IACA Token Waiver</label>
-                                                    <div class="col-sm-8">
-                                                        <textarea asp-for="ReasonTokenWaiver" class="form-control textarea-auto-height" rows="3"></textarea>
-                                                        <span id="ReasonTokenWaiver-error" class="text-danger field-validation-valid" data-valmsg-for="ReasonTokenWaiver" data-valmsg-replace="true"></span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row mb-2">
-                                                    <span id="spnUnitMapId" class="d-none">@(Model.UnitMapId > 0 ? Model.UnitMapId : 0)</span>
-                                                    <label class="col-form-label col-sm-4 fw-bold">Unit<i class="fas fa-asterisk mand1"></i></label>
-                                                    <div class="col-sm-8">
-                                                        <div class="d-flex">
-                                                            <input class="form-control" placeholder="Type SUSNO" id="txtUnitName" name="txtUnitName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit Name is required." data-val-regex-pattern="^[\w ]*$" /><button type="button" id="btnAddUnit"><i class='fas fa-plus'></i></button>
-                                                        </div>
-                                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-2">
-                                                    <label class="col-form-label col-sm-4 fw-bold">SUS No</label>
-                                                    <div class="col-sm-8">
-                                                        <label id="lblSusno" class="col-form-label unit-label-background"></label>
-                                                    </div>
-                                                </div>
-                                                <div id="lbl1" class="row mb-2 d-none">
-                                                    <label class="col-form-label col-sm-4 fw-bold">PSO / Dte</label>
-                                                    <div class="col-sm-8">
-                                                        <label class="col-form-label unit-label-background" id="lblPso"></label>
-                                                    </div>
-                                                </div>
-                                                <div id="lbl2" class="row mb-2 d-none">
-                                                    <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte</label>
-                                                    <div class="col-sm-8">
-                                                        <label class="col-form-label unit-label-background" id="lblDG"></label>
-                                                    </div>
-                                                </div>
-                                                <div id="lbl3" class="row mb-2 d-none">
-                                                    <label class="col-form-label col-sm-4 fw-bold">Comd / PSO</label>
-                                                    <div class="col-sm-8">
-                                                        <label class="col-form-label unit-label-background" id="lblComd"></label>
-                                                    </div>
-                                                </div>
-                                                <div id="lbl4" class="row mb-2 d-none">
-                                                    <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area</label>
-                                                    <div class="col-sm-8">
-                                                        <label class="col-form-label unit-label-background" id="lblCorps"></label>
-                                                    </div>
-                                                </div>
-                                                <div id="lbl5" class="row mb-2 d-none">
-                                                    <label class="col-form-label col-sm-4 fw-bold">Div / Branch / Sub Area</label>
-                                                    <div class="col-sm-8">
-                                                        <label class="col-form-label unit-label-background" id="lblDiv"></label>
-                                                    </div>
-                                                </div>
-                                                <div id="lbl6" class="row mb-2 d-none">
-                                                    <label class="col-form-label col-sm-4 fw-bold">Bde</label>
-                                                    <div class="col-sm-8">
-                                                        <label class="col-form-label unit-label-background" id="lblBde"></label>
-                                                    </div>
-                                                </div>
-                                                <div id="lbl7" class="row mb-2 d-none">
-                                                    <label class="col-form-label col-sm-4 fw-bold">Type of Fmn / Branch</label>
-                                                    <div class="col-sm-8">
-                                                        <label class="col-form-label unit-label-background" id="lblFmn"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
+    <div class="page">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="bg-white profile-wrap">
+                        <div class="login">
+                            <input type="hidden" id="hiddenSa" value="@dTOTempSession.Salt" />
+                            <div class="card-sigin">
+                                <div class="main-signup-header login-form">
+                                    <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1">Fill your  Details to Register Profile in Appl</p>
+                                    <div class="pb-3 mt-3">
+                                        <div class="col-md-12 col-sm-6 " id="">
+                                            <input class="form-control mb-2 d-none form-space" id="txtProfileForArmyNo" maxlength="9" value="1" placeholder="Enter Army No" />
                                         </div>
-                                    </div>
-                                    <div class="card-footer text-center mb-4">
-                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                        <div class="col-md-12 col-lg-12 col-xl-12 p-4">
+                                            <form asp-antiforgery="true" asp-controller="Account" asp-action="Profile" id="Profile" name="Profile" method="post" class="mt-3">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <input type="hidden" id="EncryptedData" name="EncryptedData" />
+                                                        <input hidden asp-for="UnitMapId" />
+                                                        <input hidden asp-for="ApptId" />
+                                                        <div class="col-md-6 col-lg-6 col-xl-6">
+                                                            <div class="row mb-2 required">
+                                                                <label class="col-sm-4 col-form-label form-label fw-bold">Army No<i class="fas fa-asterisk mand1"></i></label>
+                                                                <div class="col-sm-8">
+                                                                    <input class="form-control text-uppercase" placeholder="" readonly value="@(dTOTempSession != null ? dTOTempSession.ICNO : "")" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <span id="spnUnitAppointmentId" class="d-none">@(Model.ApptId > 0 ? Model.ApptId : 0)</span>
+                                                                <label class="col-form-label col-sm-4 fw-bold">Appointment<i class="fas fa-asterisk mand1 fw-bold"></i></label>
+                                                                <div class="col-sm-8">
+                                                                    <div class="d-flex">
+                                                                        <input class="form-control" placeholder="Type Appointment" id="txtAppointmentName" name="txtAppointmentName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Appointment Name is required." data-val-regex-pattern="^[\w \& \()]*$" /><button title="Add New Appointment" type="button" id="btnAddAppointment"><i class='fas fa-plus'></i></button>
+                                                                    </div>
+                                                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointmentName" data-valmsg-replace="true"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="RankId" class="col-sm-4 col-form-label form-label fw-bold">Rank<i class="fas fa-asterisk mand1"></i></label>
+                                                                <div class="col-sm-8">
+                                                                    <select asp-for="RankId" class="form-select" asp-items="ViewBag.OptionsRank">
+                                                                    </select>
+                                                                    <span asp-validation-for="RankId" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="Name" class="col-sm-4 col-form-label form-label fw-bold">Name<i class="fas fa-asterisk mand1"></i></label>
+                                                                <div class="col-sm-8">
+                                                                    <input asp-for="Name" class="form-control-Alphabets" placeholder="" />
+                                                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row mb-2">
+                                                                <label class="col-form-label col-sm-4 fw-bold">Name of Arms, Service & Corps <i class="fas fa-asterisk mand1"></i></label>
+                                                                <div class="col-sm-8">
+                                                                    <select asp-for="ArmedId" class="form-select" asp-items="ViewBag.OptionsArmedType">
+                                                                    </select>
+                                                                    <span asp-validation-for="ArmedId" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="IsIO" class="col-sm-9 col-form-label form-label fw-bold">Are you performing the Duties of OC / CO / OC Tps?<i class="fas fa-asterisk mand1"></i></label>
+                                                                @if (dTOTempSession != null && dTOTempSession.TDMId > 0)
+                                                                {
+                                                                    <div class="col-sm-3">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsIO" value="true" id="IsIOyes" checked=@(Model.IsIO == true ? true : false) disabled="disabled">
+                                                                            <label class="form-check-label" for="IsIOyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsIO" value="false" id="IsIOno" checked=@(Model.IsIO == false ? true : false) disabled="disabled">
+                                                                            <label class="form-check-label" for="IsIOno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-sm-3">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsIO" value="true" id="IsIOyes">
+                                                                            <label class="form-check-label" for="IsIOyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsIO" value="false" id="IsIOno" checked="checked">
+                                                                            <label class="form-check-label" for="IsIOno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                        <span class="text-danger field-validation-valid" id="IsIO-error"></span>
+                                                                    </div>
+                                                                }
+
+                                                            </div>
+                                                            <div class="row mb-2 required">
+                                                                <label asp-for="IsCO" class="col-sm-9 col-form-label form-label fw-bold">Are you Commanding a Unit/ Sub Unit/ Fmn / Dte?<i class="fas fa-asterisk mand1"></i></label>
+                                                                @if (dTOTempSession != null && dTOTempSession.UserId > 0)
+                                                                {
+                                                                    <div class="col-sm-3">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsCO" value="true" id="IsCOyes" checked=@(Model.IsCO == true ? true : false) disabled="disabled">
+                                                                            <label class="form-check-label" for="IsCOyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsCO" value="false" id="IsCOno" checked=@(Model.IsCO == false ? true : false) disabled="disabled">
+                                                                            <label class="form-check-label" for="IsCOno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-sm-3">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsCO" value="true" id="IsCOyes">
+                                                                            <label class="form-check-label" for="IsCOyes">
+                                                                                Yes
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" type="radio" name="IsCO" value="false" id="IsCOno" checked="checked">
+                                                                            <label class="form-check-label" for="IsCOno">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                        <span class="text-danger field-validation-valid" id="IsCO-error"></span>
+                                                                    </div>
+                                                                }
+
+                                                            </div>
+                                                            <div class="row mb-2 required d-none">
+                                                                <label asp-for="Thumbprint" class="col-sm-4 col-form-label form-label fw-bold"> Thumb print<i class="fas fa-asterisk mand1"></i></label>
+
+                                                                <div class="col-sm-8">
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input asp-for="Thumbprint" class="form-control" />
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-lg-6 col-xl-6">
+
+                                                            <div class="form-group row mb-2">
+                                                                <label class="col-form-label col-sm-9 fw-bold">Do You want IACA Token Waiver to access Appl?<i class="fas fa-asterisk mand1"></i></label>
+                                                                <div class="col-sm-3">
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input" type="radio" name="IsTokenWaiver" value="true" id="IsTokenWaiverYes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                                                        <label class="form-check-label" for="IsTokenWaiverYes">
+                                                                            Yes
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input" type="radio" name="IsTokenWaiver" value="false" id="IsTokenWaiverNo" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                                                        <label class="form-check-label" for="IsTokenWaiverNo">
+                                                                            No
+                                                                        </label>
+                                                                    </div>
+                                                                    <span class="text-danger field-validation-valid" id="IsTokenWaiver-error" data-valmsg-for="IsTokenWaiver" data-valmsg-replace="true"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row mb-2 d-none" id="spnReasonTokenWaiver">
+                                                                <label class="col-form-label col-sm-4 fw-bold">Reason for IACA Token Waiver</label>
+                                                                <div class="col-sm-8">
+                                                                    <textarea asp-for="ReasonTokenWaiver" class="form-control textarea-auto-height" rows="3"></textarea>
+                                                                    <span id="ReasonTokenWaiver-error" class="text-danger field-validation-valid" data-valmsg-for="ReasonTokenWaiver" data-valmsg-replace="true"></span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row mb-2">
+                                                                <span id="spnUnitMapId" class="d-none">@(Model.UnitMapId > 0 ? Model.UnitMapId : 0)</span>
+                                                                <label class="col-form-label col-sm-4 fw-bold">Unit<i class="fas fa-asterisk mand1"></i></label>
+                                                                <div class="col-sm-8">
+                                                                    <div class="d-flex">
+                                                                        <input class="form-control" placeholder="Type SUSNO" id="txtUnitName" name="txtUnitName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit Name is required." data-val-regex-pattern="^[\w ]*$" /><button type="button" id="btnAddUnit"><i class='fas fa-plus'></i></button>
+                                                                    </div>
+                                                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-2">
+                                                                <label class="col-form-label col-sm-4 fw-bold">SUS No</label>
+                                                                <div class="col-sm-8">
+                                                                    <label id="lblSusno" class="col-form-label unit-label-background"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl1" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 fw-bold">PSO / Dte</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblPso"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl2" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblDG"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl3" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 fw-bold">Comd / PSO</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblComd"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl4" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblCorps"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl5" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 fw-bold">Div / Branch / Sub Area</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblDiv"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl6" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 fw-bold">Bde</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblBde"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div id="lbl7" class="row mb-2 d-none">
+                                                                <label class="col-form-label col-sm-4 fw-bold">Type of Fmn / Branch</label>
+                                                                <div class="col-sm-8">
+                                                                    <label class="col-form-label unit-label-background" id="lblFmn"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer text-center mb-4">
+                                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                                        
 
-                                        <input type="button" class="btn btn-primary  mt-4 mr-4" value="Submit" id="btnSubmit" />
+                                                    <input type="button" class="btn btn-primary  mt-4 mr-4" value="Submit" id="btnSubmit" />
 
 
 
-                                        @if (TempData["success"] != null)
-                                        {
-                                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                                <span class="text-success">@TempData["success"]</span>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                            </div>
-                                        }
-                                        @if (TempData["error"] != null)
-                                        {
-                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                <span class="text-danger">@TempData["error"]</span>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                            </div>
-                                        }
-                                    </div>
-                                    <div class="col-md-12 col-sm-6 text-center mt-4" id="">
-                                        <span id="tokenmsg"></span>
-                                    </div>
+                                                    @if (TempData["success"] != null)
+                                                    {
+                                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                            <span class="text-success">@TempData["success"]</span>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                        </div>
+                                                    }
+                                                    @if (TempData["error"] != null)
+                                                    {
+                                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                            <span class="text-danger">@TempData["error"]</span>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="col-md-12 col-sm-6 text-center mt-4" id="">
+                                                    <span id="tokenmsg"></span>
+                                                </div>
                                    
-                                </form>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 
-</div>
-@section Scripts{
+@section Scripts {
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/accountprofile.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
@@ -317,12 +318,12 @@
 
 }
 
-<div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Enter Unit Details With Mapping</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -372,7 +373,7 @@
                             <div class="form-group row mb-2 unittype">
                                 <label class="col-form-label col-sm-4 fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlCommand" id="ddlCommand" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Comd / PSO is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" name="ddlCommand" id="ddlCommand" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Comd / PSO is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Comd / PSO </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlCommand" data-valmsg-replace="true"></span>
@@ -381,7 +382,7 @@
                             <div class="form-group row mb-4 unittype">
                                 <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlCorps" id="ddlCorps" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Corps / Dte / Area is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" name="ddlCorps" id="ddlCorps" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Corps / Dte / Area is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Corps / Dte / Area </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlCorps" data-valmsg-replace="true"></span>
@@ -390,7 +391,7 @@
                             <div class="form-group row mb-2 unittype">
                                 <label class="col-form-label col-sm-4 fw-bold">Div  /Branch / Sub Area<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlDiv" id="ddlDiv" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Div  /Branch / SubArea is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" name="ddlDiv" id="ddlDiv" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Div  /Branch / SubArea is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Div  /Branch / SubArea </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlDiv" data-valmsg-replace="true"></span>
@@ -399,7 +400,7 @@
                             <div class="form-group row mb-2 unittype">
                                 <label class="col-form-label col-sm-4 fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlBde" id="ddlBde" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Bde is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" name="ddlBde" id="ddlBde" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Bde is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="0">Select Bde </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlBde" data-valmsg-replace="true"></span>
@@ -408,7 +409,7 @@
                             <div class="form-group row mb-2 FmnBranch  d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlFmnBranch" id="ddlFmnBranch" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Type of Fmn /Branch is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" name="ddlFmnBranch" id="ddlFmnBranch" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Type of Fmn /Branch is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="1">Select Fmn/Branch </option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlFmnBranch" data-valmsg-replace="true"></span>
@@ -417,7 +418,7 @@
                             <div class="form-group row mb-2 DteBranch d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">PSO /Dte<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlPSODte" id="ddlPSODte" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="PSO /Dte is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" name="ddlPSODte" id="ddlPSODte" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="PSO /Dte is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="1">Select PSO /Dte</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlPSODte" data-valmsg-replace="true"></span>
@@ -426,7 +427,7 @@
                             <div class="form-group row mb-2 DteBranch d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte<i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlDgSubDte" id="ddlDgSubDte" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="DG / Sub Dte is required." data-val-regex-pattern="^[\d]+$">
+                                    <select class="form-select" name="ddlDgSubDte" id="ddlDgSubDte" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="DG / Sub Dte is required." data-val-regex-pattern="^[\d]+$">
                                         <option value="1">Select DG / Sub Dte</option>
                                     </select>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="ddlDgSubDte" data-valmsg-replace="true"></span>
@@ -445,12 +446,12 @@
     </div><!-- modal-dialog -->
 </div>
 
-<div class="modal fade" id="AddNewAppointment" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade" id="AddNewAppointment" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Enter Appointment Details...</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
             </div>
             <div class="modal-body">
                 <div class="row">

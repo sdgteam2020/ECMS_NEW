@@ -1,17 +1,182 @@
-﻿.login-wrap {
-    margin-top: 100px;
-    margin-left: 33%;
-    margin-right: 33%;
-    /*margin-bottom: 100px;*/
-    /*    margin-left: -50px;*/
-    /*  border: 7px double #242c6d;*/
-    width: 33%;
+﻿/* responsive token validate page */
+
+.login-wrap {
+    width: 100%;
+    max-width: 460px;
+    margin: 70px auto 0;
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgb(217 121 4 / 23%);
+    background: #f5f5f5;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.form-group .labeltoken {
-    font-size: 16px;
-    font-weight: 700;
-}
+    .login-wrap .login,
+    .login-wrap .card-sigin,
+    .login-wrap .main-signup-header,
+    .login-wrap form,
+    .login-wrap .form-group {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .login-wrap .card-sigin {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .login-wrap .main-signup-header {
+        padding: 26px 28px;
+    }
+
+    .form-group .labeltoken,
+    .login-wrap .labeltoken {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .login-wrap .form-group {
+        margin-bottom: 18px;
+    }
+
+    .login-wrap .form-control,
+    .login-wrap .form-select,
+    .login-wrap input[type="text"],
+    .login-wrap input[type="password"],
+    .login-wrap input[type="email"],
+    .login-wrap input[type="number"],
+    .login-wrap select,
+    .login-wrap textarea {
+        display: block;
+        width: 100% !important;
+        max-width: 100%;
+        min-height: 48px;
+        border-radius: 8px;
+        padding: 10px 14px;
+        box-sizing: border-box;
+    }
+
+    .login-wrap .btn,
+    .login-wrap .btn-primary,
+    .login-wrap button[type="submit"],
+    .login-wrap input[type="submit"] {
+        display: block;
+        width: 100% !important;
+        max-width: 100%;
+        min-height: 48px;
+        border-radius: 8px;
+        font-size: 18px;
+        box-sizing: border-box;
+    }
+
+    .login-wrap .alert {
+        width: 100%;
+        margin-top: 14px;
+        margin-bottom: 0;
+    }
+
 .mt--20 {
     margin-top: -20px;
+}
+
+@media (max-width: 768px) {
+    .login-wrap {
+        max-width: 92%;
+        margin: 40px auto 0;
+    }
+
+        .login-wrap .main-signup-header {
+            padding: 22px 20px;
+        }
+
+        .login-wrap .form-control,
+        .login-wrap .form-select,
+        .login-wrap input[type="text"],
+        .login-wrap input[type="password"],
+        .login-wrap input[type="email"],
+        .login-wrap input[type="number"],
+        .login-wrap select,
+        .login-wrap textarea,
+        .login-wrap .btn,
+        .login-wrap .btn-primary,
+        .login-wrap button[type="submit"],
+        .login-wrap input[type="submit"] {
+            min-height: 46px;
+            font-size: 16px;
+        }
+}
+
+@media (max-width: 576px) {
+    .login-wrap {
+        max-width: 95%;
+        margin: 24px auto 0;
+    }
+
+        .login-wrap .main-signup-header {
+            padding: 18px 16px;
+        }
+
+        .form-group .labeltoken,
+        .login-wrap .labeltoken {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .login-wrap .form-group {
+            margin-bottom: 14px;
+        }
+
+        .login-wrap .form-control,
+        .login-wrap .form-select,
+        .login-wrap input[type="text"],
+        .login-wrap input[type="password"],
+        .login-wrap input[type="email"],
+        .login-wrap input[type="number"],
+        .login-wrap select,
+        .login-wrap textarea {
+            min-height: 44px;
+            font-size: 15px;
+            padding: 9px 12px;
+        }
+
+        .login-wrap .btn,
+        .login-wrap .btn-primary,
+        .login-wrap button[type="submit"],
+        .login-wrap input[type="submit"] {
+            min-height: 44px;
+            font-size: 15px;
+            padding: 10px 12px;
+        }
+}
+
+@media (max-width: 400px) {
+    .login-wrap {
+        max-width: calc(100% - 16px);
+    }
+
+        .login-wrap .main-signup-header {
+            padding: 14px 12px;
+        }
+}
+
+/* Fix button alignment */
+.login-wrap .text-center {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* full width buttons */
+.login-wrap .btn {
+    width: 100% !important;
+}
+
+/* remove bootstrap center restriction */
+.login-wrap .text-center .btn {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
