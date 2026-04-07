@@ -1,6 +1,4 @@
-﻿html, body {
-    margin: 0;
-    padding: 0;
+﻿html, body {   
     overflow-x: hidden;
 }
 
@@ -9,6 +7,8 @@ body {
 }
 
 .wrap {
+    margin: 0;
+    padding: 0;
     position: static;
 }
 
@@ -159,4 +159,36 @@ body {
         .text-container h3 {
             font-size: 18px;
         }
+}
+.hero {
+    padding-bottom: 90px;
+    overflow: visible;
+}
+
+@media (max-width: 767.98px) {
+    .hero {
+        margin-top: 230px;
+        min-height: auto;
+        align-items: flex-start;
+        padding: 24px 12px 105px;
+    }
+
+        .hero .row {
+            padding-top: 28px;
+        }
+}
+
+@media (max-width: 575.98px) {
+    .hero {
+        margin-top: 245px;
+        padding: 24px 10px 110px;
+    }
+
+        .hero .row {
+            padding-top: 34px;
+        }
+
+    .clickable {
+        padding-top: 42px;
+    }
 }
