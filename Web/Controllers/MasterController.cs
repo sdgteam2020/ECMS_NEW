@@ -1703,6 +1703,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="MapUnitChangeRequestId">The ID of the MapUnitChangeRequest.</param>
         /// <returns>Returns the change map unit details in JSON format.</returns>
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetChangeMapUnitDetails(int MapUnitChangeRequestId)
         {
@@ -1977,16 +1978,34 @@ namespace Web.Controllers
                                     dTOMap.PSOName,
                                     dTOMap.SubDteName
                                 });
+                                if (dTO.UnitType == 1)
+                                {
+                                    dTO.FmnBranchID = 1;
+                                    dTO.PsoId = 1;
+                                    dTO.SubDteId = 1;
+                                }
+                                else if (dTO.UnitType == 2)
+                                {
+                                    dTO.PsoId = 1;
+                                    dTO.SubDteId = 1;
+                                }
+                                else if (dTO.UnitType == 3)
+                                {
+                                    dTO.ComdId = 1;
+                                    dTO.CorpsId=1;
+                                    dTO.DivId = 1;
+                                    dTO.BdeId = 1;
+                                }
                                 string RequestCh = string.Join("#", new[]
                                 {
-                                    dTO.UnitType.ToString(),
-                                    dTO.ComdId.ToString(),
-                                    dTO.CorpsId.ToString(),
-                                    dTO.DivId.ToString(),
-                                    dTO.BdeId.ToString(),
-                                    dTO.FmnBranchID.ToString(),
-                                    dTO.PsoId.ToString(),
-                                    dTO.SubDteId.ToString(),
+                                dTO.UnitType.ToString(),
+                                dTO.ComdId.ToString(),
+                                dTO.CorpsId.ToString(),
+                                dTO.DivId.ToString(),
+                                dTO.BdeId.ToString(),
+                                dTO.FmnBranchID.ToString(),
+                                dTO.PsoId.ToString(),
+                                dTO.SubDteId.ToString(),
                                 });
                                 TrnMapUnitChangeRequest unitChangeRequest = new TrnMapUnitChangeRequest
                                 {
@@ -2070,28 +2089,50 @@ namespace Web.Controllers
                 ModelState.Clear();
                 if (TryValidateModel(dTO))
                 {
-
-                    TrnMapUnitChangeRequest? mapUnitChangeRequest = await _mapUnitChangeBL.Get(dTO.MapUnitChangeRequestId); // Retrieve the existing Map Unit Change Request by its ID
-                    if (mapUnitChangeRequest!= null && mapUnitChangeRequest.IsEditAction == true) // Check if the request has already been edited
+                    // 2-Accept and 3-Reject
+                    if (dTO.Choice == 2 || dTO.Choice == 3) 
                     {
-                        dTOCommon.Result = false;
-                        dTOCommon.Message = "This action has already been completed by you.";
-                        return Json(dTOCommon);
-                    }
-                    else if (mapUnitChangeRequest != null && mapUnitChangeRequest.IsEditAction == false) // If the request exists and hasn't been edited yet, proceed with the update
-                    {
-                        DtoSession? dtoSession = new DtoSession();
-                        if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                        TrnMapUnitChangeRequest? mapUnitChangeRequest = await _mapUnitChangeBL.Get(dTO.MapUnitChangeRequestId); // Retrieve the existing Map Unit Change Request by its ID
+                        if (mapUnitChangeRequest != null && mapUnitChangeRequest.IsEditAction == true) // Check if the request has already been edited
                         {
-                            dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-
+                            dTOCommon.Result = false;
+                            dTOCommon.Message = "This action has already been completed by you.";
+                            return Json(dTOCommon);
                         }
-                        mapUnitChangeRequest.IsEditAction = true;
-                        mapUnitChangeRequest.IsComplete = true;
-                        mapUnitChangeRequest.AdminUpdatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                        mapUnitChangeRequest.AdminUserId = dtoSession != null ? dtoSession.UserId : 0;
-                        mapUnitChangeRequest.AdminUpdatedOn = DateTime.Now;
-                        return Json(await _mapUnitChangeBL.UpdateMapUnitChangeRequest(dTO, mapUnitChangeRequest)); // Call the business logic layer to update the request and return the result
+                        else if (mapUnitChangeRequest != null && mapUnitChangeRequest.IsEditAction == false) // If the request exists and hasn't been edited yet, proceed with the update
+                        {
+                            DtoSession? dtoSession = new DtoSession();
+                            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                            {
+                                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                            }
+
+                            string[] RequestCh = mapUnitChangeRequest.RequestCh.Split('#');
+
+                            dTO.UnitType = Convert.ToInt32(RequestCh[0]);
+                            dTO.ComdId = Convert.ToByte(RequestCh[1]);
+                            dTO.CorpsId = Convert.ToByte(RequestCh[2]);
+                            dTO.DivId = Convert.ToByte(RequestCh[3]);
+                            dTO.BdeId = Convert.ToByte(RequestCh[4]);
+                            dTO.FmnBranchID = Convert.ToByte(RequestCh[5]);
+                            dTO.PsoId = Convert.ToByte(RequestCh[6]);
+                            dTO.SubDteId = Convert.ToByte(RequestCh[7]);
+
+
+                            mapUnitChangeRequest.IsEditAction = true;
+                            mapUnitChangeRequest.IsComplete = true;
+                            mapUnitChangeRequest.AdminUpdatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                            mapUnitChangeRequest.AdminUserId = dtoSession != null ? dtoSession.UserId : 0;
+                            mapUnitChangeRequest.AdminUpdatedOn = DateTime.Now;
+                            return Json(await _mapUnitChangeBL.UpdateMapUnitChangeRequest(dTO, mapUnitChangeRequest)); // Call the business logic layer to update the request and return the result
+                        }
+                        else
+                        {
+                            dTOCommon.Result = false;
+                            dTOCommon.Message = "Invalid input.";
+                            return Json(dTOCommon);
+                        }
                     }
                     else
                     {

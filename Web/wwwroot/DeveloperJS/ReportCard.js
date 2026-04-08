@@ -1693,6 +1693,7 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
 }
 
 async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
+    let encryptedPayload = "";
     const payload = {
         tableName: "",
         id: TableId,

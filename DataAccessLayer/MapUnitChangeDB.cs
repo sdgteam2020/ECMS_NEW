@@ -109,7 +109,7 @@ namespace DataAccessLayer
             {
                 // Rollback the transaction if any operation fails
                 transaction.Rollback();
-                _logger.LogError(1001, ex, "FaultyCardDB->SaveFaultyCard");
+                _logger.LogError(1001, ex, "MapUnitChangeDB->UpdateMapUnitChangeRequest");
                 saveResponse.Result = false;
                 saveResponse.Message = ex.Message;
                 return saveResponse;

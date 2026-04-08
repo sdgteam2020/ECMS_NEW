@@ -2,6 +2,7 @@
 var comid = 0; var corId = 0; var divId = 0; var bdeId = 0; var FmnBranchId = 0; var PsoId = 0; var SubDteId = 0;
 var table; // Declare table variable outside the function to preserve the instance
 var tableView; // Declare table variable outside the function to preserve the instance
+let UnitType = 0;
 $(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -128,9 +129,9 @@ $(async function () {
 
     $('input[name="UnitTyperdi"]').on("click", async function () {
 
-        UnitType = $("input[type='radio'][name=UnitTyperdi]:checked").val();
+        UnitType = Number($("input[type='radio'][name='UnitTyperdi']:checked").val() || 0);
 
-        if (UnitType == "1") {
+        if (UnitType == 1) {
             $(".unittype").removeClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").addClass("d-none");
@@ -163,7 +164,7 @@ $(async function () {
             $("#ddlPSODte").html(lst);
             $("#ddlDgSubDte").html(lst);
         }
-        else if (UnitType == "2") {
+        else if (UnitType == 2) {
 
             $('#ddlCommand option').remove();
             $('#ddlCorps option').remove();
@@ -205,7 +206,7 @@ $(async function () {
             $(".unittype").removeClass("d-none");
             $(".DteBranch").addClass("d-none");
         }
-        else if (UnitType == "3") {
+        else if (UnitType == 3) {
             $(".unittype").addClass("d-none");
             $(".FmnBranch").addClass("d-none");
             $(".DteBranch").removeClass("d-none");
