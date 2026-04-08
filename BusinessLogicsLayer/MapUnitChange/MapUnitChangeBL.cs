@@ -28,7 +28,7 @@ namespace BusinessLogicsLayer.MapUnitChange
         }
         public async Task<DTOCommonSaveResponse> UpdateMapUnitChangeRequest(DTOSaveMapUnitChangeRequest dTO, TrnMapUnitChangeRequest trnMapUnit)
         {
-            if (dTO.Choice == 1 || dTO.Choice == 3)
+            if (dTO.Choice == 3)
             {
                 trnMapUnit.RequestStatus = false;
             }

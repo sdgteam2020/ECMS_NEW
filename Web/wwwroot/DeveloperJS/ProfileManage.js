@@ -1,6 +1,7 @@
 ﻿//const { debug } = require("util");
 
 var table; // Declare table variable outside the function to preserve the instance
+let UserProfileId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 

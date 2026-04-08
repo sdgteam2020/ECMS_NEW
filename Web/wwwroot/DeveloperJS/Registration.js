@@ -14,7 +14,7 @@ $(function () {
         if (day < 10)
             day = '0' + day.toString();
 
-        var maxDate = day + '/' + month + '/' + year;
+        var maxDate = year + '-' + month + '-' + day;
         $('#DOB').attr('max', maxDate);
     });
 
@@ -37,7 +37,7 @@ $(function () {
         if (day < 10)
             day = '0' + day.toString();
 
-        var maxDate = day + '/' + month + '/' + year;
+        var maxDate = year + '-' + month + '-' + day;
         $('#DateOfCommissioning').attr('min', maxDate);
     });
     $('.paddress').on('change', function () {
