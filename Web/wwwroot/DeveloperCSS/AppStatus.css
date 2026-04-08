@@ -1,15 +1,24 @@
-﻿.swal2-confirm, .swal2-styled {
+﻿.swal2-confirm  {
     background: #D97924 !important;
 }
 
+.page {
+    width: 100%;
+    padding: 0 12px;
+    overflow-x: hidden;
+}
+
+    .page .container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
 .login-wrap {
-    margin-top: 100px;
-    margin-left: 33%;
-    margin-right: 33%;
-    /*margin-bottom: 100px;*/
-    /*    margin-left: -50px;*/
-    /*  border: 7px double #242c6d;*/
-    width: 33%;
+    width: 100%;
+    max-width: 600px;
+    margin: 40px auto 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
 
@@ -51,4 +60,41 @@ body {
 
 #divimgpath {
     background-color: white
+}
+.print {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+    .login-wrap {
+        max-width: 95%;
+        margin-top: 20px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    h3 {
+        font-size: 18px;
+    }
+
+    .form-control {
+        font-size: 14px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+}
+
+.login-main .page {
+    margin-top: 10px;
+}
+
+.card {
+    border-radius: 10px !important;
+    overflow: hidden;
 }

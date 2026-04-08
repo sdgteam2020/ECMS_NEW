@@ -1,6 +1,6 @@
-html,
-body {
-    height: 100%;
+html, body {
+    height: auto;
+    min-height: 100%;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -8,16 +8,7 @@ body {
 
 body {
     font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    line-height: 1.71;
-    font-size: 16px;
-    color: #4d4d4d;
-    background-color: lightskyblue;
-    background-size: cover;
-    background-repeat: no-repeat;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+    overflow-y: auto;
 }
 
 /* =========================
@@ -147,11 +138,6 @@ ul {
     padding: 0;
 }
 
-.container-fluid {
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
-}
-
 .no-gutters {
     margin-right: 0;
     margin-left: 0;
@@ -172,28 +158,40 @@ ul {
 }
 
 /* =========================
-   Layout helpers
+   Main layout shell
 ========================= */
-.page,
-.main-body,
-.main-dashboard {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-/* if you use these wrappers in layout */
 .login-page-shell {
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    min-height: 100vh; 
 }
 
 .login-main {
-    flex: 1 0 auto;
-    padding: 0 16px 24px;
-    box-sizing: border-box;
+    flex: 1;
+    overflow: visible;
+}
+
+.login-footer {
+    flex-shrink: 0;
+    background: #003060;
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    margin-top: auto;
+    position: relative;
+    width: 100%;
+}
+
+.page,
+.main-body,
+.main-dashboard {
+    min-height: auto !important;
+    height: auto !important;
+    display: block !important;
+    position: relative;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    overflow-x: hidden;
 }
 
 /* =========================
@@ -224,7 +222,7 @@ ul {
     }
 
 /* =========================
-   Login page visual blocks
+   Login common blocks
 ========================= */
 .login-img-block {
     min-height: auto;
@@ -237,10 +235,11 @@ ul {
 .login-wrap {
     width: 100%;
     max-width: 520px;
-    margin: 70px auto 0;
+    margin: 40px auto 0;
     border-radius: 10px;
     box-shadow: 0 0 40px rgb(217 121 4 / 23%);
     z-index: 1;
+    box-sizing: border-box;
 }
 
 .login .card-sigin,
@@ -317,7 +316,7 @@ ul {
     }
 
 /* =========================
-   Signup / form area
+   Common login form styles
 ========================= */
 .main-signup-header h1 {
     color: #0162e8;
@@ -362,6 +361,7 @@ input.form-control {
     box-shadow: none;
     outline: none;
     background-color: #fff;
+    box-sizing: border-box;
 }
 
     .main-signup-header .form-control:focus,
@@ -493,40 +493,12 @@ input.form-control {
 }
 
 /* =========================
-   Footer
+   Tablet
 ========================= */
-footer,
-.login-footer {
-    flex-shrink: 0;
-    font-weight: 700 !important;
-    text-align: center;
-    background: #003060 !important;
-    color: #fff;
-    margin-top: 0;
-    padding: 4px 10px;
-}
-
-    .footer-content,
-    footer .footer-content {
-        font-weight: 400 !important;
-        font-family: 'Roboto', sans-serif !important;
-        margin: 0 !important;
-        color: #fff !important;
-        line-height: 1.4;
-    }
-
-/* =========================
-   Responsive
-========================= */
-@media (max-width: 1200px) {
-    .login-img-block .logo-sec h2 {
-        font-size: 23px;
-    }
-}
-
 @media (max-width: 992px) {
     .login-wrap {
         max-width: 440px;
+        margin: 28px auto 0;
     }
 
     .login-text-block {
@@ -557,26 +529,39 @@ footer,
     }
 }
 
+/* =========================
+   Mobile
+========================= */
 @media (max-width: 768px) {
     .login-main {
-        padding: 20px 12px;
+        padding: 0 8px;
+    }
+
+    .login-wrap {
+        max-width: 92%;
+        margin: 18px auto 0;
     }
 
     .login .card-sigin,
     .card-sigin {
-        padding: 20px 24px;
+        padding: 0;
     }
 
-    .login-wrap {
-        max-width: 90%;
+    .login-img-block {
+        min-height: auto;
     }
 
     .login-text-block {
         margin-top: 30px;
     }
 
-    .login-img-block {
-        min-height: auto;
+    .login-footer {
+        padding: 5px 8px;
+    }
+
+    .footer-content {
+        font-size: 13px;
+        line-height: 1.35;
     }
 }
 
@@ -602,7 +587,7 @@ footer,
 
 @media (max-width: 576px) {
     .login-main {
-        padding: 16px 10px;
+        padding: 0 6px;
     }
 
     .logo-wrap {
@@ -615,11 +600,12 @@ footer,
 
     .login-wrap {
         max-width: 95%;
+        margin: 14px auto 0;
     }
 
     .login .card-sigin,
     .card-sigin {
-        padding: 16px;
+        padding: 0;
     }
 
     .login-img-block .logo-sec {
@@ -652,21 +638,19 @@ footer,
         padding: 20px;
     }
 
-    footer,
     .login-footer {
-        padding: 6px 10px;
+        padding: 4px 8px;
     }
 
-        .footer-content,
-        footer .footer-content {
-            font-size: 13px;
-        }
+    .footer-content {
+        font-size: 12px;
+    }
 }
 
 @media (max-width: 500px) {
     .login .card-sigin,
     .card-sigin {
-        padding: 12px;
+        padding: 0;
     }
 }
 
@@ -676,255 +660,11 @@ footer,
     }
 
     .login-wrap {
-        max-width: calc(100% - 16px);
+        max-width: calc(100% - 12px);
+        margin: 10px auto 0;
     }
 
     .login-btn {
         font-size: 15px;
     }
-}
-
-/* restore login form design without breaking new responsive layout */
-.login-wrap .card,
-.login-wrap .card-body,
-.login-wrap .card-sigin,
-.login-wrap .main-card-signin,
-.login-wrap .main-signup-header {
-    background: transparent;
-    box-shadow: none;
-    border: 0;
-}
-
-.login-wrap .card-body,
-.login-wrap .card-sigin,
-.login-wrap .main-signup-header {
-    padding: 28px 26px;
-}
-
-.login-wrap form {
-    width: 100%;
-}
-
-.login-wrap .form-group {
-    margin-bottom: 1rem;
-}
-
-.login-wrap .labellogin,
-.form-group .labellogin {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    display: inline-block;
-}
-
-.login-wrap .form-control,
-.login-wrap select,
-.login-wrap input[type="text"],
-.login-wrap input[type="password"],
-.login-wrap input[type="email"] {
-    min-height: 46px;
-    border-radius: 8px;
-    width: 100%;
-}
-
-.login-wrap .login-btn,
-.login-wrap button[type="submit"],
-.login-wrap input[type="submit"] {
-    width: 100%;
-    min-height: 46px;
-    border-radius: 8px;
-    font-size: 18px;
-}
-
-@media (max-width: 768px) {
-    .login-wrap {
-        max-width: 92%;
-        margin: 40px auto 0;
-    }
-
-        .login-wrap .card-body,
-        .login-wrap .card-sigin,
-        .login-wrap .main-signup-header {
-            padding: 22px 20px;
-        }
-}
-
-@media (max-width: 576px) {
-    .login-main {
-        padding: 0 10px 20px;
-    }
-
-    .login-wrap {
-        max-width: 95%;
-        margin: 24px auto 0;
-    }
-
-        .login-wrap .card-body,
-        .login-wrap .card-sigin,
-        .login-wrap .main-signup-header {
-            padding: 18px 16px;
-        }
-
-        .login-wrap .login-btn,
-        .login-wrap button[type="submit"],
-        .login-wrap input[type="submit"] {
-            font-size: 16px;
-        }
-}
-
-/* =========================
-   Login form responsive fix
-========================= */
-
-/* make the inner form area use full card width */
-.login-wrap,
-.login-wrap .card,
-.login-wrap .card-body,
-.login-wrap .card-sigin,
-.login-wrap .main-signup-header,
-.login-wrap form,
-.login-wrap .form-group {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-    /* keep proper inner spacing */
-    .login-wrap .card-body,
-    .login-wrap .card-sigin,
-    .login-wrap .main-signup-header {
-        padding: 28px 28px;
-    }
-
-    /* labels */
-    .login-wrap label,
-    .login-wrap .labellogin,
-    .form-group .labellogin {
-        display: inline-block;
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 8px;
-    }
-
-    /* full-width controls */
-    .login-wrap .form-control,
-    .login-wrap input[type="text"],
-    .login-wrap input[type="password"],
-    .login-wrap input[type="email"],
-    .login-wrap input[type="number"],
-    .login-wrap select,
-    .login-wrap textarea {
-        display: block;
-        width: 100% !important;
-        max-width: 100%;
-        min-height: 48px;
-        padding: 10px 14px;
-        border-radius: 8px;
-        box-sizing: border-box;
-    }
-
-    /* full-width buttons */
-    .login-wrap .login-btn,
-    .login-wrap button[type="submit"],
-    .login-wrap input[type="submit"],
-    .login-wrap .btn {
-        display: block;
-        width: 100% !important;
-        max-width: 100%;
-        min-height: 48px;
-        padding: 12px 16px;
-        border-radius: 8px;
-        box-sizing: border-box;
-    }
-
-    /* spacing between fields */
-    .login-wrap .form-group {
-        margin-bottom: 18px;
-    }
-
-/* tablet */
-@media (max-width: 768px) {
-    .login-wrap {
-        max-width: 92%;
-        margin: 40px auto 0;
-    }
-
-        .login-wrap .card-body,
-        .login-wrap .card-sigin,
-        .login-wrap .main-signup-header {
-            padding: 22px 20px;
-        }
-
-        .login-wrap .form-control,
-        .login-wrap input[type="text"],
-        .login-wrap input[type="password"],
-        .login-wrap input[type="email"],
-        .login-wrap input[type="number"],
-        .login-wrap select,
-        .login-wrap textarea,
-        .login-wrap .login-btn,
-        .login-wrap button[type="submit"],
-        .login-wrap input[type="submit"],
-        .login-wrap .btn {
-            min-height: 46px;
-            font-size: 16px;
-        }
-}
-
-/* mobile */
-@media (max-width: 576px) {
-    .login-wrap {
-        max-width: 95%;
-        margin: 24px auto 0;
-    }
-
-        .login-wrap .card-body,
-        .login-wrap .card-sigin,
-        .login-wrap .main-signup-header {
-            padding: 18px 16px;
-        }
-
-        .login-wrap label,
-        .login-wrap .labellogin,
-        .form-group .labellogin {
-            font-size: 15px;
-            margin-bottom: 6px;
-        }
-
-        .login-wrap .form-group {
-            margin-bottom: 14px;
-        }
-
-        .login-wrap .form-control,
-        .login-wrap input[type="text"],
-        .login-wrap input[type="password"],
-        .login-wrap input[type="email"],
-        .login-wrap input[type="number"],
-        .login-wrap select,
-        .login-wrap textarea {
-            min-height: 44px;
-            padding: 9px 12px;
-            font-size: 15px;
-        }
-
-        .login-wrap .login-btn,
-        .login-wrap button[type="submit"],
-        .login-wrap input[type="submit"],
-        .login-wrap .btn {
-            min-height: 44px;
-            font-size: 15px;
-            padding: 10px 14px;
-        }
-}
-
-/* very small screens */
-@media (max-width: 400px) {
-    .login-wrap {
-        max-width: calc(100% - 16px);
-    }
-
-        .login-wrap .card-body,
-        .login-wrap .card-sigin,
-        .login-wrap .main-signup-header {
-            padding: 14px 12px;
-        }
-}
+} 
