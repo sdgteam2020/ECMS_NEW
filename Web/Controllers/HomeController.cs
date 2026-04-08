@@ -1444,8 +1444,15 @@ namespace Web.Controllers
         /// <param name="Data">The registration data containing the "ApplyFor" property.</param>
         /// <returns>A JSON response containing the data fetched based on the "ApplyFor" value.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetRegistrationApplyfor(MRegistration Data)
+        public async Task<IActionResult> GetRegistrationApplyfor(string request)
         {
+            MRegistration Data = await AESEncrytDecry.DecryptAESWithDTO<MRegistration>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (Data == null)
+            {
+                return Json(KeyConstants.InternalServerError); // Return error message for invalid data
+            }
+
+          
             // Fetch the registration data based on the "ApplyFor" property
             return Json(await _registrationBL.GetByApplyFor(Data));
         }
@@ -1686,8 +1693,16 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="Data">The data containing information to fetch the card details.</param>
         /// <returns>A JSON response containing the card details for the current user.</returns>
-        public async Task<IActionResult> GetApplyCardDetails(DTOApplyCardDetailsRequest Data)
+        /// [HttpPost]
+        /// 
+        [HttpPost]
+        public async Task<IActionResult> GetApplyCardDetails(string request)
         {
+            DTOApplyCardDetailsRequest Data = await AESEncrytDecry.DecryptAESWithDTO<DTOApplyCardDetailsRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (Data == null)
+            {
+                return Json(KeyConstants.InternalServerError); // Return error message for invalid data
+            }
             // Retrieve the current user's ID from the claims
             Data.UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 

@@ -365,14 +365,19 @@ function getunitbymapid(value)
     });
 }
 function getApplyIcardDetails() {
+
+    let userdata =
+    {
+        "ApplyForId": $("#ApplyForId").val(),
+        "RegistrationId": $("#RegistrationId").val(),
+        "TypeId": $("#TypeId").val()
+
+    };
     $.ajax({
         url: "/Home/GetApplyCardDetails",
         type: "POST",
-        data: {
-            "ApplyForId": $("#ApplyForId").val(),
-            "RegistrationId": $("#RegistrationId").val(),
-            "TypeId": $("#TypeId").val()
-        },
+        data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
+       
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response != null) {

@@ -3465,11 +3465,17 @@ namespace Web.Controllers
         /// otherwise generates a JSON response indicating the absence of XML data.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
+        public async Task<IActionResult> DataDigitalXmlSign(string request)
         {
             try
             {
-                if (ModelState.IsValid)
+                DTODataExportRequest Data = await AESEncrytDecry.DecryptAESWithDTO<DTODataExportRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+                if (Data == null)
+                {
+                    return Json(KeyConstants.IncorrectData); // Return error message for invalid data
+                }
+                ModelState.Clear();
+                if (TryValidateModel(Data))
                 {
                     // Step 1: Initialize the return object which will hold the ID and merged XML files
                     DTOXmlFilesFwdLogRequest ret = new DTOXmlFilesFwdLogRequest();

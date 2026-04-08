@@ -1,6 +1,7 @@
 ﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.TrnLoginLog;
+using DataTransferObject.Constants;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
@@ -149,11 +150,17 @@ namespace Web.Controllers
         /// <param name="Data">The request data containing the XML file information to be digitally signed.</param>
         /// <returns>A JSON response indicating the success or failure of the operation.</returns>
         [HttpPost]
-        public async Task<IActionResult> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data)
+        public async Task<IActionResult> XmlFileDigitalSign(string request)
         {
             try
             {
-                if (ModelState.IsValid)
+                DTOXmlFilesFwdLogRequest Data = await AESEncrytDecry.DecryptAESWithDTO<DTOXmlFilesFwdLogRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+                if (Data == null)
+                {
+                    return Json(KeyConstants.IncorrectData); // Return error message for invalid data
+                }
+                ModelState.Clear();
+                if (TryValidateModel(Data))
                 {
                     // Decode the Base64 string
                     byte[] decodedBytes = Convert.FromBase64String(Data.XmlFiles);

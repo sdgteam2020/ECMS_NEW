@@ -284,8 +284,8 @@ function GetAllRegistrationApplyFor(Id) {
     };
     $.ajax({
         url: '/Home/GetRegistrationApplyfor',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
+        
+        data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
