@@ -1,9 +1,10 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var tabledialog; // Declare tabledialog variable outside the function to preserve the instance
-var UnitMapId = 0;
-var ApptId = 0;
-var TDMId = 0;
-var DomainRegId = 0;
+let UnitMapId = 0;
+let UnitType = 0;
+let ApptId = 0;
+let TDMId = 0;
+let DomainRegId = 0;
 
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
