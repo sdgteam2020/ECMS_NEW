@@ -55,6 +55,12 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 applyForId: 0,
                 JCOOR: JCOOR
             };
+            let encryptedPayload = "";
+            if (requestData) {
+                const jsonData = JSON.stringify(requestData);
+                encryptedPayload = encryptPayloadData(jsonData);
+
+            }
             try {
                 let response = await fetch("/BasicDetail/GetAllIndexData", {
                     method: "POST",
@@ -62,7 +68,8 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                         "Content-Type": "application/json",
                         'RequestVerificationToken': globalThis.RequestVerificationToken
                     },
-                    body: JSON.stringify(requestData)
+                    body: JSON.stringify({ data: encryptedPayload })
+
                 });
 
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);

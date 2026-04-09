@@ -358,8 +358,13 @@ namespace Web.Controllers
         /// or a BadRequest response with an error message if an exception occurs.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> GetAllIndexData([FromBody] DTODataTablesRequestFor_BasicDetails_Index dTORecord)
+        public async Task<IActionResult> GetAllIndexData([FromBody] EncryptedRequest Data)
         {
+            DTODataTablesRequestFor_BasicDetails_Index dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestFor_BasicDetails_Index>(Data.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTORecord == null)
+            {
+                return BadRequest("Invalid Input");
+            }
             // Retrieve current userId from claims and assign it into the DTO
             int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             dTORecord.UserId = userId;
