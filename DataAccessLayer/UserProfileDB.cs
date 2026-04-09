@@ -370,7 +370,7 @@ namespace DataAccessLayer
             try
             {
                 string query = @"SELECT prof.ArmyNo,prof.UserId,prof.Name,trnd.Id as TDMId,prof.Thumbprint,trnd.IsRO,trnd.IsIO,trnd.IsCO,trnd.IsORO,prof.IsToken,prof.IsWithTokenApply,ran.RankName Rank,ran.RankId,mapu.UnitMapId UnitId,munit.UnitName,users.DomainId,
-                                appt.AppointmentName,trnd.MappedDate,usermodify.DomainId MappedBy,roles.Name RoleName from UserProfile prof 
+                                appt.AppointmentName,ISNULL(trnd.MappedDate,prof.UpdatedOn) MappedDate,isnull(usermodify.DomainId,'Self') MappedBy,roles.Name RoleName from UserProfile prof 
                                 inner join MRank ran on prof.RankId = ran.RankId 
                                 inner join TrnDomainMapping trnd  on trnd.UserId = prof.UserId 
                                 inner join AspNetUserRoles maprole on maprole.UserId=trnd.AspNetUsersId

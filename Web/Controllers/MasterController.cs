@@ -4097,9 +4097,7 @@ namespace Web.Controllers
             DTOMasterRequest data = await AESEncrytDecry.DecryptAESWithDTO<DTOMasterRequest>(request.Data, SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData").Salt);
             if (data == null)
                 return BadRequest(new { error = "Request body required." });
-            if (data == null)
-                return BadRequest(new { error = "Request body required." });
-
+           
             try
             {
                 var result = await unitOfWork.GetAllMMaster_Outer(data);
