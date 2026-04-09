@@ -138,13 +138,14 @@ function GetALLByUnitById(param1) {
 }
 
 function UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, Thumbprint) { 
-
+    let param = {
+        "RankId": RankId, "Name": Name, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "Thumbprint": Thumbprint
+    }
     $.ajax({
         url: '/UserProfile/UpdateProfileWithMapping',
         type: 'POST',
-        data: {
-            "RankId": RankId, "Name": Name, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "Thumbprint": Thumbprint
-        }, 
+        data: { "request": encryptPayloadData(JSON.stringify(param)) },
+
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
 
@@ -159,16 +160,22 @@ function UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, Thumbpr
     });
 }
 async function GetByArmyNo(ArmyNo) {
-    const userdata = new URLSearchParams();
-    userdata.append("ArmyNo", ArmyNo);
+    const userdata = {
+        ArmyNo, ArmyNo
+    };
+    let encryptedPayload = "";
+    if (userdata) {
+        const jsonData = JSON.stringify(userdata);
+        encryptedPayload = encryptPayloadData(jsonData);
 
+    }
     fetch('/UserProfile/GetByArmyNoOrAspnetuserId', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            "Content-Type": "application/json",
             'RequestVerificationToken': globalThis.RequestVerificationToken
         },
-        body: userdata
+        body: JSON.stringify({ data: encryptedPayload })
     })
         .then(response => response.json())
         .then(response => {

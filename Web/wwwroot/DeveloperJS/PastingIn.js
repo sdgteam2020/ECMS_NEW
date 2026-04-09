@@ -267,10 +267,14 @@ function GetByArmyNo(userid) {
         "userid": userid,
 
     };
+    const encryptedPayload = encryptPayloadData(JSON.stringify(userdata));
+
     $.ajax({
         url: '/UserProfile/GetByArmyNoOrAspnetuserId',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify({
+            Data: encryptedPayload
+        }),
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {

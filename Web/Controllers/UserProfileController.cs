@@ -236,14 +236,25 @@ namespace Web.Controllers
         /// JSON response indicating whether the update was successful and returning related status information.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> UpdateProfileWithMapping(DTOUpdateProfileWithMappingRequest dTO)
+        public async Task<IActionResult> UpdateProfileWithMapping(string request)
         {
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            DTOUpdateProfileWithMappingRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOUpdateProfileWithMappingRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTO == null)
+            {
+                response.Value = "";
+                response.Result = false;
+                return Json(response);
+            }
+
+            
+           
             try
             {
                 // Get the userId from the current logged-in user's claim
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     response = await _userProfileBL.UpdateProfileWithMapping(dTO);
                     if (response.Result == true)
@@ -294,16 +305,22 @@ namespace Web.Controllers
         /// <param name="userid">The optional UserId to look for. If it's zero, the current user's Id is used.</param>
         /// <returns>Returns a JSON response containing the user profile or an error message.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetByArmyNoOrAspnetuserId(string ArmyNo, int userid)
+        public async Task<IActionResult> GetByArmyNoOrAspnetuserId([FromBody] EncryptedRequest Data)
         {
+            DTOGetByArmyNoOrAspnetuser dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOGetByArmyNoOrAspnetuser>(Data.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTO == null)
+            {
+                return BadRequest("Invalid Input");
+            }                   
             try
             {
+               
                 // If no UserId is passed, use the current user's Id
-                if (userid == 0)
-                    userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (dTO.userid == 0)
+                    dTO.userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 // Fetch the user profile by ArmyNo and UserId
-                DTOUserProfileResponse dTOUserProfileResponse = await _userProfileBL.GetByArmyNo(ArmyNo, userid);
+                DTOUserProfileResponse dTOUserProfileResponse = await _userProfileBL.GetByArmyNo(dTO.ArmyNo, dTO.userid);
 
                 // Add the role name to the response using the session value
                 dTOUserProfileResponse.RoleName = SessionHelper.GetRoleFromSession(HttpContext);
