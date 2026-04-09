@@ -1,9 +1,10 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var tabledialog; // Declare tabledialog variable outside the function to preserve the instance
-var UnitMapId = 0;
-var ApptId = 0;
-var TDMId = 0;
-var DomainRegId = 0;
+let UnitMapId = 0;
+let UnitType = 0;
+let ApptId = 0;
+let TDMId = 0;
+let DomainRegId = 0;
 
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
@@ -1048,24 +1049,26 @@ function BindData() {
     });
 }
 function Save() {
+    let param = {
+        "Id": DomainRegId,
+        "DomainId": $("#txtDomainId").val(),
+        "RoleIds": $('#ddlRoles').val(),
+        "ClaimValues": $('#ddClaims').val(),
+        "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
+        "Active": $('input:radio[name=txtactive]:checked').val(),
+        "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
+        "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
+        //"IsRO": $('input:radio[name=IsRO]:checked').val(),
+        //"IsORO": $('input:radio[name=IsORO]:checked').val(),
+        "TDMId": TDMId,
+        "ApptId": ApptId,
+        "UnitMappId": UnitMapId,
+    }
     $.ajax({
         url: '/Account/SaveDomainRegn',
         type: 'POST',
-        data: {
-            "Id": DomainRegId,
-            "DomainId": $("#txtDomainId").val(),
-            "RoleIds": $('#ddlRoles').val(),
-            "ClaimValues": $('#ddClaims').val(),
-            "AdminFlag": $('input:radio[name=txtapproval]:checked').val(),
-            "Active": $('input:radio[name=txtactive]:checked').val(),
-            "IsIO": $('input:radio[name=InitatingOffr]:checked').val(),
-            "IsCO": $('input:radio[name=CommandingOffr]:checked').val(),
-            //"IsRO": $('input:radio[name=IsRO]:checked').val(),
-            //"IsORO": $('input:radio[name=IsORO]:checked').val(),
-            "TDMId": TDMId,
-            "ApptId": ApptId,
-            "UnitMappId": UnitMapId,
-        }, //get the search string
+        //data: param, //get the search string
+        data: { "request": encryptPayloadData(JSON.stringify(param)) },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
             if (result == DataSave) {

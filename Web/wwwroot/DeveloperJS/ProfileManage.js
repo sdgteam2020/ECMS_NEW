@@ -1,6 +1,7 @@
 ﻿//const { debug } = require("util");
 
 var table; // Declare table variable outside the function to preserve the instance
+let UserProfileId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -441,10 +442,7 @@ function ProfileCount() {
     });
 }
 function Save() {
-    $.ajax({
-        url: '/Account/SaveProfileManage',
-        type: 'POST',
-        data: {
+    let param ={
             "UserId": UserProfileId,
             "ArmyNo": $("#txtArmyNo").val(),
             "Name": $("#txtName").val(),
@@ -454,8 +452,11 @@ function Save() {
             "ReasonTokenWaiver": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
             "IsToken": $('input:radio[name=IsToken]:checked').val(),
             "IsWithTokenApply": $('input:radio[name=IsWithTokenApply]:checked').val(),
-
-        }, //get the search string
+    }
+    $.ajax({
+        url: '/Account/SaveProfileManage',
+        type: 'POST',
+        data: { "request": encryptPayloadData(JSON.stringify(param)) }, //get the search string
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 

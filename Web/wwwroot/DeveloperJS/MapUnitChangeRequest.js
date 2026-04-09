@@ -4,9 +4,9 @@
     var selectionButton;
 
     let MapUnitChangeRequestId = parseInt($("#spnMapUnitChangeRequestId").html());
-    let RoleName = $("#spnRoleName").html()?.toLowerCase();
+    let RN = $("#spnRN").html()?.toLowerCase();
 
-    if (MapUnitChangeRequestId > 0 && RoleName === "admin") {
+    if (MapUnitChangeRequestId > 0 && RN === "admin") {
         await GetChangeMapUnitDetails(MapUnitChangeRequestId);
     }
     else {
@@ -89,7 +89,7 @@
         mMsaterByParent(0, "ddlBde", 4, $('#ddlCommand').val(), $('#ddlCorps').val(), $('#ddlDiv').val(), 0); ///ComdId,CorpsId,DivId,BdeId
     });
 
-    if (MapUnitChangeRequestId > 0 && RoleName === "admin") {
+    if (MapUnitChangeRequestId > 0 && RN === "admin") {
         $("#btnSubmit").addClass("d-none");
         $("#btnAccept").removeClass("d-none");
         $("#btnReject").removeClass("d-none");
@@ -186,8 +186,8 @@ function Save(choice) {
             "UnitMapId": document.getElementById('spnUnitMapId')?.textContent || "",
             "Remark": document.getElementById('txtRemark')?.value || "",
             "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
-            "Choice": choice || "",
-            "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "",
+            "Choice": parseInt(choice || "0"),
+            "UnitType": parseInt(document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "0"),
             "ComdId": document.getElementById('ddlCommand')?.value || "",
             "CorpsId": document.getElementById('ddlCorps')?.value || "",
             "DivId": document.getElementById('ddlDiv')?.value || "",
@@ -232,8 +232,8 @@ function Save(choice) {
             "UnitMapId": document.getElementById('spnUnitMapId')?.textContent || "",
             "Remark": document.getElementById('txtRemark')?.value || "",
             "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
-            "Choice": choice || "",
-            "UnitType": document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "",
+            "Choice": parseInt(choice || "0"),
+            "UnitType": parseInt(document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "0"),
             "ComdId": document.getElementById('ddlCommand')?.value || "",
             "CorpsId": document.getElementById('ddlCorps')?.value || "",
             "DivId": document.getElementById('ddlDiv')?.value || "",
@@ -252,7 +252,7 @@ function Save(choice) {
             data: { request: encrypted }, //get the search string
             headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
             success: function (result) {
-                if ($("#spnRoleName").html().toLowerCase() === "admin" && result.Result == true) {
+                if ($("#spnRN").html().toLowerCase() === "admin" && result.Result == true) {
                     $("#spnMapUnitChangeRequestId").html(result.Id);
                 }
 

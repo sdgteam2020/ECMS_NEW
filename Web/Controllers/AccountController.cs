@@ -174,16 +174,22 @@ namespace Web.Controllers
         /// Errors are logged with eventId 1001. Requires role <c>admin</c>.
         /// </remarks>
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> SaveDomainRegn(DTODomainRegnRequest dTO)
+        public async Task<IActionResult> SaveDomainRegn(string request )
         {
+             
+            DTODomainRegnRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTODomainRegnRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTO == null)
+            {
+                return Json(KeyConstants.InternalServerError);// Update Failed
+            }
             try
             {
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));// Logged in User Id
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));// IST
                 dTO.IsORO = false;
                 dTO.IsRO = false;
-
-                if (ModelState.IsValid)// Server side validation check
+                ModelState.Clear();
+                if (TryValidateModel(dTO))// Server side validation check
                 {
                     if (!_iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))// Check Duplicate DomainId
                     {
@@ -334,15 +340,23 @@ namespace Web.Controllers
         /// <param name="dTO">Profile data to add or update.</param>
         /// <returns>JSON result indicating success, duplicate, validation errors, or error.</returns>
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> SaveProfileManage(MUserProfile dTO)
+        public async Task<IActionResult> SaveProfileManage(string request)
         {
+            MUserProfile dTO = await AESEncrytDecry.DecryptAESWithDTO<MUserProfile>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTO == null)
+            {
+                return Json(KeyConstants.InternalServerError); // Return error message for invalid data
+            }
+
             try
             {
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
 
-                if (ModelState.IsValid)// Server side validation check
+
+                ModelState.Clear();
+                if (TryValidateModel(dTO))// Server side validation check
                 {
                     if (dTO.UserId > 0)// Update
                     {
@@ -594,14 +608,24 @@ namespace Web.Controllers
         /// In case of validation errors, the model state errors are returned as a JSON array.
         /// </remarks>
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> SaveMapping(DTOUserRegnMappingRequest dTO)
+        public async Task<IActionResult> SaveMapping(string request)
         {
             DTOUserRegnResultResponse dTOUserRegnResult = new DTOUserRegnResultResponse();
+            DTOUserRegnMappingRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOUserRegnMappingRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTO == null)
+            {
+                dTOUserRegnResult.Result = false;
+                dTOUserRegnResult.Message = "Something went wrong or Invalid Entry!";
+                return Json(dTOUserRegnResult);
+            }
+
+          
             try
             {
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     DTOUserRegnResultResponse? dTOUserRegnResultResponse = await _iAccountBL.SaveMapping(dTO);// Save Mapping
                     if (dTOUserRegnResultResponse != null)

@@ -1,4 +1,7 @@
-﻿var table; // Declare table variable outside the function to preserve the instance
+﻿
+var table; // Declare table variable outside the function to preserve the instance
+let Orderby = 0;
+let RankId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 

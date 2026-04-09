@@ -1454,6 +1454,50 @@ namespace Web.Controllers
                         ViewBag.OptionsRankId = model.RankId;
                         ViewBag.OptionsArmedId = model.ArmedId;
 
+
+
+
+                        DTOBasicDetailHidden dTOBasicDetailHidden = new DTOBasicDetailHidden
+                        {
+                            // ID and Primary Keys
+                            BasicDetailId = dTOBasicDetailCrtRequest.BasicDetailId,
+                            AddressId = dTOBasicDetailCrtRequest.AddressId,
+                            UploadId = dTOBasicDetailCrtRequest.UploadId,
+                            InfoId = dTOBasicDetailCrtRequest.InfoId,
+                            // Identity and Name
+                            // Combining FName and LName as the DTO expects NameAsPerRecord
+                            NameAsPerRecord = $"{dTOBasicDetailCrtRequest.FName} {dTOBasicDetailCrtRequest.LName}".Trim(),
+                            OldServiceNo = dTOBasicDetailCrtRequest.OldServiceNo,
+                            EncryptedId = dTOBasicDetailCrtRequest.EncryptedId,
+                            PreviousBasicDetailId = dTOBasicDetailCrtRequest.PreviousBasicDetailId,
+
+                            // Dates
+                            DOB = dTOBasicDetailCrtRequest.DOB,
+                            DateOfCommissioning = dTOBasicDetailCrtRequest.DateOfCommissioning,
+
+                            // Registration Types
+                            ApplyForId = dTOBasicDetailCrtRequest.ApplyForId,
+                            RegistrationId = dTOBasicDetailCrtRequest.RegistrationId,
+                            TypeId = dTOBasicDetailCrtRequest.TypeId,
+
+                            // Address Details
+                            State = dTOBasicDetailCrtRequest.State,
+                            District = dTOBasicDetailCrtRequest.District,
+                            PS = dTOBasicDetailCrtRequest.PS,
+                            PO = dTOBasicDetailCrtRequest.PO,
+                            Tehsil = dTOBasicDetailCrtRequest.Tehsil,
+                            Village = dTOBasicDetailCrtRequest.Village,
+                            PinCode = dTOBasicDetailCrtRequest.PinCode != null ? Convert.ToInt32(dTOBasicDetailCrtRequest.PinCode) : 0,
+
+                            // Media and Other Marks
+                            ExistingPhotoImagePath = dTOBasicDetailCrtRequest.ExistingPhotoImagePath,
+                            ExistingPhotoInBase64 = dTOBasicDetailCrtRequest.ExistingPhotoInBase64,
+                            ExistingSignatureImagePath = dTOBasicDetailCrtRequest.ExistingSignatureImagePath,
+                            ExistingSignatureInBase64 = dTOBasicDetailCrtRequest.ExistingSignatureInBase64,
+                            IdenMark2 = dTOBasicDetailCrtRequest.IdenMark2
+                        };
+                        SessionHeplers.SetObject(HttpContext.Session, "BasicDetailHidden", dTOBasicDetailHidden);
+                       
                         // Render creation view with pre-populated details
                         return await Task.FromResult(View(dTOBasicDetailCrtRequest));
                     }
@@ -1539,10 +1583,54 @@ namespace Web.Controllers
                                                                     ", Tehsil- " + modelex.Tehsil + ", District- " + modelex.District +
                                                                     ", State- " + modelex.State +
                                                                     ", Pin Code- " + (modelex.PinCode == 0 ? "" : modelex.PinCode);
+
+
+                               
                             }
 
                             if (role == "user")
                             {
+                                DTOBasicDetailHidden dTOBasicDetailHidden = new DTOBasicDetailHidden
+                                {
+                                    // ID and Primary Keys
+                                    BasicDetailId = basicDetailUpdVM.BasicDetailId,
+                                    AddressId = basicDetailUpdVM.AddressId,
+                                    UploadId = basicDetailUpdVM.UploadId,
+                                    InfoId = basicDetailUpdVM.InfoId,
+                                    // Identity and Name
+                                    // Combining FName and LName as the DTO expects NameAsPerRecord
+                                    NameAsPerRecord = $"{basicDetailUpdVM.FName} {basicDetailUpdVM.LName}".Trim(),
+                                    OldServiceNo = basicDetailUpdVM.OldServiceNo,
+                                    EncryptedId = basicDetailUpdVM.EncryptedId,
+                                    PreviousBasicDetailId = basicDetailUpdVM.PreviousBasicDetailId,
+
+                                    // Dates
+                                    DOB = basicDetailUpdVM.DOB,
+                                    DateOfCommissioning = basicDetailUpdVM.DateOfCommissioning,
+
+                                    // Registration Types
+                                    ApplyForId = basicDetailUpdVM.ApplyForId,
+                                    RegistrationId = basicDetailUpdVM.RegistrationId,
+                                    TypeId = basicDetailUpdVM.TypeId,
+
+                                    // Address Details
+                                    State = basicDetailUpdVM.State,
+                                    District = basicDetailUpdVM.District,
+                                    PS = basicDetailUpdVM.PS,
+                                    PO = basicDetailUpdVM.PO,
+                                    Tehsil = basicDetailUpdVM.Tehsil,
+                                    Village = basicDetailUpdVM.Village,
+                                    PinCode = basicDetailUpdVM.PinCode != null ? Convert.ToInt32(basicDetailUpdVM.PinCode) : 0,
+
+                                    // Media and Other Marks
+                                    ExistingPhotoImagePath = basicDetailUpdVM.ExistingPhotoImagePath,
+                                    ExistingPhotoInBase64 = basicDetailUpdVM.ExistingPhotoInBase64,
+                                    ExistingSignatureImagePath = basicDetailUpdVM.ExistingSignatureImagePath,
+                                    ExistingSignatureInBase64 = basicDetailUpdVM.ExistingSignatureInBase64,
+                                    IdenMark2 = basicDetailUpdVM.IdenMark2
+                                };
+                                SessionHeplers.SetObject(HttpContext.Session, "BasicDetailHidden", dTOBasicDetailHidden);
+
                                 // Render edit view with populated details
                                 return View(basicDetailUpdVM);
                             }
@@ -1659,6 +1747,53 @@ namespace Web.Controllers
                     model = modeldec;
                     model.Photo_ = photoes;
                     model.Signature_ = Signture;
+
+
+                    DTOBasicDetailHidden? dTObasicDetailHidden = SessionHeplers.GetObject<DTOBasicDetailHidden>(HttpContext.Session, "BasicDetailHidden");
+
+                    /////////////////////////Hidden Field Data Mapping to avoid data loss during update (as Photo and Signature are optional in update and to retain existing file if new file not uploaded)
+                    ///
+
+                    // Primary Key and Identity
+                    model.BasicDetailId = dTObasicDetailHidden.BasicDetailId;
+                    model.NameAsPerRecord = dTObasicDetailHidden.NameAsPerRecord;
+                    model.OldServiceNo = dTObasicDetailHidden.OldServiceNo;
+                    model.EncryptedId = dTObasicDetailHidden.EncryptedId;
+                    model.PreviousBasicDetailId = dTObasicDetailHidden.PreviousBasicDetailId;
+
+                    // Dates
+                    model.DOB = dTObasicDetailHidden.DOB;
+                    model.DateOfCommissioning = dTObasicDetailHidden.DateOfCommissioning;
+
+                    // Type Identifiers
+                    model.ApplyForId = dTObasicDetailHidden.ApplyForId;
+                    model.RegistrationId = dTObasicDetailHidden.RegistrationId;
+                    model.TypeId = dTObasicDetailHidden.TypeId;
+
+                    // Address and Location
+                    model.State = dTObasicDetailHidden.State;
+                    model.District = dTObasicDetailHidden.District;
+                    model.PS = dTObasicDetailHidden.PS;
+                    model.PO = dTObasicDetailHidden.PO;
+                    model.Tehsil = dTObasicDetailHidden.Tehsil;
+                    model.Village = dTObasicDetailHidden.Village;
+                    model.PinCode = dTObasicDetailHidden.PinCode;
+
+                    // Media / Images
+                    model.ExistingPhotoImagePath = dTObasicDetailHidden.ExistingPhotoImagePath;
+                    model.ExistingPhotoInBase64 = dTObasicDetailHidden.ExistingPhotoInBase64;
+                    model.ExistingSignatureImagePath = dTObasicDetailHidden.ExistingSignatureImagePath;
+                    model.ExistingSignatureInBase64 = dTObasicDetailHidden.ExistingSignatureInBase64;
+
+                    // Other Details
+                    model.IdenMark2 = dTObasicDetailHidden.IdenMark2;
+                    model.AddressId = dTObasicDetailHidden.AddressId;
+                    model.UploadId = dTObasicDetailHidden.UploadId;
+                    model.InfoId = dTObasicDetailHidden.InfoId;
+
+
+
+                    ////////////////////////////////
                 }
                 // Case 1: Update existing BasicDetail (when BasicDetailId > 0)
                 if (model.BasicDetailId > 0)
@@ -1695,9 +1830,13 @@ namespace Web.Controllers
 
                             // If ModelState is valid, proceed with update logic
                             ModelState.Clear();
+                            
                             if (TryValidateModel(modeldec))
                             {
+
                                 BasicDetail newBasicDetail = new BasicDetail();
+                               
+
                                 newBasicDetail.BasicDetailId = model.BasicDetailId;
                                 newBasicDetail.FName = model.FName;
                                 newBasicDetail.LName = model.LName;
@@ -3326,11 +3465,17 @@ namespace Web.Controllers
         /// otherwise generates a JSON response indicating the absence of XML data.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> DataDigitalXmlSign(DTODataExportRequest Data)
+        public async Task<IActionResult> DataDigitalXmlSign(string request)
         {
             try
             {
-                if (ModelState.IsValid)
+                DTODataExportRequest Data = await AESEncrytDecry.DecryptAESWithDTO<DTODataExportRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+                if (Data == null)
+                {
+                    return Json(KeyConstants.IncorrectData); // Return error message for invalid data
+                }
+                ModelState.Clear();
+                if (TryValidateModel(Data))
                 {
                     // Step 1: Initialize the return object which will hold the ID and merged XML files
                     DTOXmlFilesFwdLogRequest ret = new DTOXmlFilesFwdLogRequest();

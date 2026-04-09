@@ -993,8 +993,7 @@ function DataSignDigitaly(Data, msgid, RequestId, stepId) {
     };
     $.ajax({
         url: '/BasicDetail/DataDigitalXmlSign',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
+        data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
@@ -1085,8 +1084,8 @@ function SignXmlSendTOdatabase(XmlFile, RequestId, Id) {
     };
     $.ajax({
         url: '/Log/XmlFileDigitalSign',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
+        data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
+
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
 

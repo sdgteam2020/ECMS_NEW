@@ -846,16 +846,16 @@ function ProceedForMapping() {
 }
 function SaveMapping() {
     //alert($("#spnDomainRegId").html());
+    let param = {
+        "Id": DomainRegIdForMapping,
+        "TDMId": TrnDomainMappingIdForMapping,
+        "UserId": UserProfileId,
+        "ArmyNo": $("#txtArmyNo").val(),
+    }
     $.ajax({
         url: '/Account/SaveMapping',
         type: 'POST',
-        data: {
-            "Id": DomainRegIdForMapping,
-            "TDMId": TrnDomainMappingIdForMapping,
-            "UserId": UserProfileId,
-            "ArmyNo": $("#txtArmyNo").val(),
-
-        }, //get the search string
+        data: { "request": encryptPayloadData(JSON.stringify(param)) }, //get the search string
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             var obj = jQuery.parseJSON(response);

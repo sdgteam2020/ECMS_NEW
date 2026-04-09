@@ -682,7 +682,7 @@ function BindDataMapUnit() {
         FmnBranchID: document.getElementById('ddlFmnBranch').value,
         SubDteId: document.getElementById('ddlDgSubDte').value,
     };
-
+     
     try {
         fetch('/Master/SaveUnitWithMapping', {
             method: 'POST',
@@ -690,7 +690,9 @@ function BindDataMapUnit() {
                 "Content-Type": "application/x-www-form-urlencoded",
                 'RequestVerificationToken': globalThis.RequestVerificationToken
             },
-            body: new URLSearchParams(data).toString()
+            body: new URLSearchParams({
+                Request: encryptPayloadData(JSON.stringify(data))
+            })
         }).then(response => {
             // Handle the response
             return response.json();

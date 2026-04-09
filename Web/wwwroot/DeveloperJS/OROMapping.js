@@ -1,4 +1,6 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
+let UnitMapId = 0;
+let OROMappingId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 

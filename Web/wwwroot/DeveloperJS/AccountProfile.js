@@ -595,6 +595,7 @@ function ProceedUnitSave() {
     }
 }
 function UnitSave() {
+    let encryptedPayload = "";
     let payload={
         "Name": $("#spnName").html(),
         "Rank": $("#spnRank").html(),

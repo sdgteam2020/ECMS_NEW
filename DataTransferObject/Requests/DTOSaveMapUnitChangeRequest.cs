@@ -17,6 +17,7 @@ namespace DataTransferObject.Requests
         public int MapUnitChangeRequestId { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
+        [Range(1, 3, ErrorMessage = "Invalid Input")]
         public byte Choice { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
@@ -31,7 +32,7 @@ namespace DataTransferObject.Requests
         public string? AdminRemark { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "OnlyNumber")]
-        [Range(typeof(int), "1", "3", ErrorMessage = "Invalid Unit Type.")]
+        [Range(1, 3, ErrorMessage = "Invalid Unit Type.")]
         public int UnitType { get; set; }
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "ComdId is number.")]
