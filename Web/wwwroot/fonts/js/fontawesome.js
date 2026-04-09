@@ -1,7 +1,3 @@
-/*!
- * Font Awesome Free 5.10.2 by @fontawesome - https://fontawesome.com
- * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
- */
 (function () {
   'use strict';
 
@@ -956,7 +952,7 @@
         'data-icon': iconName,
         'class': attrClass,
         'role': extra.attributes.role || 'img',
-        'xmlns': 'http://www.w3.org/2000/svg',
+        'xmlns': '###w3.org/2000/svg',
         'viewBox': "0 0 ".concat(width, " ").concat(height)
       })
     };

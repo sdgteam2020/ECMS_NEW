@@ -775,7 +775,7 @@
         return regexes[token](config._strict, config._locale);
     }
 
-    // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+    // Code from stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
     function unescapeFormat(s) {
         return regexEscape(
             s
@@ -1366,7 +1366,7 @@
 
     function createDate(y, m, d, h, M, s, ms) {
         // can't just apply() to create a date:
-        // https://stackoverflow.com/q/181348
+        // stackoverflow.com/q/181348
         var date;
         // the date constructor remaps years 0-99 to 1900-1999
         if (y < 100 && y >= 0) {
@@ -1410,7 +1410,7 @@
         return -fwdlw + fwd - 1;
     }
 
-    // https://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
+    // en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
     function dayOfYearFromWeeks(year, week, weekday, dow, doy) {
         var localWeekday = (7 + weekday - dow) % 7,
             weekOffset = firstWeekOffset(year, dow, doy),
@@ -2208,7 +2208,7 @@
                     'use moment.updateLocale(localeName, config) to change ' +
                     'an existing locale. moment.defineLocale(localeName, ' +
                     'config) should only be used for creating a new locale ' +
-                    'See http://momentjs.com/guides/#/warnings/define-locale/ for more info.'
+                    'See momentjs.com/guides/#/warnings/define-locale/ for more info.'
                 );
                 parentConfig = locales[name]._config;
             } else if (config.parentLocale != null) {
@@ -2403,7 +2403,7 @@
             ['HH', /\d\d/],
         ],
         aspNetJsonRegex = /^\/?Date\((-?\d+)/i,
-        // RFC 2822 regex: For details see https://tools.ietf.org/html/rfc2822#section-3.3
+        // RFC 2822 regex: For details see tools.ietf.org/html/rfc2822#section-3.3
         rfc2822 =
             /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|([+-]\d{4}))$/,
         obsOffsets = {
@@ -2613,7 +2613,7 @@
     hooks.createFromInputFallback = deprecate(
         'value provided is not in a recognized RFC2822 or ISO format. moment construction falls back to js Date(), ' +
         'which is not reliable across all browsers and versions. Non RFC2822/ISO date formats are ' +
-        'discouraged. Please refer to http://momentjs.com/guides/#/warnings/js-date/ for more info.',
+        'discouraged. Please refer to momentjs.com/guides/#/warnings/js-date/ for more info.',
         function (config) {
             config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
         }
@@ -3085,7 +3085,7 @@
             input = undefined;
         }
         // object construction must be done this way.
-        // https://github.com/moment/moment/issues/1423
+        // github.com/moment/moment/issues/1423
         c._isAMomentObject = true;
         c._useUTC = c._isUTC = isUTC;
         c._l = locale;
@@ -3101,7 +3101,7 @@
     }
 
     var prototypeMin = deprecate(
-        'moment().min is deprecated, use moment.max instead. http://momentjs.com/guides/#/warnings/min-max/',
+        'moment().min is deprecated, use moment.max instead. momentjs.com/guides/#/warnings/min-max/',
         function () {
             var other = createLocal.apply(null, arguments);
             if (this.isValid() && other.isValid()) {
@@ -3112,7 +3112,7 @@
         }
     ),
         prototypeMax = deprecate(
-            'moment().max is deprecated, use moment.min instead. http://momentjs.com/guides/#/warnings/min-max/',
+            'moment().max is deprecated, use moment.min instead. momentjs.com/guides/#/warnings/min-max/',
             function () {
                 var other = createLocal.apply(null, arguments);
                 if (this.isValid() && other.isValid()) {
@@ -3232,7 +3232,7 @@
             +milliseconds +
             seconds * 1e3 + // 1000
             minutes * 6e4 + // 1000 * 60
-            hours * 1000 * 60 * 60; //using 1000 * 60 * 60 instead of 36e5 to avoid floating point rounding errors https://github.com/moment/moment/issues/2978
+            hours * 1000 * 60 * 60; //using 1000 * 60 * 60 instead of 36e5 to avoid floating point rounding errors github.com/moment/moment/issues/2978
         // Because of dateAddRemove treats 24 hours as different from a
         // day when working around DST, we need to store them separately
         this._days = +days + weeks * 7;
@@ -3352,7 +3352,7 @@
 
     function getDateOffset(m) {
         // On Firefox.24 Date#getTimezoneOffset returns a floating point.
-        // https://github.com/moment/moment/pull/1871
+        // github.com/moment/moment/pull/1871
         return -Math.round(m._d.getTimezoneOffset());
     }
 
@@ -3513,7 +3513,7 @@
 
     // ASP.NET json date format regex
     var aspNetRegex = /^(-|\+)?(?:(\d*)[. ])?(\d+):(\d+)(?::(\d+)(\.\d*)?)?$/,
-        // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
+        // from docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
         // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
         // and further modified to allow for strings containing both week and day
         isoRegex =
@@ -3648,7 +3648,7 @@
                     '(period, number) is deprecated. Please use moment().' +
                     name +
                     '(number, period). ' +
-                    'See http://momentjs.com/guides/#/warnings/add-inverted-param/ for more info.'
+                    'See momentjs.com/guides/#/warnings/add-inverted-param/ for more info.'
                 );
                 tmp = val;
                 val = period;
@@ -4020,7 +4020,7 @@
      * Return a human readable representation of a moment that can
      * also be evaluated to get a new moment which is the same
      *
-     * @link https://nodejs.org/dist/latest/docs/api/util.html#util_custom_inspect_function_on_objects
+     * @link nodejs.org/dist/latest/docs/api/util.html#util_custom_inspect_function_on_objects
      */
     function inspect() {
         if (!this.isValid()) {
@@ -4997,11 +4997,11 @@
         getSetYear
     );
     proto.zone = deprecate(
-        'moment().zone is deprecated, use moment().utcOffset instead. http://momentjs.com/guides/#/warnings/zone/',
+        'moment().zone is deprecated, use moment().utcOffset instead. momentjs.com/guides/#/warnings/zone/',
         getSetZone
     );
     proto.isDSTShifted = deprecate(
-        'isDSTShifted is deprecated. See http://momentjs.com/guides/#/warnings/dst-shifted/ for more information',
+        'isDSTShifted is deprecated. See momentjs.com/guides/#/warnings/dst-shifted/ for more information',
         isDaylightSavingTimeShifted
     );
 
@@ -5252,7 +5252,7 @@
             monthsFromDays;
 
         // if we have a mix of positive and negative values, bubble down first
-        // check: https://github.com/moment/moment/issues/2166
+        // check: github.com/moment/moment/issues/2166
         if (
             !(
                 (milliseconds >= 0 && days >= 0 && months >= 0) ||
@@ -5554,7 +5554,7 @@
         years = absFloor(months / 12);
         months %= 12;
 
-        // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
+        // inspired by github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
         s = seconds ? seconds.toFixed(3).replace(/\.?0+$/, '') : '';
 
         totalSign = total < 0 ? '-' : '';

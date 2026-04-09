@@ -1,7 +1,4 @@
-/*! jQuery UI - v1.13.2 - 2022-07-14
-* http://jqueryui.com
-* Includes: widget.js, position.js, data.js, disable-selection.js, effect.js, effects/effect-blind.js, effects/effect-bounce.js, effects/effect-clip.js, effects/effect-drop.js, effects/effect-explode.js, effects/effect-fade.js, effects/effect-fold.js, effects/effect-highlight.js, effects/effect-puff.js, effects/effect-pulsate.js, effects/effect-scale.js, effects/effect-shake.js, effects/effect-size.js, effects/effect-slide.js, effects/effect-transfer.js, focusable.js, form-reset-mixin.js, jquery-patch.js, keycode.js, labels.js, scroll-parent.js, tabbable.js, unique-id.js, widgets/accordion.js, widgets/autocomplete.js, widgets/button.js, widgets/checkboxradio.js, widgets/controlgroup.js, widgets/datepicker.js, widgets/dialog.js, widgets/draggable.js, widgets/droppable.js, widgets/menu.js, widgets/mouse.js, widgets/progressbar.js, widgets/resizable.js, widgets/selectable.js, widgets/selectmenu.js, widgets/slider.js, widgets/sortable.js, widgets/spinner.js, widgets/tabs.js, widgets/tooltip.js
-* Copyright jQuery Foundation and other contributors; Licensed MIT */
+
 
 ( function( factory ) {
 	"use strict";
@@ -23,20 +20,12 @@ $.ui = $.ui || {};
 var version = $.ui.version = "1.13.2";
 
 
-/*!
- * jQuery UI Widget 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Widget
 //>>group: Core
 //>>description: Provides a factory for creating stateful widgets with a common API.
-//>>docs: http://api.jqueryui.com/jQuery.widget/
-//>>demos: http://jqueryui.com/widget/
+//>>docs: api.jqueryui.com/jQuery.widget/
+//>>demos: jqueryui.com/widget/
 
 
 var widgetUuid = 0;
@@ -765,22 +754,12 @@ $.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
 var widget = $.widget;
 
 
-/*!
- * jQuery UI Position 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- *
- * http://api.jqueryui.com/position/
- */
 
 //>>label: Position
 //>>group: Core
 //>>description: Positions elements relative to other elements.
-//>>docs: http://api.jqueryui.com/position/
-//>>demos: http://jqueryui.com/position/
+//>>docs: api.jqueryui.com/position/
+//>>demos: jqueryui.com/position/
 
 
 ( function() {
@@ -1262,19 +1241,11 @@ $.ui.position = {
 var position = $.ui.position;
 
 
-/*!
- * jQuery UI :data 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: :data Selector
 //>>group: Core
 //>>description: Selects elements which have data stored under the specified key.
-//>>docs: http://api.jqueryui.com/data-selector/
+//>>docs: api.jqueryui.com/data-selector/
 
 
 var data = $.extend( $.expr.pseudos, {
@@ -1291,19 +1262,11 @@ var data = $.extend( $.expr.pseudos, {
 		}
 } );
 
-/*!
- * jQuery UI Disable Selection 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: disableSelection
 //>>group: Core
 //>>description: Disable selection of text content within the set of matched elements.
-//>>docs: http://api.jqueryui.com/disableSelection/
+//>>docs: api.jqueryui.com/disableSelection/
 
 // This file is deprecated
 
@@ -1336,11 +1299,11 @@ var jQuery = $;
 
 /*!
  * jQuery Color Animations v2.2.0
- * https://github.com/jquery/jquery-color
+ * github.com/jquery/jquery-color
  *
  * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * jquery.org/license
  *
  * Date: Sun May 10 09:02:36 2020 +0200
  */
@@ -1797,7 +1760,7 @@ color.fn = jQuery.extend( color.prototype, {
 color.fn.parse.prototype = color.fn;
 
 // hsla conversions adapted from:
-// https://code.google.com/p/maashaack/source/browse/packages/graphics/trunk/src/graphics/colors/HUE2RGB.as?r=5021
+// code.google.com/p/maashaack/source/browse/packages/graphics/trunk/src/graphics/colors/HUE2RGB.as?r=5021
 
 function hue2rgb( p, q, h ) {
 	h = ( h + 1 ) % 1;
@@ -2046,22 +2009,14 @@ colors = jQuery.Color.names = {
 };
 
 
-/*!
- * jQuery UI Effects 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Effects Core
 //>>group: Effects
 /* eslint-disable max-len */
 //>>description: Extends the internal jQuery effects. Includes morphing and easing. Required by all other effects.
 /* eslint-enable max-len */
-//>>docs: http://api.jqueryui.com/category/effects-core/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/category/effects-core/
+//>>demos: jqueryui.com/effect/
 
 
 var dataSpace = "ui-effects-",
@@ -2366,7 +2321,7 @@ if ( $.uiBackCompat !== false ) {
 
 			// Support: Firefox
 			// Firefox incorrectly exposes anonymous content
-			// https://bugzilla.mozilla.org/show_bug.cgi?id=561664
+			// bugzilla.mozilla.org/show_bug.cgi?id=561664
 			try {
 				// eslint-disable-next-line no-unused-expressions
 				active.id;
@@ -2554,7 +2509,7 @@ $.extend( $.effects, {
 
 		// Lock in margins first to account for form elements, which
 		// will change margin if you explicitly set height
-		// see: http://jsfiddle.net/JZSMt/3/ https://bugs.webkit.org/show_bug.cgi?id=107380
+		// see: jsfiddle.net/JZSMt/3/ bugs.webkit.org/show_bug.cgi?id=107380
 		// Support: Safari
 		element.css( {
 			marginTop: element.css( "marginTop" ),
@@ -2948,7 +2903,7 @@ $.fx.step.clip = function( fx ) {
 
 ( function() {
 
-// Based on easing equations from Robert Penner (http://www.robertpenner.com/easing)
+// Based on easing equations from Robert Penner (###robertpenner.com/easing)
 
 var baseEasings = {};
 
@@ -2998,20 +2953,12 @@ $.each( baseEasings, function( name, easeIn ) {
 var effect = $.effects;
 
 
-/*!
- * jQuery UI Effects Blind 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Blind Effect
 //>>group: Effects
 //>>description: Blinds the element.
-//>>docs: http://api.jqueryui.com/blind-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/blind-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectBlind = $.effects.define( "blind", "hide", function( options, done ) {
@@ -3053,20 +3000,11 @@ var effectsEffectBlind = $.effects.define( "blind", "hide", function( options, d
 } );
 
 
-/*!
- * jQuery UI Effects Bounce 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Bounce Effect
 //>>group: Effects
 //>>description: Bounces an element horizontally or vertically n times.
-//>>docs: http://api.jqueryui.com/bounce-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/bounce-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectBounce = $.effects.define( "bounce", function( options, done ) {
@@ -3148,20 +3086,12 @@ var effectsEffectBounce = $.effects.define( "bounce", function( options, done ) 
 } );
 
 
-/*!
- * jQuery UI Effects Clip 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Clip Effect
 //>>group: Effects
 //>>description: Clips the element on and off like an old TV.
-//>>docs: http://api.jqueryui.com/clip-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/clip-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectClip = $.effects.define( "clip", "hide", function( options, done ) {
@@ -3198,20 +3128,12 @@ var effectsEffectClip = $.effects.define( "clip", "hide", function( options, don
 } );
 
 
-/*!
- * jQuery UI Effects Drop 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Drop Effect
 //>>group: Effects
 //>>description: Moves an element in one direction and hides it at the same time.
-//>>docs: http://api.jqueryui.com/drop-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/drop-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectDrop = $.effects.define( "drop", "hide", function( options, done ) {
@@ -3252,22 +3174,13 @@ var effectsEffectDrop = $.effects.define( "drop", "hide", function( options, don
 } );
 
 
-/*!
- * jQuery UI Effects Explode 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Explode Effect
 //>>group: Effects
 /* eslint-disable max-len */
 //>>description: Explodes an element in all directions into n pieces. Implodes an element to its original wholeness.
 /* eslint-enable max-len */
-//>>docs: http://api.jqueryui.com/explode-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/explode-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectExplode = $.effects.define( "explode", "hide", function( options, done ) {
@@ -3348,20 +3261,12 @@ var effectsEffectExplode = $.effects.define( "explode", "hide", function( option
 } );
 
 
-/*!
- * jQuery UI Effects Fade 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Fade Effect
 //>>group: Effects
 //>>description: Fades the element.
-//>>docs: http://api.jqueryui.com/fade-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/fade-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectFade = $.effects.define( "fade", "toggle", function( options, done ) {
@@ -3380,20 +3285,12 @@ var effectsEffectFade = $.effects.define( "fade", "toggle", function( options, d
 } );
 
 
-/*!
- * jQuery UI Effects Fold 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Fold Effect
 //>>group: Effects
 //>>description: Folds an element first horizontally and then vertically.
-//>>docs: http://api.jqueryui.com/fold-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/fold-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectFold = $.effects.define( "fold", "hide", function( options, done ) {
@@ -3454,20 +3351,11 @@ var effectsEffectFold = $.effects.define( "fold", "hide", function( options, don
 } );
 
 
-/*!
- * jQuery UI Effects Highlight 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Highlight Effect
 //>>group: Effects
 //>>description: Highlights the background of an element in a defined color for a custom duration.
-//>>docs: http://api.jqueryui.com/highlight-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/highlight-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectHighlight = $.effects.define( "highlight", "show", function( options, done ) {
@@ -3496,20 +3384,11 @@ var effectsEffectHighlight = $.effects.define( "highlight", "show", function( op
 } );
 
 
-/*!
- * jQuery UI Effects Size 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Size Effect
 //>>group: Effects
 //>>description: Resize an element to a specified width and height.
-//>>docs: http://api.jqueryui.com/size-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/size-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectSize = $.effects.define( "size", function( options, done ) {
@@ -3674,20 +3553,12 @@ var effectsEffectSize = $.effects.define( "size", function( options, done ) {
 } );
 
 
-/*!
- * jQuery UI Effects Scale 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Scale Effect
 //>>group: Effects
 //>>description: Grows or shrinks an element and its content.
-//>>docs: http://api.jqueryui.com/scale-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/scale-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectScale = $.effects.define( "scale", function( options, done ) {
@@ -3714,20 +3585,12 @@ var effectsEffectScale = $.effects.define( "scale", function( options, done ) {
 } );
 
 
-/*!
- * jQuery UI Effects Puff 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Puff Effect
 //>>group: Effects
 //>>description: Creates a puff effect by scaling the element up and hiding it at the same time.
-//>>docs: http://api.jqueryui.com/puff-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/puff-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectPuff = $.effects.define( "puff", "hide", function( options, done ) {
@@ -3740,20 +3603,11 @@ var effectsEffectPuff = $.effects.define( "puff", "hide", function( options, don
 } );
 
 
-/*!
- * jQuery UI Effects Pulsate 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Pulsate Effect
 //>>group: Effects
 //>>description: Pulsates an element n times by changing the opacity to zero and back.
-//>>docs: http://api.jqueryui.com/pulsate-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/pulsate-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectPulsate = $.effects.define( "pulsate", "show", function( options, done ) {
@@ -3789,20 +3643,11 @@ var effectsEffectPulsate = $.effects.define( "pulsate", "show", function( option
 } );
 
 
-/*!
- * jQuery UI Effects Shake 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Shake Effect
 //>>group: Effects
 //>>description: Shakes an element horizontally or vertically n times.
-//>>docs: http://api.jqueryui.com/shake-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/shake-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectShake = $.effects.define( "shake", function( options, done ) {
@@ -3848,20 +3693,11 @@ var effectsEffectShake = $.effects.define( "shake", function( options, done ) {
 } );
 
 
-/*!
- * jQuery UI Effects Slide 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Slide Effect
 //>>group: Effects
 //>>description: Slides an element in and out of the viewport.
-//>>docs: http://api.jqueryui.com/slide-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/slide-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effectsEffectSlide = $.effects.define( "slide", "show", function( options, done ) {
@@ -3909,20 +3745,12 @@ var effectsEffectSlide = $.effects.define( "slide", "show", function( options, d
 } );
 
 
-/*!
- * jQuery UI Effects Transfer 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Transfer Effect
 //>>group: Effects
 //>>description: Displays a transfer effect from one element to another.
-//>>docs: http://api.jqueryui.com/transfer-effect/
-//>>demos: http://jqueryui.com/effect/
+//>>docs: api.jqueryui.com/transfer-effect/
+//>>demos: jqueryui.com/effect/
 
 
 var effect;
@@ -3934,19 +3762,11 @@ if ( $.uiBackCompat !== false ) {
 var effectsEffectTransfer = effect;
 
 
-/*!
- * jQuery UI Focusable 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: :focusable Selector
 //>>group: Core
 //>>description: Selects elements which can be focused.
-//>>docs: http://api.jqueryui.com/focusable-selector/
+//>>docs: api.jqueryui.com/focusable-selector/
 
 
 // Selectors
@@ -4016,19 +3836,11 @@ var form = $.fn._form = function() {
 };
 
 
-/*!
- * jQuery UI Form Reset Mixin 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Form Reset Mixin
 //>>group: Core
 //>>description: Refresh input widgets when their form is reset
-//>>docs: http://api.jqueryui.com/form-reset-mixin/
+//>>docs: api.jqueryui.com/form-reset-mixin/
 
 
 var formResetMixin = $.ui.formResetMixin = {
@@ -4078,22 +3890,7 @@ var formResetMixin = $.ui.formResetMixin = {
 };
 
 
-/*!
- * jQuery UI Support for jQuery core 1.8.x and newer 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- *
- */
 
-//>>label: jQuery 1.8+ Support
-//>>group: Core
-//>>description: Support version 1.8.x and newer of jQuery core
-
-
-// Support: jQuery 1.9.x or older
 // $.expr[ ":" ] is deprecated.
 if ( !$.expr.pseudos ) {
 	$.expr.pseudos = $.expr[ ":" ];
@@ -4107,11 +3904,11 @@ if ( !$.uniqueSort ) {
 
 // Support: jQuery 2.2.x or older.
 // This method has been defined in jQuery 3.0.0.
-// Code from https://github.com/jquery/jquery/blob/e539bac79e666bba95bba86d690b4e609dca2286/src/selector/escapeSelector.js
+// Code from github.com/jquery/jquery/blob/e539bac79e666bba95bba86d690b4e609dca2286/src/selector/escapeSelector.js
 if ( !$.escapeSelector ) {
 
 	// CSS string/identifier serialization
-	// https://drafts.csswg.org/cssom/#common-serializing-idioms
+	// drafts.csswg.org/cssom/#common-serializing-idioms
 	var rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\x80-\uFFFF\w-]/g;
 
 	var fcssescape = function( ch, asCodePoint ) {
@@ -4153,19 +3950,11 @@ if ( !$.fn.even || !$.fn.odd ) {
 }
 
 ;
-/*!
- * jQuery UI Keycode 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Keycode
 //>>group: Core
 //>>description: Provide keycodes as keynames
-//>>docs: http://api.jqueryui.com/jQuery.ui.keyCode/
+//>>docs: api.jqueryui.com/jQuery.ui.keyCode/
 
 
 var keycode = $.ui.keyCode = {
@@ -4188,19 +3977,11 @@ var keycode = $.ui.keyCode = {
 };
 
 
-/*!
- * jQuery UI Labels 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: labels
 //>>group: Core
 //>>description: Find all the labels associated with a given input
-//>>docs: http://api.jqueryui.com/labels/
+//>>docs: api.jqueryui.com/labels/
 
 
 var labels = $.fn.labels = function() {
@@ -4243,19 +4024,12 @@ var labels = $.fn.labels = function() {
 };
 
 
-/*!
- * jQuery UI Scroll Parent 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
+
 
 //>>label: scrollParent
 //>>group: Core
 //>>description: Get the closest ancestor element that is scrollable.
-//>>docs: http://api.jqueryui.com/scrollParent/
+//>>docs: api.jqueryui.com/scrollParent/
 
 
 var scrollParent = $.fn.scrollParent = function( includeHidden ) {
@@ -4277,19 +4051,11 @@ var scrollParent = $.fn.scrollParent = function( includeHidden ) {
 };
 
 
-/*!
- * jQuery UI Tabbable 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: :tabbable Selector
 //>>group: Core
 //>>description: Selects elements which can be tabbed to.
-//>>docs: http://api.jqueryui.com/tabbable-selector/
+//>>docs: api.jqueryui.com/tabbable-selector/
 
 
 var tabbable = $.extend( $.expr.pseudos, {
@@ -4301,19 +4067,11 @@ var tabbable = $.extend( $.expr.pseudos, {
 } );
 
 
-/*!
- * jQuery UI Unique ID 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: uniqueId
 //>>group: Core
 //>>description: Functions to generate and remove uniqueId's
-//>>docs: http://api.jqueryui.com/uniqueId/
+//>>docs: api.jqueryui.com/uniqueId/
 
 
 var uniqueId = $.fn.extend( {
@@ -4339,22 +4097,13 @@ var uniqueId = $.fn.extend( {
 } );
 
 
-/*!
- * jQuery UI Accordion 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Accordion
 //>>group: Widgets
 /* eslint-disable max-len */
 //>>description: Displays collapsible content panels for presenting information in a limited amount of space.
 /* eslint-enable max-len */
-//>>docs: http://api.jqueryui.com/accordion/
-//>>demos: http://jqueryui.com/accordion/
+//>>docs: api.jqueryui.com/accordion/
+//>>demos: jqueryui.com/accordion/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/accordion.css
 //>>css.theme: ../../themes/base/theme.css
@@ -4971,20 +4720,11 @@ var safeActiveElement = $.ui.safeActiveElement = function( document ) {
 };
 
 
-/*!
- * jQuery UI Menu 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Menu
 //>>group: Widgets
 //>>description: Creates nestable menus.
-//>>docs: http://api.jqueryui.com/menu/
-//>>demos: http://jqueryui.com/menu/
+//>>docs: api.jqueryui.com/menu/
+//>>demos: jqueryui.com/menu/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/menu.css
 //>>css.theme: ../../themes/base/theme.css
@@ -5662,20 +5402,12 @@ var widgetsMenu = $.widget( "ui.menu", {
 } );
 
 
-/*!
- * jQuery UI Autocomplete 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Autocomplete
 //>>group: Widgets
 //>>description: Lists suggested words as the user is typing.
-//>>docs: http://api.jqueryui.com/autocomplete/
-//>>demos: http://jqueryui.com/autocomplete/
+//>>docs: api.jqueryui.com/autocomplete/
+//>>demos: jqueryui.com/autocomplete/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/autocomplete.css
 //>>css.theme: ../../themes/base/theme.css
@@ -6255,7 +5987,7 @@ $.widget( "ui.autocomplete", {
 	// Support: Chrome <=50
 	// We should be able to just use this.element.prop( "isContentEditable" )
 	// but hidden elements always report false in Chrome.
-	// https://code.google.com/p/chromium/issues/detail?id=313082
+	// code.google.com/p/chromium/issues/detail?id=313082
 	_isContentEditable: function( element ) {
 		if ( !element.length ) {
 			return false;
@@ -6318,20 +6050,12 @@ $.widget( "ui.autocomplete", $.ui.autocomplete, {
 var widgetsAutocomplete = $.ui.autocomplete;
 
 
-/*!
- * jQuery UI Controlgroup 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Controlgroup
 //>>group: Widgets
 //>>description: Visually groups form control widgets
-//>>docs: http://api.jqueryui.com/controlgroup/
-//>>demos: http://jqueryui.com/controlgroup/
+//>>docs: api.jqueryui.com/controlgroup/
+//>>demos: jqueryui.com/controlgroup/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/controlgroup.css
 //>>css.theme: ../../themes/base/theme.css
@@ -6603,20 +6327,12 @@ var widgetsControlgroup = $.widget( "ui.controlgroup", {
 	}
 } );
 
-/*!
- * jQuery UI Checkboxradio 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Checkboxradio
 //>>group: Widgets
 //>>description: Enhances a form with multiple themeable checkboxes or radio buttons.
-//>>docs: http://api.jqueryui.com/checkboxradio/
-//>>demos: http://jqueryui.com/checkboxradio/
+//>>docs: api.jqueryui.com/checkboxradio/
+//>>demos: jqueryui.com/checkboxradio/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/button.css
 //>>css.structure: ../../themes/base/checkboxradio.css
@@ -6874,20 +6590,12 @@ $.widget( "ui.checkboxradio", [ $.ui.formResetMixin, {
 var widgetsCheckboxradio = $.ui.checkboxradio;
 
 
-/*!
- * jQuery UI Button 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Button
 //>>group: Widgets
 //>>description: Enhances a form with themeable buttons.
-//>>docs: http://api.jqueryui.com/button/
-//>>demos: http://jqueryui.com/button/
+//>>docs: api.jqueryui.com/button/
+//>>demos: jqueryui.com/button/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/button.css
 //>>css.theme: ../../themes/base/theme.css
@@ -7299,21 +7007,12 @@ if ( $.uiBackCompat !== false ) {
 var widgetsButton = $.ui.button;
 
 
-/* eslint-disable max-len, camelcase */
-/*!
- * jQuery UI Datepicker 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Datepicker
 //>>group: Widgets
 //>>description: Displays a calendar from an input or inline for selecting dates.
-//>>docs: http://api.jqueryui.com/datepicker/
-//>>demos: http://jqueryui.com/datepicker/
+//>>docs: api.jqueryui.com/datepicker/
+//>>demos: jqueryui.com/datepicker/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/datepicker.css
 //>>css.theme: ../../themes/base/theme.css
@@ -7636,7 +7335,7 @@ $.extend( Datepicker.prototype, {
 		}
 
 		// Set display:block in place of inst.dpDiv.show() which won't work on disconnected elements
-		// http://bugs.jqueryui.com/ticket/7552 - A Datepicker created on a detached div has zero height
+		// bugs.jqueryui.com/ticket/7552 - A Datepicker created on a detached div has zero height
 		inst.dpDiv.css( "display", "block" );
 	},
 
@@ -9525,19 +9224,11 @@ var widgetsDatepicker = $.datepicker;
 // This file is deprecated
 var ie = $.ui.ie = !!/msie [\w.]+/.exec( navigator.userAgent.toLowerCase() );
 
-/*!
- * jQuery UI Mouse 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Mouse
 //>>group: Widgets
 //>>description: Abstracts mouse-based interactions to assist in creating certain widgets.
-//>>docs: http://api.jqueryui.com/mouse/
+//>>docs: api.jqueryui.com/mouse/
 
 
 var mouseHandled = false;
@@ -9787,20 +9478,12 @@ var safeBlur = $.ui.safeBlur = function( element ) {
 };
 
 
-/*!
- * jQuery UI Draggable 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Draggable
 //>>group: Interactions
 //>>description: Enables dragging functionality for any element.
-//>>docs: http://api.jqueryui.com/draggable/
-//>>demos: http://jqueryui.com/draggable/
+//>>docs: api.jqueryui.com/draggable/
+//>>demos: jqueryui.com/draggable/
 //>>css.structure: ../../themes/base/draggable.css
 
 
@@ -11022,20 +10705,12 @@ $.ui.plugin.add( "draggable", "zIndex", {
 var widgetsDraggable = $.ui.draggable;
 
 
-/*!
- * jQuery UI Resizable 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Resizable
 //>>group: Interactions
 //>>description: Enables resize functionality for any element.
-//>>docs: http://api.jqueryui.com/resizable/
-//>>demos: http://jqueryui.com/resizable/
+//>>docs: api.jqueryui.com/resizable/
+//>>demos: jqueryui.com/resizable/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/resizable.css
 //>>css.theme: ../../themes/base/theme.css
@@ -12220,20 +11895,12 @@ $.ui.plugin.add( "resizable", "grid", {
 var widgetsResizable = $.ui.resizable;
 
 
-/*!
- * jQuery UI Dialog 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Dialog
 //>>group: Widgets
 //>>description: Displays customizable dialog windows.
-//>>docs: http://api.jqueryui.com/dialog/
-//>>demos: http://jqueryui.com/dialog/
+//>>docs: api.jqueryui.com/dialog/
+//>>demos: jqueryui.com/dialog/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/dialog.css
 //>>css.theme: ../../themes/base/theme.css
@@ -12421,7 +12088,7 @@ $.widget( "ui.dialog", {
 
 			// Hiding a focused element doesn't trigger blur in WebKit
 			// so in case we have nothing to focus on, explicitly blur the active element
-			// https://bugs.webkit.org/show_bug.cgi?id=47182
+			// bugs.webkit.org/show_bug.cgi?id=47182
 			$.ui.safeBlur( $.ui.safeActiveElement( this.document[ 0 ] ) );
 		}
 
@@ -13078,7 +12745,7 @@ $.widget( "ui.dialog", {
 					// Focus re-triggering in jQuery 3.4/3.5 makes the original element
 					// have its focus event propagated last, breaking the re-targeting.
 					// Trigger focus in a delay in addition if needed to avoid the issue
-					// See https://github.com/jquery/jquery/issues/4382
+					// See github.com/jquery/jquery/issues/4382
 					if ( jqMinor === "3.4." || jqMinor === "3.5." ) {
 						instance._delay( instance._restoreTabbableFocus );
 					}
@@ -13145,20 +12812,12 @@ if ( $.uiBackCompat !== false ) {
 var widgetsDialog = $.ui.dialog;
 
 
-/*!
- * jQuery UI Droppable 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Droppable
 //>>group: Interactions
 //>>description: Enables drop targets for draggable elements.
-//>>docs: http://api.jqueryui.com/droppable/
-//>>demos: http://jqueryui.com/droppable/
+//>>docs: api.jqueryui.com/droppable/
+//>>demos: jqueryui.com/droppable/
 
 
 $.widget( "ui.droppable", {
@@ -13628,22 +13287,14 @@ if ( $.uiBackCompat !== false ) {
 var widgetsDroppable = $.ui.droppable;
 
 
-/*!
- * jQuery UI Progressbar 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Progressbar
 //>>group: Widgets
 /* eslint-disable max-len */
 //>>description: Displays a status indicator for loading state, standard percentage, and other progress indicators.
 /* eslint-enable max-len */
-//>>docs: http://api.jqueryui.com/progressbar/
-//>>demos: http://jqueryui.com/progressbar/
+//>>docs: api.jqueryui.com/progressbar/
+//>>demos: jqueryui.com/progressbar/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/progressbar.css
 //>>css.theme: ../../themes/base/theme.css
@@ -13791,20 +13442,12 @@ var widgetsProgressbar = $.widget( "ui.progressbar", {
 } );
 
 
-/*!
- * jQuery UI Selectable 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Selectable
 //>>group: Interactions
 //>>description: Allows groups of elements to be selected with the mouse.
-//>>docs: http://api.jqueryui.com/selectable/
-//>>demos: http://jqueryui.com/selectable/
+//>>docs: api.jqueryui.com/selectable/
+//>>demos: jqueryui.com/selectable/
 //>>css.structure: ../../themes/base/selectable.css
 
 
@@ -14089,22 +13732,14 @@ var widgetsSelectable = $.widget( "ui.selectable", $.ui.mouse, {
 } );
 
 
-/*!
- * jQuery UI Selectmenu 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Selectmenu
 //>>group: Widgets
 /* eslint-disable max-len */
 //>>description: Duplicates and extends the functionality of a native HTML select element, allowing it to be customizable in behavior and appearance far beyond the limitations of a native select.
 /* eslint-enable max-len */
-//>>docs: http://api.jqueryui.com/selectmenu/
-//>>demos: http://jqueryui.com/selectmenu/
+//>>docs: api.jqueryui.com/selectmenu/
+//>>demos: jqueryui.com/selectmenu/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/selectmenu.css, ../../themes/base/button.css
 //>>css.theme: ../../themes/base/theme.css
@@ -14758,20 +14393,11 @@ var widgetsSelectmenu = $.widget( "ui.selectmenu", [ $.ui.formResetMixin, {
 } ] );
 
 
-/*!
- * jQuery UI Slider 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
 //>>label: Slider
 //>>group: Widgets
 //>>description: Displays a flexible slider with ranges and accessibility via keyboard.
-//>>docs: http://api.jqueryui.com/slider/
-//>>demos: http://jqueryui.com/slider/
+//>>docs: api.jqueryui.com/slider/
+//>>demos: jqueryui.com/slider/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/slider.css
 //>>css.theme: ../../themes/base/theme.css
@@ -15493,20 +15119,12 @@ var widgetsSlider = $.widget( "ui.slider", $.ui.mouse, {
 } );
 
 
-/*!
- * jQuery UI Sortable 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Sortable
 //>>group: Interactions
 //>>description: Enables items in a list to be sorted using the mouse.
-//>>docs: http://api.jqueryui.com/sortable/
-//>>demos: http://jqueryui.com/sortable/
+//>>docs: api.jqueryui.com/sortable/
+//>>demos: jqueryui.com/sortable/
 //>>css.structure: ../../themes/base/sortable.css
 
 
@@ -17086,20 +16704,12 @@ var widgetsSortable = $.widget( "ui.sortable", $.ui.mouse, {
 } );
 
 
-/*!
- * jQuery UI Spinner 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Spinner
 //>>group: Widgets
 //>>description: Displays buttons to easily input numbers via the keyboard or mouse.
-//>>docs: http://api.jqueryui.com/spinner/
-//>>demos: http://jqueryui.com/spinner/
+//>>docs: api.jqueryui.com/spinner/
+//>>demos: jqueryui.com/spinner/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/spinner.css
 //>>css.theme: ../../themes/base/theme.css
@@ -17647,20 +17257,12 @@ if ( $.uiBackCompat !== false ) {
 var widgetsSpinner = $.ui.spinner;
 
 
-/*!
- * jQuery UI Tabs 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Tabs
 //>>group: Widgets
 //>>description: Transforms a set of container elements into a tab structure.
-//>>docs: http://api.jqueryui.com/tabs/
-//>>demos: http://jqueryui.com/tabs/
+//>>docs: api.jqueryui.com/tabs/
+//>>demos: jqueryui.com/tabs/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/tabs.css
 //>>css.theme: ../../themes/base/theme.css
@@ -18496,7 +18098,7 @@ $.widget( "ui.tabs", {
 				.done( function( response, status, jqXHR ) {
 
 					// support: jQuery <1.8
-					// http://bugs.jquery.com/ticket/11778
+					// bugs.jquery.com/ticket/11778
 					setTimeout( function() {
 						panel.html( response );
 						that._trigger( "load", event, eventData );
@@ -18507,7 +18109,7 @@ $.widget( "ui.tabs", {
 				.fail( function( jqXHR, status ) {
 
 					// support: jQuery <1.8
-					// http://bugs.jquery.com/ticket/11778
+					// bugs.jquery.com/ticket/11778
 					setTimeout( function() {
 						complete( jqXHR, status );
 					}, 1 );
@@ -18551,20 +18153,12 @@ if ( $.uiBackCompat !== false ) {
 var widgetsTabs = $.ui.tabs;
 
 
-/*!
- * jQuery UI Tooltip 1.13.2
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
 
 //>>label: Tooltip
 //>>group: Widgets
 //>>description: Shows additional information for any element on hover or focus.
-//>>docs: http://api.jqueryui.com/tooltip/
-//>>demos: http://jqueryui.com/tooltip/
+//>>docs: api.jqueryui.com/tooltip/
+//>>demos: jqueryui.com/tooltip/
 //>>css.structure: ../../themes/base/core.css
 //>>css.structure: ../../themes/base/tooltip.css
 //>>css.theme: ../../themes/base/theme.css

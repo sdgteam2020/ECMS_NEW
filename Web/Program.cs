@@ -79,7 +79,7 @@ builder.Services.AddCors(options =>
 
             // Always allow localhost in development
             if (builder.Environment.IsDevelopment() &&
-                origin.StartsWith("http://localhost"))
+                origin.StartsWith("localhost"))
             {
                 return true;
             }

@@ -1,11 +1,3 @@
-/*!
- * jQuery Validation Plugin v1.17.0
- *
- * https://jqueryvalidation.org/
- *
- * Copyright (c) 2017 Jörn Zaefferer
- * Released under the MIT license
- */
 (function( factory ) {
 	if ( typeof define === "function" && define.amd ) {
 		define( ["jquery"], factory );
@@ -18,7 +10,7 @@
 
 $.extend( $.fn, {
 
-	// https://jqueryvalidation.org/validate/
+	// jqueryvalidation.org/validate/
 	validate: function( options ) {
 
 		// If nothing is selected, return nothing; can't chain anyway
@@ -118,7 +110,7 @@ $.extend( $.fn, {
 		return validator;
 	},
 
-	// https://jqueryvalidation.org/valid/
+	// jqueryvalidation.org/valid/
 	valid: function() {
 		var valid, validator, errorList;
 
@@ -139,7 +131,7 @@ $.extend( $.fn, {
 		return valid;
 	},
 
-	// https://jqueryvalidation.org/rules/
+	// jqueryvalidation.org/rules/
 	rules: function( command, argument ) {
 		var element = this[ 0 ],
 			settings, staticRules, existingRules, data, param, filtered;
@@ -217,18 +209,18 @@ $.extend( $.fn, {
 // Custom selectors
 $.extend( $.expr.pseudos || $.expr[ ":" ], {		// '|| $.expr[ ":" ]' here enables backwards compatibility to jQuery 1.7. Can be removed when dropping jQ 1.7.x support
 
-	// https://jqueryvalidation.org/blank-selector/
+	// jqueryvalidation.org/blank-selector/
 	blank: function( a ) {
 		return !$.trim( "" + $( a ).val() );
 	},
 
-	// https://jqueryvalidation.org/filled-selector/
+	// jqueryvalidation.org/filled-selector/
 	filled: function( a ) {
 		var val = $( a ).val();
 		return val !== null && !!$.trim( "" + val );
 	},
 
-	// https://jqueryvalidation.org/unchecked-selector/
+	// jqueryvalidation.org/unchecked-selector/
 	unchecked: function( a ) {
 		return !$( a ).prop( "checked" );
 	}
@@ -241,7 +233,7 @@ $.validator = function( options, form ) {
 	this.init();
 };
 
-// https://jqueryvalidation.org/jQuery.validator.format/
+// jqueryvalidation.org/jQuery.validator.format/
 $.validator.format = function( source, params ) {
 	if ( arguments.length === 1 ) {
 		return function() {
@@ -354,7 +346,7 @@ $.extend( $.validator, {
 		}
 	},
 
-	// https://jqueryvalidation.org/jQuery.validator.setDefaults/
+	// jqueryvalidation.org/jQuery.validator.setDefaults/
 	setDefaults: function( settings ) {
 		$.extend( $.validator.defaults, settings );
 	},
@@ -440,7 +432,7 @@ $.extend( $.validator, {
 			}
 		},
 
-		// https://jqueryvalidation.org/Validator.form/
+		// jqueryvalidation.org/Validator.form/
 		form: function() {
 			this.checkForm();
 			$.extend( this.submitted, this.errorMap );
@@ -460,7 +452,7 @@ $.extend( $.validator, {
 			return this.valid();
 		},
 
-		// https://jqueryvalidation.org/Validator.element/
+		// jqueryvalidation.org/Validator.element/
 		element: function( element ) {
 			var cleanElement = this.clean( element ),
 				checkElement = this.validationTargetFor( cleanElement ),
@@ -511,7 +503,7 @@ $.extend( $.validator, {
 			return result;
 		},
 
-		// https://jqueryvalidation.org/Validator.showErrors/
+		// jqueryvalidation.org/Validator.showErrors/
 		showErrors: function( errors ) {
 			if ( errors ) {
 				var validator = this;
@@ -537,7 +529,7 @@ $.extend( $.validator, {
 			}
 		},
 
-		// https://jqueryvalidation.org/Validator.resetForm/
+		// jqueryvalidation.org/Validator.resetForm/
 		resetForm: function() {
 			if ( $.fn.resetForm ) {
 				$( this.currentForm ).resetForm();
@@ -1025,7 +1017,7 @@ $.extend( $.validator, {
 				.filter( selector );
 		},
 
-		// See https://api.jquery.com/category/selectors/, for CSS
+		// See api.jquery.com/category/selectors/, for CSS
 		// meta-characters that should be escaped in order to be used with JQuery
 		// as a literal part of a name/id or any selector.
 		escapeCssMeta: function( string ) {
@@ -1343,7 +1335,7 @@ $.extend( $.validator, {
 		return data;
 	},
 
-	// https://jqueryvalidation.org/jQuery.validator.addMethod/
+	// jqueryvalidation.org/jQuery.validator.addMethod/
 	addMethod: function( name, method, message ) {
 		$.validator.methods[ name ] = method;
 		$.validator.messages[ name ] = message !== undefined ? message : $.validator.messages[ name ];
@@ -1352,10 +1344,10 @@ $.extend( $.validator, {
 		}
 	},
 
-	// https://jqueryvalidation.org/jQuery.validator.methods/
+	// jqueryvalidation.org/jQuery.validator.methods/
 	methods: {
 
-		// https://jqueryvalidation.org/required-method/
+		// jqueryvalidation.org/required-method/
 		required: function( value, element, param ) {
 
 			// Check if dependency is met
@@ -1374,80 +1366,80 @@ $.extend( $.validator, {
 			return value.length > 0;
 		},
 
-		// https://jqueryvalidation.org/email-method/
+		// jqueryvalidation.org/email-method/
 		email: function( value, element ) {
 
-			// From https://html.spec.whatwg.org/multipage/forms.html#valid-e-mail-address
+			// From html.spec.whatwg.org/multipage/forms.html#valid-e-mail-address
 			// Retrieved 2014-01-14
 			// If you have a problem with this implementation, report a bug against the above spec
 			// Or use custom methods to implement your own email validation
 			return this.optional( element ) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test( value );
 		},
 
-		// https://jqueryvalidation.org/url-method/
+		// jqueryvalidation.org/url-method/
 		url: function( value, element ) {
 
 			// Copyright (c) 2010-2013 Diego Perini, MIT licensed
-			// https://gist.github.com/dperini/729294
-			// see also https://mathiasbynens.be/demo/url-regex
+			// gist.github.com/dperini/729294
+			// see also mathiasbynens.be/demo/url-regex
 			// modified to allow protocol-relative URLs
 			return this.optional( element ) || /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i.test( value );
 		},
 
-		// https://jqueryvalidation.org/date-method/
+		// jqueryvalidation.org/date-method/
 		date: function( value, element ) {
 			return this.optional( element ) || !/Invalid|NaN/.test( new Date( value ).toString() );
 		},
 
-		// https://jqueryvalidation.org/dateISO-method/
+		// jqueryvalidation.org/dateISO-method/
 		dateISO: function( value, element ) {
 			return this.optional( element ) || /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/.test( value );
 		},
 
-		// https://jqueryvalidation.org/number-method/
+		// jqueryvalidation.org/number-method/
 		number: function( value, element ) {
 			return this.optional( element ) || /^(?:-?\d+|-?\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test( value );
 		},
 
-		// https://jqueryvalidation.org/digits-method/
+		// jqueryvalidation.org/digits-method/
 		digits: function( value, element ) {
 			return this.optional( element ) || /^\d+$/.test( value );
 		},
 
-		// https://jqueryvalidation.org/minlength-method/
+		// jqueryvalidation.org/minlength-method/
 		minlength: function( value, element, param ) {
 			var length = $.isArray( value ) ? value.length : this.getLength( value, element );
 			return this.optional( element ) || length >= param;
 		},
 
-		// https://jqueryvalidation.org/maxlength-method/
+		// jqueryvalidation.org/maxlength-method/
 		maxlength: function( value, element, param ) {
 			var length = $.isArray( value ) ? value.length : this.getLength( value, element );
 			return this.optional( element ) || length <= param;
 		},
 
-		// https://jqueryvalidation.org/rangelength-method/
+		// jqueryvalidation.org/rangelength-method/
 		rangelength: function( value, element, param ) {
 			var length = $.isArray( value ) ? value.length : this.getLength( value, element );
 			return this.optional( element ) || ( length >= param[ 0 ] && length <= param[ 1 ] );
 		},
 
-		// https://jqueryvalidation.org/min-method/
+		// jqueryvalidation.org/min-method/
 		min: function( value, element, param ) {
 			return this.optional( element ) || value >= param;
 		},
 
-		// https://jqueryvalidation.org/max-method/
+		// jqueryvalidation.org/max-method/
 		max: function( value, element, param ) {
 			return this.optional( element ) || value <= param;
 		},
 
-		// https://jqueryvalidation.org/range-method/
+		// jqueryvalidation.org/range-method/
 		range: function( value, element, param ) {
 			return this.optional( element ) || ( value >= param[ 0 ] && value <= param[ 1 ] );
 		},
 
-		// https://jqueryvalidation.org/step-method/
+		// jqueryvalidation.org/step-method/
 		step: function( value, element, param ) {
 			var type = $( element ).attr( "type" ),
 				errorMessage = "Step attribute on input type " + type + " is not supported.",
@@ -1485,7 +1477,7 @@ $.extend( $.validator, {
 			return this.optional( element ) || valid;
 		},
 
-		// https://jqueryvalidation.org/equalTo-method/
+		// jqueryvalidation.org/equalTo-method/
 		equalTo: function( value, element, param ) {
 
 			// Bind to the blur event of the target in order to revalidate whenever the target field is updated
@@ -1498,7 +1490,7 @@ $.extend( $.validator, {
 			return value === target.val();
 		},
 
-		// https://jqueryvalidation.org/remote-method/
+		// jqueryvalidation.org/remote-method/
 		remote: function( value, element, param, method ) {
 			if ( this.optional( element ) ) {
 				return "dependency-mismatch";

@@ -2379,7 +2379,7 @@ namespace Web.Controllers
             using (var client = new HttpClient())
             {
                 // API base address (local test URL used here, can be swapped with production URL)
-                client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/GetData/");
+                client.BaseAddress = new Uri("localhost:7002/api/Fetch/GetData/");
 
                 // Perform GET request by appending ICNumber to the base URL
                 using (HttpResponseMessage response = await client.GetAsync(ICNumber))
@@ -2415,7 +2415,7 @@ namespace Web.Controllers
             using (var client = new HttpClient())
             {
                 // API base address (currently set to localhost; can be changed to production URL)
-                client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/Get/");
+                client.BaseAddress = new Uri("localhost:7002/api/Fetch/Get/");
 
                 // Perform GET request by appending ICNumber to the base URL
                 using (HttpResponseMessage response = await client.GetAsync(ICNumber))

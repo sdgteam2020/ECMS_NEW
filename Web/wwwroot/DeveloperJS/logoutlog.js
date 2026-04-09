@@ -13,7 +13,7 @@ var queryString = Object.keys(dataToSend).map(function (key) {
 
 // Make an AJAX request with the data in the URL
 $.ajax({
-    url: 'https://iam2.army.mil/IAM/singleAppConfirmLoginResponse.htm?' + queryString,
+    url: 'iam2.army.mil/IAM/singleAppConfirmLoginResponse.htm?' + queryString,
     type: 'GET',
     dataType: 'html',
     success: function (response) {

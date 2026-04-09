@@ -317,7 +317,7 @@ function rateResponse(type) {
     chatBox.appendChild(msg);
     scrollToBottom(chatBox);
 
-    fetch("http://127.0.0.1:8000/api/asdcfeedback/", {
+    fetch("127.0.0.1:8000/api/asdcfeedback/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ feedback: type, query: lastUserQuery, collection_name: "chatbot_paw" })
@@ -345,7 +345,7 @@ async function sendQuery(optionalQuery = null, silent = false) {
 
     const t0 = performance.now();
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/asdcask/", {
+        const res = await fetch("127.0.0.1:8000/api/asdcask/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: userQuery, collection_name: "chatbot_paw" })

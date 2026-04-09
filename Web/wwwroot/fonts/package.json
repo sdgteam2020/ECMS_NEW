@@ -19,39 +19,39 @@
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/@fortawesome/fontawesome-free/-/fontawesome-free-5.10.2.tgz",
+  "_resolved": "registry.npmjs.org/@fortawesome/fontawesome-free/-/fontawesome-free-5.10.2.tgz",
   "_shasum": "27e02da1e34b50c9869179d364fb46627b521130",
   "_spec": "@fortawesome/fontawesome-free@5.10.2",
   "_where": "/Users/DANGER_DAVID/Sites/startbootstrap-themes/startbootstrap-sb-admin-2",
   "author": {
     "name": "Dave Gandy",
     "email": "dave@fontawesome.com",
-    "url": "http://twitter.com/davegandy"
+    "url": "twitter.com/davegandy"
   },
   "bugs": {
-    "url": "http://github.com/FortAwesome/Font-Awesome/issues"
+    "url": "github.com/FortAwesome/Font-Awesome/issues"
   },
   "bundleDependencies": false,
   "contributors": [
     {
       "name": "Brian Talbot",
-      "url": "http://twitter.com/talbs"
+      "url": "twitter.com/talbs"
     },
     {
       "name": "Travis Chase",
-      "url": "http://twitter.com/supercodepoet"
+      "url": "twitter.com/supercodepoet"
     },
     {
       "name": "Rob Madole",
-      "url": "http://twitter.com/robmadole"
+      "url": "twitter.com/robmadole"
     },
     {
       "name": "Geremia Taglialatela",
-      "url": "http://twitter.com/gtagliala"
+      "url": "twitter.com/gtagliala"
     },
     {
       "name": "Mike Wilkerson",
-      "url": "http://twitter.com/mw77"
+      "url": "twitter.com/mw77"
     }
   ],
   "dependencies": {},
@@ -60,7 +60,7 @@
   "engines": {
     "node": ">=6"
   },
-  "homepage": "https://fontawesome.com",
+  "homepage": "fontawesome.com",
   "keywords": [
     "font",
     "awesome",
@@ -74,7 +74,7 @@
   "name": "@fortawesome/fontawesome-free",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FortAwesome/Font-Awesome.git"
+    "url": "git+github.com/FortAwesome/Font-Awesome.git"
   },
   "style": "css/fontawesome.css",
   "version": "5.10.2"
