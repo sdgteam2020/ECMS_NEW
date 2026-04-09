@@ -2379,7 +2379,6 @@ namespace Web.Controllers
             using (var client = new HttpClient())
             {
                 // API base address (local test URL used here, can be swapped with production URL)
-                // client.BaseAddress = new Uri("https://api.postalpincode.in/");
                 client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/GetData/");
 
                 // Perform GET request by appending ICNumber to the base URL
@@ -2416,7 +2415,6 @@ namespace Web.Controllers
             using (var client = new HttpClient())
             {
                 // API base address (currently set to localhost; can be changed to production URL)
-                // client.BaseAddress = new Uri("https://api.postalpincode.in/");
                 client.BaseAddress = new Uri("https://localhost:7002/api/Fetch/Get/");
 
                 // Perform GET request by appending ICNumber to the base URL

@@ -215,7 +215,7 @@ else
 {
     app.UseExceptionHandler("/Error");
     app.UseStatusCodePagesWithReExecute("/Error/{0}");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 app.Use(async (ctx, next) =>
@@ -251,7 +251,7 @@ app.Use(async (ctx, next) =>
         "style-src 'self'; " + // allow Bootstrap inline styles
         "img-src 'self' data:; " +
         "font-src 'self' data:; " +
-        "connect-src 'self' https://dgisapp.army.mil:55102; " +
+        "connect-src 'self' dgisapp.army.mil:55102; " +
         "frame-ancestors 'self'; " +
         "base-uri 'self'; " +
         "form-action 'self';";

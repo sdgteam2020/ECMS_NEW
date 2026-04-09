@@ -731,7 +731,7 @@ namespace Web.Controllers
         /// </returns>
         /// <remarks>
         /// - Checks whether IAM login is enabled by reading settings from the <see cref="IAMSetting"/> with the appropriate environment byte value.
-        /// - If IAM login is enabled, redirects the user to the IAM login page (https://iam2.army.mil/IAM/User).
+        /// - If IAM login is enabled, redirects the user to the IAM login page (iam2.army.mil/IAM/User).
         /// - If IAM login is disabled, it clears any session data related to the IM and sets a footer value in the view.
         /// </remarks>
         [HttpGet]

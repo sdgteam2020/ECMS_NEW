@@ -1,7 +1,7 @@
 /*!
  * jQuery Validation Plugin v1.20.0
  *
- * https://jqueryvalidation.org/
+ * jqueryvalidation.org/
  *
  * Copyright (c) 2023 Jörn Zaefferer
  * Released under the MIT license
@@ -60,7 +60,7 @@ $.validator.addMethod( "abaRoutingNumber", function( value ) {
 	}
 
 	// Calc the checksum
-	// https://en.wikipedia.org/wiki/ABA_routing_transit_number
+	// en.wikipedia.org/wiki/ABA_routing_transit_number
 	for ( var i = 0; i < length; i += 3 ) {
 		checksum +=	parseInt( tokens[ i ], 10 )     * 3 +
 					parseInt( tokens[ i + 1 ], 10 ) * 7 +
@@ -91,7 +91,7 @@ $.validator.addMethod( "accept", function( value, element, param ) {
 	if ( $( element ).attr( "type" ) === "file" ) {
 
 		// Escape string to be used in the regex
-		// see: https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+		// see: stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
 		// Escape also "/*" as "/.*" as a wildcard
 		typeParam = typeParam
 				.replace( /[\-\[\]\/\{\}\(\)\+\?\.\\\^\$\|]/g, "\\$&" )
@@ -479,8 +479,8 @@ $.validator.addMethod( "cpfBR", function( value, element ) {
 
 }, "Please specify a valid CPF number." );
 
-// https://jqueryvalidation.org/creditcard-method/
-// based on https://en.wikipedia.org/wiki/Luhn_algorithm
+// jqueryvalidation.org/creditcard-method/
+// based on en.wikipedia.org/wiki/Luhn_algorithm
 $.validator.addMethod( "creditcard", function( value, element ) {
 	if ( this.optional( element ) ) {
 		return "dependency-mismatch";
@@ -499,7 +499,7 @@ $.validator.addMethod( "creditcard", function( value, element ) {
 	value = value.replace( /\D/g, "" );
 
 	// Basing min and max length on
-	// https://dev.ean.com/general-info/valid-card-types/
+	// dev.ean.com/general-info/valid-card-types/
 	if ( value.length < 13 || value.length > 19 ) {
 		return false;
 	}
