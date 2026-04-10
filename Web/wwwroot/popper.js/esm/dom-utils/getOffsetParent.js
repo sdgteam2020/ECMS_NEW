@@ -7,7 +7,7 @@ import getParentNode from "./getParentNode.js";
 import getUAString from "../utils/userAgent.js";
 
 function getTrueOffsetParent(element) {
-  if (!isHTMLElement(element) || // https://github.com/popperjs/popper-core/issues/837
+  if (!isHTMLElement(element) || // github.com/popperjs/popper-core/issues/837
   getComputedStyle(element).position === 'fixed') {
     return null;
   }
@@ -39,7 +39,7 @@ function getContainingBlock(element) {
   while (isHTMLElement(currentNode) && ['html', 'body'].indexOf(getNodeName(currentNode)) < 0) {
     var css = getComputedStyle(currentNode); // This is non-exhaustive but covers the most common CSS properties that
     // create a containing block.
-    // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
+    // developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
 
     if (css.transform !== 'none' || css.perspective !== 'none' || css.contain === 'paint' || ['transform', 'perspective'].indexOf(css.willChange) !== -1 || isFirefox && css.willChange === 'filter' || isFirefox && css.filter && css.filter !== 'none') {
       return currentNode;

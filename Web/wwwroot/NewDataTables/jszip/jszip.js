@@ -1,13 +1,13 @@
 /*!
 
 JSZip v3.10.1 - A JavaScript class for generating and reading zip files
-<http://stuartk.com/jszip>
+<stuartk.com/jszip>
 
 (c) 2009-2016 Stuart Knightley <stuart [at] stuartk.com>
-Dual licenced under the MIT license or GPLv3. See https://raw.github.com/Stuk/jszip/main/LICENSE.markdown.
+Dual licenced under the MIT license or GPLv3. See raw.github.com/Stuk/jszip/main/LICENSE.markdown.
 
 JSZip uses the library pako released under the MIT license :
-https://github.com/nodeca/pako/blob/main/LICENSE
+github.com/nodeca/pako/blob/main/LICENSE
 */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.JSZip = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -217,7 +217,7 @@ var utils = require("./utils");
 
 /**
  * The following functions come from pako, from pako/lib/zlib/crc32.js
- * released under the MIT license, see pako https://github.com/nodeca/pako/
+ * released under the MIT license, see pako github.com/nodeca/pako/
  */
 
 // Use ordinary array, since untyped makes no boost here
@@ -440,7 +440,7 @@ var decToHex = function(dec, bytes) {
  * @param {Boolean} isDir true if the entry is a directory, false otherwise.
  * @return {Number} a 32 bit integer.
  *
- * adapted from http://unix.stackexchange.com/questions/14705/the-zip-formats-external-file-attribute :
+ * adapted from unix.stackexchange.com/questions/14705/the-zip-formats-external-file-attribute :
  *
  * TTTTsstrwxrwxrwx0000000000ADVSHR
  * ^^^^____________________________ file type, see zipinfo.c (UNX_*)
@@ -551,9 +551,9 @@ var generateZipParts = function(streamInfo, streamedContent, streamingEnded, off
     }
 
     // date
-    // @see http://www.delorie.com/djgpp/doc/rbinter/it/52/13.html
-    // @see http://www.delorie.com/djgpp/doc/rbinter/it/65/16.html
-    // @see http://www.delorie.com/djgpp/doc/rbinter/it/66/16.html
+    // @see ###delorie.com/djgpp/doc/rbinter/it/52/13.html
+    // @see ###delorie.com/djgpp/doc/rbinter/it/65/16.html
+    // @see ###delorie.com/djgpp/doc/rbinter/it/66/16.html
 
     dosTime = date.getUTCHours();
     dosTime = dosTime << 6;
@@ -1242,7 +1242,7 @@ utils.inherits(NodejsStreamOutputAdapter, Readable);
 
 /**
 * A nodejs stream using a worker as source.
-* @see the SourceWrapper in http://nodejs.org/api/stream.html
+* @see the SourceWrapper in nodejs.org/api/stream.html
 * @constructor
 * @param {StreamHelper} helper the helper wrapping the worker
 * @param {Object} options the nodejs stream options
@@ -2768,7 +2768,7 @@ var GenericWorker = require("./stream/GenericWorker");
 
 /**
  * The following functions come from pako, from pako/lib/utils/strings
- * released under the MIT license, see pako https://github.com/nodeca/pako/
+ * released under the MIT license, see pako github.com/nodeca/pako/
  */
 
 // Table with utf8 lengths (calculated by first byte of sequence)
@@ -3203,12 +3203,12 @@ function arrayLikeToString(array) {
     // Performances notes :
     // --------------------
     // String.fromCharCode.apply(null, array) is the fastest, see
-    // see http://jsperf.com/converting-a-uint8array-to-a-string/2
+    // see jsperf.com/converting-a-uint8array-to-a-string/2
     // but the stack is limited (and we can get huge arrays !).
     //
     // result += String.fromCharCode(array[i]); generate too many strings !
     //
-    // This code is inspired by http://jsperf.com/arraybuffer-to-string-apply-performance/2
+    // This code is inspired by jsperf.com/arraybuffer-to-string-apply-performance/2
     // TODO : we now have workers that split the work. Do we still need that ?
     var chunk = 65536,
         type = exports.getTypeOf(array),
@@ -3706,7 +3706,7 @@ ZipEntries.prototype = {
 
             if (isGarbage) {
                 throw new Error("Can't find end of central directory : is this a zip file ? " +
-                                "If it is, see https://stuk.github.io/jszip/documentation/howto/read_zip.html");
+                                "If it is, see stuk.github.io/jszip/documentation/howto/read_zip.html");
             } else {
                 throw new Error("Corrupted zip: can't find end of central directory");
             }
@@ -3736,8 +3736,8 @@ ZipEntries.prototype = {
             the zip file can fit into a 32bits integer. This cannot be solved : JavaScript represents
             all numbers as 64-bit double precision IEEE 754 floating point numbers.
             So, we have 53bits for integers and bitwise operations treat everything as 32bits.
-            see https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Operators/Bitwise_Operators
-            and http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf section 8.5
+            see developer.mozilla.org/en-US/docs/JavaScript/Reference/Operators/Bitwise_Operators
+            and ###ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf section 8.5
             */
 
             // should look for a zip64 EOCD locator
@@ -3874,7 +3874,7 @@ ZipEntry.prototype = {
         reader.skip(22);
         // in some zip created on windows, the filename stored in the central dir contains \ instead of /.
         // Strangely, the filename here is OK.
-        // I would love to treat these zip files as corrupted (see http://www.info-zip.org/FAQ.html#backslashes
+        // I would love to treat these zip files as corrupted (see ###info-zip.org/FAQ.html#backslashes
         // or APPNOTE#4.4.17.1, "All slashes MUST be forward slashes '/'") but there are a lot of bad zip generators...
         // Search "unzip mismatching "local" filename continuing with "central" filename version" on
         // the internet.
@@ -3882,7 +3882,7 @@ ZipEntry.prototype = {
         // I think I see the logic here : the central directory is used to display
         // content and the local directory is used to extract the files. Mixing / and \
         // may be used to display \ to windows users and use / when extracting the files.
-        // Unfortunately, this lead also to some issues : http://seclists.org/fulldisclosure/2009/Sep/394
+        // Unfortunately, this lead also to some issues : seclists.org/fulldisclosure/2009/Sep/394
         this.fileNameLength = reader.readInt(2);
         localExtraFieldsLength = reader.readInt(2); // can't be sure this will be the same as the central dir
         // the fileName is stored as binary data, the handleUTF8 method will take care of the encoding.
@@ -4679,7 +4679,7 @@ var Z_DEFLATED  = 8;
  * - `strategy`
  * - `dictionary`
  *
- * [http://zlib.net/manual.html#Advanced](http://zlib.net/manual.html#Advanced)
+ * [zlib.net/manual.html#Advanced](zlib.net/manual.html#Advanced)
  * for more information on these.
  *
  * Additional options, for internal needs:
@@ -4931,7 +4931,7 @@ Deflate.prototype.onEnd = function (status) {
  * - strategy
  * - dictionary
  *
- * [http://zlib.net/manual.html#Advanced](http://zlib.net/manual.html#Advanced)
+ * [zlib.net/manual.html#Advanced](zlib.net/manual.html#Advanced)
  * for more information on these.
  *
  * Sugar (options):
@@ -5059,7 +5059,7 @@ var toString = Object.prototype.toString;
  * - `windowBits`
  * - `dictionary`
  *
- * [http://zlib.net/manual.html#Advanced](http://zlib.net/manual.html#Advanced)
+ * [zlib.net/manual.html#Advanced](zlib.net/manual.html#Advanced)
  * for more information on these.
  *
  * Additional options, for internal needs:
@@ -5349,7 +5349,7 @@ Inflate.prototype.onEnd = function (status) {
  *
  * - windowBits
  *
- * [http://zlib.net/manual.html#Advanced](http://zlib.net/manual.html#Advanced)
+ * [zlib.net/manual.html#Advanced](zlib.net/manual.html#Advanced)
  * for more information.
  *
  * Sugar (options):
@@ -11485,8 +11485,8 @@ module.exports = ZStream;
 
     function installPostMessageImplementation() {
         // Installs an event handler on `global` for the `message` event: see
-        // * https://developer.mozilla.org/en/DOM/window.postMessage
-        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+        // * developer.mozilla.org/en/DOM/window.postMessage
+        // * ###whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
 
         var messagePrefix = "setImmediate$" + Math.random() + "$";
         var onGlobalMessage = function(event) {

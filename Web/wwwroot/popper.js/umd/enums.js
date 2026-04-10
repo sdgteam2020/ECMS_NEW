@@ -1,6 +1,3 @@
-/**
- * @popperjs/core v2.11.8 - MIT License
- */
 
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :

@@ -115,7 +115,7 @@ $(function () {
                                 text: errormsg
                             });
                         } else {
-                            var url = "https://" + window.location.host + '/WriteReadData/CSVFile/' + response + ".csv";
+                            var url = "" + window.location.host + '/WriteReadData/CSVFile/' + response + ".csv";
                             window.location.href = url;
                         }
                     }
@@ -1155,7 +1155,7 @@ function DownloadXml(RequestId) {
                     });
                 } else {
 
-                    var url = "https://" + window.location.host + '/DigitallysignatureXml/' + response;
+                    var url = "" + window.location.host + '/DigitallysignatureXml/' + response;
                     window.open(url, '_blank');
                 }
             }
@@ -1258,7 +1258,7 @@ function digitalpdfsignatureSave(RequestId, base64) {
 
                     //  window.open('/DigitallysignaturePdf/' + response, '_blank');
                     //  if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {
-                    var url = "https://" + window.location.host + '/DigitallysignaturePdf/' + response;
+                    var url = "" + window.location.host + '/DigitallysignaturePdf/' + response;
                     window.open(url, '_blank');
 
                 }

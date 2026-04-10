@@ -1,9 +1,4 @@
-﻿/*!
- * Bootstrap v3.4.1 (https://getbootstrap.com/)
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under the MIT license
- */
-
+﻿
 if (typeof jQuery === 'undefined') {
   throw new Error('Bootstrap\'s JavaScript requires jQuery')
 }
@@ -16,19 +11,11 @@ if (typeof jQuery === 'undefined') {
   }
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: transition.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#transitions
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
-
 
 +function ($) {
   'use strict';
 
-  // CSS TRANSITION SUPPORT (Shoutout: https://modernizr.com/)
+  // CSS TRANSITION SUPPORT (Shoutout: modernizr.com/)
   // ============================================================
 
   function transitionEnd() {
@@ -50,7 +37,7 @@ if (typeof jQuery === 'undefined') {
     return false // explicit for ie8 (  ._.)
   }
 
-  // https://blog.alexmaccaw.com/css-transitions
+  // blog.alexmaccaw.com/css-transitions
   $.fn.emulateTransitionEnd = function (duration) {
     var called = false
     var $el = this
@@ -76,13 +63,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: alert.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#alerts
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
 
 
 +function ($) {
@@ -172,13 +152,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: button.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#buttons
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
 
 
 +function ($) {
@@ -298,13 +271,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: carousel.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#carousel
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
 
 
 +function ($) {
@@ -545,13 +511,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: collapse.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#collapse
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
 
 /* jshint latedef: false */
 
@@ -758,14 +717,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: dropdown.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#dropdowns
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
-
 
 +function ($) {
   'use strict';
@@ -924,13 +875,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: modal.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#modals
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
 
 
 +function ($) {
@@ -1283,14 +1227,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: tooltip.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#tooltip
- * Inspired by the original jQuery.tipsy by Jason Frame
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
 
 +function ($) {
   'use strict';
@@ -1347,14 +1283,14 @@ if (typeof jQuery === 'undefined') {
   /**
    * A pattern that recognizes a commonly useful subset of URLs that are safe.
    *
-   * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
+   * Shoutout to Angular 7 github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
    */
   var SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|$))/gi
 
   /**
    * A pattern that matches safe data URLs. Only matches image, video and audio types.
    *
-   * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
+   * Shoutout to Angular 7 github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
    */
   var DATA_URL_PATTERN = /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[a-z0-9+/]+=*$/i
 
@@ -1800,12 +1736,12 @@ if (typeof jQuery === 'undefined') {
 
     var elRect    = el.getBoundingClientRect()
     if (elRect.width == null) {
-      // width and height are missing in IE8, so compute them manually; see https://github.com/twbs/bootstrap/issues/14093
+      // width and height are missing in IE8, so compute them manually; see github.com/twbs/bootstrap/issues/14093
       elRect = $.extend({}, elRect, { width: elRect.right - elRect.left, height: elRect.bottom - elRect.top })
     }
     var isSvg = window.SVGElement && el instanceof window.SVGElement
     // Avoid using $.offset() on SVGs since it gives incorrect results in jQuery 3.
-    // See https://github.com/twbs/bootstrap/issues/20280
+    // See github.com/twbs/bootstrap/issues/20280
     var elOffset  = isBody ? { top: 0, left: 0 } : (isSvg ? null : $element.offset())
     var scroll    = { scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop() }
     var outerDims = isBody ? { width: $(window).width(), height: $(window).height() } : null
@@ -1961,14 +1897,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: popover.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#popovers
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
-
 
 +function ($) {
   'use strict';
@@ -2084,14 +2012,6 @@ if (typeof jQuery === 'undefined') {
   }
 
 }(jQuery);
-
-/* ========================================================================
- * Bootstrap: scrollspy.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#scrollspy
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
 
 
 +function ($) {
@@ -2258,13 +2178,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: tab.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#tabs
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
 
 
 +function ($) {
@@ -2414,13 +2327,6 @@ if (typeof jQuery === 'undefined') {
 
 }(jQuery);
 
-/* ========================================================================
- * Bootstrap: affix.js v3.4.1
- * https://getbootstrap.com/docs/3.4/javascript/#affix
- * ========================================================================
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
 
 
 +function ($) {

@@ -20,7 +20,7 @@ function toSvg(name, attrs = {}) {
     throw new Error(
       `No icon matching '${
         name
-      }'. See the complete list of icons at https://feathericons.com`,
+      }'. See the complete list of icons at feathericons.com`,
     );
   }
 

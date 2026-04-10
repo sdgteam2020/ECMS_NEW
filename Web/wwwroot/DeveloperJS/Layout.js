@@ -30,7 +30,7 @@ $(function () {
     //    headers: myHeadersIncrement
     //};
 
-    //fetch("https://hitcounter.army.mil/api/ApplicationHit/IncrementHits", requestIncrement)
+    //fetch("hitcounter.army.mil/api/ApplicationHit/IncrementHits", requestIncrement)
     //    .then((response) => response.text())
     //    .then((result) => console.log(result))
     //    .catch((error) => console.error(error));
@@ -43,7 +43,7 @@ $(function () {
     //    headers: myHeadersIncrementStart
     //};
 
-    //fetch("https://hitcounter.army.mil/api/Application/ApplicationSessionStart", requestStart)
+    //fetch("hitcounter.army.mil/api/Application/ApplicationSessionStart", requestStart)
     //    .then((response) => response.text())
     //    .then((result) => console.log(result))
     //    .catch((error) => console.error(error));

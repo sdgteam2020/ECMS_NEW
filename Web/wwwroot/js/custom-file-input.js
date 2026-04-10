@@ -1,5 +1,5 @@
 /*
-	By Osvaldas Valutis, www.osvaldas.info
+	By Osvaldas Valutis, ###osvaldas.info
 	Available for use under the MIT License
 */
 

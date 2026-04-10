@@ -1,7 +1,3 @@
-/*!
-* sweetalert2 v11.7.12
-* Released under the MIT License.
-*/
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -47,8 +43,8 @@
    * This module contains `WeakMap`s for each effectively-"private  property" that a `Swal` has.
    * For example, to set the private property "foo" of `this` to "bar", you can `privateProps.foo.set(this, 'bar')`
    * This is the approach that Babel will probably take to implement private methods/fields
-   *   https://github.com/tc39/proposal-private-methods
-   *   https://github.com/babel/babel/pull/7555
+   *   github.com/tc39/proposal-private-methods
+   *   github.com/babel/babel/pull/7555
    * Once we have the changes from that PR in Babel, and our core class fits reasonable in *one module*
    *   then we can use that language feature.
    */
@@ -349,7 +345,7 @@
    */
   const getCloseButton = () => elementByClass(swalClasses.close);
 
-  // https://github.com/jkup/focusable/blob/master/index.js
+  // github.com/jkup/focusable/blob/master/index.js
   const focusable = `
   a[href],
   area[href],
@@ -414,7 +410,7 @@
 
   /**
    * Securely set innerHTML of an element
-   * https://github.com/sweetalert2/sweetalert2/issues/1926
+   * github.com/sweetalert2/sweetalert2/issues/1926
    *
    * @param {HTMLElement} elem
    * @param {string} html
@@ -429,7 +425,7 @@
       });
       Array.from(parsed.querySelector('body').childNodes).forEach(child => {
         if (child instanceof HTMLVideoElement || child instanceof HTMLAudioElement) {
-          elem.appendChild(child.cloneNode(true)); // https://github.com/sweetalert2/sweetalert2/issues/2507
+          elem.appendChild(child.cloneNode(true)); // github.com/sweetalert2/sweetalert2/issues/2507
         } else {
           elem.appendChild(child);
         }
@@ -516,7 +512,7 @@
 
     // place cursor at end of text in text input
     if (input.type !== 'file') {
-      // http://stackoverflow.com/a/2345915
+      // stackoverflow.com/a/2345915
       const val = input.value;
       input.value = '';
       input.value = val;
@@ -655,7 +651,7 @@
   const isScrollable = elem => !!(elem.scrollHeight > elem.clientHeight);
 
   /**
-   * borrowed from https://stackoverflow.com/a/46352119
+   * borrowed from stackoverflow.com/a/46352119
    *
    * @param {HTMLElement} elem
    * @returns {boolean}
@@ -1321,9 +1317,9 @@
      */
     const getMargin = el => parseInt(window.getComputedStyle(el).marginLeft) + parseInt(window.getComputedStyle(el).marginRight);
 
-    // https://github.com/sweetalert2/sweetalert2/issues/2291
+    // github.com/sweetalert2/sweetalert2/issues/2291
     setTimeout(() => {
-      // https://github.com/sweetalert2/sweetalert2/issues/1699
+      // github.com/sweetalert2/sweetalert2/issues/1699
       if ('MutationObserver' in window) {
         const initialPopupWidth = parseInt(window.getComputedStyle(getPopup()).width);
         const textareaResizeHandler = () => {
@@ -1559,7 +1555,7 @@
     }
 
     // Width
-    // https://github.com/sweetalert2/sweetalert2/issues/2170
+    // github.com/sweetalert2/sweetalert2/issues/2170
     if (params.toast) {
       applyNumericalStyle(container, 'width', params.width);
       popup.style.width = '100%';
@@ -1818,9 +1814,9 @@
     }
 
     // Ignore keydown during IME composition
-    // https://developer.mozilla.org/en-US/docs/Web/API/Document/keydown_event#ignoring_keydown_during_ime_composition
-    // https://github.com/sweetalert2/sweetalert2/issues/720
-    // https://github.com/sweetalert2/sweetalert2/issues/2406
+    // developer.mozilla.org/en-US/docs/Web/API/Document/keydown_event#ignoring_keydown_during_ime_composition
+    // github.com/sweetalert2/sweetalert2/issues/720
+    // github.com/sweetalert2/sweetalert2/issues/2406
     if (event.isComposing || event.keyCode === 229) {
       return;
     }
@@ -1855,7 +1851,7 @@
    * @param {SweetAlertOptions} innerParams
    */
   const handleEnter = (instance, event, innerParams) => {
-    // https://github.com/sweetalert2/sweetalert2/issues/2386
+    // github.com/sweetalert2/sweetalert2/issues/2386
     if (!callIfFunction(innerParams.allowEnterKey)) {
       return;
     }
@@ -1940,8 +1936,8 @@
    * This module contains `WeakMap`s for each effectively-"private  property" that a `Swal` has.
    * For example, to set the private property "foo" of `this` to "bar", you can `privateProps.foo.set(this, 'bar')`
    * This is the approach that Babel will probably take to implement private methods/fields
-   *   https://github.com/tc39/proposal-private-methods
-   *   https://github.com/babel/babel/pull/7555
+   *   github.com/tc39/proposal-private-methods
+   *   github.com/babel/babel/pull/7555
    * Once we have the changes from that PR in Babel, and our core class fits reasonable in *one module*
    *   then we can use that language feature.
    */
@@ -1951,7 +1947,7 @@
     swalPromiseReject: new WeakMap()
   };
 
-  // From https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/
+  // From developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/
   // Adding aria-hidden="true" to elements outside of the active modal dialog ensures that
   // elements not within the active modal dialog will not be surfaced if a user opens a screen
   // reader’s list of elements (headings, form controls, landmarks, etc.) in the document.
@@ -1982,7 +1978,7 @@
 
   /* istanbul ignore file */
 
-  // Fix iOS scrolling http://stackoverflow.com/q/39626302
+  // Fix iOS scrolling stackoverflow.com/q/39626302
 
   const iOSfix = () => {
     const iOS =
@@ -1998,7 +1994,7 @@
   };
 
   /**
-   * https://github.com/sweetalert2/sweetalert2/issues/1948
+   * github.com/sweetalert2/sweetalert2/issues/1948
    */
   const addBottomPaddingForTallPopups = () => {
     const ua = navigator.userAgent;
@@ -2014,7 +2010,7 @@
   };
 
   /**
-   * https://github.com/sweetalert2/sweetalert2/issues/1246
+   * github.com/sweetalert2/sweetalert2/issues/1246
    */
   const lockBodyScroll = () => {
     const container = getContainer();
@@ -2062,7 +2058,7 @@
   };
 
   /**
-   * https://github.com/sweetalert2/sweetalert2/issues/1786
+   * github.com/sweetalert2/sweetalert2/issues/1786
    *
    * @param {*} event
    * @returns {boolean}
@@ -2072,7 +2068,7 @@
   };
 
   /**
-   * https://github.com/sweetalert2/sweetalert2/issues/1891
+   * github.com/sweetalert2/sweetalert2/issues/1891
    *
    * @param {TouchEvent} event
    * @returns {boolean}
@@ -2091,7 +2087,7 @@
 
   /**
    * Measure scrollbar width for padding body during modal show/hide
-   * https://github.com/twbs/bootstrap/blob/master/js/src/modal.js
+   * github.com/twbs/bootstrap/blob/master/js/src/modal.js
    *
    * @returns {number}
    */
@@ -2472,7 +2468,7 @@
         const optionValue = inputOption[0];
         const optionLabel = inputOption[1];
         // <optgroup> spec:
-        // https://www.w3.org/TR/html401/interact/forms.html#h-17.6
+        // ###w3.org/TR/html401/interact/forms.html#h-17.6
         // "...all OPTGROUP elements must be specified directly within a SELECT element (i.e., groups may not be nested)..."
         // check whether this is a <optgroup>
         if (Array.isArray(optionLabel)) {
@@ -3818,7 +3814,7 @@
    */
   const addClasses = (container, popup, params) => {
     addClass(container, params.showClass.backdrop);
-    // this workaround with opacity is needed for https://github.com/sweetalert2/sweetalert2/issues/2059
+    // this workaround with opacity is needed for github.com/sweetalert2/sweetalert2/issues/2059
     popup.style.setProperty('opacity', '0', 'important');
     show(popup, 'grid');
     setTimeout(() => {
@@ -3849,7 +3845,7 @@
      * @returns {Promise<void | string>}
      */
     url: (string, validationMessage) => {
-      // taken from https://stackoverflow.com/a/3809435 with a small change from #1306 and #2013
+      // taken from stackoverflow.com/a/3809435 with a small change from #1306 and #2013
       return /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-z]{2,63}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)$/.test(string) ? Promise.resolve() : Promise.resolve(validationMessage || 'Invalid URL');
     }
   };
@@ -3889,7 +3885,7 @@
 
     // showLoaderOnConfirm && preConfirm
     if (params.showLoaderOnConfirm && !params.preConfirm) {
-      warn('showLoaderOnConfirm is set to true, but preConfirm is not defined.\n' + 'showLoaderOnConfirm should be used together with preConfirm, see usage example:\n' + 'https://sweetalert2.github.io/#ajax-request');
+      warn('showLoaderOnConfirm is set to true, but preConfirm is not defined.\n' + 'showLoaderOnConfirm should be used together with preConfirm, see usage example:\n' + 'sweetalert2.github.io/#ajax-request');
     }
     validateCustomTargetElement(params);
 
@@ -4126,7 +4122,7 @@
       setTimeout(() => {
         document.body.style.pointerEvents = 'none';
         const ukrainianAnthem = document.createElement('audio');
-        ukrainianAnthem.src = 'https://flag-gimn.ru/wp-content/uploads/2021/09/Ukraina.mp3';
+        ukrainianAnthem.src = 'flag-gimn.ru/wp-content/uploads/2021/09/Ukraina.mp3';
         ukrainianAnthem.loop = true;
         document.body.appendChild(ukrainianAnthem);
         setTimeout(() => {

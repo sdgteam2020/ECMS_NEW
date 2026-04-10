@@ -1,6 +1,3 @@
-/**
- * @popperjs/core v2.11.8 - MIT License
- */
 
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -187,7 +184,7 @@
     };
 
     if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
-      if (getNodeName(offsetParent) !== 'body' || // https://github.com/popperjs/popper-core/issues/1078
+      if (getNodeName(offsetParent) !== 'body' || // github.com/popperjs/popper-core/issues/1078
       isScrollParent(documentElement)) {
         scroll = getNodeScroll(offsetParent);
       }
@@ -213,7 +210,7 @@
 
   function getLayoutRect(element) {
     var clientRect = getBoundingClientRect(element); // Use the clientRect sizes if it's not been transformed.
-    // Fixes https://github.com/popperjs/popper-core/issues/1223
+    // Fixes github.com/popperjs/popper-core/issues/1223
 
     var width = element.offsetWidth;
     var height = element.offsetHeight;
@@ -292,7 +289,7 @@
   }
 
   function getTrueOffsetParent(element) {
-    if (!isHTMLElement(element) || // https://github.com/popperjs/popper-core/issues/837
+    if (!isHTMLElement(element) || // github.com/popperjs/popper-core/issues/837
     getComputedStyle(element).position === 'fixed') {
       return null;
     }
@@ -324,7 +321,7 @@
     while (isHTMLElement(currentNode) && ['html', 'body'].indexOf(getNodeName(currentNode)) < 0) {
       var css = getComputedStyle(currentNode); // This is non-exhaustive but covers the most common CSS properties that
       // create a containing block.
-      // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
+      // developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
 
       if (css.transform !== 'none' || css.perspective !== 'none' || css.contain === 'paint' || ['transform', 'perspective'].indexOf(css.willChange) !== -1 || isFirefox && css.willChange === 'filter' || isFirefox && css.filter && css.filter !== 'none') {
         return currentNode;
@@ -564,7 +561,7 @@
 
     if (!isElement(clipperElement)) {
       return [];
-    } // $FlowFixMe[incompatible-return]: https://github.com/facebook/flow/issues/1414
+    } // $FlowFixMe[incompatible-return]: github.com/facebook/flow/issues/1414
 
 
     return clippingParents.filter(function (clippingParent) {

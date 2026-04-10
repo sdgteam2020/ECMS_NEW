@@ -731,7 +731,7 @@ namespace Web.Controllers
         /// </returns>
         /// <remarks>
         /// - Checks whether IAM login is enabled by reading settings from the <see cref="IAMSetting"/> with the appropriate environment byte value.
-        /// - If IAM login is enabled, redirects the user to the IAM login page (https://iam2.army.mil/IAM/User).
+        /// - If IAM login is enabled, redirects the user to the IAM login page (iam2.army.mil/IAM/User).
         /// - If IAM login is disabled, it clears any session data related to the IM and sets a footer value in the view.
         /// </remarks>
         [HttpGet]
@@ -2571,7 +2571,7 @@ namespace Web.Controllers
             if (SAMLResponse != null && !string.IsNullOrEmpty(Convert.ToString(SAMLResponse)))
             {
                 // Response.Redirect("https://localhost:7023/Account/FinalLogout");
-                Response.Redirect("https://eisac.army.mil/Account/FinalLogout");
+                Response.Redirect("eisac.army.mil/Account/FinalLogout");
             }
             // If there is a SAMLRequest, process logout request from IAM
             else if (SAMLRequest != null && !string.IsNullOrEmpty(Convert.ToString(SAMLRequest)))
@@ -2609,7 +2609,7 @@ namespace Web.Controllers
                     {
                         // Remove the session token and sign out from Identity
                         //SendResponseToIAM("https://localhost:7023/Account/FinalLogout", accountSettings.entityId, nameid);
-                        SendResponseToIAM("https://eisac.army.mil/Account/FinalLogout", accountSettings.entityId, nameid);
+                        SendResponseToIAM("eisac.army.mil/Account/FinalLogout", accountSettings.entityId, nameid);
                     }
                     catch (Exception ex)
                     {
@@ -2766,7 +2766,7 @@ namespace Web.Controllers
         /// 2. Generates a SAML LogoutRequest in Base64 format.
         /// 3. Redirects the user to the IAM logout URL with the SAMLResponse query parameter.
         ///
-        /// Important: The redirection URL is hardcoded to "https://iam2.army.mil/IAM/logout".
+        /// Important: The redirection URL is hardcoded to "iam2.army.mil/IAM/logout".
         /// Ensure that the endpoint and parameters are updated appropriately for production environments.
         /// </remarks>
         [AllowAnonymous]
@@ -2779,15 +2779,15 @@ namespace Web.Controllers
             OneLogin.Saml.AuthRequest req = new AuthRequest(new AppSettings(), accountSettings);
 
             //string ReuestXML = req.GetRequest(AuthRequest.AuthRequestFormat.Base64);
-            //string ReuestXML = req.GetLogOutRequest(AuthRequest.AuthRequestFormat.Base64, issueurl, "https://iam2.army.mil/IAM/logout");
+            //string ReuestXML = req.GetLogOutRequest(AuthRequest.AuthRequestFormat.Base64, issueurl, "iam2.army.mil/IAM/logout");
             
             // Generate a Base64-encoded SAML LogoutRequest for the IAM system
-            string ReuestXML = req.GetLogOutRequest(AuthRequest.AuthRequestFormat.Base64, issueurl, "https://iam2.army.mil/IAM/logout");
+            string ReuestXML = req.GetLogOutRequest(AuthRequest.AuthRequestFormat.Base64, issueurl, "iam2.army.mil/IAM/logout");
 
-            //Response.Redirect("https://iam2.army.mil/IAM/logout?SAMLResponse=" + ReuestXML);
+            //Response.Redirect("iam2.army.mil/IAM/logout?SAMLResponse=" + ReuestXML);
 
             // Redirect the user to the IAM logout endpoint with the SAMLResponse parameter
-            Response.Redirect("https://iam2.army.mil/IAM/logout?SAMLResponse=" + ReuestXML);
+            Response.Redirect("iam2.army.mil/IAM/logout?SAMLResponse=" + ReuestXML);
 
         }
 
@@ -2805,7 +2805,7 @@ namespace Web.Controllers
         /// 3. Redirects the user's browser to the IAM Single Logout endpoint with the SAMLRequest as a query parameter.
         ///
         /// Notes:
-        /// - The IAM endpoint URL is hardcoded to "https://iam2.army.mil/IAM/singleAppLogout".
+        /// - The IAM endpoint URL is hardcoded to "iam2.army.mil/IAM/singleAppLogout".
         /// - Ensure that the entity ID, role, and username are correct to avoid logout failures.
         /// </remarks>
         [AllowAnonymous]
@@ -2819,11 +2819,11 @@ namespace Web.Controllers
 
             // Generate a Base64-encoded SAML Single LogoutRequest for the IAM system
             string ReuestXML = req.SingleLogoutRequest(AuthRequest.AuthRequestFormat.Base64, entityid, role, usernam);
-            //Response.Redirect("https://iam2.army.mil/IAM/singleAppLogout?SAMLRequest=" + HttpUtility.UrlEncode(ReuestXML), true);
+            //Response.Redirect("iam2.army.mil/IAM/singleAppLogout?SAMLRequest=" + HttpUtility.UrlEncode(ReuestXML), true);
 
             // Redirect the user's browser to the IAM Single Logout endpoint
             // with the SAMLRequest appended as a URL-encoded query parameter
-            Response.Redirect("https://iam2.army.mil/IAM/singleAppLogout?SAMLRequest=" + HttpUtility.UrlEncode(ReuestXML), true);
+            Response.Redirect("iam2.army.mil/IAM/singleAppLogout?SAMLRequest=" + HttpUtility.UrlEncode(ReuestXML), true);
         }
 
 

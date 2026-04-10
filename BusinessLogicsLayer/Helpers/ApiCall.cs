@@ -10,7 +10,7 @@ namespace BusinessLogicsLayer.Helpers
 {
     public static class ApiCall
     {
-        public const string ApiUrl = "http://192.168.10.203/api/";
+        public const string ApiUrl = "192.168.10.203/api/";
 
         private static readonly HttpClient _httpClient = new HttpClient
         {

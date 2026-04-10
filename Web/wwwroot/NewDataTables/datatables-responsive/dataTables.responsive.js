@@ -57,13 +57,13 @@ var DataTable = $.fn.dataTable;
  * @copyright   SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
- *   MIT license - http://datatables.net/license/mit
+ *   MIT license - datatables.net/license/mit
  *
  * This source file is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
  *
- * For details please refer to: http://www.datatables.net
+ * For details please refer to: ###datatables.net
  */
 
 /**
@@ -174,7 +174,7 @@ $.extend(Responsive.prototype, {
 			'orientationchange.dtr',
 			DataTable.util.throttle(function () {
 				// iOS has a bug whereby resize can fire when only scrolling
-				// See: http://stackoverflow.com/questions/8898412
+				// See: stackoverflow.com/questions/8898412
 				var width = $(window).innerWidth();
 
 				if (width !== oldWindowWidth) {
@@ -374,7 +374,7 @@ $.extend(Responsive.prototype, {
 			return this.s.childNodeStore[name];
 		}
 
-		// https://jsperf.com/childnodes-array-slice-vs-loop
+		// jsperf.com/childnodes-array-slice-vs-loop
 		var nodes = [];
 		var children = dt.cell(row, col).node().childNodes;
 		for (var i = 0, iLen = children.length; i < iLen; i++) {
