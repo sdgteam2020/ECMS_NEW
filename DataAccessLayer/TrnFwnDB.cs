@@ -257,12 +257,13 @@ namespace DataAccessLayer
                         await db.ExecuteAsync(query2, parameters2, transaction: transaction);
                     }
 
-                    query4 = @"UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] ='' ,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn WHERE [RequestId]= @RequestId";
+                    query4 = @"UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] =@XmlFiles ,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn WHERE [RequestId]= @RequestId";
                     var parameters4 = new DynamicParameters();
                     parameters4.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
                     parameters4.Add("@Updatedby", data.Updatedby, DbType.Int32, ParameterDirection.Input);
                     parameters4.Add("@UpdatedOn", data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
-                    
+                    parameters4.Add("@XmlFiles", "", DbType.String);
+
                     await db2.ExecuteAsync(query4, parameters4, transaction: transaction2);
                 }
                 query2 = @"Update BasicDetails set IsLock=@IsLock where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";

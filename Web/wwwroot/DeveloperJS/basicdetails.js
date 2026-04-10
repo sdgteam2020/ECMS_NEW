@@ -1,12 +1,18 @@
 ﻿var skey = "";
-$(function () {
+$(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     skey = $('#spnhdns').html();
 
-    $("#btnsave").on("click", function () {
-        CheckValidation();
+    $("#SaveForm").on("submit", async function (e) {
+        e.preventDefault();
+
+        const isValid = await CheckValidation();
+        if (isValid) {
+            this.submit();
+        }
     });
+
     $("#Signature_").on("change", function () {
         beforeUploadSignatureCheck(this);
     });
@@ -64,11 +70,6 @@ $(function () {
         }
     });
 
-    $('#RegimentalId').on('change', function () {
-       
-        //$("#IssuingAuth").val("Comdt, " + $('#RegimentalId option:selected').text());
-        //$("#PlaceOfIssue").val($('#RegimentalId option:selected').text());
-    });
 
     if ($("#RegistrationId").val() == 1 || $("#RegistrationId").val() == 2 || $("#RegistrationId").val() == 6) {
         GetUnit() 
@@ -180,6 +181,9 @@ $(function () {
         
     });
 
+    $("#ApplyForId, #RegimentalId").on("change", function () {
+        $("#RegimentalId").valid();
+    });
 });
 function GetROListByArmedId(ArmedId, sectid) {
     var userdata =
@@ -293,34 +297,55 @@ function GetRegimentalListByArmedId(ArmedId, sectid) {
         }
     });
 }
-function CheckValidation() {
-    
-    if ($("#TermsConditions").prop("checked")) {
-        if ($("#SaveForm")[0].checkValidity()) {
+window.addEventListener("load", function () {
+    if ($.validator) {
+        $.validator.addMethod("regimentalRequired", function (value, element) {
+            const applyForId = $("#ApplyForId").val();
 
-         
-           // alert("Your Tracking Id -" + DateFormateMMddyyyy($("#DOB").val()) + "" + $("#AadhaarNo").val().substr($("#AadhaarNo").val().length - 4));
-        }
-        let formData = {};
+            if (applyForId == '2') {
+                return !isInvalidValue(value);
+            }
 
-        $("#SaveForm").serializeArray().forEach(function (item) {
-            formData[item.name] = item.value;
-        });
-
-        let jsonData = JSON.stringify(formData);
-
-        let encrypted = encryptPayloadData(jsonData);
-
-        $("#EncryptedData").val(encrypted);
-
-        $("#SaveForm")[0].submit(); // native submit
-        return true;
-        
+            return true;
+        }, "Regimental Centre is required.");
     }
-    else {
+});
+
+async function CheckValidation() {
+
+    if (!$("#TermsConditions").prop("checked")) {
         toastr.error('Please accept the Terms and Conditions');
         return false;
     }
+    const form = $("#SaveForm");
+
+    form.removeData("validator");
+    form.removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse(form);
+
+    $("#RegimentalId").rules("remove", "regimentalRequired");
+    $("#RegimentalId").rules("add", {
+        regimentalRequired: true
+    });
+
+    if (!form.valid()) {
+        return false;
+    }
+
+    let formData = {};
+
+    form.serializeArray().forEach(function (item) {
+        formData[item.name] = item.value;
+    });
+
+    let jsonData = JSON.stringify(formData);
+
+    let encrypted = encryptPayloadData(jsonData);
+
+    $("#EncryptedData").val(encrypted);
+
+    $("#SaveForm")[0].submit(); // native submit
+    return true;
 }
 function GetUnit() {
     $.ajax({
@@ -490,25 +515,8 @@ function beforeUploadPhotoCheck(id) {
         }
     }
 }
-function beforeSubmitValidateBasicDetail(id) {
-    let formId = '#' + id;
-    let rType = $("#Type").val();
-    if (rType == '2') {
-        $("#lblRegimentalId").text('');
-        let regId = $("#RegimentalId").val();
-        if (regId == '') {
-            $('#RegimentalId').prop('required', true);
-            $("#lblRegimentalId").text('Regimental is required.')
-        }
-    }
-    $.validator.unobtrusive.parse($(formId));
-
-    return false;
-    //if ($(formId).valid()) {
-    //}
-    //else {
-    //    return false;
-    //}
+function isInvalidValue(val) {
+    return val === null || val === undefined || val.toString().trim() === '' || val === '0';
 }
 function signatureChange(id) {
     const file = id.files[0];

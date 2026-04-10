@@ -12,14 +12,9 @@
         <div class="p-2">
             <input type="hidden" id="EncryptedData" name="EncryptedData" value="null" />
     
-            <input hidden asp-for="ApplyForId" /> @* OffrsJCO/OR *@
-
-          
-            <input hidden asp-for="RegistrationId" /> @* OffrsJCO/OR *@
-            <input hidden asp-for="TypeId" />    @* OffrsJCO/OR *@
-          
-
-
+            <input hidden asp-for="ApplyForId" />
+            <input hidden asp-for="RegistrationId" />
+            <input hidden asp-for="TypeId" />
 
             <input hidden id="spnrankid" value="@ViewBag.OptionsRankId" />
             <input hidden id="spnUnitIdid" value="@ViewBag.OptionsUnitId" />
@@ -236,9 +231,9 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Regimental Centre</label>
                                         <div class="col-sm-8">
-                                            <select asp-for="RegimentalId" class="form-select full-width" required data-toggle="tooltip" title="Select Regimental Name">
+                                            <select asp-for="RegimentalId" class="form-select full-width" data-toggle="tooltip" title="Select Regimental Name">
                                             </select>
-                                            <span id="lblRegimentalId" class="text-danger"></span>
+                                            <span asp-validation-for="RegimentalId" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="row mb-1 required">
@@ -348,7 +343,7 @@
                                     </div>
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <div class="text-center mb-2">
-                                        <button type="submit" class="btn btn-primary disabled" id="btnsave">Save & Next</button> @* // *@
+                                        <button type="submit" class="btn btn-primary disabled" id="btnsave">Save & Next</button>
                                          
                                     </div>
                                 </div>

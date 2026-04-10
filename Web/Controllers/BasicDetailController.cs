@@ -1817,7 +1817,7 @@ namespace Web.Controllers
                                 ModelState.AddModelError("UnitId", "Please Enter Unit Name");
                                 goto end;
                             }
-                            if (model.ApplyForId != 1 && model.RegimentalId == 0)
+                            if (model.ApplyForId != 1 && (model.RegimentalId == 0 || model.RegimentalId == null))
                             {
                                 ModelState.AddModelError("RegimentalId", "Please Select Regimental ");
                                 goto end;
@@ -2176,10 +2176,12 @@ namespace Web.Controllers
                         if (model.UnitId == 0)
                         {
                             ModelState.AddModelError("", "Please Enter Unit Name");
+                            goto end;
                         }
-                        if (model.ApplyForId != 1 && model.RegimentalId == 0)
+                        if (model.ApplyForId != 1 && (model.RegimentalId == 0 || model.RegimentalId == null))
                         {
                             ModelState.AddModelError("", "Please Select Regimental ");
+                            goto end;
                         }
                         if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000" || model.AadhaarNo[0] == '0')
                         {
