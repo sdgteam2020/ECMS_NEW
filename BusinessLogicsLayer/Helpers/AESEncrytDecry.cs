@@ -81,13 +81,19 @@ namespace BusinessLogicsLayer.Helpers
         }
         public static async Task<T> DecryptAESWithDTO<T>(string cipherText, string key)
         {
-           
-            string json = AESEncrytDecry.DecryptAES(cipherText, key);
+            try
+            {
+                string json = AESEncrytDecry.DecryptAES(cipherText, key);
 
-            if (string.IsNullOrEmpty(json))
+                if (string.IsNullOrEmpty(json))
+                    return default;
+
+                return await Task.FromResult(JsonConvert.DeserializeObject<T>(json));
+            }
+            catch
+            {
                 return default;
-
-            return await Task.FromResult(JsonConvert.DeserializeObject<T>(json));
+            }
         }
 
     }

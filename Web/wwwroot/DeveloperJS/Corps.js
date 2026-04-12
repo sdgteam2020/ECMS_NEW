@@ -247,57 +247,50 @@ function BindData() {
     table.column(0).visible(false);
 }
 function Save() {
+    const payload = {
+        "CorpsName": $("#txtCoprsName").val().trim(),
+        "ComdId": $("#ddlCommand").val(),
+        "CorpsId": CorpsId,
+    };
+    let jsonData = JSON.stringify(payload);
+
+    let encrypted = encryptPayloadData(jsonData);
 
     $.ajax({
         url: '/Master/SaveCorps',
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        data: {
-            "CorpsName": $("#txtCoprsName").val().trim(),
-            "ComdId": $("#ddlCommand").val(),
-            "CorpsId": CorpsId
-        }, //get the search string
+        data: { Request: encrypted },
         success: function (result) {
 
 
-            if (result == DataSave) {
-
-
-                toastr.success('Data has been saved');
+            if (result.Result == true) {
+                toastr.success(result.Message);
                 Reset();
                 BindData();
-
             }
-            else if (result == DataUpdate) {
+            else {
+                const Message = result.Message || "Something went wrong.";
 
+                const errors = Message
+                    .split(";")
+                    .map(x => x.trim())
+                    .filter(x => x !== "");
 
-                toastr.success('Data has been Updated');
-                Reset();
-                BindData();
+                const list = document.createElement("ul");
+                list.classList.add("error-list"); // ✅ use CSS class
 
-            }
-            else if (result == DataExists) {
+                errors.forEach(function (error) {
+                    const item = document.createElement("li");
+                    item.textContent = error;
+                    list.appendChild(item);
+                });
 
-                toastr.error('Corps / Dte / Area Name Exits!');
-            }
-            else if (result == InternalServerError) {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
+                    icon: "error",
+                    title: "Message",
+                    html: list
+                });
             }
         }
     });

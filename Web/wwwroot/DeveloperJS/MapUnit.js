@@ -697,39 +697,38 @@ function BindDataMapUnit() {
             // Handle the response
             return response.json();
         }).then(result => {
-            if (result === DataSave) {
+
+            if (result.Result == true) {
                 Swal.fire({
                     icon: 'info',
                     title: 'Unit',
-                    html: 'Unit has been successfully mapped',
+                    html: result.Message,
                 });
                 $('#AddNewUnitmap').modal('hide'); // Hide modal
                 BindDataMapUnit();
                 ResetMapUnit();
-            } else if (result === DataUpdate) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Unit',
-                    html: 'Unit has been successfully updated',
+            }
+            else {
+                const Message = result.Message || "Something went wrong.";
+
+                const errors = Message
+                    .split(";")
+                    .map(x => x.trim())
+                    .filter(x => x !== "");
+
+                const list = document.createElement("ul");
+                list.classList.add("error-list"); // ✅ use CSS class
+
+                errors.forEach(function (error) {
+                    const item = document.createElement("li");
+                    item.textContent = error;
+                    list.appendChild(item);
                 });
-                $('#AddNewUnitmap').modal('hide'); // Hide modal
-                BindDataMapUnit();
-                ResetMapUnit();
-            } else if (result === DataExists) {
+
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Unit Already Exist!',
-                });
-            } else if (result === InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-                });
-            } else if (Array.isArray(result) && result.length > 0) {
-                result.forEach((error) => {
-                    toastr.error(error[0].ErrorMessage); // Display error messages
+                    icon: "error",
+                    title: "Message",
+                    html: list
                 });
             }
         });

@@ -407,8 +407,30 @@ namespace Web.Controllers
         /// </remarks>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> SaveCorps(MCorps dTO)
+        public async Task<IActionResult> SaveCorps(string Request)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
+
+            var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (session == null)
+            {
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Session expired.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
+            }
+
+            MCorps dTO = await AESEncrytDecry.DecryptAESWithDTO<MCorps>(Request, session.Salt);
+
+            if (dTO == null)
+            {
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Invalid Data.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
+            }
             // Set the IsActive flag to true and capture the user who is updating the Corps.
             dTO.IsActive = true;
             dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -437,11 +459,17 @@ namespace Web.Controllers
                         // Return success or error message based on the update result
                         if (result)
                         {
-                            return Json(KeyConstants.Update);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Data has been Updated.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                         else
                         {
-                            return Json(KeyConstants.InternalServerError);
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "Internal Server Error.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                         ////////End Code //////////////
                     }
@@ -449,24 +477,31 @@ namespace Web.Controllers
                     {
                         // If adding a new Corps
                         await unitOfWork.Corps.Add(dTO);
-                        return Json(KeyConstants.Save);
+
+                        dTOResponse.Result = true;
+                        dTOResponse.Message = "Data has been saved.";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
                 }
                 else
                 {
-                    return Json(KeyConstants.Exists); // Corps with the same name already exists
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Corps / Dte / Area Name Exits!";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
                 }
             }
             else
             {
-                // Return validation errors if the model is not valid
-                //return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
-                var errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => HtmlEncoder.Default.Encode(e.ErrorMessage))
-                    .ToList();
+                var errors = ModelState
+                            .Where(x => x.Value?.Errors?.Count > 0)
+                            .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                            .ToList();
 
-                return Json(errors);
+                dTOResponse.Result = false;
+                dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                return Json(dTOResponse);
             }
 
         }
@@ -656,10 +691,33 @@ namespace Web.Controllers
         /// </returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> SaveDiv(MDiv dTO)
+        public async Task<IActionResult> SaveDiv(string Request)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
+
             try
             {
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                if (session == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                MDiv dTO = await AESEncrytDecry.DecryptAESWithDTO<MDiv>(Request, session.Salt);
+
+                if (dTO == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Data.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
                 // Mark the division as active and set the updated information
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));// Get the current user
@@ -674,11 +732,6 @@ namespace Web.Controllers
                     {
                         if (dTO.DivId > 0)
                         {
-                            //this Div update using UpdateComdCorpsByDivs method
-                            //await unitOfWork.Div.Update(dTO);
-
-                            /////update Commd By CorpsId
-                            // If it's an existing division, update the associated command and corps
                             MapUnit dat = new MapUnit();
                             dat.Div = dTO;
                             dat.CorpsId = dTO.CorpsId;
@@ -689,35 +742,57 @@ namespace Web.Controllers
                             bool result = await changeHierarchyMaster.UpdateComdCorpsByDivs(dat);
                             if (result) 
                             {
-                                return Json(KeyConstants.Update); // Return success message for update
+                                dTOResponse.Result = true;
+                                dTOResponse.Message = "Data has been Updated.";
+                                dTOResponse.Value = string.Empty;
+                                return Json(dTOResponse);
                             }
                             else
                             {
-                                return Json(KeyConstants.InternalServerError); // Return error message if update fails
+                                dTOResponse.Result = false;
+                                dTOResponse.Message = "Internal Server Error.";
+                                dTOResponse.Value = string.Empty;
+                                return Json(dTOResponse);
                             }
                             ////////End Code //////////////
                         }
                         else
                         {
                             await unitOfWork.Div.Add(dTO);// Add a new DIV if DivId is 0
-                            return Json(KeyConstants.Save);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Data has been saved.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "Div  /Branch / SubArea Name Exits!";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());// Return validation errors if the model is not valid
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
+
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOResponse);
                 }
 
             }
             catch (Exception ex) 
             {
                 _logger.LogError(1001, ex, "Master->SaveDiv");
-                return Json(KeyConstants.InternalServerError); 
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
             }
 
         }
@@ -931,10 +1006,33 @@ namespace Web.Controllers
         /// </remarks>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> SaveBde(MBde dTO)
+        public async Task<IActionResult> SaveBde(string Request)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
+
             try
             {
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                if (session == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                MBde dTO = await AESEncrytDecry.DecryptAESWithDTO<MBde>(Request, session.Salt);
+
+                if (dTO == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Data.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
@@ -946,7 +1044,10 @@ namespace Web.Controllers
                     {
                         if (result == true)
                         {
-                            return Json(KeyConstants.Exists);
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "Bde Name Exits!";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                         else
                         {
@@ -962,11 +1063,17 @@ namespace Web.Controllers
                                 bool result1 = await changeHierarchyMaster.UpdateComdCorpsDivsBybdes(dat); // Update command, corps, and division hierarchy based on the brigade
                                 if (result1)
                                 {
-                                    return Json(KeyConstants.Update);
+                                    dTOResponse.Result = true;
+                                    dTOResponse.Message = "Bde has been Updated.";
+                                    dTOResponse.Value = string.Empty;
+                                    return Json(dTOResponse);
                                 }
                                 else
                                 {
-                                    return Json(KeyConstants.InternalServerError);
+                                    dTOResponse.Result = false;
+                                    dTOResponse.Message = "Internal Server Error.";
+                                    dTOResponse.Value = string.Empty;
+                                    return Json(dTOResponse);
                                 }
                                 ////////End Code //////////////
                                 ///
@@ -974,25 +1081,41 @@ namespace Web.Controllers
                             else
                             {
                                 await unitOfWork.Bde.Add(dTO);// Add a new BDE if BdeId is 0
-                                return Json(KeyConstants.Save);
+                                dTOResponse.Result = true;
+                                dTOResponse.Message = "Bde has been saved.";
+                                dTOResponse.Value = string.Empty;
+                                return Json(dTOResponse);
                             }
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.InternalServerError);
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "Internal Server Error.";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());// Return validation errors if the model is not valid
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
+
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOResponse);
                 }
 
             }
             catch (Exception ex) 
             {
                 _logger.LogError(1001, ex, "Master->SaveBde");
-                return Json(KeyConstants.InternalServerError); 
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
             }
 
         }
@@ -1225,14 +1348,30 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveUnitWithMapping(string Request)
         {
-            DTOSaveUnitWithMappingByAdminRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOSaveUnitWithMappingByAdminRequest>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
-            if (dTO == null)
-            {
-                return Json(KeyConstants.IncorrectData); // Return error message for invalid data
-            }
-
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
             try
             {
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                if (session == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                DTOSaveUnitWithMappingByAdminRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTOSaveUnitWithMappingByAdminRequest>(Request, session.Salt);
+
+                if (dTO == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Data.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 dTO.Suffix= dTO.Suffix.Trim();
@@ -1245,24 +1384,35 @@ namespace Web.Controllers
                         bool? CheckDuplicate = await unitOfWork.MappUnit.FindUnitId(dTO.UnitId); // Check for duplicate unit ID
                         if (CheckDuplicate == true)
                         {
-                            return Json(KeyConstants.Exists);
-
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "Unit Already Exist!";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                         else if (CheckDuplicate == false)
                         {
                             bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);// Save the unit with mapping
                             if (result == true)
                             {
-                                return Json(KeyConstants.Save);
+                                dTOResponse.Result = true;
+                                dTOResponse.Message = "Unit has been successfully mapped";
+                                dTOResponse.Value = string.Empty;
+                                return Json(dTOResponse);
                             }
                             else
                             {
-                                return Json(KeyConstants.InternalServerError);
+                                dTOResponse.Result = false;
+                                dTOResponse.Message = "Internal Server Error.";
+                                dTOResponse.Value = string.Empty;
+                                return Json(dTOResponse);
                             }
                         }
                         else
                         {
-                            return Json(KeyConstants.InternalServerError);
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "Internal Server Error.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
 
                     }
@@ -1271,7 +1421,10 @@ namespace Web.Controllers
                         bool? CheckDuplicate = await unitOfWork.MappUnit.FindUnitIdMapped(dTO.UnitId,dTO.UnitMapId); // Check for duplicate unit ID in mapping
                         if (CheckDuplicate == true)
                         {
-                            return Json(KeyConstants.Exists);
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "Unit Already Exist!";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
 
                         }
                         else if(CheckDuplicate == false)
@@ -1279,33 +1432,54 @@ namespace Web.Controllers
                             bool result = (bool)await unitOfWork.MappUnit.SaveUnitWithMapping(dTO);// Save the unit with mapping
                             if (result == true)
                             {
-                                return Json(KeyConstants.Update);
+                                dTOResponse.Result = true;
+                                dTOResponse.Message = "Unit has been successfully updated";
+                                dTOResponse.Value = string.Empty;
+                                return Json(dTOResponse);
                             }
                             else
                             {
-                                return Json(KeyConstants.InternalServerError);
+                                dTOResponse.Result = false;
+                                dTOResponse.Message = "Internal Server Error.";
+                                dTOResponse.Value = string.Empty;
+                                return Json(dTOResponse);
                             }
                         }
                         else 
                         {
-                            return Json(KeyConstants.InternalServerError);
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "Internal Server Error.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.InternalServerError);
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "Internal Server Error.";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
                 }
                 else
                 {
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
 
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());// Return validation errors if the model is not valid
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOResponse);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->SaveUnitWithMapping");
-                return Json(KeyConstants.InternalServerError);
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
             }
 
         }
