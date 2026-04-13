@@ -23,7 +23,7 @@ namespace DataTransferObject.Requests
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MaxLength(50, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         [MinLength(1, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
-        [RegularExpression(@"^[\w ]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[A-Za-z ]+$", ErrorMessage = "Only alphabets and spaces are allowed.")]
         public string Name { get; set; } = string.Empty;
 
 

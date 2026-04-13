@@ -61,8 +61,8 @@ namespace Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IIAMSettingBL _iAMSettingBL;
         private readonly IHostEnvironment _hostEnv;
-        private static readonly Regex armyNoRegex = new Regex(@"^[A-Z]{2}\d{5,6}[A-Z]$", RegexOptions.IgnoreCase);
-
+        //private static readonly Regex armyNoRegex = new Regex(@"^[A-Z]{2}\d{5,6}[A-Z]$", RegexOptions.IgnoreCase);
+        private static readonly Regex armyNoRegex = new Regex(@"^(IC|SL|SS|WC|TA)\d{5,6}[A-Z]$", RegexOptions.IgnoreCase);
         public AccountController(IConfiguration configuration,IUnitOfWork unitOfWork,IUnitBL unitBL, IAccountBL iAccountBL , IDomainMapBL iDomainMapBL, IUserProfileBL userProfileBL, IMapUnitBL mapUnitBL, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, ApplicationDbContext contextTransaction,
             IDataProtectionProvider dataProtectionProvider, IService service, DataProtectionPurposeStrings dataProtectionPurposeStrings, ILogger<AccountController> logger, ITrnLoginLogBL trnLoginLogBL, IHttpContextAccessor httpContextAccessor, IIAMSettingBL iAMSettingBL, IHostEnvironment hostEnv)
         {
@@ -353,9 +353,17 @@ namespace Web.Controllers
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
-
+                dTO.Name = dTO.Name.Trim();
 
                 ModelState.Clear();
+
+                string error = ArmyNoHelper.ValidateArmyNo(dTO.ArmyNo);
+
+                if (!string.IsNullOrEmpty(error))
+                {
+                    ModelState.AddModelError("ArmyNo", error);
+                }
+
                 if (TryValidateModel(dTO))// Server side validation check
                 {
                     if (dTO.UserId > 0)// Update
@@ -1178,23 +1186,6 @@ namespace Web.Controllers
                         model.ICNo = ICNo;
                         model.Password = Password;
 
-                        if (string.IsNullOrWhiteSpace(model.ICNo))
-                        {
-                            ModelState.AddModelError("ICNo", "Army No is required.");
-                            goto End;
-                        }
-                        if (model.ICNo.Length < 8 || model.ICNo.Length > 9)
-                        {
-                            ModelState.AddModelError("ICNo", "Invalid Army No.");
-                            goto End;
-                        }
-
-                        if (!armyNoRegex.IsMatch(model.ICNo))
-                        {
-                            ModelState.AddModelError("ICNo", "Invalid Army No.");
-                            goto End;
-                        }
-
                     }
 
                     if (dTOTempSession.NewUser == false)
@@ -1207,6 +1198,14 @@ namespace Web.Controllers
 
                     if (ModelState.IsValid)
                     {
+                        string error = ArmyNoHelper.ValidateArmyNo(model.ICNo);
+
+                        if (!string.IsNullOrEmpty(error))
+                        {
+                            ModelState.AddModelError("ICNo", error);
+                            goto End;
+                        }
+
                         if (dTOTempSession.Status == 5 && dTOTempSession.ICNO == model.ICNo)
                         {
                             var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
@@ -1560,6 +1559,7 @@ namespace Web.Controllers
                 ModelState.Clear();
                 if (TryValidateModel(model)) // Valid Model State
                 {
+                    model.Name = model.Name.Trim().ToUpper();
                     DTOTempSession? resultfinal = await _iAccountBL.ProfileAndMappingSaving(model, dTOTempSession); // Save or Update Profile and Mapping
                     if (dTOTempSession.Status == 2) // New DomainId mapped with other Profile
                     {

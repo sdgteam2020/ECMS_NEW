@@ -15,13 +15,13 @@ $(function () {
     });
 
     $(".ValidateArmyNo").on("blur", function () {
-        let inputValue = $('#txtArmyNo').val();
+        let inputValue = $(this).val().trim().toUpperCase();;
 
         // Validate the input: first two and last characters must be alphabets
-        let pattern = /^[A-Za-z]{2}.*[A-Za-z]$/;
+        let pattern = /^[A-Z]{2}\d{5,6}[A-Z]$/;
 
         if (!pattern.test(inputValue)) {
-            toastr.warning('Army No Not Correct Format');
+            toastr.warning('Enter valid Army No like IC12345X, SC123456L, SL78925P');
 
             $(this).val("");// Block the keypress
            

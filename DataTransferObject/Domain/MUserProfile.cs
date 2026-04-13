@@ -17,7 +17,7 @@ namespace DataTransferObject.Domain
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MinLength(8, ErrorMessage = "Minimum length of Offr Army No is eight character.")]
         [MaxLength(10,ErrorMessage = "Maximum length of Offr Army No is ten character.")]
-        [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[A-Z]{2}\d{5,6}[A-Z]$", ErrorMessage = "Offr Army No must be like IC12345X or SC123456L.")]
         public string ArmyNo { get; set; } = string.Empty;
         
         [Required]
@@ -32,7 +32,7 @@ namespace DataTransferObject.Domain
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [MinLength(1, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MinLengthError")]
         [MaxLength(50, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        [RegularExpression(@"^[\w ]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        [RegularExpression(@"^[A-Za-z ]+$", ErrorMessage = "Only alphabets and spaces are allowed.")]
         public string Name { get; set; } = string.Empty;
 
 

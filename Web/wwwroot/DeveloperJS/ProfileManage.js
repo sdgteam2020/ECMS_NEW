@@ -25,8 +25,34 @@ $(function () {
     $('input.js-uppercase').on('input', function () {
         this.value = this.value.toUpperCase();
     });
-    $("#btnProfileAddButton").on("click", function () {
-        Proceed();
+    $("#btnProfileAddButton").on("click", async function () {
+        if ($("#txtArmyNo").val().length > 7 && $("#txtArmyNo").val().length < 10)
+        {
+            let ArmyNoSfx = ($("#txtArmyNo").val() || "").trim().toUpperCase();
+
+            let pattern = /^[A-Z]{2}\d{5,6}[A-Z]$/;
+
+            if (!pattern.test(ArmyNoSfx)) {
+                toastr.warning('Enter valid Army No like IC12345X, SC123456L, SL78925P');
+
+                $("#txtArmyNo").val("");
+            }
+            else {
+                result = await ChkSfx(ArmyNoSfx);
+                if (result == false) {
+                    toastr.error("Invalid Army No.");
+                }
+                else {
+                    Proceed();
+                }
+            }
+
+
+        }
+        else {
+                toastr.error("Minimum eight and Maximum nine length of Army No.");
+        }
+
     });
 
     $("#IsTokenWaiverYes").on("click", function () { 
@@ -460,7 +486,6 @@ function Save() {
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
-
             if (result == DataSave) {
                 toastr.success('Profile has been saved');
 
@@ -574,5 +599,100 @@ function ResetErrorMessage() {
     $("#txtMessage-error").html("");
     $("#IsToken-error").html("");
     $("#IsWithTokenApply-error").html("");
+
+}
+async function ChkSfx(ServiceNo) {
+    // Simulating an asynchronous check (no external fetch needed)
+    await new Promise(resolve => resolve()); // The 'await' here is just for structure
+
+    let ArmyNo = ServiceNo;
+
+    var armyno = ArmyNo.replace(/[A-Za-z]/g, '');
+
+    var txt = ArmyNo.slice(-1);
+    // Get last character
+    const lastChar = ArmyNo.slice(-1);
+
+    // Check if it is an alphabet
+    const isAlpha = /^[A-Za-z]$/.test(lastChar);
+    if (txt == "" || isAlpha == false) {
+        return false;
+    }
+    var vlength = armyno.length;
+    var NumMulti = parseInt(vlength) + 1;
+    var vMulti = 0;
+    var vSum = 0;
+    var Sfx;
+    for (var i = 0; i < vlength; i++) {
+        vMulti = parseInt(armyno.charAt(i)) * parseInt(NumMulti);
+        vSum = parseInt(vSum) + parseInt(vMulti);
+        NumMulti = parseInt(NumMulti) - 1;
+
+    }
+
+    var Reminder = parseInt(vSum) % 11;
+    switch (Reminder) {
+        case (0):
+            {
+                Sfx = "A"
+                break;
+            }
+        case (1):
+            {
+                Sfx = "F"
+                break;
+            }
+        case (2):
+            {
+                Sfx = "H"
+                break;
+            }
+        case (3):
+            {
+                Sfx = "K"
+                break;
+            }
+        case (4):
+            {
+                Sfx = "L"
+                break;
+            }
+        case (5):
+            {
+                Sfx = "M"
+                break;
+            }
+        case (6):
+            {
+                Sfx = "N"
+                break;
+            }
+        case (7):
+            {
+                Sfx = "P"
+                break;
+            }
+        case (8):
+            {
+                Sfx = "W"
+                break;
+            }
+        case (9):
+            {
+                Sfx = "X"
+                break;
+            }
+        case (10):
+            {
+                Sfx = "Y"
+                break;
+            }
+    }
+    if (Sfx === lastChar) {
+        return true;
+    }
+    else {
+        return false;
+    }
 
 }
