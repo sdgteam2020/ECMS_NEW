@@ -316,7 +316,8 @@ function BindData() {
                     else {
                         $("#ddlTDMId").val("0");
                     }
-                    let arr2 = rowData.ArmedIdList.split(',');
+                    let arr2 = rowData.ArmedIdList ? rowData.ArmedIdList.split(',') : [];
+
                     $("#ddlArmedIdList").val(arr2);
                     $("#ddlArmedIdList").trigger("change");
 
@@ -359,58 +360,55 @@ function BindData() {
 }
 function Save() {
     var ArmedIds = "" + $("#ddlArmedIdList").val() + "";
+
+    const payload = {
+        "OROMappingId": OROMappingId,
+        "ArmedIdList": $("#ddlArmedIdList").val().length > 0 ? ArmedIds : null,
+        "RecordOfficeId": $("#ddlRO").val(),
+        "RankId": $("#ddlRank").val() == 0 ? null : $("#ddlRank").val(),
+        "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
+        "UnitId": UnitMapId == 0 ? null : UnitMapId,
+    };
+    let jsonData = JSON.stringify(payload);
+
+    let encrypted = encryptPayloadData(jsonData);
+
     $.ajax({
         url: '/Master/SaveOROMapping',
         type: 'POST',
-        data: {
-            "OROMappingId": OROMappingId,
-            "ArmedIdList": $("#ddlArmedIdList").val().length >0 ? ArmedIds : null,
-            "RecordOfficeId": $("#ddlRO").val(),
-            "RankId": $("#ddlRank").val() == 0 ? null : $("#ddlRank").val(),
-            "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
-            "UnitId": UnitMapId == 0 ? null : UnitMapId,
-        },
+        data: { Request: encrypted },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
-
-            if (result == DataSave) {
-                toastr.success('Officer Record Office Mapping has been saved');
-
+            if (result.Result == true) {
+                toastr.success(result.Message);
                 $("#AddNewOROMapping").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == DataUpdate) {
-                toastr.success('Officer Record Office Mapping has been Updated');
+            else {
+                const Message = result.Message || "Something went wrong.";
 
-                $("#AddNewOROMapping").modal('hide');
-                BindData();
-                Reset();
-                ResetErrorMessage();
-            }
-            else if (result == "5") {
-                toastr.error('Rank / Arme any one required.');
-            }
-            else if (result == InternalServerError) {
+                const errors = Message
+                    .split(";")
+                    .map(x => x.trim())
+                    .filter(x => x !== "");
+
+                const list = document.createElement("ul");
+                list.classList.add("error-list"); // ✅ use CSS class
+
+                errors.forEach(function (error) {
+                    const item = document.createElement("li");
+                    item.textContent = error;
+                    list.appendChild(item);
+                });
+
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
+                    icon: "error",
+                    title: "Message",
+                    html: list
+                });
             }
         }
     });

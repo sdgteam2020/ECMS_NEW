@@ -260,60 +260,51 @@ function BindData() {
     table.column(0).visible(false);
 }
 function Save() {
+    const payload = {
+        "ArmedName": $("#txtArmedName").val().trim(),
+        "ArmedCatId": $("#ddlArmedCat").val(),
+        "ArmedId": ArmedId,
+        "Abbreviation": $("#txtAbbreviation").val().trim(),
+        "FlagInf": $("#radioInfyes").prop("checked")
+    };
+    let jsonData = JSON.stringify(payload);
 
-     /* alert( $("#ddlArmedType").find(":selected").val());*/
-/*    alert($("#radioInfyes").prop("checked"));*/
+    let encrypted = encryptPayloadData(jsonData);
+
     $.ajax({
         url: '/Master/SaveArmed',
         type: 'POST',
-        data: {
-            "ArmedName": $("#txtArmedName").val().trim(),
-            "ArmedCatId": $("#ddlArmedCat").val(),
-            "ArmedId": ArmedId,
-            "Abbreviation": $("#txtAbbreviation").val().trim(),
-            "FlagInf": $("#radioInfyes").prop("checked")
-        }, //get the search string 
+        data: { Request: encrypted },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
-
-            if (result == DataSave) {
-                toastr.success('Arms, Service & Corps has been saved');
-
-                /*  $("#AddNewM").modal('hide');*/
+            if (result.Result == true) {
+                toastr.success(result.Message);
                 BindData();
                 Reset();
             }
-            else if (result == DataUpdate) {
-                toastr.success('Arms, Service & Corps has been Updated');
+            else {
+                const Message = result.Message || "Something went wrong.";
 
-                /*  $("#AddNewM").modal('hide');*/
-                BindData();
-                Reset();
-            }
-            else if (result == DataExists) {
+                const errors = Message
+                    .split(";")
+                    .map(x => x.trim())
+                    .filter(x => x !== "");
 
-                toastr.error('Armes / Abbreviation Name Exits!');
+                const list = document.createElement("ul");
+                list.classList.add("error-list"); // ✅ use CSS class
 
-            }
-            else if (result == InternalServerError) {
+                errors.forEach(function (error) {
+                    const item = document.createElement("li");
+                    item.textContent = error;
+                    list.appendChild(item);
+                });
+
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
+                    icon: "error",
+                    title: "Message",
+                    html: list
+                });
             }
         }
     });

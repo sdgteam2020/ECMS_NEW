@@ -327,52 +327,52 @@ function BindData() {
     table.column(0).visible(false);
 }
 function Save() {
+    const payload = {
+        "AfsacCellMappingId": AfsacCellMappingId,
+        "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
+        "UnitId": UnitMapId == 0 ? null : UnitMapId,
+    };
+    let jsonData = JSON.stringify(payload);
+
+    let encrypted = encryptPayloadData(jsonData);
+
     $.ajax({
         url: '/Master/SaveAfsacCellMapping',
         type: 'POST',
-        data: {
-            "AfsacCellMappingId": AfsacCellMappingId,
-            "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
-            "UnitId": UnitMapId == 0 ? null : UnitMapId,
-        },
+        data: { Request: encrypted },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
 
-            if (result == DataSave) {
-                toastr.success('AfsacCell Mapping has been saved');
-
+            if (result.Result == true) {
+                toastr.success(result.Message);
                 $("#AddNewAfsacCellMapping").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == DataUpdate) {
-                toastr.success('AfsacCell Mapping has been Updated');
+            else {
+                const Message = result.Message || "Something went wrong.";
 
-                $("#AddNewAfsacCellMapping").modal('hide');
-                BindData();
-                Reset();
-                ResetErrorMessage();
-            }
-            else if (result == InternalServerError) {
+                const errors = Message
+                    .split(";")
+                    .map(x => x.trim())
+                    .filter(x => x !== "");
+
+                const list = document.createElement("ul");
+                list.classList.add("error-list"); // ✅ use CSS class
+
+                errors.forEach(function (error) {
+                    const item = document.createElement("li");
+                    item.textContent = error;
+                    list.appendChild(item);
+                });
+
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
+                    icon: "error",
+                    title: "Message",
+                    html: list
+                });
             }
         }
     });

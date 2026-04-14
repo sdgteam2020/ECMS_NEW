@@ -437,8 +437,8 @@ namespace Web.Controllers
             dTO.UpdatedOn = DateTime.Now;
             dTO.CorpsName = dTO.CorpsName.Trim();
 
-            // Check if the model is valid
-            if (ModelState.IsValid)
+            ModelState.Clear();
+            if (TryValidateModel(dTO))
             {
                 // Check if a Corps with the same name already exists
                 if (!await unitOfWork.Corps.GetByName(dTO))
@@ -724,8 +724,8 @@ namespace Web.Controllers
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.DivName = dTO.DivName.Trim(); // Trim any leading/trailing whitespace from the division name
 
-                // Check if the model is valid before proceeding
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     // Check if a division with the same name already exists
                     if (!await unitOfWork.Div.GetByName(dTO))
@@ -1037,7 +1037,8 @@ namespace Web.Controllers
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.BdeName = dTO.BdeName.Trim();
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     bool? result = await unitOfWork.Bde.GetByName(dTO); // Check if BDE with the same name already exists
                     if (result != null)
@@ -1376,7 +1377,8 @@ namespace Web.Controllers
                 dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                 dTO.Suffix= dTO.Suffix.Trim();
                 dTO.Sus_no = dTO.Sus_no.Trim();
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     string Sus_no = dTO.Sus_no + dTO.Suffix;
                     if (dTO.UnitId > 0 && dTO.UnitMapId == 0)
@@ -3242,47 +3244,90 @@ namespace Web.Controllers
         /// <returns>A JSON result indicating the success or failure of the operation.</returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> SaveArmed(MArmedType dTO)
+        public async Task<IActionResult> SaveArmed(string Request)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
             try
             {
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                if (session == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                MArmedType dTO = await AESEncrytDecry.DecryptAESWithDTO<MArmedType>(Request, session.Salt);
+
+                if (dTO == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Data.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.ArmedName = dTO.ArmedName.Trim();
                 dTO.Abbreviation= dTO.Abbreviation.Trim().ToUpper();
-
-                if (ModelState.IsValid)
+                
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     if (!await unitOfWork.Armed.GetByName(dTO)) // Check if an ArmedType with the same name already exists
                     {
                         if (dTO.ArmedId > 0)
                         {
                             await unitOfWork.Armed.Update(dTO); // Update existing ArmedType
-                            return Json(KeyConstants.Update);
+
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Arms, Service & Corps has been Updated.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                         else
                         {
                             await unitOfWork.Armed.Add(dTO); // Add new ArmedType
-                            return Json(KeyConstants.Save);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Arms, Service & Corps has been saved.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "Armes / Abbreviation Name Exits!";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
 
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); // Return validation errors
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
+
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOResponse);
                 }
 
             }
             catch (Exception ex) 
             {
                 _logger.LogError(1001, ex, "Master->SaveArmed");
-                return Json(KeyConstants.InternalServerError); 
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
             }
 
         }
@@ -3428,47 +3473,88 @@ namespace Web.Controllers
         /// <returns>Returns a JSON response indicating the result of the save operation.</returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> SaveRegimental([FromBody] MRegimental dTO)
+        public async Task<IActionResult> SaveRegimental([FromBody] EncryptedRequest Request)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
             // FormBody used when send null in Unit then not support action method (treat as string, not null)
             try
             {
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                if (session == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                MRegimental dTO = await AESEncrytDecry.DecryptAESWithDTO<MRegimental>(Request.Data, session.Salt);
+
+                if (dTO == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Data.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.Name = dTO.Name.Trim();
                 dTO.Abbreviation=dTO.Abbreviation.Trim().ToUpper();
                 dTO.Location= dTO.Location.Trim();
-
-                if (ModelState.IsValid)
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     if (!await unitOfWork.Regimental.GetByName(dTO)) // Check if a regimental with the same name already exists
                     {
                         if (dTO.RegId > 0) // Update existing regimental
                         {
                             await unitOfWork.Regimental.Update(dTO); // Update existing regimental
-                            return Json(KeyConstants.Update);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Regimental has been updated.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                         else
                         {
                             await unitOfWork.Regimental.Add(dTO); // Add new regimental
-                            return Json(KeyConstants.Save);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Regimental has been saved";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "Regimental / Abbreviation Name exists!";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); // Return validation errors
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
+
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOResponse);
                 }
             }
             catch (Exception ex) 
             {
                 _logger.LogError(1001, ex, "Master->SaveRegimental");
-                return Json(KeyConstants.InternalServerError); 
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse); 
             }
 
         }
@@ -3609,17 +3695,41 @@ namespace Web.Controllers
         /// <returns>Returns a JSON result indicating the status of the operation.</returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> SaveRecordOffice(MRecordOffice dTO)
+        public async Task<IActionResult> SaveRecordOffice(string Request)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
+
             try
             {
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                if (session == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                MRecordOffice dTO = await AESEncrytDecry.DecryptAESWithDTO<MRecordOffice>(Request, session.Salt);
+
+                if (dTO == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Data.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
                 dTO.Name = dTO.Name.Trim();
                 dTO.Abbreviation = dTO.Abbreviation.Trim().ToUpper();
-
-                if (ModelState.IsValid)
+                
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     int result = await unitOfWork.RecordOffice.GetByName(dTO); // Check if a record office with the same name already exists
                     if (result == 1)
@@ -3627,44 +3737,47 @@ namespace Web.Controllers
                         if (dTO.RecordOfficeId > 0)
                         {
                             await unitOfWork.RecordOffice.Update(dTO); // Update existing record office
-                            return Json(6);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Record Office has been Updated.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                         else
                         {
                             await unitOfWork.RecordOffice.Add(dTO); // Add new record office
-                            return Json(5);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Record Office has been saved.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                     }
                     else
                     {
-                        if(result == 2) // Exists
-                        {
-                            return Json(2);
-                        }
-                        //else if(result == 3)
-                        //{
-                        //    return Json(3);
-                        //}
-                        else if(result == 4) // Incorrect Data
-                        {
-                            return Json(4);
-                        }
-                        else
-                        {
-                            return Json(0);
-                        }
-                        
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "Record Office / Abbreviation Name Exits!";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
+
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOResponse);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->SaveRecordOffice");
-                return Json(KeyConstants.InternalServerError);
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
             }
 
         }
@@ -4033,43 +4146,85 @@ namespace Web.Controllers
         /// <exception cref="Exception">Throws if any exception occurs during the save or update operation.</exception>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> SaveOROMapping(OROMapping dTO)
+        public async Task<IActionResult> SaveOROMapping(string Request)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
+
             try
             {
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                if (session == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                OROMapping dTO = await AESEncrytDecry.DecryptAESWithDTO<OROMapping>(Request, session.Salt);
+
+                if (dTO == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Data.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
                 // Validate if required fields are provided
                 if ((dTO.RankId == null || dTO.RankId == 0) && (dTO.ArmedIdList == null || dTO.ArmedIdList ==""))
                 {
-                    return Json("5");
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Rank / Arme any one required.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
                 }
                 else
                 {
-                    if (ModelState.IsValid)
+                    ModelState.Clear();
+                    if (TryValidateModel(dTO))
                     {
                         // If ORO Mapping has a valid ID, update it; otherwise, save as new
                         if (dTO.OROMappingId > 0)
                         {
                             await unitOfWork.OROMapping.Update(dTO);
-                            return Json(KeyConstants.Update);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Officer Record Office Mapping has been Updated.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                         else
                         {
                             await unitOfWork.OROMapping.Add(dTO);
-                            return Json(KeyConstants.Save);
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Officer Record Office Mapping has been saved.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                     }
                     else
                     {
-                        // Return model validation errors
-                        return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                        var errors = ModelState
+                                    .Where(x => x.Value?.Errors?.Count > 0)
+                                    .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                    .ToList();
+
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                        return Json(dTOResponse);
                     }
                 }
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "Master->SaveRegimental");
-                return Json(KeyConstants.InternalServerError);
+                _logger.LogError(1001, ex, "Master->SaveOROMapping");
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
             }
 
         }
@@ -4205,33 +4360,73 @@ namespace Web.Controllers
         /// <exception cref="Exception">Throws exception if save operation fails.</exception>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> SaveAfsacCellMapping(AfsacCellMapping dTO)
+        public async Task<IActionResult> SaveAfsacCellMapping(string Request)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
+
             try
             {
-                if (ModelState.IsValid)
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                if (session == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                AfsacCellMapping dTO = await AESEncrytDecry.DecryptAESWithDTO<AfsacCellMapping>(Request, session.Salt);
+
+                if (dTO == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Data.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
                 {
                     if (dTO.AfsacCellMappingId > 0) // Update existing AFSAC Cell Mapping
                     {
                         await unitOfWork.AfsacCellMapping.Update(dTO); // Update existing AFSAC Cell Mapping
-                        return Json(KeyConstants.Update);
+                        dTOResponse.Result = true;
+                        dTOResponse.Message = "AfsacCell Mapping has been Updated.";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
                     else
                     {
                         await unitOfWork.AfsacCellMapping.Add(dTO); // Add new AFSAC Cell Mapping
-                        return Json(KeyConstants.Save);
+                        dTOResponse.Result = true;
+                        dTOResponse.Message = "AfsacCell Mapping has been saved.";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList()); // Return validation errors
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
+
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOResponse);
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->SaveAfsacCellMapping");
-                return Json(KeyConstants.InternalServerError);
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
             }
 
         }

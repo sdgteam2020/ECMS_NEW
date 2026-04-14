@@ -314,16 +314,24 @@ function Save() {
         Location: $("#txtLocation").val().trim(),
         UnitId: (() => {
             let val = UnitMapId;
-            return val === "0" || val === "" ? null : parseInt(val, 10);
+
+            if (!val || val === "0") return null;
+
+            const parsed = parseInt(val, 10);
+            return isNaN(parsed) ? null : parsed;
         })()
     };
+    let jsonData = JSON.stringify(payload);
+
+    let encrypted = encryptPayloadData(jsonData);
+
     fetch('/Master/SaveRegimental', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json', // change to JSON
             'RequestVerificationToken': globalThis.RequestVerificationToken
         },
-        body: JSON.stringify(payload) // send proper JSON
+        body: JSON.stringify({ data: encrypted })
     })
         .then(response => {
             if (!response.ok) {
@@ -332,30 +340,35 @@ function Save() {
             return response.json(); // or use response.text() depending on server response type
         })
         .then(result => {
-            if (result === DataSave) {
-                toastr.success('Regimental has been saved');
+
+            if (result.Result == true) {
+                toastr.success(result.Message);
                 $("#AddNewRegimental").modal('hide');
                 BindData();
                 Reset();
-            } else if (result === DataUpdate) {
-                toastr.success('Regimental has been updated');
-                $("#AddNewRegimental").modal('hide');
-                BindData();
-                Reset();
-            } else if (result === DataExists) {
-                toastr.error('Regimental / Abbreviation Name exists!');
-            } else if (result === InternalServerError) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or invalid entry!',
+            }
+            else {
+                const Message = result.Message || "Something went wrong.";
+
+                const errors = Message
+                    .split(";")
+                    .map(x => x.trim())
+                    .filter(x => x !== "");
+
+                const list = document.createElement("ul");
+                list.classList.add("error-list"); // ✅ use CSS class
+
+                errors.forEach(function (error) {
+                    const item = document.createElement("li");
+                    item.textContent = error;
+                    list.appendChild(item);
                 });
-            } else {
-                if (Array.isArray(result) && result.length > 0) {
-                    for (let i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage);
-                    }
-                }
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Message",
+                    html: list
+                });
             }
         })
         .catch(error => {

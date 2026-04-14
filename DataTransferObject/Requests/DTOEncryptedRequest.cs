@@ -8,6 +8,6 @@ namespace DataTransferObject.Requests
 {
     public class EncryptedRequest
     {
-        public string Data { get; set; }
+        public string Data { get; set; }=string.Empty;
     }
 }

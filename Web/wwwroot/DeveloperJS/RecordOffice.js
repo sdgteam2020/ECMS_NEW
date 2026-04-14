@@ -346,65 +346,55 @@ function BindData() {
     table.column(0).visible(false);
 }
 function Save() {
+    const payload = {
+        "Name": $("#txtName").val().trim(),
+        "Abbreviation": $("#txtAbbreviation").val().trim(),
+        "ArmedId": $("#ddlArmType").val(),
+        "RecordOfficeId": RecordOfficeId,
+        "UnitId": UnitMapId == 0 ? null : UnitMapId,
+        "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
+        "Message": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
+    };
+    let jsonData = JSON.stringify(payload);
+
+    let encrypted = encryptPayloadData(jsonData);
+
     $.ajax({
         url: '/Master/SaveRecordOffice',
         type: 'POST',
-        data: {
-            "Name": $("#txtName").val().trim(),
-            "Abbreviation": $("#txtAbbreviation").val().trim(),
-            "ArmedId": $("#ddlArmType").val(),
-            "RecordOfficeId": RecordOfficeId,
-            "UnitId": UnitMapId == 0 ? null : UnitMapId,
-            "TDMId": $("#ddlTDMId").val() == 0 ? null : $("#ddlTDMId").val(),
-            "Message": $("#txtMessage").val().length > 0 ? $("#txtMessage").val():null,
-        }, 
+        data: { Request: encrypted },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
-
-            if (result == 5) {
-                toastr.success('Record Office has been saved');
-
+            if (result.Result == true) {
+                toastr.success(result.Message);
                 $("#AddNewRecordOffice").modal('hide');
                 BindData();
                 Reset();
                 ResetErrorMessage();
             }
-            else if (result == 6) {
-                toastr.success('Record Office has been Updated');
+            else {
+                const Message = result.Message || "Something went wrong.";
 
-                $("#AddNewRecordOffice").modal('hide');
-                BindData();
-                Reset();
-                ResetErrorMessage();
-            }
-            else if (result == 2) {
-                toastr.error('Record Office / Abbreviation Name Exits!');
-            }
-            //else if (result == 3) {
-            //    toastr.error('Armed Id Exits!');
-            //}
-            //else if (result == 4) {
-            //    toastr.error('Domain Id Exits!');
-            //}
-            else if (result == InternalServerError) {
+                const errors = Message
+                    .split(";")
+                    .map(x => x.trim())
+                    .filter(x => x !== "");
+
+                const list = document.createElement("ul");
+                list.classList.add("error-list"); // ✅ use CSS class
+
+                errors.forEach(function (error) {
+                    const item = document.createElement("li");
+                    item.textContent = error;
+                    list.appendChild(item);
+                });
+
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
+                    icon: "error",
+                    title: "Message",
+                    html: list
+                });
             }
         }
     });
