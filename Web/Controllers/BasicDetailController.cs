@@ -1800,6 +1800,13 @@ namespace Web.Controllers
 
                     ////////////////////////////////
                 }
+
+                ViewBag.OptionsRankId = modeldec.RankId;
+                ViewBag.OptionsUnitId = modeldec.UnitId;
+                ViewBag.OptionsArmedId = modeldec.ArmedId;
+                ViewBag.OptionsRegimentalId = modeldec.RegimentalId;
+                ViewBag.OptionsBloodGroupId = modeldec.BloodGroupId;
+
                 // Case 1: Update existing BasicDetail (when BasicDetailId > 0)
                 if (model.BasicDetailId > 0)
                 {
@@ -1816,27 +1823,24 @@ namespace Web.Controllers
                             ViewBag.OptionsRegimentalId = model.RegimentalId;
                             ViewBag.OptionsBloodGroupId = model.BloodGroupId;
 
+                            // If ModelState is valid, proceed with update logic
+                            ModelState.Clear();
+
                             // Basic validations
                             if (model.UnitId == 0)
                             {
                                 ModelState.AddModelError("UnitId", "Please Enter Unit Name");
-                                goto end;
                             }
                             if (model.ApplyForId != 1 && (model.RegimentalId == 0 || model.RegimentalId == null))
                             {
                                 ModelState.AddModelError("RegimentalId", "Please Select Regimental ");
-                                goto end;
                             }
                             if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000" || model.AadhaarNo[0] == '0')
                             {
                                 ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
-                                goto end;
                             }
 
-                            // If ModelState is valid, proceed with update logic
-                            ModelState.Clear();
-                            
-                            if (TryValidateModel(modeldec))
+                            if (TryValidateModel(model))
                             {
 
                                 BasicDetail newBasicDetail = new BasicDetail();
@@ -2098,11 +2102,26 @@ namespace Web.Controllers
                         TempData.Keep("error");
                         return RedirectToAction("ContactUs", "Home");
                     }
+                    
                     // Similar flow: validate, map VM to entity, handle file uploads (mandatory), create request & step counter, save via BL
                     model.Updatedby = Convert.ToInt32(userId);
                     model.StatusLevel = 0;
                     ModelState.Clear();
-                    if (TryValidateModel(modeldec))
+
+                    if (model.UnitId == 0)
+                    {
+                        ModelState.AddModelError("", "Please Enter Unit Name");
+                    }
+                    if (model.ApplyForId != 1 && (model.RegimentalId == 0 || model.RegimentalId == null))
+                    {
+                        ModelState.AddModelError("", "Please Select Regimental ");
+                    }
+                    if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000" || model.AadhaarNo[0] == '0')
+                    {
+                        ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
+                    }
+
+                    if (TryValidateModel(model))
                     {
                         BasicDetail newBasicDetail = new BasicDetail();
                         newBasicDetail.BasicDetailId = model.BasicDetailId;
@@ -2178,25 +2197,8 @@ namespace Web.Controllers
                         mTrnIdentityInfo.AadhaarNo = Convert.ToInt64(model.AadhaarNo);
                         mTrnIdentityInfo.BloodGroupId = model.BloodGroupId;
                         mTrnIdentityInfo.Height = model.Height;
-                        if (model.UnitId == 0)
-                        {
-                            ModelState.AddModelError("", "Please Enter Unit Name");
-                            goto end;
-                        }
-                        if (model.ApplyForId != 1 && (model.RegimentalId == 0 || model.RegimentalId == null))
-                        {
-                            ModelState.AddModelError("", "Please Select Regimental ");
-                            goto end;
-                        }
-                        if (string.IsNullOrEmpty(model.AadhaarNo) || model.AadhaarNo.Length != 12 || !model.AadhaarNo.All(char.IsDigit) || model.AadhaarNo == "000000000000" || model.AadhaarNo[0] == '0')
-                        {
-                            ModelState.AddModelError("AadhaarNo", "Aadhaar number must be exactly 12 digits.");
-                            goto end;
-                        }
 
 
-                        //string sourceFolderPhotoDB = "/WriteReadData/" + "Photo";
-                        //string sourceFolderPhotoPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo");
                         string sourceFolderPhotoPhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Photo")));
                         if (!Directory.Exists(sourceFolderPhotoPhy))
                             Directory.CreateDirectory(sourceFolderPhotoPhy);
@@ -2241,8 +2243,6 @@ namespace Web.Controllers
                             goto end;
                         }
 
-                        //string sourceFolderSignatureDB = "/WriteReadData/" + "Signature";
-                        //string sourceFolderSignaturePhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature");
                         string sourceFolderSignaturePhy = Convert.ToString(GetCreateMyFolder(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "Signature")));
                         if (!Directory.Exists(sourceFolderSignaturePhy))
                             Directory.CreateDirectory(sourceFolderSignaturePhy);

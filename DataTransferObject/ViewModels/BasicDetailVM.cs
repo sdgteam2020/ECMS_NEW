@@ -66,7 +66,6 @@ namespace DataTransferObject.ViewModels
         [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string? ArmedName { get; set; }
 
-        //[Remote(action: "IsServiceNoInUse", controller: "BasicDetail", AdditionalFields = "initialServiceNo")]
         [Display(Name = "ServiceNo", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
         [RegularExpression(@"^[\w ]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
@@ -75,12 +74,6 @@ namespace DataTransferObject.ViewModels
         public string ServiceNo { get; set; } = string.Empty;
 
         public string? OldServiceNo { get; set; } = string.Empty;
-
-        //[Display(Name = "IdentityMark", ResourceType = typeof(Resource))]
-        //[Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        //[MaxLength(20, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
-        //[RegularExpression(@"^[\w \.\,\?\;\:\""\''\[\]\!\@\#\$\%\&\*\(\)\-\=\+\\\/]*$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
-        //public string IdentityMark { get; set; } = string.Empty;
 
         [Display(Name = "DOB", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
@@ -94,7 +87,7 @@ namespace DataTransferObject.ViewModels
 
         [Display(Name = "AadhaarNo", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "AadhaarNo is number.")]
+        [RegularExpression(@"^[1-9][0-9]{11}$", ErrorMessage = "Aadhaar number must be exactly 12 digits and cannot start with 0.")]
         [MaxLength(12)]
         public string AadhaarNo { get; set; } = string.Empty;
 
@@ -139,7 +132,6 @@ namespace DataTransferObject.ViewModels
         public byte? RegimentalId { get; set; }
         public MRegimental? Regimental { get; set; }
 
-        //[Display(Name = "ApplyForId", ResourceType = typeof(Resource))]
         [Required]
         [RegularExpression(@"^[\d]+$", ErrorMessage = "ApplyForId is number.")]
         public byte ApplyForId { get; set; }

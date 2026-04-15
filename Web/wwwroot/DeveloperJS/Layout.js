@@ -19,6 +19,8 @@ toastr.options = {
 }
 
 $(function () {
+
+    $(".btn-close").html("X");
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     //const myHeadersIncrement = new Headers();

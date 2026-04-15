@@ -485,7 +485,7 @@ async function GetTokenDetails(ApiId, xml) {
                 const datef2 = new Date();
                 let [day, month, year, hours, minutes, seconds] = data[0].ValidTo.match(/\d+/g).map(Number);
                 let validTo = new Date(year, month - 1, day, hours, minutes, seconds);
-                if (validTo >= datef2) { //datef2 >= validTo
+                if (datef2 >= validTo) { // validTo >= datef2
                     toastr.error("Token Expired");
                     return false;
                 } else {
