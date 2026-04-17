@@ -652,9 +652,9 @@ function getColumnsForCommand() {
             className: "noExport text-center col-action",
             width: "250px",
             render: function (data, type, row) {
+                //<button type='button' class='cls-btntreeview btn btn-primary  mr-1'>Hierarchy Chart</button>
                 let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>
-                                    <button type='button' class='cls-btntreeview btn btn-primary  mr-1'>Hierarchy Chart</button>`;
+                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
                 return Action;
             }
         }

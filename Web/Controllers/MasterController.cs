@@ -446,8 +446,6 @@ namespace Web.Controllers
                     // If updating an existing Corps
                     if (dTO.CorpsId > 0)
                     {
-                        //this Corps update using UpdateChageComdByCorps method
-                        //await unitOfWork.Corps.Update(dTO);
 
                         /////update Commd By CorpsId
                         MapUnit dat = new MapUnit();
@@ -3579,6 +3577,7 @@ namespace Web.Controllers
             }
 
         }
+        
         [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> GetAllRegimental_Pagination(DTODataTablesRequest dTO)

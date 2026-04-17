@@ -274,7 +274,7 @@ namespace DataAccessLayer
                 parameters.Add("@IsActive", model.IsActive, DbType.Boolean, ParameterDirection.Input);
                 parameters.Add("@Updatedby", model.Updatedby, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@UpdatedOn", model.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
-                parameters.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.String, ParameterDirection.Input);
+                parameters.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.AnsiString, ParameterDirection.Input, size: -1);
 
                 // Execute the query and get the DistributeCardId of the newly created record
                 model.DistributeCardId = await db.ExecuteScalarAsync<int>(insertQuery, parameters, transaction: transaction);

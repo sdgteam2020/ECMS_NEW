@@ -23,33 +23,6 @@ $(function () {
     $(".btn-close").html("X");
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    //const myHeadersIncrement = new Headers();
-    //myHeadersIncrement.append("X-API-KEY", 'b03aae18-4c63-44e4-93a3-eba447270157');
-
-    //const requestIncrement = {
-    //    method: "POST",
-    //    redirect: "follow",
-    //    headers: myHeadersIncrement
-    //};
-
-    //fetch("hitcounter.army.mil/api/ApplicationHit/IncrementHits", requestIncrement)
-    //    .then((response) => response.text())
-    //    .then((result) => console.log(result))
-    //    .catch((error) => console.error(error));
-
-    //const myHeadersIncrementStart = new Headers();
-    //myHeadersIncrementStart.append("X-API-KEY", 'b03aae18-4c63-44e4-93a3-eba447270157');
-    //const requestStart = {
-    //    method: "POST",
-    //    redirect: "follow",
-    //    headers: myHeadersIncrementStart
-    //};
-
-    //fetch("hitcounter.army.mil/api/Application/ApplicationSessionStart", requestStart)
-    //    .then((response) => response.text())
-    //    .then((result) => console.log(result))
-    //    .catch((error) => console.error(error));
-
 
 
     $('img[data-fallback]').on('error', function () {
@@ -58,12 +31,6 @@ $(function () {
             this.src = fallback;
         }
     });
-    //$(window).on('resize', function () {
-    //    // Check if element exists AND is a DataTable
-    //    if ($('#tbldata').length && $.fn.DataTable.isDataTable('#tbldata')) {
-    //        $('#tbldata').DataTable().columns.adjust();
-    //    }
-    //});
 
     $('[data-toggle="tooltip"]').tooltip();
 
@@ -312,13 +279,12 @@ $(function () {
     //javascript-obfuscator:disable
     fetch('/Home/VisitorStats', {
         method: 'POST',
-        redirect: 'manual',
+        credentials: 'same-origin',
         headers: {
-            'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'RequestVerificationToken': globalThis.RequestVerificationToken
             // NOTE: No need for Content-Type or body if action koi data expect nahi kar raha
         },
-        body: '{}'  // empty object so ASP.NET accepts the POST
     })
         .then(response => {
             if (!response.ok) {

@@ -96,7 +96,6 @@ namespace DataAccessLayer
             {
                 ["Name"] = "mreg.Name",
                 ["UnitAbbreviation"] = "mreg.Abbreviation",
-                ["Location"] = "mreg.Location",
                 ["RegId"] = "mreg.RegId",
             };
             selectFields = @"mreg.RegId,mreg.Name,mreg.Location,mreg.Abbreviation,mreg.UnitId,marmed.ArmedId,marmed.ArmedName, munit.Sus_no,munit.Suffix,munit.Abbreviation AS UnitAbbreviation,munit.UnitName";
@@ -107,8 +106,7 @@ namespace DataAccessLayer
             whereClause = @"WHERE
                                 (
                                     mreg.Name LIKE '%' + @SearchTerm + '%' OR
-                                    mreg.Abbreviation LIKE '%' + @SearchTerm + '%' OR
-                                    mreg.Location LIKE '%' + @SearchTerm + '%'
+                                    mreg.Abbreviation LIKE '%' + @SearchTerm + '%'
                                 )";
             try
             {

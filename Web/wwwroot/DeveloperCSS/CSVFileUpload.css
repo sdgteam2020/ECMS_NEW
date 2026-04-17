@@ -23,9 +23,9 @@
 }
 
 /* Optional: extra styling for preview table */
-.csv-preview-table {
+/*.csv-preview-table {
     margin-top: 10px;
-}
+}*/
 
 /* Button group in validation complete popup */
 .csv-btn-group {
@@ -46,4 +46,66 @@
 
 .csv-btn-cancel {
     background-color: #dc3545 !important; /* red */
+}
+
+/* NEW CSS*/
+
+.csv-preview-popup {
+    width: 96vw !important;
+    max-width: 96vw !important;
+    padding: 1.25rem !important;
+}
+
+.csv-preview-title {
+    margin-bottom: 10px;
+}
+
+.csv-preview-intro {
+    margin-bottom: 14px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.csv-preview-wrapper {
+    width: 100%;
+    max-width: 100%;
+    max-height: 60vh;
+    overflow-x: auto;
+    overflow-y: auto;
+    border: 1px solid #dcdcdc;
+    background: #fff;
+}
+
+.csv-preview-table {
+    border-collapse: collapse;
+    min-width: 2200px;
+    width: max-content;
+    table-layout: auto;
+}
+
+    .csv-preview-table th,
+    .csv-preview-table td {
+        white-space: nowrap;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        padding: 8px 12px;
+        border: 1px solid #dee2e6;
+        font-size: 14px;
+        text-align: left;
+    }
+
+    .csv-preview-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: #0d5ea8;
+        color: #fff;
+    }
+
+.csv-btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
 }

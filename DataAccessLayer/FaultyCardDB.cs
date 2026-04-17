@@ -360,6 +360,7 @@ namespace DataAccessLayer
         public async Task<DTOCommonSaveResponse> SaveFaultyCard(DTOFaultyCardRequest dTO, MTrnFwd? mTrnFwd)
         {
             DTOCommonSaveResponse saveResponse = new DTOCommonSaveResponse();
+            string XmlFiles = string.Empty;
 
             string RemarksIds = dTO.RemarksIds != null && dTO.RemarksIds.Any() ? string.Join(",", dTO.RemarksIds) : string.Empty;
             // Open a database connection and start a transaction
@@ -501,8 +502,8 @@ namespace DataAccessLayer
                         await db.ExecuteAsync(query6, parameters2, transaction: transaction);
                     }
                     // SQL queries to reset the XmlFiles and update the step counter for rejection
-                    query3 = @"UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles='' WHERE RequestId=@RequestId";
-                    await db.ExecuteAsync(query3, new { dTO.RequestId }, transaction: transaction);
+                    query3 = @"UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles=@XmlFiles WHERE RequestId=@RequestId";
+                    await db.ExecuteAsync(query3, new { dTO.RequestId, XmlFiles }, transaction: transaction);
 
                     query2 = @"UPDATE TrnStepCounter set StepId = 9 where RequestId=@RequestId ";
                     await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);

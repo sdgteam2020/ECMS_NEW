@@ -299,6 +299,8 @@ app.UseAuthorization();
 
 app.UseMiddleware<XssProtectionMiddleware>();
 
+
+// When the code is published on IAM, these MyMiddleware code are uncommented.
 //app.UseMyMiddleware();
 //app.UseMiddleware<BackRestrictionMiddleware>();
 //app.UseSessionMiddleware();
