@@ -1,4 +1,5 @@
 ﻿var table;
+let spnPostingOutId;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -270,8 +271,7 @@ function BindData() {
                 if (rowData != null) {
                     Reset();
                     //ResetErrorMessage();
-
-                    $("#spnPostingOutId").html(rowData.Id);
+                    spnPostingOutId = rowData.Id;
                     $("#AddDispatchDetails").modal('show');
                 }
             });
@@ -316,40 +316,55 @@ function GetHtmlLabel(label,value) {
 }
 
 function Reset() {
-    $("#spnPostingOutId").html("0");
+    spnPostingOutId = 0;
     $("#txtDispatchDate").val("");
     $("#txtRefNo").val("");
 }
 
 function Save() {
+    const payload = {
+        "encId": spnPostingOutId,
+        "DispatchedOn": formatDateToSqlString($("#txtDispatchDate").val()),
+        "RefNo": $("#txtRefNo").val(),
+    };
+    let jsonData = JSON.stringify(payload);
+
+    let encrypted = encryptPayloadData(jsonData);
+
     $.ajax({
         url: '/Posting/SavePostingOutDispatchDetails',
         type: 'POST',
-        data: {
-            "encId": $("#spnPostingOutId").html(),
-            "DispatchedOn": formatDateToSqlString($("#txtDispatchDate").val()),
-            "RefNo": $("#txtRefNo").val(),
-        },
+        data: { Request: encrypted },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (data) {
-            if (data.Result) {
-               $("#AddDispatchDetails").modal('hide');
-               Swal.fire({
-                   title: "Success!",
-                   text: data.Message,
-                   icon: "success",
-                   confirmButtonText: "OK"
-               });
-           }
-           else {
-               Swal.fire({
-                   title: "OOPs!",
-                   text: data.Message,
-                   icon: "error",
-                   confirmButtonText: "Ok"
-               });
-           }
-           BindData();
+        success: function (result) {
+            if (result.Result == true) {
+                $("#AddDispatchDetails").modal('hide');
+                toastr.success(result.Message);
+            }
+            else {
+                const Message = result.Message || "Something went wrong.";
+
+                const errors = Message
+                    .split(";")
+                    .map(x => x.trim())
+                    .filter(x => x !== "");
+
+                const list = document.createElement("ul");
+                list.classList.add("error-list"); // ✅ use CSS class
+
+                errors.forEach(function (error) {
+                    const item = document.createElement("li");
+                    item.textContent = error;
+                    list.appendChild(item);
+                });
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Message",
+                    html: list
+                });
+            }
+            BindData();
         }
     });
 }

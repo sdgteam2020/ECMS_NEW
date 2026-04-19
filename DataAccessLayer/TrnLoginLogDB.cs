@@ -4,7 +4,9 @@ using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.Extensions.Logging;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
@@ -13,8 +15,10 @@ namespace DataAccessLayer
     {
         private readonly DapperContextDb2 _contextDP2;
         private readonly DapperContext _context;
-        public TrnLoginLogDB(DapperContextDb2 contextDP2, DapperContext context) 
+        private readonly ILogger<TrnLoginLogDB> _logger;// For logging
+        public TrnLoginLogDB(DapperContextDb2 contextDP2, DapperContext context, ILogger<TrnLoginLogDB> logger) 
         {
+            _logger = logger;
             _contextDP2 = contextDP2;
             _context = context;
         }
@@ -139,10 +143,29 @@ namespace DataAccessLayer
         /// <returns>Returns true if the operation is successful.</returns>
         public async Task<bool> AddDataExport(DTODataExported Data)
         {
-            using (var connection = _contextDP2.CreateConnection())
+            try
             {
-                await connection.ExecuteAsync("INSERT INTO [dbo].[TrnExported]([AspNetUsersId],[UserId],[IP],[CreatedBy],[CreatedOn],[RequestId]) VALUES (@AspNetUsersId,@UserId,@IP,@CreatedBy,@CreatedOn,@RequestId)", new { Data.AspNetUsersId, Data.UserId, Data.IP, Data.CreatedBy, Data.CreatedOn,Data.RequestId });
-                return true;
+                using (var connection = _contextDP2.CreateConnection())
+                {
+                    string query1 = string.Empty;
+                    query1 = @"INSERT INTO [dbo].[TrnExported]([AspNetUsersId],[UserId],[IP],[CreatedBy],[CreatedOn],[RequestId]) VALUES (@AspNetUsersId,@UserId,@IP,@CreatedBy,@CreatedOn,@RequestId)";
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AspNetUsersId", Data.AspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@UserId", Data.UserId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@IP", Data.IP, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@CreatedBy", Data.CreatedBy, DbType.AnsiString, ParameterDirection.Input, size: 100);
+                    parameters.Add("@CreatedOn", Data.CreatedOn, DbType.DateTime, ParameterDirection.Input);
+                    parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+
+                    await connection.ExecuteAsync(query1, parameters);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "TrnLoginLogDB->AddDataExport");
+                return false;
             }
         }
     }

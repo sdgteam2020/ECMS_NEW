@@ -5,6 +5,7 @@ using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.Service;
 using DataAccessLayer;
 using DataTransferObject.Constants;
+using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -401,25 +402,57 @@ namespace Web.Controllers
         /// - Returns a message indicating if the dispatch details already exist or if there are validation errors.
         /// </returns>
         [HttpPost]
-        public async Task<IActionResult> SavePostingOutDispatchDetails(DTODispatchDetailsSaveRequest dTO)
+        public async Task<IActionResult> SavePostingOutDispatchDetails(string Request)
         {
-            DTOCommonSaveResponse dTOResponse = new DTOCommonSaveResponse();  // Initialize response object
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
 
             try
             {
+                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+                if (session == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+                DTODispatchDetailsSaveRequest dTO = await AESEncrytDecry.DecryptAESWithDTO<DTODispatchDetailsSaveRequest>(Request, session.Salt);
+
+                if (dTO == null)
+                {
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Data.";
+                    dTOResponse.Value = string.Empty;
+                    return Json(dTOResponse);
+                }
+
+
+
                 // Decrypt the encrypted ID (encId) and validate it
                 var encId = _protector.Unprotect(dTO.encId);
                 if (int.TryParse(encId, out int Id))
                 {
-                    if (ModelState.IsValid)
+                    ModelState.Clear();
+                    if (TryValidateModel(dTO))
                     {
                         // Fetch the posting out details based on the Id
                         var postingOutDetails = await _iPostingBL.Get(Id);
 
-                        // If dispatch details already exist, return a message
-                        if (postingOutDetails.DispatchedOn.HasValue)
+                        if (postingOutDetails.FromUnitID != session.UnitId) 
                         {
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "Unit is not authorized.";
+                            return Json(dTOResponse);
+                        }
+                        // If dispatch details already exist, return a message
+                        else if (postingOutDetails.DispatchedOn.HasValue)
+                        {
+                            dTOResponse.Result = false;
                             dTOResponse.Message = "Dispatch details already exists!";
+                            return Json(dTOResponse);
                         }
                         else
                         {
@@ -431,36 +464,38 @@ namespace Web.Controllers
                             await _iPostingBL.Update(postingOutDetails);  // Update the record in the database
                             dTOResponse.Result = true;
                             dTOResponse.Message = "Record Saved!";  // Success message
+                            return Json(dTOResponse);
                         }
                     }
                     else
                     {
-                        // If validation fails, return all error messages
-                        var errors = ModelState.Where(x => x.Value?.Errors?.Count > 0)
-                        .SelectMany(x => x.Value!.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-                        if (errors.Any())
-                        {
-                            dTOResponse.Message = string.Join("; ", errors);  // Concatenate all error messages
-                        }
+                        var errors = ModelState
+                                    .Where(x => x.Value?.Errors?.Count > 0)
+                                    .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                    .ToList();
+
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                        return Json(dTOResponse);
                     }
                 }
                 else
                 {
                     // If the encrypted ID is invalid, log an error and return a failure message
                     _logger.LogError(1001, $"Invalid Id -: {dTO.encId}", "Posting->SavePostingOutDispatchDetails");
-                    dTOResponse.Message = "Technical Error!";
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Invalid Id.";
+                    return Json(dTOResponse);
                 }
             }
             catch (Exception ex)
             {
                 // Handle any exceptions and return an internal server error message
                 _logger.LogError(1001, ex, "Posting->SavePostingOutDispatchDetails");
+                dTOResponse.Result = false;
                 dTOResponse.Message = "Internal Server Error!";
+                return Json(dTOResponse);
             }
-
-            return Json(dTOResponse);  // Return the response
         }
 
         /// <summary>

@@ -39,9 +39,6 @@
 <div class="containerMain mt-n10">
     <div class="card mb-3 ">
         <div class="card-header">
-
-            <span id="SpnTxnId" class="d-none">0</span>
-            @*<span id="PtoId" class="d-none">0</span>*@
             <div class="row">
                 <div class="col-xl-12 text-left">
                     @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingOut")
@@ -99,7 +96,6 @@
                     <form action="" id="SaveDispatchDetails" name="SaveDispatchDetails" method="post">
                         <div class="row">
                             <div class="form-group">
-                                <span class="d-none" id="spnPostingOutId">0</span>
                                 <input type="text" id="txtDispatchDate" placeholder=" " class="datetimepickerpast" autocomplete="off" required/>
                                 <label for="txtDispatchDate" class="fw-bold">Dispatch Date<i class="fas fa-asterisk mand1"></i></label>
                             </div>
