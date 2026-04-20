@@ -6,12 +6,14 @@ namespace DataAccessLayer.Logger
 {
     public class DapperContext
     {
-        private readonly IConfiguration _configuration;
         private readonly string _connectionString;
         public DapperContext(IConfiguration configuration)
         {
-            _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("AFSACDBConnection");
+            _connectionString =
+                                Environment.GetEnvironmentVariable("ConnectionStrings__AFSACDBConnection")
+                                ?? configuration.GetConnectionString("ConnectionStrings__AFSACDBConnection")
+                                ?? throw new InvalidOperationException(
+                                    "Connection string 'AFSACDBConnection' is not configured.");
         }
         public IDbConnection CreateConnection()
             => new SqlConnection(_connectionString);

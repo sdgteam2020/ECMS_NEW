@@ -4,8 +4,6 @@ $(async function () {
 
     let oldText = "";
     let oldMoment = null;
-    const now = moment();                 // current date-time
-    const max = moment().add(1, 'month'); // +1 month
 
     if ($('#txtDestructiononinp').data('DateTimePicker')) {
         $('#txtDestructiononinp').data('DateTimePicker').destroy();
@@ -16,8 +14,8 @@ $(async function () {
         sideBySide: true,
         stepping: 5,
         useCurrent: false,
-        minDate: now,
-        maxDate: max,
+        minDate: moment(),
+        maxDate: moment().add(1, 'month'),
         showClear: false,
         showClose: false
     }).on('dp.show', function () {
@@ -28,6 +26,13 @@ $(async function () {
         oldMoment = picker.date() ? picker.date().clone() : null;
 
         picker.minDate(moment());
+
+
+        const now = moment();
+        const max = moment().add(1, 'month');
+
+        picker.minDate(now);
+        picker.maxDate(max);
 
         setTimeout(function () {
             const $widget = $('.bootstrap-datetimepicker-widget:visible').last();
@@ -161,9 +166,10 @@ function Proceed() {
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
+
         let inputVal = $("#txtDestructiononinp").val();
-        const parsedDate = new Date(inputVal);
-        if (!isValidDate(parsedDate)) {
+        const parsedDate = formatDateToSqlString(inputVal);
+        if (parsedDate == null) {
             $(formId).validate().showErrors({
                 "txtDestructiononinp": "Invalid Date Of Destruction"
             });

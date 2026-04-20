@@ -1,37 +1,97 @@
 ﻿$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
-        var dtToday = new Date();
+    //    var dtToday = new Date();
 
-        var month = dtToday.getMonth() + 1;
-        var day = dtToday.getDate();
-        var year = dtToday.getFullYear() + 1;
+    //    var month = dtToday.getMonth() + 1;
+    //    var day = dtToday.getDate();
+    //    var year = dtToday.getFullYear() + 1;
 
-        if (month < 10)
-            month = '0' + month.toString();
-        if (day < 10)
-            day = '0' + day.toString();
+    //    if (month < 10)
+    //        month = '0' + month.toString();
+    //    if (day < 10)
+    //        day = '0' + day.toString();
 
-        var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
-        var maxDate = year + '-' + month + '-' + day;
+    //    var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
+    //    var maxDate = year + '-' + month + '-' + day;
 
-        $('#txtSosDate').attr('min', minDate);
-        $('#txtSosDate').attr('max', maxDate);
+    //    $('#txtSosDate').attr('min', minDate);
+    //    $('#txtSosDate').attr('max', maxDate);
 
-        $('#txtSosDate').on('change', function () {
-            var dtToday = new Date();
+    //    $('#txtSosDate').on('change', function () {
+    //        var dtToday = new Date();
 
-            var month = dtToday.getMonth() + 1;
-            var day = dtToday.getDate();
-            var year = dtToday.getFullYear() + 1;
+    //        var month = dtToday.getMonth() + 1;
+    //        var day = dtToday.getDate();
+    //        var year = dtToday.getFullYear() + 1;
 
-            if (month < 10)
-                month = '0' + month.toString();
-            if (day < 10)
-                day = '0' + day.toString();
-            var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
-            var maxDate = year + '-' + month + '-' + day;
-            $('#txtSosDate').attr('min', minDate);
-            $('#txtSosDate').attr('max', maxDate);
+    //        if (month < 10)
+    //            month = '0' + month.toString();
+    //        if (day < 10)
+    //            day = '0' + day.toString();
+    //        var minDate = dtToday.getFullYear() + '-' + month + '-' + day;
+    //        var maxDate = year + '-' + month + '-' + day;
+    //        $('#txtSosDate').attr('min', minDate);
+    //        $('#txtSosDate').attr('max', maxDate);
+    //});
+
+    let oldText = "";
+    let oldMoment = null;
+
+    if ($('#txtSosDate').data('DateTimePicker')) {
+        $('#txtSosDate').data('DateTimePicker').destroy();
+    }
+
+    $('#txtSosDate').datetimepicker({
+        format: 'DD/MM/YYYY HH:mm',
+        sideBySide: true,
+        stepping: 5,
+        useCurrent: false,
+        minDate: moment().subtract(1, 'month').startOf('day'),
+        maxDate: moment().add(1, 'month'),
+        showClear: false,
+        showClose: false
+    }).on('dp.show', function () {
+
+        const picker = $(this).data('DateTimePicker');
+
+        oldText = $(this).val();
+        oldMoment = picker.date() ? picker.date().clone() : null;
+
+        const now = moment().add(1, 'month');
+        const min = moment(now).subtract(1, 'month').startOf('day');
+
+        picker.minDate(min);
+        picker.maxDate(now);
+
+        setTimeout(function () {
+            const $widget = $('.bootstrap-datetimepicker-widget:visible').last();
+            if (!$widget.length) return;
+
+            // add buttons once
+            if ($widget.find('.dtp-okcancel').length === 0) {
+                $widget.append(`
+                <div class="dtp-okcancel">
+                    <button type="button" class="btn btn-sm btn-secondary dtp-cancel">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-success ms-2 dtp-ok">OK</button>
+                </div>
+            `);
+
+                // OK
+                $widget.on('click', '.dtp-ok', function () {
+                    picker.hide();
+                });
+
+                // Cancel
+                $widget.on('click', '.dtp-cancel', function () {
+                    if (oldMoment)
+                        picker.date(oldMoment);
+                    else
+                        picker.clear();
+                    $('#txtSosDate').val(oldText);
+                    picker.hide();
+                });
+            }
+        }, 0);
     });
 
     $('#txtSosDate').on('keydown', (e) => {
@@ -39,8 +99,8 @@
         return false;
     });
 
-    let oldText = "";
-    let oldMoment = null;
+    oldText = "";
+    oldMoment = null;
     const now = moment();                 // current date-time
     const max = moment().add(1, 'month'); // +1 month
 
@@ -227,7 +287,7 @@ function Save() {
     const payload = {
         "ReasonId": $("#ddlpostingReason").val(),
         "Authority": $("#txtAuthority").val(),
-        "SOSDate": convertToISOWithTime($("#txtSosDate").val()),
+        "SOSDate": formatDateToSqlString($("#txtSosDate").val()),
         "ToAspNetUsersId": $("#ddlaspnetiserpostout").val(),
         "ToUnitID": $("#postingoutUnitId").html(),
         "ToUserID": $(".spnToUserID").html(),

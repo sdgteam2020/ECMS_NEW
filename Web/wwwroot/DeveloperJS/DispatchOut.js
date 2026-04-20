@@ -54,8 +54,10 @@ $(async function () {
 
                 // Cancel
                 $widget.on('click', '.dtp-cancel', function () {
-                    if (oldMoment) picker.date(oldMoment);
-                    else picker.clear();
+                    if (oldMoment)
+                        picker.date(oldMoment);
+                    else
+                        picker.clear();
                     $('#txtDispatchDate').val(oldText);
                     picker.hide();
                 });

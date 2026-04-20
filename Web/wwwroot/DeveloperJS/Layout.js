@@ -95,18 +95,6 @@ $(function () {
     });
 
 
-    $('.datetimepickerpast').datetimepicker({
-        sideBySide: true,
-        format: 'YYYY-MM-DD HH:mm',
-        maxDate: new Date()
-    }).on('dp.change', function (e) {
-        // Set the formatted value (optional: adjust format)
-        $(this).val(e.date.format('YYYY-MM-DD HH:mm'));
-
-        // Trigger input for floating label (if CSS relies on :placeholder-shown)
-        $(this).trigger('input');
-    });
-
     // ====== Misc bindings ======
     $('.PersInfo').on("click", function () {
         sessionStorage.persid = null
@@ -549,14 +537,14 @@ function isValidDate(d) {
     return d instanceof Date && !isNaN(d);
 }
 function formatDateToSqlString(inputDate) {
-    if (inputDate == '') {
+    if (!inputDate || inputDate.trim() === '') {
         return null;
     }
-    let date = new Date(inputDate);
-    const pad = (num, size = 2) => String(num).padStart(size, '0');
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
-        `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.` +
-        `${pad(date.getMilliseconds(), 3)}`;
+
+    const m = moment(inputDate, 'DD/MM/YYYY HH:mm', true);
+    if (!m.isValid()) return null;
+
+    return m.format('YYYY-MM-DD HH:mm:ss.SSS');
 }
 
 function decryptData(cipherText, skey) {

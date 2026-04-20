@@ -127,13 +127,11 @@ function Proceed() {
     }
 }
 function Save() {
-    let inputDate = $("#txtDistributeoninp").val();
     $.ajax({
         url: '/BasicDetail/SaveDistributeCardRequest' ,
         type: 'POST',
         data: {
             "RequestId": $("#spnDistributeCardRequestId").html(),
-            "DistributedOn": formatDateToSqlString(inputDate),
             "Remark": $("#txtDistributeRemark").val()
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
