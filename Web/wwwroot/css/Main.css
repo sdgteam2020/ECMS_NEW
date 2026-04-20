@@ -900,3 +900,18 @@ a {
     white-space: nowrap;
     pointer-events: none;
 }
+
+.arrow-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 25%;
+    background: #f8f9fa;
+    margin-right: 0.25rem;
+}
+
+    .arrow-icon-box i {
+        font-size: 14px;
+    }
