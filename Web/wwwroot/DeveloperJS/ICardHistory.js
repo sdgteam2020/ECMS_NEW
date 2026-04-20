@@ -39,7 +39,7 @@ function GetRequestHistory(spnRequestId) {
 
                                 // var PostingOut = PostingOut.filter(i => i.TrnFwdId == ICardHistory[i].TrnFwdId)
                                 if (PostingOut1.length > 0) {
-                                    listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
+                                    listItem += '<br><div class="arrow-icon-box"><i class="fas fa-arrow-down"></i></div>'
                                     listItem += '<br> <strong class="text-center text-danger">' + PostingOut1[0].Reason + '</strong> <br> <span class="text-info">From Unit </span>  <br>' + PostingOut1[0].FromUnit + ' <br> <span class="text-info">To Unit </span>  <br>' + PostingOut1[0].UnitName + '';
                                 }
                             }
@@ -92,7 +92,7 @@ function GetRequestHistory(spnRequestId) {
                         }
 
 
-                        listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
+                        listItem += '<br><div class="arrow-icon-box"><i class="fas fa-arrow-down"></i></div>'
 
                         if (ICardHistory[i].IsComplete == 0) {
                             listItem += '<br><span class="badge bg-warning ">Pending from </span>';
@@ -109,7 +109,7 @@ function GetRequestHistory(spnRequestId) {
 
                        // var PostingOut = PostingOut.filter(i => i.TrnFwdId == ICardHistory[i].TrnFwdId)
                         if (PostingOut1.length > 0) {
-                            listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
+                            listItem += '<br><div class="arrow-icon-box"><i class="fas fa-arrow-down"></i></div>'
                             listItem += '<br> <strong class="text-center text-danger">' + PostingOut1[0].Reason + '</strong> <br> <span class="text-info">From Unit </span>  <br>' + PostingOut1[0].FromUnit + ' <br> <span class="text-info">To Unit </span>  <br>' + PostingOut1[0].UnitName + '';
                         }
 
@@ -123,14 +123,14 @@ function GetRequestHistory(spnRequestId) {
                                 remarks += '<li>' + remarksfaulty[f] +'</li>';
                             }
                             remarks += "</ul>";
-                            listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
+                            listItem += '<br><div class="arrow-icon-box"><i class="fas fa-arrow-down"></i></div>'
                             listItem += '<br><strong class="text-center text-danger text-decoration-underline">Faulty Card </strong> <br> <span class="text-danger">Reason</span> <br><strong class="text-left text-info">' + remarks + '</strong> By :-' + FaultyCard1[0].FaultyStage + '';
                         }
 
                         if (ICardHistory.length == i) {
                           
                             if (CloseCard != null) {
-                                listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
+                                listItem += '<br><div class="arrow-icon-box"><i class="fas fa-arrow-down"></i></div>'
                                 listItem += '<br> <strong class="text-center text-danger">Appl Close </strong> <br> Reason :-' + CloseCard.Reason + '';
                             }
                         }
@@ -152,7 +152,7 @@ function GetRequestHistory(spnRequestId) {
 
                     // var PostingOut = PostingOut.filter(i => i.TrnFwdId == ICardHistory[i].TrnFwdId)
                     if (PostingOut1?.length > 0) {
-                        listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>'
+                        listItem += '<br><div class="arrow-icon-box"><i class="fas fa-arrow-down"></i></div>'
                         listItem += '<br> <strong class="text-center text-danger">' + PostingOut1[0].Reason + '</strong> <br> <span class="text-info">From Unit </span>  <br>' + PostingOut1[0].FromUnit + ' <br> <span class="text-info">To Unit </span>  <br>' + PostingOut1[0].UnitName + '';
                     }
 
@@ -217,7 +217,7 @@ function GetMovementHistory(spnRequestId) {
                         listItem += '<br> <strong class="text-center">Remark</strong> <br>' + response[i].Remark + '';
 
                         if (response.length != i+1) {
-                            listItem += '<br><button type="button" class="btn btn-icon btn-round btn-light mr-1"><i class="fas fa-arrow-down"></i></button>';
+                            listItem += '<br><div class="arrow-icon-box"><i class="fas fa-arrow-down"></i></div>';
                         }
                         listItem += '</div>';
                         listItem += '</div>';

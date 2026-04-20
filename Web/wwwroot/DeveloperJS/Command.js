@@ -64,7 +64,7 @@ function BindData(callback) {
         autoWidth: false,  //Set autoWidth to true (let DataTables decide)
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
-        order: [[2, 'asc']], // Default sorting on the first column
+        order: [[4, 'asc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
