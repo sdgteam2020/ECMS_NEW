@@ -304,27 +304,35 @@ async function GetTrnFaultyCardDetail(TrnFaultyCardId) {
     }
 }
 function DownloadPdf(RequestId) {
-    $.ajax({
-        url: '/Log/CreatePdf',
-        type: 'POST',
-        data: {
-            "Request": encryptPayloadData(RequestId)
-        },
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        xhrFields: {
-            responseType: 'blob'
-        },
-        success: function (response, status, xhr) {
-            var blob = new Blob([response], { type: 'application/pdf' });
-            var fileURL = window.URL.createObjectURL(blob);
-            window.open(fileURL, '_blank');
-        },
-        error: function () {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
+    try {
+        const encryptedRequest = encryptPayloadData(RequestId);
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/Log/CreatePdf';
+        form.target = '_blank';
+        form.style.display = 'none';
+
+        const requestInput = document.createElement('input');
+        requestInput.type = 'hidden';
+        requestInput.name = 'Request';
+        requestInput.value = encryptedRequest;
+        form.appendChild(requestInput);
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '__RequestVerificationToken';
+        tokenInput.value = globalThis.RequestVerificationToken;
+        form.appendChild(tokenInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    } catch (e) {
+        Swal.fire({
+            text: errormsg002
+        });
+    }
 }
 function Reset() {
     //$("#spnTrnFaultyCardId").html("0");

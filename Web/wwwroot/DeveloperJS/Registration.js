@@ -213,6 +213,9 @@ $(function () {
     $('#ddlRemarks').on('change', function () {
         $("#RemarksIds").val($('#ddlRemarks').val());
     });
+    $('#btnclear').on('click', function () {
+        ResetField();
+    });
 
 
 });
@@ -505,4 +508,22 @@ function Proceed(id) {
     else {
         return false;
     }
+}
+function ResetField() {
+    $('#FName').val("");
+    $('#LName').val("");
+    $("#NameAsPerRecord").val("");
+    $("#ServiceNo").val("");
+    $("#DOB").val("");
+    $("#DOB_").val("");
+    $("#DateOfCommissioning").val("");
+    $("#DOC_").val("");
+    $("#PermanentAddress").val("");
+    $("#State").val("");
+    $("#District").val("");
+    $("#PS").val("");
+    $("#PO").val("");
+    $("#Tehsil").val("");
+    $("#Village").val("");
+    $("#PinCode").val("000000");
 }

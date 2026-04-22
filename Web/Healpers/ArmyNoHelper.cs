@@ -6,7 +6,7 @@ namespace Web.Healpers
     {
         private static readonly HashSet<string> ValidPrefixes = new HashSet<string>
         {
-            "IC", "SL", "SS", "WC", "TA", "JC"
+            "IC", "SL", "SS", "WC", "TA"
         };
 
         public static string ValidateArmyNo(string? armyNo)
