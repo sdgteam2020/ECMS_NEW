@@ -89,8 +89,12 @@
     border-radius: 20px 20px;
     position: relative;
     z-index: 1;
+    margin-bottom: 0px;
+}
+.clsforMargin {
     margin-bottom: 15px;
 }
+
 
     .counter:before,
     .counter:after {
@@ -218,6 +222,11 @@
             border-bottom-color: #C1C353;
             border-left-color: #C1C353;
         }
+.col-md-2.col-sm-6 > a {
+    display: inline-block;
+    cursor: pointer;
+    text-decoration: none;
+}
 /* *********************************old card css end **********************************/
 
 
