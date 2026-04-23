@@ -124,7 +124,7 @@
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 labelprofile">@Html.DisplayNameFor(model => model.DOB)</label>
                                     <div class="col-sm-8">
-                                        <label id="" class="col-form-label">@Model.DOB.ToString().Replace("-","/").Replace("00:00:00","")</label>
+                                        <label id="" class="col-form-label">@(Model.DOB.ToString("dd/MM/yyyy"))</label>
 
                                     </div>
 
@@ -134,7 +134,7 @@
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 labelprofile">Dte Of Commission</label>
                                     <div class="col-sm-8">
-                                        <label id="" class="col-form-label">@Model.DateOfCommissioning.ToString().Replace("-","/").Replace("00:00:00","")</label>
+                                        <label id="" class="col-form-label">@(Model.DateOfCommissioning.ToString("dd/MM/yyyy"))</label>
 
                                     </div>
 

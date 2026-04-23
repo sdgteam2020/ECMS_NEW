@@ -526,4 +526,6 @@ function ResetField() {
     $("#Tehsil").val("");
     $("#Village").val("");
     $("#PinCode").val("000000");
+    $("#RankId").val("");
+    $("#ArmedId").val("");
 }

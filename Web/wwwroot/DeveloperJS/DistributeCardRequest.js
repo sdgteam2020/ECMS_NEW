@@ -87,14 +87,6 @@ function Proceed() {
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
-        //let inputVal = $("#txtDistributeoninp").val();
-        //const parsedDate = new Date(inputVal);
-        //if (!isValidDate(parsedDate)) {
-        //    $(formId).validate().showErrors({
-        //        "txtDistributeoninp": "Invalid Date Of Distribution"
-        //    });
-        //    return false;
-        //}
 
         let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();

@@ -156,14 +156,15 @@ function Proceed() {
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
+
         let inputVal = $("#txtlostoninp").val();
-        const parsedDate = new Date(inputVal);
-        if (!isValidDate(parsedDate)) {
+        const parsedDate = formatDateToSqlString(inputVal);
+        if (parsedDate == null) {
             $(formId).validate().showErrors({
                 "txtlostoninp": "Invalid Date Of Loss"
             });
             return false;
-        } 
+        }
 
         let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
