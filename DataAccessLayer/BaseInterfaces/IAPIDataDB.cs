@@ -14,6 +14,5 @@ namespace DataAccessLayer.BaseInterfaces
     {
         public Task<DTOApiPersDataResponse> GetByIC(DTOAPIDataRequest Data);
         public Task<DTOApiPersDataResponse> GetByoffrsIC(DTOAPIDataRequest Data);
-        public Task<bool> apiLogin(string accessKey);
     }
 }

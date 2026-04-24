@@ -135,16 +135,11 @@ function BindData() {
         columns: columns,
         /* ===== FORCE WIDTHS (IMPORTANT) ===== */
         columnDefs: [
-            {
-                targets: 0,     
-                visible: false,
-                width: "0px",
-                searchable: false
-            },
-            { targets: 1, width: "60px" },
+            { targets: 0, width: "60px" },
+            { targets: 1, width: "200px" },
             { targets: 2, width: "200px" },
-            { targets: 3, width: "200px" },
-            { targets: 4, width: "200px" },
+            { targets: 3, width: "120px" },
+            { targets: 4, width: "120px" },
             { targets: 5, width: "120px" },
             {
                 targets: '_all',  // Apply to all visible columns
@@ -255,9 +250,6 @@ function BindData() {
 
         }
     });
-
-    // Force hide the column
-    table.column(0).visible(false);
 }
 function Save() {
     const payload = {
@@ -404,14 +396,6 @@ function DeleteMultiple(ids) {
 function getColumnsForArmedType() {
     let columns = [];
     columns = [
-        {
-            title: "",
-            data: "ArmedId",
-            name: "ArmedId",
-            visible: false,        // hidden
-            searchable: false,
-            width: "0px",
-        },
         // Serial number column
         {
             title: "S No",

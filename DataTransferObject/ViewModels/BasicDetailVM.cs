@@ -28,6 +28,8 @@ namespace DataTransferObject.ViewModels
         public int AspNetUsersId { get; set; }
         public byte StatusId { get; set; }
 
+        public int CurrentUnitId { get; set; }
+
         [StringLength(12)]
         [MaxLength(12)]
         [Column(TypeName = "varchar(12)")]

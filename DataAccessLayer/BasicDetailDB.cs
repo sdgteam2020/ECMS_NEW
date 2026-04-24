@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using Azure.Core;
+using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Healpers;
 using DataAccessLayer.Logger;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.Data;
+using System.Linq;
 
 namespace DataAccessLayer
 {
@@ -4487,6 +4489,112 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ee, "BasicDetailDB->UpdateCardStatus");
             }
             return response;
+        }
+
+        public async Task<DTOGenericResponse<string>> CheckBeforeBesicDetailPost(BasicDetailCrtAndUpdVM basicDetail)
+        {
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            response.Value = string.Empty;
+            response.Result = false;
+
+            List<MRegistration> registrations = new List<MRegistration>();
+            List<MICardType> cardType = new List<MICardType>();
+            string query;
+            try
+            {
+                // Validate Apply For Id
+                if (basicDetail.ApplyForId != 1 && basicDetail.ApplyForId != 2)
+                {
+                    response.Message = "Invalid Apply For Select .";
+                    return response;
+                }
+
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    query = @"Select * from MRegistration;
+                                Select * from MICardType;";
+
+                    using (var multi = connection.QueryMultiple(query))
+                    {
+                        registrations = multi.Read<MRegistration>().ToList();
+                        cardType = multi.Read<MICardType>().ToList();
+
+                    }
+                }
+                // Validate Registration Type based on  Apply For Id
+                if (basicDetail.ApplyForId == 1)
+                {
+                    var registrationsApplyForId = registrations.Where(r => r.ApplyForId == 1).Select(r => r.RegistrationId).ToList();
+                    if (registrations.Count > 0 && !registrationsApplyForId.Contains(basicDetail.RegistrationId))
+                    {
+                        response.Message = "Invalid RegistrationId Select.";
+                        return response;
+                    }
+                }
+                else
+                {
+                    var registrationsApplyForId = registrations.Where(r => r.ApplyForId == 2).Select(r => r.RegistrationId).ToList();
+                    if (registrations.Count > 0 && !registrationsApplyForId.Contains(basicDetail.RegistrationId))
+                    {
+                        response.Message = "Invalid RegistrationId Select.";
+                        return response;
+                    }
+                }
+                // Validate Same Unit or other Unit based on SameUnit field in MRegistration
+                var registrationsUnit = registrations.Where(r => r.RegistrationId == basicDetail.RegistrationId).Select(r => r.SameUnit).FirstOrDefault();
+
+                if (registrationsUnit)
+                {
+                    if (basicDetail.CurrentUnitId != basicDetail.UnitId)
+                    {
+                        response.Message = "Invalid Unit Select.";
+                        return response;
+                    }
+                }
+                else
+                {
+                    if (basicDetail.CurrentUnitId == basicDetail.UnitId)
+                    {
+                        response.Message = "Invalid Unit Select.";
+                        return response;
+                    }
+                }
+
+                // Validate Card Type Id
+                var cardTypeIds = cardType.Select(c => c.TypeId).ToList();
+
+                if (cardTypeIds.Count > 0 && !cardTypeIds.Contains(basicDetail.TypeId))
+                {
+                    response.Message = "Invalid TypeId Select.";
+                    return response;
+                }
+
+
+
+                if (basicDetail.BasicDetailId > 0)
+                {
+
+                }
+                else
+                {
+
+                }
+
+
+
+                response.Result = true;
+                response.Message = "Ok.";
+                return response;
+            }
+            catch (Exception ee)
+            {
+                _logger.LogError(1001, ee, "BasicDetailDB->CheckBeforeBesicDetailPost");
+                response.Result = false;
+                response.Message = "Something went wrong";
+                response.Value = string.Empty;
+                return response;
+            }
         }
     }
 }

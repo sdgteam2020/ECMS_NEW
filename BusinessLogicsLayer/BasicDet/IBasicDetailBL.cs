@@ -57,5 +57,6 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTOGenericResponse<string>> CheckBeforeDistribution(int requestId, int UnitId);
         public Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId, string ToRemark);
         public Task<DTOPreventBasicDetailEditResponse?> GetPreventBasicDetailEdit(int BasicDetailId);
+        public Task<DTOGenericResponse<string>> CheckBeforeBesicDetailPost(BasicDetailCrtAndUpdVM basicDetail);
     }
 }

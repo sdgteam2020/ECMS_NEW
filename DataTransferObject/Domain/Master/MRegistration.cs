@@ -17,5 +17,6 @@ namespace DataTransferObject.Domain.Master
 
         [Required(ErrorMessage = "required!")]
         public int ApplyForId { get; set; }
+        public bool SameUnit { get; set; }
     }
 }
