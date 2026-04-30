@@ -86,7 +86,7 @@ namespace DataAccessLayer
             {
                 // LINQ query to fetch appointments where the AppointmentName contains the provided AppointmentName
                 // and where the appointment is approved (Approved = true).
-                // It limits the result to the top 5 records.
+                // It limits the result to the top 10 records.
                 var GetALL = await (from A in _context.MAppointment
                               where A.AppointmentName.Contains(AppointmentName)  // Filters appointments by AppointmentName
                               && A.Approved == true  // Ensures the appointment is approved
@@ -94,7 +94,7 @@ namespace DataAccessLayer
                               {
                                   ApptId = A.ApptId,  // Selects the appointment ID
                                   AppointmentName = A.AppointmentName,  // Selects the appointment name
-                              }).Take(5)  // Limits the results to 5 records
+                              }).Take(10)  // Limits the results to 5 records
                               .ToListAsync();  // Executes the query and materializes the results into a list
 
                 // Wrap the result in Task.FromResult to simulate async behavior

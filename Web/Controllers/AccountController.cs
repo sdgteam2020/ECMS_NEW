@@ -1710,8 +1710,8 @@ namespace Web.Controllers
                 {
                     dTO.ServiceNo = dTOTempSession.ICNOInput;
                     dTO.DomainId = dTOTempSession.DomainId;
-                    dTO.UnitName = (dTO.UnitName ?? "").Trim();
-                    dTO.Abbreviation = (dTO.Abbreviation ?? "").Trim();
+                    dTO.UnitName = (dTO.UnitName ?? "").Trim().ToUpper();
+                    dTO.Abbreviation = (dTO.Abbreviation ?? "").Trim().ToUpper();
                     dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                     dTO.UpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
                     ModelState.Clear();

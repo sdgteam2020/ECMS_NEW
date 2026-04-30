@@ -24,26 +24,27 @@ namespace DataTransferObject.Requests
         public string DomainId { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression("^[0-9]{7}$", ErrorMessage = "Use Seven digit numbers")]
+        [RegularExpression(@"^(?!0{7}$)\d{7}$", ErrorMessage = "Enter valid 7 digit Sus no.")]
         [MaxLength(7, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string Sus_no { get; set; } = string.Empty;
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression("^[A-Z]{1}$", ErrorMessage = "Alphabet in Capital letter.")]
-        [MaxLength(1, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
+        [RegularExpression(@"^(?=.*[A-Z])[YHALWXFMPKN]$", ErrorMessage = "Only capital letters Y, H, A, L, W, X, F, M, P, K, N allowed.")]
+        [MaxLength(1, ErrorMessage = "Maximum length of Suffix is one character.")]
+        [MinLength(1, ErrorMessage = "Minimum length of Suffix is one character.")]
         public string Suffix { get; set; } = string.Empty;
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitId is number.")]
         public int UnitId { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression(@"^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$", ErrorMessage = "Unit name must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed.")]
         [MaxLength(100, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string UnitName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Unit Abbreviation is required.")]
         [MaxLength(10, ErrorMessage = "Maximum length of Abbreviation is ten characters.")]
-        [RegularExpression(@"^[a-zA-Z0-9]+( [a-zA-Z0-9]+){0,2}$", ErrorMessage = "Only alphabets, numbers and maximum two spaces allowed.")]
+        [RegularExpression(@"^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$", ErrorMessage = "Unit Abbreviation must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed.")]
         public string Abbreviation { get; set; } = string.Empty;
 
         [RegularExpression(@"^[\d]+$", ErrorMessage = "Numbers allowed.")]

@@ -1706,6 +1706,8 @@ namespace Web.Controllers
             {
                 string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
 
+                DTOBasicDetailHidden? dTObasicDetailHidden = SessionHeplers.GetObject<DTOBasicDetailHidden>(HttpContext.Session, "BasicDetailHidden");
+
                 // Fetch current logged-in user ID from claims
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -1754,8 +1756,6 @@ namespace Web.Controllers
                     model = modeldec;
                     model.Photo_ = photoes;
                     model.Signature_ = Signture;
-
-                    DTOBasicDetailHidden? dTObasicDetailHidden = SessionHeplers.GetObject<DTOBasicDetailHidden>(HttpContext.Session, "BasicDetailHidden");
 
                     if (dTObasicDetailHidden != null)
                     {
@@ -2060,6 +2060,11 @@ namespace Web.Controllers
                                             HttpContext.Session.Remove(SessionKeySalt);
                                         }
 
+                                        if (dTObasicDetailHidden != null)
+                                        {
+                                            HttpContext.Session.Remove("BasicDetailHidden");
+                                        }
+
                                         TempData["success"] = "Updated Successfully.";
                                         //return RedirectToAction("Index");
                                         if (newBasicDetail.ApplyForId == 1)
@@ -2319,6 +2324,11 @@ namespace Web.Controllers
                                 if (dd != null)
                                 {
                                     HttpContext.Session.Remove(SessionKeySalt);
+                                }
+
+                                if (dTObasicDetailHidden != null)
+                                {
+                                    HttpContext.Session.Remove("BasicDetailHidden");
                                 }
 
                                 TempData["success"] = "Successfully created.";

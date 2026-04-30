@@ -45,6 +45,7 @@ namespace DataAccessLayer
         /// </remarks>
         public async Task<DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>> CheckUnitMappedInMapUnit(DTOSaveUnitWithMappingRequest dTO)
         {
+            string SUSNO_WithoutSuffix = dTO.Sus_no.Trim();
             string SUSNo = dTO.Sus_no + dTO.Suffix.ToUpper();
             var response = new DTOGenericResponse<DTOCheckUnitMappedInMapUnitResponse>();
             var normalized = SUSNo.Trim();
@@ -58,8 +59,8 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var Unit = await connection.QueryAsync<DTOCheckUnitMappedInMapUnitResponse>(query, new { Prefix });
-                    var result =  Unit.FirstOrDefault(x =>string.Concat(x.Sus_no, x.Suffix).Equals(normalized, StringComparison.OrdinalIgnoreCase));
-                    if(result != null)
+                    var result =  Unit.FirstOrDefault(x =>x.Sus_no.Equals(SUSNO_WithoutSuffix));
+                    if(result != null && result.Suffix == dTO.Suffix)
                     {
                         if (result.UnitMapId == null)
                         {
@@ -94,9 +95,21 @@ namespace DataAccessLayer
                         }
                         else
                         {
-                            response.Result = true;
-                            response.Message = "ok";
-                            response.Value = new DTOCheckUnitMappedInMapUnitResponse();
+                            var duplicateSUSNo = mUnits.FirstOrDefault(x => x.Sus_no.Equals(SUSNO_WithoutSuffix));
+
+                            if (duplicateSUSNo != null)
+                            {
+                                response.Result = false;
+                                response.Message = "SUS No already exists.";
+                                response.Value = new DTOCheckUnitMappedInMapUnitResponse();
+                            }
+                            else
+                            {
+                                response.Result = true;
+                                response.Message = "ok";
+                                response.Value = new DTOCheckUnitMappedInMapUnitResponse();
+                            }
+
                         }
                     }
                 }
@@ -289,7 +302,7 @@ namespace DataAccessLayer
                                Suffix = MUni.Suffix,
                                Sus_no = MUni.Sus_no,
                            }).AsNoTracking().ToListAsync();
-                return Unit.Where(x => (x.Sus_no + x.Suffix).Contains(UnitName)).Take(10).ToList();
+                return Unit.Where(x => (x.Sus_no + x.Suffix).Contains(normalized)).Take(10).ToList();
             }
             catch (Exception ex)
             {
@@ -301,7 +314,39 @@ namespace DataAccessLayer
 
         }
 
-        
+        public async Task<List<DTOMapUnitResponse>> GetALLByUnitNameForBD(string UnitName,int UnitId,bool SameUnit)
+        {
+            if (string.IsNullOrWhiteSpace(UnitName))
+                return new List<DTOMapUnitResponse>();
+
+            var normalized = UnitName.Trim();
+            var prefix = normalized[..Math.Min(3, normalized.Length)];
+            try
+            {
+                var Unit = await (from uni in _context.MapUnit
+                                  join MUni in _context.MUnit on uni.UnitId equals MUni.UnitId
+                                  where MUni.Prefix == prefix && MUni.IsVerify == true && (SameUnit || uni.UnitMapId != UnitId)
+                                  select new DTOMapUnitResponse
+                                  {
+                                      UnitMapId = uni.UnitMapId,
+                                      UnitName = MUni.UnitName,
+                                      Suffix = MUni.Suffix,
+                                      Sus_no = MUni.Sus_no,
+                                  }).AsNoTracking().ToListAsync();
+                return Unit.Where(x => (x.Sus_no + x.Suffix).Contains(normalized)).Take(10).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                // Log the error in case of an exception
+                _logger.LogError(1001, ex, "MapUnitDB->GetALLByUnitNameForBD");
+                // Return null in case of an error
+                return new List<DTOMapUnitResponse>();
+            }
+
+        }
+
+
         /// <summary>
         /// Retrieves a unit by its UnitMapId.
         /// </summary>

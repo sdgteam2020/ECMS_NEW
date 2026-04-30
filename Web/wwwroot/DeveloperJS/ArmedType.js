@@ -13,8 +13,18 @@ $(function () {
         this.value = this.value.toUpperCase();
     });
    
-    $("#btnsave").on("click",function () {
+    $("#btnsave").on("click",function (e) {
         if ($("#SaveForm")[0].checkValidity()) {
+            if ($("input[name='radioInf']:checked").length === 0) {
+                e.preventDefault();
+
+                Swal.fire({
+                    icon: "warning",
+                    text: "Please select Infantry Yes or No."
+                });
+
+                return false;
+            }
 
             Swal.fire({
                 title: 'Are you sure?',

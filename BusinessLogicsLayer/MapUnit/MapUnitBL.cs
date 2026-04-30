@@ -63,5 +63,10 @@ namespace BusinessLogicsLayer.Unit
         {
             return await _UnitDB.GetUnitByHierarchy(Data);
         }
+        public async Task<List<DTOMapUnitResponse>> GetALLByUnitNameForBD(string UnitName, int UnitId, bool SameUnit)
+        {
+            return await _UnitDB.GetALLByUnitNameForBD(UnitName, UnitId, SameUnit);
+
+        }
     }
 }

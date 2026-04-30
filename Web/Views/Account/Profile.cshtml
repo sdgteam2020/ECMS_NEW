@@ -333,21 +333,21 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">SUS No <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" placeholder="Enter SUS No" name="txtSusno" id="txtSusno" minlength="8" maxlength="8" data-val="true" data-val-regex="Use Seven digit numbers and one alphabet in capital letter without space" data-val-required="SUS No is required." data-val-regex-pattern="^[0-9]{7}[A-Z]{1}$" />
+                                    <input class="form-control js-uppercase" placeholder="Enter SUS No" name="txtSusno" id="txtSusno" minlength="8" maxlength="8" data-val="true" data-val-regex="Enter valid SUS No: 7 digits followed by suffix Y, H, A, L, W, X, F, M, P, K, or N." data-val-required="SUS No is required." data-val-regex-pattern="^(?!0{7})\d{7}[YHALWXFMPKN]$" />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtSusno" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Unit <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" placeholder="Enter Unit" name="txtUnit" id="txtUnit" maxlength="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit is required." data-val-regex-pattern="^[\w ]+$" />
+                                    <textarea class="form-control textarea-auto-height js-uppercase" placeholder="Enter Unit" name="txtUnit" id="txtUnit" rows="2" maxlength="100" data-val="true" data-val-regex="Unit name must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed." data-val-required="Unit Name is required." data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$"></textarea>
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtUnit" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Unit Abbreviation <i class="fas fa-asterisk mand1"></i></label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" placeholder="Abbreviation as Per Unit Name" id="txtUnitAbbr" maxlength="10" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit Abbreviation is required." data-val-regex-pattern="^[\w ]+$" />
+                                    <input class="form-control js-uppercase" placeholder="Abbreviation as Per Unit Name" id="txtUnitAbbr" name="txtUnitAbbr" maxlength="10" data-val="true" data-val-regex="Unit Abbreviation must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed." data-val-required="Unit Abbreviation is required." data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$" />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitAbbr" data-valmsg-replace="true"></span>
                                 </div>
                             </div>

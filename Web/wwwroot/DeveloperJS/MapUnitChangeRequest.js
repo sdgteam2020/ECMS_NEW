@@ -1,4 +1,5 @@
-﻿$(async function () {
+﻿let UnitTyperdi = 0;
+$(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     var selectionButton;
@@ -17,65 +18,6 @@
 
     $('input.js-uppercase').on('input', function () {
         this.value = this.value.toUpperCase();
-    });
-
-
-    $('input[name="UnitTyperdi"]').on("click", function () {
-        var lst = '<option value="1">Please Select</option>';
-        var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
-        if (val == "1") {
-            $(".unittype").removeClass("d-none");
-            $(".FmnBranch").addClass("d-none");
-            $(".DteBranch").addClass("d-none");
-
-            $('#ddlCommand option').remove();
-            $('#ddlCorps option').remove();
-            $('#ddlBde option').remove();
-            $('#ddlDiv option').remove();
-
-            mMsater(0, "ddlCommand", 1, "");
-
-            $("#ddlFmnBranch").html(lst);
-            $("#ddlPSODte").html(lst);
-            $("#ddlDgSubDte").html(lst);
-
-        }
-        else if (val == "2") {
-
-            $('#ddlCommand option').remove();
-            $('#ddlCorps option').remove();
-            $('#ddlBde option').remove();
-            $('#ddlDiv option').remove();
-            $('#ddlFmnBranch option').remove();
-
-            mMsater(0, "ddlCommand", 1, "");
-            mMsater(0, "ddlFmnBranch", FmnBranches, "");
-
-            $("#ddlPSODte").html(lst);
-            $("#ddlDgSubDte").html(lst);
-
-            $(".unittype").removeClass("d-none");
-            $(".FmnBranch").removeClass("d-none");
-            $(".DteBranch").addClass("d-none");
-        }
-        else if (val == "3") {
-            $(".unittype").addClass("d-none");
-            $(".FmnBranch").addClass("d-none");
-            $(".DteBranch").removeClass("d-none");
-
-            $('#ddlPSODte option').remove();
-            $('#ddlDgSubDte option').remove();
-
-            $("#ddlCommand").html(lst);
-            $("#ddlCorps").html(lst);
-            $("#ddlBde").html(lst);
-            $("#ddlDiv").html(lst);
-            $("#ddlFmnBranch").html(lst);
-
-            mMsater(0, "ddlPSODte", PSO, "");
-            mMsater(0, "ddlDgSubDte", SubDte, "");
-
-        }
     });
 
     $('#ddlCommand').on('change', function () {
@@ -187,7 +129,7 @@ function Save(choice) {
             "Remark": document.getElementById('txtRemark')?.value || "",
             "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
             "Choice": parseInt(choice || "0"),
-            "UnitType": parseInt(document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "0"),
+            "UnitType": UnitTyperdi,
             "ComdId": document.getElementById('ddlCommand')?.value || "",
             "CorpsId": document.getElementById('ddlCorps')?.value || "",
             "DivId": document.getElementById('ddlDiv')?.value || "",
@@ -233,7 +175,7 @@ function Save(choice) {
             "Remark": document.getElementById('txtRemark')?.value || "",
             "AdminRemark": document.getElementById('txtAdminRemark')?.value || "",
             "Choice": parseInt(choice || "0"),
-            "UnitType": parseInt(document.querySelector('input[type="radio"][name="UnitTyperdi"]:checked')?.value || "0"),
+            "UnitType": UnitTyperdi,
             "ComdId": document.getElementById('ddlCommand')?.value || "",
             "CorpsId": document.getElementById('ddlCorps')?.value || "",
             "DivId": document.getElementById('ddlDiv')?.value || "",
@@ -302,6 +244,8 @@ async function GetUnitDetails(UnitMapId) {
         })
         .then(result => {
             if (result != null) {
+                UnitTyperdi = result.UnitType;
+
                 $("#lblUnit").html(result.UnitName);
                 $("#lblSUSNo").html(`${result.Sus_no}${result.Suffix}`);
                 if (result.UnitType == 1) {
@@ -333,6 +277,66 @@ async function GetUnitDetails(UnitMapId) {
                 $("#lblFmnBranch").html(result.BranchName);
                 $("#lblPSODte").html(result.PSOName);
                 $("#lblDgSubDte").html(result.SubDteName);
+
+
+                var lst = '<option value="1">Please Select</option>';
+
+                if (UnitTyperdi == 1) {
+                    $(".unittype").removeClass("d-none");
+                    $(".FmnBranch").addClass("d-none");
+                    $(".DteBranch").addClass("d-none");
+
+                    $('#ddlCommand option').remove();
+                    $('#ddlCorps option').remove();
+                    $('#ddlBde option').remove();
+                    $('#ddlDiv option').remove();
+
+                    mMsater(0, "ddlCommand", 1, "");
+
+                    $("#ddlFmnBranch").html(lst);
+                    $("#ddlPSODte").html(lst);
+                    $("#ddlDgSubDte").html(lst);
+
+                }
+                else if (UnitTyperdi == 2) {
+
+                    $('#ddlCommand option').remove();
+                    $('#ddlCorps option').remove();
+                    $('#ddlBde option').remove();
+                    $('#ddlDiv option').remove();
+                    $('#ddlFmnBranch option').remove();
+
+                    mMsater(0, "ddlCommand", 1, "");
+                    mMsater(0, "ddlFmnBranch", FmnBranches, "");
+
+                    $("#ddlPSODte").html(lst);
+                    $("#ddlDgSubDte").html(lst);
+
+                    $(".unittype").removeClass("d-none");
+                    $(".FmnBranch").removeClass("d-none");
+                    $(".DteBranch").addClass("d-none");
+                }
+                else if (UnitTyperdi == 3) {
+                    $(".unittype").addClass("d-none");
+                    $(".FmnBranch").addClass("d-none");
+                    $(".DteBranch").removeClass("d-none");
+
+                    $('#ddlPSODte option').remove();
+                    $('#ddlDgSubDte option').remove();
+
+                    $("#ddlCommand").html(lst);
+                    $("#ddlCorps").html(lst);
+                    $("#ddlBde").html(lst);
+                    $("#ddlDiv").html(lst);
+                    $("#ddlFmnBranch").html(lst);
+
+                    mMsater(0, "ddlPSODte", PSO, "");
+                    mMsater(0, "ddlDgSubDte", SubDte, "");
+
+                }
+
+                $("#CurrentUnitHierarchy").removeClass("d-none");
+                $("#ChangeUnitHierarchy").removeClass("d-none");
 
             }
             else {
@@ -371,12 +375,24 @@ async function GetChangeMapUnitDetails(MapUnitChangeRequestId) {
 
                 if (result.ExistingCh_UnitType == 1) {
                     $("#lblUnitType").html(`Unit`);
+
+                    $(".ExistingCh-UnitType").removeClass("d-none");
+                    $(".ExistingCh-FmnBranch").addClass("d-none");
+                    $(".ExistingCh-DteBranch").addClass("d-none");
                 }
                 else if (result.ExistingCh_UnitType == 2) {
                     $("#lblUnitType").html(`Fmn HQ`);
+
+                    $(".ExistingCh-UnitType").removeClass("d-none");
+                    $(".ExistingCh-FmnBranch").removeClass("d-none");
+                    $(".ExistingCh-DteBranch").addClass("d-none");
                 }
                 else if (result.ExistingCh_UnitType == 3) {
                     $("#lblUnitType").html(`Dte / Sub Dte Branch`);
+
+                    $(".ExistingCh-UnitType").addClass("d-none");
+                    $(".ExistingCh-FmnBranch").addClass("d-none");
+                    $(".ExistingCh-DteBranch").removeClass("d-none");
                 }
 
                 $("#lblComd").html(result.ComdName);
@@ -389,8 +405,9 @@ async function GetChangeMapUnitDetails(MapUnitChangeRequestId) {
 
                 var lst = '<option value="1">Please Select</option>';
 
+
+
                 if (result.RequestCh_UnitType == 1) {
-                    $("#UnitType1").prop("checked", true);
 
                     mMsater(result.ComdId, "ddlCommand", 1, "");
                     mMsater(result.CorpsId, "ddlCorps", 2, result.ComdId);
@@ -406,7 +423,6 @@ async function GetChangeMapUnitDetails(MapUnitChangeRequestId) {
                     $("#ddlDgSubDte").html(lst);
                 }
                 else if (result.RequestCh_UnitType == 2) {
-                    $("#UnitType2").prop("checked", true);
 
                     mMsater(result.ComdId, "ddlCommand", 1, "");
                     mMsater(result.CorpsId, "ddlCorps", 2, result.ComdId);
@@ -423,7 +439,6 @@ async function GetChangeMapUnitDetails(MapUnitChangeRequestId) {
 
                 }
                 else if (result.RequestCh_UnitType == 3) {
-                    $("#UnitType3").prop("checked", true);
 
                     mMsater(result.PsoId, "ddlPSODte", PSO, "");
                     mMsater(result.SubDteId, "ddlDgSubDte", SubDte, "");
@@ -439,7 +454,7 @@ async function GetChangeMapUnitDetails(MapUnitChangeRequestId) {
                     $("#ddlBde").html(lst);
                     $("#ddlDiv").html(lst);
                 }
-                $("#UnitType1, #UnitType2, #UnitType3").prop("disabled", true);
+
                 $("#ddlCommand").prop("disabled", true);
                 $("#ddlCorps").prop("disabled", true);
                 $("#ddlDiv").prop("disabled", true);
@@ -449,6 +464,11 @@ async function GetChangeMapUnitDetails(MapUnitChangeRequestId) {
                 $("#ddlDgSubDte").prop("disabled", true);
 
                 $("#txtRemark").prop("disabled", true);
+
+                UnitTyperdi = result.RequestCh_UnitType;
+
+                $("#CurrentUnitHierarchy").removeClass("d-none");
+                $("#ChangeUnitHierarchy").removeClass("d-none");
             }
             else {
                 toastr.error('Invalid Input.');

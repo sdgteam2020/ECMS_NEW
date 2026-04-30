@@ -22,26 +22,27 @@ namespace DataAccessLayer
         }
 
         /// <summary>
-        /// Checks if a unit with the specified name already exists in the database, excluding the current unit (based on UnitId).
+        /// Checks whether another unit already exists with the same Unit Name, Abbreviation, or SUS No,
+        /// excluding the current unit based on UnitId.
         /// </summary>
-        /// <param name="Data">The MUnit object containing the unit name to check.</param>
+        /// <param name="Data">The MUnit object containing UnitName, Abbreviation, SUS No, and UnitId values.</param>
         /// <returns>
-        /// A boolean value indicating whether a unit with the specified name already exists (excluding the current unit).
-        /// Returns <c>true</c> if the unit name exists in the database for another unit; otherwise, <c>false</c>.
+        /// Returns <c>true</c> if UnitName, Abbreviation, or SUS No already exists for another unit;
+        /// otherwise, returns <c>false</c>.
         /// </returns>
-        /// <remarks>
-        /// This method performs a case-insensitive comparison of the unit name in the database and checks if any unit with the same name
-        /// already exists, excluding the current unit's ID. It is useful for ensuring that unit names are unique when adding or updating records.
-        /// </remarks>
         public async Task<bool> GetByName(MUnit Data)
         {
+            string unitName = Data.UnitName?.Trim().ToUpper() ?? "";
+            string abbreviation = Data.Abbreviation?.Trim().ToUpper() ?? "";
+            string susNo = Data.Sus_no?.Trim() ?? "";
+
             // Retrieve all units from the database without tracking them in memory (for performance reasons).
-            List<MUnit> mUnits = await _context.MUnit.AsNoTracking().ToListAsync();
+            List<MUnit> mUnits = await _context.MUnit.AsNoTracking().Where(x => x.UnitId != Data.UnitId).ToListAsync();
 
             // Check if any unit already exists with the same name (case-insensitive) and a different UnitId.
-            var ret = mUnits.Any(p => p.UnitName.ToUpper() == Data.UnitName.ToUpper() && p.UnitId != Data.UnitId);
+            var ret = mUnits.Any(p => p.UnitName.ToUpper() == unitName || p.Abbreviation.ToUpper() == abbreviation || p.Sus_no ==susNo);
 
-            // Return the result of the check (true if a duplicate unit name exists, false otherwise).
+            // Return the result of the check (true if a duplicate unit name,Abbreviation exists,Sus_no, false otherwise).
             return ret;
         }
 
