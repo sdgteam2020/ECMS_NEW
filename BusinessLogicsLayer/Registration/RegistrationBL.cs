@@ -19,9 +19,14 @@ namespace BusinessLogicsLayer.Registration
             return await _registrationDB.GetApplyCardDetails(Data);
         }
 
+
         public async Task<List<MRegistration>> GetByApplyFor(MRegistration Data)
         {
             return await _registrationDB.GetByApplyFor(Data);
+        }
+        public async Task<List<MArmyPrefixRule>> GetArmyPrefixRules(DTOApplyForRequest Data)
+        {
+            return await _registrationDB.GetArmyPrefixRules(Data);
         }
     }
 }

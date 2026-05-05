@@ -18,6 +18,7 @@ using DataTransferObject.Response;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Management.Smo;
@@ -150,8 +151,8 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
-        
-        
+
+
         [HttpPost]
         public async Task<IActionResult> GetAllNotificationData([FromBody] DTODataTablesRequestForNotification dTORecord)
         {
@@ -389,7 +390,7 @@ namespace Web.Controllers
             }
         }
 
-        
+
         /// <summary>
         /// Action method to retrieve the dashboard user management count based on the provided UnitId and current user's session.
         /// It calls the business logic layer to get the user management count for the dashboard.
@@ -401,7 +402,7 @@ namespace Web.Controllers
         {
             try
             {
-                int UnitId=0;
+                int UnitId = 0;
                 // Initialize the DTO session object
                 DtoSession? dtoSession = new DtoSession();
 
@@ -613,7 +614,7 @@ namespace Web.Controllers
                 TempData.Keep("error");
                 return RedirectToAction("ContactUs", "Home");
             }
- 
+
         }
 
         /// <summary>
@@ -1257,7 +1258,7 @@ namespace Web.Controllers
         /// <param name="dTORecord">The request data for the report.</param>
         /// <returns>A JSON response containing the report data or an error message.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetReportData([FromBody]  EncryptedRequest request)
+        public async Task<IActionResult> GetReportData([FromBody] EncryptedRequest request)
         {
             DTODataTablesRequestForReport dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForReport>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             if (dTORecord == null)
@@ -1452,7 +1453,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError); // Return error message for invalid data
             }
 
-          
+
             // Fetch the registration data based on the "ApplyFor" property
             return Json(await _registrationBL.GetByApplyFor(Data));
         }
@@ -1745,11 +1746,11 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> GetReportCardDashboardCount([FromBody] EncryptedRequest request)
         {
-            DTOMHierarchyRequest dTORecord= await AESEncrytDecry.DecryptAESWithDTO<DTOMHierarchyRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            DTOMHierarchyRequest dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTOMHierarchyRequest>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             if (dTORecord == null)
             {
                 return BadRequest(new { message = "Invalid Data." });
@@ -1823,11 +1824,11 @@ namespace Web.Controllers
             // Return the report dashboard count data as a JSON response
             return Json(await _reportReturnBL.GetReportCardDashboardCount(dTORecord));
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> GetReportCardData([FromBody] EncryptedRequest request)
         {
-            DTODataTablesRequestForReportCard dTORecord= await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForReportCard>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            DTODataTablesRequestForReportCard dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForReportCard>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             if (dTORecord == null)
             {
                 return BadRequest(new { message = "Invalid data." });
@@ -1912,6 +1913,20 @@ namespace Web.Controllers
             }
         }
 
+        #endregion
+
+        #region GetArmyPrefixRule
+        [HttpPost]
+        public async Task<IActionResult> GetArmyPrefixRules(string request)
+        {
+            var data = await AESEncrytDecry.DecryptAESWithDTO<DTOApplyForRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (data == null)
+            {
+                return Json(KeyConstants.InternalServerError); // Return error message for invalid data
+            }           
+            return Json(await _registrationBL.GetArmyPrefixRules(data));
+
+        }
         #endregion
     }
 }

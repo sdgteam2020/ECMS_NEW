@@ -98,6 +98,7 @@ namespace DataAccessLayer
         public DbSet<TrnDispatchCardMapping> TrnDispatchCardMapping { get; set; } = null!;// For dispatch card mapping details
         public DbSet<MDispatchMode> MDispatchMode { get; set; } = null!;// For dispatch mode details
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
+        public DbSet<MArmyPrefixRule> MArmyPrefixRule { get; set; } = null!;// For army prefix rule details
 
         protected override void OnModelCreating(ModelBuilder builder)// Fluent API configurations
         {

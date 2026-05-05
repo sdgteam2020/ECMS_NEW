@@ -9,5 +9,7 @@ namespace BusinessLogicsLayer.Registration
     {
         public Task<List<MRegistration>> GetByApplyFor(MRegistration Data);
         public Task<DTOApplyCardDetailsResponse> GetApplyCardDetails(DTOApplyCardDetailsRequest Data);
+        Task<List<MArmyPrefixRule>> GetArmyPrefixRules(DTOApplyForRequest Data);
+
     }
 }
