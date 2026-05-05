@@ -2892,7 +2892,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTOAppointmentResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw, // IMPORTANT: return same draw
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOAppointments
@@ -2906,7 +2906,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTOAppointmentResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw, // IMPORTANT: return same draw
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOAppointments

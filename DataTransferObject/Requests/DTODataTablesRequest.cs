@@ -4,16 +4,17 @@ namespace DataTransferObject.Requests
 {
     public class DTODataTablesRequest
     {
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Invalid draw value.")]
         public int Draw { get; set; }
 
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Invalid start value.")]
         public int Start { get; set; }
 
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        [Range(1, 500, ErrorMessage = "Invalid page length.")]
         public int Length { get; set; }
 
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        //[RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression(@"^[a-zA-Z0-9\s()\-\/&]*$", ErrorMessage = "Only alphabets, numbers, space, ( ), -, / and & are allowed.")]
         public string? searchValue { get; set; }
 
         [RegularExpression(@"^[a-zA-Z_]*$", ErrorMessage = "Only alphabets and underscores are allowed.")]
@@ -33,7 +34,7 @@ namespace DataTransferObject.Requests
     }
     public class DTODataTablesRequestForMapUnitChange : DTODataTablesRequest
     {
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Invalid UnitMapId.")]
         public int UnitMapId { get; set; }
         
         [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
@@ -41,7 +42,7 @@ namespace DataTransferObject.Requests
     }
     public class DTODataTablesRequestForFaultyCard : DTODataTablesRequest
     {
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Invalid UnitMapId.")]
         public int UnitMapId { get; set; }
 
         [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets allowed.")]

@@ -101,7 +101,7 @@
                                                         <div class="js--image-preview"> <img id="PhotoPath" src="@Model.ExistingPhotoInBase64" height="158px" width="180px" loading="lazy" /></div>
                                                         <div class="upload-options">
                                                             <label>
-                                                                <input asp-for="Photo_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
+                                                                <input asp-for="Photo_" class="form-control alpha-num-only" accept="image/jpeg,image/jpg,image/png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -112,7 +112,7 @@
                                                         <div class="js--image-preview"> <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="158px" width="180px" loading="lazy" /></div>
                                                         <div class="upload-options">
                                                             <label>
-                                                                <input asp-for="Photo_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
+                                                                <input asp-for="Photo_" class="form-control alpha-num-only" accept="image/jpeg,image/jpg,image/png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -134,7 +134,7 @@
                                                         <div class="js--image-preview_sig"> <img id="SignaturePath" src="@Model.ExistingSignatureInBase64" height="80px" width="180px" loading="lazy" /></div>
                                                         <div class="upload-options_sign">
                                                             <label>
-                                                                <input asp-for="Signature_" class="form-control" accept="image/jpeg,image/jpg,image/png" loading="lazy" />
+                                                                <input asp-for="Signature_" class="form-control alpha-num-only" accept="image/jpeg,image/jpg,image/png" loading="lazy" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -146,7 +146,7 @@
                                                         <div class="upload-options_sign">
                                                             <label>
 
-                                                                <input asp-for="Signature_" class="form-control" accept="image/jpeg,image/jpg,image/png" />
+                                                                <input asp-for="Signature_" class="form-control alpha-num-only" accept="image/jpeg,image/jpg,image/png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -163,7 +163,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Paper I-Card No</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="PaperIcardNo" class="form-control text-uppercase" data-toggle="tooltip" title="Enter Paper I card No" placeholder="Enter Paper I card No" maxlength="12" required />
+                                            <input asp-for="PaperIcardNo" class="form-control alpha-num-only text-uppercase" data-toggle="tooltip" title="Enter Paper I card No" placeholder="Enter Paper I card No" maxlength="12" required />
                                             <span asp-validation-for="PaperIcardNo" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -171,7 +171,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold labelprofile">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Service No</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="ServiceNo" class="form-control text-uppercase" data-toggle="tooltip" title="IC No Not Editable" placeholder="IC-12345X/JC-12345X" readonly required />
+                                            <input asp-for="ServiceNo" class="form-control alpha-num-only text-uppercase" data-toggle="tooltip" title="IC No Not Editable" placeholder="IC-12345X/JC-12345X" readonly required />
                                             <span asp-validation-for="ServiceNo" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -188,7 +188,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="FName" class="col-sm-3 col-form-label form-label labelprofile">First Name</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="FName" class="form-control text-uppercase" data-toggle="tooltip" title="First Name" placeholder="Max 18 Characters incl spaces" readonly required />
+                                            <input asp-for="FName" class="form-control alpha-num-only text-uppercase" data-toggle="tooltip" title="First Name" placeholder="Max 18 Characters incl spaces" readonly required />
                                             <span asp-validation-for="FName" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -196,7 +196,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="LName" class="col-sm-3 col-form-label form-label labelprofile">Last Name</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="LName" class="form-control text-uppercase" data-toggle="tooltip" title="Last Name" placeholder="Max 18 Characters incl spaces" readonly/>
+                                            <input asp-for="LName" class="form-control alpha-num-only text-uppercase" data-toggle="tooltip" title="Last Name" placeholder="Max 18 Characters incl spaces" readonly />
                                             <span asp-validation-for="LName" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -205,7 +205,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="UnitId" class="col-sm-3 col-form-label form-label labelprofile">Unit Name</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="txtUnit" name="txtUnit" class="form-control text-uppercase" data-toggle="tooltip" title="Enter SUS No And Select Unit Name" placeholder="Enter SUS No And Select Unit Name" />
+                                            <input type="text" id="txtUnit" name="txtUnit" class="form-control alpha-num-only text-uppercase" data-toggle="tooltip" title="Enter SUS No And Select Unit Name" placeholder="Enter SUS No And Select Unit Name" />
 
                                             <span asp-validation-for="UnitId" class="text-danger"></span>
                                         </div>
@@ -232,7 +232,7 @@
                                         <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label class="col-sm-3 col-form-label form-label labelprofile">Iden Mark</label>
                                         <div class="col-sm-8">
-                                            <textarea asp-for="IdenMark1" rows="3" class="form-control text-uppercase" data-toggle="tooltip" title="Enter IdenMark " placeholder="Only one iden Mk (Max 10 characters incl spaces)" required></textarea>
+                                            <textarea asp-for="IdenMark1" rows="3" class="form-control alpha-num-only text-uppercase" data-toggle="tooltip" title="Enter IdenMark " placeholder="Only one iden Mk (Max 10 characters incl spaces)" required></textarea>
                                             <span asp-validation-for="IdenMark1" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -310,7 +310,7 @@
                                         <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="PermanentAddress" class="col-sm-4 col-form-label form-label labelprofile"></label>
                                         <div class="col-sm-6">
-                                            <textarea asp-for="PermanentAddress" rows="6" class="form-control text-uppercase" placeholder="" required readonly></textarea>
+                                            <textarea asp-for="PermanentAddress" rows="6" class="form-control alpha-num-only text-uppercase" placeholder="" required readonly></textarea>
                                             <span asp-validation-for="PermanentAddress" class="text-danger"></span>
                                         </div>
                                     </div>

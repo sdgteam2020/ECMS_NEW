@@ -67,7 +67,7 @@
                                 <label class="col-form-label col-md-2 fw-bold">Please upload only csv format<i class="fas fa-asterisk mand1"></i><br />
                                 </label>
                                 <div class="col-md-8 d-flex justify-content-start">
-                                    <input asp-for="CSVFile" class="form-control col-md-2" accept="text/csv" />
+                                    <input asp-for="CSVFile" class="form-control alpha-num-only col-md-2" accept="text/csv" />
                                     <button type="button" class="btn btn-primary col-md-1 ml-1" id="btnsave">Submit</button>
                                     <span id="lblCSVFile" class="col-md-3 text-red"></span>
                                     <span asp-validation-for="CSVFile" class="text-danger col-md-1"></span>

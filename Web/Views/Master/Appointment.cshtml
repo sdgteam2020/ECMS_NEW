@@ -40,7 +40,8 @@
                         <div class="form-group row mb-2">
                             <label class="col-form-label col-sm-4 fw-bold">Enter Appointment<i class="fas fa-asterisk mand1"></i></label>
                             <div class="col-sm-8">
-                                <input class="form-control Alphanumeric" placeholder="Enter Appointment" id="txtAppoinment" maxlength="50" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                <input class="form-control1" placeholder="Enter Appointment" id="txtAppointment" name="txtAppointment" maxlength="50" data-val="true" data-val-regex="Appointment name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed." data-val-required="Appointment name is required." data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$" />
+                                <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointment" data-valmsg-replace="true"></span>
                             </div>
                         </div>
                     </div>
@@ -48,7 +49,8 @@
                         <div class="form-group row mb-2">
                             <label class="col-form-label col-sm-4 fw-bold">Abbreviation</label>
                             <div class="col-sm-8">
-                                <input class="form-control Alphanumeric" placeholder="Enter Appointment" id="txtAbbreviation" maxlength="20" pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
+                                <input class="form-control1" placeholder="Enter Appointment" id="txtAbbreviation" name="txtAbbreviation" maxlength="20" data-val="true" data-val-regex="Abbreviation name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed." data-val-required="Abbreviation name is required." data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$" />
+                                <span class="text-danger field-validation-valid" data-valmsg-for="txtAbbreviation" data-valmsg-replace="true"></span>
                             </div>
                         </div>
                     </div>
@@ -57,22 +59,21 @@
                             <label class="col-form-label col-sm-4 fw-bold">Approve<i class="fas fa-asterisk mand1"></i></label>
                             <div class="col-sm-8">
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="Approved" id="ApprovedYes" value="true" checked>
-                                    <label class="form-check-label" for="ApprovedYes">Yes</label>
+                                    <input class="form-check-input" type="radio" name="IsApproved" id="IsApprovedYes" value="true" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="IsApprovedYes">Yes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="Approved" id="ApprovedNo" value="false">
-                                    <label class="form-check-label" for="ApprovedNo">No</label>
+                                    <input class="form-check-input" type="radio" name="IsApproved" id="IsApprovedNo" value="false" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="IsApprovedNo">No</label>
                                 </div>
                             </div>
+                            <span class="text-danger field-validation-valid" id="Approved-error"></span>
                         </div>
                     </div>
                     <div class="col-xl-3">
                         <div class="col-sm-12 text-right">
                             <input type="button" class="btn btn-outline-primary " value="Save" id="btnsave" />
                             <button type="button" id="btnReset" class="btn btn-outline-danger">Reset</button>
-                        </div>
-                        <div class="col-sm-12" id="msg">
                         </div>
                     </div>
                 </div>

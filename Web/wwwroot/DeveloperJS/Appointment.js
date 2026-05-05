@@ -3,39 +3,24 @@ let ApptId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    Reset();
     BindData();
 
     $("#btnReset").on("click", function () {
         Reset();
+        ResetErrorMessage();
     });
 
-    $("#btnsave").on("click",function () {
-        if ($("#SaveForm")[0].checkValidity()) {
+    $("#btnsave").on("click",function (e) {
+        e.preventDefault();
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Save it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Save();
-                }
-            })
-
-        } else {
-            $("#SaveForm")[0].reportValidity();
-        }
-
-
-
-        // 
+        Proceed();
 
     });
-  
+
+    $("input[name='IsApproved']").on("change", function () {
+        $("#Approved-error").text("");
+    });
 
     $('#btnMultiDelete').on("click",function () {
         var lst = new Array();
@@ -72,7 +57,58 @@ $(function () {
             });
         }
     });
+
+    // ✅ For server-side DataTables: clean invalid search before AJAX goes to server
+    $('#tbldata').on('preXhr.dt', function (e, settings, data) {
+
+        var searchValue = data.search.value || "";
+        var allowedRegex = /^[a-zA-Z0-9\s()\-\/&]*$/;
+
+        if (!allowedRegex.test(searchValue)) {
+            toastr.warning('Only alphabets, numbers, space, ( ), -, / and & are allowed.');
+
+            // remove invalid characters before sending to server
+            data.search.value = searchValue.replace(/[^a-zA-Z0-9\s()\-\/&]/g, '');
+
+            // update search textbox also
+            $('.dt-search input').val(data.search.value);
+        }
+    });
+
 });
+
+function Proceed() {
+    ResetErrorMessage();
+
+    let formId = "#SaveForm";
+
+    $.validator.unobtrusive.parse($(formId));
+
+    let isFormValid = $(formId).valid();
+    let isApprovedValid = $("input[name='IsApproved']:checked").length > 0;
+
+    if (!isApprovedValid) {
+        $("#Approved-error").text("Please select Approve Yes or No.");
+    } else {
+        $("#Approved-error").text("");
+    }
+
+    if (!isFormValid || !isApprovedValid) {
+        return false;
+    }
+
+    Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Save it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Save();
+        }
+    });
+}
+
 function BindData() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
         // Destroy the DataTable and clear the table content
@@ -177,9 +213,14 @@ function BindData() {
                 }
             }],
         initComplete: function () {
-            // Add tooltip to the search input box
-            let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search Comd/Abbreviation');
+            // DataTables search input
+            let searchBox = $('.dt-search input');
+
+            // Remove default Bootstrap classes and add your custom class
+            searchBox
+                //.removeClass('form-control form-control-sm')
+                //.addClass('form-control1')
+                .attr('title', 'Search Appointment/Abbreviation');
 
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
@@ -208,8 +249,11 @@ function BindData() {
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.ApptId != null) {
+                    Reset();
+                    ResetErrorMessage();
+
                     ApptId = rowData.ApptId;
-                    $("#txtAppoinment").val(rowData.AppointmentName);
+                    $("#txtAppointment").val(rowData.AppointmentName);
                     if (rowData.AppointmentAbbreviation == "") {
                         $("#txtAbbreviation").val("");
                     }
@@ -217,10 +261,10 @@ function BindData() {
                         $("#txtAbbreviation").val(rowData.AppointmentAbbreviation);
                     }
                     if (rowData.Approved == true) {
-                        $("#ApprovedYes").prop("checked", true);
+                        $("#IsApprovedYes").prop("checked", true);
                     }
                     else {
-                        $("#ApprovedNo").prop("checked", true);
+                        $("#IsApprovedNo").prop("checked", true);
                     }
 
                     $("#btnsave").val("Update");
@@ -266,10 +310,10 @@ function Save() {
         type: 'POST',
         data:
         {
-            "AppointmentName": $("#txtAppoinment").val().trim(),
-            "AppointmentAbbreviation": $("#txtAbbreviation").val().trim() == "" ? null : $("#txtAbbreviation").val().trim(),
+            "AppointmentName": $("#txtAppointment").val().trim(),
+            "AppointmentAbbreviation": $("#txtAbbreviation").val().trim(),
             "ApptId": ApptId,
-            "Approved": $('input[name="Approved"]:checked').val()
+            "Approved": document.querySelector('input[type="radio"][name="IsApproved"]:checked')?.value,
         }, //get the search string
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
@@ -299,11 +343,7 @@ function Save() {
                     for (var i = 0; i < result.length; i++) {
                         toastr.error(result[i][0].ErrorMessage)
                     }
-
-
                 }
-
-
             }
         }
     });
@@ -312,8 +352,16 @@ function Save() {
 function Reset() {
     ApptId = 0;
     $("#btnsave").val("Save");
-    $("#txtAppoinment").val("");
+    $("#txtAppointment").val("");
     $("#txtAbbreviation").val("");
+
+    $("input[name='IsApproved']").prop("checked", false);
+    $("#Approved-error").text("");
+}
+
+function ResetErrorMessage() {
+    $("#txtAppointment-error").html("");
+    $("#txtAbbreviation-error").html("");
 }
 
 function Delete(Id) {
