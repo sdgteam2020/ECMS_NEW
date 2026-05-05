@@ -18,7 +18,6 @@ namespace DataAccessLayer
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
-        public DbSet<MApiLogin> MApiLogin { get; set; } = null!;// For API login details
         public DbSet<ClaimsStore> ClaimsStore { get; set; } = null!;// For storing claims
         public DbSet <MTrnICardHold> MTrnICardHold { get; set; } = null!;// For ICard hold details
         public DbSet <MTrnICardStatus> MTrnICardStatus { get; set; } = null!;// For ICard status details

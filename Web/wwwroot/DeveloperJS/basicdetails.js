@@ -71,16 +71,15 @@ $(async function () {
     });
 
 
-    if ($("#RegistrationId").val() == 1 || $("#RegistrationId").val() == 2 || $("#RegistrationId").val() == 6) {
-        GetUnit() 
-        $('#txtUnit').attr('readonly', true);
-      //  getunitbymapid($("#aspndomainUnitID").html())
-    }
-    else {
-        $('#txtUnit').attr('readonly', false);
-        //getunitbymapid($("#spnUnitIdid").val())
+    const regId = $("#RegistrationId").val();
 
+    if ([1, 2, 4, 6, 9, 10].includes(parseInt(regId))) {
+        GetUnit();
+        $('#txtUnit').prop('readonly', true);
+    } else {
+        $('#txtUnit').prop('readonly', false);
     }
+
     getApplyIcardDetails();
 
     if ($("#ApplyForId").val() == 1) {
@@ -142,7 +141,7 @@ $(async function () {
                 var param = { "UnitName": request.term };
                 $("#UnitId").html(0);
                 $.ajax({
-                    url: '/Master/GetALLByUnitName',
+                    url: '/Master/GetALLByUnitNameForBD',
                     contentType: 'application/x-www-form-urlencoded',
                     data: param,
                     type: 'POST',
@@ -380,12 +379,6 @@ function getunitbymapid(value)
             $("#txtUnit").val(data.UnitName);
             $("#PlaceOfIssue").val(data.UnitAbbreviation);
             $("#UnitId").val(data.UnitMapId);
-            //$("#lblProComd").html(data.ComdName);
-            //$("#lblProCorps").html(data.CorpsName);
-            //$("#lblProDiv").html(data.DivName);
-            //$("#lblPrBde").html(data.BdeName);
-            //$("#lblProSusno").html(data.Sus_no + '' + data.Suffix);
-
         }
     });
 }

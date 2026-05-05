@@ -10,32 +10,20 @@ $(function () {
     });
     $("#btnReset").on("click", function () {
         Reset();
+        ResetErrorMessage();
     });
-    $("#btnsave").on("click", function () {
-        if ($("#SaveForm")[0].checkValidity()) {
+    $("#btnsave").on("click", function (e) {
+        e.preventDefault();
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Save it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Save();
-                }
-            })
+        Proceed();
+    });
 
-        } else {
-            $("#SaveForm")[0].reportValidity();
-        }
+    $("input[name='IsVerify']").on("change", function () {
+        $("#IsVerify-error").text("");
+    });
 
-
-
-        // 
-
+    $('input.js-uppercase, textarea.js-uppercase').on('input', function () {
+        this.value = this.value.toUpperCase();
     });
 
     $('#btnMultiDelete').on("click", function () {
@@ -75,6 +63,37 @@ $(function () {
         }
     });
 });
+function Proceed() {
+    ResetErrorMessage();
+
+    let formId = "#SaveForm";
+
+    $.validator.unobtrusive.parse($(formId));
+
+    let isFormValid = $(formId).valid();
+    let isVerifyValid = $("input[name='IsVerify']:checked").length > 0;
+
+    if (!isVerifyValid) {
+        $("#IsVerify-error").text("Please select Verify Yes or No.");
+    } else {
+        $("#IsVerify-error").text("");
+    }
+
+    if (!isFormValid || !isVerifyValid) {
+        return false;
+    }
+
+    Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Save it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Save();
+        }
+    });
+}
 
 function BindData() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
@@ -290,11 +309,21 @@ function BindData() {
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData != null) {
+                    Reset();
+                    ResetErrorMessage();
+
                     $("#txtSusno").val(rowData.Sus_no);
                     $("#txtSuffix").val(rowData.Suffix);
                     $("#txtUnitDesc").val(rowData.UnitName);
                     $("#txtAbbreviation").val(rowData.Abbreviation);
                     UnitId = rowData.UnitId;
+
+                    if (rowData.IsVerify === true) {
+                        $("#isverifyyes").prop("checked", true);
+                    }
+                    else {
+                        $("#isverifyno").prop("checked", true);
+                    }
                 }
             });
             $("#tbldata tbody").off("click", ".cls-btnDelete").on("click", ".cls-btnDelete", function () {
@@ -335,51 +364,38 @@ function Save() {
             "Suffix": $("#txtSuffix").val().trim(),
             "UnitName": $("#txtUnitDesc").val().trim(),
             "Abbreviation": $("#txtAbbreviation").val().trim(),
-            "IsVerify": true
+            "IsVerify": document.querySelector('input[type="radio"][name="IsVerify"]:checked')?.value,
         }, //get the search string
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
-
-            if (result == DataSave) {
-                toastr.success('Unit has been saved');
-
-                /*  $("#AddNewM").modal('hide');*/
-                /* $("#tbldata").DataTable().destroy();*/
+            if (result.Result == true) {
+                toastr.success(result.Message);
                 BindData();
                 Reset();
             }
-            else if (result == DataUpdate) {
-                toastr.success('Unit has been Updated');
+            else {
+                const Message = result.Message || "Something went wrong.";
 
-                /*  $("#AddNewM").modal('hide');*/
-                $("#tbldata").DataTable().destroy();
-                BindData();
-                Reset();
-            }
-            else if (result == DataExists) {
+                const errors = Message
+                    .split(";")
+                    .map(x => x.trim())
+                    .filter(x => x !== "");
 
-                toastr.error('Unit Name Exits!');
+                const list = document.createElement("ul");
+                list.classList.add("error-list"); // ✅ use CSS class
 
-            }
-            else if (result == InternalServerError) {
+                errors.forEach(function (error) {
+                    const item = document.createElement("li");
+                    item.textContent = error;
+                    list.appendChild(item);
+                });
+
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong or Invalid Entry!',
-
-                })
-
-            } else {
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        toastr.error(result[i][0].ErrorMessage)
-                    }
-
-
-                }
-
-
+                    icon: "error",
+                    title: "Message",
+                    html: list
+                });
             }
         }
     });
@@ -390,7 +406,17 @@ function Reset() {
     $("#txtSuffix").val("");
     $("#txtUnitDesc").val("");
     $("#txtAbbreviation").val("");
+
+    $("input[name='IsVerify']").prop("checked", false);
+    $("#IsVerify-error").text("");
+
     UnitId = 0;
+}
+function ResetErrorMessage() {
+    $("#txtSusno-error").html("");
+    $("#txtSuffix-error").html("");
+    $("#txtUnitDesc-error").html("");
+    $("#txtAbbreviation-error").html("");
 }
 
 function Delete(Id) {

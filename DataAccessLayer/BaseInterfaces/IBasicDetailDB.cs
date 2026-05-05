@@ -55,5 +55,6 @@ namespace DataAccessLayer.BaseInterfaces
         Task UpdateCardStatus(int requestId, byte status);
         public Task<DTOGenericResponse<string>> CheckBeforeDistribution(int requestId, int UnitId);
         public Task<DTOPreventBasicDetailEditResponse?> GetPreventBasicDetailEdit(int BasicDetailId);
+        public Task<DTOGenericResponse<string>> CheckBeforeBesicDetailPost(BasicDetailCrtAndUpdVM basicDetail);
     }
 }

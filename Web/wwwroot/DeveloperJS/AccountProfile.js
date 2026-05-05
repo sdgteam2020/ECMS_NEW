@@ -21,6 +21,10 @@ $(function () {
         }
     });
 
+    $('input.js-uppercase, textarea.js-uppercase').on('input', function () {
+        this.value = this.value.toUpperCase();
+    });
+
     $("#IsTokenWaiverYes").on("click", function () {
         $("#spnReasonTokenWaiver").removeClass("d-none");
         $('#ReasonTokenWaiver').prop('required', true);

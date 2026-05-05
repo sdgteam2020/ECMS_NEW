@@ -167,7 +167,7 @@ function GetRequestHistory(spnRequestId) {
                 let HistoryModal_Body = document.getElementById("HistoryModal_Body");
 
                 HistoryModal_Header.innerHTML = "I-Card Application History";
-                HistoryModal_Title_Content.innerHTML = "Step Wise I Card Application History";
+                HistoryModal_Title_Content.innerHTML = "Step-by-step I Card Application History";
                 HistoryModal_Body.innerHTML = listItem;
                 myModal.show();
             } else {
@@ -251,7 +251,7 @@ function GetMovementHistory(spnRequestId) {
                 let HistoryModal_Body = document.getElementById("HistoryModal_Body");
 
                 HistoryModal_Header.innerHTML = "I-Card History";
-                HistoryModal_Title_Content.innerHTML = "Step Wise I Card History";
+                HistoryModal_Title_Content.innerHTML = "Step-by-step I-Card History";
                 HistoryModal_Body.innerHTML = listItem;
                 myModal.show();
             } else {

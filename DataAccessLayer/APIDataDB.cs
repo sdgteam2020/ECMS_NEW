@@ -29,36 +29,6 @@ namespace DataAccessLayer
             _contextDP = dapperContext;
         }
 
-        /// <summary>
-        /// Asynchronously checks if the provided access key exists in the MApiLogin table.
-        /// </summary>
-        /// <param name="accessKey">The access key to be checked in the MApiLogin table.</param>
-        /// <returns>
-        /// Returns true if the access key exists in the table, otherwise false.
-        /// </returns>
-        public async Task<bool> apiLogin(string accessKey)
-        {
-            // SQL query to select the Id and ClientName from the MApiLogin table where the accessKey matches the provided value.
-            string query = "select [Id], [ClientName] from MApiLogin where accessKey = @accessKey";
-
-            // Using a database connection to execute the SQL query asynchronously.
-            using (var connection = _contextDP.CreateConnection())
-            {
-                // Executing the query and passing the accessKey as a parameter to avoid SQL injection.
-                var ret = await connection.QueryAsync<MApiLogin>(query, new { accessKey });
-
-                // Check if the query returned any records. If so, return true.
-                if (ret != null && ret.Count() > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;  // If no records were found, return false.
-                }
-            }
-        }
-
 
         /// <summary>
         /// Asynchronously retrieves personal data for the given Army number (Pers_Army_No) from the MApiData table, 

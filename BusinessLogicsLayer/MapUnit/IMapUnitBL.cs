@@ -23,6 +23,7 @@ namespace BusinessLogicsLayer.Unit
         public Task<bool?> FindUnitIdMapped(int UnitId, int UnitMapId);
         public Task<DTOUnitMapIdCheckInFKTableResponse?> UnitMapIdCheckInFKTable(int UnitMapId);
         public Task<List<DTOUnitResponse>> GetUnitByHierarchy(DTOMHierarchyRequest Data);
+        public Task<List<DTOMapUnitResponse>> GetALLByUnitNameForBD(string UnitName, int UnitId, bool SameUnit);
     }
 }
 

@@ -16,11 +16,6 @@ namespace BusinessLogicsLayer.APIData
             _aPIDataDB = aPIDataDB;
         }
 
-        public Task<bool> apiLogin(string accessKey)
-        {
-            return _aPIDataDB.apiLogin(accessKey);
-        }
-
         public Task<DTOApiPersDataResponse> GetByIC(DTOAPIDataRequest Data)
         {
             return _aPIDataDB.GetByIC(Data);

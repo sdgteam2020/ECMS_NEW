@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260423063237_196")]
+    partial class _196
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -355,50 +358,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("Updatedby");
 
                     b.ToTable("MArmedType");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MArmyPrefixRule", b =>
-                {
-                    b.Property<byte>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<byte>("Id"));
-
-                    b.Property<byte>("ApplyForId")
-                        .HasColumnType("tinyint");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<byte>("MaxDigits")
-                        .HasColumnType("tinyint");
-
-                    b.Property<byte>("MinDigits")
-                        .HasColumnType("tinyint");
-
-                    b.Property<byte>("Order")
-                        .HasColumnType("tinyint");
-
-                    b.Property<string>("Prefix")
-                        .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("varchar(3)");
-
-                    b.Property<bool>("StorePrefix")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<int?>("Updatedby")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Updatedby");
-
-                    b.ToTable("MArmyPrefixRule");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MBde", b =>
@@ -976,9 +935,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
-
-                    b.Property<bool>("SameUnit")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime");
@@ -3104,16 +3060,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("ArmedCat");
-                });
-
-            modelBuilder.Entity("DataTransferObject.Domain.Master.MArmyPrefixRule", b =>
-                {
-                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserUpdate")
-                        .WithMany()
-                        .HasForeignKey("Updatedby")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ApplicationUserUpdate");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Master.MBde", b =>

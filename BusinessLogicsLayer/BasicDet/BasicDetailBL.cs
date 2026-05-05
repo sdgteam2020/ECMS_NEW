@@ -372,7 +372,11 @@ namespace BusinessLogicsLayer.BasicDet
         }
         public async Task<DTOPreventBasicDetailEditResponse?> GetPreventBasicDetailEdit(int BasicDetailId)
         {
-                return await _iBasicDetailDB.GetPreventBasicDetailEdit(BasicDetailId);
+            return await _iBasicDetailDB.GetPreventBasicDetailEdit(BasicDetailId);
+        }
+        public async Task<DTOGenericResponse<string>> CheckBeforeBesicDetailPost(BasicDetailCrtAndUpdVM basicDetail)
+        {
+            return await _iBasicDetailDB.CheckBeforeBesicDetailPost(basicDetail);
         }
     }
 }

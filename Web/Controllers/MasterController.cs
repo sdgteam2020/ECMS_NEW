@@ -2,6 +2,7 @@
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.MapUnitChange;
 using BusinessLogicsLayer.Master;
+using BusinessLogicsLayer.Registration;
 using DataAccessLayer;
 using DataTransferObject.Constants;
 using DataTransferObject.Domain.Identitytable;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 using System.Drawing.Imaging;
 using System.Security.Claims;
 using System.Text;
@@ -37,7 +39,8 @@ namespace Web.Controllers
         private readonly IMapUnitChangeBL _mapUnitChangeBL;
         private readonly IDataProtector protector;
         private readonly UserManager<ApplicationUser> _userManager;
-        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IMasterBL masterBL, IConfiguration configuration, IMapUnitChangeBL mapUnitChangeBL, DataProtectionPurposeStrings dataProtectionPurposeStrings, IDataProtectionProvider dataProtectionProvider, UserManager<ApplicationUser> userManager)
+        private readonly IRegistrationBL _registrationBL;
+        public MasterController(IUnitOfWork unitOfWork, IUserProfileBL userProfileBL, IChangeHierarchyMasterBL changeHierarchyMaster, ILogger<MasterController> logger, IMasterBL masterBL, IConfiguration configuration, IMapUnitChangeBL mapUnitChangeBL, DataProtectionPurposeStrings dataProtectionPurposeStrings, IDataProtectionProvider dataProtectionProvider, UserManager<ApplicationUser> userManager, IRegistrationBL registrationBL)
         {
             this.userProfileBL = userProfileBL;
             this.unitOfWork = unitOfWork;
@@ -50,6 +53,7 @@ namespace Web.Controllers
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             _userManager = userManager;
+            _registrationBL = registrationBL;
         }
 
         #region Command Page
@@ -1604,6 +1608,37 @@ namespace Web.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetALLByUnitNameForBD(string UnitName)
+        {
+            try
+            {
+                DTOBasicDetailHidden? dTObasicDetailHidden = SessionHeplers.GetObject<DTOBasicDetailHidden>(HttpContext.Session, "BasicDetailHidden");
+
+                DtoSession? session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                
+                if (dTObasicDetailHidden != null && session != null)
+                {
+                    MRegistration dTO = await _registrationBL.GetByGen<byte>(dTObasicDetailHidden.RegistrationId); // Get registration details by ID from session
+                    bool SameUnit = dTO.SameUnit; // Check if the registration has the SameUnit flag set
+                    int UnitId = session.UnitId; // Get the unit ID from the session    
+
+                    return Json(await unitOfWork.MappUnit.GetALLByUnitNameForBD(UnitName,UnitId, SameUnit));// Fetch all map units filtered by SUS NO
+                }
+                else
+                {
+                    return Json(KeyConstants.InternalServerError);
+                }
+                    
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "Master->GetALLByUnitName");
+                return Json(KeyConstants.InternalServerError);
+            }
+
+        }
+
 
         /// <summary>
         /// Retrieves all map units filtered by unit map ID.
@@ -2144,6 +2179,13 @@ namespace Web.Controllers
                             {
                                 DTOMapUnitResponse dTOMap =await unitOfWork.MappUnit.GetALLByUnitMapId(MapUnitId); // Retrieve the current mapping details for the unit
 
+                                if (dTOMap.UnitType != dTO.UnitType)
+                                {
+                                    dTOCommon.Result = false;
+                                    dTOCommon.Message = "Invalid Unit Type.";
+                                    return Json(dTOCommon);
+                                }
+
 
                                 string ExistingCh = string.Join("#", new[]
                                 {
@@ -2368,13 +2410,15 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveUnit(MUnit dTO)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<string>();
             try
             {
                 dTO.IsActive = true;
                 dTO.Updatedby = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 dTO.UpdatedOn = DateTime.Now;
-                dTO.UnitName = dTO.UnitName.Trim();
-                dTO.Abbreviation = dTO.Abbreviation != null ? dTO.Abbreviation.Trim() : dTO.Abbreviation;
+                dTO.UnitName = dTO.UnitName?.Trim().ToUpper() ?? "";
+                dTO.Abbreviation = dTO.Abbreviation?.Trim().ToUpper() ?? "";
                 dTO.Suffix = dTO.Suffix.Trim();
                 var susNo = dTO.Sus_no?.Trim();
                 dTO.Prefix = string.IsNullOrEmpty(susNo)? string.Empty : susNo[..Math.Min(3, susNo.Length)];
@@ -2386,29 +2430,50 @@ namespace Web.Controllers
                         if (dTO.UnitId > 0)
                         {
                             await unitOfWork.Unit.Update(dTO); // Update existing unit
-                            return Json(KeyConstants.Update);
+                            
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Unit has been Updated.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                         else
                         {
                             await unitOfWork.Unit.Add(dTO); // Add new unit
-                            return Json(KeyConstants.Save);
+
+                            dTOResponse.Result = true;
+                            dTOResponse.Message = "Unit has been saved.";
+                            dTOResponse.Value = string.Empty;
+                            return Json(dTOResponse);
                         }
                     }
                     else
                     {
-                        return Json(KeyConstants.Exists);
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "Unit Name/Abbreviation/SUS No Exits!";
+                        dTOResponse.Value = string.Empty;
+                        return Json(dTOResponse);
                     }
                 }
                 else
                 {
-                    return Json(ModelState.Select(x => x.Value?.Errors).Where(y => y?.Count > 0).ToList());
+                    var errors = ModelState
+                                .Where(x => x.Value?.Errors?.Count > 0)
+                                .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
+                                .ToList();
+
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTOResponse);
                 }
 
             }
             catch (Exception ex) 
             {
                 _logger.LogError(1001, ex, "Master->SaveUnit");
-                return Json(KeyConstants.InternalServerError); 
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                dTOResponse.Value = string.Empty;
+                return Json(dTOResponse);
             }
 
         }

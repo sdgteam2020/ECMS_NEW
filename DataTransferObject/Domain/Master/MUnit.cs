@@ -12,27 +12,27 @@ namespace DataTransferObject.Domain.Master
         public int UnitId { get; set; }
         
         [Required(ErrorMessage = "required!")]
-        [RegularExpression(@"^[\d]+$", ErrorMessage = "Numbers allowed.")]
+        [RegularExpression(@"^(?!0{7}$)\d{7}$", ErrorMessage = "Enter valid 7 digit Sus no.")]
         [MaxLength(7, ErrorMessage = "Maximum length of Sus no is seven digit.")]
         [Column(TypeName = "varchar(7)")]
         public string Sus_no { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
-        [RegularExpression("^[a-zA-Z]*$", ErrorMessage = "Only Alphabets.")]
+        [RegularExpression(@"^(?=.*[A-Z])[YHALWXFMPKN]$", ErrorMessage = "Only capital letters Y, H, A, L, W, X, F, M, P, K, N allowed.")]
         [MaxLength(1,ErrorMessage = "Maximum length of Suffix is one character.")]
         [MinLength(1, ErrorMessage = "Minimum length of Suffix is one character.")]
         [Column(TypeName = "char(1)")]
         public string Suffix { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression(@"^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$",ErrorMessage = "Unit name must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed.")]
         [MaxLength(100, ErrorMessage = "Maximum length of UnitName is 100 character.")]
         [Column(TypeName = "varchar(100)")]
         public string UnitName { get; set; } = string.Empty;
 
         [Column(TypeName = "varchar(10)")]
         [MaxLength(10, ErrorMessage = "Maximum length of Abbreviation is ten character.")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression(@"^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$", ErrorMessage = "Unit Abbreviation must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed.")]
         public string Abbreviation { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
