@@ -164,7 +164,7 @@ $(function () {
         }
     });
 
-    $('.form-control').on("keypress",function (e) {
+    $('.alpha-num-only').on("keypress",function (e) {
        
         // Get the key code of the pressed key
         var keyCode = e.which;

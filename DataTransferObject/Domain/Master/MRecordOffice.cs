@@ -13,13 +13,13 @@ namespace DataTransferObject.Domain.Master
         public byte RecordOfficeId { get; set; }
 
         [Required(ErrorMessage = "required!")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression(@"^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$", ErrorMessage = "Record Office name must contain at least one alphabet. Only A-Z, a-z, 0-9, & - / ( ) and single space allowed.")]
         [Column(TypeName = "varchar(50)")]
         [MaxLength(50, ErrorMessage = "Maximum length of Abbreviation is fifty character.")]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "required!")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression(@"^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$", ErrorMessage = "Record Office Abbreviation name must contain at least one alphabet. Only A-Z, a-z, 0-9, & - / ( ) and single space allowed.")]
         [Column(TypeName = "varchar(10)")]
         [MaxLength(15, ErrorMessage = "Maximum length of Abbreviation is ten character.")]
         public string Abbreviation { get; set; } = string.Empty;
@@ -40,7 +40,7 @@ namespace DataTransferObject.Domain.Master
 
         [StringLength(150)]
         [Column(TypeName = "varchar(150)")]
-        [RegularExpression(@"^[\w\&\.\-\; ]*$", ErrorMessage = "Only Alphabets ,Numbers and some symbol (& . -) allowed.")]
+        [RegularExpression(@"^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/().,\-]+(?: [A-Za-z0-9&\/().,\-]+)*$", ErrorMessage = "Message name must contain at least one alphabet. Only A-Z, a-z, 0-9, &, -, /, (, ), dot, comma and single space allowed.")]
         [MaxLength(150, ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "MaxLengthError")]
         public string? Message { get; set; }
     }

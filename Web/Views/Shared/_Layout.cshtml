@@ -122,9 +122,9 @@
     <div class="d-none" id="postingouthtml"></div>
     <div class="d-none" id="content-container"></div>
     <div class="d-none" id="spnPostedOffrsfornoti"></div>
-    <input class="form-control mb-2 d-none form-space" id="txtspnTokenArmyNo" placeholder="Enter Army No" />
-    <input class="form-control mb-2 d-none form-space" id="txtspnTokenthumbprint" placeholder="Enter Army No" />
-    <input class="form-control mb-2 d-none form-space" id="txtspnIsToken" />
+    <input class="form-control alpha-num-only mb-2 d-none form-space" id="txtspnTokenArmyNo" placeholder="Enter Army No" />
+    <input class="form-control alpha-num-only mb-2 d-none form-space" id="txtspnTokenthumbprint" placeholder="Enter Army No" />
+    <input class="form-control alpha-num-only mb-2 d-none form-space" id="txtspnIsToken" />
 
     <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" />
 
@@ -245,7 +245,7 @@
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 fw-bold">Select Offr<i class="fas fa-asterisk mand1"></i></label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" tabindex="-1" name="ddlfwdInternaloffrs" id="ddlfwdInternaloffrs" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offr is required.">
+                                        <select class="form-select" tabindex="-1" name="ddlfwdInternaloffrs" id="ddlfwdInternaloffrs" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offr is required.">
                                             <option value="0">Select Offr</option>
                                         </select>
                                         <span class="text-danger field-validation-valid" data-valmsg-for="ddlfwdInternaloffrs" data-valmsg-replace="true"></span>
@@ -355,7 +355,7 @@
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Select Offr</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" tabindex="-1" name="fwdoffrs" required id="ddlfwdoffrs">
+                                    <select class="form-select" tabindex="-1" name="fwdoffrs" required id="ddlfwdoffrs">
                                         <option value="0">Select Offr</option>
                                     </select>
                                     <span class="fw-bold text-danger d-none" id="ErrMess1"></span>
@@ -416,14 +416,14 @@
                             <div class="form-group row mb-2 Remarks d-none">
                                 <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" multiple="" placeholder="Please select a Remarks"  tabindex="-1" name="Remarks" required id="ddlRemarks">
+                                    <select class="form-select" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="Remarks" required id="ddlRemarks">
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row mb-2">
                                 <label class="col-form-label col-sm-4 fw-bold">Other Obsn</label>
                                 <div class="col-sm-8">
-                                    <textarea class="form-control" id="txtFRemarks" rows="3" maxlength="100"></textarea>
+                                    <textarea class="form-control alpha-num-only" id="txtFRemarks" rows="3" maxlength="100"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -467,7 +467,7 @@
                             <div class="form-group row recectopt  mb-3">
                                 <label class="col-form-label col-12 text-center">Select Remarks</label>
                                 <div class="col-sm-12">
-                                    <select class="form-control" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="Remarks" required id="ddlRRemarks">
+                                    <select class="form-select" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="Remarks" required id="ddlRRemarks">
                                     </select>
                                 </div>
                             </div>
@@ -475,7 +475,7 @@
                                 <div class="form-group row recectopt mb-3">
                                     <label class="col-form-label col-12 text-center">Remarks</label>
                                     <div class="col-12">
-                                        <textarea class="form-control text-uppercase" id="txtFrejectedRemarks" rows="2" maxlength="100"></textarea>
+                                        <textarea class="form-control alpha-num-only text-uppercase" id="txtFrejectedRemarks" rows="2" maxlength="100"></textarea>
                                     </div>
                                 </div>
                             </div>

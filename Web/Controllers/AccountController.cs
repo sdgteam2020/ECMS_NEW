@@ -190,7 +190,7 @@ namespace Web.Controllers
                 dTO.IsRO = false;
                 ModelState.Clear();
                 if (TryValidateModel(dTO))// Server side validation check
-                {
+                    {
                     if (!_iAccountBL.GetByDomainId(dTO.DomainId, dTO.Id))// Check Duplicate DomainId
                     {
                         bool result;

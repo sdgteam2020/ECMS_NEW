@@ -14,12 +14,12 @@ namespace DataTransferObject.Requests
         public short ApptId { get; set; }
 
         [Required(ErrorMessage = "AppointmentName is required.")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression(@"^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$", ErrorMessage = "Appointment name must contain at least one alphabet. Only A-Z, a-z, 0-9, & - / ( ) and single space allowed.")]
         [MaxLength(50, ErrorMessage = "Maximum length of Appointment Name is fifty character.")]
         public string AppointmentName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Appointment abbreviation is required.")]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
+        [RegularExpression(@"^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$", ErrorMessage = "Abbreviation name must contain at least one alphabet. Only A-Z, a-z, 0-9, & - / ( ) and single space allowed.")]
         [MaxLength(20, ErrorMessage = "Maximum length of Appointment Abbreviation is twenty character.")]
         public string AppointmentAbbreviation { get; set; } = string.Empty;
 

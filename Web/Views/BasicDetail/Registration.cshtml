@@ -97,7 +97,7 @@
                                                             <div class="form-group row mb-2 required">
                                                                 <label class="col-form-label col-sm-3 form-label labelprofile">Service No </label>
                                                                 <div class="col-sm-3">
-                                                                    <input asp-for="ServiceNumber" readonly class="form-control text-uppercase" />
+                                                                    <input asp-for="ServiceNumber" readonly class="form-control alpha-num-only text-uppercase" />
                                                                     <span asp-validation-for="ServiceNumber" class="text-danger"></span>
                                                                 </div>
                                                                 <div class="col-sm-4 spnhideServiceNo">
@@ -115,7 +115,7 @@
                                                         <div class="form-group row mb-2 OldServiceNo">
                                                             <label class="col-sm-6 col-form-label form-label labelprofile">Old Service No</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="OldServiceNo" readonly class="form-control text-uppercase" />
+                                                                <input asp-for="OldServiceNo" readonly class="form-control alpha-num-only text-uppercase" />
                                                                 <span asp-validation-for="OldServiceNo" class="text-danger"></span>
                                                             </div>
                                                         </div>
@@ -130,14 +130,14 @@
                                                         <div class="form-group row mb-2 required">
                                                             <label asp-for="FName" class="col-form-label col-sm-6 labelprofile">First Name</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="FName" class="form-control text-uppercase" placeholder="Max 18 Characters incl spaces" required readonly />
+                                                                <input asp-for="FName" class="form-control alpha-num-only text-uppercase" placeholder="Max 18 Characters incl spaces" required readonly />
                                                                 <span asp-validation-for="FName" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2">
                                                             <label asp-for="LName" class="col-form-label col-sm-6 labelprofile">Last Name</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="LName" class="form-control text-uppercase" placeholder="Max 18 Characters incl spaces" readonly />
+                                                                <input asp-for="LName" class="form-control alpha-num-only text-uppercase" placeholder="Max 18 Characters incl spaces" readonly />
                                                                 <span asp-validation-for="LName" class="text-danger"></span>
                                                             </div>
                                                         </div>
@@ -155,35 +155,35 @@
                                                                 Permt Address as per Service Records
                                                             </label>
                                                             <div class="col-sm-6">
-                                                                <textarea id="PermanentAddress" rows="6" class="form-control text-uppercase" placeholder="" readonly></textarea>
+                                                                <textarea id="PermanentAddress" rows="6" class="form-control alpha-num-only text-uppercase" placeholder="" readonly></textarea>
 
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2 entryaddress">
                                                             <label class="col-form-label col-sm-6 labelprofile">State</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="State" class="form-control paddress text-uppercase" maxlength="50" />
+                                                                <input asp-for="State" class="form-control alpha-num-only paddress text-uppercase" maxlength="50" />
                                                                 <span id="lblState" name="lblState" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2 entryaddress">
                                                             <label class="col-form-label col-sm-6 labelprofile">Police Station</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="PS" class="form-control text-uppercase" maxlength="50" />
+                                                                <input asp-for="PS" class="form-control alpha-num-only text-uppercase" maxlength="50" />
                                                                 <span id="lblPS" name="lblPS" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2 entryaddress">
                                                             <label class="col-form-label col-sm-6 labelprofile">Village</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="Village" class="form-control text-uppercase" maxlength="50" />
+                                                                <input asp-for="Village" class="form-control alpha-num-only text-uppercase" maxlength="50" />
                                                                 <span id="lblVillage" name="lblVillage" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2 entryaddress">
                                                             <label class="col-form-label col-sm-6 labelprofile">Pin Code</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="PinCode" class="form-control" />
+                                                                <input asp-for="PinCode" class="form-control alpha-num-only" />
                                                                 <span asp-validation-for="PinCode" class="text-danger"></span>
                                                             </div>
                                                         </div>
@@ -192,14 +192,14 @@
                                                         <div class="form-group row mb-2 spnhideServiceNo">
                                                             <label class="col-form-label col-sm-6 labelprofile">Service No as per Service Record</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="ServiceNo" class="form-control text-uppercase" maxlength="9" placeholder="IC12345X/JC12345X" readonly />
+                                                                <input asp-for="ServiceNo" class="form-control alpha-num-only text-uppercase" maxlength="9" placeholder="IC12345X/JC12345X" readonly />
                                                                 <span asp-validation-for="ServiceNo" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2">
                                                             <label asp-for="NameAsPerRecord" class="col-form-label col-sm-6 labelprofile">Name as per Service Record</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="NameAsPerRecord" class="form-control text-uppercase" placeholder="Max 36 Characters incl spaces" readonly />
+                                                                <input asp-for="NameAsPerRecord" class="form-control alpha-num-only text-uppercase" placeholder="Max 36 Characters incl spaces" readonly />
                                                                 <span asp-validation-for="NameAsPerRecord" class="text-danger"></span>
                                                             </div>
                                                         </div>
@@ -223,21 +223,21 @@
                                                         <div class="form-group row mb-2 entryaddress">
                                                             <label class="col-form-label col-sm-6 labelprofile">District</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="District" class="form-control text-uppercase" maxlength="50" />
+                                                                <input asp-for="District" class="form-control alpha-num-only text-uppercase" maxlength="50" />
                                                                 <span id="lblDistrict" name="lblDistrict" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2 entryaddress">
                                                             <label class="col-form-label col-sm-6 labelprofile">Post Office</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="PO" class="form-control text-uppercase" maxlength="50" />
+                                                                <input asp-for="PO" class="form-control alpha-num-only text-uppercase" maxlength="50" />
                                                                 <span id="lblPO" name="lblPO" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row mb-2 entryaddress">
                                                             <label class="col-form-label col-sm-6 labelprofile">Tehsil</label>
                                                             <div class="col-sm-6">
-                                                                <input asp-for="Tehsil" class="form-control text-uppercase" maxlength="50" />
+                                                                <input asp-for="Tehsil" class="form-control alpha-num-only text-uppercase" maxlength="50" />
                                                                 <span id="lblTehsil" name="lblTehsil" class="text-danger"></span>
                                                             </div>
                                                         </div>

@@ -93,7 +93,8 @@ function BindData() {
             {
                 title: "User Claim Count",
                 data: "TotalUsers",
-                name: "TotalUsers"
+                name: "TotalUsers",
+                className: "text-center",
             }
             ,
             {

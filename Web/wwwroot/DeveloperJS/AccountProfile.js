@@ -689,8 +689,8 @@ function AppointmentSave() {
         type: 'POST',
         data: {
             "AppointmentName": $("#txtAppointment").val().trim(),
-            "AppointmentAbbreviation": $("#txtAppointmentAbbr").val().trim() == "" ? null : $("#txtAppointmentAbbr").val().trim(),
-            "ApptId": $("#spnAppointmentId").html()
+            "AppointmentAbbreviation": $("#txtAppointmentAbbr").val().trim(),
+            "ApptId": 0
         },
         headers: { 'RequestVerificationToken': RequestVerificationToken },
         success: function (result) {
