@@ -110,7 +110,7 @@ namespace DataAccessLayer
             List<DTOLostCardGetResponse> dTOLostCardGetResponses = new List<DTOLostCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,

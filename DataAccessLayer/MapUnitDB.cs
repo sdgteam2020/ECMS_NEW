@@ -267,7 +267,7 @@ namespace DataAccessLayer
                 List<DTOMapUnitResponse> dTOUserRegnResponses = new List<DTOMapUnitResponse>();
                 var responseData = new DTODataTablesResponse<DTOMapUnitResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses

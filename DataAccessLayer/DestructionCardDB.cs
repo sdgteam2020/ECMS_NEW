@@ -76,7 +76,7 @@ namespace DataAccessLayer
             List<DTODestructionCardGetResponse> dTODestructionCardGetResponses = new List<DTODestructionCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,

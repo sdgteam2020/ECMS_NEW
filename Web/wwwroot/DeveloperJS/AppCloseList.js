@@ -2,6 +2,8 @@
 let dataExportType = 1;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+    applyDataTableSearchValidation('#tbldata');
+
     let applyFor = $('#spnapplyFor').html();
     BindData(applyFor,function () {
     });

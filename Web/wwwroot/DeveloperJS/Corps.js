@@ -4,6 +4,9 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlCommand", 1, "");
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData(function () {});
 
     $("#btnReset").on("click", function () {

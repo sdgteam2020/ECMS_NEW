@@ -118,7 +118,7 @@ namespace DataAccessLayer
             List<DTOPostingOutDetilsResponse> dTOPostingOutDetilsResponses = new List<DTOPostingOutDetilsResponse>();
             var responseData = new DTODataTablesResponse<DTOPostingOutDetilsResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 data = dTOPostingOutDetilsResponses
@@ -389,7 +389,7 @@ namespace DataAccessLayer
             List<DTOAppClosedListResponse> dTOAppCloseds = new List<DTOAppClosedListResponse>();
             var responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 data = dTOAppCloseds

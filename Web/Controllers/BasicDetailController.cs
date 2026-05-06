@@ -2767,7 +2767,7 @@ namespace Web.Controllers
                 List<CSVImport> dTOClaimsStoreResponses = new List<CSVImport>();
                 var responseData = new DTODataTablesResponse<CSVImport>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOClaimsStoreResponses
@@ -3765,7 +3765,7 @@ namespace Web.Controllers
                 List<DTOFaultyCardListResponse> dTOUserRegnResponses = new List<DTOFaultyCardListResponse>();
                 var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -4465,7 +4465,7 @@ namespace Web.Controllers
             List<DTOLostCardGetResponse> dTOLosts = new List<DTOLostCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
@@ -4734,7 +4734,7 @@ namespace Web.Controllers
             List<DTODistributeCardGetResponse> dTODistributes = new List<DTODistributeCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
@@ -5484,7 +5484,7 @@ namespace Web.Controllers
             var dTODispatchCardLists = new List<DTOICardRequestHoldResponse>();
             var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
             {
-                draw = 0,                 // Draw counter for DataTables
+                draw = dTO.Draw,                 // Draw counter for DataTables
                 recordsTotal = 0,         // Total records count
                 recordsFiltered = 0,      // Filtered records count
                 data = dTODispatchCardLists // Empty data list
@@ -5507,7 +5507,7 @@ namespace Web.Controllers
 
                     if (errors.Any())
                     {
-                        int draw = 0;
+                        int draw = dTO.Draw;
                         int.TryParse(Request.Form["draw"], out draw);
 
                         responseData.draw = draw;
@@ -5943,7 +5943,7 @@ namespace Web.Controllers
             List<DTODestructionCardGetResponse> dTODestructions = new List<DTODestructionCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
@@ -6816,7 +6816,7 @@ namespace Web.Controllers
                     List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
                     var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTODispatchCardLists
@@ -6830,7 +6830,7 @@ namespace Web.Controllers
                 List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
                 var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTODispatchCardLists
@@ -6856,16 +6856,17 @@ namespace Web.Controllers
             DTODataTablesRequestForCardDispatchDialog dTO= await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForCardDispatchDialog>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             List <DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
             // If an exception occurs, return an empty response to avoid breaking the UI
+
+            if (dTO == null)
+                return BadRequest();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTOCardDispatchDialogResponse>
             {
-                draw = 0,               // DataTables draw counter (0 since error)
+                draw = dTO.Draw,               // DataTables draw counter (0 since error)
                 recordsTotal = 0,       // Total records (0 since error)
                 recordsFiltered = 0,    // Filtered records (0 since error)
                 selectedIds = null,     // No selected IDs
                 data = dTOCards         // Empty list of data
             };
-            if (dTO == null)
-                return BadRequest();
             try
             {
                 ModelState.Clear();
@@ -7158,7 +7159,7 @@ namespace Web.Controllers
                 // Create a response object with zeroed metadata
                 var responseData = new DTODataTablesWithSelectedIdsResponse<DTODispatchCardStatusResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOCards,

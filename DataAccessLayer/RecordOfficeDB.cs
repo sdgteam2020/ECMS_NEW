@@ -194,7 +194,7 @@ namespace DataAccessLayer
                 List<DTORecordOfficeResponse> dTORecordOffices = new List<DTORecordOfficeResponse>();
                 var responseData = new DTODataTablesResponse<DTORecordOfficeResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTORecordOffices

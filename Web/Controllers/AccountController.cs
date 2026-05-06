@@ -441,7 +441,7 @@ namespace Web.Controllers
                 List<DTOProfileManageResponse> dTOUserRegnResponses = new List<DTOProfileManageResponse>();
                 var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -540,7 +540,7 @@ namespace Web.Controllers
                     List<DTOUserRegnResponse> dTOUserRegns = new List<DTOUserRegnResponse>();
                     var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOUserRegns
@@ -583,7 +583,7 @@ namespace Web.Controllers
                     List<DTOUserRegnResponse> dTOUserRegnResponses = new List<DTOUserRegnResponse>();
                     var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOUserRegnResponses
@@ -2957,7 +2957,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTOClaimsStoreResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOClaims
@@ -2969,7 +2969,7 @@ namespace Web.Controllers
             {
                 var responseData = new DTODataTablesResponse<DTOClaimsStoreResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOClaims
@@ -3012,7 +3012,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTOUsersByClaim>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOUsers
@@ -3025,7 +3025,7 @@ namespace Web.Controllers
                 // Prepare an empty DataTables response
                 var responseData = new DTODataTablesResponse<DTOUsersByClaim>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUsers

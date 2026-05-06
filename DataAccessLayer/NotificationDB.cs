@@ -195,7 +195,7 @@ namespace DataAccessLayer
                 List<DTONotificationResponse> detailVMs = new List<DTONotificationResponse>();
                 var responseData = new DTODataTablesResponse<DTONotificationResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = detailVMs

@@ -241,7 +241,7 @@ namespace Web.Controllers
             List<DTOPostingOutDetilsResponse> dTOPostingOutDetilsResponses = new List<DTOPostingOutDetilsResponse>();
             var responseData = new DTODataTablesResponse<DTOPostingOutDetilsResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 data = dTOPostingOutDetilsResponses  // Set the initial empty list of data
@@ -703,7 +703,7 @@ namespace Web.Controllers
             List<DTOAppClosedListResponse> dTOApps = new List<DTOAppClosedListResponse>();
             var responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
             {
-                draw = 0,
+                draw = dTORecord.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 data = dTOApps

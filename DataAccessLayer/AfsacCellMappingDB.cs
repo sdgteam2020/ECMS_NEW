@@ -162,7 +162,7 @@ namespace DataAccessLayer
                 List<DTOAfsacCellMappingResponse> dTOAfsacs = new List<DTOAfsacCellMappingResponse>();
                 var responseData = new DTODataTablesResponse<DTOAfsacCellMappingResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOAfsacs

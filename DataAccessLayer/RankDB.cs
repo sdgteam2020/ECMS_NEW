@@ -168,7 +168,7 @@ namespace DataAccessLayer
                 List<DTORankResponse> dTORanks = new List<DTORankResponse>();
                 var responseData = new DTODataTablesResponse<DTORankResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTORanks

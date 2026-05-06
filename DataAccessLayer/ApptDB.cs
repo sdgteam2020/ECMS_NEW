@@ -262,7 +262,7 @@ namespace DataAccessLayer
                 List<DTOAppointmentResponse> dTOAppointments = new List<DTOAppointmentResponse>();
                 var responseData = new DTODataTablesResponse<DTOAppointmentResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOAppointments

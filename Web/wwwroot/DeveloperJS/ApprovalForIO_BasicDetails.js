@@ -2,6 +2,8 @@
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    applyDataTableSearchValidation('#tbldatatabledata_Fwd');
+
     let Type = parseInt($("#spnType").html());
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();

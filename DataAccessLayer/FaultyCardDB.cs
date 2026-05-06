@@ -281,7 +281,7 @@ namespace DataAccessLayer
                 List<DTOFaultyCardListResponse> dTOUserRegnResponses = new List<DTOFaultyCardListResponse>();
                 var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
                 {
-                    draw = 0,
+                    draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses

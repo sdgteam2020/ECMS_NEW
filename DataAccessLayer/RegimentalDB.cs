@@ -147,7 +147,7 @@ namespace DataAccessLayer
                 List<DTORegimentalResponse> dTORegimentals = new List<DTORegimentalResponse>();
                 var responseData = new DTODataTablesResponse<DTORegimentalResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTORegimentals

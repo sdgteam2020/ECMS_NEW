@@ -76,7 +76,7 @@ namespace DataAccessLayer
             List<DTODistributeCardGetResponse> dTODistributeCardGetResponses = new List<DTODistributeCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,

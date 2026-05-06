@@ -261,7 +261,7 @@ namespace DataAccessLayer
                 List<DTOBdeResponse> dTOBdes = new List<DTOBdeResponse>();
                 var responseData = new DTODataTablesResponse<DTOBdeResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOBdes

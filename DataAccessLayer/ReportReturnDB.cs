@@ -800,7 +800,7 @@ namespace DataAccessLayer
                 List<DTOReportReturnListResponse> dTOUserRegnResponses = new List<DTOReportReturnListResponse>();
                 var responseData = new DTODataTablesResponse<DTOReportReturnListResponse>
                 {
-                    draw = 0,
+                    draw = dTORecord.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -1068,7 +1068,7 @@ namespace DataAccessLayer
                 List<DTOReportResponse> dTOUserRegnResponses = new List<DTOReportResponse>();
                 var responseData = new DTODataTablesResponse<DTOReportResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -1684,7 +1684,7 @@ namespace DataAccessLayer
                     List<DTOReportCardResponse> dTOUserRegnResponses = new List<DTOReportCardResponse>();
                     var responseData = new DTODataTablesResponse<DTOReportCardResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOUserRegnResponses

@@ -3,6 +3,8 @@
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    applyDataTableSearchValidation('#tbldata');
+
     let cvalue = parseInt($("#spnCValue").html());
     BindData(cvalue, function () {
     });
@@ -268,6 +270,7 @@ async function Save() {
         alert("Error: " + error.message);
     }
 }
+
 function BindData(cvalue, callback) {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
         $("#tbldata").DataTable().destroy();
@@ -444,6 +447,9 @@ function BindData(cvalue, callback) {
                     `;
                     }
                     $("#LotDetails").html(summary);
+
+                    applyDataTableSearchValidation('#tbldatadialogLot');
+
                     BindDialog(rowData, cvalue, function () {
                         $("#DataTableDialogForLot").modal("show");
                     })

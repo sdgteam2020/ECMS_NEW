@@ -294,7 +294,7 @@ namespace DataAccessLayer
                 List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
                 var responseData = new DTODataTablesWithSelectedIdsResponse<DTODispatchCardStatusResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     selectedIds = null,
@@ -574,7 +574,7 @@ namespace DataAccessLayer
                 List<DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
                 var responseData = new DTODataTablesWithSelectedIdsResponse<DTOCardDispatchDialogResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     selectedIds = null,
@@ -777,7 +777,7 @@ namespace DataAccessLayer
                 List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
                 var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTODispatchCardLists
@@ -1484,7 +1484,7 @@ namespace DataAccessLayer
                 List<DTOICardRequestHoldResponse> dTODispatchCardLists = new List<DTOICardRequestHoldResponse>();
                 var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTODispatchCardLists,
@@ -2428,7 +2428,7 @@ namespace DataAccessLayer
                 List<DTOBasicDetailIndexResponse> detailVMs = new List<DTOBasicDetailIndexResponse>();
                 var responseData = new DTODataTablesResponse<DTOBasicDetailIndexResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = detailVMs
@@ -2802,7 +2802,7 @@ namespace DataAccessLayer
                 List<DTOBasicDetailIndexResponse> detailVMs = new List<DTOBasicDetailIndexResponse>();
                 var responseData = new DTODataTablesWithSelectedIdsResponse<DTOBasicDetailIndexResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     selectedIds = null,

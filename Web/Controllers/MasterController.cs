@@ -345,7 +345,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTOAllCommand_PaginationResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOAllCommands
@@ -359,7 +359,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTOAllCommand_PaginationResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOAllCommands
@@ -557,7 +557,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTOCorpsResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOCorps
@@ -571,7 +571,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTOCorpsResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOCorps
@@ -848,7 +848,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTODivResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTODivs
@@ -862,7 +862,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTODivResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTODivs
@@ -1169,7 +1169,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTOBdeResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOBdes
@@ -1183,7 +1183,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTOBdeResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOBdes
@@ -1565,7 +1565,7 @@ namespace Web.Controllers
                     List<DTOMapUnitResponse> dTOUserRegnResponses = new List<DTOMapUnitResponse>();
                     var responseData = new DTODataTablesResponse<DTOMapUnitResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOUserRegnResponses
@@ -2008,7 +2008,7 @@ namespace Web.Controllers
                 List<DTOProfileManageResponse> dTOUserRegnResponses = new List<DTOProfileManageResponse>();
                 var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -2499,7 +2499,7 @@ namespace Web.Controllers
                     List<MUnit> dTOUserRegnResponses = new List<MUnit>();
                     var responseData = new DTODataTablesResponse<MUnit>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOUserRegnResponses
@@ -3149,7 +3149,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTORankResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTORanks
@@ -3163,7 +3163,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTORankResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTORanks
@@ -3431,7 +3431,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTOArmedResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOArmeds
@@ -3445,7 +3445,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTOArmedResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOArmeds
@@ -3658,7 +3658,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTORegimentalResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTORegimentals
@@ -3672,7 +3672,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTORegimentalResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTORegimentals
@@ -3881,7 +3881,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTORecordOfficeResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTORecordOffices
@@ -3895,7 +3895,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTORecordOfficeResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTORecordOffices
@@ -4166,7 +4166,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTOOROMappingResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOOROs
@@ -4180,7 +4180,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTOOROMappingResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOOROs
@@ -4391,7 +4391,7 @@ namespace Web.Controllers
                 {
                     var responseData = new DTODataTablesResponse<DTOAfsacCellMappingResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTOAfsacs
@@ -4405,7 +4405,7 @@ namespace Web.Controllers
 
                 var responseData = new DTODataTablesResponse<DTOAfsacCellMappingResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOAfsacs

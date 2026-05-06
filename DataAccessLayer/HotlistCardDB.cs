@@ -69,7 +69,7 @@ namespace DataAccessLayer
             List<DTOHotlistCardGetResponse> dTOHotlistCardGetResponses = new List<DTOHotlistCardGetResponse>();
             var responseData = new DTODataTablesResponse<DTOHotlistCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 data = dTOHotlistCardGetResponses

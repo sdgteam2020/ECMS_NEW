@@ -218,7 +218,7 @@ namespace DataAccessLayer
                 List<DTODomainRegnResponse> dTOUserRegnResponses = new List<DTODomainRegnResponse>();
                 var responseData = new DTODataTablesResponse<DTODomainRegnResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -890,7 +890,7 @@ namespace DataAccessLayer
                 List<DTOUserRegnResponse> dTOUserRegnResponses = new List<DTOUserRegnResponse>();
                 var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -988,7 +988,7 @@ namespace DataAccessLayer
                 List<DTOUserRegnResponse> dTOUserRegns = new List<DTOUserRegnResponse>();
                 var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegns
@@ -1083,7 +1083,7 @@ namespace DataAccessLayer
                 List<DTOProfileManageResponse> dTOUserRegnResponses = new List<DTOProfileManageResponse>();
                 var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -2132,7 +2132,7 @@ namespace DataAccessLayer
                 List<DTOClaimsStoreResponse> dTOUserRegnResponses = new List<DTOClaimsStoreResponse>();
                 var responseData = new DTODataTablesResponse<DTOClaimsStoreResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -2235,7 +2235,7 @@ namespace DataAccessLayer
                 List<DTOUsersByClaim> dTOUserRegnResponses = new List<DTOUsersByClaim>();
                 var responseData = new DTODataTablesResponse<DTOUsersByClaim>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses

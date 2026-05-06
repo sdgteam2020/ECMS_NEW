@@ -181,7 +181,7 @@ namespace DataAccessLayer
                 List<DTOArmedResponse> dTOArmeds = new List<DTOArmedResponse>();
                 var responseData = new DTODataTablesResponse<DTOArmedResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOArmeds
