@@ -5,6 +5,9 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     let cvalue = $("#spnFlagICardAppl").html();
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData(cvalue, function () {
     });
     $('.select2').select2({

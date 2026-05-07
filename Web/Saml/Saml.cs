@@ -1,8 +1,10 @@
 using SAMLSignatureVerification;
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
+using System.Text;
 using System.Xml;
 /// <summary>
 /// Summary description for saml
@@ -441,7 +443,7 @@ namespace OneLogin
                     if (format == AuthRequestFormat.Base64)
                     {
                         byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(sw.ToString());
-                        return System.Convert.ToBase64String(toEncodeAsBytes);
+                        return EncryptData(System.Convert.ToBase64String(toEncodeAsBytes));
                     }
 
                     return null;
@@ -532,10 +534,37 @@ namespace OneLogin
                     if (format == AuthRequestFormat.Base64)
                     {
                         byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(sw.ToString());
-                        return System.Convert.ToBase64String(toEncodeAsBytes);
+                        return EncryptData(System.Convert.ToBase64String(toEncodeAsBytes));
                     }
 
                     return null;
+                }
+            }
+
+            public static string EncryptData(string logoutRequest)
+            {
+                var key = RandomNumberGenerator.GetBytes(32);
+
+                using (var aesAlg = new AesManaged() { KeySize = 256 })
+                {
+                    aesAlg.Mode = CipherMode.ECB;
+                    aesAlg.Key = key;
+
+                    using (var encryptor = aesAlg.CreateEncryptor())
+                    {
+                        string request = Convert.ToBase64String(encryptor.TransformFinalBlock(Encoding.UTF8.GetBytes(logoutRequest), 0, logoutRequest.Length));
+                        var certPath = Environment.GetEnvironmentVariable("Cert__Path") ?? string.Empty;
+
+                        var publicKey = new X509Certificate2(certPath);
+
+                        using (var rsa = publicKey.GetRSAPublicKey())
+                        {
+                            var encKey = rsa.Encrypt(key, RSAEncryptionPadding.Pkcs1);
+                            var alpha = "alpha";
+                            return $"{request}{Convert.ToBase64String(Encoding.UTF8.GetBytes(alpha))}{Convert.ToBase64String(encKey)}";
+                        }
+                    }
+
                 }
             }
         }

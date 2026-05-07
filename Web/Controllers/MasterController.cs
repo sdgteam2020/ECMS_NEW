@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Management.XEvent;
 using Newtonsoft.Json;
 using System;
 using System.Drawing.Imaging;
@@ -1847,67 +1848,126 @@ namespace Web.Controllers
         /// <param name="MapUnitChangeRequestId">The ID of the MapUnitChangeRequest.</param>
         /// <returns>Returns the unit move history details in JSON format.</returns>
         [HttpPost]
-        public async Task<IActionResult> GetUnitMoveHistory(int MapUnitChangeRequestId)
+        public async Task<IActionResult> GetUnitMoveHistory(string Request)
         {
+            // Initialize the response object for front-end
+            var dTOResponse = new DTOGenericResponse<DTOMapUnitDetailsResponse>();
+
             try
             {
-                TrnMapUnitChangeRequest? mapUnitChangeRequest = await _mapUnitChangeBL.Get(MapUnitChangeRequestId);
 
-                if (mapUnitChangeRequest != null)
+                // Initialize a DTO for session data
+                DtoSession? dtoSession = new DtoSession();
+
+                // Check if session token exists and retrieve session object
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
                 {
-                    DTOMapUnitDetailsResponse dTOMapUnitDetails = new DTOMapUnitDetailsResponse();
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
 
-                    // Map existing data and request data
-                    string[] ExistingCh = mapUnitChangeRequest.ExistingCh.Split('#');
-                    string[] RequestCh = mapUnitChangeRequest.RequestCh.Split('#');
+                // If session is valid, proceed
+                if (dtoSession != null)
+                {
+                    var MapUnitChangeRequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, dtoSession.Salt);
+
+                    if (MapUnitChangeRequestId == 0)
+                    {
+                        dTOResponse.Result = false;
+                        dTOResponse.Message = "Invalid Data.";
+                        return Json(dTOResponse);
+                    }
+                    else
+                    {
+                        TrnMapUnitChangeRequest? mapUnitChangeRequest = await _mapUnitChangeBL.Get(MapUnitChangeRequestId);
+
+                        if (mapUnitChangeRequest != null)
+                        {
+                            var user = await _userManager.GetUserAsync(User);
+
+                            if (user != null)
+                            {
+                                var roles = await _userManager.GetRolesAsync(user);
+                                if (!roles.Contains("admin"))
+                                {
+                                    if (dtoSession.UnitId != mapUnitChangeRequest.UnitMapId)
+                                    {
+                                        dTOResponse.Result = false;
+                                        dTOResponse.Message = "You are not authorized to view details.";
+                                        return Json(dTOResponse);
+                                    }
+                                }
+                            }
+
+                            DTOMapUnitDetailsResponse dTOMapUnitDetails = new DTOMapUnitDetailsResponse();
+
+                            // Map existing data and request data
+                            string[] ExistingCh = mapUnitChangeRequest.ExistingCh.Split('#');
+                            string[] RequestCh = mapUnitChangeRequest.RequestCh.Split('#');
 
 
-                    dTOMapUnitDetails.MapUnitChangeRequestId = MapUnitChangeRequestId;
-                    dTOMapUnitDetails.ComdId = Convert.ToByte(RequestCh[1]);
-                    dTOMapUnitDetails.CorpsId = Convert.ToByte(RequestCh[2]);
-                    dTOMapUnitDetails.DivId = Convert.ToByte(RequestCh[3]);
-                    dTOMapUnitDetails.BdeId = Convert.ToByte(RequestCh[4]);
-                    dTOMapUnitDetails.FmnBranchID = Convert.ToByte(RequestCh[5]);
-                    dTOMapUnitDetails.PsoId = Convert.ToByte(RequestCh[6]);
-                    dTOMapUnitDetails.SubDteId = Convert.ToByte(RequestCh[7]);
+                            dTOMapUnitDetails.MapUnitChangeRequestId = MapUnitChangeRequestId;
+                            dTOMapUnitDetails.ComdId = Convert.ToByte(RequestCh[1]);
+                            dTOMapUnitDetails.CorpsId = Convert.ToByte(RequestCh[2]);
+                            dTOMapUnitDetails.DivId = Convert.ToByte(RequestCh[3]);
+                            dTOMapUnitDetails.BdeId = Convert.ToByte(RequestCh[4]);
+                            dTOMapUnitDetails.FmnBranchID = Convert.ToByte(RequestCh[5]);
+                            dTOMapUnitDetails.PsoId = Convert.ToByte(RequestCh[6]);
+                            dTOMapUnitDetails.SubDteId = Convert.ToByte(RequestCh[7]);
 
-                    dTOMapUnitDetails = await _mapUnitChangeBL.GetUnitMoveHistory(dTOMapUnitDetails);
-                    
-                    dTOMapUnitDetails.MapUnitChangeRequestId = MapUnitChangeRequestId;
-                    dTOMapUnitDetails.UnitAbbreviation = ExistingCh[0];
-                    dTOMapUnitDetails.Sus_no = ExistingCh[1];
-                    dTOMapUnitDetails.ExistingUnitType = Convert.ToInt32(ExistingCh[2]);
-                    dTOMapUnitDetails.ExistingComdName = ExistingCh[3];
-                    dTOMapUnitDetails.ExistingCorpsName = ExistingCh[4];
-                    dTOMapUnitDetails.ExistingDivName = ExistingCh[5];
-                    dTOMapUnitDetails.ExistingBdeName = ExistingCh[6];
-                    dTOMapUnitDetails.ExistingBranchName = ExistingCh[7];
-                    dTOMapUnitDetails.ExistingPSOName = ExistingCh[8];
-                    dTOMapUnitDetails.ExistingSubDteName = ExistingCh[9];
+                            dTOMapUnitDetails = await _mapUnitChangeBL.GetUnitMoveHistory(dTOMapUnitDetails);
 
-                    dTOMapUnitDetails.RequestUnitType = Convert.ToInt32(RequestCh[0]);
-                    dTOMapUnitDetails.ComdId = Convert.ToByte(RequestCh[1]);
-                    dTOMapUnitDetails.CorpsId = Convert.ToByte(RequestCh[2]);
-                    dTOMapUnitDetails.DivId = Convert.ToByte(RequestCh[3]);
-                    dTOMapUnitDetails.BdeId = Convert.ToByte(RequestCh[4]);
-                    dTOMapUnitDetails.FmnBranchID = Convert.ToByte(RequestCh[5]);
-                    dTOMapUnitDetails.PsoId = Convert.ToByte(RequestCh[6]);
-                    dTOMapUnitDetails.SubDteId = Convert.ToByte(RequestCh[7]);
+                            dTOMapUnitDetails.MapUnitChangeRequestId = MapUnitChangeRequestId;
+                            dTOMapUnitDetails.UnitAbbreviation = ExistingCh[0];
+                            dTOMapUnitDetails.Sus_no = ExistingCh[1];
+                            dTOMapUnitDetails.ExistingUnitType = Convert.ToInt32(ExistingCh[2]);
+                            dTOMapUnitDetails.ExistingComdName = ExistingCh[3];
+                            dTOMapUnitDetails.ExistingCorpsName = ExistingCh[4];
+                            dTOMapUnitDetails.ExistingDivName = ExistingCh[5];
+                            dTOMapUnitDetails.ExistingBdeName = ExistingCh[6];
+                            dTOMapUnitDetails.ExistingBranchName = ExistingCh[7];
+                            dTOMapUnitDetails.ExistingPSOName = ExistingCh[8];
+                            dTOMapUnitDetails.ExistingSubDteName = ExistingCh[9];
 
-                    dTOMapUnitDetails.UnitMapId = mapUnitChangeRequest.UnitMapId;
-                    return Json(dTOMapUnitDetails);
+                            dTOMapUnitDetails.RequestUnitType = Convert.ToInt32(RequestCh[0]);
+                            dTOMapUnitDetails.ComdId = Convert.ToByte(RequestCh[1]);
+                            dTOMapUnitDetails.CorpsId = Convert.ToByte(RequestCh[2]);
+                            dTOMapUnitDetails.DivId = Convert.ToByte(RequestCh[3]);
+                            dTOMapUnitDetails.BdeId = Convert.ToByte(RequestCh[4]);
+                            dTOMapUnitDetails.FmnBranchID = Convert.ToByte(RequestCh[5]);
+                            dTOMapUnitDetails.PsoId = Convert.ToByte(RequestCh[6]);
+                            dTOMapUnitDetails.SubDteId = Convert.ToByte(RequestCh[7]);
+
+                            dTOMapUnitDetails.UnitMapId = mapUnitChangeRequest.UnitMapId;
+
+                            dTOResponse.Result = true;
+                            dTOResponse.Value = dTOMapUnitDetails;
+                            dTOResponse.Message = "Ok";
+                            return Json(dTOResponse);
+                        }
+                        else
+                        {
+                            dTOResponse.Result = false;
+                            dTOResponse.Message = "Invalid Id.";
+                            return Json(dTOResponse);
+                        }
+                    }
+
                 }
                 else
                 {
-                    return Json(KeyConstants.InternalServerError);
+                    // Session is invalid or expired: return empty data response
+                    dTOResponse.Result = false;
+                    dTOResponse.Message = "Session expired.";
+                    return Json(dTOResponse);
                 }
-
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "Master->GetChangeMapUnitDetails");
-                return Json(KeyConstants.InternalServerError);
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error.";
+                return Json(dTOResponse);
             }
         }
 

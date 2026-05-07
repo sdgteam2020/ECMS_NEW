@@ -1,5 +1,7 @@
 ﻿var table_Fwd; // Declare table variable outside the function to preserve the instance
 $(function () {
+    applyDataTableSearchValidation('#tbldatatabledata_Notification');
+
     BindData(function () {
     });
 });

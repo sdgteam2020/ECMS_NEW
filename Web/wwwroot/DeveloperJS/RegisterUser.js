@@ -1,5 +1,8 @@
 ﻿$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData();
 });
 function BindData() {

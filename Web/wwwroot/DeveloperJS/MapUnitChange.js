@@ -4,6 +4,8 @@ var table; // Declare table variable outside the function to preserve the instan
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    applyDataTableSearchValidation('#tbldata');
+
     BindData();
     $("#btnAdd").on("click", function (){
         location.href = '/Master/MapUnitChangeRequest';

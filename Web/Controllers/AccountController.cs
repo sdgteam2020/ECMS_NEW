@@ -1222,7 +1222,6 @@ namespace Web.Controllers
                                 if (result.Succeeded)
                                 {
                                    
-                                    DTORsaKeyResponse dTORsaKeyResponse = RsaKeyGenerator.GenerateKeys();
                                     DtoSession dtoSession = new DtoSession();
                                     dtoSession.ICNO = dTOTempSession.ICNO;
                                     dtoSession.RoleName = dTOTempSession.RoleName.Trim();
@@ -1249,8 +1248,10 @@ namespace Web.Controllers
                                     await _TrnLoginLogBL.Add(log);
                                     ////////////////End Log////////////////////////
 
-                                    SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession); // Set session object
+                                    HttpContext.Session.Clear();
+                                    Response.Cookies.Delete(".AspNetCore.Session");
 
+                                    SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession); // Set session object
 
 
                                     if (RoleNameList.Contains(dTOTempSession.RoleName))

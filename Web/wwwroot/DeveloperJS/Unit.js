@@ -4,6 +4,9 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     Reset();
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData()
     $("#txtSerachunit").on("keyup", function () {
         BindData()

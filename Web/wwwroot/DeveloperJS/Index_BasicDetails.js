@@ -6,6 +6,9 @@ $(function () {
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();
     let VBId = $("#spnVBId").html();
+
+    applyDataTableSearchValidation('#tbldatatabledata_Fwd');
+
     BindData(Type, StepCounter, JCOOR, VBId, function () {
     });
 

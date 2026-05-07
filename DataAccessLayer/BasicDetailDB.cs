@@ -3560,25 +3560,25 @@ namespace DataAccessLayer
             string query = "";
             if (Type == 1) // Submitted
             {
-                query = "declare @ToDrafted int=0 declare @ToSubmitted int=0 declare @ToCompleted int=0 declare @ToRejected int=0" +
-                        " select @ToDrafted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                        " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                        " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 and trnstepcout.ApplyForId=@applyForId " +
+                query = @"declare @ToDrafted int=0 declare @ToSubmitted int=0 declare @ToCompleted int=0 declare @ToRejected int=0
+                            select @ToDrafted=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId=1 and trnstepcout.ApplyForId=@applyForId
 
-                        " select @ToSubmitted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                        " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                        " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=@applyForId " +
+                            select @ToSubmitted=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and trnstepcout.StepId>1 and trnstepcout.ApplyForId=@applyForId 
 
-                        " select @ToCompleted=COUNT(distinct req.RequestId) from TrnDomainMapping domain" +
-                        " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                        " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=2 and trnstepcout.ApplyForId=@applyForId " +
+                            select @ToCompleted=COUNT(distinct req.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId where domain.AspNetUsersId=@UserId and req.StatusId=2 and trnstepcout.ApplyForId=@applyForId 
 
-                        " select @ToRejected=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain" +
-                        " inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id " +
-                        " inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId" +
-                        " inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=@applyForId " +
+                            select @ToRejected=COUNT(distinct fwd.RequestId) from TrnDomainMapping domain
+                            inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id 
+                            inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId
+                            inner join TrnFwds fwd on fwd.RequestId= trnstepcout.RequestId where fwd.ToAspNetUsersId=@UserId and fwd.FwdStatusId=3 and req.StatusId=1 and trnstepcout.StepId in(7,8,9,10) and trnstepcout.ApplyForId=@applyForId 
 
-                        " select @ToDrafted ToDrafted,@ToSubmitted ToSubmitted,@ToCompleted ToCompleted,@ToRejected ToRejected";
+                            select @ToDrafted ToDrafted,@ToSubmitted ToSubmitted,@ToCompleted ToCompleted,@ToRejected ToRejected";
             }
             else if (Type == 2) // Pending
             {

@@ -7,6 +7,9 @@ $(function () {
 
     mMsater(0, "ddlRank", Rank, "");
     mMsater(0, "ddlArmType", ArmyType, "");
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData()
 
     $('#TokenWaiverInfo').on({

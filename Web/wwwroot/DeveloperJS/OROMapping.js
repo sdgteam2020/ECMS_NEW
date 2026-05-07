@@ -7,6 +7,9 @@ $(function () {
     mMsater(0, "ddlRO", RecordOffice, "");
     mMsater(0, "ddlRank", Rank, "");
     GetArmsList("ddlArmedIdList", 0);
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData();
     $('#ddlArmedIdList').select2({
         placeholder: "Select Arms",
