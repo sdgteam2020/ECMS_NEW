@@ -155,6 +155,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.IsEssential = true;
 
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     options.SlidingExpiration = false;
@@ -163,6 +164,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
 
+});
+
+// TempData cookie - only needed if you use TempData
+builder.Services.Configure<CookieTempDataProviderOptions>(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddAuthorizationPolicies();

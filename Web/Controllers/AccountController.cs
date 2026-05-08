@@ -1221,51 +1221,57 @@ namespace Web.Controllers
                                 var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, lockoutOnFailure: true); // Sign in user
                                 if (result.Succeeded)
                                 {
-                                   
-                                    DtoSession dtoSession = new DtoSession();
-                                    dtoSession.ICNO = dTOTempSession.ICNO;
-                                    dtoSession.RoleName = dTOTempSession.RoleName.Trim();
-                                    dtoSession.UserId = dTOTempSession.UserId;
-                                    dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
-                                    dtoSession.Name = dTOTempSession.Name.ToUpper();
-                                    dtoSession.RankName = dTOTempSession.RankAbbreviation.ToUpper();
-                                    dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
-                                    dtoSession.RoleName = dTOTempSession.RoleName;
-                                    dtoSession.DoaminId = dTOTempSession.DomainId;
-                                    dtoSession.Salt = GetSalt;
-                                    
+                                    // Login log
+                                    var role = await roleManager.FindByNameAsync(dTOTempSession.RoleName);
+
+                                    if (role == null)
+                                    {
+                                        DeleteTempDataCookies();
+                                        await signInManager.SignOutAsync();
+                                        return RedirectToAction("IMLoginSelf", "Account");
+                                    }
+                                    var loginGuid = Guid.NewGuid();
 
                                     ///////////////login log//////////////////////
                                     TrnLogin_Log log = new TrnLogin_Log();
                                     log.AspNetUsersId = Convert.ToInt32(usera.Id);
-                                    var Role = await roleManager.FindByNameAsync(dTOTempSession.RoleName);
-                                    log.RoleId = Convert.ToInt32(Role.Id);
+                                    log.RoleId = Convert.ToInt32(role.Id);
                                     log.UserId = Convert.ToInt32(dTOTempSession.UserId);
-                                    log.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                                    log.IP = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
                                     log.IsActive = true;
                                     log.Updatedby = Convert.ToInt32(usera.Id);
                                     log.UpdatedOn = DateTime.Now;
-                                    await _TrnLoginLogBL.Add(log);
+                                    log.LoginGuid = loginGuid;
+                                    log.ExpiresOn = DateTime.Now.AddMinutes(2);
+                                    log.IsUsed = false;
+
+                                    bool res = await _TrnLoginLogBL.Add(log);
                                     ////////////////End Log////////////////////////
 
-                                    HttpContext.Session.Clear();
-                                    Response.Cookies.Delete(".AspNetCore.Session");
-
-                                    SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession); // Set session object
-
-
-                                    if (RoleNameList.Contains(dTOTempSession.RoleName))
+                                    if (res)
                                     {
-                                        HttpContext.Session.Remove("IMData");
-                                        HttpContext.Session.Remove(SessionKeySalt);
-                                        return RedirectToActionPermanent("Index", "Home");
+
+                                        dTOTempSession.LoginGuid = loginGuid;
+
+                                        HttpContext.Session.Clear();
+                                        await HttpContext.Session.CommitAsync();
+
+                                        Response.Cookies.Delete(".AspNetCore.Session");
+
+                                        // Store TempSession temporarily and redirect to FinalLogin
+                                        TempData["TempSession"] = JsonConvert.SerializeObject(dTOTempSession);
+
+                                        return RedirectToAction("FinalLogin", "Account");
                                     }
-                                    else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                                    else
                                     {
-                                        HttpContext.Session.Remove("IMData");
-                                        HttpContext.Session.Remove(SessionKeySalt);
-                                        return RedirectToActionPermanent("DashboardMaster", "Master");
+                                        _logger.LogError(1001, null, "Logs not register.");
+
+                                        DeleteTempDataCookies();
+                                        await signInManager.SignOutAsync();
+                                        return RedirectToAction("IMLoginSelf", "Account");
                                     }
+
                                 }
                                 else if (result.IsLockedOut)
                                 {
@@ -1398,6 +1404,145 @@ namespace Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> FinalLogin()
+        {
+            try
+            {
+                var tempSessionJson = TempData["TempSession"]?.ToString();
+
+                if (string.IsNullOrWhiteSpace(tempSessionJson))
+                {
+                    DeleteTempDataCookies();
+                    return RedirectToAction("IMLoginSelf", "Account");
+                    // On exception, redirect to IAM login page
+                    //Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                }
+
+                var dTOTempSession = JsonConvert.DeserializeObject<DTOTempSession>(tempSessionJson);
+
+                if (dTOTempSession == null)
+                {
+                    DeleteTempDataCookies();
+                    return RedirectToAction("IMLoginSelf", "Account");
+                    // On exception, redirect to IAM login page
+                    //Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                }
+
+                var log = await _TrnLoginLogBL.GetByToken(dTOTempSession.LoginGuid);
+
+                if (log == null || log.IsUsed || log.ExpiresOn < DateTime.Now)
+                {
+                    return RedirectToAction("IMLoginSelf", "Account");
+                    // On exception, redirect to IAM login page
+                    //Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                }
+
+                log.IsUsed = true;
+                await _TrnLoginLogBL.Update(log);
+
+
+                var usera = await userManager.FindByIdAsync(dTOTempSession.AspNetUsersId.ToString());
+
+                if (usera == null)
+                {
+                    DeleteTempDataCookies();
+                    return RedirectToAction("IMLoginSelf", "Account");
+                    // On exception, redirect to IAM login page
+                    //Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                }
+
+                // Clear any existing authentication cookie
+                await signInManager.SignOutAsync();
+
+                // Create new authentication cookie
+                await signInManager.SignInAsync(usera, isPersistent: false);
+
+
+                string GetSalt = AESEncrytDecry.GetSalt();
+                List<string> RoleNameList = new List<string>() { "user" };
+
+                DtoSession dtoSession = new DtoSession();
+                dtoSession.ICNO = dTOTempSession.ICNO;
+                dtoSession.RoleName = dTOTempSession.RoleName.Trim();
+                dtoSession.UserId = dTOTempSession.UserId;
+                dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
+                dtoSession.Name = dTOTempSession.Name.ToUpper();
+                dtoSession.RankName = dTOTempSession.RankAbbreviation.ToUpper();
+                dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
+                dtoSession.RoleName = dTOTempSession.RoleName;
+                dtoSession.DoaminId = dTOTempSession.DomainId;
+                dtoSession.Salt = GetSalt;
+
+
+
+                // Remove old pre-login keys if any
+                HttpContext.Session.Remove("IMData");
+                HttpContext.Session.Remove(SessionKeySalt);
+                HttpContext.Session.Remove("Token");
+
+                // Create new session data
+                SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession); // Set session object
+
+                // Force save new session
+                await HttpContext.Session.CommitAsync();
+
+                // Remove TempData cookie
+                DeleteTempDataCookies();
+
+                if (RoleNameList.Contains(dTOTempSession.RoleName))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                {
+                    return RedirectToAction("DashboardMaster", "Master");
+                }
+
+                await signInManager.SignOutAsync();
+                HttpContext.Session.Clear();
+                await HttpContext.Session.CommitAsync();
+
+                return RedirectToAction("IMLoginSelf", "Account");
+
+                // On exception, redirect to IAM login page
+                //Response.Redirect("https://iam2.army.mil/IAM/User", true);
+            }
+            catch
+            {
+                await signInManager.SignOutAsync();
+                HttpContext.Session.Clear();
+                await HttpContext.Session.CommitAsync();
+
+                DeleteTempDataCookies();
+
+                return RedirectToAction("IMLoginSelf", "Account");
+                // On exception, redirect to IAM login page
+                //Response.Redirect("https://iam2.army.mil/IAM/User", true);
+            }
+        }
+
+        private void DeleteTempDataCookies()
+        {
+            TempData.Clear();
+
+            var cookieOptions = new CookieOptions
+            {
+                Path = "/",
+                Secure = true,
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict
+            };
+
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                if (cookie.StartsWith(".AspNetCore.Mvc.CookieTempDataProvider"))
+                {
+                    Response.Cookies.Delete(cookie, cookieOptions);
+                }
+            }
+        }
 
         /// <summary>
         /// Displays the profile page for the currently logged-in user based on session data.
@@ -1977,7 +2122,7 @@ namespace Web.Controllers
                 if (!string.IsNullOrEmpty(EncryptedResponse))
                 {
                     // Decrypt SAML response using the certificate
-                    string decryptedsamlresponse = DecryptSAmlResponseNew(EncryptedResponse, "C:\\Cert\\App Certificate\\eisac.army.mil.pfx", "Abc@2022");
+                    string decryptedsamlresponse = DecryptSAmlResponseNew(EncryptedResponse, Environment.GetEnvironmentVariable("Cert__Path") ?? string.Empty, Environment.GetEnvironmentVariable("Cert__Password") ?? string.Empty);
 
                     AccountSettings accountSettings = new AccountSettings();
                     OneLogin.Saml.Response samlResponse = new OneLogin.Saml.Response(accountSettings);
@@ -2353,46 +2498,63 @@ namespace Web.Controllers
                                 var result = await signInManager.PasswordSignInAsync(usera.UserName, model.Password, false, lockoutOnFailure: true);
                                 if (result.Succeeded)
                                 {
-                                    // Create session object
-                                    DtoSession dtoSession = new DtoSession();
-                                    dtoSession.ICNO = dTOTempSession.ICNO;
-                                    dtoSession.RoleName = dTOTempSession.RoleName.Trim();
-                                    dtoSession.UserId = dTOTempSession.UserId;
-                                    dtoSession.UnitId = dTOTempSession.TDMUnitMapId;
-                                    dtoSession.Name = dTOTempSession.Name.ToUpper();
-                                    dtoSession.RankName = dTOTempSession.RankAbbreviation.ToUpper();
-                                    dtoSession.TrnDomainMappingId = dTOTempSession.TDMId;
-                                    dtoSession.RoleName = dTOTempSession.RoleName;
-                                    dtoSession.DoaminId = dTOTempSession.DomainId;
+                                    // Login log
+                                    var role = await roleManager.FindByNameAsync(dTOTempSession.RoleName);
+
+                                    if (role == null)
+                                    {
+                                        DeleteTempDataCookies();
+                                        await signInManager.SignOutAsync();
+                                        return RedirectToAction("IMLoginSelf", "Account");
+
+                                        // On exception, redirect to IAM login page
+                                        //Response.Redirect("https://iam2.army.mil/IAM/User", true);
+                                    }
+                                    var loginGuid = Guid.NewGuid();
+
                                     ///////////////login log//////////////////////
-                                    // Log the login attempt
                                     TrnLogin_Log log = new TrnLogin_Log();
                                     log.AspNetUsersId = Convert.ToInt32(usera.Id);
-                                    var Role = await roleManager.FindByNameAsync(dTOTempSession.RoleName);
-                                    log.RoleId = Convert.ToInt32(Role.Id);
+                                    log.RoleId = Convert.ToInt32(role.Id);
                                     log.UserId = Convert.ToInt32(dTOTempSession.UserId);
-                                    log.IP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                                    log.IP = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
                                     log.IsActive = true;
                                     log.Updatedby = Convert.ToInt32(usera.Id);
                                     log.UpdatedOn = DateTime.Now;
-                                    await _TrnLoginLogBL.Add(log);
+                                    log.LoginGuid = loginGuid;
+                                    log.ExpiresOn = DateTime.Now.AddMinutes(2);
+                                    log.IsUsed = false;
+
+                                    bool res = await _TrnLoginLogBL.Add(log);
                                     ////////////////End Log////////////////////////
 
-                                    // Set session for successful login
-                                    SessionHeplers.SetObject(HttpContext.Session, "Token", dtoSession);
-
-
-
-                                    if (RoleNameList.Contains(dTOTempSession.RoleName))
+                                    if (res)
                                     {
-                                        HttpContext.Session.Remove("IMData");
-                                        return RedirectToActionPermanent("Index", "Home");
+
+                                        dTOTempSession.LoginGuid = loginGuid;
+
+                                        HttpContext.Session.Clear();
+                                        await HttpContext.Session.CommitAsync();
+
+                                        Response.Cookies.Delete(".AspNetCore.Session");
+
+                                        // Store TempSession temporarily and redirect to FinalLogin
+                                        TempData["TempSession"] = JsonConvert.SerializeObject(dTOTempSession);
+
+                                        return RedirectToAction("FinalLogin", "Account");
                                     }
-                                    else if (dTOTempSession.RoleName.ToUpper() == "ADMIN")
+                                    else
                                     {
-                                        HttpContext.Session.Remove("IMData");
-                                        return RedirectToActionPermanent("DashboardMaster", "Master");
+                                        _logger.LogError(1001, null, "Logs not register.");
+
+                                        DeleteTempDataCookies();
+                                        await signInManager.SignOutAsync();
+                                        return RedirectToAction("IMLoginSelf", "Account");
+
+                                        // On exception, redirect to IAM login page
+                                        //Response.Redirect("https://iam2.army.mil/IAM/User", true);
                                     }
+
                                 }
                                 else if (result.IsLockedOut)
                                 {

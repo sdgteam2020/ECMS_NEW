@@ -24,5 +24,13 @@ namespace DataTransferObject.Domain.Model
         public int RoleId { get; set; }
 
         public ApplicationRole? ApplicationRole { get; set; }
+
+        // One-time login transfer GUID
+        public Guid LoginGuid { get; set; }
+
+        // Login transfer validation
+        public DateTime ExpiresOn { get; set; }
+
+        public bool IsUsed { get; set; } = false;
     }
 }

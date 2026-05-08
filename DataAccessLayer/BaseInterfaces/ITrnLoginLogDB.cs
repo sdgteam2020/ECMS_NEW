@@ -17,5 +17,8 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOLoginLogResponse>> GetLoginLogByUserId(int AspnetUserId,int UnitId, DateTime? FmDate, DateTime? ToDate);
         public Task<bool> XmlFileDigitalSign(DTOXmlFilesFwdLogRequest Data);
         public Task<DTOXmlFilesFwdLogRequest> XmlFileDigitalSignFromData(int[] RequestId);
+
+        public Task<TrnLogin_Log?> GetByToken(Guid loginGuid);
+        public Task<bool> Update(TrnLogin_Log Data);
     }
 }

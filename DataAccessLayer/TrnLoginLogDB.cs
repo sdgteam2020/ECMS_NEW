@@ -31,10 +31,18 @@ namespace DataAccessLayer
         /// <returns>Returns true if the operation is successful.</returns>
         public async Task<bool> Add(TrnLogin_Log Data)
         {
-            using (var connection = _contextDP2.CreateConnection())
+            try
             {
-                await connection.ExecuteAsync("INSERT INTO [dbo].[TrnLogin_Log]([AspNetUsersId],[UserId],[IP],[IsActive],[Updatedby],[UpdatedOn],[RoleId]) VALUES (@AspNetUsersId,@UserId,@IP,@IsActive,@Updatedby,@UpdatedOn,@RoleId)", new { Data.AspNetUsersId,Data.UserId,Data.IP,Data.IsActive,Data.Updatedby,Data.UpdatedOn,Data.RoleId });
-                return true;
+                using (var connection = _contextDP2.CreateConnection())
+                {
+                    await connection.ExecuteAsync("INSERT INTO [dbo].[TrnLogin_Log]([AspNetUsersId],[UserId],[IP],[IsActive],[Updatedby],[UpdatedOn],[RoleId],[LoginGuid],[ExpiresOn],[IsUsed]) VALUES (@AspNetUsersId,@UserId,@IP,@IsActive,@Updatedby,@UpdatedOn,@RoleId,@LoginGuid,@ExpiresOn,@IsUsed)", new { Data.AspNetUsersId, Data.UserId, Data.IP, Data.IsActive, Data.Updatedby, Data.UpdatedOn, Data.RoleId, Data.LoginGuid, Data.ExpiresOn, Data.IsUsed });
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "TrnLoginLogDB->Add");
+                return false;
             }
         }
 
@@ -83,6 +91,49 @@ namespace DataAccessLayer
                 var Ret = await connection.QueryAsync<DTOXmlFilesFwdLogRequest>(query, new { RequestId });
                 return Ret.FirstOrDefault();
             }
+        }
+
+        public async Task<TrnLogin_Log?> GetByToken(Guid loginGuid)
+        {
+            try
+            {
+                string query = @"select * from TrnLogin_Log where LoginGuid=@LoginGuid";
+
+                using (var connection = _contextDP2.CreateConnection())
+                {
+                    return await connection.QueryFirstOrDefaultAsync<TrnLogin_Log>(query, new { LoginGuid = loginGuid });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "TrnLoginLogDB->GetByToken");
+                return null;
+            }
+
+        }
+
+        public async Task<bool> Update(TrnLogin_Log Data)
+        {
+            try
+            {
+                using (var connection = _contextDP2.CreateConnection())
+                {
+                    string query1 = @"UPDATE [dbo].[TrnLogin_Log] SET [IsUsed] =  @IsUsed WHERE [LoginGuid]= @LoginGuid";
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@LoginGuid", Data.LoginGuid, DbType.Guid, ParameterDirection.Input);
+                    parameters.Add("@IsUsed", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+
+                    await connection.ExecuteAsync(query1, parameters);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "TrnLoginLogDB->Update");
+                return false;
+            }
+
         }
 
 

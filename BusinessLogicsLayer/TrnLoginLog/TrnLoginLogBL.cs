@@ -57,5 +57,13 @@ namespace BusinessLogicsLayer.TrnLoginLog
         {
             return _iTrnLoginLogDB.XmlFileDigitalSignFromData(RequestId);
         }
+        public async Task<TrnLogin_Log?> GetByToken(Guid loginGuid)
+        {
+            return await _iTrnLoginLogDB.GetByToken(loginGuid);
+        }
+        public async Task<bool> Update(TrnLogin_Log Data)
+        {
+            return await _iTrnLoginLogDB.Update(Data);
+        }
     }
 }
