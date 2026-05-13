@@ -1,8 +1,6 @@
-﻿using BusinessLogicsLayer;
-using BusinessLogicsLayer.BasicDet;
+﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
-using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.DestructionCard;
 using BusinessLogicsLayer.DispatchCard;
@@ -20,7 +18,6 @@ using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.TrnICardHold;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
-using BusinessLogicsLayer.User;
 using CsvHelper;
 using CsvHelper.Configuration;
 using DataAccessLayer;
@@ -31,42 +28,23 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
-using Humanizer;
-using iText.Commons.Bouncycastle.Cert.Ocsp;
-using iText.IO.Font.Cmap;
-using iText.Layout.Renderer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Smo.Wmi;
 using Newtonsoft.Json;
-using NuGet.Packaging;
-using Org.BouncyCastle.Ocsp;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.IO.Compression;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
@@ -3451,8 +3429,36 @@ namespace Web.Controllers
                     dTODataExported.RequestId = arryRequestId;
                     await _iTrnLoginLogBL.AddDataExport(dTODataExported);
 
-                    // Return last folder name to caller
-                    return Json(lastFolderName);
+                    string zipFilePath = sourceFolderPhotoPhy + ".zip";
+
+                    // clean download file name
+                    string downloadFileName = $"{lastFolderName}.zip";
+                    downloadFileName = downloadFileName.Replace(";", "")
+                                                       .Replace("\"", "")
+                                                       .Replace("'", "")
+                                                       .Trim();
+
+                    byte[] zipBytes = await System.IO.File.ReadAllBytesAsync(zipFilePath);
+
+                    // delete zip
+                    if (System.IO.File.Exists(zipFilePath))
+                    {
+                        System.IO.File.Delete(zipFilePath);
+                    }
+
+                    // delete folder
+                    if (Directory.Exists(sourceFolderPhotoPhy))
+                    {
+                        Directory.Delete(sourceFolderPhotoPhy, true);
+                    }
+
+                    Response.Headers.Remove("Content-Disposition");
+                    Response.Headers.Append(
+                        "Content-Disposition",
+                        $"attachment; filename=\"{downloadFileName}\""
+                    );
+
+                    return File(zipBytes, "application/zip");
                 }
                 else
                 {

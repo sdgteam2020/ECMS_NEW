@@ -900,85 +900,108 @@ function ActionOnRequest(spnRequestId, Flag) {
 
 
 function DataExport() {
-    const ispn = Number($('#Isspnjcoor').text().trim()); // -> 1
+    const ispn = Number($('#Isspnjcoor').text().trim());
 
     var userdata = {
         "Ids": globalThis.selectedIds,
         "IsJco": ispn,
         "DataExportType": DataExportType
-
     };
+
     $.ajax({
         url: '/BasicDetail/DataExport',
         contentType: 'application/x-www-form-urlencoded',
-        data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
+        data: {
+            "request": encryptPayloadData(JSON.stringify(userdata))
+        },
         type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        headers: {
+            'RequestVerificationToken': globalThis.RequestVerificationToken
+        },
 
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
+        // Important for file download
+        xhrFields: {
+            responseType: 'blob'
+        },
+
+        success: function (blob, status, xhr) {
+
+            // If server returns JSON/string error as blob
+            const contentType = xhr.getResponseHeader("content-type");
+
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const reader = new FileReader();
+                reader.onload = function () {
                     Swal.fire({
                         text: "Data Not Export Internal Server Error"
                     });
-                } else {
-
-                    if (ispn === 1) {
-                        SaveNotification(5, 5, null, globalThis.selectedIds)
-                    } else {
-                        SaveNotification(5, 15, null, globalThis.selectedIds)
-                    }
-
-                    let responseHtml = "Data Exported Successfully!";
-                    
-                    Swal.fire({
-                        title: responseHtml,
-                        text: "Please download Zip file.",
-                        icon: "success",
-                        showConfirmButton: false, // We'll create custom buttons
-                        showCancelButton: false,
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            const swal = Swal.getPopup();
-
-                            const btnGroup = document.createElement('div');
-                            btnGroup.style.display = 'flex';
-                            btnGroup.style.justifyContent = 'center';
-                            btnGroup.style.gap = '10px';
-
-                            const downloadBtn = document.createElement('button');
-                            downloadBtn.textContent = 'Download';
-                            downloadBtn.className = 'swal2-confirm swal2-styled';
-                            downloadBtn.style.backgroundColor = '#28a745'; // green
-                            downloadBtn.onclick = function () {
-                                const fileUrl = `/WriteReadData/ExportAFSACCell/${response}.zip`;
-                                const link = document.createElement('a');
-                                link.href = fileUrl;
-                                link.download = response; // This will prompt the file to download instead of opening it in a new tab
-                                document.body.appendChild(link); // Append the link to the document
-                                link.click(); // Trigger the download
-                                document.body.removeChild(link); // Clean up by removing the link
-                            };
-
-                            const closedBtn = document.createElement('button');
-                            closedBtn.textContent = 'Close';
-                            closedBtn.className = 'swal2-cancel swal2-styled';
-                            closedBtn.style.backgroundColor = '#dc3545'; // red
-                            closedBtn.onclick = function () {
-                                Swal.close();
-                                location.reload();
-                            };
-
-                            btnGroup.appendChild(downloadBtn);
-                            btnGroup.appendChild(closedBtn);
-
-                            swal.appendChild(btnGroup);
-                        }
-                    });
-                }
+                };
+                reader.readAsText(blob);
+                return;
             }
+
+            // Notification after successful export
+            if (ispn === 1) {
+                SaveNotification(5, 5, null, globalThis.selectedIds);
+            } else {
+                SaveNotification(5, 15, null, globalThis.selectedIds);
+            }
+
+            // Get filename from response header
+            let fileName = "DataExport.zip";
+            const disposition = xhr.getResponseHeader('Content-Disposition');
+
+            if (disposition) {
+
+                // First try RFC 5987 filename*=UTF-8''
+                let fileNameMatch = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+
+                if (fileNameMatch && fileNameMatch[1]) {
+                    fileName = decodeURIComponent(fileNameMatch[1].trim());
+                }
+                else {
+                    // Then try normal filename=""
+                    fileNameMatch = disposition.match(/filename="?([^";]+)"?/i);
+
+                    if (fileNameMatch && fileNameMatch[1]) {
+                        fileName = fileNameMatch[1].trim();
+                    }
+                }
+
+                // Final safety cleanup
+                fileName = fileName
+                    .replace(/;.*$/g, '')
+                    .replace(/filename\*=UTF-8''/gi, '')
+                    .replace(/filename_/gi, '')
+                    .replace(/["']/g, '')
+                    .trim();
+            }
+
+            // Direct download
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            link.href = url;
+            link.download = fileName;
+
+            document.body.appendChild(link);
+            link.click();
+
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            Swal.fire({
+                title: "Data Exported Successfully!",
+                text: "Zip file downloaded successfully.",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
         },
-        error: function (result) {
+
+        error: function () {
             Swal.fire({
                 text: errormsg002
             });
