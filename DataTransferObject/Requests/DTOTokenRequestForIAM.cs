@@ -12,9 +12,10 @@ namespace DataTransferObject.Requests
     {
         [Display(Name = "ArmyNumber", ResourceType = typeof(Resource))]
         [Required(ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "RequiredError")]
-        [MinLength(8, ErrorMessage = "Minimum length of Offr Army No is eight character.")]
-        [MaxLength(9, ErrorMessage = "Maximum length of Offr Army No is nine character.")]
-        [RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
+        // Validation not implemented on ICNo because this field is encrypted and the format is not known. The validation will be done using ArmyNoHelper.ValidateArmyNo.
+        //[MinLength(8, ErrorMessage = "Minimum length of Offr Army No is eight character.")]
+        //[MaxLength(9, ErrorMessage = "Maximum length of Offr Army No is nine character.")]
+        //[RegularExpression(@"^[\w]+$", ErrorMessageResourceType = typeof(ErrorMessages), ErrorMessageResourceName = "SpecialChars")]
         public string ICNo { get; set; } = string.Empty;
 
         public string? ErrorMessage { get; set; }

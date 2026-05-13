@@ -1039,7 +1039,7 @@ namespace Web.Controllers
         [HttpGet]
         [AnySessionRequired]
         [AllowAnonymous]
-        public IActionResult TokenValidate()
+        public IActionResult TokenValidate_For_ACG()
         {
             string? Footer = _configuration["Footer:Test"];
             ViewBag.Footer = Footer;
@@ -1154,7 +1154,7 @@ namespace Web.Controllers
         [HttpPost]
         [AnySessionRequired]
         [AllowAnonymous]
-        public async Task<IActionResult> TokenValidate(DTOTokenRequest model)
+        public async Task<IActionResult> TokenValidate_For_ACG(DTOTokenRequest model)
         {
             try
             {
@@ -2359,11 +2359,15 @@ namespace Web.Controllers
         [HttpGet]
         [AllowAnonymous]
         [AnySessionRequired]
-        public IActionResult TokenValidate_()  //__ForIAM
+        public IActionResult TokenValidate()  //__ForIAM
         {
             // Get footer text from configuration and pass to ViewBag
             string? Footer = _configuration["Footer:Test"];
             ViewBag.Footer = Footer;
+
+            string dd = AESEncrytDecry.GetSalt();
+            HttpContext.Session.SetString(SessionKeySalt, dd);
+            ViewBag.hdns = dd;
 
             // Get the current logged-in user's Id from Claims
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -2455,7 +2459,7 @@ namespace Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [AnySessionRequired]
-        public async Task<IActionResult> TokenValidate_(DTOTokenRequestForIAM model)  //__ForIAM
+        public async Task<IActionResult> TokenValidate(DTOTokenRequestForIAM model)  //__ForIAM
         {
             try
             {
@@ -2463,7 +2467,7 @@ namespace Web.Controllers
                 string? Footer = _configuration["Footer:Test"];
                 ViewBag.Footer = Footer;
 
-                // Retrieve temporary session for IAM data
+                  // Retrieve temporary session for IAM data
                 DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
 
                 // Default role list for basic user redirection
@@ -2473,13 +2477,35 @@ namespace Web.Controllers
                 // Check if session exists
                 if (dTOTempSession != null)
                 {
-                    // Clean up ICNo input and set default password
-                    model.ICNo = model.ICNo.Trim();
+                    string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
+                    if (dd != null)
+                    {
+                        ViewBag.hdns = dd;
+                        string ICNo = AESEncrytDecry.DecryptAES(model.ICNo, dd);  //decrypt ICNo
+                        if (ICNo == null)
+                        {
+                            ModelState.AddModelError("ICNo", "Request Manipulated.");
+                            goto End;
+                        }
+
+                        // Clean up ICNo input
+                        model.ICNo = ICNo;
+                    }
+
+                    //set default password
                     model.Password = Environment.GetEnvironmentVariable("Common__Password") ?? string.Empty;
 
                     // Validate model
                     if (ModelState.IsValid)
                     {
+                        string error = ArmyNoHelper.ValidateArmyNo(model.ICNo);
+
+                        if (!string.IsNullOrEmpty(error))
+                        {
+                            ModelState.AddModelError("ICNo", error);
+                            goto End;
+                        }
+
                         // Case: Approved user attempting login
                         if (dTOTempSession.Status == 5 && dTOTempSession.ICNO == model.ICNo)
                         {
@@ -2517,7 +2543,7 @@ namespace Web.Controllers
                                     log.AspNetUsersId = Convert.ToInt32(usera.Id);
                                     log.RoleId = Convert.ToInt32(role.Id);
                                     log.UserId = Convert.ToInt32(dTOTempSession.UserId);
-                                    log.IP = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+                                    log.IP = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "UNKNOWN";
                                     log.IsActive = true;
                                     log.Updatedby = Convert.ToInt32(usera.Id);
                                     log.UpdatedOn = DateTime.Now;
@@ -2602,7 +2628,7 @@ namespace Web.Controllers
                                 dTOTempSession.ICNoTDMId = _dTOProfileResponse.TrnDomainMappingId;
                                 dTOTempSession.ICNoTDMApptId = _dTOProfileResponse.ApptId;
                                 //TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No- " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
-                                TempData["error"] = "Invalid Army No / Password.";
+                                TempData["error"] = "Invalid Army No.";
                                 goto End;
                             }
                             // Handle Status 2,3,4 with existing domain mapping
@@ -2618,13 +2644,13 @@ namespace Web.Controllers
 
                                 if (dTOTempSession.Status == 2)
                                     //TempData["error"] = "Your Profile Id -" + _dTOProfileResponse.UserId + " is mapped to Domain Id - " + _dTOProfileResponse.DomainId + " in Sys.<br/>Pl get yourself relieved first    and try again.";
-                                    TempData["error"] = "Invalid Army No / Password.";
+                                    TempData["error"] = "Invalid Army No.";
                                 else if (dTOTempSession.Status == 3)
                                     //TempData["error"] = "Your Profile Id - " + _dTOProfileResponse.UserId + " is already mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl get yourself relieved first..Domain Id - " + dTOTempSession.DomainId + "(regd) is not mapped to any profile.";
-                                    TempData["error"] = "Invalid Army No / Password.";
+                                    TempData["error"] = "Invalid Army No.";
                                 else if (dTOTempSession.Status == 4)
                                     //TempData["error"] = "You are presently mapped to Domain Id -" + _dTOProfileResponse.DomainId + ".<br/>Pl relieve yourself and get your profile mapped to new domain ID - " + dTOTempSession.DomainId + ".";
-                                    TempData["error"] = "Invalid Army No / Password.";
+                                    TempData["error"] = "Invalid Army No.";
                                 goto End;
                             }
                             // Handle new profiles or unmapped statuses
@@ -2649,7 +2675,7 @@ namespace Web.Controllers
                             else if (dTOTempSession.Status == 5 && dTOTempSession.ICNO != model.ICNo)
                             {
                                 //TempData["error"] = "Not Authorized to access the current profile because Domain Id - " + dTOTempSession.DomainId + " is presently mapped to Profile Id - " + dTOTempSession.UserId + " ( IC No " + dTOTempSession.ICNO + ") .<br/>Pl change Token and try again!";
-                                TempData["error"] = "Invalid Army No / Password.";
+                                TempData["error"] = "Invalid Army No.";
                                 goto End;
                             }
                         }
