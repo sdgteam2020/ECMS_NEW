@@ -289,6 +289,7 @@ namespace Web.Controllers
                 return Json(KeyConstants.InternalServerError);
             }
         }
+
         /// Returns the count of accounts as a JSON payload.
         /// </summary>
         /// <returns>
@@ -863,7 +864,7 @@ namespace Web.Controllers
                     dTOTempSession.NewUser = false;
                     dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
-                    dTOTempSession.RoleName = model.Role;
+                    dTOTempSession.RoleName = model.Role.ToLower();
                     dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
                     dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
                     dTOTempSession.RankAbbreviation = _trnDomainMapping.Rank.RankAbbreviation;
@@ -902,7 +903,7 @@ namespace Web.Controllers
                     dTOTempSession.NewUser = false;
                     dTOTempSession.AdminFlag = _trnDomainMapping.ApplicationUser.AdminFlag;
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
-                    dTOTempSession.RoleName = model.Role;
+                    dTOTempSession.RoleName = model.Role.ToLower();
                     dTOTempSession.TDMId = _trnDomainMapping.Id;
                     dTOTempSession.TDMUnitMapId = _trnDomainMapping.UnitId;
                     dTOTempSession.TDMApptId = _trnDomainMapping.ApptId;
@@ -933,7 +934,7 @@ namespace Web.Controllers
                     /*Create TrnDomainMapping using AspnetUserId,UnitId,UserId from Profile Table.*/
                     dTOTempSession.NewUser = false;
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
-                    dTOTempSession.RoleName = model.Role;
+                    dTOTempSession.RoleName = model.Role.ToLower();
                     dTOTempSession.AspNetUsersId = _trnDomainMapping.ApplicationUser.Id;
 
                     if (_trnDomainMapping.Role != null)
@@ -957,7 +958,7 @@ namespace Web.Controllers
                 {
                     dTOTempSession.NewUser = false;
                     dTOTempSession.DomainId = _trnDomainMapping.ApplicationUser.DomainId;
-                    dTOTempSession.RoleName = model.Role;
+                    dTOTempSession.RoleName = model.Role.ToLower();
                     dTOTempSession.ICNO = _trnDomainMapping.MUserProfile.ArmyNo;
                     dTOTempSession.Name = _trnDomainMapping.MUserProfile.Name;
                     dTOTempSession.UserId = _trnDomainMapping.MUserProfile.UserId;
@@ -996,7 +997,7 @@ namespace Web.Controllers
                     /*Create DomainId in AspNetUser Table , Assign Role.,Create Mapping with add profile id.*/
                     dTOTempSession.NewUser = true;
                     dTOTempSession.DomainId = model.DomainId;
-                    dTOTempSession.RoleName = model.Role;
+                    dTOTempSession.RoleName = model.Role.ToLower();
                     dTOTempSession.Status = 2;
                     SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
                     await HttpContext.Session.CommitAsync(); // Force write session
@@ -1405,6 +1406,8 @@ namespace Web.Controllers
         }
 
         [HttpGet]
+        [AnySessionRequired]
+        [AllowAnonymous]
         public async Task<IActionResult> FinalLogin()
         {
             try
@@ -1415,8 +1418,6 @@ namespace Web.Controllers
                 {
                     DeleteTempDataCookies();
                     return RedirectToAction("IMLoginSelf", "Account");
-                    // On exception, redirect to IAM login page
-                    //Response.Redirect("https://iam2.army.mil/IAM/User", true);
                 }
 
                 var dTOTempSession = JsonConvert.DeserializeObject<DTOTempSession>(tempSessionJson);
@@ -1425,8 +1426,6 @@ namespace Web.Controllers
                 {
                     DeleteTempDataCookies();
                     return RedirectToAction("IMLoginSelf", "Account");
-                    // On exception, redirect to IAM login page
-                    //Response.Redirect("https://iam2.army.mil/IAM/User", true);
                 }
 
                 var log = await _TrnLoginLogBL.GetByToken(dTOTempSession.LoginGuid);
@@ -1434,8 +1433,6 @@ namespace Web.Controllers
                 if (log == null || log.IsUsed || log.ExpiresOn < DateTime.Now)
                 {
                     return RedirectToAction("IMLoginSelf", "Account");
-                    // On exception, redirect to IAM login page
-                    //Response.Redirect("https://iam2.army.mil/IAM/User", true);
                 }
 
                 log.IsUsed = true;
@@ -1448,8 +1445,6 @@ namespace Web.Controllers
                 {
                     DeleteTempDataCookies();
                     return RedirectToAction("IMLoginSelf", "Account");
-                    // On exception, redirect to IAM login page
-                    //Response.Redirect("https://iam2.army.mil/IAM/User", true);
                 }
 
                 // Clear any existing authentication cookie
@@ -1505,9 +1500,6 @@ namespace Web.Controllers
                 await HttpContext.Session.CommitAsync();
 
                 return RedirectToAction("IMLoginSelf", "Account");
-
-                // On exception, redirect to IAM login page
-                //Response.Redirect("https://iam2.army.mil/IAM/User", true);
             }
             catch
             {
@@ -1518,8 +1510,6 @@ namespace Web.Controllers
                 DeleteTempDataCookies();
 
                 return RedirectToAction("IMLoginSelf", "Account");
-                // On exception, redirect to IAM login page
-                //Response.Redirect("https://iam2.army.mil/IAM/User", true);
             }
         }
 
@@ -2145,7 +2135,7 @@ namespace Web.Controllers
                         {
                             // Populate model and session objects
                             model.DomainId = log.NameId;
-                            model.Role = log.SAMLRole;
+                            model.Role = log.SAMLRole.ToLower();
                             dTOTempSession.AppName = log.AppName;
                             HttpContext.Session.SetString("AppName", dTOTempSession.AppName);
 
@@ -2719,13 +2709,27 @@ namespace Web.Controllers
         /// </returns>
         public async Task<ActionResult> FinalLogout()
         {
-            // Remove the session object named "Token" to clear user-specific session data
+            // Remove the session token to clear user-specific session data
             HttpContext.Session.Remove("Token");
+
+            var user = await userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                await userManager.UpdateSecurityStampAsync(user); // invalidate all cookies
+            }
 
             // Sign out the user from ASP.NET Identity authentication
             await signInManager.SignOutAsync();
 
-            // Return the logout confirmation view
+            //Clear server-side session state
+            HttpContext.Session.Clear();
+
+            // Delete session + auth cookies explicitly (good for audits)
+            Response.Cookies.Delete(".AspNetCore.Identity.Application");
+            Response.Cookies.Delete(".AspNetCore.Session");
+
+            // Return the logout confirmation view to the user
             return View();
         }
 
@@ -2807,18 +2811,9 @@ namespace Web.Controllers
                 }
             }
             // If neither SAMLRequest nor SAMLResponse is present
-            else
-            {
-                AccountSettings acs = new AccountSettings();
 
-                string NameId = dtoSession.DoaminId;
-                string userRole = dtoSession.RoleName;
-
-                // Send logout request to IAM for the current user
-                LogoutRequesttoIAM(userRole, acs.entityId, NameId);
-            }
             // Final fallback: if no SAMLRequest or SAMLResponse, send logout request to IAM
-            if (SAMLRequest == null && SAMLResponse == null)
+            else if (SAMLRequest == null && SAMLResponse == null)
             {
                 AccountSettings acs = new AccountSettings();
                 string NameId = dtoSession.DoaminId;
@@ -2829,6 +2824,16 @@ namespace Web.Controllers
 
 
 
+                LogoutRequesttoIAM(userRole, acs.entityId, NameId);
+            }
+            else
+            {
+                AccountSettings acs = new AccountSettings();
+
+                string NameId = dtoSession.DoaminId;
+                string userRole = dtoSession.RoleName;
+
+                // Send logout request to IAM for the current user
                 LogoutRequesttoIAM(userRole, acs.entityId, NameId);
             }
             // Return the logout confirmation view
