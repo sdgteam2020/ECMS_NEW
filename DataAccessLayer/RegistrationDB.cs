@@ -96,6 +96,7 @@ namespace DataAccessLayer
                                .OrderBy(x => x.Order)
                                .Select(x => new
                                {
+                                   x.Id,
                                    x.Prefix,
                                    x.MinDigits,
                                    x.MaxDigits,
@@ -105,6 +106,7 @@ namespace DataAccessLayer
                                .ToListAsync();
                 return result.Select(x => new MArmyPrefixRule
                 {
+                    Id=x.Id,
                     Prefix = x.Prefix,
                     MinDigits = x.MinDigits,
                     MaxDigits = x.MaxDigits,

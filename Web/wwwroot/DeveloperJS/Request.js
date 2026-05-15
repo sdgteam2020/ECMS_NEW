@@ -16,9 +16,6 @@ $(document).ready(function () {
         toggleNextButton();
     });
 
-    $('#ddlForArmyNoRulePrefix').on('change', function () {
-        applyArmyPrefix();
-    });
 
     $("#btnApplicantsPostingout").on("click", function () {
         $("#armynosearchAllName").html("");
@@ -52,6 +49,7 @@ $(document).ready(function () {
 
         resetArmyNoUi();
         GetAllRegistrationApplyFor(1);
+        getArmyPrefixRules(1);
     });
 
     $("#btnJCOs").on("click", function () {
@@ -60,6 +58,7 @@ $(document).ready(function () {
 
         resetArmyNoUi();
         GetAllRegistrationApplyFor(2);
+        getArmyPrefixRules(2);
     });
 
     $("#btntokenrefresh").on("click", async function () {
@@ -67,9 +66,7 @@ $(document).ready(function () {
         $('#btnNext').removeClass("disabled");
     });
 
-    $("#btnNext").on("click", async function () {
-        applyArmyPrefix();
-
+    $("#btnNext").on("click", async function () {       
         if ($("#txtApplyForArmyNo").val().length > 7 && $("#txtApplyForArmyNo").val().length < 10) {
             if (parseInt(OffType) == 1) {
                 if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
@@ -545,6 +542,42 @@ async function ChkSfx(ServiceNo) {
     return Sfx === lastChar;
 }
 
+// Function to get Army Prefix rules
+function getArmyPrefixRules(ApplyForId) {
+    // Encrypt the request parameter if needed
+    var requestData = {
+        ApplyForId // Replace with the actual request data to pass
+    };
+
+    $.ajax({
+        url: '/Home/GetArmyPrefixRules', // URL to the method in the controller
+        method: 'POST',
+        data: { "request": encryptPayloadData(JSON.stringify(requestData)) },
+        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        success: function (response) {
+            if (response && Array.isArray(response)) {
+                // Clear existing options
+                $('#ddlForArmyNoRulePrefix').empty();
+
+                // Add default "Select Prefix" option
+                $('#ddlForArmyNoRulePrefix').append('<option value="">Select Prefix</option>');
+
+                // Loop through the response and append options to the dropdown
+                response.forEach(function (item) {
+                    $('#ddlForArmyNoRulePrefix').append('<option value="' + item.Prefix + '">' + item.Prefix + '</option>');
+                });
+            } else {
+                // Handle error if response is not an array or is empty
+                console.error("Error: Invalid data received.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error: " + error);
+            console.error("Response: " + xhr.responseText);
+        }
+    });
+}
+
 /* =========================
    UI Helper Functions
 ========================= */
@@ -601,15 +634,5 @@ function toggleNextButton() {
         $("#btnNext").removeClass("disabled");
     } else {
         $("#btnNext").addClass("disabled");
-    }
-}
-
-function applyArmyPrefix() {
-    var prefix = $("#ddlForArmyNoRulePrefix").val();
-    var armyNo = $("#txtApplyForArmyNo").val().toUpperCase();
-
-    if (prefix === "IC" || prefix === "JC") {
-        armyNo = armyNo.replace(/^(IC|JC)/i, "");
-        $("#txtApplyForArmyNo").val(prefix + armyNo);
     }
 }

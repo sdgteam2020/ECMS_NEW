@@ -101,13 +101,6 @@
                 </div>
                 <div class="col-12 mt-4 ApplyCard d-none" id="armyNoSection">
 
-                    <div class="army-form-card">
-
-                        <div class="army-form-header">
-                            <h5>Army Number Details</h5>
-                            <p>Enter Army No with prefix and suffix as applicable.</p>
-                        </div>
-
                         <div class="army-field d-none" id="oldArmyNoWrapper">
                             <label for="txtApplyForOldArmyNo">Old Army No</label>
                             <input class="form-control army-input alpha-num-only"
@@ -119,36 +112,36 @@
                                    data-val-regex-pattern="^[\w]+$" />
                         </div>
 
-                        <div class="army-field" id="newArmyNoWrapper">
-                            <label for="txtApplyForArmyNo">Army No</label>
-
-                            <div class="army-combo">
-                                <select id="ddlForArmyNoRulePrefix"
-                                        class="army-prefix"
-                                        aria-label="Select Prefix for the Army No.">
-                                    <option value="">Prefix</option>
-                                    <option value="IC">IC</option>
-                                    <option value="JC">JC</option>
-                                    <option value="">None</option>
-                                </select>
-
-                                <input class="army-input-combo alpha-num-only spnarmynoformula"
-                                       id="txtApplyForArmyNo"
-                                       placeholder="Enter Army No"
-                                       maxlength="9"
-                                       minlength="8"
-                                       data-val="true"
-                                       data-val-required="Army No is required."
-                                       data-val-regex="This special chars and space not allowed for security reasons."
-                                       data-val-regex-pattern="^[\w]+$" />
+                        <div class="army-form-card">
+                            <div class="army-form-header">
+                                <h5>Enter Army Number</h5>
+                                <p>Provide your Army Number with a prefix and suffix, if applicable.</p>
                             </div>
 
-                            <small class="army-help">
-                                Example: ICXXXXXP, JC391516M, 15698645A
-                            </small>
+                            <div class="army-field" id="newArmyNoWrapper">
+                               
+                                <div class="army-combo">
+                                    <select id="ddlForArmyNoRulePrefix" class="army-prefix" aria-label="Select Prefix for the Army No.">
+                                        
+                                    </select>
+
+                                    <input class="army-input-combo alpha-num-only spnarmynoformula"
+                                           id="txtApplyForArmyNo"
+                                           placeholder="Enter Army No"
+                                           maxlength="9"
+                                           minlength="8"
+                                           data-val="true"
+                                           data-val-required="Army No is required."
+                                           data-val-regex="This special chars and space not allowed for security reasons."
+                                           data-val-regex-pattern="^[\w]+$" />
+                                </div> 
+
+                                <small class="army-help">
+                                    Example: ICXXXXXP, JC391516M, 15698645A
+                                </small>
+                            </div>
                         </div>
 
-                    </div>
 
                 </div>
                 <div class="col-md-12 col-sm-6 text-center mt-4 d-none ApplyCard" id="spnNext">
