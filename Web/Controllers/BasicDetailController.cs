@@ -1045,10 +1045,36 @@ namespace Web.Controllers
                     TempData["error"] = "Invalid data.";
                     goto end;
                 }
+
                 if (model.OldServiceNo == "")
                     model.OldServiceNo =null;
                 // Validate ModelState
                 ModelState.Clear();
+                
+                DateTime? dob = ConvertStringToDate.ConvertDob(model.DOB_);
+
+                if (dob == null)
+                {
+                    ModelState.AddModelError("DOB_", "Please enter DOB in dd/MM/yyyy format.");
+                }
+                else
+                {
+                    model.DOB = dob.Value.Date;
+
+                }
+
+                DateTime? doc = ConvertStringToDate.ConvertDob(model.DOC_);
+
+                if (doc == null)
+                {
+                    ModelState.AddModelError("DOC_", "Please enter Date of Commissioning/ Enrollment in dd/MM/yyyy format.");
+                }
+                else
+                {
+                    model.DateOfCommissioning = doc.Value.Date;
+
+                }
+
                 if (TryValidateModel(model))
                 {
                     // Case 1: SubmitType == 1 (new application flow)

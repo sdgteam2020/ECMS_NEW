@@ -1406,7 +1406,6 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        [AnySessionRequired]
         [AllowAnonymous]
         public async Task<IActionResult> FinalLogin()
         {
@@ -2349,79 +2348,60 @@ namespace Web.Controllers
         [HttpGet]
         [AllowAnonymous]
         [AnySessionRequired]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public IActionResult TokenValidate()  //__ForIAM
         {
+            SetNoCacheHeaders();
             // Get footer text from configuration and pass to ViewBag
-            string? Footer = _configuration["Footer:Test"];
-            ViewBag.Footer = Footer;
+            ViewBag.Footer = _configuration["Footer:Test"];
 
-            string dd = AESEncrytDecry.GetSalt();
-            HttpContext.Session.SetString(SessionKeySalt, dd);
-            ViewBag.hdns = dd;
+            string salt = AESEncrytDecry.GetSalt();
+            HttpContext.Session.SetString(SessionKeySalt, salt);
+            ViewBag.hdns = salt;
 
-            // Get the current logged-in user's Id from Claims
-            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            int userId = 0;
 
-            // Get session object for token-based validation
-            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
+            string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int.TryParse(userIdClaim, out userId);
 
-            // Default role list for basic user
-            List<string> RoleNameList = new List<string>() { "user" };
 
             // Case: User not logged in (userid == 0)
-            if (userid == 0)
+            if (userId == 0)
             {
                 // Retrieve temporary session object set during initial login
-                DTOTempSession? dTOTempSession1 = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
-
-                ViewBag.AppName = dTOTempSession1.AppName;
-                ViewBag.DomainId = dTOTempSession1.DomainId;
-                ViewBag.RoleName = dTOTempSession1.RoleName;
-
-                if (dTOTempSession1 != null)
-                {
-                    // Status check can be extended for pending verification or new user logic
-                    if (dTOTempSession1.Status == 1)
-                    {
-                        return View();
-                    }
-                    else
-                    {
-                        return View();
-                    }
-                }
-                else
+                DTOTempSession? imData = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+                if (imData == null)
                 {
                     // Session missing, show unauthorized error
                     TempData["error"] = "You are not authorized to this page.";
                     return View();
                 }
+                return View();
+
             }
             else
             {
-                // Case: User is logged in
-                if (dTOTempSession != null)
-                {
-                    ViewBag.AppName = dTOTempSession.AppName;
-                    ViewBag.DomainId = dTOTempSession.DomainId;
-                    ViewBag.RoleName = dTOTempSession.RoleName;
+                // Get session object for token-based validation
+                DTOTempSession? tokenData = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
 
-                    // Redirect based on role
-                    if (RoleNameList.Contains(dTOTempSession.RoleName))
-                    {
-                        return RedirectToActionPermanent("Index", "Home");
-                    }
-                    else if (dTOTempSession.RoleName == "admin")
-                    {
-                        return RedirectToActionPermanent("DashboardMaster", "Master");
-                    }
-                    return View();
-                }
-                else
+                // Case: User is logged in
+                if (tokenData == null)
                 {
-                    // Session object not found, display default view
                     return View();
                 }
+                string roleName = tokenData.RoleName?.Trim().ToLower() ?? "";
+
+                if (roleName == "user")
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                if (roleName == "admin")
+                {
+                    return RedirectToAction("DashboardMaster", "Master");
+                }
+
+                return View();
 
             }
 
@@ -2449,10 +2429,12 @@ namespace Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [AnySessionRequired]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<IActionResult> TokenValidate(DTOTokenRequestForIAM model)  //__ForIAM
         {
             try
             {
+                SetNoCacheHeaders();
                 // Set footer from configuration
                 string? Footer = _configuration["Footer:Test"];
                 ViewBag.Footer = Footer;
@@ -2695,6 +2677,13 @@ namespace Web.Controllers
             }
         }
 
+
+        private void SetNoCacheHeaders()
+        {
+            Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "0";
+        }
 
         /// <summary>
         /// Logs out the currently signed-in user and clears the session token.

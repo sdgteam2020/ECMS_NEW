@@ -61,9 +61,6 @@
     <div class="page">
         <div class="container-fluid">
             <partial name="~/Views/Shared/_CommonHeader.cshtml" />
-            <span class="d-none" id="spnlogoutDomainId">@ViewBag.DomainId</span>
-            <span class="d-none" id="spnlogoutAppName">@ViewBag.AppName</span>
-            <span class="d-none" id="spnlogoutRoleName">@ViewBag.RoleName</span>
             <div class="row">
                 <div class="bg-white login-wrap align-items-center">
                     <div class="login py-2 py-sm-4">
@@ -74,7 +71,8 @@
                                         <span id="spnhdns" class="d-none">@ViewBag.hdns</span>
                                         <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1 ">Kindly Validate your IC Number here.</p>
                                         <div class="pb-3 mt-3">
-                                            <form asp-antiforgery="true" method="post" asp-action="TokenValidate" autocomplete="off" role="form">
+                                            <form method="post" asp-action="TokenValidate" autocomplete="off" role="form" id="frmTokenValidate">
+                                                @Html.AntiForgeryToken()
                                                 <div class="form-group">
                                                     <label class="labeltoken">Army No</label>
                                                     @if (dTOTempSession.IsToken==true)

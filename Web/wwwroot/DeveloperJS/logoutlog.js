@@ -1,56 +1,28 @@
 ﻿$(function () {
 
-    const btn = document.getElementById('btnProceed');
-    if (!btn) return;
+    const form = document.getElementById('frmTokenValidate');
+    if (!form) return;
 
-    btn.addEventListener('click', function (event) {
-        handleSubmit(event);
-    });
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-    var dataToSend = {
-        domainName: $("#spnlogoutDomainId").html(),
-        appName: $("#spnlogoutAppName").html(),
-        appRoleName: $("#spnlogoutRoleName").html(),
-        flexible: ''
-    };
-
-    // Create a query string from the data object
-    var queryString = Object.keys(dataToSend).map(function (key) {
-        return key + '=' + dataToSend[key];
-    }).join('&');
-
-    // Make an AJAX request with the data in the URL
-    $.ajax({
-        url: 'iam2.army.mil/IAM/singleAppConfirmLoginResponse.htm?' + queryString,
-        type: 'GET',
-        dataType: 'html',
-        success: function (response) {
-            // Display the response in the 'result' div
-            $('#result').html(response);
-        },
-        error: function (xhr, status, error) {
-            console.error(xhr.responseText);
+        if ($(form).valid && !$(form).valid()) {
+            return false;
         }
+
+        const result = await SubmitsEncry1();
+
+        if (!result) {
+            return false;
+        }
+
+        form.submit();
     });
+
     $('input.js-uppercase').on('input', function () {
         this.value = this.value.toUpperCase();
     });
 });
-
-async function handleSubmit(event) {
-    try {
-        const result = await SubmitsEncry1();
-        if (!result) {
-            event.preventDefault();  // Prevent form submission if the result is false
-            return false; // Return false to ensure the button does not trigger the default form submit action
-        }
-    } catch (error) {
-        console.error("Error in submission:", error);
-        event.preventDefault();  // Prevent form submission in case of an error
-        return false; // Handle the error by preventing the form submission
-    }
-}
-
 
 async function SubmitsEncry1() {
 
