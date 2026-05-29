@@ -10,9 +10,9 @@ namespace DataTransferObject.Domain.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequestId { get; set; }
 
-        [ForeignKey("BasicDetail"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        //[ForeignKey("BasicDetail"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int BasicDetailId { get; set; }
-        public BasicDetail? BasicDetail { get; set; }
+        //public BasicDetail? BasicDetail { get; set; }
         
         [ForeignKey("MTrnICardStatus"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte StatusId { get; set; }

@@ -2350,20 +2350,27 @@ namespace DataAccessLayer
             }
             try
             {
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "ServiceNo";
-                var multiQuery = $@"
-                        WITH RecordCTE AS (
-                            SELECT DISTINCT Count(*) over () as TotalFilteredRecords, {query} {wherequery} 
-                        )
-                        SELECT *
-                        FROM (
-                            SELECT 
-                                ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum,
-                                *
-                            FROM RecordCTE
-                        ) AS Numbered
-                        WHERE RowNum BETWEEN @Offset AND @Limit;
-                    ";
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "RequestId";
+
+                var sql = $@"
+                            ;WITH CountData AS
+                            (
+                                SELECT DISTINCT
+                                    {query}
+                                    {wherequery}
+                            )
+                            SELECT COUNT(1) AS TotalRecords
+                            FROM CountData
+                            OPTION (RECOMPILE);
+
+                            SELECT DISTINCT
+                                    {query}
+                                    {wherequery}
+                            ORDER BY {sortColumn} {sortOrder}
+                            OFFSET @Start ROWS
+                            FETCH NEXT @Length ROWS ONLY;
+                            ";
+
                 //select Count(*) over () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery} 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -2374,49 +2381,50 @@ namespace DataAccessLayer
                     parameters.Add("@stepcount", dTO.stepcount, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@TypeId", dTO.TypeId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@applyfor", applyfor, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Start", dTO.Start, DbType.Int32);
+                    parameters.Add("@Length", dTO.Length, DbType.Int32);
                     parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
+                    
+                    using var multi = await connection.QueryMultipleAsync(sql, parameters);
 
-                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
-                    var records = (await ret.ReadAsync<DTOBasicDetailIndexResponse>()).ToList();
-                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+                    var totalRecords = await multi.ReadFirstOrDefaultAsync<int>();
 
-                    var allrecord = (from e in records
-                                     select new DTOBasicDetailIndexResponse()
-                                     {
-                                         TotalFilteredRecords = e.TotalFilteredRecords,
-                                         BasicDetailId = e.BasicDetailId,
-                                         RegistrationApplyFor = e.RegistrationApplyFor,
-                                         EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
-                                         EncryptedRequestId = protector.Protect(e.RequestId.ToString()),
-                                         FName = e.FName,
-                                         LName = e.LName,
-                                         ServiceNo = e.ServiceNo,
-                                         DOB = e.DOB,
-                                         DateOfCommissioning = e.DateOfCommissioning,
-                                         PermanentAddress = e.PermanentAddress,
-                                         IsTrnFwdId = e.IsTrnFwdId,
-                                         StepCounter = e.StepCounter,
-                                         StepId = e.StepId,
-                                         ICardType = e.ICardType,
-                                         ApplyFor = e.ApplyFor,
-                                         ApplyForId = e.ApplyForId,
-                                         RequestId = e.RequestId,
-                                         IsFwdStatusId = e.IsFwdStatusId,
-                                         Remark = e.Remark,
-                                         ApplId = e.RequestId,
-                                         RankName = e.RankName,
-                                         IsPosting = e.IsPosting,
-                                         UnitName = e.UnitName,
-                                         IsLock=e.IsLock,
-                                         UnitId = e.UnitId
-                                     }).ToList();
+                    var records = (await multi.ReadAsync<DTOBasicDetailIndexResponse>()).ToList();
+
+                    var allrecord = records.Select(e => new DTOBasicDetailIndexResponse
+                    {
+                        TotalFilteredRecords = totalRecords,
+                        BasicDetailId = e.BasicDetailId,
+                        RegistrationApplyFor = e.RegistrationApplyFor,
+                        EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
+                        EncryptedRequestId = protector.Protect(e.RequestId.ToString()),
+                        FName = e.FName,
+                        LName = e.LName,
+                        ServiceNo = e.ServiceNo,
+                        DOB = e.DOB,
+                        DateOfCommissioning = e.DateOfCommissioning,
+                        PermanentAddress = e.PermanentAddress,
+                        IsTrnFwdId = e.IsTrnFwdId,
+                        StepCounter = e.StepCounter,
+                        StepId = e.StepId,
+                        ICardType = e.ICardType,
+                        ApplyFor = e.ApplyFor,
+                        ApplyForId = e.ApplyForId,
+                        RequestId = e.RequestId,
+                        IsFwdStatusId = e.IsFwdStatusId,
+                        Remark = e.Remark,
+                        ApplId = e.RequestId,
+                        RankName = e.RankName,
+                        IsPosting = e.IsPosting,
+                        UnitName = e.UnitName,
+                        IsLock=e.IsLock,
+                        UnitId = e.UnitId
+                    }).ToList();
                     var responseData = new DTODataTablesResponse<DTOBasicDetailIndexResponse>
                     {
                         draw = dTO.Draw,
-                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),  
-                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        recordsTotal = totalRecords,  
+                        recordsFiltered = totalRecords,
                         data = allrecord,
                     };
                     return responseData;

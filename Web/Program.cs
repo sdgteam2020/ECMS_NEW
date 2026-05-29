@@ -118,6 +118,8 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });
 
+builder.Services.AddHostedService<BasicDetailsMoveService>();
+
 builder.Services.AddSingleton<ITagHelperInitializer<ScriptTagHelper>, AppendVersionTagHelperInitializer>();
 builder.Services.AddSingleton<ITagHelperInitializer<LinkTagHelper>, AppendVersionTagHelperInitializer>();
 builder.Services.AddInfrastructure();
@@ -217,17 +219,17 @@ app.UseCookiePolicy(new CookiePolicyOptions
     Secure = CookieSecurePolicy.Always // Set the Secure flag for all cookies
 });
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();    
-}
-else
-{
-    app.UseExceptionHandler("/Error");
-    app.UseStatusCodePagesWithReExecute("/Error/{0}");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();    
+    }
+    else
+    {
+        app.UseExceptionHandler("/Error");
+        app.UseStatusCodePagesWithReExecute("/Error/{0}");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
 app.Use(async (ctx, next) =>
 {
     // ========== 0) BLOCK DANGEROUS HTTP METHODS FIRST ==========
