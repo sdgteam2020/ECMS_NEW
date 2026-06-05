@@ -392,7 +392,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     width: "100px",
                     orderable: false,
                     render: function (data, type, row) {
-                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                     }
                 },
                 // Additional column for Edit action
@@ -531,7 +531,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     name: "History",
                     orderable: false,
                     render: function (data, type, row) {
-                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                     }
                 },
                 // Additional column for Edit action

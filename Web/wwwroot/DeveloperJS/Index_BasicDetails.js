@@ -189,7 +189,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 width: "100px",
                 orderable: false,
                 render: function (data, type, row) {
-                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                 }
             },
             {
@@ -200,7 +200,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 className: "noExport",
                 width: "100px",
                 render: function (data, type, row) {
-                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                 }
             },
             // Additional column for Edit action
@@ -233,7 +233,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     {
                         // Case 3: Rejected only
                         if (row.IsFwdStatusId == 3) {
-                            html += `<span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="${row.Remark}">Rejected</span>`;
+                            html += `<span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left">Rejected</span>`;
                         }
                     }
                     return html; // Return the full HTML string

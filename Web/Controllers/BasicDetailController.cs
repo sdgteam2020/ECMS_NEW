@@ -213,72 +213,8 @@ namespace Web.Controllers
             {
                 case 0:
                 case 1:  // Request from Dashboard
-                    stepcounter = 1;
-                    break;
-
                 case 11: // Request from Task Board → maps to Dashboard (1)
                     stepcounter = 1;
-                    break;
-
-                case 2:
-                    title = "I-Card Pending From IO / Superior";
-                    type = 2; stepcounter = 2;
-                    break;
-
-                case 22:    // Request from Dashboard
-                case 2222:  // Request from Task Board
-                    title = "I-Card Rejectd From IO / Superior";
-                    type = 1; stepcounter = 7;
-                    break;
-
-                case 222:
-                    title = "I-Card Approved From IO / Superior";
-                    type = 3; stepcounter = 2;
-                    break;
-
-                case 3:
-                    title = "I-Card Pending From RO / ORO";
-                    type = 2; stepcounter = 3;
-                    break;
-
-                case 33:
-                    title = "I-Card Rejectd From RO / ORO";
-                    type = 1; stepcounter = 8;
-                    break;
-
-                case 333:
-                    title = "I-Card Approved From RO / ORO";
-                    type = 3; stepcounter = 4;
-                    break;
-
-                case 4:
-                    title = "I-Card Pending From AFSAC Cell";
-                    type = 2; stepcounter = 4;
-                    break;
-
-                case 44:
-                    title = "I-Card Rejectd From AFSAC Cell";
-                    type = 1; stepcounter = 9;
-                    break;
-
-                case 444:
-                    title = "I-Card Approved From AFSAC Cell";
-                    type = 3; stepcounter = 5;
-                    break;
-
-                case 5:
-                    title = "I-Card Pending From HQ 54";
-                    type = 2; stepcounter = 5;
-                    break;
-
-                case 55:
-                    title = "I-Card Rejectd From HQ 54";
-                    type = 1; stepcounter = 10;
-                    break;
-
-                case 555:
-                    title = "I-Card Approved From HQ 54";
-                    type = 2; stepcounter = 5;
                     break;
 
                 case 88:   // Request from Task Board
@@ -453,11 +389,6 @@ namespace Web.Controllers
             // Determine Title, Type, StepCounter, and Export flags based on decoded Id
             switch (retint)
             {
-                case 1:
-                    ViewBag.Title = "List of Register I-Card";
-                    ViewBag.Id = 0;
-                    break;
-
                 case 2:
                     ViewBag.Title = "I-Card For Approval";
                     ViewBag.Id = 1;
@@ -514,46 +445,11 @@ namespace Web.Controllers
                     ViewBag.dataexport = 4;
                     break;
 
-                case 44:
-                    ViewBag.Title = "Rejectd I-Card";
-                    ViewBag.Id = 0;
-                    type = 1;
-                    stepCounter = 9;
-                    break;
-
                 case 444:
                     ViewBag.Title = "Exported I-Card";
                     ViewBag.Id = 0;
                     type = 3;
                     stepCounter = 5;
-                    break;
-
-                case 5:
-                    ViewBag.Title = "Export Data";
-                    type = 2;
-                    ViewBag.Id = 1;
-                    ViewBag.dataexport = 5;
-                    break;
-
-                case 55:
-                    ViewBag.Title = "Rejectd I-Card";
-                    ViewBag.Id = 0;
-                    type = 1;
-                    stepCounter = 10;
-                    break;
-
-                case 555:
-                    ViewBag.Title = "Approved I-Card";
-                    ViewBag.Id = 0;
-                    type = 3;
-                    stepCounter = 6;
-                    break;
-
-                case 6:
-                    ViewBag.Title = "Exported Data";
-                    type = 6;
-                    ViewBag.Id = 1;
-                    ViewBag.dataexport = 6;
                     break;
 
                 default:
