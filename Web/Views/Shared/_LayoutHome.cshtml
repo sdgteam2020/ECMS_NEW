@@ -5,68 +5,71 @@
 @inject UserManager<ApplicationUser> userManager;
 @inject IHttpContextAccessor HttpContextAccessor;
 @inject IConfiguration configuration;
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="icon" type="image/x-icon" asp-href-include="/images/AFSAC.png">
+    <link rel="icon" type="image/x-icon" asp-href-include="@($"{Cdn}/images/AFSAC.png")">
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC </title>
         <!-- Development: Load normal JS -->
     <environment include="Development">
-        <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
-        <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
-        <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" />
-        <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/style.css" rel="stylesheet" />
-        <link asp-href-include="~/css/extra.css" rel="stylesheet" />
-        <link asp-href-include="~/css/background.css" rel="stylesheet" />
-        <link asp-href-include="~/css/typography.css" rel="stylesheet" />
-        <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/fonts/css/all.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/DashBoard.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/bootstrap-datetimepicker.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/style.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/extra.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/background.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/typography.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/select2/css/select2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
         
 @*         <link asp-href-include="~/css/cssStyle.css" rel="stylesheet" /> *@
-        <script asp-src-include="~/fonts/feather/feather.min.js"></script>
-        <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
-        <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-        <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
+        <script src="@($"{Cdn}/fonts/feather/feather.min.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/fonts/allfont/webfont.min.js?v={configuration["StaticVersion"]}")"></script>
+        <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/main.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/toastr/toastr.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <script asp-src-include="~/lib/jquery/jquery.js"></script>
+        <script src="@($"{Cdn}/lib/jquery/jquery.js?v={configuration["StaticVersion"]}")"></script>
     </environment>
     
     <!-- Production: Load minified JS -->
     <environment exclude="Development">
-        <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
-        <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
-        <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" />
-        <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/style.css" rel="stylesheet" />
-        <link asp-href-include="~/css/extra.css" rel="stylesheet" />
-        <link asp-href-include="~/css/background.css" rel="stylesheet" />
-        <link asp-href-include="~/css/typography.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/fonts/css/all.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/DashBoard.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/bootstrap-datetimepicker.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/style.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/extra.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/background.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/typography.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
        
 @*         <link asp-href-include="~/css/cssstyle.min.css" rel="stylesheet" /> *@
-        <script asp-src-include="~/fonts/feather/feather.min.js"></script>
-        <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
-        <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-        <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
+        <script src="@($"{Cdn}/fonts/feather/feather.min.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/fonts/allfont/webfont.min.js?v={configuration["StaticVersion"]}")"></script>
+        <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/main.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/toastr/toastr.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
+        <script src="@($"{Cdn}/lib/jquery/jquery.min.js?v={configuration["StaticVersion"]}")"></script>
     </environment>
 
-    <link asp-href-include="~/developercss/layouthome.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/developercss/layouthome.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 </head>
 <body class="nav-fixed">
     @Html.AntiForgeryToken()
@@ -140,21 +143,21 @@
     @RenderSection("Scripts", false)
     @RenderSection("body_scripts", false)
 
-    <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script asp-src-include="~/js/bootstrap.bundle.min.js"></script>
-    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="@($"{Cdn}/lib/jqueryui/jquery-ui.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/js/bootstrap.bundle.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/bootstrap/js/bootstrap.bundle.min.js?v={configuration["StaticVersion"]}")"></script>
 
-    <script asp-src-include="~/js/scripts.js"></script>
+    <script src="@($"{Cdn}/js/scripts.js?v={configuration["StaticVersion"]}")"></script>
 
 
-    <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
-    <script asp-src-include="~/toastr/toastr.min.js"></script>
-    <script asp-src-include="~/js/moment.min.js"></script>
-    <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
-    <script asp-src-include="~/developerjs/layout.js"></script> 
+    <script src="@($"{Cdn}/sweetalert2/sweetalert2.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/toastr/toastr.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/js/moment.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/js/bootstrap-datetimepicker.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/layout.js?v={configuration["StaticVersion"]}")"></script> 
 @*     <script asp-src-include="~/developerjs/commanvalidation.js"></script> *@
-    <script asp-src-include="~/developerjs/pagevalidation.js"></script>
-    <script asp-src-include="~/developerjs/_notifications.js"></script>
+    <script src="@($"{Cdn}/developerjs/pagevalidation.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/_notifications.js?v={configuration["StaticVersion"]}")"></script>
 </body>
 </html>
 

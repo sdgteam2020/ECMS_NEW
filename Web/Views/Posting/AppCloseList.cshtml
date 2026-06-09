@@ -1,4 +1,8 @@
-﻿<link asp-href-include="~/developercss/appcloselist.css" rel="stylesheet" />
+﻿@inject IConfiguration configuration;
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
+<link href="@($"{Cdn}/developercss/appcloselist.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -45,5 +49,5 @@
 
 @section Scripts{
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
-    <script asp-src-include="~/developerjs/appcloselist.js"></script>
+    <script src="@($"{Cdn}/developerjs/appcloselist.js?v={configuration["StaticVersion"]}")"></script>
 }

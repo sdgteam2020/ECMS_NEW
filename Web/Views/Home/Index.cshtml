@@ -1,8 +1,10 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/homeindex.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/homeindex.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
 <div class="hero">
     <div class="container-fluid h-100 d-flex align-items-end">

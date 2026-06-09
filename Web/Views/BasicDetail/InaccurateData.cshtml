@@ -1,4 +1,8 @@
-﻿@model List<DTOBasicDetailTempRequest>
+﻿@inject IConfiguration configuration;
+@model List<DTOBasicDetailTempRequest>
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -86,6 +90,6 @@
     </div>
 </div>
 @section Scripts{
-    <script asp-src-include="~/developerjs/inaccuratedata.js"></script>
+    <script src="@($"{Cdn}/developerjs/inaccuratedata.js?v={configuration["StaticVersion"]}")"></script>
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }

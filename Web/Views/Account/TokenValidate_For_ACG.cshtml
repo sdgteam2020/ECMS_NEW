@@ -1,9 +1,11 @@
 ﻿@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration configuration;
 @model DTOTokenRequest
 @{
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/tokenvalidate.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/tokenvalidate.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 @{
     DTOTempSession? dTOTempSession = new DTOTempSession();
     StringBuilder m1 = new StringBuilder();
@@ -120,9 +122,9 @@
     </div>
 </div>
 @section Scripts {
-    <script asp-src-include="~/developerjs/KeyConstants.js"></script>
-    <script asp-src-include="~/developerjs/Token.js"></script>
-    <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
-    <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script> 
-    <script asp-src-include="~/developerjs/pagevalidation.js"></script>
+    <script src="@($"{Cdn}/developerjs/KeyConstants.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/Token.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/lib/crypto-js/crypto-js.min.js?v={configuration["StaticVersion"]}")"></script> 
+    <script src="@($"{Cdn}/developerjs/pagevalidation.js?v={configuration["StaticVersion"]}")"></script>
 }

@@ -1,5 +1,9 @@
-﻿<link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
-<link asp-href-include="~/developercss/notification.css" rel="stylesheet" />
+﻿@inject IConfiguration configuration;
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
+<link href="@($"{Cdn}/css/popupprintcss.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/notification.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -39,6 +43,6 @@
 </div>
 
 @section Scripts {
-    <script asp-src-include="~/developerjs/Notification.js"></script>
+    <script src="@($"{Cdn}/developerjs/Notification.js?v={configuration["StaticVersion"]}")"></script>
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }

@@ -1,8 +1,10 @@
 ﻿@inject UserManager<ApplicationUser> userManager;
+@inject IConfiguration configuration;
 @{
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
     string? DIDName = null;
     if (userId !=null)
     {
@@ -890,5 +892,5 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
         }
     </div>
 </div>  
-<script asp-src-include="~/developerjs/MyTask.js"></script>
+<script src="@($"{Cdn}/developerjs/MyTask.js?v={configuration["StaticVersion"]}")"></script>
 

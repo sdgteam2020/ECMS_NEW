@@ -1,10 +1,14 @@
-﻿<link asp-href-include="~/newdatatables/datatables.datatables.min.css" rel="stylesheet" />
-<link asp-href-include="~/newdatatables/datatables.bootstrap5.min.css" rel="stylesheet" />
+﻿@inject IConfiguration configuration;
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
+<link href="@($"{Cdn}/newdatatables/datatables.datatables.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/newdatatables/datatables.bootstrap5.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-<link asp-href-include="~/newdatatables/responsive.datatables.min.css" rel="stylesheet" />
-<link asp-href-include="~/newdatatables/responsive.bootstrap5.min.css" rel="stylesheet" />
+<link href="@($"{Cdn}/newdatatables/responsive.datatables.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/newdatatables/responsive.bootstrap5.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-<link asp-href-include="~/newdatatables/buttons.bootstrap5.min.css" rel="stylesheet" />
-<link asp-href-include="~/newdatatables/fixedheader.datatables.min.css" rel="stylesheet" />
+<link href="@($"{Cdn}/newdatatables/buttons.bootstrap5.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/newdatatables/fixedheader.datatables.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-<link asp-href-include="~/css/stylesheetfordatatable.css" rel="stylesheet" />
+<link href="@($"{Cdn}/css/stylesheetfordatatable.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />

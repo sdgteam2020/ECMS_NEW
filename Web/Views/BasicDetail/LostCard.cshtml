@@ -1,9 +1,11 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     ViewData["Title"] = "List of Lost Card Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-<link asp-href-include="~/developercss/lostcard.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/lostcard.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -48,6 +50,6 @@
         </div>
     </div>
 </div>
-<script asp-src-include="~/developerjs/LostCard.js"></script>
-<script asp-src-include="~/developerjs/CheckedFunction.js"></script>
+<script src="@($"{Cdn}/developerjs/LostCard.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/CheckedFunction.js?v={configuration["StaticVersion"]}")"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

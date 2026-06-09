@@ -1,8 +1,10 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     ViewData["Title"] = "Registered User";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/registeruser.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/registeruser.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -61,6 +63,6 @@
     </div>
 </div>
 
-<script asp-src-include="~/developerjs/RegisterUser.js"></script>
+<script src="@($"{Cdn}/developerjs/RegisterUser.js?v={configuration["StaticVersion"]}")"></script>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

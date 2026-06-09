@@ -1,10 +1,11 @@
 ﻿@model IEnumerable<DataTransferObject.Response.DTOLoginLogResponse>
-
+@inject IConfiguration configuration;
 @{
     ViewData["Title"] = "LoginLog";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/css/offrstimeline.css" rel="stylesheet" />
-<link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
+<link href="@($"{Cdn}/css/offrstimeline.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/css/horizontaltimeline.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -119,7 +120,7 @@
 
     </div>
 </div>
-<script asp-src-include="~/developerjs/loginlog.js"></script>
+<script src="@($"{Cdn}/developerjs/loginlog.js?v={configuration["StaticVersion"]}")"></script>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 

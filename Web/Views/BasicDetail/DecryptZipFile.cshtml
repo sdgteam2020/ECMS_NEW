@@ -1,9 +1,11 @@
-﻿@model DTODecryptZipFileRequest
+﻿@inject IConfiguration configuration;
+@model DTODecryptZipFileRequest
 @{
     ViewData["Title"] = "Decrypt Zip File";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/decryptzipfile.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/decryptzipfile.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -85,5 +87,5 @@
 </div>
 
 @section Scripts {
-    <script asp-src-include="~/developerjs/DecryptZipFile.js"></script>
+    <script src="@($"{Cdn}/developerjs/DecryptZipFile.js?v={configuration["StaticVersion"]}")"></script>
 }

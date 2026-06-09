@@ -1,8 +1,10 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     ViewData["Title"] = "List of Dispatch Card";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var claimValue = ViewBag.ClaimValue;
     string lblForDispatch = string.Empty;
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
     if (claimValue == 1 || claimValue == 2 || claimValue == 3)
     {
         lblForDispatch = "Ready For Dispatch";
@@ -12,7 +14,7 @@
         lblForDispatch = "Ready For Distribution";
     }
 }
-<link asp-href-include="~/developercss/dispatchcard.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/dispatchcard.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -206,7 +208,7 @@
         </div>
     </div>
 </div>
-<script asp-src-include="~/developerjs/DispatchCard.js"></script>
-<script asp-src-include="~/developerjs/CheckedFunction.js"></script>
-<script asp-src-include="~/developerjs/mtables.js"></script>
+<script src="@($"{Cdn}/developerjs/DispatchCard.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/CheckedFunction.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

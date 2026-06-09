@@ -1,9 +1,11 @@
-﻿@model BasicDetailCrtAndUpdVM
+﻿@inject IConfiguration configuration;
+@model BasicDetailCrtAndUpdVM
 @{
     ViewBag.Title = "Edit I-card detail";
     int sno = 1;
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/basicdetail.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/basicdetail.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
  
 <div class="card">
     <span id="SpnTxnId" class="d-none">0</span>
@@ -352,6 +354,6 @@
 </div>
 @* </div> *@
 @section Scripts{
-    <script asp-src-include="~/developerjs/mtables.js"></script>
-    <script asp-src-include="~/developerjs/basicdetails.js"></script>
+    <script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/basicdetails.js?v={configuration["StaticVersion"]}")"></script>
 }

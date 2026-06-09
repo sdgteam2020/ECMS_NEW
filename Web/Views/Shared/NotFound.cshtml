@@ -1,14 +1,16 @@
-﻿@inject SignInManager<ApplicationUser> signInManager;
+﻿@inject IConfiguration configuration;
+@inject SignInManager<ApplicationUser> signInManager;
 @{
     ViewBag.Title = "Not Found";
 }
 @{
     Layout = null;
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
 @* @if (ViewBag.ErrorTitle == null)
 { *@
-<link asp-href-include="~/developercss/notfound.css" rel="stylesheet" />
-<link asp-href-include="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/notfound.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/lib/bootstrap/dist/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
 <section class="page_404">
     <div class="container">

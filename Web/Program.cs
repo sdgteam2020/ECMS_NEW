@@ -2,27 +2,17 @@ using BusinessLogicsLayer;
 using BusinessLogicsLayer.Helpers;
 using BusinessLogicsLayer.Service;
 using DataAccessLayer;
-using DataTransferObject;
 using DataAccessLayer.Logger;
 using DataAccessLayer.Security;
 using DataTransferObject.Domain.Identitytable;
 using EntityFramework.Exceptions.SqlServer;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.SqlServer.Management.Smo.Wmi;
 using Newtonsoft.Json.Serialization;
-using System;
 using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using ApplicationUser = DataTransferObject.Domain.Identitytable.ApplicationUser;
@@ -256,15 +246,15 @@ app.Use(async (ctx, next) =>
 
     // 1) Content Security Policy
     ctx.Response.Headers["Content-Security-Policy"] =
-        "default-src 'self'; " +
-        "script-src 'self'; " +
-        "style-src 'self'; " + // allow Bootstrap inline styles
-        "img-src 'self' data:; " +
-        "font-src 'self' data:; " +
-        "connect-src 'self' https://dgisapp.army.mil:55102 https://iam2.army.mil; " +
-        "frame-ancestors 'self'; " +
-        "base-uri 'self'; " +
-        "form-action 'self';";
+       "default-src 'self' " + Environment.GetEnvironmentVariable("AFSAC__CDN") + "; " +
+       "script-src 'self' " + Environment.GetEnvironmentVariable("AFSAC__CDN") + "; " +
+       "style-src 'self' " + Environment.GetEnvironmentVariable("AFSAC__CDN") + "; " + // allow Bootstrap inline styles
+       "img-src 'self' data: " + Environment.GetEnvironmentVariable("AFSAC__CDN") + "; " +
+       "font-src 'self' data: " + Environment.GetEnvironmentVariable("AFSAC__CDN") + "; " +
+       "connect-src 'self' https://dgisapp.army.mil:55102 https://iam2.army.mil " + Environment.GetEnvironmentVariable("AFSAC__CDN") + "; " +
+       "frame-ancestors 'self' " + Environment.GetEnvironmentVariable("AFSAC__CDN") + "; " +
+       "base-uri 'self' " + Environment.GetEnvironmentVariable("AFSAC__CDN") + "; " +
+       "form-action 'self' " + Environment.GetEnvironmentVariable("AFSAC__CDN") + ";";
 
     // 2) X-Frame-Options (align with frame-ancestors)
     ctx.Response.Headers["X-Frame-Options"] = "DENY";
@@ -295,6 +285,12 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles(new StaticFileOptions
 {
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.AppendCommaSeparatedValues(
+            "Access-Control-Allow-Origin",
+            "https://localhost:7023", "" + Environment.GetEnvironmentVariable("AFSAC__CDN") + "");
+    },
     ServeUnknownFileTypes = false,
 });
 

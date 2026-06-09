@@ -1,5 +1,7 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     Layout = null;
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
 <html>
 <head>
@@ -11,22 +13,21 @@
     <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
     <title> E-IASAC </title>
      
+    <link href="@($"{Cdn}/css/style.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet"  />
+    <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet"  />
+    <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet"  />
+    <link href="@($"{Cdn}/css/login.css?v={configuration["StaticVersion"]}")" rel="stylesheet"  />
 
-    <link asp-href-include="~/css/style.css" rel="stylesheet" />
-    <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
-    <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
-    <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/login.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/feed.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-    <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/normalize.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-    <link asp-href-include="~/css/normalize.min.css" rel="stylesheet" />
-     
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
-    <link asp-href-include="~/css/main.css" rel="stylesheet" />
-   
-    <link asp-href-include="~/developercss/accessdenied.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/feed.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+
+    <link href="@($"{Cdn}/developercss/accessdenied.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 </head>
 
 <body>
@@ -43,7 +44,7 @@
                                             <h1 class="text-danger">Access Denied</h1>
                                             <h6 class="text-danger">You do not have persmission to view this resource</h6>
                                           
-                                            <img src="~/images/asset/no.gif" />
+                                            <img src="@($"{Cdn}/images/asset/no.gif")" />
                                         </div>
                                        
                                         

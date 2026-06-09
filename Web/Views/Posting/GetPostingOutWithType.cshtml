@@ -1,10 +1,11 @@
 ﻿@model IEnumerable<DataTransferObject.Response.DTOPostingOutDetilsResponse>
-
+@inject IConfiguration configuration;
 @{
 
     ViewData["Title"] = "GetPostingOut";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/getpostingoutwithtype.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/getpostingoutwithtype.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -120,6 +121,6 @@
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
 </div>
-<script asp-src-include="~/developerjs/GetPostingOutWithType.js"></script>
+<script src="@($"{Cdn}/developerjs/GetPostingOutWithType.js?v={configuration["StaticVersion"]}")"></script>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

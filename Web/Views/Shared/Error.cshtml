@@ -1,10 +1,12 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     Layout = null;
+	string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
 @* @if (ViewBag.ErrorTitle == null)
 { *@
-<link asp-href-include="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-<link asp-href-include="~/developercss/error.css" rel="stylesheet" />
+<link href="@($"{Cdn}/lib/bootstrap/dist/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/error.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <section class="page_404">
 	<div class="container">
 		<div class="row">

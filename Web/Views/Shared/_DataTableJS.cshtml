@@ -1,20 +1,24 @@
-﻿<!-- DataTables core -->
-<script asp-src-include="~/newdatatables/datatables.min.js"></script>
-<script asp-src-include="~/newdatatables/datatables.bootstrap5.min.js"></script>
+﻿@inject IConfiguration configuration;
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
+<!-- DataTables core -->
+<script src="@($"{Cdn}/newdatatables/datatables.min.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/newdatatables/datatables.bootstrap5.min.js?v={configuration["StaticVersion"]}")"></script>
 
 <!-- Responsive -->
-<script asp-src-include="~/newdatatables/datatables-responsive/datatables.responsive.min.js"></script>
-<script asp-src-include="~/newdatatables/responsive.bootstrap5.min.js"></script>
+<script src="@($"{Cdn}/newdatatables/datatables-responsive/datatables.responsive.min.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/newdatatables/responsive.bootstrap5.min.js?v={configuration["StaticVersion"]}")"></script>
 
 <!-- FixedHeader -->
-<script asp-src-include="~/newdatatables/fixedheader.datatables.min.js"></script>
+<script src="@($"{Cdn}/newdatatables/fixedheader.datatables.min.js?v={configuration["StaticVersion"]}")"></script>
 
 <!-- Buttons -->
-<script asp-src-include="~/newdatatables/datatables-buttons/js/datatables.buttons.min.js"></script><!-- It adds the foundational functionality needed to add custom buttons (like Export, Print, or custom actions) to a DataTable.-->
-<script asp-src-include="~/newdatatables/buttons.bootstrap5.min.js"></script>
+<script src="@($"{Cdn}/newdatatables/datatables-buttons/js/datatables.buttons.min.js?v={configuration["StaticVersion"]}")"></script><!-- It adds the foundational functionality needed to add custom buttons (like Export, Print, or custom actions) to a DataTable.-->
+<script src="@($"{Cdn}/newdatatables/buttons.bootstrap5.min.js?v={configuration["StaticVersion"]}")"></script>
 
 <!-- Export -->
  
-<script asp-src-include="~/newdatatables/datatables-buttons/js/buttons.html5.min.js"></script> 
-<script asp-src-include="~/newdatatables/datatables-buttons/js/buttons.print.min.js"></script><!-- Adds a "Print" button to DataTables toolbar for print preview and printing -->
+<script src="@($"{Cdn}/newdatatables/datatables-buttons/js/buttons.html5.min.js?v={configuration["StaticVersion"]}")"></script> 
+<script src="@($"{Cdn}/newdatatables/datatables-buttons/js/buttons.print.min.js?v={configuration["StaticVersion"]}")"></script><!-- Adds a "Print" button to DataTables toolbar for print preview and printing -->
  

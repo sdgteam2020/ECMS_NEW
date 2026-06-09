@@ -1,15 +1,19 @@
-﻿<link asp-href-include="~/developercss/commonheader.css" rel="stylesheet" />
+﻿@inject IConfiguration configuration;
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
+<link href="@($"{Cdn}/DeveloperCSS/CommonHeader.css?v={configuration["StaticVersion"]}")" rel="stylesheet" asp-append-version="true" />
 <header class="eisac-header">
     <div class="header-container">
         <!-- Left Logo -->
         <div class="header-logo">
-            <img src="~/Images/dgis_ico.png" alt="Army Logo" class="logo-img" />
+            <img src="@($"{Cdn}/Images/dgis_ico.png")" alt="Army Logo" class="logo-img" />
         </div>
 
         <!-- Center Title -->
         <div class="center">
             <div class="title-chip">
-                <img src="~/Images/Header-Logo.png" alt="Army Logo" class="logo-img" />
+                <img src="@($"{Cdn}/Images/Header-Logo.png")" alt="Army Logo" class="logo-img" />
                 <div class="header-title">
                     <h1 class="title-text">Enterprise Card Management System(ECMS)</h1> <!--ENTERPRISE IA SECURE ACCESS CARD (E-ISAC)     Enterprise Card Management System(ECMS)-->
                     <p class="subtitle">Secure Identity &amp; Access Portal</p>
@@ -21,7 +25,7 @@
 
         <!-- Right Logo -->
         <div class="header-logo">
-            <img src="~/Images/dgislogo.png" alt="DGIS Logo" class="logo-img" />
+            <img src="@($"{Cdn}/Images/dgislogo.png")" alt="DGIS Logo" class="logo-img" />
         </div>
     </div>
 </header>

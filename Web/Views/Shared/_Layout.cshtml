@@ -5,94 +5,96 @@
 @inject UserManager<ApplicationUser> userManager;
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IConfiguration configuration;
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="icon" type="image/x-icon" asp-href-include="/images/AFSAC_icon.png">
+    <link rel="icon" type="image/x-icon" href="@($"{Cdn}/images/AFSAC_icon.png")">
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC</title>
-    <link rel="stylesheet" href="~/static/css/all.min.css" />
-@*     <link asp-href-include="~/css/chatbot.css" rel="stylesheet" /> *@
+    <link rel="stylesheet" href="@($"{Cdn}/static/css/all.min.css?v={configuration["StaticVersion"]}")" />
+    @*     <link asp-href-include="~/css/chatbot.css" rel="stylesheet" /> *@
     <!-- Development: Load normal JS -->
     <environment include="Development">
-        <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
-        <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/fonts/css/all.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/style.css" rel="stylesheet" />
-        <link asp-href-include="~/css/extra.css" rel="stylesheet" />
-        <link asp-href-include="~/css/background.css" rel="stylesheet" />
-        <link asp-href-include="~/css/typography.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/style.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/extra.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/background.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/typography.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <link asp-href-include="~/css/cssStyle.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/cssStyle.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
-        <script asp-src-include="~/fonts/feather/feather.min.js"></script>
-        <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
-        <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-        <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
-        <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/main.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/horizontaltimeline.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <script src="@($"{Cdn}/fonts/feather/feather.min.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/fonts/allfont/webfont.min.js?v={configuration["StaticVersion"]}")"></script>
+        <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/bootstrap-datetimepicker.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/toastr/toastr.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
         @*     <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" /> *@
 
-        <script asp-src-include="~/lib/jquery/jquery.js"></script>
-        <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
-        <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
-        <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-        
+        <script src="@($"{Cdn}/lib/jquery/jquery.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/lib/jquery-validate/jquery.validate.js?v={configuration["StaticVersion"]}")" defer></script>
+        <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js?v={configuration["StaticVersion"]}")" defer></script>
 
 
     </environment>
 
     <!-- Production: Load minified JS -->
     <environment exclude="Development">
-        <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
-        <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/fonts/css/all.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/style.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/extra.css" rel="stylesheet" />
-        <link asp-href-include="~/css/background.css" rel="stylesheet" />
-        <link asp-href-include="~/css/typography.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/style.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/extra.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/background.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/typography.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <link asp-href-include="~/css/cssstyle.min.css" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/cssstyle.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-        <link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
-        <script asp-src-include="~/fonts/feather/feather.min.js"></script>
-        <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
-        <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-        <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
-        <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/main.css" rel="stylesheet" />        
+        <link href="@($"{Cdn}/css/horizontaltimeline.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <script src="@($"{Cdn}/fonts/feather/feather.min.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/fonts/allfont/webfont.min.js?v={configuration["StaticVersion"]}")"></script>
+        <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/bootstrap-datetimepicker.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/toastr/toastr.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
         @*     <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" /> *@
 
-        <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
-        <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
-        <script asp-src-include="~/lib/jquery-validate/jquery.validate.min.js" defer></script>
-        <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" defer></script>
+        <script src="@($"{Cdn}/lib/jquery/jquery.min.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/lib/jquery-validate/jquery.validate.min.js?v={configuration["StaticVersion"]}")" defer></script>
+        <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js?v={configuration["StaticVersion"]}")" defer></script>
 
 
 
     </environment>
 
-    <link asp-href-include="~/developercss/layout.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/developercss/layout.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 </head>
 <body class="nav-fixed sidenav-toggled">
     @Html.AntiForgeryToken()
     <div id="loading" class="loader">
         <div class="loader-container">
-        <img src="/Images/load.gif" width="100">
+            <img src="@($"{Cdn}/Images/load.gif")" width="100">
             <div>
                 <h4 class="mt--20">Loading...</h4>
-            <span>Please wait. This may take few seconds.</span>
+                <span>Please wait. This may take few seconds.</span>
             </div>
         </div>
     </div>
@@ -116,7 +118,7 @@
         }
 
     }
-        <input type="hidden" value="@dtoSession.Salt" id="hiddenSa" />
+    <input type="hidden" value="@dtoSession.Salt" id="hiddenSa" />
     <div class="watermark yes-print"></div>
     <div class="d-none" id="IpaddresGloble">@(Context.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "0.0.0.0")</div>
     <div class="d-none" id="postingouthtml"></div>
@@ -201,28 +203,28 @@
         </div>
     </footer>
 
-    <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script asp-src-include="~/js/bootstrap.bundle.min.js"></script>
-    <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="@($"{Cdn}/lib/jqueryui/jquery-ui.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/js/bootstrap.bundle.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/bootstrap/js/bootstrap.bundle.min.js?v={configuration["StaticVersion"]}")"></script>
 
-    <script asp-src-include="~/js/scripts.js"></script>
+    <script src="@($"{Cdn}/js/scripts.js?v={configuration["StaticVersion"]}")"></script>
 
 
 
-    @*<script asp-src-include="~/fonts/feather/feather.min.js"></script>*@
-    <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
-    <script asp-src-include="~/toastr/toastr.min.js"></script>
-    <script asp-src-include="~/js/moment.min.js"></script> 
-    <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script> 
-    <script asp-src-include="~/developerjs/layout.js"></script>
-    <script asp-src-include="~/developerjs/keyconstants.js"></script>
-    <script asp-src-include="~/developerjs/commanvalidation.js"></script>
-    <script asp-src-include="~/developerjs/icardhistory.js"></script>
-@*     <script asp-src-include="~/developerjs/chatbot.js"></script> *@
-    <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
-    <script asp-src-include="~/developerjs/_notifications.js"></script>
-    <script asp-src-include="~/developerjs/encryptepayload.js"></script>
-    <script asp-src-include="~/developerjs/datatablesearchvalidation.js"></script>
+    @*<script src="@($"{Cdn}/fonts/feather/feather.min.js")"></script>*@
+    <script src="@($"{Cdn}/sweetalert2/sweetalert2.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/toastr/toastr.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/js/moment.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/js/bootstrap-datetimepicker.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/layout.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/keyconstants.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/commanvalidation.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/icardhistory.js?v={configuration["StaticVersion"]}")"></script>
+    @*     <script src="@($"{Cdn}/developerjs/chatbot.js")"></script> *@
+    <script src="@($"{Cdn}/lib/crypto-js/crypto-js.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/_notifications.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/encryptepayload.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/datatablesearchvalidation.js?v={configuration["StaticVersion"]}")"></script>
     @RenderSection("Scripts", false)
 
 
@@ -230,7 +232,7 @@
 </html>
 
 <!-- Fwd Internal Record  -->
-<div class="modal fade" id="FwdInternalRecord" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="FwdInternalRecord" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -304,7 +306,7 @@
 </div>
 
 <!-- Fwd Record  -->
-<div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -451,7 +453,7 @@
 </div>
 
 <!-- Basic Details   -->
-<div class="modal fade" id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -462,7 +464,6 @@
                 <div class="card">
                     <div class="row">
                         <div id="BasicDetails_Data">
-
                         </div>
                         <div class="col-md-12 ">
                             <div class="form-group row recectopt  mb-3">
@@ -494,7 +495,7 @@
 </div>
 
 <!-- Basic Details for View Purpose  -->
-<div class="modal fade" id="BasicDetailViewPurpose" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="BasicDetailViewPurpose" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -506,7 +507,6 @@
                     <div class="row ">
                         <div class="col-sm-12 mb-3">
                             <div id="BasicDetailViewPurpose_Data">
-
                             </div>
                         </div>
                     </div>
@@ -519,17 +519,16 @@
     </div>
 </div>
 
-<div class="modal fade right" id="HistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade right" id="HistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg modal-history" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                 <h4 class="modal-title"><span id="HistoryModal_Header">I-Card History</span></h4>
             </div>
             <div class="modal-body" id="exampleModal1111">
                 <div id="HistoryModal_Title"><h5 class="text-center badge badge-success"><span id="HistoryModal_Title_Content">Step Wise I Card Request History</span></h5></div>
                 <div class="timeline timeline-xs" id="HistoryModal_Body">
-
                 </div>
 
             </div>
@@ -538,7 +537,7 @@
     </div><!-- modal-dialog -->
 </div>
 
-<div class="modal fade" id="unitoffrsModal" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade" id="unitoffrsModal" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -573,11 +572,11 @@
     </div>
 </div>
 
-<div class="modal fade right" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade right" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-xl " role="document">
         <div class="modal-content ">
             <div class="modal-header ">
-                <button type="button" class="close no-print" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
+                <button type="button" class="close no-print" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                 <h4 class="modal-title no-print" id="lblICardPrint">I-Card Print Preview</h4>
             </div>
             <div class="modal-body section-to-print-popup" id="section-to-print-popup">
@@ -604,7 +603,7 @@
                                                             <div class="d-flex f19 font-weight-800"> INDIAN ARMED FORCES INDENTITY CARD</div>
                                                         </div>
                                                         <div class="col-sm-6">
-                                                            <img class="PhotoImagePath_ICardPrint" data-fallback="/Images/user4.png" height="200" width="200" />
+                                                            <img class="PhotoImagePath_ICardPrint" data-fallback="@($"{Cdn}/Images/user4.png")" height="200" width="200" />
                                                         </div>
                                                         <div class="col-sm-6">
 
@@ -626,9 +625,9 @@
                                                 <div class="card mt-2 mb-2">
                                                     <div class="row p-4">
                                                         <div class="col-sm-2 justify-content-center">
-                                                            <div class="mt-4 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="60" width="50" /></div>
-                                                            <div class="mt-4 ml-3"><img class="PhotoImagePath_ICardPrint" data-fallback="/Images/Signature.png" height="60" width="50" /></div>
-                                                            <div class="mt-4 ml-3"><img src="~/images/asset/hologrambg.png" height="60" width="50" /></div>
+                                                            <div class="mt-4 ml-3"><img src="@($"{Cdn}/writereaddata/images/indian-army-logo.jpg")" height="60" width="50" /></div>
+                                                            <div class="mt-4 ml-3"><img class="PhotoImagePath_ICardPrint" data-fallback="@($"{Cdn}/Images/Signature.png")" height="60" width="50" /></div>
+                                                            <div class="mt-4 ml-3"><img src="@($"{Cdn}/images/asset/hologrambg.png")" height="60" width="50" /></div>
                                                         </div>
                                                         <div class="col-sm-3">
                                                             <div class="">
@@ -678,7 +677,7 @@
                                                             <span class="font-weight-800 border border-dark p-2">SIGNATURE</span>
                                                         </div>
                                                         <div class="col-sm-6 text-center mt-2 p-2 border border-dark signature-box">
-                                                            <span class="p-2"><img class="SignaturePath_ICardPrint" data-fallback="/Images/Signature.png" height="30" width="80" /></span>
+                                                            <span class="p-2"><img class="SignaturePath_ICardPrint" data-fallback="@($"{Cdn}/Images/Signature.png")" height="30" width="80" /></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -701,7 +700,7 @@
 </div>
 
 <!-- Confirmation Dialog  -->
-<div class="modal fade" id="ConfirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="ConfirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -727,7 +726,7 @@
 </div>
 
 <!-- Message Dialog  -->
-<div class="modal fade" id="MessageDialog" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="MessageDialog" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

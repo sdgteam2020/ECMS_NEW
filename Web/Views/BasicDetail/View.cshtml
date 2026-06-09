@@ -1,5 +1,9 @@
 ﻿@model BasicDetailCrtAndUpdVM
-<link asp-href-include="~/developercss/basicdetail_view.css" rel="stylesheet" />
+@inject IConfiguration configuration;
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
+<link href="@($"{Cdn}/developercss/basicdetail_view.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <div class="container1" id="printdata">
     <div class="row section-to-print">
         <div class="col-sm-4  text-left">
@@ -307,5 +311,5 @@
     </div>
 </div>
 @section Scripts{
-    <script asp-src-include="~/js/CustomScript.js"></script>
+    <script src="@($"{Cdn}/js/CustomScript.js?v={configuration["StaticVersion"]}")"></script>
 }

@@ -1,6 +1,8 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     ViewData["Title"] = "DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -243,4 +245,4 @@
         </div>
     </div>
 </div>
-<script asp-src-include="~/developerjs/DashboardMaster.js"></script>
+<script src="@($"{Cdn}/developerjs/DashboardMaster.js?v={configuration["StaticVersion"]}")"></script>

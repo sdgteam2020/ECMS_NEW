@@ -1,10 +1,12 @@
 ﻿@model DTORegistrationRequest
 @inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration configuration;
 @{
     ViewBag.Title = "New Registration";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
-<link asp-href-include="~/developercss/registration.css" rel="stylesheet" />
+<link href="@($"{Cdn}/select2/css/select2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/registration.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <div class="container mt-2">
     <div class="card mb-3 ">
         <div class="card-header">
@@ -302,10 +304,10 @@
 </div>
 
 @section Scripts{   
-    <script asp-src-include="~/developerjs/registration.js"></script>
-    <script asp-src-include="~/developerjs/token.js"></script>
-    <script asp-src-include="~/developerjs/mtables.js"></script>
-    <script asp-src-include="~/developerjs/commanvalidation.js"></script>
-    <script asp-src-include="~/select2/js/select2.min.js"></script>
+    <script src="@($"{Cdn}/developerjs/registration.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/token.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/commanvalidation.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/select2/js/select2.min.js?v={configuration["StaticVersion"]}")"></script>
 
     }

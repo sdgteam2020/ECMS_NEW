@@ -1,8 +1,10 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     ViewData["Title"] = "Corps";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/corps.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/corps.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -84,7 +86,7 @@
         </div>
     </div>
 </div>
-<script asp-src-include="~/developerjs/mtables.js"></script>
-<script asp-src-include="~/developerjs/corps.js"></script>
+<script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/corps.js?v={configuration["StaticVersion"]}")"></script>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

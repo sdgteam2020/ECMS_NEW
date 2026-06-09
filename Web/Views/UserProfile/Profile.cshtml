@@ -1,8 +1,10 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     ViewData["Title"] = "Add Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/userprofile_profile.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/userprofile_profile.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 @if (@ViewBag.Role == "admin")
 {
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -373,9 +375,9 @@ else
         </div><!-- modal-dialog -->
     </div>
 </div>
-<script asp-src-include="~/developerjs/mtables.js"></script>
-<script asp-src-include="~/developerjs/profile.js"></script>
-<script asp-src-include="~/developerjs/token.js"></script>
+<script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/profile.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/token.js?v={configuration["StaticVersion"]}")"></script>
 
 <div class="modal fade" id="DeRegisterConfirmModal" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">

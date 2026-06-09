@@ -1,8 +1,10 @@
-﻿@{
+﻿@inject IConfiguration configuration;
+@{
     ViewData["Title"] = "Afsac Cell Mapping";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/afsaccellmapping.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/afsaccellmapping.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -51,7 +53,7 @@
         </div>
     </div>
 </div>
-<script asp-src-include="~/developerjs/AfsacCellMapping.js"></script>
+<script src="@($"{Cdn}/developerjs/AfsacCellMapping.js?v={configuration["StaticVersion"]}")"></script>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 

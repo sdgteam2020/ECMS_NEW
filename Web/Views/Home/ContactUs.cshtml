@@ -1,9 +1,11 @@
-﻿ @{
+﻿@inject IConfiguration configuration;
+ @{
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
  
-<link asp-href-include="~/developercss/contactus.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/contactus.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">

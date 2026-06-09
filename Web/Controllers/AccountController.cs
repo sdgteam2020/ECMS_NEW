@@ -1406,7 +1406,6 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        [AnySessionRequired]
         [AllowAnonymous]
         public async Task<IActionResult> FinalLogin()
         {

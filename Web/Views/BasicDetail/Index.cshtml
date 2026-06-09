@@ -1,6 +1,10 @@
-﻿<link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
-<link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
-<link asp-href-include="~/developercss/indexbasicdetail.css" rel="stylesheet" />
+﻿@inject IConfiguration configuration;
+@{
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+}
+<link href="@($"{Cdn}/css/popupprintcss.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/select2/css/select2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/indexbasicdetail.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -197,13 +201,13 @@
 </div>
 
 @section Scripts {
-        <script asp-src-include="~/developerjs/fwdrecord.js"></script>
-        <script asp-src-include="~/developerjs/Index_BasicDetails.js"></script>
-        <script asp-src-include="~/js/CustomScript.js"></script>
-        <script asp-src-include="~/developerjs/ICardPrint.js"></script>
-        <script asp-src-include="~/developerjs/Token.js"></script>
-        <script asp-src-include="~/developerjs/mtables.js"></script>
-        <script asp-src-include="~/select2/js/select2.min.js"></script>
+        <script src="@($"{Cdn}/developerjs/fwdrecord.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/developerjs/Index_BasicDetails.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/js/CustomScript.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/developerjs/ICardPrint.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/developerjs/Token.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/select2/js/select2.min.js?v={configuration["StaticVersion"]}")"></script>
 
         <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }

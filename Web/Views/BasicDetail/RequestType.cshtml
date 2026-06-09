@@ -1,8 +1,10 @@
 ﻿@model List<DTOICardTypeRequest>
+@inject IConfiguration configuration;
 @{
     ViewBag.Title = "Select";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
-<link asp-href-include="~/developercss/requesttype.css" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/requesttype.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 <div class="row g-3">
     <div class="card-header py-3 d-flex  bg-transparent">
         <h6 class="mb-0 fw-bold">@ViewBag.Title</h6>

@@ -1,14 +1,15 @@
-﻿
+﻿@inject IConfiguration configuration;
 <!DOCTYPE html>
 @{
     ViewData["Title"] = "Final Logout";
     Layout = null;
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
 
 <html>
 <head runat="server">
     <title>IAM Logout</title>
-    <link asp-href-include="~/developercss/finallogout.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/developercss/finallogout.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 </head>
 <body>
     <form id="form1" runat="server">

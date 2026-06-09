@@ -1,7 +1,9 @@
 ﻿@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration configuration;
 @model DTOTokenRequestForIAM
 @{
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
 }
 <html>
 <head>
@@ -10,26 +12,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" type="image/x-icon" asp-href-include="/images/AFSAC.png">
+    <link rel="icon" type="image/x-icon" href="@($"{Cdn}/images/AFSAC.png")">
     <title> E-ISAC </title>
     @*  <link asp-href-include="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
 
-    <link asp-href-include="~/css/style.css" rel="stylesheet" />
-    <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
-    <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
-    <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/style.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-    <link asp-href-include="~/css/login.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/login.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-    <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/feed.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 
-    <link asp-href-include="~/css/normalize.min.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/normalize.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
     @*   <link asp-href-include="~/css/swiper.min.css" rel="stylesheet" /> *@
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
-    <link asp-href-include="~/css/main.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/feed.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
     @*     <link asp-href-include="~/css/sliders/style.css" rel="stylesheet" /> *@
-    <link asp-href-include="~/developercss/tokenvalidateforiam.css" rel="stylesheet" />
+    <link href="@($"{Cdn}/developercss/tokenvalidateforiam.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
 </head>
 @{
     DTOTempSession? dTOTempSession = new DTOTempSession();
@@ -142,15 +144,15 @@
             </div>
         </section>
     </footer>
-    <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
-    <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
-    <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-    <script asp-src-include="~/developerjs/KeyConstants.js"></script>
-    <script asp-src-include="~/developerjs/token.js"></script>
-    <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script> 
-    <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
-    <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
-    <script asp-src-include="~/developerjs/logoutlog.js"></script>
+    <script src="@($"{Cdn}/lib/jquery/jquery.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/lib/jquery-validate/jquery.validate.js?v={configuration["StaticVersion"]}")" defer></script>
+    <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js?v={configuration["StaticVersion"]}")" defer></script>
+    <script src="@($"{Cdn}/developerjs/KeyConstants.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/token.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={configuration["StaticVersion"]}")"></script> 
+    <script src="@($"{Cdn}/sweetalert2/sweetalert2.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/lib/crypto-js/crypto-js.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/logoutlog.js?v={configuration["StaticVersion"]}")"></script>
 
 </body>
 </html>
