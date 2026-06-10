@@ -66,7 +66,7 @@ $(document).ready(function () {
         $('#btnNext').removeClass("disabled");
     });
 
-    $("#btnNext").on("click", async function () {       
+    $("#btnNext").on("click", async function () {
         if ($("#txtApplyForArmyNo").val().length > 7 && $("#txtApplyForArmyNo").val().length < 10) {
             if (parseInt(OffType) == 1) {
                 if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
@@ -227,7 +227,7 @@ function GetAllRegistrationApplyFor(Id) {
                             continue;
                         }
 
-                        listItem += '<button type="button" class="btn btn-outline-primary mt-4 mr-2 applyforoffs btn1" id="icardFor' + response[i].RegistrationId + '">';
+                        listItem += '<button type="button" class="btn btn-outline-primary mr-2 applyforoffs btn1" id="icardFor' + response[i].RegistrationId + '">';
                         listItem += response[i].Name;
                         listItem += '<span class="spnRegistration d-none">' + response[i].RegistrationId + '</span>';
                         listItem += '</button>';
@@ -263,11 +263,11 @@ function AddAllCardType() {
 
     var list = '';
     list += '<div class="seven mt-4"><h1>Reason For Applying</h1></div>';
-    list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">First time Smart card <span class="spnApplyForcard d-none">1</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Fair wear and tear / Damaged <span class="spnApplyForcard d-none">2</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Change of Rank <span class="spnApplyForcard d-none">3</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Change of Army No <span class="spnApplyForcard d-none">4</span></button>';
-    list += '<button type="button" class="btn btn-outline-primary mt-4 ml-2 applyforicard btn1">Lost Card <span class="spnApplyForcard d-none">5</span></button>';
+    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">First time Smart card <span class="spnApplyForcard d-none">1</span></button>';
+    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Fair wear and tear / Damaged <span class="spnApplyForcard d-none">2</span></button>';
+    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Change of Rank <span class="spnApplyForcard d-none">3</span></button>';
+    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Change of Army No <span class="spnApplyForcard d-none">4</span></button>';
+    list += '<button type="button" class="btn btn-outline-primary ml-2 applyforicard btn1">Lost Card <span class="spnApplyForcard d-none">5</span></button>';
 
     $("#icardrequestfor").html(list);
 
