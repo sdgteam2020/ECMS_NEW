@@ -36,7 +36,6 @@ namespace DataAccessLayer
         {
             // SQL query to get task board counts for various categories
             string query = @"declare @TotHotlistCards int=0 declare @TotMisprintedCard int=0 declare @TotUnitChangeRequest int=0 declare @TotDistCards int=0 declare @TotDestCards int=0 declare @TotDispatchCards int=0 declare @TotLostCards int=0
-
                             BEGIN 
                             IF @Claim=1
                             BEGIN 
@@ -47,14 +46,12 @@ namespace DataAccessLayer
                             BEGIN 
                             Select @TotDispatchCards=COUNT(disca.DispatchCardId) from TrnDispatchCard disca
                             INNER JOIN MRecordOffice mrec ON disca.RecordOfficeId = mrec.RecordOfficeId
-                            INNER JOIN OROMapping oro on  mrec.RecordOfficeId =oro.RecordOfficeId
-                            WHERE oro.TDMId=@TDM_Id
+                            INNER JOIN OROMapping oro on  mrec.RecordOfficeId =oro.RecordOfficeId AND oro.TDMId=@TDM_Id
                             END 
                             ELSE IF @Claim=3
                             BEGIN 
                             Select @TotDispatchCards=COUNT(disca.DispatchCardId) from TrnDispatchCard disca
-                            INNER JOIN MRegimental regi on disca.RegId=regi.RegId
-                            WHERE regi.UnitId=@MapUnitId
+                            INNER JOIN MRegimental regi on disca.RegId=regi.RegId AND regi.UnitId=@MapUnitId
                             END 
                             ELSE 
                             BEGIN 

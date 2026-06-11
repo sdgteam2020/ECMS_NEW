@@ -28,6 +28,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
 {
     <span class="d-none" id="Id">2</span>
 }
+<link asp-href-include="~/developercss/MyTask.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -74,7 +75,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToDrafted">0</h3>
+                                                                        <h3 class="success counter-value" id="ToDrafted">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Drafted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -93,7 +94,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToSubmitted">0</h3>
+                                                                        <h3 class="success counter-value" id="ToSubmitted">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Submitted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -113,7 +114,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToRejected">0</h3>
+                                                                        <h3 class="success counter-value" id="ToRejected">0</h3>
                                                                         <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -132,7 +133,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToCompleted">0</h3>
+                                                                        <h3 class="success counter-value" id="ToCompleted">0</h3>
                                                                         <span class="badge badge-pill badge-success p-2">Completed</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -180,7 +181,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="_2ndLevelPending">0</h3>
+                                                                        <h3 class="success counter-value" id="_2ndLevelPending">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Pending for Approval</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -200,7 +201,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="_2ndLevelApproved">0</h3>
+                                                                        <h3 class="success counter-value" id="_2ndLevelApproved">0</h3>
                                                                         <span class="badge badge-pill badge-success p-2">Approved</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -219,7 +220,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="_2ndLevelReject">0</h3>
+                                                                        <h3 class="success counter-value" id="_2ndLevelReject">0</h3>
                                                                         <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -261,7 +262,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
                                                                         <div class="media-body text-left">
-                                                                            <h3 class="success" id="_3rdLevelPending">0</h3>
+                                                                            <h3 class="success counter-value" id="_3rdLevelPending">0</h3>
                                                                             <span class="badge badge-pill badge-warning p-2">Pending</span>
                                                                         </div>
                                                                         <div class="align-self-center">
@@ -280,7 +281,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
                                                                         <div class="media-body text-left">
-                                                                            <h3 class="success" id="_3rdLevelApproved">0</h3>
+                                                                            <h3 class="success counter-value" id="_3rdLevelApproved">0</h3>
                                                                             <span class="badge badge-pill badge-success p-2">Approved</span>
                                                                         </div>
                                                                         <div class="align-self-center">
@@ -299,7 +300,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
                                                                         <div class="media-body text-left">
-                                                                            <h3 class="success" id="_3rdLevelReject">0</h3>
+                                                                            <h3 class="success counter-value" id="_3rdLevelReject">0</h3>
                                                                             <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                         </div>
                                                                         <div class="align-self-center">
@@ -344,7 +345,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
                                                                         <div class="media-body text-left">
-                                                                            <h3 class="success" id="_4thLevelPending">0</h3>
+                                                                            <h3 class="success counter-value" id="_4thLevelPending">0</h3>
                                                                             <span class="badge badge-pill badge-warning p-2">Pending for Approval</span>
                                                                         </div>
                                                                         <div class="align-self-center">
@@ -363,7 +364,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
                                                                         <div class="media-body text-left">
-                                                                            <h3 class="success" id="_4thLevelApproved">0</h3>
+                                                                            <h3 class="success counter-value" id="_4thLevelApproved">0</h3>
                                                                             <span class="badge badge-pill badge-success p-2">Exported Data</span>
                                                                         </div>
                                                                         <div class="align-self-center">
@@ -455,7 +456,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToDrafted">0</h3>
+                                                                        <h3 class="success counter-value" id="ToDrafted">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Drafted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -475,7 +476,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToSubmitted">0</h3>
+                                                                        <h3 class="success counter-value" id="ToSubmitted">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Submitted</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -495,7 +496,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToRejected">0</h3>
+                                                                        <h3 class="success counter-value" id="ToRejected">0</h3>
                                                                         <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -515,7 +516,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="ToCompleted">0</h3>
+                                                                        <h3 class="success counter-value" id="ToCompleted">0</h3>
                                                                         <span class="badge badge-pill badge-success p-2">Completed</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -566,7 +567,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="_2ndLevelPending">0</h3>
+                                                                        <h3 class="success counter-value" id="_2ndLevelPending">0</h3>
                                                                         <span class="badge badge-pill badge-warning p-2">Pending for Approval</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -586,7 +587,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="_2ndLevelApproved">0</h3>
+                                                                        <h3 class="success counter-value" id="_2ndLevelApproved">0</h3>
                                                                         <span class="badge badge-pill badge-success p-2">Approved</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -605,7 +606,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
                                                                     <div class="media-body text-left">
-                                                                        <h3 class="success" id="_2ndLevelReject">0</h3>
+                                                                        <h3 class="success counter-value" id="_2ndLevelReject">0</h3>
                                                                         <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
@@ -648,7 +649,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                     <div class="card-body">
                                                                         <div class="media d-flex">
                                                                             <div class="media-body text-left">
-                                                                                <h3 class="success" id="_3rdLevelPending">0</h3>
+                                                                                <h3 class="success counter-value" id="_3rdLevelPending">0</h3>
                                                                                 <span class="badge badge-pill badge-warning p-2">Pending for Approval</span>
                                                                             </div>
                                                                             <div class="align-self-center">
@@ -667,7 +668,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                     <div class="card-body">
                                                                         <div class="media d-flex">
                                                                             <div class="media-body text-left">
-                                                                                <h3 class="success" id="ToInternalForward">0</h3>
+                                                                                <h3 class="success counter-value" id="ToInternalForward">0</h3>
                                                                                 <span class="badge badge-pill badge-success p-2">Forward</span>
                                                                             </div>
                                                                             <div class="align-self-center">
@@ -686,7 +687,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                     <div class="card-body">
                                                                         <div class="media d-flex">
                                                                             <div class="media-body text-left">
-                                                                                <h3 class="success" id="_3rdLevelApproved">0</h3>
+                                                                                <h3 class="success counter-value" id="_3rdLevelApproved">0</h3>
                                                                                 <span class="badge badge-pill badge-success p-2">Approved</span>
                                                                             </div>
                                                                             <div class="align-self-center">
@@ -705,7 +706,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                     <div class="card-body">
                                                                         <div class="media d-flex">
                                                                             <div class="media-body text-left">
-                                                                                <h3 class="success" id="_3rdLevelReject">0</h3>
+                                                                                <h3 class="success counter-value" id="_3rdLevelReject">0</h3>
                                                                                 <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                             </div>
                                                                             <div class="align-self-center">
@@ -728,7 +729,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                     <div class="card-body">
                                                                         <div class="media d-flex">
                                                                             <div class="media-body text-left">
-                                                                                <h3 class="success" id="_3rdLevelPending">0</h3>
+                                                                                <h3 class="success counter-value" id="_3rdLevelPending">0</h3>
                                                                                 <span class="badge badge-pill badge-warning p-2">Pending for Approval</span>
                                                                             </div>
                                                                             <div class="align-self-center">
@@ -747,7 +748,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                     <div class="card-body">
                                                                         <div class="media d-flex">
                                                                             <div class="media-body text-left">
-                                                                                <h3 class="success" id="_3rdLevelApproved">0</h3>
+                                                                                <h3 class="success counter-value" id="_3rdLevelApproved">0</h3>
                                                                                 <span class="badge badge-pill badge-success p-2">Approved</span>
                                                                             </div>
                                                                             <div class="align-self-center">
@@ -766,7 +767,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                     <div class="card-body">
                                                                         <div class="media d-flex">
                                                                             <div class="media-body text-left">
-                                                                                <h3 class="success" id="_3rdLevelReject">0</h3>
+                                                                                <h3 class="success counter-value" id="_3rdLevelReject">0</h3>
                                                                                 <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                             </div>
                                                                             <div class="align-self-center">
@@ -809,7 +810,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
                                                                         <div class="media-body text-left">
-                                                                            <h3 class="success" id="_4thLevelPending">0</h3>
+                                                                            <h3 class="success counter-value" id="_4thLevelPending">0</h3>
                                                                             <span class="badge badge-pill badge-warning p-2">Pending for Approval</span>
                                                                         </div>
                                                                         <div class="align-self-center">
@@ -828,7 +829,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                 <div class="card-body">
                                                                     <div class="media d-flex">
                                                                         <div class="media-body text-left">
-                                                                            <h3 class="success" id="_4thLevelApproved">0</h3>
+                                                                            <h3 class="success counter-value" id="_4thLevelApproved">0</h3>
                                                                             <span class="badge badge-pill badge-success p-2">Exported Data</span>
                                                                         </div>
                                                                         <div class="align-self-center">

@@ -59,6 +59,9 @@
 
 })
 function GetDashboardCount() {
+    // show loader until server data received
+    $(".counter-value").html('<span class="count-loader"></span>');
+
     $.ajax({
         url: '/Home/GetTaskBoardCount',
         contentType: 'application/x-www-form-urlencoded',
@@ -101,10 +104,13 @@ function GetDashboardCount() {
                 }
             }
             else {
-
+                // keep loader, do not show zero
+                $(".counter-value").html('<span class="count-loader"></span>');
             }
         },
         error: function (result) {
+            // keep loader, do not show zero
+            $(".counter-value").html('<span class="count-loader"></span>');
             Swal.fire({
                 text: errormsg002
             });

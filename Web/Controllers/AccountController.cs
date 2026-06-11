@@ -1045,13 +1045,6 @@ namespace Web.Controllers
             string? Footer = _configuration["Footer:Test"];
             ViewBag.Footer = Footer;
 
-
-            string dd = AESEncrytDecry.GetSalt();
-            HttpContext.Session.SetString(SessionKeySalt, dd);
-            ViewBag.hdns = dd;
-
-
-
             int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "Token");
             List<string> RoleNameList = new List<string>() { "user" };
@@ -1063,6 +1056,9 @@ namespace Web.Controllers
 
                 if (dTOTempSession1 != null)
                 {
+                    string salt = AESEncrytDecry.GetSalt();
+                    dTOTempSession1.Salt = salt;
+                    SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession1);
                     return View();
                 }
                 else
@@ -1159,35 +1155,27 @@ namespace Web.Controllers
         {
             try
             {
-                string GetSalt = AESEncrytDecry.GetSalt();
                 DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData"); // Get Session Object
                 List<string> RoleNameList = new List<string>() { "user" };
-                dTOTempSession.Salt = GetSalt;
                 if (dTOTempSession != null)
                 {
                     string? Footer = _configuration["Footer:Test"];
                     ViewBag.Footer = Footer;
 
-                    string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
-                    if (dd != null)
+                    string Password = AESEncrytDecry.DecryptAES(model.Password, dTOTempSession.Salt);  //decrypt password
+                    string ICNo = AESEncrytDecry.DecryptAES(model.ICNo, dTOTempSession.Salt);  //decrypt ICNo
+                    if (ICNo == null)
                     {
-                        ViewBag.hdns = dd;
-                        string Password = AESEncrytDecry.DecryptAES(model.Password, dd);  //decrypt password
-                        string ICNo = AESEncrytDecry.DecryptAES(model.ICNo, dd);  //decrypt ICNo
-                        if (ICNo == null)
-                        {
-                            ModelState.AddModelError("ICNo", "Request Manipulated.");
-                            goto End;
-                        }
-                        else if (Password == null)
-                        {
-                            ModelState.AddModelError("Password", "Request Manipulated.");
-                            goto End;
-                        }
-                        model.ICNo = ICNo;
-                        model.Password = Password;
-
+                        ModelState.AddModelError("ICNo", "Request Manipulated.");
+                        goto End;
                     }
+                    else if (Password == null)
+                    {
+                        ModelState.AddModelError("Password", "Request Manipulated.");
+                        goto End;
+                    }
+                    model.ICNo = ICNo;
+                    model.Password = Password;
 
                     if (dTOTempSession.NewUser == false)
                     {
@@ -2355,9 +2343,15 @@ namespace Web.Controllers
             // Get footer text from configuration and pass to ViewBag
             ViewBag.Footer = _configuration["Footer:Test"];
 
-            string salt = AESEncrytDecry.GetSalt();
-            HttpContext.Session.SetString(SessionKeySalt, salt);
-            ViewBag.hdns = salt;
+            // Retrieve temporary session for IAM data
+            DTOTempSession? dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContext.Session, "IMData");
+            // Check if session exists
+            if (dTOTempSession != null)
+            {
+                string salt = AESEncrytDecry.GetSalt();
+                dTOTempSession.Salt = salt;
+                SessionHeplers.SetObject(HttpContext.Session, "IMData", dTOTempSession);
+            }
 
             int userId = 0;
 
@@ -2449,20 +2443,15 @@ namespace Web.Controllers
                 // Check if session exists
                 if (dTOTempSession != null)
                 {
-                    string? dd = HttpContext.Session.GetString(SessionKeySalt); // Get Salt from Session
-                    if (dd != null)
+                    string ICNo = AESEncrytDecry.DecryptAES(model.ICNo, dTOTempSession.Salt);  //decrypt ICNo
+                    if (ICNo == null)
                     {
-                        ViewBag.hdns = dd;
-                        string ICNo = AESEncrytDecry.DecryptAES(model.ICNo, dd);  //decrypt ICNo
-                        if (ICNo == null)
-                        {
-                            ModelState.AddModelError("ICNo", "Request Manipulated.");
-                            goto End;
-                        }
-
-                        // Clean up ICNo input
-                        model.ICNo = ICNo;
+                        ModelState.AddModelError("ICNo", "Request Manipulated.");
+                        goto End;
                     }
+
+                    // Clean up ICNo input
+                    model.ICNo = ICNo;
 
                     //set default password
                     model.Password = Environment.GetEnvironmentVariable("Common__Password") ?? string.Empty;

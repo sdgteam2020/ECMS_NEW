@@ -1,12 +1,4 @@
-﻿.clickable {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-}
-.counter-title {
-    margin-top: 2.0rem !important;
-}
-.count-loader {
+﻿.count-loader {
     display: inline-block;
     width: 18px;
     height: 18px;

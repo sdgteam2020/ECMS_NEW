@@ -68,7 +68,7 @@
                             <div class="col-md-10 col-lg-10 col-xl-9 mx-auto">
                                 <div class="card-sigin">
                                     <div class="main-signup-header login-form">
-                                        <span id="spnhdns" class="d-none">@ViewBag.hdns</span>
+                                        <span id="spnhdns" class="d-none">@dTOTempSession.Salt</span>
                                         <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1 ">Kindly Validate your IC Number here.</p>
                                         <div class="pb-3 mt-3">
                                             <form method="post" asp-action="TokenValidate" autocomplete="off" role="form" id="frmTokenValidate">

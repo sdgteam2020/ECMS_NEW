@@ -311,7 +311,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 {
                     title: "Appl Id",
-                    data: "ApplId",
+                    data: "RequestId",
                     name: "ApplId",
                     className: "nowrap",
                     width: "100px",
@@ -461,7 +461,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 {
                     title: "Appl Id",
-                    data: "ApplId",
+                    data: "RequestId",
                     name: "ApplId",
                     className: "nowrap",
                     width: "100px",
