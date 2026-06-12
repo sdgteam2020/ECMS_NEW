@@ -392,64 +392,65 @@ namespace Web.Controllers
                 case 2:
                     ViewBag.Title = "I-Card For Approval";
                     ViewBag.Id = 1;
-                    type = 2;
+                    type = (int)ForwardStatusEnum.Pending;
+                    stepCounter = (int)ApplicationStepEnum.PendingApplicationApproverLevel;
                     noti.DisplayId = 2;
                     break;
 
                 case 22:
                     ViewBag.Title = "Rejectd I-Card";
                     ViewBag.Id = 0;
-                    type = 1;
-                    stepCounter = 7;
+                    type = (int)ForwardStatusEnum.Rejected;
+                    stepCounter = (int)ApplicationStepEnum.ApplicationRejectedApproverLevel;
                     break;
 
                 case 222:
                     ViewBag.Title = "Approved I-Card";
                     ViewBag.Id = 0;
-                    type = 3;
-                    stepCounter = 3;
+                    type = (int)ForwardStatusEnum.Approved;
+                    stepCounter = (int)ApplicationStepEnum.PendingApplicationVerifierLevel;
                     break;
 
                 case 3:
                     ViewBag.Title = "I-Card For Approval";
-                    type = 2;
+                    type = (int)ForwardStatusEnum.Pending;
                     ViewBag.Id = 1;
-                    stepCounter = 3;
+                    stepCounter = (int)ApplicationStepEnum.PendingApplicationVerifierLevel;
                     break;
 
                 case 33:
                     ViewBag.Title = "Rejectd I-Card";
                     ViewBag.Id = 0;
-                    type = 1;
-                    stepCounter = 8;
+                    type = (int)ForwardStatusEnum.Rejected;
+                    stepCounter = (int)ApplicationStepEnum.ApplicationRejectedVerifierLevel;
                     break;
 
                 case 333:
                     ViewBag.Title = "Approved I-Card";
                     ViewBag.Id = 0;
-                    type = 3;
-                    stepCounter = 4;
+                    type = (int)ForwardStatusEnum.Approved;
+                    stepCounter = (int)ApplicationStepEnum.ApplicationStatusAtADC;
                     break;
 
                 case 11:
                     ViewBag.Title = "Internal Forward I-Card";
                     ViewBag.Id = 0;
-                    type = 3;
+                    type = (int)ForwardStatusEnum.Forward;
                     stepCounter = 11;
                     break;
 
                 case 4:
                     ViewBag.Title = "I-Card For Export Data";
-                    type = 2;
+                    type = (int)ForwardStatusEnum.Pending;
                     ViewBag.Id = 1;
-                    ViewBag.dataexport = 4;
+                    ViewBag.dataexport = (int)ApplicationStepEnum.ApplicationStatusAtADC;
                     break;
 
                 case 444:
                     ViewBag.Title = "Exported I-Card";
                     ViewBag.Id = 0;
-                    type = 3;
-                    stepCounter = 5;
+                    type = (int)ForwardStatusEnum.Approved;
+                    stepCounter = (int)ApplicationStepEnum.Exported;
                     break;
 
                 default:

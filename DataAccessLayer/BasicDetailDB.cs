@@ -2225,11 +2225,19 @@ namespace DataAccessLayer
 
             var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
+            var rejectedSteps = new byte[]
+            {
+                (byte)ApplicationStepEnum.ApplicationRejectedApproverLevel,
+                (byte)ApplicationStepEnum.ApplicationRejectedVerifierLevel,
+                (byte)ApplicationStepEnum.ApplicationRejectedAFSACLevel,
+                (byte)ApplicationStepEnum.PrintReject
+            };
+
             if (dTO.stepcount == 1)//////For Draft
             {
                 selectColumns = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting";
                 fromJoin = @"FROM TrnICardRequest trnicrd
-                            inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId = @stepcount AND trnicrd.StatusId = 1                        
+                            inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId = @stepcount AND trnicrd.StatusId = @RunningStatusId                        
                             INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
                             inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                            
                             inner join MRank ran on ran.RankId=B.RankId
@@ -2241,7 +2249,7 @@ namespace DataAccessLayer
                             left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId";
                 
                 fromJoinCount = @"FROM TrnICardRequest trnicrd
-                            inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId = @stepcount AND trnicrd.StatusId = 1                        
+                            inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId = @stepcount AND trnicrd.StatusId = @RunningStatusId                        
                             INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
                             inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                            
                             inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId and map.AspNetUsersId = @UserId";
@@ -2254,7 +2262,7 @@ namespace DataAccessLayer
             {
                 selectColumns = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting";
                 fromJoin = @"FROM TrnICardRequest trnicrd
-                        inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND trnicrd.StatusId = 2                        
+                        inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND trnicrd.StatusId = @CompleteStatusId                        
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                         
                         inner join MRank ran on ran.RankId=B.RankId 
@@ -2266,7 +2274,7 @@ namespace DataAccessLayer
                         left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId";
 
                 fromJoinCount = @"FROM TrnICardRequest trnicrd
-                        inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND trnicrd.StatusId = 2                        
+                        inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND trnicrd.StatusId = @CompleteStatusId                       
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                      
                         inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId AND map.AspNetUsersId = @UserId";
@@ -2278,7 +2286,7 @@ namespace DataAccessLayer
             {
                 selectColumns = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting";
                 fromJoin = @"FROM TrnICardRequest trnicrd
-                        INNER join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId > 1                        
+                        INNER join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId > @DraftedSavedApplication                        
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId  AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                       
                         inner join MRank ran on ran.RankId=B.RankId 
@@ -2289,7 +2297,7 @@ namespace DataAccessLayer
                         left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId";
 
                 fromJoinCount = @"FROM TrnICardRequest trnicrd
-                        INNER join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId > 1                        
+                        INNER join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId > @DraftedSavedApplication                        
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId  AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                
                         inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId AND map.AspNetUsersId = @UserId";
@@ -2301,22 +2309,22 @@ namespace DataAccessLayer
             {
                 selectColumns = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting";
                 fromJoin = @"FROM TrnICardRequest trnicrd
-                        inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId in (7,8,9,10) AND trnicrd.StatusId = 1                       
+                        inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId IN @RejectedSteps AND trnicrd.StatusId = @RunningStatusId                       
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                        
                         inner join MRank ran on ran.RankId=B.RankId
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
                         inner join MUnit munit on munit.UnitId=mapunit.UnitId 
                         inner join MICardType ty on ty.TypeId = trnicrd.TypeId
-                        inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId  and fwd.FwdStatusId=3                        
+                        inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId  and fwd.FwdStatusId=@RejectedForward                        
                         left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId";
 
 
                 fromJoinCount = @"FROM TrnICardRequest trnicrd
-                        inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId in (7,8,9,10) AND trnicrd.StatusId = 1                       
+                        inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId IN @RejectedSteps AND trnicrd.StatusId = @RunningStatusId                       
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                        
-                        inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId  and fwd.FwdStatusId=3";
+                        inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId  and fwd.FwdStatusId=@RejectedForward";
 
                 wherequery = @"where (@SearchTerm IS NULL OR B.ServiceNo LIKE @SearchTerm OR trnicrd.RequestId LIKE @SearchTerm)";
 
@@ -2352,7 +2360,12 @@ namespace DataAccessLayer
                     parameters.Add("@Start", dTO.Start, DbType.Int32);
                     parameters.Add("@Length", dTO.Length, DbType.Int32);
                     parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
-                    
+                    parameters.Add("@RejectedSteps", rejectedSteps);
+                    parameters.Add("@DraftedSavedApplication", (byte)ApplicationStepEnum.DraftedSavedApplication);
+                    parameters.Add("@RejectedForward", (byte)ForwardStatusEnum.Rejected);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running);
+                    parameters.Add("@CompleteStatusId", (byte)RequestStatusEnum.Complete);
+
                     using var multi = await connection.QueryMultipleAsync(sql, parameters);
 
                     var totalRecords = await multi.ReadFirstOrDefaultAsync<int>();
@@ -2431,9 +2444,28 @@ namespace DataAccessLayer
 
             var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
-            if (dTO.stepcount == 2 || dTO.stepcount == 3 || dTO.stepcount == 4 || dTO.stepcount == 5 || dTO.stepcount == 6) // 2 - Pending App Approver Level, 3 - Pending Appl Verifier Level, 4 - Appl  Status ADC, 5 - Exported, 6 - I-CARD PRINT
+            int currentStep = dTO.stepcount;
+
+            int[] pendingSteps =
             {
-                if (dTO.stepcount == 3 && dTO.TypeId == 2 && dTO.applyForId == 2) //Pending For Approval (RO)
+                (int)ApplicationStepEnum.PendingApplicationApproverLevel,
+                (int)ApplicationStepEnum.PendingApplicationVerifierLevel,
+                (int)ApplicationStepEnum.ApplicationStatusAtADC,
+                (int)ApplicationStepEnum.Exported,
+                (int)ApplicationStepEnum.ICardPrint
+            };
+
+            int[] rejectedSteps =
+            {
+                (int)ApplicationStepEnum.ApplicationRejectedApproverLevel,
+                (int)ApplicationStepEnum.ApplicationRejectedVerifierLevel,
+                (int)ApplicationStepEnum.ApplicationRejectedAFSACLevel,
+                (int)ApplicationStepEnum.PrintReject
+            };
+
+            if (pendingSteps.Contains(currentStep)) // 2 - Pending App Approver Level, 3 - Pending Appl Verifier Level, 4 - Appl  Status ADC, 5 - Exported, 6 - I-CARD PRINT
+            {
+                if (currentStep == (int)ApplicationStepEnum.PendingApplicationVerifierLevel && dTO.TypeId == (int)ForwardStatusEnum.Pending && dTO.applyForId == 2) //Pending For Approval (RO)
                 {
                     allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                     {
@@ -2445,7 +2477,7 @@ namespace DataAccessLayer
                     };
                     selectFields = @"trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName";
                     fromJoinClause = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete=0  AND fwd.TypeId=@stepcount AND trnicrd.StatusId=1  
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete=0  AND fwd.TypeId=@stepcount AND trnicrd.StatusId=@RunningStatusId  
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId = @stepcount                                        
                                         inner join BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                                        
@@ -2455,7 +2487,7 @@ namespace DataAccessLayer
                                         inner join MICardType ty on ty.TypeId = trnicrd.TypeId";
                     
                     fromJoinCount = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete=0  AND fwd.TypeId=@stepcount AND trnicrd.StatusId=1  
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete=0  AND fwd.TypeId=@stepcount AND trnicrd.StatusId=@RunningStatusId  
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId = @stepcount                                        
                                         inner join BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) ";
@@ -2463,7 +2495,7 @@ namespace DataAccessLayer
                     whereClause = @"WHERE ";
                     searchFilter = @"( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR trnicrd.RequestId LIKE @SearchTerm))";
                 }
-                else if (dTO.TypeId == 2) //Pending For Approval (IO/ORO/AFSAC Cell)
+                else if (dTO.TypeId == (int)ForwardStatusEnum.Pending) //Pending For Approval (IO/ORO/AFSAC Cell)
                 {
                     allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                     {
@@ -2475,7 +2507,7 @@ namespace DataAccessLayer
                     };
                     selectFields = @"trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName,mreg.Abbreviation RegimentalName";
                     fromJoinClause = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId  AND fwd.TypeId=@stepcount AND fwd.IsComplete = 0 AND trnicrd.StatusId = 1
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId  AND fwd.TypeId=@stepcount AND fwd.IsComplete = 0 AND trnicrd.StatusId = @RunningStatusId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId = @stepcount
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)  
@@ -2485,7 +2517,7 @@ namespace DataAccessLayer
                                         inner join MICardType ty on ty.TypeId = trnicrd.TypeId
                                         left join MRegimental mreg on mreg.RegId = B.RegimentalId";
                     fromJoinCount = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId  AND fwd.TypeId=@stepcount AND fwd.IsComplete = 0 AND trnicrd.StatusId = 1
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId  AND fwd.TypeId=@stepcount AND fwd.IsComplete = 0 AND trnicrd.StatusId = @RunningStatusId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId = @stepcount
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) ";
@@ -2494,7 +2526,7 @@ namespace DataAccessLayer
                     searchFilter = @"( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR trnicrd.RequestId LIKE @SearchTerm))";
 
                 }
-                else if (dTO.TypeId == 3 && dTO.stepcount == 3) //Approved (IO)
+                else if (dTO.TypeId == (int)ForwardStatusEnum.Approved && currentStep == (int)ApplicationStepEnum.PendingApplicationVerifierLevel) //Approved (IO)
                 {
                     allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                     {
@@ -2506,7 +2538,7 @@ namespace DataAccessLayer
                     };
                     selectFields = @"trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName,mreg.Abbreviation RegimentalName";
                     fromJoinClause = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and fwd.FromAspNetUsersId = @UserId and fwd.FwdStatusId=2 and fwd.TypeId=3                                        
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and fwd.FromAspNetUsersId = @UserId and fwd.FwdStatusId=@ApprovedFwdStatusId and fwd.TypeId=@ROOROTypeId                                        
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId                                        
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                                         
@@ -2517,7 +2549,7 @@ namespace DataAccessLayer
                                         left join MRegimental mreg on mreg.RegId = B.RegimentalId";
                     
                     fromJoinCount = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and fwd.FromAspNetUsersId = @UserId and fwd.FwdStatusId=2 and fwd.TypeId=3                                        
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and fwd.FromAspNetUsersId = @UserId and fwd.FwdStatusId=@ApprovedFwdStatusId and fwd.TypeId=@ROOROTypeId                                        
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId                                        
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) ";
@@ -2526,7 +2558,7 @@ namespace DataAccessLayer
                     searchFilter = @"((@SearchTerm IS NULL) OR (B.ServiceNo LIKE @SearchTerm OR trnicrd.RequestId LIKE @SearchTerm))";
 
                 }
-                else if (dTO.TypeId == 3 && dTO.stepcount == 4) //Approved (RO)
+                else if (dTO.TypeId == (int)ForwardStatusEnum.Approved && currentStep == (int)ApplicationStepEnum.ApplicationStatusAtADC) //Approved (RO)
                 {
                     allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                     {
@@ -2538,7 +2570,7 @@ namespace DataAccessLayer
                     };
                     selectFields = @"trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName";
                     fromJoinClause = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=2 AND fwd.TypeId=4
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=@ApprovedFwdStatusId AND fwd.TypeId=@AFSCCellTypeId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) 
@@ -2548,7 +2580,7 @@ namespace DataAccessLayer
                                         inner join MICardType ty on ty.TypeId = trnicrd.TypeId";
                     
                     fromJoinCount = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=2 AND fwd.TypeId=4
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=@ApprovedFwdStatusId AND fwd.TypeId=@AFSCCellTypeId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) ";
@@ -2557,7 +2589,7 @@ namespace DataAccessLayer
                     searchFilter = @"((@SearchTerm IS NULL) OR (B.ServiceNo LIKE @SearchTerm OR trnicrd.RequestId LIKE @SearchTerm))";
 
                 }
-                else if (dTO.stepcount == 5) //for Exported data
+                else if (currentStep == (int)ApplicationStepEnum.Exported) //for Exported data
                 {
                     allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                     {
@@ -2569,7 +2601,7 @@ namespace DataAccessLayer
                     };
                     selectFields = @"trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName,mreg.Abbreviation RegimentalName";
                     fromJoinClause = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=4 and fwd.IsComplete=1 AND trnicrd.StatusId=1
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=@AFSCCellTypeId and fwd.IsComplete=1 AND trnicrd.StatusId=@RunningStatusId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) 
@@ -2580,7 +2612,7 @@ namespace DataAccessLayer
                                         left join MRegimental mreg on mreg.RegId = B.RegimentalId";
 
                     fromJoinCount = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=4 and fwd.IsComplete=1 AND trnicrd.StatusId=1
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and fwd.ToAspNetUsersId = @UserId and fwd.TypeId=@AFSCCellTypeId and fwd.IsComplete=1 AND trnicrd.StatusId=@RunningStatusId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) ";
@@ -2601,7 +2633,7 @@ namespace DataAccessLayer
                     dTO.TypeId = dTO.stepcount - 1;
                     selectFields = @"trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName";
                     fromJoinClause = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=2
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=@ApprovedFwdStatusId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId)
@@ -2611,7 +2643,7 @@ namespace DataAccessLayer
                                         inner join MICardType ty on ty.TypeId = trnicrd.TypeId";
                     
                     fromJoinCount = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=2
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=@ApprovedFwdStatusId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND Afor.ApplyForId=IsNULL(@applyForId,Afor.ApplyForId)";
@@ -2620,7 +2652,7 @@ namespace DataAccessLayer
                     searchFilter = @"((@SearchTerm IS NULL) OR (B.ServiceNo LIKE @SearchTerm OR trnicrd.RequestId LIKE @SearchTerm))";
                 }
             }
-            else if (dTO.stepcount == 7 || dTO.stepcount == 8 || dTO.stepcount == 9 || dTO.stepcount == 10)//Reject From Approval/RO/ORO/AFSAC/Print 
+            else if (rejectedSteps.Contains(currentStep))//Reject From Approval/RO/ORO/AFSAC/Print 
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
@@ -2663,7 +2695,7 @@ namespace DataAccessLayer
                 };
                 selectFields = @"trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,fwd.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId ,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName";
                 fromJoinClause = @"FROM TrnFwds fwd
-                                    inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=4 AND trnicrd.StatusId=1
+                                    inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=@ForwardFwdStatusId AND trnicrd.StatusId=@RunningStatusId
                                     inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId                                    
                                     INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                     inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)    
@@ -2673,7 +2705,7 @@ namespace DataAccessLayer
                                     inner join MICardType ty on ty.TypeId = trnicrd.TypeId";
 
                 fromJoinCount = @"FROM TrnFwds fwd
-                                    inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=4 AND trnicrd.StatusId=1
+                                    inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId=@ForwardFwdStatusId AND trnicrd.StatusId=@RunningStatusId
                                     inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId                                    
                                     INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                     inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) ";
@@ -2693,7 +2725,7 @@ namespace DataAccessLayer
                 };
                 selectFields = @"trnicrd.RegistrationId RegistrationApplyFor,munit.UnitName,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId StepCounter,ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.Id StepId,ty.Name ICardType,trnicrd.RequestId,fwd.Remark,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName";
                 fromJoinClause = @"FROM TrnFwds fwd 
-                                    inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete=0 AND trnicrd.StatusId=1
+                                    inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete=0 AND trnicrd.StatusId=@RunningStatusId
                                     inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId 
                                     INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                     inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) 
@@ -2703,7 +2735,7 @@ namespace DataAccessLayer
                                     inner join MICardType ty on ty.TypeId = trnicrd.TypeId";
                 
                 fromJoinCount = @"FROM TrnFwds fwd 
-                                    inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete=0 AND trnicrd.StatusId=1
+                                    inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete=0 AND trnicrd.StatusId=@RunningStatusId
                                     inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId 
                                     INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                     inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) ";
@@ -2742,6 +2774,18 @@ namespace DataAccessLayer
                         parameters.Add("@Start", dTO.Start, DbType.Int32);
                         parameters.Add("@Length", dTO.Length, DbType.Int32);
                         parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
+
+                        parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+                        parameters.Add("@CompleteStatusId", (byte)RequestStatusEnum.Complete, DbType.Byte);
+                        parameters.Add("@ClosedStatusId", (byte)RequestStatusEnum.Closed, DbType.Byte);
+
+                        parameters.Add("@PendingFwdStatusId", (byte)ForwardStatusEnum.Pending, DbType.Byte);
+                        parameters.Add("@ApprovedFwdStatusId", (byte)ForwardStatusEnum.Approved, DbType.Byte);
+                        parameters.Add("@RejectedFwdStatusId", (byte)ForwardStatusEnum.Rejected, DbType.Byte);
+                        parameters.Add("@ForwardFwdStatusId", (byte)ForwardStatusEnum.Forward, DbType.Byte);
+
+                        parameters.Add("@ROOROTypeId", (byte)UserTypeEnum.RO_ORO);
+                        parameters.Add("@AFSCCellTypeId", (byte)UserTypeEnum.AFSCCell);
 
                         using var multi = await connection.QueryMultipleAsync(sql, parameters);
 
