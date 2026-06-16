@@ -34,7 +34,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
     }
 
 
-    const columns = getColumnsForApprovalForIO(cvalue, JCOOR);
+    const columns = getColumnsForApprovalForIO(cvalue, JCOOR, Type);
     table_Fwd = $("#tbldatatabledata_Fwd").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
@@ -266,7 +266,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
     });
 }
 
-function getColumnsForApprovalForIO(cvalue, JCOOR) {
+function getColumnsForApprovalForIO(cvalue, JCOOR, Type) {
     let columns = [];
     switch (JCOOR) {
         case "0":
@@ -407,7 +407,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                         // Always include the Print Preview button
                         let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-eye mt-2"></i></button>`;
 
-                        if (parseInt($("#spnVBId").html()) == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
+                        if (Type == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
                             html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
                         }
                         // Case 2: Processed + Download
@@ -546,7 +546,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                         // Always include the Print Preview button
                         let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview"><i class="fa fa-eye mt-2"></i></button>`;
 
-                        if (parseInt($("#spnVBId").html()) == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
+                        if (Type == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
                             html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
                         }
                         // Case 2: Processed + Download

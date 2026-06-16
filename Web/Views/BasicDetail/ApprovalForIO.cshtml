@@ -48,7 +48,6 @@
             <span class="d-none" id="spnType">@ViewBag.Type</span>
             <span class="d-none" id="spnStepCounter">@ViewBag.StepCounter</span>
             <span class="d-none" id="spnJCOOR">@ViewBag.jcoor</span>
-            <span class="d-none" id="spnVBId">@(ViewBag.Id ?? 0)</span>
             <span class="d-none" id="spnClaim">@((claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")) ? "Internal Wk Distr" : "")</span>
             <div class="row">
                 <div class="col-xl-12 text-left">
@@ -62,14 +61,14 @@
         <div class="card-body card-body-min-height" >
             <div class="row">
                 <div class="col-xl-12">
-                    @if (ViewBag.dataexport == 5 || ViewBag.dataexport == 4)
+                    @if (ViewBag.StepCounter == (int)ApplicationStepEnum.ApplicationStatusAtADC || ViewBag.StepCounter == (int)ApplicationStepEnum.Exported)
                     {
                         <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
                             <h6 class="mb-3 mb-md-0">
                                 &nbsp;
                             </h6>
                             <div class="d-flex">
-                                @if ((ViewBag.dataexport == 4 || ViewBag.dataexport == 5) && claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))
+                                @if (ViewBag.StepCounter == (int)ApplicationStepEnum.ApplicationStatusAtADC && claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))
                                 {
                                     <button type="button" id="btnDataExportsEncry" class="btn btn-warning font-weight-600 btn-sm mr-2">Data Exports with Encry</button>
                                     <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm">Data Exports without Encry</button>
@@ -80,7 +79,7 @@
                     }
                     <div class="d-flex justify-content-end">
                         
-                        @if (ViewBag.StepCounter == 3 && claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
+                        @if (ViewBag.StepCounter == (int)ApplicationStepEnum.PendingApplicationVerifierLevel && ViewBag.Type == (int)ForwardStatusEnum.Pending && claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
                         {
                             <button type="button" id="btnInternalFwd" class="btn btn-warning font-weight-600 btn-sm mb-2 ml-2">Forward</button>
                         }
