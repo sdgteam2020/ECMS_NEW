@@ -16,6 +16,10 @@ $(document).ready(function () {
         toggleNextButton();
     });
 
+    $('#ddlForOldArmyNoRulePrefix, #ddlForArmyNoRulePrefix').on('change', function () {
+        toggleNextButton();
+    });
+
 
     $("#btnApplicantsPostingout").on("click", function () {
         $("#armynosearchAllName").html("");
@@ -62,134 +66,198 @@ $(document).ready(function () {
     });
 
     $("#btntokenrefresh").on("click", async function () {
-        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
-        $('#btnNext').removeClass("disabled");
+        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg", "ddlForArmyNoRulePrefix");
+        $('#btnNext').removeClass("disabled").prop("disabled", false);
     });
 
     $("#btnNext").on("click", async function () {
-        if ($("#txtApplyForArmyNo").val().length > 7 && $("#txtApplyForArmyNo").val().length < 10) {
+
+        if ($("#ddlForArmyNoRulePrefix").val() == '') {
+            toastr.error("Please select the Prefix.");
+            return;
+        }
+
+        let fullArmyNo = getFullArmyNumber();
+
+        if (fullArmyNo.length > 7 && fullArmyNo.length < 10) {
+
             if (parseInt(OffType) == 1) {
-                if ((parseInt(RegistrationApplyFor) == 2 || parseInt(RegistrationApplyFor) == 3 || parseInt(RegistrationApplyFor) == 4 || parseInt(RegistrationApplyFor) == 10)) {
+                if (
+                    parseInt(RegistrationApplyFor) == 2 ||
+                    parseInt(RegistrationApplyFor) == 3 ||
+                    parseInt(RegistrationApplyFor) == 4 ||
+                    parseInt(RegistrationApplyFor) == 10
+                ) {
                     if (IsWithTokenApply == true) {
                         $("#txtApplyForArmyNo").val("");
-                        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
+                        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg", "ddlForArmyNoRulePrefix");
                     }
                 } else {
                     if (IsToken == true && parseInt(RegistrationApplyFor) == 1) {
                         $("#txtApplyForArmyNo").val("");
-                        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
+                        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg", "ddlForArmyNoRulePrefix");
                     }
                 }
             }
 
             if (lCardType == 4) {
-                if ($("#txtApplyForOldArmyNo").val().length > 7 && $("#txtApplyForOldArmyNo").val().length < 10) {
-                    if ($("#txtApplyForOldArmyNo").val().toUpperCase() == $("#txtApplyForArmyNo").val().toUpperCase()) {
+
+                if ($("#ddlForOldArmyNoRulePrefix").val() == '') {
+                    toastr.error("Please select the Old Prefix.");
+                    return;
+                }
+
+                let OldServiceNo = getFullOldArmyNumber();
+                let NewServiceNo = getFullArmyNumber();
+
+                if (OldServiceNo.length > 7 && OldServiceNo.length < 10) {
+
+                    if (OldServiceNo.toUpperCase() == NewServiceNo.toUpperCase()) {
                         toastr.error("Old Army No and New Army No not same.");
-                    } else {
-                        let OldServiceNo = $("#txtApplyForOldArmyNo").val();
-                        let NewServiceNo = $("#txtApplyForArmyNo").val();
+                        return;
+                    }
 
-                        let OldArmyNoFound = await CheckArmyNo(OldServiceNo);
-                        let NewArmyNoFound = await CheckArmyNo(NewServiceNo);
+                    let OldArmyNoFound = await CheckArmyNo(OldServiceNo);
+                    let NewArmyNoFound = await CheckArmyNo(NewServiceNo);
 
-                        let OldFirstTwo = await checkFirstTwoChars(OldServiceNo);
-                        let NewFirstTwo = await checkFirstTwoChars(NewServiceNo);
+                    let OldFirstTwo = await checkFirstTwoChars(OldServiceNo);
+                    let NewFirstTwo = await checkFirstTwoChars(NewServiceNo);
 
-                        let OldArmyNoSfx = await ChkSfx(OldServiceNo);
-                        let NewArmyNoSfx = await ChkSfx(NewServiceNo);
+                    let OldArmyNoSfx = await ChkSfx(OldServiceNo);
+                    let NewArmyNoSfx = await ChkSfx(NewServiceNo);
 
-                        if (OldArmyNoSfx == false) {
-                            toastr.error("Invalid Old Army No.");
-                        } else if (NewArmyNoSfx == false) {
-                            toastr.error("Invalid New Army No.");
-                        } else if (OldArmyNoFound == false) {
-                            toastr.error("Old Army No not found.");
-                        } else if (NewArmyNoFound == true) {
-                            toastr.error("New Army No is alredy used.");
-                        } else if (OldFirstTwo === '') {
-                            if (NewFirstTwo === '') {
-                                toastr.error("Both Old and New Army No is OR rank.");
-                            } else if (OffType == 2 && (NewFirstTwo === 'IC' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'SS' || NewFirstTwo === 'TA')) {
-                                toastr.error("Please Select Offrs tab.");
-                            } else if (OffType == 1 && NewFirstTwo === 'JC') {
-                                toastr.error("Please Select JCOs/OR tab.");
-                            } else {
-                                CheckArmyNOExist();
-                            }
-                        } else if (OldFirstTwo !== '') {
-                            if (OldFirstTwo === 'IC' && NewFirstTwo === '') {
-                                toastr.error("Permanent Commissioned Officers are not downgraded.");
-                            } else if (OldFirstTwo === 'IC' && NewFirstTwo === 'IC') {
-                                toastr.error("Both Old and New Army No is permanent commissioned officers.");
-                            } else if (OldFirstTwo === 'IC' && (NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA' || NewFirstTwo === 'JC')) {
-                                toastr.error("Permanent Commissioned Officers are not downgraded.");
-                            } else if ((OldFirstTwo === 'SL' || OldFirstTwo === 'TA') && (NewFirstTwo === 'IC' || NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA' || NewFirstTwo === 'JC')) {
-                                toastr.error("SL / TA are not changed Army No.");
-                            } else if ((OldFirstTwo === 'SS' || OldFirstTwo === 'WC') && OffType == 2 && NewFirstTwo !== '' && NewFirstTwo === 'IC') {
-                                toastr.error("Please Select Offrs tab.");
-                            } else if (OldFirstTwo === 'JC' && OffType == 2 && NewFirstTwo !== '' && (NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA')) {
-                                toastr.error("Please Select  Offrs tab.");
-                            } else {
-                                CheckArmyNOExist();
-                            }
+                    if (OldArmyNoSfx == false) {
+                        toastr.error("Invalid Old Army No.");
+                    } else if (NewArmyNoSfx == false) {
+                        toastr.error("Invalid New Army No.");
+                    } else if (OldArmyNoFound == false) {
+                        toastr.error("Old Army No not found.");
+                    } else if (NewArmyNoFound == true) {
+                        toastr.error("New Army No is already used.");
+                    } else if (OldFirstTwo === '') {
+
+                        if (NewFirstTwo === '') {
+                            toastr.error("Both Old and New Army No is OR rank.");
+                        } else if (
+                            OffType == 2 &&
+                            (NewFirstTwo === 'IC' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'SS' || NewFirstTwo === 'TA')
+                        ) {
+                            toastr.error("Please Select Offrs tab.");
+                        } else if (OffType == 1 && NewFirstTwo === 'JC') {
+                            toastr.error("Please Select JCOs/OR tab.");
+                        } else {
+                            CheckArmyNOExist();
+                        }
+
+                    } else if (OldFirstTwo !== '') {
+
+                        if (OldFirstTwo === 'IC' && NewFirstTwo === '') {
+                            toastr.error("Permanent Commissioned Officers are not downgraded.");
+                        } else if (OldFirstTwo === 'IC' && NewFirstTwo === 'IC') {
+                            toastr.error("Both Old and New Army No is permanent commissioned officers.");
+                        } else if (
+                            OldFirstTwo === 'IC' &&
+                            (NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA' || NewFirstTwo === 'JC')
+                        ) {
+                            toastr.error("Permanent Commissioned Officers are not downgraded.");
+                        } else if (
+                            (OldFirstTwo === 'SL' || OldFirstTwo === 'TA') &&
+                            (NewFirstTwo === 'IC' || NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA' || NewFirstTwo === 'JC')
+                        ) {
+                            toastr.error("SL / TA are not changed Army No.");
+                        } else if (
+                            (OldFirstTwo === 'SS' || OldFirstTwo === 'WC') &&
+                            OffType == 2 &&
+                            NewFirstTwo !== '' &&
+                            NewFirstTwo === 'IC'
+                        ) {
+                            toastr.error("Please Select Offrs tab.");
+                        } else if (
+                            OldFirstTwo === 'JC' &&
+                            OffType == 2 &&
+                            NewFirstTwo !== '' &&
+                            (NewFirstTwo === 'SS' || NewFirstTwo === 'SL' || NewFirstTwo === 'WC' || NewFirstTwo === 'TA')
+                        ) {
+                            toastr.error("Please Select Offrs tab.");
+                        } else {
+                            CheckArmyNOExist();
                         }
                     }
+
                 } else {
                     toastr.error("Minimum eight and Maximum nine length of Old Army No.");
                 }
+
             } else {
+
                 if (parseInt(OffType) != 0 && parseInt(RegistrationApplyFor) != 0 && parseInt(lCardType) != 0) {
-                    let ArmyNoSfx = $("#txtApplyForArmyNo").val();
+
+                    let ArmyNoSfx = getFullArmyNumber();
                     let result;
 
                     if (OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
-                        if ($("#txtApplyForArmyNo").val() === $("#aspntokenarmyno").html()) {
+                        if (getFullArmyNumber() === $("#aspntokenarmyno").html()) {
                             result = await ChkSfx(ArmyNoSfx);
                             IsValid = result == false ? 0 : 1;
-                            if (result == false) toastr.error("Invalid Army No.");
+
+                            if (result == false) {
+                                toastr.error("Invalid Army No.");
+                            }
                         } else {
-                            Message = "Please Inset Valid Token Token ArmyNo And Login ArmyNo Not Match";
+                            Message = "Please Insert Valid Token. Token ArmyNo And Login ArmyNo Not Match";
                             IsValid = 0;
                         }
                     }
 
                     if (OffType == 1 && parseInt(RegistrationApplyFor) == 2) {
-                        if ($("#txtApplyForArmyNo").val() != "") {
+                        if (getFullArmyNumber() != "") {
                             result = await ChkSfx(ArmyNoSfx);
                             IsValid = result == false ? 0 : 1;
-                            if (result == false) toastr.error("Invalid Army No.");
+
+                            if (result == false) {
+                                toastr.error("Invalid Army No.");
+                            }
                         } else {
-                            Message = "Please Inset Token";
+                            Message = "Please Insert Token";
                             IsValid = 0;
                         }
                     } else if (OffType == 1 && parseInt(RegistrationApplyFor) != 1) {
-                        if ($("#txtApplyForArmyNo").val() != "") {
+                        if (getFullArmyNumber() != "") {
                             result = await ChkSfx(ArmyNoSfx);
                             IsValid = result == false ? 0 : 1;
-                            if (result == false) toastr.error("Invalid Old Army No.");
+
+                            if (result == false) {
+                                toastr.error("Invalid Army No.");
+                            }
                         } else {
                             Message = "Please Enter Army No";
                             IsValid = 0;
                         }
                     } else if (OffType == 2) {
-                        if ($("#txtApplyForArmyNo").val() == "") {
+                        if (getFullArmyNumber() == "") {
                             IsValid = 0;
                             Message = "Please Enter Army No";
                         } else {
                             result = await ChkSfx(ArmyNoSfx);
                             IsValid = result == false ? 0 : 1;
-                            if (result == false) toastr.error("Invalid Old Army No.");
+
+                            if (result == false) {
+                                toastr.error("Invalid Army No.");
+                            }
                         }
                     }
 
                     if (IsValid == 1) {
                         CheckArmyNOExist();
+                    } else if (Message != "") {
+                        toastr.error(Message);
                     }
+
                 } else {
                     toastr.error("Invalid Selected");
                 }
             }
+
         } else {
             toastr.error("Minimum eight and Maximum nine length of Army No.");
         }
@@ -236,7 +304,10 @@ function GetAllRegistrationApplyFor(Id) {
                     $("#btnIcardFor").html(listItem);
                     $("#icardrequestfor").html("");
 
-                    $('.applyforoffs').on("click", function () {
+                    $('.applyforoffs').on("click", function () {   
+                        $("#spnNext").addClass("d-none");
+                        clearArmyNoFields();
+                        hideArmyNoSection();
                         hideOldArmyNo();
                         setNewArmyNoPlaceholder("Enter Army No");
 
@@ -380,15 +451,67 @@ function GetByArmyNoIsToken(ArmyNo) {
                                 showArmyNoSection();
                                 showNewArmyNo();
 
-                                $("#txtApplyForArmyNo").val($("#aspntokenarmyno").html());
-                                $('#txtApplyForArmyNo').attr('readonly', true);
+                                var tokenArmyNo = $("#aspntokenarmyno").html();
+                                var prefix = getArmyPrefix(tokenArmyNo);
+                                 
+                                if (lCardType == 4) {
+                                    showOldArmyNo(); 
+                                    // Populate OLD Army No
+                                    if (prefix != '') {
 
-                                if (lCardType != 4) {
-                                    hideOldArmyNo();
-                                } else {
-                                    showOldArmyNo();
+                                        $("#ddlForOldArmyNoRulePrefix")
+                                            .val(prefix)
+                                            .prop("disabled", true);
+
+                                        $("#txtApplyForOldArmyNo")
+                                            .val(tokenArmyNo.substring(prefix.length))
+                                            .prop("readonly", true);
+
+                                    } else {
+
+                                        $("#ddlForOldArmyNoRulePrefix")
+                                            .val('No(OR)')
+                                            .prop("disabled", true);
+
+                                        $("#txtApplyForOldArmyNo")
+                                            .val(tokenArmyNo)
+                                            .prop("readonly", true);
+                                    }
+
+                                    // Keep NEW Army No empty
+                                    $("#ddlForArmyNoRulePrefix")
+                                        .val("")
+                                        .prop("disabled", false);
+
+                                    $("#txtApplyForArmyNo")
+                                        .val("")
+                                        .prop("readonly", false);
+
                                 }
+                                else {
+                                    hideOldArmyNo();
+                                    // Existing logic for normal requests
+                                    if (prefix != '') {
 
+                                        $("#ddlForArmyNoRulePrefix")
+                                            .val(prefix)
+                                            .prop("disabled", true);
+
+                                        $("#txtApplyForArmyNo")
+                                            .val(tokenArmyNo.substring(prefix.length))
+                                            .prop("readonly", true);
+
+                                    } else {
+
+                                        $("#ddlForArmyNoRulePrefix")
+                                            .val('No(OR)')
+                                            .prop("disabled", true);
+
+                                        $("#txtApplyForArmyNo")
+                                            .val(tokenArmyNo)
+                                            .prop("readonly", true);
+                                    }
+                                }
                                 $('#btnNext').removeClass("disabled");
                             }
                         }
@@ -414,11 +537,13 @@ function GetByArmyNoIsToken(ArmyNo) {
 }
 
 function CheckArmyNOExist() {
+    let OldServiceNo = getFullOldArmyNumber();
+    let NewServiceNo = getFullArmyNumber();
     $.ajax({
         url: "/BasicDetail/GetData",
         type: "POST",
         data: {
-            "ICNumber": lCardType == 4 ? encryptPayloadData($("#txtApplyForOldArmyNo").val()) : encryptPayloadData($("#txtApplyForArmyNo").val()),
+            "ICNumber": lCardType == 4 ? encryptPayloadData(OldServiceNo) : encryptPayloadData(NewServiceNo),
             "lCardType": lCardType
         },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
@@ -436,8 +561,8 @@ function CheckArmyNOExist() {
                     confirmButtonText: "Yes, submit it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        var encryptedArmyNo = encryptData($("#txtApplyForArmyNo").val(), skey);
-                        var encryptedOldArmyNo = encryptData($("#txtApplyForOldArmyNo").val(), skey);
+                        var encryptedArmyNo = encryptData(NewServiceNo, skey);
+                        var encryptedOldArmyNo = encryptData(OldServiceNo, skey);
                         var encryptedOffType = encryptData(OffType.toString(), skey);
                         var encryptedRegistrationApplyFor = encryptData(RegistrationApplyFor.toString(), skey);
                         var encryptedlCardType = encryptData(lCardType.toString(), skey);
@@ -556,15 +681,18 @@ function getArmyPrefixRules(ApplyForId) {
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response && Array.isArray(response)) {
-                // Clear existing options
+
                 $('#ddlForArmyNoRulePrefix').empty();
+                $('#ddlForOldArmyNoRulePrefix').empty();
+                $("#ddlForArmyNoRulePrefix").prop("disabled", false);
+                $('#ddlForOldArmyNoRulePrefix').prop("disabled", false);
 
-                // Add default "Select Prefix" option
                 $('#ddlForArmyNoRulePrefix').append('<option value="">Select Prefix</option>');
+                $('#ddlForOldArmyNoRulePrefix').append('<option value="">Select Prefix</option>');
 
-                // Loop through the response and append options to the dropdown
                 response.forEach(function (item) {
                     $('#ddlForArmyNoRulePrefix').append('<option value="' + item.Prefix + '">' + item.Prefix + '</option>');
+                    $('#ddlForOldArmyNoRulePrefix').append('<option value="' + item.Prefix + '">' + item.Prefix + '</option>');
                 });
             } else {
                 // Handle error if response is not an array or is empty
@@ -614,6 +742,7 @@ function clearArmyNoFields() {
     $("#txtApplyForArmyNo").val("");
     $("#txtApplyForOldArmyNo").val("");
     $("#ddlForArmyNoRulePrefix").val("");
+    $("#ddlForOldArmyNoRulePrefix").val("");
 }
 
 function resetArmyNoUi() {
@@ -630,9 +759,57 @@ function setNewArmyNoPlaceholder(text) {
 }
 
 function toggleNextButton() {
-    if ($("#txtApplyForArmyNo").val().length > 0) {
-        $("#btnNext").removeClass("disabled");
+    var newPrefix = $("#ddlForArmyNoRulePrefix").val();
+    var newArmyNo = $("#txtApplyForArmyNo").val().trim();
+
+    var oldPrefix = $("#ddlForOldArmyNoRulePrefix").val();
+    var oldArmyNo = $("#txtApplyForOldArmyNo").val().trim();
+
+    var isChangeArmyNo = parseInt(lCardType) === 4;
+
+    var validNew = newPrefix !== "" || newArmyNo.length > 0;
+    var validOld = oldPrefix !== "" || oldArmyNo.length > 0;
+
+    if (isChangeArmyNo) {
+        if (validNew && validOld) {
+            $("#btnNext").removeClass("disabled").prop("disabled", false);
+        } else {
+            $("#btnNext").addClass("disabled").prop("disabled", true);
+        }
     } else {
-        $("#btnNext").addClass("disabled");
+        if (validNew) {
+            $("#btnNext").removeClass("disabled").prop("disabled", false);
+        } else {
+            $("#btnNext").addClass("disabled").prop("disabled", true);
+        }
     }
+}
+
+function getFullArmyNumber() {
+    if ($("#ddlForArmyNoRulePrefix").val() != 'No(OR)')
+        return $("#ddlForArmyNoRulePrefix").val() + $("#txtApplyForArmyNo").val();
+    else
+        return $("#txtApplyForArmyNo").val();
+}
+
+function getFullOldArmyNumber() {
+    if ($("#ddlForOldArmyNoRulePrefix").val() != 'No(OR)')
+        return $("#ddlForOldArmyNoRulePrefix").val() + $("#txtApplyForOldArmyNo").val();
+    else
+        return $("#txtApplyForOldArmyNo").val();
+}
+
+function getArmyPrefix(armyNo) {
+
+    if (!armyNo || armyNo.length < 2) {
+        return "";
+    }
+
+    // Remove last suffix character
+    let withoutSuffix = armyNo.slice(0, -1);
+
+    // Extract alphabets from start
+    let match = withoutSuffix.match(/^[A-Za-z]+/);
+
+    return match ? match[0].toUpperCase() : "";
 }

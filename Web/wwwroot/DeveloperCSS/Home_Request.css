@@ -165,9 +165,7 @@ html, body {
 
 /* Main white panel */
 .request-shell {
-    width: 100%;
-    min-height: calc(100vh - 210px);
-    max-height: calc(100vh - 210px);
+    width: 100%;    
     overflow: hidden;
     padding: 12px 22px !important;
     border-radius: 8px;

@@ -90,7 +90,7 @@
                     </div>
 
                 </div>
-                <div class="col-md-12 col-sm-6 text-center mt-4 ApplyCard d-none" id="btnarmytype">
+                <div class="col-md-12 col-sm-6 text-center ApplyCard d-none" id="btnarmytype">
                     <button type="button" class="btn btn-outline-primary btn1" id="btnaddOffrs">Offrs</button>
                     <button type="button" class="btn btn-outline-primary btn1" id="btnJCOs">JCOs/OR </button>
                 </div>
@@ -100,45 +100,47 @@
                 <div class="col-md-12 col-sm-6 text-center d-none1 ApplyCard" id="icardrequestfor">
                 </div>
                 <div class="col-12 mt-4 ApplyCard d-none" id="armyNoSection">
-
-                    <div class="army-field d-none" id="oldArmyNoWrapper">
-                        <label for="txtApplyForOldArmyNo">Old Army No</label>
-                        <input class="form-control army-input alpha-num-only"
-                               id="txtApplyForOldArmyNo"
-                               placeholder="Enter Old Army No"
-                               maxlength="9"
-                               minlength="8"
-                               data-val="true"
-                               data-val-regex-pattern="^[\w]+$" />
-                    </div>
-
                     <div class="army-form-card">
                         <div class="army-form-header">
                             <h5>Enter Army Number</h5>
-                            <p>Provide your Army Number with a prefix and suffix, if applicable.</p>
+                            <p>Provide Army Number with prefix and suffix, if applicable.</p>
                         </div>
 
-                        <div class="army-field" id="newArmyNoWrapper">
+                        <!-- Old Army No -->
+                        <div class="army-field d-none" id="oldArmyNoWrapper">
+                            <label>Old Army No</label>
 
                             <div class="army-combo">
-                                <select id="ddlForArmyNoRulePrefix" class="army-prefix" aria-label="Select Prefix for the Army No.">
+                                <select id="ddlForOldArmyNoRulePrefix" class="army-prefix">
+                                </select>
+
+                                <input class="army-input-combo alpha-num-only spnarmynoformula"
+                                       id="txtApplyForOldArmyNo"
+                                       placeholder="Enter Old Army No"
+                                       maxlength="9"
+                                       minlength="8" />
+                            </div>
+                        </div>
+
+                        <!-- New Army No -->
+                        <div class="army-field" id="newArmyNoWrapper">
+                            <label>Army No</label>
+
+                            <div class="army-combo">
+                                <select id="ddlForArmyNoRulePrefix" class="army-prefix">
                                 </select>
 
                                 <input class="army-input-combo alpha-num-only spnarmynoformula"
                                        id="txtApplyForArmyNo"
                                        placeholder="Enter Army No"
                                        maxlength="9"
-                                       minlength="8"
-                                       data-val="true"
-                                       data-val-required="Army No is required."
-                                       data-val-regex="This special chars and space not allowed for security reasons."
-                                       data-val-regex-pattern="^[\w]+$" />
+                                       minlength="8" />
                             </div>
-
-                            <small class="army-help">
-                                Example: ICXXXXXP, JC391516M, 15698645A
-                            </small>
                         </div>
+
+                        <small class="army-help">
+                            Example: ICXXXXXP, JC391516M, 15698645A
+                        </small>
                     </div>
 
 
