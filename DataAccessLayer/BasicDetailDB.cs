@@ -2355,7 +2355,6 @@ namespace DataAccessLayer
                     var parameters = new DynamicParameters();
                     parameters.Add("@UserId", dTO.UserId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@stepcount", dTO.stepcount, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@TypeId", dTO.TypeId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@applyfor", applyfor, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Start", dTO.Start, DbType.Int32);
                     parameters.Add("@Length", dTO.Length, DbType.Int32);

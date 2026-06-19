@@ -4,11 +4,10 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();
-    let VBId = $("#spnVBId").html();
 
     applyDataTableSearchValidation('#tbldatatabledata_Fwd');
 
-    BindData(StepCounter, JCOOR, VBId, function () {
+    BindData(StepCounter, JCOOR, function () {
     });
 
     $(window).on('resize', function () {
@@ -18,7 +17,7 @@ $(function () {
         }
     });
 });
-function BindData(StepCounter, JCOOR, VBId) {
+function BindData(StepCounter, JCOOR) {
     if ($.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
         // Destroy the DataTable and clear the table content
         $("#tbldatatabledata_Fwd").DataTable().clear().destroy(); // Clear and destroy DataTable properly
@@ -215,7 +214,7 @@ function BindData(StepCounter, JCOOR, VBId) {
                     let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-ICardPrintPreviewByRequestId"><i class="fa fa-eye mt-2"></i></button>`;
 
                     // Case 1: Editable + Forward
-                    if ((row.StepCounter == 1 || row.StepCounter == 7 || row.StepCounter == 8 || row.StepCounter == 9 || row.StepCounter == 10) && row.IsLock == false) //(VBId == 0 || VBId == 1 || VBId == 11 || row.IsFwdStatusId == 3)
+                    if ((row.StepCounter == 1 || row.StepCounter == 7 || row.StepCounter == 8 || row.StepCounter == 9 || row.StepCounter == 10) && row.IsLock == false)
                     {
                         html += `<a href="/BasicDetail/BasicDetail?Id=${row.EncryptedId}" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
                                 <button class="btn btn-icon btn-round btn-primary mr-1 cls-fwdrecord"><i class="fa fa-step-forward"></i></button>`;

@@ -357,11 +357,10 @@ namespace DataAccessLayer
                     await db.ExecuteAsync(query, parameters4, transaction: transaction);
 
 
-                    var insertApplClose = @$" INSERT INTO TrnApplClose (BasicDetailId, ReasonId, Authority, Remarks, RequestId, IsActive, Updatedby, UpdatedOn, UserId)
-                                         VALUES (@BasicDetailId, @ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @Updatedby, @UpdatedOn, @UserId);";
+                    var insertApplClose = @$" INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, Updatedby, UpdatedOn, UserId)
+                                         VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @Updatedby, @UpdatedOn, @UserId);";
 
                     var parameters3 = new DynamicParameters();
-                    parameters3.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                     parameters3.Add("@ReasonId", ReasonId, DbType.Byte, ParameterDirection.Input);
                     parameters3.Add("@Authority", Data.AppointmentName, DbType.String, ParameterDirection.Input, 50);
                     parameters3.Add("@Remarks", Data.Remark, DbType.String, ParameterDirection.Input, 100);

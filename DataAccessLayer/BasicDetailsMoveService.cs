@@ -91,8 +91,9 @@ namespace DataAccessLayer
                         bs.NameAsPerRecord, bs.RegimentalId, bs.FName, bs.LName,
                         bs.PreviousBasicDetailId, bs.IsLock
                     FROM dbo.BasicDetails bs
-                    INNER JOIN TrnICardRequest req on req.BasicDetailId = bs.BasicDetailId and req.StatusId =2
-                    INNER JOIN TrnDistributeCards dist on dist.RequestId = req.RequestId
+                    INNER JOIN TrnICardRequest req on req.BasicDetailId = bs.BasicDetailId and req.StatusId IN (2,3)
+                    LEFT JOIN TrnDistributeCards dist on dist.RequestId = req.RequestId
+                    LEFT JOIN TrnApplClose appcl on appcl.RequestId = req.RequestId
                     ORDER BY bs.BasicDetailId;
                 ",
                     new { BatchSize = batchSize },

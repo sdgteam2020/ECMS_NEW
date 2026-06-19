@@ -96,12 +96,11 @@ namespace DataAccessLayer
             try
             {
                 // SQL query to insert a new record into the TrnApplClose table.
-                var insertSql = "INSERT INTO TrnApplClose (BasicDetailId, ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId) " +
-                                "VALUES (@BasicDetailId, @ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId);";
+                var insertSql = "INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId) " +
+                                "VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId);";
 
                 // Creating dynamic parameters for the insert query.
                 var parameters = new DynamicParameters();
-                parameters.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@ReasonId", Data.ReasonId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@Authority", Data.Authority, DbType.String, ParameterDirection.Input, 50);
                 parameters.Add("@Remarks", Data.Remarks, DbType.String, ParameterDirection.Input, 50);

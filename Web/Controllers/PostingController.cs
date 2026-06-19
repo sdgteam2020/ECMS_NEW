@@ -337,8 +337,6 @@ namespace Web.Controllers
                     closeResponse = await _iPostingBL.BeforePostingOutCheckedInputData(trnPostingOut);
                     if (closeResponse.Result == true)
                     {
-                        trnPostingOut.BasicDetailId = closeResponse.BasicDetailId;
-
                         // If it's a new record, use UpdateForPosting method (this handles both add and update)
                         bool result = await _iPostingBL.UpdateForPosting(trnPostingOut);  // Attempt to add or update the record
                         if (result == true)
@@ -574,8 +572,7 @@ namespace Web.Controllers
                     // Check if the application close record already exists
                     if (closeResponse.Result == true)
                     {
-                        applClose.BasicDetailId = closeResponse.BasicDetailId;
-                        
+                    
                         bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(applClose);
                         if (reuslt == true)
                         {

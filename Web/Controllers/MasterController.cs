@@ -3256,7 +3256,7 @@ namespace Web.Controllers
             {
                 // Defensive FK usage check before deletion
                 DTORankIdCheckInFKTableResponse? dTORankIdCheckIn = await unitOfWork.Rank.RankIdCheckInFKTable(dTO.RankId);
-                if (dTORankIdCheckIn != null && (dTORankIdCheckIn.TotalBD > 0 || dTORankIdCheckIn.TotalBDT > 0 || dTORankIdCheckIn.TotalUP >0))
+                if (dTORankIdCheckIn != null && (dTORankIdCheckIn.TotalBD > 0 || dTORankIdCheckIn.TotalBD_2 > 0 || dTORankIdCheckIn.TotalBDT > 0 || dTORankIdCheckIn.TotalUP >0))
                 {
                     // In-use sentinel value expected by client
                     return Json(5);

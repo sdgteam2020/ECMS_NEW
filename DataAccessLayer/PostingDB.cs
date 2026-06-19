@@ -35,10 +35,10 @@ namespace DataAccessLayer
             {
 
                 string query = @"select res.Reason,Authority,CONVERT (varchar(10),Cast(SOSDate as date), 103) SOSDate,CONVERT (varchar(10),Cast(pout.UpdatedOn as date), 103) UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId,
-                                    unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank
+                                    unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,ISNULL(basic.ServiceNo, basi2.ServiceNo) AS ServiceNo,basic.FName AS FName_1,basic.LName AS LName_1,basi2.FName AS FName_2,basi2.LName AS LName_2,ranksmain.RankAbbreviation Rank
                                     ,user3.DomainId DispatchUpdatedBy,pout.DispatchedOn,pout.DispatchUpdatedOn,pout.RefNo
                                     from TrnPostingOut pout
-                                    inner join MPostingReason res on pout.ReasonId=res.Id
+                                    inner join MPostingReason res on res.Id=pout.ReasonId
                                     inner join AspNetUsers user1 on user1.Id=pout.FromAspNetUsersId
                                     inner join AspNetUsers user2 on user2.Id=pout.ToAspNetUsersId
                                     left join AspNetUsers user3 on user3.Id=pout.DispatchUpdatedBy
@@ -49,14 +49,23 @@ namespace DataAccessLayer
                                     inner join UserProfile prof1 on prof1.UserId=pout.FromUserID
                                     inner join MRank ranks on ranks.RankId=prof1.RankId
                                     inner join UserProfile prof2 on prof2.UserId=pout.ToUserID
-                                    inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId
-                                    inner join MRank ranksmain on ranksmain.RankId=basic.RankId
+                                    inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId
+                                    LEFT JOIN BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId
+                                    LEFT JOIN AFSAC2.dbo.BasicDetails basi2 on basi2.BasicDetailId=trnicardr.BasicDetailId
+                                    inner join MRank ranksmain on ranksmain.RankId=ISNULL(basic.RankId, basi2.RankId)
                                     where pout.FromAspNetUsersId= @AspNetUsersId
                                     order by pout.Id desc";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTOPostingOutDetilsResponse>(query, new { AspNetUsersId });
-
+                    if (ret != null)
+                    {
+                        foreach (var item in ret)
+                        {
+                            item.FName = item.FName_1 ?? item.FName_2;
+                            item.LName = item.LName_1 ?? item.LName_2;
+                        }
+                    }
                     return ret.ToList();
 
                 }
@@ -141,7 +150,7 @@ namespace DataAccessLayer
                 string CanAddDispatchDetailQr = @$"{(PostingTy == "PostingIn" ? "0" : "isnull((Select 1 from TrnPostingOut where Id = (Select MAX(Id) from TrnPostingOut where RequestId = pout.RequestId and FromUnitID = pout.FromUnitID) and Id = pout.Id and DispatchedOn is null),0)")}";
 
                 string query = @$"pout.Id,res.Reason,Authority,SOSDate,pout.UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId,
-                                unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,basic.ServiceNo,basic.FName,basic.LName,ranksmain.RankAbbreviation Rank 
+                                unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,ISNULL(basic.ServiceNo, basic_2.ServiceNo) AS ServiceNo,basic.FName AS FName_1,basic.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ranksmain.RankAbbreviation Rank 
                                 ,user3.DomainId DispatchUpdatedBy,pout.DispatchedOn,pout.DispatchUpdatedOn,pout.RefNo,{CanAddDispatchDetailQr} CanAddDispatchDetail
 							    from TrnPostingOut pout
                                 inner join MPostingReason res on pout.ReasonId=res.Id 
@@ -154,10 +163,12 @@ namespace DataAccessLayer
                                 inner join MUnit unit2 on unit2.UnitId=mapunit2.UnitId 
                                 inner join UserProfile prof1 on prof1.UserId=pout.FromUserID 
                                 inner join MRank ranks on ranks.RankId=prof1.RankId 
-                                inner join UserProfile prof2 on prof2.UserId=pout.ToUserID 
-                                inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId 
-                                inner join MRank ranksmain on ranksmain.RankId=basic.RankId 
-                                where pout.{(PostingTy == "PostingIn" ? "ToUnitID" : "FromUnitID")} = @MapUnitId and basic.ApplyForId = @Type and basic.ServiceNo like '%' + @SearchTerm + '%'";
+                                inner join UserProfile prof2 on prof2.UserId=pout.ToUserID
+                                inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId
+                                LEFT join BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId = @Type
+                                LEFT join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId AND basic_2.ApplyForId = @Type
+                                inner join MRank ranksmain on ranksmain.RankId= ISNULL(basic.RankId, basic_2.RankId)
+                                where pout.{(PostingTy == "PostingIn" ? "ToUnitID" : "FromUnitID")} = @MapUnitId  AND (@SearchTerm IS NULL OR basic.ServiceNo like @SearchTerm OR basic_2.ServiceNo like @SearchTerm )";
 
                 query = $@"
                             WITH RecordCTE AS (
@@ -167,47 +178,33 @@ namespace DataAccessLayer
                             WHERE RowNum BETWEEN @Offset AND @Limit;
 
                             select count(1) from TrnPostingOut pout
-                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId
-                            where pout.{(PostingTy == "PostingIn" ? "ToUnitID" : "FromUnitID")} = @MapUnitId and basic.ApplyForId = @Type;
+                            inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId
+                            LEFT join BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId = @Type
+                            LEFT join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId AND basic_2.ApplyForId = @Type
+                            where pout.{(PostingTy == "PostingIn" ? "ToUnitID" : "FromUnitID")} = @MapUnitId ;
                         ";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     // Parameters for SQL query
-                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue.Trim()}%";
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
                     parameters.Add("@MapUnitId", UnitMapId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Type", Type, DbType.Int32, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
-                    var records = (await ret.ReadAsync<DTOPostingOutDetilsResponse>()).Select(
-                        record => new DTOPostingOutDetilsResponse(){ 
-                            Id = _protector.Protect(record.Id.ToString()),
-                            ServiceNo = record.ServiceNo,
-                            FName = record.FName,
-                            LName = record.LName,
-                            Rank = record.Rank,
-                            Reason = record.Reason,
-                            Authority = record.Authority,
-                            SOSDate = record.SOSDate,
-                            UpdatedOn = record.UpdatedOn,
-                            FromDomainId = record.FromDomainId,
-                            FromUnitName = record.FromUnitName,
-                            FromArmyNO = record.FromArmyNO,
-                            FromName = record.FromName,
-                            FromRankName = record.FromRankName,
-                            ToDomainId = record.ToDomainId,
-                            ToUnitName = record.ToUnitName,
-                            ToArmyNO = record.ToArmyNO,
-                            DispatchedOn = record.DispatchedOn,
-                            RefNo = record.RefNo,
-                            DispatchUpdatedOn = record.DispatchUpdatedOn,
-                            DispatchUpdatedBy = record.DispatchUpdatedBy,
-                            CanAddDispatchDetail = record.CanAddDispatchDetail
-                        }
-                        ).ToList();
+                    var records = (await ret.ReadAsync<DTOPostingOutDetilsResponse>()).ToList();
+
+                    foreach (var item in records)
+                    {
+                        item.Id = _protector.Protect(item.Id.ToString());
+                        item.FName = item.FName_1 ?? item.FName_2;
+                        item.LName = item.LName_1 ?? item.LName_2;
+                    }
+
                     var totalRecords = (await ret.ReadAsync<int>()).Single();
                     responseData.data = records;
                     responseData.draw = dTO.Draw;
@@ -240,7 +237,7 @@ namespace DataAccessLayer
                                 ,muni.UnitName,muni.Suffix,muni.Sus_no,mapunit.UnitMapId FromUnitID,users.Id FromAspNetUsersId,pro.userId FromUserID,
                                 COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId
                                 from BasicDetails basi
-                                inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId
+                                inner join TrnICardRequest trnicardr on trnicardr.BasicDetailId=basi.BasicDetailId AND trnicardr.StatusId=1
                                 inner join TrnDomainMapping trndom on trndom.id=trnicardr.TrnDomainMappingId
                                 inner join MRank ranks on ranks.RankId=basi.RankId
                                 inner join MApplyFor appl on appl.ApplyForId=basi.ApplyForId
@@ -252,7 +249,7 @@ namespace DataAccessLayer
                                 inner join MapUnit mapunit on mapunit.UnitMapId=basi.UnitId
                                 inner join MUnit muni on muni.UnitId=mapunit.UnitId
                                 left join TrnFwds fwd on fwd.RequestId=trnicardr.RequestId
-                                where basi.ServiceNo=@ArmyNo and trnicardr.StatusId=1
+                                where basi.ServiceNo=@ArmyNo 
                                 GROUP BY 
                                     basi.BasicDetailId,
                                     trnicardr.RequestId,
@@ -310,9 +307,9 @@ namespace DataAccessLayer
             try
             {
                 // Insert new posting record
-                var insertSql = @$" INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, BasicDetailId, RequestId, TrnFwdId,DispatchUpdatedBy,DispatchUpdatedOn,DispatchedOn,RefNo)
+                var insertSql = @$" INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, RequestId, TrnFwdId,DispatchUpdatedBy,DispatchUpdatedOn,DispatchedOn,RefNo)
                                 OUTPUT INSERTED.Id 
-                                VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @BasicDetailId, @RequestId, @TrnFwdId,{(Data.DispatchedOn.HasValue ? "@Updatedby"  : "null")},{(Data.DispatchedOn.HasValue ? "@UpdatedOn" : "null")},@DispatchedOn,@RefNo );";
+                                VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @RequestId, @TrnFwdId,{(Data.DispatchedOn.HasValue ? "@Updatedby"  : "null")},{(Data.DispatchedOn.HasValue ? "@UpdatedOn" : "null")},@DispatchedOn,@RefNo );";
                 var parameters = new DynamicParameters();
                 parameters.Add("@ReasonId", Data.ReasonId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@Authority", Data.Authority, DbType.String, ParameterDirection.Input,50);
@@ -326,7 +323,6 @@ namespace DataAccessLayer
                 parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@SOSDate", Data.SOSDate, DbType.DateTime, ParameterDirection.Input);
-                parameters.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@TrnFwdId", Data.TrnFwdId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@TrnFwdId", Data.TrnFwdId, DbType.Int32, ParameterDirection.Input);
@@ -415,7 +411,8 @@ namespace DataAccessLayer
 
                 string selectFields = @"appcl.UpdatedOn,bd.ServiceNo,mr.RankAbbreviation as RankName,bd.FName,bd.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority";
                 string fromJoinClause = @"from TrnApplClose appcl
-                                        inner join BasicDetails bd on bd.BasicDetailId=appcl.BasicDetailId and bd.UnitId =@UnitMapId
+                                        inner join TrnICardRequest trnicardr on trnicardr.RequestId=appcl.RequestId
+                                        inner join BasicDetails bd on bd.BasicDetailId=trnicardr.BasicDetailId and bd.UnitId =@UnitMapId
                                         inner join MRank mr on mr.RankId = bd.RankId
                                         inner join MApplyFor mappl on mappl.ApplyForId = bd.ApplyForId
                                         inner join MPostingReason mpr on mpr.Id= appcl.ReasonId";

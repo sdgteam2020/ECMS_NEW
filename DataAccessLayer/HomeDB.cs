@@ -236,19 +236,23 @@ namespace DataAccessLayer
                 case "Posting Out":
                     query = @"declare @ToPostingOutOffrs int=0 declare @ToPostingOutJCO int=0  
                             select @ToPostingOutOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout
-                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromUnitId=@UnitMapId and basic.ApplyForId=1 
+                            inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId AND pout.FromUnitId=@UnitMapId
+                            inner join BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId=1 
                           
                             select @ToPostingOutJCO=COUNT(distinct pout.Id) from TrnPostingOut pout
-                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.FromUnitId=@UnitMapId and basic.ApplyForId=2 
+                            inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId AND pout.FromUnitId=@UnitMapId
+                            inner join BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId=2 
                             select @ToPostingOutOffrs ToPostingOutOffrs,@ToPostingOutJCO ToPostingOutJCO";
                     break;
                 case "Posting In":
                     query = @"declare @ToPostingInOffrs int=0 declare @ToPostingInJCO int=0 
                             select @ToPostingInOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout 
-                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToUnitId=@UnitMapId and basic.ApplyForId=1 
+                            inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId AND pout.ToUnitId=@UnitMapId
+                            inner join BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId=1 
                           
                             select @ToPostingInJCO=COUNT(distinct pout.Id) from TrnPostingOut pout 
-                            inner join BasicDetails basic on basic.BasicDetailId=pout.BasicDetailId where pout.ToUnitId=@UnitMapId and basic.ApplyForId=2 
+                            inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId AND pout.ToUnitId=@UnitMapId
+                            inner join BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId=2 
                             select @ToPostingInOffrs ToPostingInOffrs,@ToPostingInJCO ToPostingInJCO";
                     break;
             }
@@ -318,10 +322,12 @@ namespace DataAccessLayer
                             --Closed--
                             declare @ToClosedOffrs int=0 declare @ToClosedJCO int=0
                             select @ToClosedOffrs=COUNT(appcl.Id) from TrnApplClose appcl
-                            inner join BasicDetails bs on bs.BasicDetailId=appcl.BasicDetailId AND bs.UnitId =@UnitMapId AND bs.ApplyForId=1
+                            inner join TrnICardRequest req on req.RequestId=appcl.RequestId
+                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.UnitId =@UnitMapId AND bs.ApplyForId=1
 
                             select @ToClosedJCO=COUNT(appcl.Id) from TrnApplClose appcl
-                            inner join BasicDetails bs on bs.BasicDetailId=appcl.BasicDetailId and bs.UnitId =@UnitMapId AND bs.ApplyForId=2
+                            inner join TrnICardRequest req on req.RequestId=appcl.RequestId
+                            inner join BasicDetails bs on bs.BasicDetailId=req.BasicDetailId and bs.UnitId =@UnitMapId AND bs.ApplyForId=2
 
                             --Completed--
                             declare @ToCompletedOffrs int=0 declare @ToCompletedJCO int=0

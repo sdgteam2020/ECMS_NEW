@@ -293,14 +293,14 @@ namespace Web.Controllers
                 // Case 2: If stepcount > 0 but JCOOR is null/empty
                 else if (string.IsNullOrEmpty(dTORecord.JCOOR))
                 {
-                    dTORecord.applyForId = 1;
+                    dTORecord.applyForId = (int)ApplyForEnum.Officers;
                     var allrecord = await basicDetailBL.GetALLForIcardSttaus(dTORecord);
                     return Json(allrecord);
                 }
                 // Case 3: Otherwise, JCOOR is present → set applyForId = 2
                 else
                 {
-                    dTORecord.applyForId = 2;
+                    dTORecord.applyForId = (int)ApplyForEnum.JCO_ORs;
                     var allrecord = await basicDetailBL.GetALLForIcardSttaus(dTORecord);
                     return Json(allrecord);
                 }
@@ -495,14 +495,14 @@ namespace Web.Controllers
                 // If JCOOR == "1" → applyForId = 1 (fetch one type of dataset)
                 if (dTORecord.JCOOR == "1")
                 {
-                    dTORecord.applyForId = 1;
+                    dTORecord.applyForId = (int)ApplyForEnum.Officers;
                     var allrecord = await basicDetailBL.GetALLBasicDetail(dTORecord);
                     return Json(allrecord);
                 }
                 // Otherwise → applyForId = 2 (fetch alternative dataset)
                 else
                 {
-                    dTORecord.applyForId = 2;
+                    dTORecord.applyForId = (int)ApplyForEnum.JCO_ORs;
                     var allrecord = await basicDetailBL.GetALLBasicDetail(dTORecord);
                     return Json(allrecord);
                 }

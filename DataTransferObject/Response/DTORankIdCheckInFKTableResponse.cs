@@ -9,6 +9,7 @@ namespace DataTransferObject.Response
     public class DTORankIdCheckInFKTableResponse
     {
         public int TotalBD { get; set; }
+        public int TotalBD_2 { get; set; }
         public int TotalBDT { get; set; }
         public int TotalUP { get; set; }
 

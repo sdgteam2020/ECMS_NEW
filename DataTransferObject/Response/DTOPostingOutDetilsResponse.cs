@@ -11,7 +11,7 @@ namespace DataTransferObject.Response
     {
         public string Id { get; set; } = string.Empty;
         public string ServiceNo { get; set; } = string.Empty;
-        public string FName { get; set; } = string.Empty;
+        public string? FName { get; set; }
         public string? LName { get; set; }
         public string Rank { get; set; } = string.Empty;
         public string Reason { get; set; } = string.Empty;
@@ -31,5 +31,11 @@ namespace DataTransferObject.Response
         public DateTime DispatchUpdatedOn { get; set; }
         public string DispatchUpdatedBy { get; set; } = string.Empty;
         public bool CanAddDispatchDetail { get; set; }
+
+        public string? FName_1 { get; set; }
+        public string? LName_1 { get; set; }
+
+        public string? FName_2 { get; set; }
+        public string? LName_2 { get; set; }
     }
 }
