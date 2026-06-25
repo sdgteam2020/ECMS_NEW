@@ -27,5 +27,10 @@ namespace DataTransferObject.Response
         public bool IsEditAction { get; set; } = false;
         public string? EncryptedId { get; set; }
 
+        public string? FName_1 { get; set; }
+        public string? LName_1 { get; set; }
+
+        public string? FName_2 { get; set; }
+        public string? LName_2 { get; set; }
     }
 }

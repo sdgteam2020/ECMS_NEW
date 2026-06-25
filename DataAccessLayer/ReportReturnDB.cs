@@ -799,7 +799,11 @@ namespace DataAccessLayer
                             )
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
-                            AND ServiceNo LIKE '%' + @SearchTerm + '%'";
+                            AND 
+                            (
+                                @SearchTerm IS NULL OR 
+                                ServiceNo LIKE @SearchTerm
+                            )";
             }
             else if (dTO.Choice == "NonFunctional")
             {
@@ -848,13 +852,17 @@ namespace DataAccessLayer
                             )
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
-                            AND ServiceNo LIKE '%' + @SearchTerm + '%'";
+                            AND 
+                            (
+                                @SearchTerm IS NULL OR 
+                                ServiceNo LIKE @SearchTerm
+                            )";
             }
             else if (dTO.Choice == "LostCase")
             {
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ServiceNo"] = "bas.ServiceNo",
+                    ["ServiceNo"] = "ServiceNo",
                     ["RequestId"] = "req.RequestId",
                     ["ArmedAbbreviation"] = "marmed.Abbreviation",
                     ["ApplyFor"] = "appl.Name",
@@ -862,18 +870,19 @@ namespace DataAccessLayer
                     ["LostOn"] = "lost.LostOn",
                     ["UpdatedOn"] = "lost.UpdatedOn"
                 };
-                query = @"appl.Name ApplyFor,marmed.Abbreviation as ArmedAbbreviation,req.RequestId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,bas.NameAsPerRecord,Muni.Abbreviation UnitAbbreviation,
+                query = @"appl.Name ApplyFor,marmed.Abbreviation as ArmedAbbreviation,req.RequestId,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ranks.RankAbbreviation RankName,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,Muni.Abbreviation UnitAbbreviation,
 		                    lost.UpdatedOn,lost.Remark as FromRemark,lost.LostOn,regi.Abbreviation RegimentalName,lost.IsFIRLogged,lost.SupportDocName
                             from TrnLostCards lost
                             inner join TrnICardRequest req on req.RequestId = lost.RequestId
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            inner join AFSAC2.dbo.BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-		                    INNER JOIN MArmedType marmed on bas.ArmedId=marmed.ArmedId
-                            inner join MRank ranks on ranks.RankId=bas.RankId
-                            inner join MapUnit unit on unit.UnitMapId=bas.UnitId
+                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
+                            LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
+		                    INNER JOIN MArmedType marmed on marmed.ArmedId=ISNULL(basic_2.ArmedId,bd.ArmedId)
+                            inner join MRank ranks on ranks.RankId=ISNULL(basic_2.RankId,bd.RankId)
+                            inner join MapUnit unit on unit.UnitMapId=ISNULL(basic_2.UnitId,bd.UnitId)
                             inner join MUnit Muni on Muni.UnitId=unit.UnitId
-                            inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId ";
+                            inner join MApplyFor appl on appl.ApplyForId=ISNULL(basic_2.ApplyForId,bd.ApplyForId)
+                            left join MRegimental regi on regi.RegId=ISNULL(basic_2.RegimentalId,bd.RegimentalId)";
                 wherequery = @"WHERE
                             (
                                 (@UnitType = 1 AND
@@ -898,7 +907,10 @@ namespace DataAccessLayer
                             )
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
-                            AND ServiceNo LIKE '%' + @SearchTerm + '%'";
+                            AND (
+                            @SearchTerm IS NULL OR 
+                            bd.ServiceNo LIKE @SearchTerm OR
+                            basic_2.ServiceNo LIKE @SearchTerm)";
             }
             else if (dTO.Choice == "MonthlyProcessed")
             {
@@ -945,15 +957,25 @@ namespace DataAccessLayer
                             )
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
-                            AND ServiceNo LIKE '%' + @SearchTerm + '%'
                             AND YEAR(basi.UpdatedOn) = RIGHT(@MonthYear, 4)
-							AND MONTH(basi.UpdatedOn) = LEFT(@MonthYear, 2)";
+							AND MONTH(basi.UpdatedOn) = LEFT(@MonthYear, 2)
+                            AND 
+                            (
+                                @SearchTerm IS NULL OR 
+                                ServiceNo LIKE @SearchTerm
+                            )";
             }
             try
             {
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
-                ? allowedSortColumns[dTO.sortColumn!]
-                : "ServiceNo";
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "req.RequestId";
+                if (dTO.Choice == "LostCase")
+                {
+                    if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
+                    {
+                        sortColumn = "ISNULL(basic_2.ServiceNo , bd.ServiceNo )";
+                    }
+                }
+
                 var multiQuery = query = $@"
                         WITH RecordCTE AS (
                             select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {query} {wherequery}
@@ -962,6 +984,8 @@ namespace DataAccessLayer
 
                 using (var connection = _contextDP.CreateConnection())
                 {
+                    var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue.Trim()}%";
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@UnitType", dTO.UnitType, DbType.Int32, ParameterDirection.Input);
@@ -975,12 +999,24 @@ namespace DataAccessLayer
                     parameters.Add("@MonthYear", dTO.MonthYear, DbType.String, ParameterDirection.Input);
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length) , DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
                     parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running);
 
                     var ret = await connection.QueryMultipleAsync(query, parameters);
                     var records = (await ret.ReadAsync<DTOReportResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    if (dTO.Choice == "LostCase")
+                    {
+                        if (records != null)
+                        {
+                            foreach (var item in records)
+                            {
+                                item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                                item.LName = item.LName_2 ?? item.LName_1;
+                            }
+                        }
+                    }
 
                     var responseData = new DTODataTablesResponse<DTOReportResponse>
                     {
@@ -1078,12 +1114,10 @@ namespace DataAccessLayer
                                 (
                                     SELECT COUNT(DISTINCT req.RequestId)
                                     FROM TrnLostCards lost
-                                    INNER JOIN TrnICardRequest req 
-                                        ON req.RequestId = lost.RequestId
-                                    INNER JOIN AFSAC2.dbo.BasicDetails bas 
-                                        ON bas.BasicDetailId = req.BasicDetailId
-                                    INNER JOIN FilteredUnits unit 
-                                        ON unit.UnitMapId = bas.UnitId
+                                    INNER JOIN TrnICardRequest req ON req.RequestId = lost.RequestId
+                                    LEFT JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId
+                                    LEFT JOIN AFSAC2.dbo.BasicDetails basic_2  ON basic_2.BasicDetailId = req.BasicDetailId
+                                    INNER JOIN FilteredUnits unit ON unit.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
                                 ),
 
                                 TotNonFunctionalCard =
@@ -1524,69 +1558,6 @@ namespace DataAccessLayer
             }
             else if (dTO.Choice == "CardDistributed")
             {
-                #region Using Union
-                //allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                //{
-                //    ["RequestId"] = "req.RequestId",
-                //    ["ArmedAbbreviation"] = "marmed.Abbreviation",
-                //    ["ServiceNo"] = "ServiceNo",
-                //    ["ActionOn"] = "dist.DistributedOn"
-                //};
-                //selectFields = $@"req.RequestId,ranks.RankAbbreviation RankName,basi.FName,basi.LName,basi.ServiceNo,marmed.Abbreviation as ArmedAbbreviation,basi.DistributedOn as ActionOn,toRanks.RankAbbreviation as ToRankName,toUp.Name as ToName,toUp.ArmyNo as ToServiceNo,toAspUser.DomainId as ToDID";
-                //fromJoinClause = $@"FROM
-                //                    (
-                //                        SELECT
-                //                            dist.RequestId,
-                //                            basi.BasicDetailId,
-                //                            basi.ApplyForId,
-                //                            basi.FName,
-                //                            basi.LName,
-                //                            basi.ServiceNo,
-                //                            basi.ArmedId,
-                //                            basi.RankId,
-                //                            basi.UnitId,
-                //                            dist.DistributedOn,
-                //                            dist.UpdatedbyUserId,
-                //                            dist.Updatedby
-                //                        FROM TrnDistributeCards dist
-                //                        INNER JOIN TrnICardRequest req ON dist.RequestId = req.RequestId AND req.StatusId = 2
-                //                        INNER JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId AND basi.ApplyForId = @ApplyForId
-
-                //                        UNION ALL
-
-                //                        SELECT
-                //                            dist.RequestId,
-                //                            basi2.BasicDetailId,
-                //                            basi2.ApplyForId,
-                //                            basi2.FName,
-                //                            basi2.LName,
-                //                            basi2.ServiceNo,
-                //                            basi2.ArmedId,
-                //                            basi2.RankId,
-                //                            basi2.UnitId,
-                //                            dist.DistributedOn,
-                //                            dist.UpdatedbyUserId,
-                //                            dist.Updatedby
-                //                        FROM TrnDistributeCards dist
-                //                        INNER JOIN TrnICardRequest req ON dist.RequestId = req.RequestId AND req.StatusId = 2
-                //                        INNER JOIN AFSAC2.dbo.BasicDetails basi2 ON req.BasicDetailId = basi2.BasicDetailId AND basi2.ApplyForId = @ApplyForId
-                //                    ) basi
-                //                    INNER JOIN TrnStepCounter step ON basi.RequestId = step.RequestId AND step.StepId = 15
-                //                    INNER JOIN TrnICardRequest req ON basi.RequestId = req.RequestId
-                //                    INNER JOIN MArmedType marmed ON basi.ArmedId = marmed.ArmedId
-                //                    INNER JOIN MRank ranks ON ranks.RankId = basi.RankId
-                //                    INNER JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId
-                //                    INNER JOIN UserProfile toUp ON basi.UpdatedbyUserId = toUp.UserId
-                //                    INNER JOIN MRank toRanks ON toUp.RankId = toRanks.RankId
-                //                    INNER JOIN AspNetUsers toAspUser ON basi.Updatedby = toAspUser.Id";
-                //whereClause = $@"WHERE
-                //            {unitFilter}
-                //            AND (
-                //             @SearchTerm IS NULL OR
-                //                basi.ServiceNo LIKE @SearchTerm
-                //                )";
-                #endregion
-
                 allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["RequestId"] = "req.RequestId",
@@ -1679,7 +1650,7 @@ namespace DataAccessLayer
                         {
                             foreach (var item in records)
                             {
-                                item.FName = item.FName_1 ?? item.FName_2;
+                                item.FName = item.FName_1 ?? item.FName_2 ?? string.Empty;
                                 item.LName = item.LName_1 ?? item.LName_2;
                             }
                         }

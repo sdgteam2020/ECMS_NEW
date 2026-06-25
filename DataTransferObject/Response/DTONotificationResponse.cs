@@ -16,6 +16,15 @@
         public string ApplId { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public DateTime UpdatedOn { get; set; }
+
+        public string? FName_1 { get; set; }
+        public string? LName_1 { get; set; }
+
+        public string? FName_2 { get; set; }
+        public string? LName_2 { get; set; }
+
+        public string? PhotoImagePath_1 { get; set; }
+        public string? PhotoImagePath_2 { get; set; }
     }
     public class DTONotificationResult
     {

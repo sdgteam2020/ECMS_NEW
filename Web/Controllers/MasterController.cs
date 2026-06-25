@@ -1740,7 +1740,7 @@ namespace Web.Controllers
             try
             {
                 DTOUnitMapIdCheckInFKTableResponse? dTOUnitMapId = await unitOfWork.MappUnit.UnitMapIdCheckInFKTable(UnitMapId); // Check for foreign key references
-                if (dTOUnitMapId != null && (dTOUnitMapId.TotalBD > 0 || dTOUnitMapId.TotalRO >0 || dTOUnitMapId.TotalTDM >0 || dTOUnitMapId.TotalTF> 0 || dTOUnitMapId.TotalTPOFrom>0 || dTOUnitMapId.TotalTPOTo>0)) // If there are references, return an error indicating the map unit cannot be deleted
+                if (dTOUnitMapId != null && (dTOUnitMapId.TotalBD > 0 || dTOUnitMapId.TotalBD_2 > 0 || dTOUnitMapId.TotalRO >0 || dTOUnitMapId.TotalTDM >0 || dTOUnitMapId.TotalTF> 0 || dTOUnitMapId.TotalTPOFrom>0 || dTOUnitMapId.TotalTPOTo>0)) // If there are references, return an error indicating the map unit cannot be deleted
                 {
                     return Json(5); // Map unit cannot be deleted because it's in use by other tables
                 }

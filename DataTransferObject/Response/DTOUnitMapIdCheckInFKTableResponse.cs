@@ -9,6 +9,7 @@ namespace DataTransferObject.Response
     public class DTOUnitMapIdCheckInFKTableResponse
     {
         public int TotalBD { get; set; }
+        public int TotalBD_2 { get; set; }
         public int TotalRO { get; set; }
         public int TotalTDM { get; set; }
         public int TotalTF { get; set; }

@@ -52,7 +52,7 @@ namespace DataAccessLayer
                                     inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId
                                     LEFT JOIN BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId
                                     LEFT JOIN AFSAC2.dbo.BasicDetails basi2 on basi2.BasicDetailId=trnicardr.BasicDetailId
-                                    inner join MRank ranksmain on ranksmain.RankId=ISNULL(basic.RankId, basi2.RankId)
+                                    inner join MRank ranksmain on ranksmain.RankId=ISNULL(basi2.RankId,basic.RankId)
                                     where pout.FromAspNetUsersId= @AspNetUsersId
                                     order by pout.Id desc";
                 using (var connection = _contextDP.CreateConnection())
@@ -62,8 +62,8 @@ namespace DataAccessLayer
                     {
                         foreach (var item in ret)
                         {
-                            item.FName = item.FName_1 ?? item.FName_2;
-                            item.LName = item.LName_1 ?? item.LName_2;
+                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                            item.LName = item.LName_2 ?? item.LName_1;
                         }
                     }
                     return ret.ToList();
@@ -167,7 +167,7 @@ namespace DataAccessLayer
                                 inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId
                                 LEFT join BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId = @Type
                                 LEFT join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId AND basic_2.ApplyForId = @Type
-                                inner join MRank ranksmain on ranksmain.RankId= ISNULL(basic.RankId, basic_2.RankId)
+                                inner join MRank ranksmain on ranksmain.RankId= ISNULL(basic_2.RankId,basic.RankId)
                                 where pout.{(PostingTy == "PostingIn" ? "ToUnitID" : "FromUnitID")} = @MapUnitId  AND (@SearchTerm IS NULL OR basic.ServiceNo like @SearchTerm OR basic_2.ServiceNo like @SearchTerm )";
 
                 query = $@"
@@ -201,8 +201,8 @@ namespace DataAccessLayer
                     foreach (var item in records)
                     {
                         item.Id = _protector.Protect(item.Id.ToString());
-                        item.FName = item.FName_1 ?? item.FName_2;
-                        item.LName = item.LName_1 ?? item.LName_2;
+                        item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                        item.LName = item.LName_2 ?? item.LName_1;
                     }
 
                     var totalRecords = (await ret.ReadAsync<int>()).Single();
@@ -381,6 +381,7 @@ namespace DataAccessLayer
         /// <returns>A list of <see cref="DTOAppClosedListResponse"/> objects representing the closed applications.</returns>
         /// <exception cref="Exception">Throws an exception if an error occurs while retrieving the closed applications.</exception>
         public async Task<DTODataTablesResponse<DTOAppClosedListResponse>> GetAppClosedList(DTODataTableRequestForAppCloseList dTO)
+        
         {
             List<DTOAppClosedListResponse> dTOAppCloseds = new List<DTOAppClosedListResponse>();
             var responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
@@ -396,31 +397,37 @@ namespace DataAccessLayer
                 // Map allowed sort columns to DB fields
                 var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ServiceNo"] = "bd.ServiceNo",
+                    ["ServiceNo"] = "ServiceNo",
                     ["UpdatedOn"] = "appcl.UpdatedOn",
                     ["Authority"] = "appcl.Authority",
                     ["Remarks"] = "appcl.Remarks"
                 };
 
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
-                    ? allowedSortColumns[dTO.sortColumn!]
-                    : "appcl.UpdatedOn";
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "appcl.UpdatedOn";
+
+                if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
+                {
+                    sortColumn = "ISNULL(basic_2.ServiceNo , bd.ServiceNo )";
+                }
 
                 var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
 
-                string selectFields = @"appcl.UpdatedOn,bd.ServiceNo,mr.RankAbbreviation as RankName,bd.FName,bd.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority";
+                string selectFields = @"appcl.UpdatedOn,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,mr.RankAbbreviation as RankName,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority";
                 string fromJoinClause = @"from TrnApplClose appcl
                                         inner join TrnICardRequest trnicardr on trnicardr.RequestId=appcl.RequestId
-                                        inner join BasicDetails bd on bd.BasicDetailId=trnicardr.BasicDetailId and bd.UnitId =@UnitMapId
-                                        inner join MRank mr on mr.RankId = bd.RankId
-                                        inner join MApplyFor mappl on mappl.ApplyForId = bd.ApplyForId
+                                        LEFT JOIN BasicDetails bd on bd.BasicDetailId=trnicardr.BasicDetailId and bd.UnitId =@UnitMapId
+                                        LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId and basic_2.UnitId =@UnitMapId
+                                        inner join MRank mr on mr.RankId = ISNULL(basic_2.RankId,bd.RankId)
+                                        inner join MApplyFor mappl on mappl.ApplyForId = ISNULL(basic_2.ApplyForId,bd.ApplyForId)
                                         inner join MPostingReason mpr on mpr.Id= appcl.ReasonId";
                 string whereClause = @"where
                                        mappl.ApplyForId=@apply
                                        AND (
-                                            bd.ServiceNo LIKE '%' + @SearchTerm + '%' OR
-                                            appcl.Authority LIKE '%' + @SearchTerm + '%'
+                                            @SearchTerm IS NULL OR 
+                                            bd.ServiceNo LIKE @SearchTerm OR
+                                            basic_2.ServiceNo LIKE @SearchTerm OR
+                                            appcl.Authority LIKE @SearchTerm
                                         )";
 
                 var multiQuery = $@"
@@ -433,17 +440,27 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     // Parameters for SQL query
-                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue.Trim()}%";
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
                     parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@apply", dTO.apply, DbType.Int32, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOAppClosedListResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
+
+                    if (records != null)
+                    {
+                        foreach (var item in records)
+                        {
+                            item.FName = item.FName_2 ?? item.FName_1 ??  string.Empty;
+                            item.LName = item.LName_2 ?? item.LName_1;
+                        }
+                    }
 
                     responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
                     {
@@ -465,15 +482,16 @@ namespace DataAccessLayer
         {
             DTOBeforePostingOutCheckedInputDataResponse dTOBeforePostingOut = new DTOBeforePostingOutCheckedInputDataResponse();
 
-            string query = @"Select basi.BasicDetailId,req.StatusId,basi.UnitId,tdm.AspNetUsersId as ToAspNetUsersId, tdm.UserId as ToUserID,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId from BasicDetails basi
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId
-                            left join TrnDomainMapping tdm on tdm.AspNetUsersId = @AspNetUsersId and tdm.UnitId =@UnitId and tdm.UserId =@UserId
-                            left join TrnFwds fwd on fwd.RequestId=req.RequestId
+            string query = @"Select ISNULL(basi.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,req.StatusId,ISNULL(basic_2.UnitId, basi.UnitId) AS UnitId,tdm.AspNetUsersId as ToAspNetUsersId, tdm.UserId as ToUserID,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId from TrnICardRequest req
+                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
+                            LEFT JOIN BasicDetails basi on basi.BasicDetailId=req.BasicDetailId
+                            LEFT JOIN TrnDomainMapping tdm on tdm.AspNetUsersId = @AspNetUsersId and tdm.UnitId =@UnitId and tdm.UserId =@UserId
+                            LEFT JOIN TrnFwds fwd on fwd.RequestId=req.RequestId
                             where req.RequestId=@RequestId
                             GROUP BY 
-                                basi.BasicDetailId,
+                                ISNULL(basi.BasicDetailId, basic_2.BasicDetailId),
                                 req.StatusId,
-                                basi.UnitId,
+                                ISNULL(basic_2.UnitId, basi.UnitId),
                                 tdm.AspNetUsersId,
                                 tdm.UserId";
 

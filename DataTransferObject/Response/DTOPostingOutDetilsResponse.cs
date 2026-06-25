@@ -11,7 +11,7 @@ namespace DataTransferObject.Response
     {
         public string Id { get; set; } = string.Empty;
         public string ServiceNo { get; set; } = string.Empty;
-        public string? FName { get; set; }
+        public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
         public string Rank { get; set; } = string.Empty;
         public string Reason { get; set; } = string.Empty;

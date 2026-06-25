@@ -98,6 +98,7 @@ namespace DataAccessLayer
         public DbSet<MDispatchMode> MDispatchMode { get; set; } = null!;// For dispatch mode details
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 
+        public DbSet<BasicDetailsAFSAC2> BasicDetailsAFSAC2 { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)// Fluent API configurations
         {
             base.OnModelCreating(builder);
@@ -121,7 +122,13 @@ namespace DataAccessLayer
             builder.Entity<IdentityUserToken<int>>(entity =>
             {
             });
-         
+
+            builder.Entity<BasicDetailsAFSAC2>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("vw_BasicDetails_AFSAC2");
+            });
+
             //Foreign key with NO ACTION ON DELETE
 
             foreach (var foreignKey in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

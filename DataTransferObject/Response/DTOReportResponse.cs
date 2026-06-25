@@ -26,5 +26,11 @@
         public DateTime? LostOn { get; set; }
         public string? SupportDocName { get; set; }
         public bool IsFIRLogged { get; set; }
+
+        public string? FName_1 { get; set; }
+        public string? LName_1 { get; set; }
+
+        public string? FName_2 { get; set; } = string.Empty;
+        public string? LName_2 { get; set; }
     }
 }
