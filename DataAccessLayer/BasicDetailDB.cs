@@ -2156,6 +2156,36 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="RequestId">The unique identifier for the card request to fetch associated basic details.</param>
         /// <returns>A DTOBasicDetailForParitalViewResponse object containing the basic details for the specified RequestId, or an empty response if not found or an error occurs.</returns>
+
+        public async Task<DTOBasicDetailForParitalViewResponse?> GetBasicDetailForParitalViewByRequestIdNew(int RequestId)
+        {
+            try
+            {           
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
+                    using var multi = await connection.QueryMultipleAsync("GetICardDetailsByRequestId", parameters, commandType: CommandType.StoredProcedure);
+                    var ret = (await multi.ReadAsync<DTOBasicDetailForParitalViewResponse>()).ToList();                
+                    if (ret != null)
+                    {
+                        return ret.FirstOrDefault();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailForParitalViewByRequestId");
+                return null;
+            }
+        }
+
         public async Task<DTOBasicDetailForParitalViewResponse?> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
             try
@@ -2280,6 +2310,105 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="dTO">The DTODataTablesRequestFor_BasicDetails_Index object containing the search and pagination parameters.</param>
         /// <returns>A DTODataTablesResponse containing the paginated list of DTOBasicDetailIndexResponse, with total records and filtered records count.</returns>
+
+
+        public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttausNew(DTODataTablesRequestFor_BasicDetails_Index dTO)
+        {
+            DTODataTablesResponse<DTOBasicDetailIndexResponse> response = new DTODataTablesResponse<DTOBasicDetailIndexResponse>();
+            try
+            {
+                int applyfor = 0;
+                if (dTO.applyForId == 0) applyfor = 0; else applyfor = dTO.applyForId;
+                var rejectedSteps = new int[]
+          {
+                (int)ApplicationStepEnum.ApplicationRejectedApproverLevel,
+                (int)ApplicationStepEnum.ApplicationRejectedVerifierLevel,
+                (int)ApplicationStepEnum.ApplicationRejectedAFSACLevel,
+                (int)ApplicationStepEnum.PrintReject
+          };
+
+                using (var connection = _contextDP.CreateConnection())
+                    {
+
+                    var searchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? null : $"{dTO.searchValue}%";
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserId", dTO.UserId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@stepcount", dTO.stepcount, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@TypeId", dTO.TypeId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@applyfor", applyfor, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Start", dTO.Start, DbType.Int32);
+                    parameters.Add("@Length", dTO.Length, DbType.Int32);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@RejectedSteps1", rejectedSteps[0]);
+                    parameters.Add("@RejectedSteps2", rejectedSteps[1]);
+                    parameters.Add("@RejectedSteps3", rejectedSteps[2]);
+                    parameters.Add("@RejectedSteps4", rejectedSteps[3]);
+                    parameters.Add("@DraftedSavedApplication", (byte)ApplicationStepEnum.DraftedSavedApplication);
+                    parameters.Add("@RejectedForward", (byte)ForwardStatusEnum.Rejected);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running);
+                    parameters.Add("@CompleteStatusId", (byte)RequestStatusEnum.Complete);
+
+                    using var multi = await connection.QueryMultipleAsync("GetALLForIcardSttaus", parameters,commandType: CommandType.StoredProcedure);
+
+                    var totalRecords = await multi.ReadFirstOrDefaultAsync<int>();
+
+                    var records = (await multi.ReadAsync<DTOBasicDetailIndexResponse>()).ToList();
+
+                    var allrecord = records.Select(e => new DTOBasicDetailIndexResponse
+                    {
+                        TotalFilteredRecords = totalRecords,
+                        BasicDetailId = e.BasicDetailId,
+                        RegistrationApplyFor = e.RegistrationApplyFor,
+                        EncryptedId = protector.Protect(e.BasicDetailId.ToString()),
+                        FName = e.FName,
+                        LName = e.LName,
+                        ServiceNo = e.ServiceNo,
+                        IsTrnFwdId = e.IsTrnFwdId,
+                        StepCounter = e.StepCounter,
+                        StepId = e.StepId,
+                        ICardType = e.ICardType,
+                        ApplyFor = e.ApplyFor,
+                        ApplyForId = e.ApplyForId,
+                        RequestId = e.RequestId,
+                        IsFwdStatusId = e.IsFwdStatusId,
+                        ApplId = e.RequestId,
+                        RankName = e.RankName,
+                        IsPosting = e.IsPosting,
+                        UnitName = e.UnitName,
+                        IsLock = e.IsLock,
+                        UnitId = e.UnitId
+                    }).ToList();
+
+                     response = new DTODataTablesResponse<DTOBasicDetailIndexResponse>
+                    {
+                        draw = dTO.Draw,
+                        recordsTotal = totalRecords,
+                        recordsFiltered = totalRecords,
+                        data = allrecord
+                    };
+
+                    return response;                  
+                }
+            }
+                
+            
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetALLForIcardSttaus");
+                List<DTOBasicDetailIndexResponse> detailVMs = new List<DTOBasicDetailIndexResponse>();
+                var responseData = new DTODataTablesResponse<DTOBasicDetailIndexResponse>
+                {
+                    draw = dTO.Draw,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = detailVMs
+                };
+                return responseData;
+            }
+            return response;
+        }
+
         public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus(DTODataTablesRequestFor_BasicDetails_Index dTO)
         {
             int applyfor = 0;
