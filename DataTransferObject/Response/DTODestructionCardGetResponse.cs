@@ -15,5 +15,11 @@
         public int DestructedCardId { get; set; }
         public string RemarksNameList { get; set; } = string.Empty;
         public string? Remark { get; set; }
+
+        public string? FName_1 { get; set; }
+        public string? LName_1 { get; set; }
+
+        public string? FName_2 { get; set; }
+        public string? LName_2 { get; set; }
     }
 }

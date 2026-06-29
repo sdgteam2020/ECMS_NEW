@@ -1989,9 +1989,9 @@ namespace DataAccessLayer
             if (dto.TypeId == KeyConstants.ApplicantPostingOut || dto.TypeId == KeyConstants.ApplicantClose)
             {
                 query = @"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,req.CardSerialNo,req.ChipNo
-                            from BasicDetails basi
-                            inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnDomainMapping map on map.Id = req.TrnDomainMappingId and map.UnitId=@MapUnitId
+                            from TrnICardRequest req
+                            inner join TrnDomainMapping map on map.Id = req.TrnDomainMappingId AND map.UnitId=@MapUnitId AND req.StatusId=1
+                            inner join BasicDetails basi on basi.BasicDetailId=req.BasicDetailId 
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                             where ServiceNo like @ServiceNo ";
             }
@@ -2000,11 +2000,11 @@ namespace DataAccessLayer
                 if (dto.Claim == 1)
                 {
                     query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
-                                from BasicDetails basi
-                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=6
+                                from TrnICardRequest req
+                                inner join TrnStepCounter stepcount on stepcount.RequestId = req.RequestId AND stepcount.StepId=6 AND req.StatusId=1
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                                inner join BasicDetails basi on basi.BasicDetailId=req.BasicDetailId 
+                                inner join TrnUpload trnu on trnu.BasicDetailId = basi.BasicDetailId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 where ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
@@ -2012,11 +2012,11 @@ namespace DataAccessLayer
                 else
                 {
                     query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
-                                from BasicDetails basi
-                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=14
+                                from TrnICardRequest req
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId=14 AND req.StatusId=1
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                                inner join BasicDetails basi on basi.BasicDetailId=req.BasicDetailId 
+                                inner join TrnUpload trnu on trnu.BasicDetailId = basi.BasicDetailId
                                 LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 where ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
@@ -2025,39 +2025,63 @@ namespace DataAccessLayer
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
-                                from BasicDetails basi
-                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId = 15
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                                Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
-                                where thc.RequestId is null and ServiceNo like @ServiceNo
-                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
+                query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                            from TrnICardRequest req
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId = 15 AND req.StatusId = 2
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                            LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId 
+                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+                            LEFT JOIN TrnUpload trnu on trnu.BasicDetailId = bd.BasicDetailId
+                            LEFT JOIN AFSAC2.dbo.TrnUpload trnu_2 on trnu_2.BasicDetailId = basic_2.BasicDetailId
+                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                            Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
+                            where thc.RequestId is null AND (bd.ServiceNo LIKE @ServiceNo OR basic_2.ServiceNo LIKE @ServiceNo)
+                            Group by 
+	                            ISNULL(bd.BasicDetailId, basic_2.BasicDetailId),
+	                            bd.FName,
+                                bd.LName,
+                                basic_2.FName,
+                                basic_2.LName,
+                                ISNULL(bd.ServiceNo, basic_2.ServiceNo),
+                                ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath),
+                                req.RequestId,
+                                req.CardSerialNo,
+                                req.ChipNo";
             }
             else if (dto.TypeId == KeyConstants.LostCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
-                                from BasicDetails basi
-                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId in (1,2)
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (6,11,12,13,14,15)
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                                Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
-                                Left join TrnDestructionCards tld on req.RequestId = tld.RequestId
-                                where tlc.RequestId is null and tld.RequestId is null and ServiceNo like @ServiceNo
-                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
+                query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                            from TrnICardRequest req
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId in (6,11,12,13,14,15) AND req.StatusId in (1,2)
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                            LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId 
+                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+                            LEFT JOIN TrnUpload trnu on trnu.BasicDetailId = bd.BasicDetailId
+                            LEFT JOIN AFSAC2.dbo.TrnUpload trnu_2 on trnu_2.BasicDetailId = basic_2.BasicDetailId
+                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                            Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
+                            Left join TrnDestructionCards tld on req.RequestId = tld.RequestId
+                            where tlc.RequestId is null AND tld.RequestId is null AND (bd.ServiceNo LIKE @ServiceNo OR basic_2.ServiceNo LIKE @ServiceNo)
+                            Group by 
+	                            ISNULL(bd.BasicDetailId, basic_2.BasicDetailId),
+	                            bd.FName,
+                                bd.LName,
+                                basic_2.FName,
+                                basic_2.LName,
+                                ISNULL(bd.ServiceNo, basic_2.ServiceNo),
+                                ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath),
+                                req.RequestId,
+                                req.CardSerialNo,
+                                req.ChipNo";
             }
             else if (dto.TypeId == KeyConstants.DistributeCardRequest)
             {
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,0 AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
-                                from BasicDetails basi
-                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId=14
+                                from TrnICardRequest req
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId=14 AND req.StatusId=1
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
+                                inner join BasicDetails basi on basi.BasicDetailId=req.BasicDetailId 
+                                inner join TrnUpload trnu on trnu.BasicDetailId = basi.BasicDetailId
                                 Left join TrnDistributeCards tdc on req.RequestId = tdc.RequestId
                                 Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
                                 where tdc.RequestId is null and thc.RequestId is null and ServiceNo like @ServiceNo
@@ -2065,16 +2089,28 @@ namespace DataAccessLayer
             }
             else if (dto.TypeId == KeyConstants.DestructionCardRequest)
             {
-                query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
-                                from BasicDetails basi
-                                inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
-                                inner join TrnICardRequest req on req.BasicDetailId=basi.BasicDetailId and req.StatusId = 2
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId and stepcount.StepId in (15)
-                                inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
-                                Left join TrnDestructionCards tlc on req.RequestId = tlc.RequestId
-                                where tlc.RequestId is null and ServiceNo like @ServiceNo
-                                Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
+                query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                            from TrnICardRequest req
+                            INNER JOIN TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId in (15) AND req.StatusId = 2
+                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
+                            LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId 
+                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+                            LEFT JOIN TrnUpload trnu on trnu.BasicDetailId = bd.BasicDetailId
+                            LEFT JOIN AFSAC2.dbo.TrnUpload trnu_2 on trnu_2.BasicDetailId = basic_2.BasicDetailId
+                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
+                            Left join TrnDestructionCards tlc on req.RequestId = tlc.RequestId
+                            where tlc.RequestId is null AND (bd.ServiceNo LIKE @ServiceNo OR basic_2.ServiceNo LIKE @ServiceNo)
+                            Group by 
+	                            ISNULL(bd.BasicDetailId, basic_2.BasicDetailId),
+	                            bd.FName,
+                                bd.LName,
+                                basic_2.FName,
+                                basic_2.LName,
+                                ISNULL(bd.ServiceNo, basic_2.ServiceNo),
+                                ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath),
+                                req.RequestId,
+                                req.CardSerialNo,
+                                req.ChipNo";
             }
 
             try
@@ -2090,6 +2126,14 @@ namespace DataAccessLayer
                     var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, parameters);
                     if (basicDetail != null)
                     {
+                        if (dto.TypeId == KeyConstants.DestructionCardRequest || dto.TypeId == KeyConstants.HoltlistCardRequest || dto.TypeId == KeyConstants.LostCardRequest)
+                        {
+                            foreach (var item in basicDetail)
+                            {
+                                item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                                item.LName = item.LName_2 ?? item.LName_1;
+                            }
+                        }
                         return basicDetail.ToList();
                     }
                     else
@@ -2117,38 +2161,70 @@ namespace DataAccessLayer
             try
             {
 
-                string query = @"SELECT bas.PaperIcardNo,bas.NameAsPerRecord,bas.FName,bas.LName,bas.ServiceNo,bas.DOB,bas.DateOfIssue,bas.DateOfCommissioning,bas.PlaceOfIssue,
-                                issaut.Name IssuingAuthorityName,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,
-                                IdenMark1,AadhaarNo,Height,bld.BloodGroup,regi.Abbreviation RegimentalName,Muni.UnitName,
-                                ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,
-                                icardreq.RequestId,icardreq.UpdatedOn RequestDate,appl.Name ApplyFor,uplod.PhotoImagePath,uplod.SignatureImagePath,
-                                CASE
-                                WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
-                                CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
-                                ELSE
-                                bas.ServiceNo
-                                END AS ModifiedServiceNo,icardreq.CardSerialNo,icardreq.ChipNo
-                                from BasicDetails bas
-                                inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId
-                                inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId
-                                inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId
-                                inner join TrnIdentityInfo trninfo on trninfo.BasicDetailId=bas.BasicDetailId
-                                inner join MBloodGroup bld on bld.BloodGroupId=trninfo.BloodGroupId
-                                inner join MRank ranks on ranks.RankId=bas.RankId
-                                inner join MArmedType arm on arm.ArmedId=bas.ArmedId
-                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
-                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                                left join MRegimental regi on regi.RegId=bas.RegimentalId
-                                inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId
-                                inner join TrnStepCounter stepcount on icardreq.RequestId=stepcount.RequestId
-                                where icardreq.RequestId=@RequestId";
+                string query = @"SELECT ISNULL(bd.PaperIcardNo, basic_2.PaperIcardNo) AS PaperIcardNo,bd.NameAsPerRecord as NameAsPerRecord_1,basic_2.NameAsPerRecord as NameAsPerRecord_2,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,
+                                    bd.DOB as DOB_1,basic_2.DOB as DOB_2,bd.DateOfIssue as DateOfIssue_1,basic_2.DateOfIssue as DateOfIssue_2,
+                                    ISNULL(bd.DateOfCommissioning, basic_2.DateOfCommissioning) AS DateOfCommissioning,bd.PlaceOfIssue as PlaceOfIssue_1,basic_2.PlaceOfIssue as PlaceOfIssue_2,
+                                    issaut.Name IssuingAuthorityName,
+                                    trnadd.State as State_1,trnadd_2.State as State_2,
+                                    trnadd.District as District_1,trnadd_2.District as District_2,
+                                    trnadd.PS as PS_1,trnadd_2.PS as PS_2,
+                                    trnadd.PO as PO_1,trnadd_2.PO as PO_2,
+                                    trnadd.Tehsil as Tehsil_1,trnadd_2.Tehsil as Tehsil_2,
+                                    trnadd.Village as Village_1,trnadd_2.Village as Village_2,
+                                    trnadd.PinCode as PinCode_1,trnadd_2.PinCode as PinCode_2,
+                                    ISNULL(trninfo.IdenMark1, trninfo_2.IdenMark1) AS IdenMark1,ISNULL(trninfo.Height, trninfo_2.Height) AS Height,trninfo.AadhaarNo AS AadhaarNo_1,trninfo_2.AadhaarNo AS AadhaarNo_2,
+                                    bld.BloodGroup,regi.Abbreviation RegimentalName,Muni.UnitName,
+                                    ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,
+                                    icardreq.RequestId,icardreq.UpdatedOn RequestDate,appl.Name ApplyFor,
+                                    ISNULL(uplod.PhotoImagePath, uplod_2.PhotoImagePath) AS PhotoImagePath,
+                                    ISNULL(uplod.SignatureImagePath, uplod_2.SignatureImagePath) AS SignatureImagePath,
+                                    CASE
+                                    WHEN LEFT(ISNULL(bd.ServiceNo, basic_2.ServiceNo), 2) LIKE '[A-Za-z][A-Za-z]' THEN
+                                    CONCAT(SUBSTRING(ISNULL(bd.ServiceNo, basic_2.ServiceNo), 1, 2), ' ', SUBSTRING(ISNULL(bd.ServiceNo, basic_2.ServiceNo), 3, LEN(ISNULL(bd.ServiceNo, basic_2.ServiceNo)) - 2))
+                                    ELSE
+                                    ISNULL(bd.ServiceNo, basic_2.ServiceNo)
+                                    END AS ModifiedServiceNo,icardreq.CardSerialNo,icardreq.ChipNo
+                                    from TrnICardRequest icardreq
+                                    LEFT JOIN BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId
+                                    LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=icardreq.BasicDetailId
+                                    inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId = ISNULL(basic_2.IssuingAuthorityId,bd.IssuingAuthorityId)
+                                    inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
+                                    inner join MArmedType arm on arm.ArmedId = ISNULL(basic_2.ArmedId,bd.ArmedId)
+                                    inner join MapUnit uni on uni.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
+                                    inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                                    inner join MApplyFor appl on appl.ApplyForId = ISNULL(basic_2.ApplyForId,bd.ApplyForId)
+                                    LEFT JOIN TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
+                                    LEFT JOIN AFSAC2.dbo.TrnUpload uplod_2 on uplod_2.BasicDetailId = basic_2.BasicDetailId
+                                    LEFT JOIN TrnAddress trnadd on trnadd.BasicDetailId=bd.BasicDetailId
+                                    LEFT JOIN AFSAC2.dbo.TrnAddress trnadd_2 on trnadd_2.BasicDetailId=basic_2.BasicDetailId
+                                    LEFT JOIN TrnIdentityInfo trninfo on trninfo.BasicDetailId=bd.BasicDetailId
+                                    LEFT JOIN AFSAC2.dbo.TrnIdentityInfo trninfo_2 on trninfo_2.BasicDetailId=basic_2.BasicDetailId
+                                    inner join MBloodGroup bld on bld.BloodGroupId=ISNULL(trninfo_2.BloodGroupId,trninfo.BloodGroupId)
+                                    left join MRegimental regi on regi.RegId = ISNULL(basic_2.RegimentalId,bd.RegimentalId)
+                                    where icardreq.RequestId=@RequestId";
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTOBasicDetailForParitalViewResponse>(query, new { RequestId });
 
                     if (ret != null)
                     {
+                        foreach (var item in ret)
+                        {
+                            item.NameAsPerRecord = item.NameAsPerRecord_2 ?? item.NameAsPerRecord_1 ?? string.Empty;
+                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                            item.LName = item.LName_2 ?? item.LName_1;
+                            item.PlaceOfIssue = item.PlaceOfIssue_2 ?? item.PlaceOfIssue_1 ?? string.Empty;
+                            item.DOB = (item.DOB_2 ?? item.DOB_1) ?? default(DateTime);
+                            item.AadhaarNo = item.AadhaarNo_2 ?? item.AadhaarNo_1 ?? string.Empty;
+                            item.DateOfIssue = item.DateOfIssue_2 ?? item.DateOfIssue_1;
+                            item.State = item.State_2 ?? item.State_1 ?? string.Empty;
+                            item.District = item.District_2 ?? item.District_1 ?? string.Empty;
+                            item.PS = item.PS_2 ?? item.PS_1;
+                            item.PO = item.PO_2 ?? item.PO_1;
+                            item.Tehsil = item.Tehsil_2 ?? item.Tehsil_1;
+                            item.Village = item.Village_2 ?? item.Village_1;
+                            item.PinCode = item.PinCode_2 ?? item.PinCode_1;
+                        }
                         return ret.FirstOrDefault();
                     }
                     else

@@ -41,5 +41,43 @@ namespace DataTransferObject.Response
         public string? ModifiedServiceNo { get; set; }
         public string CardSerialNo { get; set; } = string.Empty;
         public string ChipNo { get; set; } = string.Empty;
+
+        public string? FName_1 { get; set; }
+        public string? LName_1 { get; set; }
+
+        public string? FName_2 { get; set; }
+        public string? LName_2 { get; set; }
+
+        public string? NameAsPerRecord_1 { get; set; }
+        public string? NameAsPerRecord_2 { get; set; }
+
+        public string? PlaceOfIssue_1 { get; set; }
+        public string? PlaceOfIssue_2 { get; set; }
+
+        public DateTime? DOB_1 { get; set; }
+        public DateTime? DOB_2 { get; set; }
+
+        public string? AadhaarNo_1 { get; set; }
+        public string? AadhaarNo_2 { get; set; }
+
+        public DateTime? DateOfIssue_1 { get; set; }
+        public DateTime? DateOfIssue_2 { get; set; }
+
+        public string State_1 { get; set; } = string.Empty;
+        public string District_1 { get; set; } = string.Empty;
+        public string? PS_1 { get; set; }
+        public string? PO_1 { get; set; }
+        public string? Tehsil_1 { get; set; }
+        public string? Village_1 { get; set; }
+        public int? PinCode_1 { get; set; }
+
+        public string State_2 { get; set; } = string.Empty;
+        public string District_2 { get; set; } = string.Empty;
+        public string? PS_2 { get; set; }
+        public string? PO_2 { get; set; }
+        public string? Tehsil_2 { get; set; }
+        public string? Village_2 { get; set; }
+        public int? PinCode_2 { get; set; }
+
     }
 }
