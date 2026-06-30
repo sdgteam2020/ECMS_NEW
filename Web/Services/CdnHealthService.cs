@@ -23,24 +23,27 @@ namespace Web.Services
         }
         public async Task<string> GetStaticBaseUrlAsync()
         {
-            return await _cache.GetOrCreateAsync("CDN_BASE_URL", async entry =>
-            {
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-
-                string cdnUrl =
+            string cdnUrl =
                     Environment.GetEnvironmentVariable("AFSAC__CDN")?.TrimEnd('/')
                     ?? _configuration["AFSAC:CDN"]?.TrimEnd('/')
                     ?? "";
 
-                string localUrl =
-                    _configuration["AFSAC__Local"]?.TrimEnd('/')
-                    ?? _configuration["AFSAC:Local"]?.TrimEnd('/')
-                    ?? "";
-
+            string localUrl =
+                _configuration["AFSAC__Local"]?.TrimEnd('/')
+                ?? _configuration["AFSAC:Local"]?.TrimEnd('/')
+                ?? "";
+            return await _cache.GetOrCreateAsync("CDN_BASE_URL", async entry =>
+            {
                 bool isCdnRunning = await IsCdnRunningAsync(cdnUrl);
 
+                // If CDN is running, cache only for few seconds
+                // so failover happens quickly
+                entry.AbsoluteExpirationRelativeToNow = isCdnRunning
+                    ? TimeSpan.FromSeconds(5)
+                    : TimeSpan.FromSeconds(10);
+
                 return isCdnRunning ? cdnUrl : localUrl;
-            }) ?? "";
+            }) ?? localUrl;
         }
 
         private async Task<bool> IsCdnRunningAsync(string cdnUrl)

@@ -77,34 +77,3 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
-@functions {
-    private async Task<bool> IsCdnRunning(string cdnUrl)
-    {
-        if (string.IsNullOrWhiteSpace(cdnUrl))
-            return false;
-
-        try
-        {
-            var handler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback =
-        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-            using var client = new HttpClient(handler);
-            client.Timeout = TimeSpan.FromMilliseconds(800);
-
-            var healthUrl = cdnUrl.TrimEnd('/') + "/health.txt";
-
-            using var response = await client.GetAsync(
-                healthUrl,
-                HttpCompletionOption.ResponseHeadersRead
-            );
-
-            return response.IsSuccessStatusCode;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-}

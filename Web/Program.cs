@@ -59,7 +59,7 @@ builder.Services.Configure<SecurityStampValidatorOptions>(opt =>
 
 builder.Services.AddHttpClient("CdnHealthClient", client =>
 {
-    client.Timeout = TimeSpan.FromMilliseconds(800);
+    client.Timeout = TimeSpan.FromMilliseconds(500);
 }).ConfigurePrimaryHttpMessageHandler(() =>
 {
     return new HttpClientHandler
