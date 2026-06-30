@@ -4,9 +4,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<string> RoleNameList = new List<string>() { "user" };
     List<Claim> claims = ViewBag.UserClaims;
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/developercss/home_task.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/home_task.css?v={Ver}")" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -221,4 +222,4 @@
         </div>
     }
 </div>
-<script src="@($"{Cdn}/developerjs/Task.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/Task.js?v={Ver}")"></script>

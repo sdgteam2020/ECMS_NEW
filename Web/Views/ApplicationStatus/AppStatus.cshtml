@@ -4,9 +4,10 @@
     ViewBag.Description = "Appl Status";
     ViewBag.Keywords = "";
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/developercss/appstatus.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/appstatus.css?v={Ver}")" rel="stylesheet" />
 <div class="page">
     <div class="container-fluid">
         <partial name="~/Views/Shared/_CommonHeader.cshtml" />
@@ -157,7 +158,7 @@
     </div>
 </div>
 @section Scripts {
-    <script src="@($"{Cdn}/developerjs/keyconstants.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/commanvalidation.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/appstatus.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/keyconstants.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/commanvalidation.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/appstatus.js?v={Ver}")"></script>
 }

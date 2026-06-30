@@ -2,9 +2,10 @@
 @{
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/developercss/homeindex.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/homeindex.css?v={Ver}")" rel="stylesheet"   />
 
 <div class="hero">
     <div class="container-fluid h-100 d-flex align-items-end">

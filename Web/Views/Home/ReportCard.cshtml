@@ -4,10 +4,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<string> RoleNameList = new List<string>() { "user" };
     List<Claim> claims = ViewBag.UserClaims;
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/developercss/reportandreturn.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-<link href="@($"{Cdn}/developercss/reportcard.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/reportandreturn.css?v={Ver}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/reportcard.css?v={Ver}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -300,6 +301,6 @@
         </div><!-- modal-content -->
     </div><!-- modal-dialog -->
 </div>
-<script src="@($"{Cdn}/developerjs/ReportCard.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/ReportCard.js?v={Ver}")"></script>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

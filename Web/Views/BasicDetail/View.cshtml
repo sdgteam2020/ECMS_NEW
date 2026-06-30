@@ -1,9 +1,10 @@
 ﻿@model BasicDetailCrtAndUpdVM
 @inject IConfiguration configuration;
 @{
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/developercss/basicdetail_view.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/basicdetail_view.css?v={Ver}")" rel="stylesheet" />
 <div class="container1" id="printdata">
     <div class="row section-to-print">
         <div class="col-sm-4  text-left">
@@ -311,5 +312,5 @@
     </div>
 </div>
 @section Scripts{
-    <script src="@($"{Cdn}/js/CustomScript.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/js/CustomScript.js?v={Ver}")"></script>
 }

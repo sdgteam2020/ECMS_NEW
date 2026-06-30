@@ -2,9 +2,10 @@
 @{
     ViewData["Title"] = "Claim Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/developercss/account_claims.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/account_claims.css?v={Ver}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -52,9 +53,9 @@
         </div>
     </div>
 </div>
-<script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
-<script src="@($"{Cdn}/developerjs/claims.js?v={configuration["StaticVersion"]}")"></script>
-<script src="@($"{Cdn}/developerjs/commandvalidation.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/mtables.js?v={Ver}")"></script>
+<script src="@($"{Cdn}/developerjs/claims.js?v={Ver}")"></script>
+<script src="@($"{Cdn}/developerjs/commandvalidation.js?v={Ver}")"></script>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 

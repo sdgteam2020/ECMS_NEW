@@ -1,6 +1,14 @@
-﻿@inject IConfiguration configuration;
-@{
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+﻿@using System.Net.Http
+@inject IConfiguration configuration
+@{    
+    // string cdnUrl = Environment.GetEnvironmentVariable("AFSAC__CDN")?.TrimEnd('/');
+    // string localUrl = configuration["AFSAC__Local"]?.TrimEnd('/');
+    // string Ver = configuration["StaticVersion"];
+    // bool isCdnRunning = await IsCdnRunning(cdnUrl);
+    // string Cdn = isCdnRunning ? cdnUrl : localUrl;
+
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
 <!DOCTYPE html>
 <html>
@@ -10,32 +18,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    @* <script src="@Url.Content($"~/developerjs/cdn-fallback.js?v={Ver}")"></script> *@
     <link rel="icon" type="image/x-icon" asp-href-include="@($"{Cdn}/images/AFSAC.png")">
     <title> E-ISAC </title>
     @*  <link asp-href-include="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
 
-    <link href="@($"{Cdn}/css/style.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/css/login.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/fonts/css/all.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/style.css?v={Ver}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/nunito.css?v={Ver}")" rel="stylesheet"  />
+    <link href="@($"{Cdn}/css/roboto.css?v={Ver}")" rel="stylesheet"/>
+    <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={Ver}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={Ver}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/login.css?v={Ver}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/fonts/css/all.min.css?v={Ver}")" rel="stylesheet" />
 
-    <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/css/feed.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={Ver}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/feed.css?v={Ver}")" rel="stylesheet" />
 
-    <link href="@($"{Cdn}/css/normalize.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/normalize.min.css?v={Ver}")" rel="stylesheet" />
     @*   <link asp-href-include="~/css/swiper.min.css" rel="stylesheet" /> *@
-    <link href="@($"{Cdn}/css/feed.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/feed.css?v={Ver}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/main.css?v={Ver}")" rel="stylesheet" />
     @*     <link asp-href-include="~/css/sliders/style.css" rel="stylesheet" /> *@
-    <link href="@($"{Cdn}/developercss/layoutlogin.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/developercss/layoutlogin.css?v={Ver}")" rel="stylesheet"  />
 </head>
 <body>
     @Html.AntiForgeryToken()
     <div>
-    @*<div class="watermark">
+        @*<div class="watermark">
         <div>
             <img src="/Images/dgislogo.png" alt="Watermark" loading="lazy">
         </div>
@@ -58,13 +67,44 @@
             </section>
         </footer>
     </div>
-    <script src="@($"{Cdn}/lib/jquery/jquery.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/lib/jquery-validate/jquery.validate.js?v={configuration["StaticVersion"]}")" defer></script>
-    <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js?v={configuration["StaticVersion"]}")" defer></script>
-    <script src="@($"{Cdn}/lib/jqueryui/jquery-ui.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/bootstrap/js/bootstrap.bundle.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/sweetalert2/sweetalert2.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@Url.Content($"{Cdn}/lib/jquery/jquery.js?v={Ver}")"></script>
+    <script src="@Url.Content($"{Cdn}/lib/jquery-validate/jquery.validate.js?v={Ver}")"></script>
+    <script src="@Url.Content($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/lib/jqueryui/jquery-ui.min.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/bootstrap/js/bootstrap.bundle.min.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/sweetalert2/sweetalert2.min.js?v={Ver}")"  ></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+@functions {
+    private async Task<bool> IsCdnRunning(string cdnUrl)
+    {
+        if (string.IsNullOrWhiteSpace(cdnUrl))
+            return false;
+
+        try
+        {
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+            using var client = new HttpClient(handler);
+            client.Timeout = TimeSpan.FromMilliseconds(800);
+
+            var healthUrl = cdnUrl.TrimEnd('/') + "/health.txt";
+
+            using var response = await client.GetAsync(
+                healthUrl,
+                HttpCompletionOption.ResponseHeadersRead
+            );
+
+            return response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+}

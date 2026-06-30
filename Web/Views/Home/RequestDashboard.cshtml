@@ -3,9 +3,10 @@
     ViewData["Title"] = "Initiate Request DashBoard";
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<string> RoleNameList = new List<string>() { "user" };
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/developercss/requestdashboard.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/requestdashboard.css?v={Ver}")" rel="stylesheet" />
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -107,4 +108,4 @@
         </div>
     }
 </div>
-<script src="@($"{Cdn}/developerjs/RequestDashboard.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/RequestDashboard.js?v={Ver}")"></script>

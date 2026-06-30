@@ -1,12 +1,13 @@
 ﻿@inject IConfiguration configuration;
 @{
     Layout = null;
-	string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+	string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+	string Ver = configuration["StaticVersion"];
 }
 @* @if (ViewBag.ErrorTitle == null)
 { *@
-<link href="@($"{Cdn}/lib/bootstrap/dist/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-<link href="@($"{Cdn}/developercss/error.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/lib/bootstrap/dist/css/bootstrap.min.css?v={Ver}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/error.css?v={Ver}")" rel="stylesheet" />
 <section class="page_404">
 	<div class="container">
 		<div class="row">

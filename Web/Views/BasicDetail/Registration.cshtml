@@ -3,10 +3,11 @@
 @inject IConfiguration configuration;
 @{
     ViewBag.Title = "New Registration";
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/select2/css/select2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-<link href="@($"{Cdn}/developercss/registration.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/select2/css/select2.min.css?v={Ver}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/registration.css?v={Ver}")" rel="stylesheet" />
 <div class="container mt-2">
     <div class="card mb-3 ">
         <div class="card-header">
@@ -304,10 +305,10 @@
 </div>
 
 @section Scripts{   
-    <script src="@($"{Cdn}/developerjs/registration.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/token.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/commanvalidation.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/select2/js/select2.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/registration.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/token.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/mtables.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/commanvalidation.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/select2/js/select2.min.js?v={Ver}")"></script>
 
     }

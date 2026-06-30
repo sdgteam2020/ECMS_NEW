@@ -1,7 +1,8 @@
 ﻿@inject IConfiguration configuration;
 @model List<DTOBasicDetailTempRequest>
 @{
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -90,6 +91,6 @@
     </div>
 </div>
 @section Scripts{
-    <script src="@($"{Cdn}/developerjs/inaccuratedata.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/inaccuratedata.js?v={Ver}")"></script>
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }

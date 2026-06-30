@@ -9,7 +9,8 @@
     var user = await userManager.FindByIdAsync(userId);
     var RoleList = await userManager.GetRolesAsync(user);
     var ClaimsList = await userManager.GetClaimsAsync(user);
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
     List<string> RoleNameList = new List<string>() { "user" };
     DtoSession? dtoSession = new DtoSession();
     if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
@@ -26,7 +27,7 @@
 
 }
 
-<link href="@($"{Cdn}/DeveloperCSS/CommonHeaderInternal.css?v={configuration["StaticVersion"]}")" rel="stylesheet" asp-append-version="true" />
+<link href="@($"{Cdn}/DeveloperCSS/CommonHeaderInternal.css?v={Ver}")" rel="stylesheet" asp-append-version="true" />
 <header class="eisac-header">
     <div class="header-container">
         <!-- Left Logo -->

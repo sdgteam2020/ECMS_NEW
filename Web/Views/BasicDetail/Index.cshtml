@@ -1,10 +1,11 @@
 ﻿@inject IConfiguration configuration;
 @{
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/css/popupprintcss.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-<link href="@($"{Cdn}/select2/css/select2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-<link href="@($"{Cdn}/developercss/indexbasicdetail.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/css/popupprintcss.css?v={Ver}")" rel="stylesheet" />
+<link href="@($"{Cdn}/select2/css/select2.min.css?v={Ver}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/indexbasicdetail.css?v={Ver}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -201,13 +202,13 @@
 </div>
 
 @section Scripts {
-        <script src="@($"{Cdn}/developerjs/fwdrecord.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/developerjs/Index_BasicDetails.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/js/CustomScript.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/developerjs/ICardPrint.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/developerjs/Token.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/select2/js/select2.min.js?v={configuration["StaticVersion"]}")"></script>
+        <script src="@($"{Cdn}/developerjs/fwdrecord.js?v={Ver}")"></script>
+        <script src="@($"{Cdn}/developerjs/Index_BasicDetails.js?v={Ver}")"></script>
+        <script src="@($"{Cdn}/js/CustomScript.js?v={Ver}")"></script>
+        <script src="@($"{Cdn}/developerjs/ICardPrint.js?v={Ver}")"></script>
+        <script src="@($"{Cdn}/developerjs/Token.js?v={Ver}")"></script>
+        <script src="@($"{Cdn}/developerjs/mtables.js?v={Ver}")"></script>
+        <script src="@($"{Cdn}/select2/js/select2.min.js?v={Ver}")"></script>
 
         <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }

@@ -1,10 +1,11 @@
 ﻿@inject IConfiguration configuration;
 @{
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
 <environment names="Development">
-    <script src="@($"{Cdn}/lib/jquery-validation/dist/jquery.validate.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/lib/jquery-validation/dist/jquery.validate.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js?v={Ver}")"></script>
 </environment>
 <environment names="Staging,Production">
     <script asp-src-include="ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"

@@ -2,10 +2,11 @@
 @{
     ViewData["Title"] = "Record Office";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-<link href="@($"{Cdn}/developercss/recordoffice.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/recordoffice.css?v={Ver}")" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -51,8 +52,8 @@
         </div>
     </div>
 </div>  
-<script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
-<script src="@($"{Cdn}/developerjs/RecordOffice.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/mtables.js?v={Ver}")"></script>
+<script src="@($"{Cdn}/developerjs/RecordOffice.js?v={Ver}")"></script>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 

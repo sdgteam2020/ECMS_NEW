@@ -1,7 +1,8 @@
 ﻿@inject IConfiguration configuration;
 @{
     Layout = null;
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
 <html>
 <head>
@@ -13,21 +14,21 @@
     <link rel="icon" type="image/x-icon" href="/images/AFSAC.png">
     <title> E-IASAC </title>
      
-    <link href="@($"{Cdn}/css/style.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet"  />
-    <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet"  />
-    <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet"  />
-    <link href="@($"{Cdn}/css/login.css?v={configuration["StaticVersion"]}")" rel="stylesheet"  />
+    <link href="@($"{Cdn}/css/style.css?v={Ver}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/nunito.css?v={Ver}")" rel="stylesheet"  />
+    <link href="@($"{Cdn}/css/roboto.css?v={Ver}")" rel="stylesheet"  />
+    <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={Ver}")" rel="stylesheet"  />
+    <link href="@($"{Cdn}/css/login.css?v={Ver}")" rel="stylesheet"  />
 
-    <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/css/feed.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={Ver}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/feed.css?v={Ver}")" rel="stylesheet" />
 
-    <link href="@($"{Cdn}/css/normalize.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/normalize.min.css?v={Ver}")" rel="stylesheet" />
 
-    <link href="@($"{Cdn}/css/feed.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-    <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/feed.css?v={Ver}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/css/main.css?v={Ver}")" rel="stylesheet" />
 
-    <link href="@($"{Cdn}/developercss/accessdenied.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/developercss/accessdenied.css?v={Ver}")" rel="stylesheet" />
 </head>
 
 <body>
@@ -44,7 +45,7 @@
                                             <h1 class="text-danger">Access Denied</h1>
                                             <h6 class="text-danger">You do not have persmission to view this resource</h6>
                                           
-                                            <img src="@($"{Cdn}/images/asset/no.gif")" />
+                                            <img src="@($"{Cdn}/images/asset/no.gif?v={Ver}")" />
                                         </div>
                                        
                                         

@@ -3,7 +3,8 @@
 @model DTOProfileAndMappingRequest
 @{
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
     DTOTempSession? dTOTempSession = new DTOTempSession();
     StringBuilder m1 = new StringBuilder();
     StringBuilder m2 = new StringBuilder();
@@ -25,7 +26,7 @@
     }
     
 }
-<link href="@($"{Cdn}/developercss/account_profile.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/account_profile.css?v={Ver}")" rel="stylesheet" />
 <div class="page">
     <div class="container-fluid">
         <partial name="~/Views/Shared/_CommonHeader.cshtml" />
@@ -310,11 +311,11 @@
 
 </div>
 @section Scripts{
-    <script src="@($"{Cdn}/developerjs/keyconstants.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/accountprofile.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/token.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/lib/crypto-js/crypto-js.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/encryptepayload.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/keyconstants.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/accountprofile.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/token.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/lib/crypto-js/crypto-js.min.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/encryptepayload.js?v={Ver}")"></script>
 
 }
 

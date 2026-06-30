@@ -1,13 +1,14 @@
 ﻿@inject IConfiguration configuration;
 @{
     List<Claim> claims = ViewBag.UserClaims;
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/select2/css/select2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-<link href="@($"{Cdn}/css/popupprintcss.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/select2/css/select2.min.css?v={Ver}")" rel="stylesheet" />
+<link href="@($"{Cdn}/css/popupprintcss.css?v={Ver}")" rel="stylesheet" />
 
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-<link href="@($"{Cdn}/developercss/approvalforio.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/approvalforio.css?v={Ver}")" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -96,14 +97,14 @@
 </div>
 
 @section Scripts {
-    <script src="@($"{Cdn}/developerjs/ApprovalForIO_BasicDetails.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/CheckedFunction.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/js/CustomScript.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/fwdrecord.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/ICardPrint.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/token.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/select2/js/select2.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/developerjs/ApprovalForIO_BasicDetails.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/CheckedFunction.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/js/CustomScript.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/fwdrecord.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/ICardPrint.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/token.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/developerjs/mtables.js?v={Ver}")"></script>
+    <script src="@($"{Cdn}/select2/js/select2.min.js?v={Ver}")"></script>
 
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }

@@ -6,7 +6,8 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IConfiguration configuration;
 @{
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -18,74 +19,76 @@
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC</title>
-    <link rel="stylesheet" href="@($"{Cdn}/static/css/all.min.css?v={configuration["StaticVersion"]}")" />
+    
+    <link rel="stylesheet" href="@($"{Cdn}/static/css/all.min.css?v={Ver}")" />
+  
     @*     <link asp-href-include="~/css/chatbot.css" rel="stylesheet" /> *@
     <!-- Development: Load normal JS -->
     <environment include="Development">
-        <link href="@($"{Cdn}/fonts/css/all.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/fonts/css/all.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/nunito.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/roboto.css?v={Ver}")" rel="stylesheet" />
 
-        <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/style.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/extra.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/background.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/typography.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/style.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/extra.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/background.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/typography.css?v={Ver}")" rel="stylesheet" />
 
-        <link href="@($"{Cdn}/css/cssStyle.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/cssStyle.css?v={Ver}")" rel="stylesheet" />
 
-        <link href="@($"{Cdn}/css/horizontaltimeline.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <script src="@($"{Cdn}/fonts/feather/feather.min.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/fonts/allfont/webfont.min.js?v={configuration["StaticVersion"]}")"></script>
-        <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/bootstrap-datetimepicker.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/toastr/toastr.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/horizontaltimeline.css?v={Ver}")" rel="stylesheet" />
+        <script src="@($"{Cdn}/fonts/feather/feather.min.js?v={Ver}")" ></script>
+        <script src="@($"{Cdn}/fonts/allfont/webfont.min.js?v={Ver}")" ></script>
+        <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/bootstrap-datetimepicker.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/toastr/toastr.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/main.css?v={Ver}")" rel="stylesheet" />
         @*     <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" /> *@
 
-        <script src="@($"{Cdn}/lib/jquery/jquery.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/lib/jquery-validate/jquery.validate.js?v={configuration["StaticVersion"]}")" defer></script>
-        <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js?v={configuration["StaticVersion"]}")" defer></script>
+        <script src="@($"{Cdn}/lib/jquery/jquery.js?v={Ver}")" ></script>
+        <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={Ver}")" ></script>
+        <script src="@($"{Cdn}/lib/jquery-validate/jquery.validate.js?v={Ver}")"  defer></script>
+        <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js?v={Ver}")"  defer></script>
 
 
     </environment>
 
     <!-- Production: Load minified JS -->
     <environment exclude="Development">
-        <link href="@($"{Cdn}/fonts/css/all.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/nunito.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/roboto.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/fonts/css/all.min.css?v={Ver}")" rel="stylesheet"  />
+        <link href="@($"{Cdn}/css/nunito.css?v={Ver}")" rel="stylesheet"   />
+        <link href="@($"{Cdn}/css/roboto.css?v={Ver}")" rel="stylesheet"   />
 
-        <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/style.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/extra.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/background.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/typography.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/sweetalert2/sweetalert2.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/style.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/extra.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/background.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/typography.css?v={Ver}")" rel="stylesheet"   />
 
-        <link href="@($"{Cdn}/css/cssstyle.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/cssstyle.min.css?v={Ver}")" rel="stylesheet"   />
 
-        <link href="@($"{Cdn}/css/horizontaltimeline.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <script src="@($"{Cdn}/fonts/feather/feather.min.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/fonts/allfont/webfont.min.js?v={configuration["StaticVersion"]}")"></script>
-        <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/bootstrap-datetimepicker.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/toastr/toastr.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-        <link href="@($"{Cdn}/css/main.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/horizontaltimeline.css?v={Ver}")" rel="stylesheet" />
+        <script src="@($"{Cdn}/fonts/feather/feather.min.js?v={Ver}")" ></script>
+        <script src="@($"{Cdn}/fonts/allfont/webfont.min.js?v={Ver}")" ></script>
+        <link href="@($"{Cdn}/bootstrap/css/bootstrap.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/bootstrap-datetimepicker.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/lib/jqueryui/themes/base/jquery-ui.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/toastr/toastr.min.css?v={Ver}")" rel="stylesheet" />
+        <link href="@($"{Cdn}/css/main.css?v={Ver}")" rel="stylesheet" />
         @*     <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" /> *@
 
-        <script src="@($"{Cdn}/lib/jquery/jquery.min.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={configuration["StaticVersion"]}")"></script>
-        <script src="@($"{Cdn}/lib/jquery-validate/jquery.validate.min.js?v={configuration["StaticVersion"]}")" defer></script>
-        <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js?v={configuration["StaticVersion"]}")" defer></script>
+        <script src="@($"{Cdn}/lib/jquery/jquery.min.js?v={Ver}")" ></script>
+        <script src="@($"{Cdn}/bootstrap/js/bootstrap.min.js?v={Ver}")" ></script>
+        <script src="@($"{Cdn}/lib/jquery-validate/jquery.validate.min.js?v={Ver}")"  defer></script>
+        <script src="@($"{Cdn}/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js?v={Ver}")"  defer></script>
 
 
 
     </environment>
 
-    <link href="@($"{Cdn}/developercss/layout.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+    <link href="@($"{Cdn}/developercss/layout.css?v={Ver}")" rel="stylesheet"  />
 </head>
 <body class="nav-fixed sidenav-toggled">
     @Html.AntiForgeryToken()
@@ -203,28 +206,28 @@
         </div>
     </footer>
 
-    <script src="@($"{Cdn}/lib/jqueryui/jquery-ui.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/js/bootstrap.bundle.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/bootstrap/js/bootstrap.bundle.min.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/lib/jqueryui/jquery-ui.min.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/js/bootstrap.bundle.min.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/bootstrap/js/bootstrap.bundle.min.js?v={Ver}")"  ></script>
 
-    <script src="@($"{Cdn}/js/scripts.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/js/scripts.js?v={Ver}")"  ></script>
 
 
 
     @*<script src="@($"{Cdn}/fonts/feather/feather.min.js")"></script>*@
-    <script src="@($"{Cdn}/sweetalert2/sweetalert2.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/toastr/toastr.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/js/moment.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/js/bootstrap-datetimepicker.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/layout.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/keyconstants.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/commanvalidation.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/icardhistory.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/sweetalert2/sweetalert2.min.js?v={Ver}")" ></script>
+    <script src="@($"{Cdn}/toastr/toastr.min.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/js/moment.min.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/js/bootstrap-datetimepicker.min.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/developerjs/layout.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/developerjs/keyconstants.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/developerjs/commanvalidation.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/developerjs/icardhistory.js?v={Ver}")"  ></script>
     @*     <script src="@($"{Cdn}/developerjs/chatbot.js")"></script> *@
-    <script src="@($"{Cdn}/lib/crypto-js/crypto-js.min.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/_notifications.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/encryptepayload.js?v={configuration["StaticVersion"]}")"></script>
-    <script src="@($"{Cdn}/developerjs/datatablesearchvalidation.js?v={configuration["StaticVersion"]}")"></script>
+    <script src="@($"{Cdn}/lib/crypto-js/crypto-js.min.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/developerjs/_notifications.js?v={Ver}")"  ></script>
+    <script src="@($"{Cdn}/developerjs/encryptepayload.js?v={Ver}")" ></script>
+    <script src="@($"{Cdn}/developerjs/datatablesearchvalidation.js?v={Ver}")"  ></script>
     @RenderSection("Scripts", false)
 
 

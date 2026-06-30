@@ -2,11 +2,12 @@
 @{
     ViewData["Title"] = "ORO Mapping";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
 
-<link href="@($"{Cdn}/select2/css/select2.min.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
-<link href="@($"{Cdn}/developercss/oromapping.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/select2/css/select2.min.css?v={Ver}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/oromapping.css?v={Ver}")" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -58,9 +59,9 @@
         </div>
     </div>
 </div>
-<script src="@($"{Cdn}/developerjs/mtables.js?v={configuration["StaticVersion"]}")"></script>
-<script src="@($"{Cdn}/developerjs/OROMapping.js?v={configuration["StaticVersion"]}")"></script>
-<script src="@($"{Cdn}/select2/js/select2.min.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/developerjs/mtables.js?v={Ver}")"></script>
+<script src="@($"{Cdn}/developerjs/OROMapping.js?v={Ver}")"></script>
+<script src="@($"{Cdn}/select2/js/select2.min.js?v={Ver}")"></script>
 
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

@@ -2,9 +2,10 @@
 @inject IConfiguration configuration;
 @{
     ViewBag.Title = "Select";
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/developercss/requesttype.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/requesttype.css?v={Ver}")" rel="stylesheet" />
 <div class="row g-3">
     <div class="card-header py-3 d-flex  bg-transparent">
         <h6 class="mb-0 fw-bold">@ViewBag.Title</h6>

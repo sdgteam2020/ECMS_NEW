@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
+using Web.Services;
 using ApplicationUser = DataTransferObject.Domain.Identitytable.ApplicationUser;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,7 +45,7 @@ builder.Logging.AddDbLogger(options =>
 {
     builder.Configuration.GetSection("Logging").GetSection("Database").GetSection("Options").Bind(options);
 });
-
+builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
@@ -56,6 +57,19 @@ builder.Services.Configure<SecurityStampValidatorOptions>(opt =>
     opt.ValidationInterval = TimeSpan.FromSeconds(0)
 );
 
+builder.Services.AddHttpClient("CdnHealthClient", client =>
+{
+    client.Timeout = TimeSpan.FromMilliseconds(800);
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback =
+            HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+}); ;
+
+builder.Services.AddSingleton<ICdnHealthService, CdnHealthService>();
 
 builder.Services.AddCors(options =>
 {

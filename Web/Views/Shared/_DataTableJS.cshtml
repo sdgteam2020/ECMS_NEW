@@ -1,24 +1,25 @@
 ﻿@inject IConfiguration configuration;
 @{
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
 <!-- DataTables core -->
-<script src="@($"{Cdn}/newdatatables/datatables.min.js?v={configuration["StaticVersion"]}")"></script>
-<script src="@($"{Cdn}/newdatatables/datatables.bootstrap5.min.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/newdatatables/datatables.min.js?v={Ver}")"></script>
+<script src="@($"{Cdn}/newdatatables/datatables.bootstrap5.min.js?v={Ver}")"></script>
 
 <!-- Responsive -->
-<script src="@($"{Cdn}/newdatatables/datatables-responsive/datatables.responsive.min.js?v={configuration["StaticVersion"]}")"></script>
-<script src="@($"{Cdn}/newdatatables/responsive.bootstrap5.min.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/newdatatables/datatables-responsive/datatables.responsive.min.js?v={Ver}")"></script>
+<script src="@($"{Cdn}/newdatatables/responsive.bootstrap5.min.js?v={Ver}")"></script>
 
 <!-- FixedHeader -->
-<script src="@($"{Cdn}/newdatatables/fixedheader.datatables.min.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/newdatatables/fixedheader.datatables.min.js?v={Ver}")"></script>
 
 <!-- Buttons -->
-<script src="@($"{Cdn}/newdatatables/datatables-buttons/js/datatables.buttons.min.js?v={configuration["StaticVersion"]}")"></script><!-- It adds the foundational functionality needed to add custom buttons (like Export, Print, or custom actions) to a DataTable.-->
-<script src="@($"{Cdn}/newdatatables/buttons.bootstrap5.min.js?v={configuration["StaticVersion"]}")"></script>
+<script src="@($"{Cdn}/newdatatables/datatables-buttons/js/datatables.buttons.min.js?v={Ver}")"></script><!-- It adds the foundational functionality needed to add custom buttons (like Export, Print, or custom actions) to a DataTable.-->
+<script src="@($"{Cdn}/newdatatables/buttons.bootstrap5.min.js?v={Ver}")"></script>
 
 <!-- Export -->
  
-<script src="@($"{Cdn}/newdatatables/datatables-buttons/js/buttons.html5.min.js?v={configuration["StaticVersion"]}")"></script> 
-<script src="@($"{Cdn}/newdatatables/datatables-buttons/js/buttons.print.min.js?v={configuration["StaticVersion"]}")"></script><!-- Adds a "Print" button to DataTables toolbar for print preview and printing -->
+<script src="@($"{Cdn}/newdatatables/datatables-buttons/js/buttons.html5.min.js?v={Ver}")"></script> 
+<script src="@($"{Cdn}/newdatatables/datatables-buttons/js/buttons.print.min.js?v={Ver}")"></script><!-- Adds a "Print" button to DataTables toolbar for print preview and printing -->
  

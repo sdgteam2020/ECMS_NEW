@@ -5,9 +5,10 @@
     ViewBag.Description = "IM Login Section";
     ViewBag.Keywords = "";
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
-    string Cdn = Environment.GetEnvironmentVariable("AFSAC__CDN");
+    string Cdn = (await CdnHealthService.GetStaticBaseUrlAsync())?.TrimEnd('/');
+    string Ver = configuration["StaticVersion"];
 }
-<link href="@($"{Cdn}/developercss/imloginself.css?v={configuration["StaticVersion"]}")" rel="stylesheet" />
+<link href="@($"{Cdn}/developercss/imloginself.css?v={Ver}")" rel="stylesheet" />
 <div class="page">
     <div class="container-fluid">
         <partial name="~/Views/Shared/_CommonHeader.cshtml" />
