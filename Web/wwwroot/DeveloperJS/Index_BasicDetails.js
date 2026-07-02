@@ -20,8 +20,7 @@ $(function () {
     });
 });
 function BindData(Type, StepCounter, JCOOR, VBId) {
-    // Guard against DataTables plugin not being loaded to avoid TypeError
-    if ($.fn && $.fn.DataTable && $.fn.DataTable.isDataTable && $.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
+    if ($.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
         // Destroy the DataTable and clear the table content
         $("#tbldatatabledata_Fwd").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldatatabledata_Fwd thead").empty(); // Clear old thead

@@ -1,5 +1,4 @@
-﻿@using System.Net.Http
-@inject IConfiguration configuration
+﻿@inject IConfiguration configuration
 @{    
     // string cdnUrl = Environment.GetEnvironmentVariable("AFSAC__CDN")?.TrimEnd('/');
     // string localUrl = configuration["AFSAC__Local"]?.TrimEnd('/');
@@ -19,7 +18,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     @* <script src="@Url.Content($"~/developerjs/cdn-fallback.js?v={Ver}")"></script> *@
-    <link rel="icon" type="image/x-icon" asp-href-include="@($"{Cdn}/images/AFSAC.png")">
+    <link rel="icon" type="image/x-icon" href="@($"{Cdn}/images/AFSAC.png")">
     <title> E-ISAC </title>
     @*  <link asp-href-include="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
 
