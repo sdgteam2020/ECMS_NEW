@@ -136,7 +136,7 @@ namespace Web.Controllers
             // Fetch and return the basic details for the provided request ID as a JSON response
             try
             {
-                BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await _basicDetailBL.GetBasicDetailByRequestId(RequestId);
+                DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await _basicDetailBL.GetBasicDetailByRequestId(RequestId);
                 if (basicDetailCrtAndUpdVM != null)
                 {
                     // Define the root physical folder where images are stored

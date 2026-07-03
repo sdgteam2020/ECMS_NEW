@@ -23,8 +23,6 @@
         public string? FName_2 { get; set; }
         public string? LName_2 { get; set; }
 
-        public string? PhotoImagePath_1 { get; set; }
-        public string? PhotoImagePath_2 { get; set; }
     }
     public class DTONotificationResult
     {

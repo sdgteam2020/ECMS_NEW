@@ -122,7 +122,7 @@ namespace DataAccessLayer
             };
 
             var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
-            selectFields = @"tre.RequestId as ApplId,noti.UpdatedOn,Message,ranks.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,uplod.PhotoImagePath AS PhotoImagePath_1,uplod_2.PhotoImagePath AS PhotoImagePath_2 ,dis.Url";
+            selectFields = @"tre.RequestId as ApplId,noti.UpdatedOn,Message,ranks.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(uplod.PhotoImagePath, uplod_2.PhotoImagePath) AS PhotoImagePath,dis.Url";
 
             fromJoinClause = @"from TrnNotification noti
                                 inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
@@ -179,7 +179,7 @@ namespace DataAccessLayer
                                      select new DTONotificationResponse()
                                      {
                                          TotalFilteredRecords = e.TotalFilteredRecords,
-                                         PhotoImagePath = e.PhotoImagePath_1 ?? e.PhotoImagePath_2 ?? string.Empty,
+                                         PhotoImagePath = e.PhotoImagePath,
                                          ApplId = e.ApplId,
                                          ServiceNo = e.ServiceNo,
                                          RankAbbreviation = e.RankAbbreviation,
