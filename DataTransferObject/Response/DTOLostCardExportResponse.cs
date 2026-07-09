@@ -23,11 +23,5 @@ namespace DataTransferObject.Response
         public string Remark { get; set; }
         public string CardSerialNo { get; set; }
         public string ChipNo { get; set; }
-
-        public string? FName_1 { get; set; }
-        public string? LName_1 { get; set; }
-
-        public string? FName_2 { get; set; }
-        public string? LName_2 { get; set; }
     }
 }

@@ -14,6 +14,7 @@ namespace DataTransferObject.Domain.Model
         [Required]
         public byte ReasonId { get; set; }
         public MPostingReason? MPostingReason { get; set; }
+        
         [Required]
         [StringLength(50)]
         [Column(TypeName = "varchar(50)")]
@@ -31,5 +32,20 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MUserProfile"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UserId { get; set; }
         public MUserProfile? MUserProfile { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string CardRequestHistoryJson { get; set; }
+
+        [Column(TypeName = "varchar(30)")]
+        [MaxLength(30, ErrorMessage = "Maximum length of Rank Abbreviation is thirty character.")]
+        public string RankAbbreviation { get; set; } = string.Empty;
+
+        [StringLength(36)]
+        [Column(TypeName = "varchar(36)")]
+        public string Name { get; set; } = string.Empty;
+
+        [StringLength(10)]
+        [Column(TypeName = "varchar(10)")]
+        public string ServiceNo { get; set; } = string.Empty;
     }
 }

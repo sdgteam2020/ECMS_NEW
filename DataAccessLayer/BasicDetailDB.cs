@@ -2333,13 +2333,12 @@ namespace DataAccessLayer
                 wherequery = @"WHERE ( (@SearchTerm IS NULL) OR (B.ServiceNo LIKE @SearchTerm OR trnicrd.RequestId LIKE @SearchTerm))";
 
             }
-
             else if (dTO.stepcount == (int)ApplSubmittedStatusEnum.Complete)//////For Completed   
             {
                 selectColumns = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND trnicrd.StatusId = @CompleteStatusId                        
-                        INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
+                        INNER JOIN AFSAC2.dbo.BasicDetails B ON B.BasicDetailId = trnicrd.BasicDetailId
                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                         
                         inner join MRank ran on ran.RankId=B.RankId 
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
@@ -2351,7 +2350,7 @@ namespace DataAccessLayer
 
                 fromJoinCount = @"FROM TrnICardRequest trnicrd
                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND trnicrd.StatusId = @CompleteStatusId                       
-                        INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
+                        INNER JOIN AFSAC2.dbo.BasicDetails B ON B.BasicDetailId = trnicrd.BasicDetailId 
                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor)                      
                         inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId AND map.AspNetUsersId = @UserId";
 
@@ -3479,7 +3478,24 @@ namespace DataAccessLayer
         /// </exception>
         public async Task<ICardHistoryResponseAll> ICardHistory(int RequestId)
         {
-            string query = @"select fwd.TrnFwdId,usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank,
+            string query = @"SELECT bd.PaperIcardNo,bd.NameAsPerRecord,bd.FName,bd.LName,bd.ServiceNo,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,
+                            trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,trninfo.IdenMark1,trninfo.Height,trninfo.AadhaarNo,bld.BloodGroup,regi.Abbreviation RegimentalName,
+                            Muni.UnitName,ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,icardreq.RequestId,icardreq.UpdatedOn RequestDate,appl.Name ApplyFor,icardreq.CardSerialNo,icardreq.ChipNo
+                            from TrnICardRequest icardreq
+                            INNER JOIN BasicDetails bd on bd.BasicDetailId = icardreq.BasicDetailId
+                            INNER JOIN MIssuingAuthority issaut on issaut.IssuingAuthorityId = bd.IssuingAuthorityId
+                            INNER JOIN MRank ranks on ranks.RankId = bd.RankId
+                            INNER JOIN MArmedType arm on arm.ArmedId = bd.ArmedId
+                            INNER JOIN MapUnit uni on uni.UnitMapId = bd.UnitId
+                            INNER JOIN MUnit Muni on Muni.UnitId=uni.UnitId
+                            INNER JOIN MApplyFor appl on appl.ApplyForId = bd.ApplyForId
+                            INNER JOIN TrnAddress trnadd on trnadd.BasicDetailId = bd.BasicDetailId
+                            INNER JOIN TrnIdentityInfo trninfo on trninfo.BasicDetailId = bd.BasicDetailId
+                            INNER JOIN MBloodGroup bld on bld.BloodGroupId = trninfo.BloodGroupId
+                            left join MRegimental regi on regi.RegId = bd.RegimentalId
+                            where icardreq.RequestId=@RequestId
+
+                            select fwd.TrnFwdId,fwd.StepId,usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank,
                             usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,
                             CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status,
                             fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark,
@@ -3520,11 +3536,13 @@ namespace DataAccessLayer
                     using (var multi = await connection.QueryMultipleAsync(query, new { RequestId }))
                     {
                         // var ICardHistory = await multi.ReadFirstOrDefaultAsync<ICardHistoryResponse>();
+                        var BasicDetail = (await multi.ReadFirstOrDefaultAsync<DTOBasicDetailForCompleteClosed>());
                         var ICardHistory = (await multi.ReadAsync<ICardHistoryResponse>()).ToList();
                         var PostingOut = (await multi.ReadAsync<ICardHistoryPostingOutResponse>()).ToList();
                         var FaultyCard = (await multi.ReadAsync<ICardHistoryFaultyCardResponse>()).ToList();
                         var CloseCard = await multi.ReadFirstOrDefaultAsync<ICardApplCloseCardResponse>();
 
+                        cardHistoryResponseAll.BasicDetail = BasicDetail;   
                         cardHistoryResponseAll.ICardHistory = ICardHistory;
                         cardHistoryResponseAll.PostingOut = PostingOut;
                         cardHistoryResponseAll.FaultyCard = FaultyCard;
@@ -3681,12 +3699,6 @@ namespace DataAccessLayer
             if (Type == 1) // Submitted
             {
                 query = @"
-                        ;WITH BasicData AS
-                        (
-                            SELECT BasicDetailId, ApplyForId FROM BasicDetails
-                            UNION ALL
-                            SELECT BasicDetailId, ApplyForId FROM AFSAC2.dbo.BasicDetails
-                        )
                         SELECT
                         ToDrafted =
                         (
@@ -3701,14 +3713,14 @@ namespace DataAccessLayer
                             SELECT COUNT(req.RequestId) FROM TrnDomainMapping domain
                             INNER JOIN TrnICardRequest req ON req.TrnDomainMappingId = domain.Id
                             INNER JOIN TrnStepCounter trnstepcout ON trnstepcout.RequestId = req.RequestId AND trnstepcout.StepId > 1
-                            INNER JOIN BasicData bd ON bd.BasicDetailId = req.BasicDetailId AND bd.ApplyForId = @applyForId
+                            INNER JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId AND bd.ApplyForId = @applyForId
                             WHERE domain.AspNetUsersId = @UserId
                         ),
                         ToCompleted =
                         (
                             SELECT COUNT(req.RequestId) FROM TrnDomainMapping domain
                             INNER JOIN TrnICardRequest req ON req.TrnDomainMappingId = domain.Id AND req.StatusId = 2
-                            INNER JOIN AFSAC2.dbo.BasicDetails basic_2 basic_2 bd.BasicDetailId = req.BasicDetailId AND basic_2.ApplyForId = @applyForId
+                            INNER JOIN AFSAC2.dbo.BasicDetails basic_2 ON basic_2.BasicDetailId = req.BasicDetailId AND basic_2.ApplyForId = @applyForId
                             WHERE domain.AspNetUsersId = @UserId
                         ),
 
@@ -3836,17 +3848,15 @@ namespace DataAccessLayer
         /// </exception>
         public async Task<DTONotificationResult> GetNotification(int UserId)
         {
-            string selectFields = @"select TOP 5 tre.RequestId as ApplId,dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(uplod.PhotoImagePath, uplod_2.PhotoImagePath) AS PhotoImagePath,dis.Url,users.DomainId as DomainId";
+            string selectFields = @"select TOP 5 tre.RequestId as ApplId,dis.DisplayId,Spanname,Message,ranks.RankAbbreviation,bd.FName,bd.LName,bd.ServiceNo,uplod.PhotoImagePath,dis.Url,users.DomainId as DomainId";
             string fromJoinClause = @"from TrnNotification noti
-                                    inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
-                                    inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId
-                                    inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId 
-                                    inner join TrnICardRequest tre on tre.RequestId = noti.RequestId 
-                                    LEFT JOIN BasicDetails bd on bd.BasicDetailId=tre.BasicDetailId
-                                    LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=tre.BasicDetailId 
-                                    inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
-                                    LEFT JOIN TrnUpload uplod on uplod.BasicDetailId=bd.BasicDetailId
-                                    LEFT JOIN TrnUpload uplod_2 on uplod_2.BasicDetailId=basic_2.BasicDetailId";
+                                    inner join TrnNotificationDisplay dis on noti.DisplayId = dis.DisplayId
+                                    inner join AspNetUsers users on users.Id = noti.SentAspNetUsersId
+                                    inner join TrnStepCounter stepc on stepc.RequestId = noti.RequestId 
+                                    inner join TrnICardRequest tre on tre.RequestId = noti.RequestId AND tre.StatusId = 1
+                                    inner join BasicDetails bd on bd.BasicDetailId = tre.BasicDetailId
+                                    inner join MRank ranks on ranks.RankId = bd.RankId
+                                    inner join TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId";
             string whereClause = @"where noti.ReciverAspNetUsersId=@UserId and [Read]=0 and ReciverAspNetUsersId!=SentAspNetUsersId";
 
             string sql = $@" {selectFields} {fromJoinClause} {whereClause} order by noti.UpdatedOn
@@ -3860,15 +3870,6 @@ namespace DataAccessLayer
 
                     var items = (await grid.ReadAsync<DTONotificationResponse>()).ToList();
                     var total = await grid.ReadSingleAsync<int>();
-
-                    if (items != null)
-                    {
-                        foreach (var item in items)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
-                    }
 
                     return new DTONotificationResult
                     {
@@ -3907,7 +3908,7 @@ namespace DataAccessLayer
         /// </exception>
         public async Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId)
         {
-            string query = @"select Distinct tre.RequestId as ApplId, dis.DisplayId,Spanname + 'self' Spanname,Message,ranks.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(uplod.PhotoImagePath, uplod_2.PhotoImagePath) AS PhotoImagePath,
+            string query = @"select Distinct tre.RequestId as ApplId, dis.DisplayId,Spanname + 'self' Spanname,Message,ranks.RankAbbreviation,bd.FName,bd.LName,bd.ServiceNo,uplod.PhotoImagePath,
                             CASE WHEN dis.DisplayId in (7,8,9,10,17,18,19,20) THEN 
                             dis.Url 
                             ELSE '' 
@@ -3917,26 +3918,15 @@ namespace DataAccessLayer
                             inner join TrnICardRequest tre on tre.RequestId = noti.RequestId
                             inner join TrnDomainMapping dmap on dmap.Id = tre.TrnDomainMappingId AND dmap.AspNetUsersId = @UserId
                             inner join TrnStepCounter cou on cou.RequestId=tre.RequestId 
-                            LEFT JOIN BasicDetails bd on bd.BasicDetailId=tre.BasicDetailId AND bd.applyforId=@applyForId
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=tre.BasicDetailId AND basic_2.applyforId=@applyForId
-                            inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
-                            LEFT JOIN TrnUpload uplod on uplod.BasicDetailId=bd.BasicDetailId
-                            LEFT JOIN AFSAC2.dbo.TrnUpload uplod_2 on uplod_2.BasicDetailId=basic_2.BasicDetailId
+                            inner join BasicDetails bd on bd.BasicDetailId=tre.BasicDetailId AND bd.applyforId=@applyForId
+                            inner join MRank ranks on ranks.RankId = bd.RankId
+                            inner join TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
                             where noti.StepId = @Type  AND noti.[Read]=0  AND ReciverAspNetUsersId=SentAspNetUsersId";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTONotificationResponse>(query, new { UserId, Type, applyForId });
-                    if (ret != null)
-                    {
-                        foreach (var item in ret)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
-                    }
-
                     return ret.ToList();
                 }
             }

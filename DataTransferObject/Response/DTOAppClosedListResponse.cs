@@ -17,11 +17,5 @@
         public int BasicDetailId { get; set; }
         public byte ReasonId { get; set; }
         public int RequestId { get; set; }
-
-        public string? FName_1 { get; set; }
-        public string? LName_1 { get; set; }
-
-        public string? FName_2 { get; set; } = string.Empty;
-        public string? LName_2 { get; set; }
     }
 }

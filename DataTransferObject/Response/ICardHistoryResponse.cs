@@ -9,6 +9,7 @@ namespace DataTransferObject.Response
     public class ICardHistoryResponse
     {
         public int? TrnFwdId { get; set; }
+        public byte StepId { get; set; }
         public string? FromDomain { get; set; }
         public string? FromProfile { get; set; }
         public string? FromRank { get; set; }
@@ -51,6 +52,7 @@ namespace DataTransferObject.Response
     }
     public class ICardHistoryResponseAll
     {
+        public DTOBasicDetailForCompleteClosed BasicDetail { get; set; }
         public List<ICardHistoryResponse> ICardHistory { get; set; }
         public List<ICardHistoryPostingOutResponse> PostingOut { get; set; }
         public List<ICardHistoryFaultyCardResponse> FaultyCard { get; set; }

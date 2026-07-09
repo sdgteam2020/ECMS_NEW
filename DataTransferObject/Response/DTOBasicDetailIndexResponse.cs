@@ -33,20 +33,5 @@ namespace DataTransferObject.Response
         public int IsPosting { get; set; }
         public bool IsLock { get; set; }
 
-        [JsonIgnore]
-        [ScaffoldColumn(false)]
-        public string? FName_1 { get; set; }
-
-        [JsonIgnore]
-        [ScaffoldColumn(false)]
-        public string? LName_1 { get; set; }
-
-        [JsonIgnore]
-        [ScaffoldColumn(false)]
-        public string? FName_2 { get; set; }
-
-        [JsonIgnore]
-        [ScaffoldColumn(false)]
-        public string? LName_2 { get; set; }
     }
 }

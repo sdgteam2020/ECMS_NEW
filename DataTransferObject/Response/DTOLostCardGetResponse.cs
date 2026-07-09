@@ -18,12 +18,6 @@ namespace DataTransferObject.Response
         public string RemarksNameList { get; set; } = string.Empty;
         public string? Remark { get; set; }
 
-        public string? FName_1 { get; set; }
-        public string? LName_1 { get; set; }
-
-        public string? FName_2 { get; set; }
-        public string? LName_2 { get; set; }
-
         [JsonIgnore]
         public string? SupportDocName { get; set; }
         public bool IsFIRLogged { get; set; }

@@ -814,20 +814,22 @@ namespace DataAccessLayer
                     ["ArmedAbbreviation"] = "marmed.Abbreviation",
                     ["ApplyFor"] = "appl.Name"
                 };
-                query = @"appl.Name ApplyFor,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mcat.Name FaultyStage,req.RequestId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,bas.NameAsPerRecord,Muni.Abbreviation UnitAbbreviation,
-                            faulty.UpdatedOn,faulty.FromRemark,faulty.ToRemark,
+                query = @"appl.Name ApplyFor,marmed.Abbreviation as ArmedAbbreviation,regi.Abbreviation RegimentalName,mcat.Name FaultyStage,req.RequestId,
+                            ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ranks.RankAbbreviation RankName,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,
+                            Muni.Abbreviation UnitAbbreviation,faulty.UpdatedOn,faulty.FromRemark,faulty.ToRemark,
                             (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(faulty.RemarksIds,','))) RemarksNameList
                             from TrnFaultyCard faulty
                             inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId
                             inner join TrnICardRequest req on req.RequestId = faulty.RequestId
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-							INNER JOIN MArmedType marmed on bas.ArmedId=marmed.ArmedId
-                            inner join MRank ranks on ranks.RankId=bas.RankId
-                            inner join MapUnit unit on unit.UnitMapId=bas.UnitId
-                            inner join MUnit Muni on Muni.UnitId=unit.UnitId
-                            inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId ";
+                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
+                            LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
+							INNER JOIN MArmedType marmed on marmed.ArmedId = ISNULL(basic_2.ArmedId,bd.ArmedId)
+                            inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
+                            inner join MapUnit unit on unit.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
+                            inner join MUnit Muni on Muni.UnitId = unit.UnitId
+                            inner join MApplyFor appl on appl.ApplyForId = ISNULL(basic_2.ApplyForId,bd.ApplyForId)
+                            left join MRegimental regi on regi.RegId = ISNULL(basic_2.RegimentalId,bd.RegimentalId)";
                 wherequery = @"WHERE
                             (
                                 (@UnitType = 1 AND
@@ -855,7 +857,8 @@ namespace DataAccessLayer
                             AND 
                             (
                                 @SearchTerm IS NULL OR 
-                                ServiceNo LIKE @SearchTerm
+                                bd.ServiceNo LIKE @SearchTerm OR
+                                basic_2.ServiceNo LIKE @SearchTerm
                             )";
             }
             else if (dTO.Choice == "LostCase")
@@ -870,19 +873,18 @@ namespace DataAccessLayer
                     ["LostOn"] = "lost.LostOn",
                     ["UpdatedOn"] = "lost.UpdatedOn"
                 };
-                query = @"appl.Name ApplyFor,marmed.Abbreviation as ArmedAbbreviation,req.RequestId,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ranks.RankAbbreviation RankName,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,Muni.Abbreviation UnitAbbreviation,
-		                    lost.UpdatedOn,lost.Remark as FromRemark,lost.LostOn,regi.Abbreviation RegimentalName,lost.IsFIRLogged,lost.SupportDocName
+                query = @"appl.Name ApplyFor,marmed.Abbreviation as ArmedAbbreviation,req.RequestId,basic_2.ServiceNo,ranks.RankAbbreviation RankName,basic_2.FName,basic_2.LName
+                            Muni.Abbreviation UnitAbbreviation,lost.UpdatedOn,lost.Remark as FromRemark,lost.LostOn,regi.Abbreviation RegimentalName,lost.IsFIRLogged,lost.SupportDocName
                             from TrnLostCards lost
                             inner join TrnICardRequest req on req.RequestId = lost.RequestId
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
-                            LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
-		                    INNER JOIN MArmedType marmed on marmed.ArmedId=ISNULL(basic_2.ArmedId,bd.ArmedId)
-                            inner join MRank ranks on ranks.RankId=ISNULL(basic_2.RankId,bd.RankId)
-                            inner join MapUnit unit on unit.UnitMapId=ISNULL(basic_2.UnitId,bd.UnitId)
+                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
+		                    INNER JOIN MArmedType marmed on marmed.ArmedId = basic_2.ArmedId 
+                            inner join MRank ranks on ranks.RankId = basic_2.RankId
+                            inner join MapUnit unit on unit.UnitMapId = basic_2.UnitId 
                             inner join MUnit Muni on Muni.UnitId=unit.UnitId
-                            inner join MApplyFor appl on appl.ApplyForId=ISNULL(basic_2.ApplyForId,bd.ApplyForId)
-                            left join MRegimental regi on regi.RegId=ISNULL(basic_2.RegimentalId,bd.RegimentalId)";
+                            inner join MApplyFor appl on appl.ApplyForId = basic_2.ApplyForId
+                            left join MRegimental regi on regi.RegId = basic_2.RegimentalId ";
                 wherequery = @"WHERE
                             (
                                 (@UnitType = 1 AND
@@ -908,9 +910,9 @@ namespace DataAccessLayer
 							AND unit.UnitType =@UnitType
                             AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                             AND (
-                            @SearchTerm IS NULL OR 
-                            bd.ServiceNo LIKE @SearchTerm OR
-                            basic_2.ServiceNo LIKE @SearchTerm)";
+                                @SearchTerm IS NULL OR 
+                                basic_2.ServiceNo LIKE @SearchTerm
+                            )";
             }
             else if (dTO.Choice == "MonthlyProcessed")
             {
@@ -968,7 +970,7 @@ namespace DataAccessLayer
             try
             {
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "req.RequestId";
-                if (dTO.Choice == "LostCase")
+                if (dTO.Choice == "NonFunctional")
                 {
                     if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
                     {
@@ -1006,7 +1008,7 @@ namespace DataAccessLayer
                     var records = (await ret.ReadAsync<DTOReportResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 
-                    if (dTO.Choice == "LostCase")
+                    if (dTO.Choice == "NonFunctional")
                     {
                         if (records != null)
                         {
@@ -1087,12 +1089,9 @@ namespace DataAccessLayer
                             ),
                             BaseRequests AS
                             (
-                                SELECT req.RequestId, basi.UpdatedOn
-                                FROM TrnICardRequest req
-                                INNER JOIN BasicDetails basi 
-                                    ON req.BasicDetailId = basi.BasicDetailId
-                                INNER JOIN FilteredUnits unit 
-                                    ON unit.UnitMapId = basi.UnitId
+                                SELECT req.RequestId, basi.UpdatedOn FROM TrnICardRequest req
+                                INNER JOIN BasicDetails basi ON basi.BasicDetailId = req.BasicDetailId
+                                INNER JOIN FilteredUnits unit ON unit.UnitMapId = basi.UnitId
                                 WHERE req.StatusId = @RunningStatusId
                             )
                             SELECT
@@ -1115,21 +1114,18 @@ namespace DataAccessLayer
                                     SELECT COUNT(DISTINCT req.RequestId)
                                     FROM TrnLostCards lost
                                     INNER JOIN TrnICardRequest req ON req.RequestId = lost.RequestId
-                                    LEFT JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId
-                                    LEFT JOIN AFSAC2.dbo.BasicDetails basic_2  ON basic_2.BasicDetailId = req.BasicDetailId
-                                    INNER JOIN FilteredUnits unit ON unit.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
+                                    INNER JOIN AFSAC2.dbo.BasicDetails basic_2  ON basic_2.BasicDetailId = req.BasicDetailId
+                                    INNER JOIN FilteredUnits unit ON unit.UnitMapId = basic_2.UnitId
                                 ),
 
                                 TotNonFunctionalCard =
                                 (
                                     SELECT COUNT(DISTINCT faulty.TrnFaultyCardId)
                                     FROM TrnFaultyCard faulty
-                                    INNER JOIN TrnICardRequest req 
-                                        ON req.RequestId = faulty.RequestId
-                                    INNER JOIN BasicDetails bas 
-                                        ON bas.BasicDetailId = req.BasicDetailId
-                                    INNER JOIN FilteredUnits unit 
-                                        ON unit.UnitMapId = bas.UnitId
+                                    INNER JOIN TrnICardRequest req ON req.RequestId = faulty.RequestId
+                                    LEFT JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId
+                                    LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+                                    INNER JOIN FilteredUnits unit ON unit.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
                                 )
                             OPTION (RECOMPILE)";
 
@@ -1249,13 +1245,9 @@ namespace DataAccessLayer
                                     req.StatusId,
                                     unit.UnitMapId
                                 FROM TrnStepCounter stcount
-                                INNER JOIN TrnICardRequest req 
-                                    ON stcount.RequestId = req.RequestId
-                                   AND req.StatusId IN (1,2)
-                                INNER JOIN BasicDetails basi 
-                                    ON req.BasicDetailId = basi.BasicDetailId
-                                INNER JOIN MapUnit unit 
-                                    ON basi.UnitId = unit.UnitMapId
+                                INNER JOIN TrnICardRequest req ON stcount.RequestId = req.RequestId AND req.StatusId = 1  AND stcount.StepId IN (5,6,11,12,13,14)
+                                INNER JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId
+                                INNER JOIN MapUnit unit ON basi.UnitId = unit.UnitMapId
                                 WHERE unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                                   AND unit.UnitType = @UnitType
                                   AND
@@ -1289,14 +1281,11 @@ namespace DataAccessLayer
                                     req.StatusId,
                                     unit.UnitMapId
                                 FROM TrnStepCounter stcount
-                                INNER JOIN TrnICardRequest req 
-                                    ON stcount.RequestId = req.RequestId
-                                   AND req.StatusId = 2
-                                INNER JOIN AFSAC2.dbo.BasicDetails basi2 
-                                    ON req.BasicDetailId = basi2.BasicDetailId
-                                INNER JOIN MapUnit unit 
-                                    ON basi2.UnitId = unit.UnitMapId
-                                WHERE unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
+                                INNER JOIN TrnICardRequest req ON stcount.RequestId = req.RequestId AND req.StatusId = 2
+                                INNER JOIN AFSAC2.dbo.BasicDetails basi2 ON req.BasicDetailId = basi2.BasicDetailId
+                                INNER JOIN MapUnit unit ON basi2.UnitId = unit.UnitMapId
+                                WHERE stcount.StepId = 15
+                                  AND unit.UnitMapId = ISNULL(@UnitMapId, unit.UnitMapId)
                                   AND unit.UnitType = @UnitType
                                   AND
                                   (
@@ -1565,33 +1554,15 @@ namespace DataAccessLayer
                     ["ServiceNo"] = "ServiceNo",
                     ["ActionOn"] = "dist.DistributedOn"
                 };
-                selectFields = @"
-                                req.RequestId,
-                                ranks.RankAbbreviation AS RankName,
-
-                                basi.FName AS FName_1,
-                                basi.LName AS LName_1,
-
-                                basi2.FName AS FName_2,
-                                basi2.LName AS LName_2,
-
-                                ISNULL(basi.ServiceNo, basi2.ServiceNo) AS ServiceNo,
-                                marmed.Abbreviation AS ArmedAbbreviation,
-                                dist.DistributedOn AS ActionOn,
-                                toRanks.RankAbbreviation AS ToRankName,
-                                toUp.Name AS ToName,
-                                toUp.ArmyNo AS ToServiceNo,
-                                toAspUser.DomainId AS ToDID";
-
+                selectFields = @"req.RequestId,ranks.RankAbbreviation AS RankName,basi2.FName,basi2.LName,basi2.ServiceNo,marmed.Abbreviation AS ArmedAbbreviation,dist.DistributedOn AS ActionOn,toRanks.RankAbbreviation AS ToRankName,toUp.Name AS ToName,toUp.ArmyNo AS ToServiceNo,toAspUser.DomainId AS ToDID";
                 fromJoinClause = $@"        
                                     FROM TrnDistributeCards dist
                                     INNER JOIN TrnStepCounter step ON dist.RequestId = step.RequestId AND step.StepId = 15
                                     INNER JOIN TrnICardRequest req ON step.RequestId = req.RequestId AND req.StatusId = 2
-                                    LEFT JOIN BasicDetails basi ON req.BasicDetailId = basi.BasicDetailId AND basi.ApplyForId = @ApplyForId
-                                    LEFT JOIN AFSAC2.dbo.BasicDetails basi2 ON req.BasicDetailId = basi2.BasicDetailId AND basi2.ApplyForId = @ApplyForId
-                                    INNER JOIN MArmedType marmed ON marmed.ArmedId = ISNULL(basi.ArmedId, basi2.ArmedId)
-                                    INNER JOIN MRank ranks ON ranks.RankId = ISNULL(basi.RankId, basi2.RankId)
-                                    INNER JOIN MapUnit unit ON unit.UnitMapId = ISNULL(basi.UnitId, basi2.UnitId)
+                                    INNER JOIN AFSAC2.dbo.BasicDetails basi2 ON req.BasicDetailId = basi2.BasicDetailId AND basi2.ApplyForId = @ApplyForId
+                                    INNER JOIN MArmedType marmed ON marmed.ArmedId = basi2.ArmedId
+                                    INNER JOIN MRank ranks ON ranks.RankId = basi2.RankId
+                                    INNER JOIN MapUnit unit ON unit.UnitMapId = basi2.UnitId
                                     INNER JOIN UserProfile toUp ON dist.UpdatedbyUserId = toUp.UserId
                                     INNER JOIN MRank toRanks ON toUp.RankId = toRanks.RankId
                                     INNER JOIN AspNetUsers toAspUser ON dist.Updatedby = toAspUser.Id";
@@ -1599,25 +1570,14 @@ namespace DataAccessLayer
                             {unitFilter}
                             AND (
 	                            @SearchTerm IS NULL
-                                OR basi.ServiceNo LIKE @SearchTerm
                                 OR basi2.ServiceNo LIKE @SearchTerm
                                 )";
             }
                 try
                 {
                     var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "req.RequestId";
-                    if (dTO.Choice == "CardDistributed")
-                    {
-                        if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
-                        {
-                            sortColumn = "ISNULL(basi2.ServiceNo , basi.ServiceNo )";
-                        }
-                        else if (string.IsNullOrWhiteSpace(dTO.sortColumn))
-                        {
-                            sortColumn = "req.RequestId";
-                        }
-                    }
-                var multiQuery = $@"
+
+                    var multiQuery = $@"
                         WITH RecordCTE AS (
                             select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
                         )
@@ -1645,15 +1605,6 @@ namespace DataAccessLayer
                         var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                         var records = (await ret.ReadAsync<DTOReportCardResponse>()).ToList();
                         var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
-
-                        if (dTO.Choice == "CardDistributed" && records != null)
-                        {
-                            foreach (var item in records)
-                            {
-                                item.FName = item.FName_1 ?? item.FName_2 ?? string.Empty;
-                                item.LName = item.LName_1 ?? item.LName_2;
-                            }
-                        }
 
                         var responseData = new DTODataTablesResponse<DTOReportCardResponse>
                         {
