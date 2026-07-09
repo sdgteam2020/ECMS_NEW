@@ -1,0 +1,609 @@
+:root {
+    --ecms-navy: #0b2e59;
+    --ecms-blue: #1f5fd1;
+    --ecms-blue-2: #167dcf;
+    --ecms-sky: #4aa3ff;
+    --ecms-bg: #f4f7fb;
+    --ecms-surface: #ffffff;
+    --ecms-text: #263445;
+    --ecms-muted: #667085;
+    --ecms-border: #dbe5f2;
+    --ecms-danger: #d92d20;
+    --ecms-success: #1f8f4d;
+    --ecms-shadow: 0 10px 28px rgba(15, 35, 70, 0.1);
+    --ecms-radius: 12px;
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+    background: var(--ecms-bg);
+    color: var(--ecms-text);
+    font-family: "Segoe UI", "Roboto", "Nunito", sans-serif;
+    font-size: 14px;
+}
+
+a {
+    color: var(--ecms-blue);
+}
+
+.content-wrapper,
+.page-body-wrapper {
+    padding: 22px 22px 72px;
+}
+
+.main-panel,
+#layoutSidenav_content {
+    background: linear-gradient(180deg, #f8fbff 0%, var(--ecms-bg) 100%);
+    min-height: calc(100vh - 52px);
+}
+
+.card,
+.card.new_css {
+    border: 1px solid rgba(219, 229, 242, 0.9);
+    border-radius: var(--ecms-radius);
+    background: var(--ecms-surface);
+    box-shadow: var(--ecms-shadow);
+}
+
+.card-header,
+.seven h1,
+.card.new_css .seven h1 {
+    border: 0;
+    border-radius: var(--ecms-radius) var(--ecms-radius) 0 0;
+    background: linear-gradient(135deg, var(--ecms-navy), var(--ecms-blue));
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+.card-title {
+    color: var(--ecms-navy);
+    font-weight: 700;
+}
+
+.nav-pills {
+    margin: 82px 16px 0;
+    padding: 10px;
+    gap: 10px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 8px 24px rgba(15, 35, 70, 0.08);
+}
+
+.nav-pills .nav-link {
+    margin: 0;
+    border-radius: 10px;
+    background: #edf5ff;
+    color: var(--ecms-blue);
+    box-shadow: none;
+    font-size: 16px;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.nav-pills .nav-link:hover,
+.nav-pills .nav-link.active {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--ecms-blue), var(--ecms-sky));
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(31, 95, 209, 0.25);
+}
+
+.nav-hide-for-admin {
+    height: 82px;
+}
+
+.form-control,
+.form-control1,
+.form-control-Alphabets,
+.form-control-domainId,
+.form-select,
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    min-height: 38px;
+    border: 1px solid var(--ecms-border);
+    border-radius: 8px !important;
+    background-color: #ffffff;
+    color: var(--ecms-text);
+    box-shadow: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus,
+.form-control1:focus,
+.form-control-Alphabets:focus,
+.form-control-domainId:focus,
+.form-select:focus,
+.select2-container--default.select2-container--focus .select2-selection--multiple,
+.select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--ecms-blue);
+    box-shadow: 0 0 0 0.18rem rgba(31, 95, 209, 0.16);
+    outline: 0;
+}
+
+.col-form-label,
+.form-label {
+    color: #344054;
+    font-weight: 700;
+}
+
+.btn,
+.Dosth-btn {
+    border-radius: 9px;
+    border: 0;
+    font-weight: 700;
+    box-shadow: 0 6px 14px rgba(15, 35, 70, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn:hover,
+.Dosth-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.02);
+    box-shadow: 0 10px 20px rgba(15, 35, 70, 0.16);
+}
+
+.btn-primary,
+.Dosth-btn {
+    background: linear-gradient(135deg, var(--ecms-blue), var(--ecms-sky)) !important;
+    color: #ffffff !important;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #16864f, #22b573) !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #b42318, #f04438) !important;
+}
+
+.btn-secondary {
+    background: #eef2f7 !important;
+    color: #344054 !important;
+}
+
+.table-responsive {
+    border-radius: var(--ecms-radius);
+    box-shadow: var(--ecms-shadow);
+}
+
+.table {
+    margin-bottom: 0;
+    background: #ffffff;
+}
+
+.table thead th {
+    background: #eef5ff;
+    color: var(--ecms-navy);
+    font-weight: 800;
+    border-bottom: 1px solid var(--ecms-border);
+    white-space: nowrap;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    color: #344054;
+}
+
+.modal-content {
+    border: 0;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(15, 35, 70, 0.26);
+}
+
+.modal-header {
+    border-bottom: 0;
+    border-radius: 14px 14px 0 0;
+    background: linear-gradient(135deg, var(--ecms-navy), var(--ecms-blue));
+    color: #ffffff;
+}
+
+.modal-title {
+    font-weight: 800;
+}
+
+.modal-body {
+    color: var(--ecms-text);
+    background: #f8fbff;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--ecms-border);
+    background: #ffffff;
+}
+
+.btn-close,
+.modal-header .close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.9;
+}
+
+.counter,
+.card.new_css .counter {
+    width: 190px;
+    height: 190px;
+    border: 1px solid rgba(74, 163, 255, 0.5) !important;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff, #f4f9ff);
+    box-shadow: 0 12px 26px rgba(15, 35, 70, 0.12);
+    color: var(--ecms-blue) !important;
+}
+
+.counter::before,
+.counter::after {
+    display: none;
+}
+
+.counter:hover,
+.card.new_css .counter:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 32px rgba(15, 35, 70, 0.16);
+}
+
+.counter .counter-icon,
+.card.new_css .counter-icon {
+    color: var(--ecms-blue);
+}
+
+.counter h3,
+.card.new_css .counter h3 {
+    color: var(--ecms-navy);
+    font-weight: 800;
+}
+
+.counter .counter-value,
+.card.new_css .counter-value {
+    color: var(--ecms-blue);
+    font-weight: 800;
+}
+
+.notif-toggle {
+    background: linear-gradient(135deg, var(--ecms-blue), var(--ecms-sky));
+    box-shadow: 0 8px 18px rgba(31, 95, 209, 0.28);
+}
+
+.btn__badge,
+.number,
+.number1,
+.number2 {
+    background: var(--ecms-danger);
+}
+
+footer,
+footer.fixed-bottom {
+    min-height: 42px;
+    padding: 9px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    background: linear-gradient(90deg, #08284f, var(--ecms-navy)) !important;
+    color: #ffffff;
+    font-size: 13px;
+    box-shadow: 0 -8px 24px rgba(15, 35, 70, 0.12);
+}
+
+footer .text-end span {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.watermark {
+    opacity: 0.055;
+    z-index: 0;
+}
+
+.loader {
+    backdrop-filter: blur(2px);
+}
+
+@media (max-width: 992px) {
+    .content-wrapper,
+    .page-body-wrapper {
+        padding: 18px 14px 82px;
+    }
+
+    .nav-pills {
+        margin: 72px 12px 0;
+        flex-direction: column;
+    }
+
+    .nav-pills .nav-link {
+        width: 100%;
+        font-size: 15px;
+    }
+
+    .modal-lg,
+    .modal-xl,
+    .modal-history {
+        width: auto !important;
+        max-width: calc(100vw - 20px) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 13px;
+    }
+
+    .content-wrapper,
+    .page-body-wrapper {
+        padding: 14px 10px 20px;
+    }
+
+    footer.fixed-bottom {
+        position: static;
+        text-align: center;
+    }
+
+    .footer-placeholder,
+    footer .text-end {
+        display: none;
+    }
+
+    .modal-dialog {
+        margin: 8px;
+    }
+
+    .modal-body {
+        max-height: 72vh;
+        overflow-y: auto;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .counter,
+    .card.new_css .counter {
+        width: 100%;
+        max-width: 240px;
+        height: 170px;
+    }
+
+    .unit-label-background {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+/* =====================================================
+   ECMS FINAL LAYOUT FIX
+   Solves content going under fixed header/footer
+===================================================== */
+
+:root {
+    --ecms-top-header-height: 105px;
+    --ecms-footer-height: 42px;
+}
+
+/* Body should reserve space for footer only */
+body.nav-fixed {
+    padding-top: 0 !important;
+    padding-bottom: var(--ecms-footer-height) !important;
+    background: #f4f8fd !important;
+}
+
+/* Your tab nav needs margin because header is fixed */
+#layouttask,
+#_layouttask,
+.nav-pills {
+    margin-top: var(--ecms-top-header-height) !important;
+    position: relative;
+    z-index: 20;
+}
+
+/* Remove extra spacing from style.css */
+.page-header {
+    margin-bottom: 0 !important;
+    padding-top: 12px !important;
+    padding-bottom: 18px !important;
+}
+
+/* Content should start correctly after breadcrumb */
+.content-wrapper {
+    padding-top: 14px !important;
+    padding-bottom: calc(var(--ecms-footer-height) + 35px) !important;
+}
+
+/* Your negative margin page containers should not jump too high */
+.containerMain.mt-n10 {
+    margin-top: -35px !important;
+}
+
+/* Main layout should not hide behind footer */
+.main-panel,
+#layoutSidenav_content,
+#layoutSidenav_content main {
+    padding-bottom: calc(var(--ecms-footer-height) + 35px) !important;
+    min-height: calc(100vh - var(--ecms-footer-height));
+}
+
+/* Fixed footer safe styling */
+footer.fixed-bottom {
+    height: var(--ecms-footer-height) !important;
+    min-height: var(--ecms-footer-height) !important;
+    padding: 8px 16px !important;
+    margin-top: 0 !important;
+    z-index: 1030 !important;
+    background: #003060 !important;
+}
+
+/* Prevent large cards from touching footer */
+.containerMain,
+.container-fluid {
+    margin-bottom: 25px !important;
+}
+
+/* Mobile behavior */
+@media (max-width: 768px) {
+    :root {
+        --ecms-top-header-height: 76px;
+    }
+
+    #layouttask,
+    #_layouttask,
+    .nav-pills {
+        margin-top: var(--ecms-top-header-height) !important;
+        flex-direction: column;
+    }
+
+    body.nav-fixed {
+        padding-bottom: 0 !important;
+    }
+
+    footer.fixed-bottom {
+        position: static !important;
+        height: auto !important;
+        min-height: auto !important;
+    }
+
+    .content-wrapper,
+    .main-panel,
+    #layoutSidenav_content,
+    #layoutSidenav_content main {
+        padding-bottom: 20px !important;
+    }
+
+    .containerMain.mt-n10 {
+        margin-top: -15px !important;
+    }
+}
+
+/* =====================================================
+   ECMS CLEAN HEADER / NAV / PAGE / FOOTER FIX
+   Add only once at end of ecms-modern-theme.css
+===================================================== */
+
+:root {
+    --ecms-header-gap: 86px;
+    --ecms-footer-height: 42px;
+    --ecms-navy: #062b63;
+    --ecms-blue: #167dcf;
+    --ecms-sky: #41c7f4;
+    --ecms-green: #7fd36c;
+}
+
+/* body */
+body {
+    background: #f4f8fd !important;
+    overflow-x: hidden !important;
+    padding-bottom: var(--ecms-footer-height) !important;
+}
+
+/* top nav only */
+#layouttask.nav-pills {
+    margin: var(--ecms-header-gap) 16px 0 !important;
+    padding: 8px 10px !important;
+    background: rgba(255,255,255,0.88) !important;
+    border-radius: 0 0 14px 14px !important;
+    box-shadow: 0 8px 18px rgba(0, 30, 80, 0.08);
+    position: relative;
+    z-index: 20;
+}
+
+    #layouttask.nav-pills .nav-link {
+        background: linear-gradient(135deg, #1d78d6, #0c56bd) !important;
+        color: #ffffff !important;
+        font-size: 17px !important;
+        font-weight: 700 !important;
+        border-radius: 0 0 10px 10px !important;
+        box-shadow: none !important;
+        padding: 12px 18px !important;
+    }
+
+        #layouttask.nav-pills .nav-link:hover {
+            background: linear-gradient(135deg, #2794f2, #0d61d0) !important;
+        }
+
+        #layouttask.nav-pills .nav-link.active,
+        #layouttask.nav-pills .show > .nav-link {
+            background: linear-gradient(135deg, #95dd80, #65bd52) !important;
+            color: #ffffff !important;
+            box-shadow: 0 8px 18px rgba(83, 171, 66, 0.28) !important;
+        }
+
+/* admin blank nav */
+/*.nav-hide-for-admin {
+    height: var(--ecms-header-gap) !important;
+    background: transparent !important;
+}*/
+
+/* page breadcrumb/header */
+.page-header {
+    min-height: auto !important;
+    margin-bottom: 0 !important;
+    padding: 14px 26px !important;
+    background: linear-gradient(90deg, #42c7ef 0%, #2c80dd 55%, #2a70c8 100%) !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    border-bottom: 0 !important;
+}
+
+.page-header-title,
+.page-header-title a {
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+}
+
+/* stop cards going inside breadcrumb blue area */
+.containerMain.mt-n10 {
+    margin-top: 20px !important;
+}
+
+/* content spacing */
+.content-wrapper,
+.main-panel,
+#layoutSidenav_content main {
+    padding-bottom: 65px !important;
+}
+
+/* footer */
+footer.fixed-bottom {
+    height: var(--ecms-footer-height) !important;
+    min-height: var(--ecms-footer-height) !important;
+    padding: 8px 18px !important;
+    margin-top: 0 !important;
+    background: linear-gradient(90deg, #062b63 0%, #003060 55%, #031a3f 100%) !important;
+    color: #ffffff !important;
+    border-top: 1px solid rgba(255,255,255,0.16);
+    box-shadow: 0 -6px 18px rgba(0,0,0,0.16);
+    font-size: 13px;
+    z-index: 1030 !important;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+    :root {
+        --ecms-header-gap: 76px;
+    }
+
+    #layouttask.nav-pills {
+        margin: var(--ecms-header-gap) 10px 0 !important;
+        flex-direction: column;
+        border-radius: 12px !important;
+    }
+
+        #layouttask.nav-pills .nav-link {
+            border-radius: 10px !important;
+            margin-bottom: 6px !important;
+            font-size: 15px !important;
+        }
+
+    .containerMain.mt-n10 {
+        margin-top: 12px !important;
+    }
+
+    footer.fixed-bottom {
+        position: static !important;
+        height: auto !important;
+        min-height: auto !important;
+        text-align: center;
+    }
+
+    body {
+        padding-bottom: 0 !important;
+    }
+}

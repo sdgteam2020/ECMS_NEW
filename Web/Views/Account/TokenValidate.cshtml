@@ -2,42 +2,15 @@
 @model DTOTokenRequestForIAM
 @{
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
-}
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" type="image/x-icon" asp-href-include="/images/AFSAC.png">
-    <title> E-ISAC </title>
-    @*  <link asp-href-include="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
 
-    <link asp-href-include="~/css/style.css" rel="stylesheet" />
-    <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
-    <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
-    <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-
-    <link asp-href-include="~/css/login.css" rel="stylesheet" />
-
-    <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
-
-    <link asp-href-include="~/css/normalize.min.css" rel="stylesheet" />
-    @*   <link asp-href-include="~/css/swiper.min.css" rel="stylesheet" /> *@
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
-    <link asp-href-include="~/css/main.css" rel="stylesheet" />
-    @*     <link asp-href-include="~/css/sliders/style.css" rel="stylesheet" /> *@
-    <link asp-href-include="~/developercss/tokenvalidateforiam.css" rel="stylesheet" />
-</head>
-@{
     DTOTempSession? dTOTempSession = new DTOTempSession();
     StringBuilder m1 = new StringBuilder();
     StringBuilder m2 = new StringBuilder();
-    if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("IMData")))
+
+    if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("IMData")))
     {
         dTOTempSession = SessionHeplers.GetObject<DTOTempSession>(HttpContextAccessor.HttpContext.Session, "IMData");
+
         m1.Append("Status : " + dTOTempSession.Status);
         m1.Append(",<br/> AdminFlag : " + dTOTempSession.AdminFlag);
         m1.Append(",<br/> DomainId : " + dTOTempSession.DomainId);
@@ -52,106 +25,137 @@
         m2.Append(",<br/> ICNoTrnDomainMappingUnitId : " + dTOTempSession.ICNoTDMUnitMapId);
     }
 }
-<body>
-@*     <div class="watermark">
-        <div>
-            <img src="/Images/dgislogo.png" alt="Watermark" loading="lazy">
-        </div>
-    </div> *@
-    <div class="page">
-        <div class="container-fluid">
-            <partial name="~/Views/Shared/_CommonHeader.cshtml" />
-            <div class="row">
-                <div class="bg-white login-wrap align-items-center">
-                    <div class="login py-2 py-sm-4">
-                        <div class="row">
-                            <div class="col-md-10 col-lg-10 col-xl-9 mx-auto">
-                                <div class="card-sigin">
-                                    <div class="main-signup-header login-form">
-                                        <span id="spnhdns" class="d-none">@dTOTempSession.Salt</span>
-                                        <p class="font-weight-normal font-weight-700 text-center mb-4 mt-1 ">Kindly Validate your IC Number here.</p>
-                                        <div class="pb-3 mt-3">
-                                            <form method="post" asp-action="TokenValidate" autocomplete="off" role="form" id="frmTokenValidate">
-                                                @Html.AntiForgeryToken()
-                                                <div class="form-group">
-                                                    <label class="labeltoken">Army No</label>
-                                                    @if (dTOTempSession.IsToken==true)
-                                                    {
-                                                        <input asp-for="ICNo" class="form-control js-uppercase" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" autocomplete="off" readonly />
-                                                    }
-                                                    else
-                                                    {
-                                                        <input asp-for="ICNo" class="form-control js-uppercase" placeholder="Enter IC No Ex.IC/SS/SLXXXXXP" autocomplete="off" />
-                                                    }
 
-                                                    <span asp-validation-for="ICNo" class="text-danger"></span>
-                                                    <label id="tokenmsg"></label>
-                                                </div>
-                                                <div class="text-center" >
-                                                    @if (dTOTempSession != null && dTOTempSession.IsToken == true)
-                                                    {
-                                                        <button type="button" class="btn btn-primary mt-2" id="btnTokenFetchDetails">Refresh To Fetch Token Details</button>
-                                                    }
-                                                    @if (dTOTempSession != null)
-                                                    {
-                                                        <button type="submit" id="btnProceed" class="btn btn-primary mt-2">Proceed</button>
-                                                    } 
-                                                </div>
-                                                
-                                                @if (TempData["success"] != null)
-                                                {
-                                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                                        <span class="text-success">@Html.Raw(@TempData["success"])</span>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                                    </div>
-                                                }
-                                                @if (TempData["error"] != null)
-                                                {
-                                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                        <span class="text-danger">@Html.Raw(@TempData["error"])</span>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                                    </div>
-                                                }
-                                               
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<link asp-href-include="~/developercss/tokenvalidateforiam.css" rel="stylesheet" />
+
+<div class="ecms-token-page">
+    <div class="ecms-token-bg-shield" aria-hidden="true">
+        <svg viewBox="0 0 180 220" fill="none">
+            <path d="M90 12L154 38V90C154 144 126 185 90 205C54 185 26 144 26 90V38L90 12Z" stroke="currentColor" stroke-width="8" />
+            <circle cx="90" cy="78" r="24" stroke="currentColor" stroke-width="8" />
+            <path d="M56 142C58 116 70 104 90 104C110 104 122 116 124 142" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
+            <rect x="64" y="132" width="52" height="44" rx="8" stroke="currentColor" stroke-width="8" />
+            <path d="M90 150V163" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
+        </svg>
+    </div>
+
+    <div class="ecms-token-shell">
+        <div class="ecms-token-card">
+            <div class="ecms-token-badge" aria-hidden="true">
+                <svg class="ecms-token-shield-svg" viewBox="0 0 96 112" fill="none">
+                    <path d="M48 6L82 20V47C82 76 67 97 48 106C29 97 14 76 14 47V20L48 6Z" stroke="#216DFF" stroke-width="5" />
+                    <circle cx="48" cy="40" r="11" stroke="#216DFF" stroke-width="5" />
+                    <path d="M30 72C31 58 38 52 48 52C58 52 65 58 66 72" stroke="#216DFF" stroke-width="5" stroke-linecap="round" />
+                    <rect x="34" y="67" width="28" height="25" rx="5" fill="#216DFF" />
+                    <path d="M48 77V83" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+                </svg>
+            </div>
+
+            <div class="ecms-token-panel">
+                <span id="spnhdns" class="d-none">@dTOTempSession?.Salt</span>
+
+                <div class="ecms-token-heading">
+                    <h1>Validate IC Number</h1>
+                    <div class="ecms-token-divider">
+                        <span></span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 2.5L14.9 8.3L21.3 9.2L16.65 13.75L17.75 20.1L12 17.1L6.25 20.1L7.35 13.75L2.7 9.2L9.1 8.3L12 2.5Z" fill="currentColor" />
+                        </svg>
+                        <span></span>
                     </div>
+                    <p>Kindly validate your IC Number here.</p>
+                </div>
+
+                <form method="post" asp-action="TokenValidate" autocomplete="off" role="form" id="frmTokenValidate" class="ecms-token-form">
+                    @Html.AntiForgeryToken()
+
+                    <div class="ecms-form-group">
+                        <label asp-for="ICNo" class="ecms-form-label">Army No</label>
+
+                        <div class="ecms-input-wrap">
+                            <span class="ecms-input-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="currentColor" />
+                                    <path d="M4 22C4.8 17.8 7.7 15.5 12 15.5C16.3 15.5 19.2 17.8 20 22H4Z" fill="currentColor" />
+                                </svg>
+                            </span>
+
+                            @if (dTOTempSession?.IsToken == true)
+                            {
+                                <input asp-for="ICNo"
+                                       class="form-control js-uppercase ecms-input"
+                                       placeholder="Enter IC No Ex. IC/SS/SLXXXXXP"
+                                       autocomplete="off"
+                                       readonly />
+                            }
+                            else
+                            {
+                                <input asp-for="ICNo"
+                                       class="form-control js-uppercase ecms-input"
+                                       placeholder="Enter IC No Ex. IC/SS/SLXXXXXP"
+                                       autocomplete="off" />
+                            }
+                        </div>
+
+                        <span asp-validation-for="ICNo" class="text-danger ecms-validation"></span>
+                        <label id="tokenmsg" class="ecms-token-message"></label>
+                    </div>
+
+                    <div class="ecms-token-actions">
+                        @if (dTOTempSession != null && dTOTempSession.IsToken == true)
+                        {
+                            <button type="button" class="ecms-token-secondary-btn" id="btnTokenFetchDetails">
+                                Refresh Token Details
+                                <span aria-hidden="true">↻</span>
+                            </button>
+                        }
+
+                        @if (dTOTempSession != null)
+                        {
+                            <button type="submit" id="btnProceed" class="ecms-token-submit">
+                                Proceed
+                                <span aria-hidden="true">→</span>
+                            </button>
+                        }
+                    </div>
+
+                    @if (TempData["success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show ecms-token-alert" role="alert">
+                            <span class="text-success">@Html.Raw(TempData["success"])</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @if (TempData["error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show ecms-token-alert" role="alert">
+                            <span class="text-danger">@Html.Raw(TempData["error"])</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                </form>
+
+                <div class="ecms-secure-note">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 3L19 6V11C19 15.8 16.1 19.7 12 21C7.9 19.7 5 15.8 5 11V6L12 3Z" stroke="currentColor" stroke-width="2" />
+                        <path d="M9 12L11 14L15.5 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Secure token validation for enterprise resources.
                 </div>
             </div>
         </div>
     </div>
-    <footer class="fixed-bottom">
-        <section class="page_copyright ls section_padding_25">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12 text-center">
-                        <div class="footer-content">
-                            @if (ViewBag.Footer != null)
-                            {
-                                @ViewBag.Footer
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </footer>
+</div>
+
+@section Scripts {
     <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
     <script asp-src-include="~/developerjs/KeyConstants.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
-    <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script> 
+    <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
     <script asp-src-include="~/developerjs/logoutlog.js"></script>
-
-</body>
-</html>
-
-@section Scripts{
 }

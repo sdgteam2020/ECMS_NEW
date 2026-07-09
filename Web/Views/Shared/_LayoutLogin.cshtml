@@ -8,8 +8,6 @@
     <meta name="author" content="">
     <link rel="icon" type="image/x-icon" asp-href-include="/images/AFSAC.png">
     <title> E-ISAC </title>
-    @*  <link asp-href-include="/Fonts/css/all.min.css" rel="stylesheet" type="text/css"> *@
-
     <link asp-href-include="~/css/style.css" rel="stylesheet" />
     <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
     <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
@@ -30,12 +28,9 @@
 </head>
 <body>
     @Html.AntiForgeryToken()
+     <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" /> 
+        @* <partial name="~/Views/Shared/_CommonHeader.cshtml" /> *@
     <div>
-    @*<div class="watermark">
-        <div>
-            <img src="/Images/dgislogo.png" alt="Watermark" loading="lazy">
-        </div>
-    </div> *@
         @RenderBody()
         <footer class="fixed-bottom">
             <section class="page_copyright ls section_padding_25">

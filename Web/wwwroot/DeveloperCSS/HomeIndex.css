@@ -1,162 +1,573 @@
-﻿html, body {
+﻿/* =====================================================
+   ECMS HOME PAGE MODERN TARGET DESIGN
+   Replace content of wwwroot/developercss/homeindex.css
+===================================================== */
+
+html,
+body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
 }
 
 body {
-    background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%);
+    background: #061b34 !important;
 }
 
-.wrap {
-    position: static;
+.page-body-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #061b34 !important;
 }
 
-.hero {
-    margin-top:117px;
-    background-image: url("/Images/HomePage/2.png");
+/* Optional: make home header closer to target style without touching other pages */
+body.nav-fixed .eisac-header,
+body.nav-fixed .ecms-header {
+    background: linear-gradient(90deg, #003f98 0%, #004cae 48%, #003276 100%) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+}
+
+/* Main hero */
+.ecms-home-hero {
+    position: relative;
+    min-height: calc(100vh - 42px);
+    margin-top: 117px; /* keep because your common header is fixed */
+    background-image: url("/Images/HomePage/indexbackgroundimg.png");
     background-size: cover;
-    background-position: center;
+    background-position: center center;
     background-repeat: no-repeat;
-    min-height: calc(100vh - 140px);
-    width: 100%;
     display: flex;
-    align-items: flex-end;
+    align-items: stretch;
     justify-content: center;
-    padding: 0 12px 20px 12px;
-    box-sizing: border-box;
     overflow: hidden;
 }
 
-/* card outer */
-.a-box {
-    width: 100%;
-    max-width: 300px; /* increased card size */
-    text-align: center;
-    position: relative;
-    margin: 0 auto;
-}
-
-/* clickable full card */
-.clickable {
-    display: block;
-    width: 100%;
-    text-decoration: none;
-    position: relative;
-    padding-top: 38px; /* creates space for top icon overlap */
-}
-
-/* icon circle */
-.img-container {
-    width: 92px;
-    height: 92px;
-    margin: 0 auto;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: visible;
+/* Dark premium overlay like target image */
+.ecms-home-overlay {
     position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-    background: transparent;
+    inset: 0;
+/*    background: radial-gradient(circle at 15% 25%, rgba(255, 185, 72, 0.20), transparent 28%), linear-gradient(180deg, rgba(6, 23, 45, 0.78) 0%, rgba(4, 19, 38, 0.78) 42%, rgba(2, 13, 28, 0.92) 100%), linear-gradient(90deg, rgba(0, 32, 72, 0.70), rgba(0, 13, 35, 0.85));*/
+    z-index: 1;
 }
 
-.img-inner,
-.inner-skew {
-    width: 92px;
-    height: 92px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.img-container img {
-    max-width: 78px;
-    max-height: 78px;
-    transition: transform 0.3s ease;
-}
-
-    .img-container img:hover {
-        transform: scale(1.08);
-    }
-
-/* text card */
-.text-container {
-    background: rgba(255,255,255,0.95);
-    border-radius: 20px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
-    padding: 58px 22px 24px 22px; /* top padding for icon space */
-    min-height: 175px; /* increased card height */
+.ecms-home-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 64px 24px 88px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
+}
+
+/* Welcome text */
+.ecms-welcome-block {
     text-align: center;
-    line-height: 1.45;
+    color: #ffffff;
+    margin-bottom: 180px;
+}
+
+    .ecms-welcome-block h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(42px, 5.2vw, 72px);
+        line-height: 1.05;
+        font-weight: 800;
+        letter-spacing: -1.2px;
+        text-shadow: 0 6px 24px rgba(0, 0, 0, 0.40);
+    }
+
+.ecms-title-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 24px 0 20px;
+    color: #5ee7ff;
+}
+
+    .ecms-title-divider span {
+        width: 105px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(94, 231, 255, 0.9), transparent);
+    }
+
+    .ecms-title-divider i {
+        font-size: 15px;
+        filter: drop-shadow(0 0 8px rgba(94, 231, 255, 0.8));
+    }
+
+.ecms-welcome-block p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: clamp(17px, 1.55vw, 22px);
+    line-height: 1.65;
+    font-weight: 400;
+    text-shadow: 0 3px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* Cards */
+.ecms-card-container {
+    margin-top: 120px;
+    max-width: 1160px;
+}
+
+.ecms-home-card {
+    min-height: 305px;
+    height: 100%;
+    padding: 28px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    text-decoration: none !important;
+    color: #344054;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 18px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+    .ecms-home-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 28px 60px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(255,255,255,0.4);
+    }
+
+.ecms-card-icon {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    box-shadow: 0 16px 28px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+    .ecms-card-icon img {
+        width: 46px;
+        height: 46px;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
+    }
+
+.ecms-home-card h3 {
+    margin: 0 0 12px;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.ecms-home-card p {
+    margin: 0 0 24px;
+    color: #4f5f70;
+    font-size: 16px;
+    line-height: 1.55;
+    min-height: 52px;
+}
+
+.ecms-card-btn {
+    min-width: 190px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 800;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.20);
+}
+
+.ecms-card-blue h3 {
+    color: #0e5fd2;
+}
+
+.ecms-card-blue .ecms-card-icon,
+.ecms-card-blue .ecms-card-btn {
+    background: linear-gradient(135deg, #3278ff, #0e47bb);
+}
+
+.ecms-card-teal h3 {
+    color: #0b9d92;
+}
+
+.ecms-card-teal .ecms-card-icon,
+.ecms-card-teal .ecms-card-btn {
+    background: linear-gradient(135deg, #39d1c3, #079b8f);
+}
+
+.ecms-card-orange h3 {
+    color: #ef6c00;
+}
+
+.ecms-card-orange .ecms-card-icon,
+.ecms-card-orange .ecms-card-btn {
+    background: linear-gradient(135deg, #ff9b20, #ef5b00);
+}
+
+.ecms-card-purple h3 {
+    color: #4c39b8;
+}
+
+.ecms-card-purple .ecms-card-icon,
+.ecms-card-purple .ecms-card-btn {
+    background: linear-gradient(135deg, #7c5cff, #4930b5);
+}
+
+/* Feature strip */
+.ecms-feature-strip {
+    width: min(1120px, calc(100% - 40px));
+    margin-top: 30px;
+    padding: 22px 28px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: rgba(18, 67, 112, 0.72);
+    border: 1px solid rgba(120, 217, 255, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+}
+
+.ecms-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 22px;
+    color: #ffffff;
+    border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+    .ecms-feature-item:last-child {
+        border-right: 0;
+    }
+
+.ecms-feature-icon {
+    flex: 0 0 58px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #51efff;
+    font-size: 28px;
+    background: rgba(81, 239, 255, 0.10);
+    border: 1px solid rgba(81, 239, 255, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.ecms-feature-item h4 {
+    margin: 0 0 6px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.ecms-feature-item p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.88);
     font-size: 14px;
+    line-height: 1.4;
 }
 
-    .text-container h3 {
-        margin: 0 0 10px 0;
-        color: #04bcff;
-        font-size: 20px;
-        font-weight: 700;
+/* Footer alignment like target */
+footer.fixed-bottom {
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 9px 44px !important;
+    background: linear-gradient(90deg, #003f98 0%, #004cae 50%, #003276 100%) !important;
+    color: #ffffff !important;
+    border-top: 1px solid rgba(255,255,255,0.16);
+    box-shadow: 0 -8px 22px rgba(0,0,0,0.22);
+    z-index: 1030 !important;
+}
+
+    footer.fixed-bottom .flex-grow-1 {
+        text-align: left !important;
     }
 
-/* reduce horizontal gap between cards */
-.row.w-100.justify-content-center {
-    --bs-gutter-x: 1rem !important; /* less gap */
-    --bs-gutter-y: 1rem !important;
+    footer.fixed-bottom .footer-placeholder {
+        display: none !important;
+    }
+
+    footer.fixed-bottom .text-end span {
+        color: #ffffff !important;
+        font-size: 14px !important;
+    }
+
+/* Responsive */
+@media (max-width: 1199.98px) {
+    .ecms-welcome-block {
+        margin-bottom: 145px;
+    }
+
+    .ecms-home-card {
+        min-height: 292px;
+    }
+
+    .ecms-feature-strip {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 22px;
+    }
+
+    .ecms-feature-item:nth-child(2) {
+        border-right: 0;
+    }
 }
 
-/* tablet */
 @media (max-width: 991.98px) {
-    .a-box {
-        max-width: 290px;
+    .ecms-home-hero {
+        margin-top: 96px;
     }
 
-    .text-container {
-        min-height: 170px;
+    .ecms-home-content {
+        padding: 45px 18px 74px;
+    }
+
+    .ecms-welcome-block {
+        margin-bottom: 115px;
     }
 }
 
-/* mobile */
-@media (max-width: 575.98px) {
-    .hero {
+@media (max-width: 767.98px) {
+    .ecms-home-hero {
         min-height: auto;
-        padding: 12px 10px 20px;
+        margin-top: 80px;
     }
 
-    .a-box {
-        max-width: 320px;
+    .ecms-home-content {
+        padding: 36px 14px 28px;
     }
 
-    .clickable {
-        padding-top: 34px;
+    .ecms-welcome-block {
+        margin-bottom: 38px;
     }
 
-    .img-container,
-    .img-inner,
-    .inner-skew {
-        width: 82px;
-        height: 82px;
+    .ecms-card-container {
+        margin-top: 0;
     }
 
-        .img-container img {
-            max-width: 68px;
-            max-height: 68px;
+    .ecms-home-card {
+        min-height: auto;
+        padding: 24px 20px;
+    }
+
+    .ecms-feature-strip {
+        width: 100%;
+        grid-template-columns: 1fr;
+        margin-top: 22px;
+        padding: 18px;
+    }
+
+    .ecms-feature-item {
+        border-right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+        padding: 14px 0;
+    }
+
+        .ecms-feature-item:last-child {
+            border-bottom: 0;
         }
 
-    .text-container {
-        min-height: 160px;
-        padding: 52px 18px 20px 18px;
+    footer.fixed-bottom {
+        position: static !important;
+        height: auto !important;
+        min-height: auto !important;
+        padding: 10px 14px !important;
     }
 
-        .text-container h3 {
-            font-size: 18px;
+        footer.fixed-bottom .d-flex {
+            flex-direction: column;
+            gap: 4px;
         }
+
+        footer.fixed-bottom .flex-grow-1,
+        footer.fixed-bottom .text-end {
+            text-align: center !important;
+        }
+}
+
+.ecms-home-icon {
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    margin: -18px auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.22);
+}
+
+    .ecms-home-icon i {
+        color: #ffffff;
+        font-size: 36px;
+    }
+
+.ecms-blue-icon {
+    background: linear-gradient(135deg, #3d7cff, #194ec7);
+}
+
+.ecms-green-icon {
+    background: linear-gradient(135deg, #44d6c0, #12a892);
+}
+
+.ecms-orange-icon {
+    background: linear-gradient(135deg, #ff9a18, #f05a00);
+}
+
+.ecms-purple-icon {
+    background: linear-gradient(135deg, #7b5cff, #5633c7);
+}
+
+/* =====================================================
+   FINAL FIX: FontAwesome v4 icons + no desktop scrollbar
+   Put this block at the END of homeindex.css
+===================================================== */
+
+/* Your project is using old Font Awesome syntax: fa fa-...
+   Keep icon size controlled here. */
+.ecms-card-icon i {
+    color: #ffffff !important;
+    font-size: 38px !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+}
+
+.ecms-feature-icon i {
+    color: #51efff !important;
+    font-size: 28px !important;
+    line-height: 1 !important;
+}
+
+/* Desktop viewport fit: header fixed + footer fixed */
+@media (min-width: 992px) {
+    html,
+    body {
+        height: 100%;
+        overflow: hidden !important;
+    }
+
+    .ecms-home-hero {
+        /* header approx 117px and footer 42px */
+        height: calc(100vh - 117px - 42px) !important;
+        min-height: 700px !important;
+        margin-top: 117px !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-home-content {
+        height: 100%;
+        padding: 34px 24px 54px !important;
+        justify-content: flex-start !important;
+    }
+
+    .ecms-welcome-block {
+        margin-bottom: 38px !important;
+    }
+
+        .ecms-welcome-block h1 {
+            font-size: clamp(44px, 4vw, 62px) !important;
+        }
+
+    .ecms-title-divider {
+        margin: 18px 0 14px !important;
+    }
+
+    .ecms-welcome-block p {
+        font-size: clamp(16px, 1.25vw, 19px) !important;
+        line-height: 1.55 !important;
+    }
+
+    .ecms-card-container {
+        margin-top: 0 !important;
+        max-width: 1120px !important;
+    }
+
+    .ecms-home-card {
+        min-height: 270px !important;
+        padding: 24px 22px 20px !important;
+    }
+
+    .ecms-card-icon {
+        width: 78px !important;
+        height: 78px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .ecms-home-card h3 {
+        font-size: 22px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .ecms-home-card p {
+        font-size: 15px !important;
+        line-height: 1.45 !important;
+        min-height: 44px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .ecms-card-btn {
+        min-height: 42px !important;
+        min-width: 170px !important;
+        font-size: 14px !important;
+    }
+
+    .ecms-feature-strip {
+        margin-top: 20px !important;
+        padding: 16px 22px !important;
+        min-height: 88px !important;
+    }
+
+    .ecms-feature-item {
+        gap: 12px !important;
+        padding: 0 16px !important;
+    }
+
+    .ecms-feature-icon {
+        flex-basis: 50px !important;
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 24px !important;
+    }
+
+    .ecms-feature-item h4 {
+        font-size: 15px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .ecms-feature-item p {
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+    }
+}
+
+/* On small screens, allow scrolling because content stacks vertically */
+@media (max-width: 991.98px) {
+    html,
+    body {
+        height: auto;
+        overflow-y: auto !important;
+    }
+
+    .ecms-home-hero {
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+    }
+}
+.ecms-welcome-block {
+    margin-bottom: 35px !important;
+}
+
+.ecms-home-content .ecms-card-container {
+    margin-top: 120px !important;
+    max-width: 1120px !important;
 }

@@ -4,90 +4,109 @@
 }
 <link asp-href-include="~/developercss/homeindex.css" rel="stylesheet" />
 
-<div class="hero">
-    <div class="container-fluid h-100 d-flex align-items-end">
-        <div class="row w-100 justify-content-center g-1 pb-3 pb-md-4">
+<section class="ecms-home-hero">
+    <div class="ecms-home-overlay"></div>
 
-            <div class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
-                <div class="a-box w-100">
-                    <a href="/Home/Dashboard" class="clickable">
-                        <div class="img-container">
-                            <div class="img-inner">
-                                <div class="inner-skew">
-                                    <img src="~/images/asset/dashboard.png" alt="Dashboard" class="img-fluid" />
-                                </div>
-                            </div>
+    <div class="ecms-home-content">
+        <div class="ecms-welcome-block">
+            <h1>Welcome to ECMS</h1>
+            <div class="ecms-title-divider">
+                <span></span>
+                <i class="fa fa-star"></i>
+                <span></span>
+            </div>
+            <p>
+                A secure and integrated platform for managing Identity Card<br class="d-none d-md-block" />
+                requests, approvals, and role-based activities.
+            </p>
+        </div>
+
+        <div class="container ecms-card-container">
+            <div class="row g-4 justify-content-center">
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <a href="/Home/Dashboard" class="ecms-home-card ecms-card-blue">
+                        <div class="ecms-card-icon ecms-blue-icon">
+                            @* <img src="~/images/asset/dashboard.png" alt="Dashboard" /> *@
+                            <i class="fa fa-tachometer-alt"></i>
                         </div>
-                        <div class="text-container">
-                            <h3>Dashboard</h3>
-                            <div>
-                                Dashboard contains all pending requests for approval
-                            </div>
-                        </div>
+                        <h3>Dashboard</h3>
+                        <p>Dashboard contains all pending requests for approval</p>
+                        <span class="ecms-card-btn">View Dashboard <i class="fa fa-arrow-right"></i></span>
                     </a>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <a href="/Home/Request" class="ecms-home-card ecms-card-teal">
+                        <div class="ecms-card-icon ecms-green-icon">
+                            @* <img src="~/images/asset/request.png" alt="Initiate Request" /> *@
+                            <i class="fa fa-hand-pointer"></i>
+                        </div>
+                        <h3>Initiate Request</h3>
+                        <p>Guides to the link to initiate I-Card Requests</p>
+                        <span class="ecms-card-btn">New Request <i class="fa fa-arrow-right"></i></span>
+                    </a>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <a href="/Home/Task" class="ecms-home-card ecms-card-orange">
+                        <div class="ecms-card-icon ecms-orange-icon">
+                            @* <img src="~/images/asset/task-100.png" alt="Task" /> *@
+                            <i class="fa fa-clipboard"></i>
+                        </div>
+                        <h3>Task</h3>
+                        <p>Contains role based activity and approval workflow</p>
+                        <span class="ecms-card-btn">Open Tasks <i class="fa fa-arrow-right"></i></span>
+                    </a>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <a href="/Home/ContactUs" class="ecms-home-card ecms-card-purple">
+                        <div class="ecms-card-icon ecms-purple-icon">
+                            @* <img src="~/images/asset/contact-us-circle.png" alt="Contact Us" /> *@
+                            <i class="fa fa-envelope"></i>
+                        </div>
+                        <h3>Contact Us</h3>
+                        <p>Contact information and support details</p>
+                        <span class="ecms-card-btn">Contact Now <i class="fa fa-arrow-right"></i></span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="ecms-feature-strip">
+            <div class="ecms-feature-item">
+                <div class="ecms-feature-icon"><i class="fa fa-shield-alt"></i></div>
+                <div>
+                    <h4>Secure &amp; Trusted</h4>
+                    <p>Advanced security for identity management</p>
                 </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
-                <div class="a-box w-100">
-                    <a href="/Home/Request" class="clickable">
-                        <div class="img-container">
-                            <div class="img-inner">
-                                <div class="inner-skew">
-                                    <img src="~/images/asset/request.png" alt="Initiate Request" class="img-fluid" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-container">
-                            <h3>Initiate Request</h3>
-                            <div>
-                                Guides to the link to Initiate I-Card Requests
-                            </div>
-                        </div>
-                    </a>
+            <div class="ecms-feature-item">
+                <div class="ecms-feature-icon"><i class="fa fa-user"></i></div>
+                <div>
+                    <h4>Role Based Access</h4>
+                    <p>Access based on role and permissions</p>
                 </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
-                <div class="a-box w-100">
-                    <a href="/Home/Task" class="clickable">
-                        <div class="img-container">
-                            <div class="img-inner">
-                                <div class="inner-skew">
-                                    <img src="~/images/asset/task-100.png" alt="Task" class="img-fluid" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-container">
-                            <h3>Task</h3>
-                            <div>
-                                Contains role based activity
-                            </div>
-                        </div>
-                    </a>
+            <div class="ecms-feature-item">
+                <div class="ecms-feature-icon"><i class="fa fa-clock"></i></div>
+                <div>
+                    <h4>Real-time Tracking</h4>
+                    <p>Track your requests in real-time</p>
                 </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-lg-3 d-flex justify-content-center">
-                <div class="a-box w-100">
-                    <a href="/Home/ContactUs" class="clickable">
-                        <div class="img-container">
-                            <div class="img-inner">
-                                <div class="inner-skew">
-                                    <img src="~/images/asset/contact-us-circle.png" alt="Contact Us" class="img-fluid" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-container">
-                            <h3>Contact Us</h3>
-                            <div>
-                                Contact information and support details
-                            </div>
-                        </div>
-                    </a>
+            <div class="ecms-feature-item">
+                <div class="ecms-feature-icon"><i class="fa fa-headphones"></i></div>
+                <div>
+                    <h4>24/7 Support</h4>
+                    <p>We are here to help you always</p>
                 </div>
             </div>
-
         </div>
     </div>
-</div>
+</section>
