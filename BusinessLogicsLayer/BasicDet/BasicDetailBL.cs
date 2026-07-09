@@ -97,10 +97,7 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetAllICardType();
         }
-        public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
-        {
-            return await _iBasicDetailDB.FindServiceNo(ServiceNo);
-        }
+       
         public async Task<int?> MaxBasicDetailId(string ServiceNo)
         {
             return await _iBasicDetailDB.MaxBasicDetailId(ServiceNo);

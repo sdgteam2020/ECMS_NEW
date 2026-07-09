@@ -31,7 +31,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<BasicDetailCrtAndUpdVM?> GetBasicDetailById(int BasicDetailId);
         public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId);
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
-        public Task<BasicDetail?> FindServiceNo(string ServiceNo);
         public Task<int?> MaxBasicDetailId(string ServiceNo);
         public Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto);
         public Task<DTOBasicDetailForParitalViewResponse?> GetBasicDetailForParitalViewByRequestId(int RequestId);

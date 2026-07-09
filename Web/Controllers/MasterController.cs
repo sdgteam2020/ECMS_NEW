@@ -3529,7 +3529,7 @@ namespace Web.Controllers
             try
             {
                 DTOArmedIdCheckInFKTableResponse? dTOArmedIdCheckIn = await unitOfWork.Armed.ArmedIdCheckInFKTable(dTO.ArmedId); // Check for foreign key dependencies
-                if (dTOArmedIdCheckIn != null && (dTOArmedIdCheckIn.TotalBD > 0 || dTOArmedIdCheckIn.TotalRO >0))
+                if (dTOArmedIdCheckIn != null && (dTOArmedIdCheckIn.TotalBD > 0 || dTOArmedIdCheckIn.TotalBD2 > 0 || dTOArmedIdCheckIn.TotalRO >0))
                 {
                     return Json(5); // Return 5 if the ArmedType is referenced in other tables and cannot be deleted
                 }
