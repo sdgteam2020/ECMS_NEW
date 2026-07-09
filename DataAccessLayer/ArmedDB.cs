@@ -93,8 +93,9 @@ namespace DataAccessLayer
             try
             {
                 // SQL query to count the distinct BasicDetailId and RecordOfficeId for the given ArmedId.
-                string query = "Select count(distinct bd.BasicDetailId) as TotalBD, count(mrec.RecordOfficeId) as TotalRO from MArmedType marm " +
+                string query = "Select count(distinct bd.BasicDetailId) AS TotalBD, count(distinct bd2.BasicDetailId) as TotalBD2, count(mrec.RecordOfficeId) as TotalRO from MArmedType marm " +
                                "left join BasicDetails bd on bd.ArmedId = marm.ArmedId " +
+                               "LEFT JOIN AFSAC2.dbo.BasicDetails bd2 on bd2.ArmedId = marm.ArmedId " +
                                "left join MRecordOffice mrec on mrec.ArmedId = marm.ArmedId " +
                                "where marm.ArmedId = @ArmedId";
 

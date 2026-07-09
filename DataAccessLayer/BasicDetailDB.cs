@@ -67,11 +67,12 @@ namespace DataAccessLayer
             // SQL query to select dispatch card data based on the provided RequestIds
             string query = @"SELECT req.RequestId as ApplId,
                             ranks.RankAbbreviation as RankName,
-                            basi.FName, basi.LName, basi.ServiceNo,
+                            basi.FName as FName_1, basi.LName as LName_1,basic_2.FName as FName_2, basic_2.LName as LName_2, basi.ServiceNo,
                             req.ChipNo, req.CardSerialNo
                          from TrnICardRequest req
-                         INNER JOIN BasicDetails basi on req.BasicDetailId = basi.BasicDetailId
-                         INNER JOIN MRank ranks on ranks.RankId = basi.RankId
+                         LEFT JOIN BasicDetails basi on req.BasicDetailId = basi.BasicDetailId
+						 LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+                         INNER JOIN MRank ranks on ranks.RankId = ISNULL(basi.RankId,basic_2.RankId) 
                          WHERE req.RequestId IN (SELECT RequestId FROM @RequestIds)";  // Use parameterized query for RequestIds
 
             try
@@ -94,6 +95,19 @@ namespace DataAccessLayer
 
                     // Execute the query asynchronously and map the results to DTODispatchCardForCSVResponse objects
                     dTOs = (await connection.QueryAsync<DTODispatchCardForCSVResponse>(query, parameters)).ToList();
+                    if(dTOs != null)
+                    {
+                        foreach(var item in dTOs)
+                        {
+                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                            item.LName = item.LName_2 ?? item.LName_1;
+                        }
+                        return dTOs;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
             catch (Exception ex)
@@ -1450,11 +1464,12 @@ namespace DataAccessLayer
             };
 
             var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
-            selectFields = @"munit.UnitName,B.FName,B.LName,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn";
+            selectFields = @"munit.UnitName,B.FName as FName_1, B.LName as LName_1,basic_2.FName as FName_2, basic_2.LName as LName_2,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn";
             fromJoinClause = @"FROM MTrnICardHold thold
                                 inner join AspNetUsers u on u.Id = thold.Updatedby
-                                inner join TrnICardRequest trnicrd on trnicrd.RequestId = thold.RequestId
-                                inner join BasicDetails B on B.BasicDetailId = trnicrd.BasicDetailId
+                                inner join TrnICardRequest trnicrd on trnicrd.RequestId = thold.RequestId                           
+                                LEFT JOIN BasicDetails B on B.BasicDetailId = trnicrd.BasicDetailId
+                                LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = trnicrd.BasicDetailId
                                 inner join MRank ran on ran.RankId=B.RankId
                                 inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId
                                 inner join MUnit munit on munit.UnitId=mapunit.UnitId
@@ -1484,6 +1499,18 @@ namespace DataAccessLayer
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOICardRequestHoldResponse>()).ToList();
+                    if (records != null)
+                    {
+                        foreach (var item in records)
+                        {
+                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                            item.LName = item.LName_2 ?? item.LName_1;
+                        }                    
+                    }
+                    else
+                    {
+                        return null;
+                    }
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 
                     var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
@@ -1919,46 +1946,25 @@ namespace DataAccessLayer
 
 
         /// <summary>
-        /// Finds a BasicDetail record based on the provided ServiceNo.
-        /// </summary>
-        /// <param name="ServiceNo">The Service Number (ArmyNo) used to query the BasicDetails table.</param>
-        /// <returns>A BasicDetail object if a matching record is found, otherwise null.</returns>
-        public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
-        {
-            string query = @"Select * from BasicDetails where ServiceNo = @ServiceNo ";
-            try
-            {
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    BasicDetail? basicDetail = await connection.QuerySingleOrDefaultAsync<BasicDetail>(query, new { ServiceNo });
-                    if (basicDetail != null)
-                    {
-                        return basicDetail;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "BasicDetailDB->FindServiceNo");
-                return null;
-            }
-
-
-        }
-
-
-        /// <summary>
         /// Retrieves the maximum BasicDetailId for a given ServiceNo from the BasicDetails table.
         /// </summary>
         /// <param name="ServiceNo">The Service Number (ArmyNo) used to find the corresponding BasicDetail records.</param>
         /// <returns>The maximum BasicDetailId for the specified ServiceNo, or null if no records are found or an error occurs.</returns>
         public async Task<int?> MaxBasicDetailId(string ServiceNo)
         {
-            const string query = @"SELECT MAX(BasicDetailId) AS MaxBasicDetailId FROM BasicDetails  WHERE ServiceNo = @ServiceNo";
+            const string query = @"SELECT MAX(MaxBasicDetailId) AS MaxBasicDetailId
+FROM
+(
+    SELECT MAX(BasicDetailId) AS MaxBasicDetailId
+    FROM dbo.BasicDetails
+    WHERE ServiceNo = @ServiceNo
+
+    UNION ALL
+
+    SELECT MAX(BasicDetailId) AS MaxBasicDetailId
+    FROM AFSAC2.dbo.BasicDetails
+    WHERE ServiceNo = @ServiceNo
+) AS T;";
 
             try
             {
