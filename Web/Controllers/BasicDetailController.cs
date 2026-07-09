@@ -568,7 +568,7 @@ namespace Web.Controllers
             }
 
             // Fetch basic detail record by decrypted integer Id
-            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(decryptedIntId);
+            DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(decryptedIntId);
 
             if (basicDetailCrtAndUpdVM != null)
             {
@@ -5054,7 +5054,7 @@ namespace Web.Controllers
         public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
             // Fetch the basic detail data for the given request ID
-            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+            DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
 
             if (basicDetailCrtAndUpdVM != null)
             {
@@ -5243,11 +5243,11 @@ namespace Web.Controllers
         {
             int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             // Initialize the generic response object
-            DTOGenericResponse<BasicDetailCrtAndUpdVM?> response = new DTOGenericResponse<BasicDetailCrtAndUpdVM?>();
+            DTOGenericResponse<DTOBasicDetailByRequestIdResponse?> response = new DTOGenericResponse<DTOBasicDetailByRequestIdResponse?>();
             try
             {
                 // Retrieve the basic detail record for the given RequestId
-                BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+                DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
 
                 if (basicDetailCrtAndUpdVM != null)
                 {

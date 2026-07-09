@@ -96,6 +96,8 @@ namespace DataAccessLayer
         public DbSet<TrnDispatchCard> TrnDispatchCard { get; set; } = null!;// For dispatch card details
         public DbSet<TrnDispatchCardMapping> TrnDispatchCardMapping { get; set; } = null!;// For dispatch card mapping details
         public DbSet<MDispatchMode> MDispatchMode { get; set; } = null!;// For dispatch mode details
+        public DbSet<TrnApplCloseMapping> TrnApplCloseMapping { get; set; } = null!;// For application close mapping details
+        public DbSet<CompletedICardRequestMapping> CompletedICardRequestMapping { get; set; } = null!;// For completed ICard request mapping details
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
 
         public DbSet<BasicDetailsAFSAC2> BasicDetailsAFSAC2 { get; set; }

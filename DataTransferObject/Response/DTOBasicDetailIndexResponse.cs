@@ -1,4 +1,7 @@
-﻿namespace DataTransferObject.Response
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+
+namespace DataTransferObject.Response
 {
     public class DTOBasicDetailIndexResponse
     {
@@ -29,5 +32,6 @@
         public string? Remark { get; set; }
         public int IsPosting { get; set; }
         public bool IsLock { get; set; }
+
     }
 }

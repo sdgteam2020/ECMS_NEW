@@ -200,16 +200,17 @@ namespace DataAccessLayer
             try
             {
                 // SQL query to retrieve destruction card details along with related information
-                string query = @"select req.RequestId,tdc.DestructedCardId,bas.ServiceNo as ArmyNo,
-	                                ranks.RankAbbreviation,bas.FName,bas.LName,Muni.Abbreviation Unit,
+                string query = @"select req.RequestId,tdc.DestructedCardId,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ArmyNo,
+	                                ranks.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,Muni.Abbreviation Unit,
 	                                tdc.UpdatedOn as DateAndTime,tdc.Remark,tdc.IsActive as IsActiveBool,
 	                                req.CardSerialNo,req.ChipNo,tdc.DestructedOn,
                                     (select STRING_AGG(Remarks,' | ') from MRemarks where RemarksId in (select value from string_split(tdc.RemarksIds,','))) Reasons
 	                                from TrnDestructionCards tdc
 	                                inner join TrnICardRequest req on req.RequestId = tdc.RequestId
-	                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-	                                inner join MRank ranks on ranks.RankId=bas.RankId
-	                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+	                                LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
+                                    LEFT JOIN  AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId 
+	                                inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
+	                                inner join MapUnit uni on uni.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
 	                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
                                   Where req.RequestId in @Ids";
 
@@ -221,6 +222,15 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTODestructionCardExportResponse>(query, parameters);
+                    
+                    if (ret != null)
+                    {
+                        foreach (var item in ret)
+                        {
+                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                            item.LName = item.LName_2 ?? item.LName_1;
+                        }
+                    }
                     records = ret.ToList();
                 }
             }

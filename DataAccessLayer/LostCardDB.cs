@@ -75,12 +75,9 @@ namespace DataAccessLayer
                                         (
                                             SELECT 1
                                             FROM TrnLostCards lc
-                                            INNER JOIN TrnICardRequest tir 
-                                                ON lc.RequestId = tir.RequestId
-                                            LEFT JOIN BasicDetails bd 
-                                                ON tir.BasicDetailId = bd.BasicDetailId
-                                            LEFT JOIN AFSAC2.dbo.BasicDetails bd2 
-                                                ON tir.BasicDetailId = bd2.BasicDetailId
+                                            INNER JOIN TrnICardRequest tir ON tir.RequestId = lc.RequestId
+                                            LEFT JOIN BasicDetails bd ON bd.BasicDetailId = tir.BasicDetailId
+                                            LEFT JOIN AFSAC2.dbo.BasicDetails bd2 ON bd2.BasicDetailId = tir.BasicDetailId
                                             WHERE tir.BasicDetailId =
                                             (
                                                 SELECT MAX(BasicDetailId)
@@ -145,32 +142,23 @@ namespace DataAccessLayer
 
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "lost.UpdatedOn";
                 
-                if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
-                {
-                    sortColumn = "ISNULL(basic_2.ServiceNo , bd.ServiceNo )";
-                }
-
                 var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
 
                 string selectFields = @"appl.Name ApplyFor,
                                         req.RequestId,lost.LostCardId,
-                                        ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ranks.RankAbbreviation RankName,
-                                        bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,
-                                        Muni.Abbreviation UnitAbbreviation,
-                                        lost.UpdatedOn,lost.Remark,lost.LostOn,
-                                        lost.IsFIRLogged,lost.SupportDocName,
+                                        basic_2.ServiceNo,ranks.RankAbbreviation RankName,basic_2.FName,basic_2.LName,
+                                        Muni.Abbreviation UnitAbbreviation,lost.UpdatedOn,lost.Remark,lost.LostOn,lost.IsFIRLogged,lost.SupportDocName,
                                         (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(lost.RemarksIds,','))) RemarksNameList";
                 string fromJoinClause = @"from TrnLostCards lost
                                         inner join TrnICardRequest req on req.RequestId = lost.RequestId
                                         inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                        LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
-                                        LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
-                                        inner join MRank ranks on ranks.RankId=ISNULL(basic_2.RankId,bd.RankId)
-                                        inner join MapUnit uni on uni.UnitMapId=ISNULL(basic_2.UnitId,bd.UnitId)
-                                        inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                        inner join MApplyFor appl on appl.ApplyForId=ISNULL(basic_2.ApplyForId,bd.ApplyForId)";
-                string whereClause = @"Where @SearchTerm IS NULL OR bd.ServiceNo LIKE @SearchTerm OR basic_2.ServiceNo LIKE @SearchTerm";
+                                        inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+                                        inner join MRank ranks on ranks.RankId = basic_2.RankId
+                                        inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
+                                        inner join MUnit Muni on Muni.UnitId = uni.UnitId
+                                        inner join MApplyFor appl on appl.ApplyForId = basic_2.ApplyForId";
+                string whereClause = @"Where @SearchTerm IS NULL OR basic_2.ServiceNo LIKE @SearchTerm";
 
                 var multiQuery = $@"
                         WITH RecordCTE AS (
@@ -192,15 +180,6 @@ namespace DataAccessLayer
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOLostCardGetResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
-
-                    if (records != null)
-                    {
-                        foreach (var item in records)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
-                    }
 
                     List<int>? selectedIds = new List<int>();
 
@@ -243,17 +222,16 @@ namespace DataAccessLayer
             var records = new List<DTOLostCardExportResponse>();
             try
             {
-                string query = @"select req.RequestId,lost.LostCardId,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ArmyNo,
-	                                ranks.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,Muni.Abbreviation Unit,
+                string query = @"select req.RequestId,lost.LostCardId,basic_2.ServiceNo AS ArmyNo,
+	                                ranks.RankAbbreviation,basic_2.FName,basic_2.LName,Muni.Abbreviation Unit,
 	                                lost.UpdatedOn as DateAndTime,lost.Remark,lost.IsActive as IsActiveBool,
 	                                req.CardSerialNo,req.ChipNo,lost.LostOn
 	                                from TrnLostCards lost
 	                                inner join TrnICardRequest req on req.RequestId = lost.RequestId
-	                                LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
-                                    LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
-	                                inner join MRank ranks on ranks.RankId=ISNULL(basic_2.RankId,bd.RankId)
-	                                inner join MapUnit uni on uni.UnitMapId=ISNULL(basic_2.UnitId,bd.UnitId)
-	                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                                    inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+	                                inner join MRank ranks on ranks.RankId = basic_2.RankId
+	                                inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
+	                                inner join MUnit Muni on Muni.UnitId = uni.UnitId
                                   Where req.RequestId in @Ids";
 
                 // Parameters for SQL query, adding the list of Request IDs
@@ -269,14 +247,6 @@ namespace DataAccessLayer
                     // Convert the results to a list
                     records = ret.ToList();
 
-                    if (records != null)
-                    {
-                        foreach (var item in records)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
-                    }
                 }
             }
             catch (Exception ex)

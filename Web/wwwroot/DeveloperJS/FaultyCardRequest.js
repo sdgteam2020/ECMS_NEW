@@ -276,26 +276,26 @@ async function GetTrnFaultyCardDetail(TrnFaultyCardId) {
 
         const result = await response.json();
 
-        if (result != null) {
+        if (result.Result === true) {
 
-            $("#spnArmyNo").text(result.ServiceNo);
-            spnFaultyCardRequestId = result.RequestId;
-            $("#lblFaultyRequestId").html(result.RequestId);
-            $("#txtFromRemark").text(result.FromRemark);
+            $("#spnArmyNo").text(result.Value.ServiceNo);
+            spnFaultyCardRequestId = result.Value.RequestId;
+            $("#lblFaultyRequestId").html(result.Value.RequestId);
+            $("#txtFromRemark").text(result.Value.FromRemark);
             $("#txtFromRemark").prop("disabled", true);
 
-            GetBasicDetailForParitalViewByRequestId(result.RequestId);
+            GetBasicDetailForParitalViewByRequestId(result.Value.RequestId);
 
-            await mMsater(result.CategoryId, "ddlStage", FaultyStage, "");
+            await mMsater(result.Value.CategoryId, "ddlStage", FaultyStage, "");
 
-            let RemarksIds = result.RemarksIds;
+            let RemarksIds = result.Value.RemarksIds;
             let arr2 = RemarksIds.split(',');
             $("#ddlFaultyRemark").val(arr2);
             $("#ddlFaultyRemark").trigger("change");
             $("#ddlFaultyRemark").prop("disabled", true)
 
         } else {
-            toastr.error('Invalid Input.');
+            toastr.error(result.Message);
             window.location.href = '/BasicDetail/FaultyCard';
         }
 

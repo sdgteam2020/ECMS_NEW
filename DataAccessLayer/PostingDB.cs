@@ -24,60 +24,6 @@ namespace DataAccessLayer
         }
 
         /// <summary>
-        /// Retrieves all posting history for a specific AspNetUserId.
-        /// </summary>
-        /// <param name="AspNetUsersId">The AspNetUsersId to filter the posting history by.</param>
-        /// <returns>A list of <see cref="DTOPostingOutDetilsResponse"/> containing the posting history details.</returns>
-        /// <exception cref="Exception">Throws exception if any error occurs while retrieving the posting history.</exception>
-        public async Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId)
-        {
-            try
-            {
-
-                string query = @"select res.Reason,Authority,CONVERT (varchar(10),Cast(SOSDate as date), 103) SOSDate,CONVERT (varchar(10),Cast(pout.UpdatedOn as date), 103) UpdatedOn,user1.DomainId FromDomainId,user2.DomainId TODomainId,
-                                    unit1.UnitName FromUnitName,unit2.UnitName ToUnitName,prof1.ArmyNo FromArmyNO,prof2.ArmyNo TOArmyNO,ranks.RankAbbreviation FromRankName,prof1.Name FromName,ISNULL(basic.ServiceNo, basi2.ServiceNo) AS ServiceNo,basic.FName AS FName_1,basic.LName AS LName_1,basi2.FName AS FName_2,basi2.LName AS LName_2,ranksmain.RankAbbreviation Rank
-                                    ,user3.DomainId DispatchUpdatedBy,pout.DispatchedOn,pout.DispatchUpdatedOn,pout.RefNo
-                                    from TrnPostingOut pout
-                                    inner join MPostingReason res on res.Id=pout.ReasonId
-                                    inner join AspNetUsers user1 on user1.Id=pout.FromAspNetUsersId
-                                    inner join AspNetUsers user2 on user2.Id=pout.ToAspNetUsersId
-                                    left join AspNetUsers user3 on user3.Id=pout.DispatchUpdatedBy
-                                    inner join MapUnit mapunit1 on mapunit1.UnitMapId=pout.FromUnitID
-                                    inner join MUnit unit1 on unit1.UnitId=mapunit1.UnitId
-                                    inner join MapUnit mapunit2 on mapunit2.UnitMapId=pout.ToUnitID
-                                    inner join MUnit unit2 on unit2.UnitId=mapunit2.UnitId
-                                    inner join UserProfile prof1 on prof1.UserId=pout.FromUserID
-                                    inner join MRank ranks on ranks.RankId=prof1.RankId
-                                    inner join UserProfile prof2 on prof2.UserId=pout.ToUserID
-                                    inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId
-                                    LEFT JOIN BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId
-                                    LEFT JOIN AFSAC2.dbo.BasicDetails basi2 on basi2.BasicDetailId=trnicardr.BasicDetailId
-                                    inner join MRank ranksmain on ranksmain.RankId=ISNULL(basi2.RankId,basic.RankId)
-                                    where pout.FromAspNetUsersId= @AspNetUsersId
-                                    order by pout.Id desc";
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    var ret = await connection.QueryAsync<DTOPostingOutDetilsResponse>(query, new { AspNetUsersId });
-                    if (ret != null)
-                    {
-                        foreach (var item in ret)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
-                    }
-                    return ret.ToList();
-
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "PostingDB->GetAllPostingHistory");
-                return new List<DTOPostingOutDetilsResponse>(); // Return an empty list instead of null
-            }
-        }
-
-        /// <summary>
         /// Retrieves posting detail by Id.
         /// </summary>
         /// <param name="Id">The posting Id to retrieve details for.</param>
@@ -381,7 +327,6 @@ namespace DataAccessLayer
         /// <returns>A list of <see cref="DTOAppClosedListResponse"/> objects representing the closed applications.</returns>
         /// <exception cref="Exception">Throws an exception if an error occurs while retrieving the closed applications.</exception>
         public async Task<DTODataTablesResponse<DTOAppClosedListResponse>> GetAppClosedList(DTODataTableRequestForAppCloseList dTO)
-        
         {
             List<DTOAppClosedListResponse> dTOAppCloseds = new List<DTOAppClosedListResponse>();
             var responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
@@ -397,7 +342,7 @@ namespace DataAccessLayer
                 // Map allowed sort columns to DB fields
                 var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ServiceNo"] = "ServiceNo",
+                    ["ServiceNo"] = "basic_2.ServiceNo",
                     ["UpdatedOn"] = "appcl.UpdatedOn",
                     ["Authority"] = "appcl.Authority",
                     ["Remarks"] = "appcl.Remarks"
@@ -405,27 +350,20 @@ namespace DataAccessLayer
 
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "appcl.UpdatedOn";
 
-                if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
-                {
-                    sortColumn = "ISNULL(basic_2.ServiceNo , bd.ServiceNo )";
-                }
-
                 var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
 
-                string selectFields = @"appcl.UpdatedOn,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,mr.RankAbbreviation as RankName,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority";
+                string selectFields = @"appcl.UpdatedOn,basic_2.ServiceNo,mr.RankAbbreviation as RankName,basic_2.FName,basic_2.LName,mpr.Reason,mappl.Name as ApplyFor,appcl.Remarks,appcl.Authority";
                 string fromJoinClause = @"from TrnApplClose appcl
                                         inner join TrnICardRequest trnicardr on trnicardr.RequestId=appcl.RequestId
-                                        LEFT JOIN BasicDetails bd on bd.BasicDetailId=trnicardr.BasicDetailId and bd.UnitId =@UnitMapId
-                                        LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId and basic_2.UnitId =@UnitMapId
-                                        inner join MRank mr on mr.RankId = ISNULL(basic_2.RankId,bd.RankId)
-                                        inner join MApplyFor mappl on mappl.ApplyForId = ISNULL(basic_2.ApplyForId,bd.ApplyForId)
+                                        inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId and basic_2.UnitId =@UnitMapId
+                                        inner join MRank mr on mr.RankId = basic_2.RankId
+                                        inner join MApplyFor mappl on mappl.ApplyForId = basic_2.ApplyForId
                                         inner join MPostingReason mpr on mpr.Id= appcl.ReasonId";
                 string whereClause = @"where
                                        mappl.ApplyForId=@apply
                                        AND (
                                             @SearchTerm IS NULL OR 
-                                            bd.ServiceNo LIKE @SearchTerm OR
                                             basic_2.ServiceNo LIKE @SearchTerm OR
                                             appcl.Authority LIKE @SearchTerm
                                         )";
@@ -452,15 +390,6 @@ namespace DataAccessLayer
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOAppClosedListResponse>()).ToList();
                     var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
-
-                    if (records != null)
-                    {
-                        foreach (var item in records)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ??  string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
-                    }
 
                     responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
                     {

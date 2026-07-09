@@ -217,52 +217,48 @@ namespace DataAccessLayer
         /// The results include the service number (with formatting), rank, unit, remarks, fault category, and other related details.
         /// If an error occurs during the execution of the query, the method logs the error and returns null.
         /// </remarks>
-        public async Task<DTOFaultyCardListResponse?> GetTrnFaultyCardDetail(int TrnFaultyCardId)
+        public async Task<DTOGenericResponse<DTOFaultyCardListResponse?>> GetTrnFaultyCardDetail(int TrnFaultyCardId)
         {
+            var response = new DTOGenericResponse<DTOFaultyCardListResponse?>();
             try
             {
                 // SQL query to fetch faulty card details from multiple related tables
-                string query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,mcat.CategoryId,req.RequestId,faulty.TrnFaultyCardId,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ranks.RankAbbreviation RankName,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                                faulty.IsEditAction,faulty.UpdatedOn,faulty.RemarksIds,faulty.FromRemark,faulty.ToRemark,regi.Abbreviation RegimentalName,
-                                (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(faulty.RemarksIds,','))) RemarksNameList
+                string query = @"SELECT mcat.CategoryId,req.RequestId,bd.ServiceNo,faulty.RemarksIds,faulty.FromRemark
                                 from TrnFaultyCard faulty
                                 inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId
-                                inner join TrnICardRequest req on req.RequestId = faulty.RequestId
+                                inner join TrnICardRequest req on req.RequestId = faulty.RequestId AND req.StatusId =1
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
-                                LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
-                                inner join MRank ranks on ranks.RankId=ISNULL(basic_2.RankId,bd.RankId)
-                                inner join MapUnit uni on uni.UnitMapId=ISNULL(basic_2.UnitId,bd.UnitId)
-                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                inner join MApplyFor appl on appl.ApplyForId=ISNULL(basic_2.ApplyForId,bd.ApplyForId)
-                                left join MRegimental regi on regi.RegId=ISNULL(basic_2.RegimentalId,bd.RegimentalId)
+                                inner join BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
                                 WHERE faulty.TrnFaultyCardId = @TrnFaultyCardId";
 
 
                 using (var connection = _contextDP.CreateConnection())
                 {
                     // Execute the query and return the first matching record
-                    var allrecord = await connection.QueryAsync<DTOFaultyCardListResponse>(query, new { TrnFaultyCardId });
+                    var allrecord = await connection.QueryFirstOrDefaultAsync<DTOFaultyCardListResponse>(query, new { TrnFaultyCardId });
 
-                    if (allrecord != null)
+                    if (allrecord == null)
                     {
-                        foreach (var item in allrecord)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
+                        response.Result = false;
+                        response.Message = "Invalid Id.";
+                    }
+                    else
+                    {
+                        response.Result = true;
+                        response.Value = allrecord;
+                        response.Message = "ok";
                     }
 
-                    return allrecord.FirstOrDefault();
                 }
             }
             catch (Exception ex)
             {
                 // Log the error and return null if an exception occurs
                 _logger.LogError(1001, ex, "FaultyCardDB->GetTrnFaultyCardDetail");
-                return null;
+                response.Result = false;
+                response.Message = "An error occurred while fetching the record.";
             }
-
+            return response;
         }
 
 

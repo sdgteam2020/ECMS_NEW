@@ -3,8 +3,6 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     GetTaskIcardRequestCount($("#Id").html(), $("#applyForId").html())
 
-    //GetNotification(1, 1);
-    //GetNotification(1, 2); //
     //GetNotificationRequestId(1, 1); //this notification method for self notifiy
     //GetNotificationRequestId(1, 2); //this notification method for self notifiy
 });

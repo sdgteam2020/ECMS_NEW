@@ -76,9 +76,8 @@ namespace DataAccessLayer
                             
                             select @TotDistCards=COUNT(dist.DistributeCardId) from TrnDistributeCards dist
                             INNER JOIN TrnICardRequest  trnicard on trnicard.RequestId = dist.RequestId
-                            LEFT JOIN BasicDetails bd on bd.BasicDetailId =  trnicard.BasicDetailId
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId =  trnicard.BasicDetailId
-                            WHERE ISNULL(bd.UnitId, basic_2.UnitId) = @MapUnitId
+                            INNER JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId =  trnicard.BasicDetailId
+                            WHERE basic_2.UnitId = @MapUnitId
                             
 
                             select @TotLostCards TotLostCards,@TotHotlistCards TotHotlistCards,@TotUnitChangeRequest TotUnitChangeRequest,@TotMisprintedCard TotMisprintedCard,@TotDistCards TotDistCards,@TotDestCards TotDestCards,@TotDispatchCards TotDispatchCards";
@@ -329,27 +328,23 @@ namespace DataAccessLayer
                             declare @ToClosedOffrs int=0 declare @ToClosedJCO int=0
                             select @ToClosedOffrs=COUNT(appcl.Id) from TrnApplClose appcl
                             inner join TrnICardRequest req on req.RequestId=appcl.RequestId
-                            LEFT JOIN BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.UnitId =@UnitMapId AND bs.ApplyForId=1
-                            LEFT JOIN  AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId =@UnitMapId AND basic_2.ApplyForId=1
+                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId =@UnitMapId AND basic_2.ApplyForId=1
 
                             select @ToClosedJCO=COUNT(appcl.Id) from TrnApplClose appcl
                             inner join TrnICardRequest req on req.RequestId=appcl.RequestId
-                            LEFT JOIN BasicDetails bs on bs.BasicDetailId=req.BasicDetailId and bs.UnitId =@UnitMapId AND bs.ApplyForId=2
-                            LEFT JOIN  AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId =@UnitMapId AND basic_2.ApplyForId=2
+                            inner join  AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId =@UnitMapId AND basic_2.ApplyForId=2
 
                             --Completed--
                             declare @ToCompletedOffrs int=0 declare @ToCompletedJCO int=0
                             select @ToCompletedOffrs=COUNT(distinct req.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=2
                             inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId 
-                            LEFT JOIN BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=1
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.ApplyForId=1
+                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.ApplyForId=1
                           
                             select @ToCompletedJCO=COUNT(distinct req.RequestId) from TrnDomainMapping domain
                             inner join TrnICardRequest req on req.TrnDomainMappingId=domain.Id AND domain.AspNetUsersId=@UserId AND req.StatusId=2
                             inner join TrnStepCounter trnstepcout on trnstepcout.RequestId= req.RequestId 
-                            LEFT JOIN BasicDetails bs on bs.BasicDetailId=req.BasicDetailId AND bs.ApplyForId=2
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.ApplyForId=2
+                            inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.ApplyForId=2
 
                             --Rejected--
                             declare @ToRejectedOffrs int=0 declare @ToRejectedJCO int=0

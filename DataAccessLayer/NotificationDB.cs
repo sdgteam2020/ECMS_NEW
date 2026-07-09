@@ -122,18 +122,16 @@ namespace DataAccessLayer
             };
 
             var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
-            selectFields = @"tre.RequestId as ApplId,noti.UpdatedOn,Message,ranks.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,uplod.PhotoImagePath AS PhotoImagePath_1,uplod_2.PhotoImagePath AS PhotoImagePath_2 ,dis.Url";
+            selectFields = @"tre.RequestId as ApplId,noti.UpdatedOn,Message,ranks.RankAbbreviation,bd.FName,bd.LName,bd.ServiceNo,uplod.PhotoImagePath,dis.Url";
 
             fromJoinClause = @"from TrnNotification noti
                                 inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
                                 inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId
                                 inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId 
-                                inner join TrnICardRequest tre on tre.RequestId = noti.RequestId 
-                                LEFT JOIN BasicDetails bd on bd.BasicDetailId=tre.BasicDetailId
-                                LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=tre.BasicDetailId
-                                inner join MRank ranks on ranks.RankId=ISNULL(basic_2.RankId,bd.RankId)
-                                LEFT JOIN TrnUpload uplod on uplod.BasicDetailId=ISNULL(basic_2.BasicDetailId,bd.BasicDetailId)
-                                LEFT JOIN AFSAC2.dbo.TrnUpload uplod_2 on uplod_2.BasicDetailId=ISNULL(basic_2.BasicDetailId,bd.BasicDetailId)";
+                                inner join TrnICardRequest tre on tre.RequestId = noti.RequestId AND tre.StatusId = 1
+                                inner join BasicDetails bd on bd.BasicDetailId = tre.BasicDetailId
+                                inner join MRank ranks on ranks.RankId = bd.RankId
+                                inner join TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId";
 
             whereClause = @"WHERE
                             noti.ReciverAspNetUsersId=@ReciverAspNetUsersId 
@@ -141,18 +139,12 @@ namespace DataAccessLayer
                             AND (
                                 @SearchTerm IS NULL OR
                                  bd.ServiceNo LIKE @SearchTerm OR
-                                 basic_2.ServiceNo LIKE @SearchTerm OR
                                  tre.RequestId LIKE @SearchTerm
                             )";
 
             try
             {
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "tre.RequestId";
-
-                if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
-                {
-                    sortColumn = "ISNULL(basic_2.ServiceNo , bd.ServiceNo )";
-                }
 
 
                 var multiQuery = $@"
@@ -179,12 +171,10 @@ namespace DataAccessLayer
                                      select new DTONotificationResponse()
                                      {
                                          TotalFilteredRecords = e.TotalFilteredRecords,
-                                         PhotoImagePath = e.PhotoImagePath_1 ?? e.PhotoImagePath_2 ?? string.Empty,
+                                         PhotoImagePath = e.PhotoImagePath,
                                          ApplId = e.ApplId,
                                          ServiceNo = e.ServiceNo,
                                          RankAbbreviation = e.RankAbbreviation,
-                                         FName = e.FName_2 ?? e.FName_1 ?? string.Empty,
-                                         LName = e.LName_2 ?? e.LName_1,
                                          UpdatedOn = e.UpdatedOn,
                                          Message = e.Message,
                                          Url= e.Url,
