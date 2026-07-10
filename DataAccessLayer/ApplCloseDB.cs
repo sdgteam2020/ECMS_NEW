@@ -99,7 +99,8 @@ namespace DataAccessLayer
             try
             {
                 string name = (cardHistoryResponses.BasicDetail.FName + " " + cardHistoryResponses.BasicDetail.LName).Trim();
-                string rankAbbreviation = (cardHistoryResponses.BasicDetail.RankName ?? string.Empty).Trim();
+                short RankId = cardHistoryResponses.BasicDetail.RankId;
+                byte ApplyForId = cardHistoryResponses.BasicDetail.ApplyForId;
                 string serviceNo = (cardHistoryResponses.BasicDetail.ServiceNo ?? string.Empty).Trim();
                 List<int> AspnetuserId = new List<int>();
                 if (cardHistoryResponses != null)
@@ -116,8 +117,8 @@ namespace DataAccessLayer
                 var cardRequestHistoryJson = JsonConvert.SerializeObject(cardHistoryResponses);
 
                 // SQL query to insert a new record into the TrnApplClose table.
-                var insertSql = @$"INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankAbbreviation,ServiceNo) 
-                                VALUES(@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId, @CardRequestHistoryJson, @Name, @RankAbbreviation, @ServiceNo);
+                var insertSql = @$"INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankId,ServiceNo,ApplyForId) 
+                                VALUES(@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId, @CardRequestHistoryJson, @Name, @RankId, @ServiceNo,@ApplyForId);
                                 {(cardHistoryResponses?.FaultyCard?.Count > 0 ? "update TrnFaultyCard set TrnFwdId = null where RequestId = @RequestId;" : "")}
                                 {(cardHistoryResponses?.PostingOut?.Count > 0 ? "update TrnPostingOut set TrnFwdId = null where RequestId = @RequestId;" : "")}                                    
                                 Delete from TrnFwds where RequestId = @RequestId;
@@ -136,11 +137,12 @@ namespace DataAccessLayer
                 parameters.Add("@UserId", Data.UserId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.AnsiString, ParameterDirection.Input, size: -1);
                 parameters.Add("@Name", name, DbType.String, ParameterDirection.Input,36 );
-                parameters.Add("@RankAbbreviation", rankAbbreviation, DbType.String, ParameterDirection.Input, 30);
+                parameters.Add("@RankId", RankId, DbType.Int16, ParameterDirection.Input);
                 parameters.Add("@ServiceNo", serviceNo, DbType.String, ParameterDirection.Input, 10);
+                parameters.Add("@ApplyForId", ApplyForId, DbType.Byte, ParameterDirection.Input);
 
                 // Execute the insert query asynchronously with transaction.
-               Data.Id =  await db.ExecuteScalarAsync<int>(insertSql, parameters, transaction: transaction);
+                Data.Id =  await db.ExecuteScalarAsync<int>(insertSql, parameters, transaction: transaction);
 
                 // SQL query to update the status of the RequestId in the TrnICardRequest table.
                 string query1 = "UPDATE TrnICardRequest SET StatusId = 3 WHERE RequestId = @RequestId";
