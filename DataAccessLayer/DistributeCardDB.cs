@@ -260,7 +260,7 @@ namespace DataAccessLayer
         /// 3. It optionally updates the `TrnFaultyCard` and `TrnPostingOut` tables based on conditions from the `cardRequestHistory`.
         /// 4. It records the history of the card request in the `CompletedICardRequests` table.
         /// </remarks>
-        public async Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model, ICardHistoryResponseAll cardRequestHistory)
+        public async Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model, ICardHistoryResponseAll cardRequestHistory, List<int> AspNetUsersIds)
         {
             // Initialize the response DTO
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
@@ -269,10 +269,17 @@ namespace DataAccessLayer
             {
                 // Serialize the card request history to store in the database
                 var cardRequestHistoryJson = JsonConvert.SerializeObject(cardRequestHistory);
+                
+                string Name = (cardRequestHistory.BasicDetail.FName + " " + cardRequestHistory.BasicDetail.LName ?? "").Trim();
+                short RankId = cardRequestHistory.BasicDetail.RankId;
+                byte ApplyForId = cardRequestHistory.BasicDetail.ApplyForId;
+                string ServiceNo = cardRequestHistory.BasicDetail.ServiceNo;
 
                 // SQL query to insert the distribution card and update relevant records
-                var insertQuery = @$"Insert into TrnDistributeCards(RequestId,DistributedOn,Remark,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn) 
-                                                             Values(@RequestId,@DistributedOn,@Remark,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn);
+                var insertQuery = @$"
+                                    SET NOCOUNT ON;
+                                    Insert into TrnDistributeCards(RequestId,DistributedOn,Remark,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn) 
+                                    Values(@RequestId,@DistributedOn,@Remark,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn);
 
                                      DECLARE @DistributeCardId INT = SCOPE_IDENTITY();
                                      
@@ -283,10 +290,12 @@ namespace DataAccessLayer
                                      {(cardRequestHistory?.PostingOut?.Count > 0 ? "update TrnPostingOut set TrnFwdId = null where RequestId = @RequestId;" : "")}
                                      
                                      Delete from TrnFwds where RequestId = @RequestId;
-                                     Insert into CompletedICardRequests(RequestId,CardRequestHistoryJson,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn)
-                                     values(@RequestId,@CardRequestHistoryJson,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn);
+                                     Insert into CompletedICardRequests(RequestId,CardRequestHistoryJson,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn,Name,RankId,ServiceNo,ApplyForId)
+                                     values(@RequestId,@CardRequestHistoryJson,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn,@Name,@RankId,@ServiceNo,@ApplyForId);
                                      
-                                     Select @DistributeCardId;
+                                     DECLARE @CompletedId INT = SCOPE_IDENTITY();
+                                     
+                                     SELECT @DistributeCardId AS DistributeCardId,@CompletedId AS CompletedId;
                                     ";
 
                 // Set up the parameters for the SQL query
@@ -299,9 +308,27 @@ namespace DataAccessLayer
                 parameters.Add("@Updatedby", model.Updatedby, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@UpdatedOn", model.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.AnsiString, ParameterDirection.Input, size: -1);
+                parameters.Add("@Name", Name, DbType.String, ParameterDirection.Input,36);
+                parameters.Add("@RankId", RankId, DbType.Int16, ParameterDirection.Input);
+                parameters.Add("@ServiceNo", ServiceNo, DbType.String, ParameterDirection.Input,10);
+                parameters.Add("@ApplyForId", ApplyForId, DbType.Byte, ParameterDirection.Input);
 
                 // Execute the query and get the DistributeCardId of the newly created record
-                model.DistributeCardId = await db.ExecuteScalarAsync<int>(insertQuery, parameters, transaction: transaction);
+                DTOSaveDistributeCardResponse? dTOSave = await db.QuerySingleAsync<DTOSaveDistributeCardResponse>(insertQuery, parameters, transaction: transaction);
+                if (dTOSave != null)
+                {
+                    model.DistributeCardId = dTOSave.DistributeCardId;
+                    foreach (var item in AspNetUsersIds)
+                    {
+                        var insertCompletedICardRequestMapping = @"Insert into CompletedICardRequestMapping(CompletedId,AspNetUsersId) 
+                                                                Values(@CompletedId,@AspNetUsersId);";
+                        var aspNetUserParameters = new DynamicParameters();
+                        aspNetUserParameters.Add("@CompletedId", dTOSave.CompletedId, DbType.Int32, ParameterDirection.Input);
+                        aspNetUserParameters.Add("@AspNetUsersId", item, DbType.Int32, ParameterDirection.Input);
+                        await db.ExecuteAsync(insertCompletedICardRequestMapping, aspNetUserParameters, transaction: transaction);
+                    }
+                }
+
 
                 // Commit the transaction if everything was successful
                 transaction.Commit();
