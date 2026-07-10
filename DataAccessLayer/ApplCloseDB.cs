@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using Azure.Core;
+using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
 using DataTransferObject.Domain.Model;
@@ -115,11 +116,14 @@ namespace DataAccessLayer
                 var cardRequestHistoryJson = JsonConvert.SerializeObject(cardHistoryResponses);
 
                 // SQL query to insert a new record into the TrnApplClose table.
-                var insertSql = "INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankAbbreviation,ServiceNo) " +
-                                "VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId,@CardRequestHistoryJson,@Name,@RankAbbreviation,@ServiceNo); " +
-                                "DECLARE @Id INT = SCOPE_IDENTITY();" +
-                                "Select @Id;";
-
+                var insertSql = @$"INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankAbbreviation,ServiceNo) 
+                                VALUES(@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId, @CardRequestHistoryJson, @Name, @RankAbbreviation, @ServiceNo);
+                                {(cardHistoryResponses?.FaultyCard?.Count > 0 ? "update TrnFaultyCard set TrnFwdId = null where RequestId = @RequestId;" : "")}
+                                {(cardHistoryResponses?.PostingOut?.Count > 0 ? "update TrnPostingOut set TrnFwdId = null where RequestId = @RequestId;" : "")}                                    
+                                Delete from TrnFwds where RequestId = @RequestId;
+                                DECLARE @Id INT = SCOPE_IDENTITY();                                
+                                Select @Id;";
+               
                 // Creating dynamic parameters for the insert query.
                 var parameters = new DynamicParameters();
                 parameters.Add("@ReasonId", Data.ReasonId, DbType.Byte, ParameterDirection.Input);
