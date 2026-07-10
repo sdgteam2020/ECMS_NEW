@@ -4784,7 +4784,7 @@ namespace Web.Controllers
                     if (checkCardBeforeDist.Result)
                     {
                         // Fetch card history to record distribution details
-                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
+                        ICardHistoryResponseAll cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
                         // Save the distribution record and get the response
                         dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
                     }

@@ -3613,9 +3613,11 @@ FROM
         /// </exception>
         public async Task<ICardHistoryResponseAll> ICardHistory(int RequestId)
         {
+            ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();
+
             string query = @"SELECT bd.PaperIcardNo,bd.NameAsPerRecord,bd.FName,bd.LName,bd.ServiceNo,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,
                             trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,trninfo.IdenMark1,trninfo.Height,trninfo.AadhaarNo,bld.BloodGroup,regi.Abbreviation RegimentalName,
-                            Muni.UnitName,ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,icardreq.RequestId,icardreq.UpdatedOn RequestDate,appl.Name ApplyFor,icardreq.CardSerialNo,icardreq.ChipNo
+                            Muni.UnitName,bd.RankId,ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,icardreq.RequestId,icardreq.UpdatedOn RequestDate,bd.ApplyForId,appl.Name ApplyFor,icardreq.CardSerialNo,icardreq.ChipNo
                             from TrnICardRequest icardreq
                             INNER JOIN BasicDetails bd on bd.BasicDetailId = icardreq.BasicDetailId
                             INNER JOIN MIssuingAuthority issaut on issaut.IssuingAuthorityId = bd.IssuingAuthorityId
@@ -3631,7 +3633,7 @@ FROM
                             where icardreq.RequestId=@RequestId
 
                             select fwd.TrnFwdId,fwd.StepId,usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank,
-                            usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,fwd.ToAspNetUsersId,
+                            usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank,fwd.ToAspNetUsersId,
                             CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status,
                             fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark,
                             fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2
@@ -3665,12 +3667,11 @@ FROM
                             inner join MPostingReason res on trnclose.ReasonId=res.Id where trnclose.RequestId=@RequestId";
             try
             {
-                ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();
+
                 using (var connection = _contextDP.CreateConnection())
                 {
                     using (var multi = await connection.QueryMultipleAsync(query, new { RequestId }))
                     {
-                        // var ICardHistory = await multi.ReadFirstOrDefaultAsync<ICardHistoryResponse>();
                         var BasicDetail = (await multi.ReadFirstOrDefaultAsync<DTOBasicDetailForCompleteClosed>());
                         var ICardHistory = (await multi.ReadAsync<ICardHistoryResponse>()).ToList();
                         var PostingOut = (await multi.ReadAsync<ICardHistoryPostingOutResponse>()).ToList();
@@ -3684,19 +3685,13 @@ FROM
                         cardHistoryResponseAll.CloseCard = CloseCard;
 
                     }
-
-                    // var BasicDetailList = await connection.QueryAsync<ICardHistoryResponseAll>(query, new { RequestId });
-
-                    // return BasicDetailList.ToList();
-                    return cardHistoryResponseAll;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->ICardHistory");
-                return null;
             }
-
+            return cardHistoryResponseAll;
         }
 
 

@@ -53,10 +53,10 @@ namespace DataTransferObject.Response
     }
     public class ICardHistoryResponseAll
     {
-        public DTOBasicDetailForCompleteClosed BasicDetail { get; set; }
-        public List<ICardHistoryResponse> ICardHistory { get; set; }
-        public List<ICardHistoryPostingOutResponse> PostingOut { get; set; }
-        public List<ICardHistoryFaultyCardResponse> FaultyCard { get; set; }
-        public ICardApplCloseCardResponse CloseCard { get; set; }
+        public DTOBasicDetailForCompleteClosed BasicDetail { get; set; } = new();
+        public List<ICardHistoryResponse> ICardHistory { get; set; } = new();
+        public List<ICardHistoryPostingOutResponse> PostingOut { get; set; } = new();
+        public List<ICardHistoryFaultyCardResponse> FaultyCard { get; set; } = new();
+        public ICardApplCloseCardResponse CloseCard { get; set; } = new();
     }
 }
