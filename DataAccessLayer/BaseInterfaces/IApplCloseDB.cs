@@ -13,6 +13,6 @@ namespace DataAccessLayer.BaseInterfaces
     {
 
         public Task<DTOApplicationCloseResponse> RequestIdExists(DTOApplicationCloseRequest DTo);
-        public Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data);
+        public Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data, ICardHistoryResponseAll? cardHistoryResponse);
     }
 }

@@ -18,6 +18,7 @@ namespace DataTransferObject.Response
         public string? ToDomain { get; set; }
         public string? ToProfile { get; set; }
         public string? ToRank { get; set; }
+        public int ToAspNetUsersId { get; set; }
         public string? Status { get; set; }
         public string? UpdatedOn { get; set; }
         public string? Remark { get; set; }

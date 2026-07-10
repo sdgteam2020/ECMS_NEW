@@ -5,6 +5,7 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace DataAccessLayer
@@ -89,16 +90,35 @@ namespace DataAccessLayer
         /// <returns>
         /// Returns true if the insert and update operations succeed, otherwise returns false.
         /// </returns>
-        public async Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data)
+        public async Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data, ICardHistoryResponseAll? cardHistoryResponses)
         {
             // Creating a connection and transaction for database operations.
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
-
+           
             try
             {
+                string name = (cardHistoryResponses.BasicDetail.FName + " " + cardHistoryResponses.BasicDetail.LName).Trim();
+                string rankAbbreviation = (cardHistoryResponses.BasicDetail.RankName ?? string.Empty).Trim();
+                string serviceNo = (cardHistoryResponses.BasicDetail.ServiceNo ?? string.Empty).Trim();
+                List<int> AspnetuserId = new List<int>();
+                if (cardHistoryResponses != null)
+                {
+                    foreach (var item in cardHistoryResponses.ICardHistory)
+                    {
+                        if (item.StepId == 2)
+                        {
+                            AspnetuserId.Add(item.ToAspNetUsersId);
+                        }
+                    }
+                }
+                // Serialize the card request history to store in the database
+                var cardRequestHistoryJson = JsonConvert.SerializeObject(cardHistoryResponses);
+
                 // SQL query to insert a new record into the TrnApplClose table.
-                var insertSql = "INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId) " +
-                                "VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId);";
+                var insertSql = "INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankAbbreviation,ServiceNo) " +
+                                "VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId,@CardRequestHistoryJson,@Name,@RankAbbreviation,@ServiceNo); " +
+                                "DECLARE @Id INT = SCOPE_IDENTITY();" +
+                                "Select @Id;";
 
                 // Creating dynamic parameters for the insert query.
                 var parameters = new DynamicParameters();
@@ -110,9 +130,13 @@ namespace DataAccessLayer
                 parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@UserId", Data.UserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.AnsiString, ParameterDirection.Input, size: -1);
+                parameters.Add("@Name", name, DbType.String, ParameterDirection.Input,36 );
+                parameters.Add("@RankAbbreviation", rankAbbreviation, DbType.String, ParameterDirection.Input, 30);
+                parameters.Add("@ServiceNo", serviceNo, DbType.String, ParameterDirection.Input, 10);
 
                 // Execute the insert query asynchronously with transaction.
-                await db.ExecuteAsync(insertSql, parameters, transaction: transaction);
+               Data.Id =  await db.ExecuteScalarAsync<int>(insertSql, parameters, transaction: transaction);
 
                 // SQL query to update the status of the RequestId in the TrnICardRequest table.
                 string query1 = "UPDATE TrnICardRequest SET StatusId = 3 WHERE RequestId = @RequestId";
@@ -131,6 +155,19 @@ namespace DataAccessLayer
 
                 // Execute the update query asynchronously with transaction.
                 await db.ExecuteAsync(query2, query2_parameters, transaction: transaction);
+                if(AspnetuserId != null && AspnetuserId.Count > 0)
+                { 
+                    foreach (var item in AspnetuserId)
+                    {
+                        // SQL query to update the status of the RequestId in the TrnICardRequest table.
+                        string query3 = "Insert into TrnApplCloseMapping(CloseId,AspNetUsersId) VALUES(@CloseId,@AspNetUsersId)";
+                        var query3_parameters = new DynamicParameters();
+                        query3_parameters.Add("@CloseId", Data.Id, DbType.Int32, ParameterDirection.Input);
+                        query3_parameters.Add("@AspNetUsersId", item, DbType.Int32, ParameterDirection.Input);
+                        // Execute the update query asynchronously with transaction.
+                        await db.ExecuteAsync(query3, query3_parameters, transaction: transaction);
+                    }                        
+                }
 
                 // Commit the transaction if both operations succeed.
                 transaction.Commit();

@@ -3631,7 +3631,7 @@ FROM
                             where icardreq.RequestId=@RequestId
 
                             select fwd.TrnFwdId,fwd.StepId,usersfrom.UserName FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank,
-                            usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,
+                            usersto.UserName ToDomain,proto.Name ToProfile,ranlto.RankAbbreviation ToRank ,fwd.ToAspNetUsersId,
                             CASE fwd.FwdStatusId WHEN 1 THEN 'Pending' WHEN 2 THEN 'Approved' WHEN 3 THEN 'Reject' WHEN 4 THEN 'Internal Forward' END Status,
                             fwd.UpdatedOn,isnull(fwd.Remark,'Nill') Remark,
                             fwd.IsComplete,(select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(fwd.RemarksIds,','))) Remarks2
