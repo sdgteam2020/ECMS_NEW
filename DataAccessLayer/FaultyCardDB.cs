@@ -84,109 +84,6 @@ namespace DataAccessLayer
 
 
         /// <summary>
-        /// Retrieves a list of faulty cards, optionally filtered by the provided `MapUnitId`. 
-        /// It returns detailed information about each faulty card including associated metadata such as rank, service number, unit, and fault remarks.
-        /// </summary>
-        /// <param name="Claim">A boolean flag indicating whether to filter the cards based on claim status.</param>
-        /// <param name="MapUnitId">An optional parameter used to filter faulty cards by a specific MapUnitId.</param>
-        /// <returns>
-        /// A list of <see cref="DTOFaultyCardListResponse"/> containing the details of faulty cards.
-        /// If an error occurs, it returns null.
-        /// </returns>
-        /// <remarks>
-        /// If `Claim` is true, it retrieves all faulty cards without unit-based filtering.
-        /// If `Claim` is false, it filters the results by the provided `MapUnitId`.
-        /// The method also formats the service number and remarks for better presentation.
-        /// </remarks>
-        public async Task<List<DTOFaultyCardListResponse>?> GetAllFaulty(bool Claim,int MapUnitId)
-        {
-            try
-            {
-                string query = "";
-                if (Claim)
-                {
-                    query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,mcat.CategoryId,req.RequestId,faulty.TrnFaultyCardId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                            faulty.IsEditAction,faulty.UpdatedOn,faulty.RemarksIds,faulty.FromRemark,faulty.ToRemark,bas.NameAsPerRecord,regi.Abbreviation RegimentalName,
-                            CASE
-                            WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
-                            CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
-                            ELSE
-                            bas.ServiceNo
-                            END AS ModifiedServiceNo,
-                            (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(faulty.RemarksIds,','))) RemarksNameList
-                            from TrnFaultyCard faulty
-                            inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId
-                            inner join TrnICardRequest req on req.RequestId = faulty.RequestId
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                            inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                            inner join MRank ranks on ranks.RankId=bas.RankId
-                            inner join MapUnit uni on uni.UnitMapId=bas.UnitId
-                            inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                            inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId
-                            order by faulty.TrnFaultyCardId desc";
-                }
-                else
-                {
-                    query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,mcat.CategoryId,req.RequestId,faulty.TrnFaultyCardId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                            faulty.IsEditAction,faulty.UpdatedOn,faulty.RemarksIds,faulty.FromRemark,faulty.ToRemark,bas.NameAsPerRecord,regi.Abbreviation RegimentalName,
-                            CASE
-                            WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
-                            CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
-                            ELSE
-                            bas.ServiceNo
-                            END AS ModifiedServiceNo,
-                            (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(faulty.RemarksIds,','))) RemarksNameList
-                            from TrnFaultyCard faulty
-                            inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId
-                            inner join TrnICardRequest req on req.RequestId = faulty.RequestId
-                            inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
-                            inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                            inner join MRank ranks on ranks.RankId=bas.RankId
-                            inner join MapUnit uni on uni.UnitMapId=bas.UnitId
-                            inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                            inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId
-                            order by faulty.TrnFaultyCardId desc";
-                }
-
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    var allrecordList = await connection.QueryAsync<DTOFaultyCardListResponse>(query , new { MapUnitId });
-                    var allrecord = (from e in allrecordList
-                                         select new DTOFaultyCardListResponse()
-                                         {
-                                             EncryptedId = protector.Protect(e.TrnFaultyCardId.ToString()),
-                                             FName=e.FName,
-                                             LName=e.LName,
-                                             ServiceNo=e.ServiceNo,
-                                             UnitAbbreviation=e.UnitAbbreviation,
-                                             RankName=e.RankName,
-                                             RequestId=e.RequestId,
-                                             UpdatedOn=e.UpdatedOn,
-                                             ApplyFor=e.ApplyFor,
-                                             TrnFaultyCardId=e.TrnFaultyCardId,
-                                             RemarksIds=e.RemarksIds,
-                                             RemarksNameList=e.RemarksNameList,
-                                             FromRemark = e.FromRemark,
-                                             ToRemark = e.ToRemark, 
-                                             CategoryId=e.CategoryId,
-                                             FaultyStage= e.FaultyStage,
-                                             IsEditAction=e.IsEditAction,
-                                         }).ToList();
-                    return allrecord.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "FaultyCardDB->GetAllFaulty");
-                return null;
-            }
-
-        }
-
-        
-        /// <summary>
         /// Retrieves a paginated and filtered list of faulty card data. The data includes service number, rank, unit, and fault details.
         /// It also handles search, sorting, and filtering based on the provided parameters.
         /// </summary>
@@ -209,17 +106,23 @@ namespace DataAccessLayer
                                      join mcat in _context.MCategory on faulty.CategoryId equals mcat.CategoryId
                                      join req in _context.TrnICardRequest on faulty.RequestId equals req.RequestId
                                      join tdm in _context.TrnDomainMapping on req.TrnDomainMappingId equals tdm.Id
-                                     join bas in _context.BasicDetails on req.BasicDetailId equals bas.BasicDetailId
-                                     join ranks in _context.MRank on bas.RankId equals ranks.RankId
-                                     join mapunit in _context.MapUnit on bas.UnitId equals mapunit.UnitMapId
+                                     join bas1Temp in _context.BasicDetails on req.BasicDetailId equals bas1Temp.BasicDetailId into bas1Group 
+                                     from bas1 in bas1Group.DefaultIfEmpty()
+                                     join bas2Temp in _context.BasicDetailsAFSAC2 on req.BasicDetailId equals bas2Temp.BasicDetailId into bas2Group
+                                     from bas2 in bas2Group.DefaultIfEmpty()
+                                     join ranks in _context.MRank on (bas1 != null ? bas1.RankId : bas2.RankId) equals ranks.RankId
+                                     join mapunit in _context.MapUnit on (bas1 != null ? bas1.UnitId : bas2.UnitId) equals mapunit.UnitMapId
                                      join munit in _context.MUnit on mapunit.UnitId equals munit.UnitId
-                                     join appl in _context.MApplyFor on bas.ApplyForId equals appl.ApplyForId
+                                     join appl in _context.MApplyFor on (bas1 != null ? bas1.ApplyForId : bas2.ApplyForId) equals appl.ApplyForId
                                      select new DTOFaultyCardListResponse()
                                      {
                                          EncryptedId = protector.Protect(faulty.TrnFaultyCardId.ToString()),
-                                         FName = bas.FName,
-                                         LName = bas.LName,
-                                         ServiceNo = bas.ServiceNo,
+                                         FName_1 = bas1 != null ? bas1.FName : null,
+                                         LName_1 = bas1 != null ? bas1.LName : null,
+
+                                         FName_2 = bas2 != null ? bas2.FName : null,
+                                         LName_2 = bas2 != null ? bas2.LName : null,
+                                         ServiceNo = bas1 != null ? bas1.ServiceNo : bas2.ServiceNo,
                                          UnitMapId = mapunit.UnitMapId,
                                          UnitAbbreviation = munit.Abbreviation,
                                          RankName = ranks.RankAbbreviation,
@@ -240,14 +143,14 @@ namespace DataAccessLayer
                 }
 
                 // Total records without filtering
-                var totalRecords = queryableData.Count();
+                var totalRecords =await queryableData.CountAsync();
 
                 // Apply filtering
-                if (!string.IsNullOrEmpty(request.searchValue))
+                if (!string.IsNullOrWhiteSpace(request.searchValue))
                 {
-                    string searchValue = request.searchValue.ToLower();
+                    var searchValue = request.searchValue.Trim();
 
-                    queryableData = queryableData.Where(x => x.ServiceNo.ToLower().Contains(searchValue));
+                    queryableData = queryableData.Where(x => x.ServiceNo != null && x.ServiceNo.Contains(searchValue));
                 }
 
                 // Apply sorting
@@ -258,12 +161,22 @@ namespace DataAccessLayer
                     ? queryableData.OrderBy(item => EF.Property<object>(item, request.sortColumn))
                     : queryableData.OrderByDescending(item => EF.Property<object>(item, request.sortColumn));
                 }
+                else
+                {
+                    queryableData = queryableData.OrderByDescending(x => x.TrnFaultyCardId);
+                }
 
                 // Total records after filtering
-                var filteredRecords = queryableData.Count();
+                var filteredRecords = await queryableData.CountAsync();
 
                 // Paginate the result
                 var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
+
+                foreach (var item in paginatedData)
+                {
+                    item.FName = item.FName_1 ?? item.FName_2 ?? string.Empty;
+                    item.LName = item.LName_1 ?? item.LName_2;
+                }
 
                 var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
                 {
@@ -281,7 +194,7 @@ namespace DataAccessLayer
                 List<DTOFaultyCardListResponse> dTOUserRegnResponses = new List<DTOFaultyCardListResponse>();
                 var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
                 {
-                    draw = 0,
+                    draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -304,47 +217,48 @@ namespace DataAccessLayer
         /// The results include the service number (with formatting), rank, unit, remarks, fault category, and other related details.
         /// If an error occurs during the execution of the query, the method logs the error and returns null.
         /// </remarks>
-        public async Task<DTOFaultyCardListResponse?> GetTrnFaultyCardDetail(int TrnFaultyCardId)
+        public async Task<DTOGenericResponse<DTOFaultyCardListResponse?>> GetTrnFaultyCardDetail(int TrnFaultyCardId)
         {
+            var response = new DTOGenericResponse<DTOFaultyCardListResponse?>();
             try
             {
                 // SQL query to fetch faulty card details from multiple related tables
-                string query = @"SELECT appl.Name ApplyFor,mcat.Name FaultyStage,mcat.CategoryId,req.RequestId,faulty.TrnFaultyCardId,bas.ServiceNo,ranks.RankAbbreviation RankName,bas.FName,bas.LName,Muni.UnitName,Muni.Abbreviation UnitAbbreviation,
-                                faulty.IsEditAction,faulty.UpdatedOn,faulty.RemarksIds,faulty.FromRemark,faulty.ToRemark,bas.NameAsPerRecord,regi.Abbreviation RegimentalName,
-                                CASE
-                                WHEN LEFT(bas.ServiceNo, 2) LIKE '[A-Za-z][A-Za-z]' THEN
-                                CONCAT(SUBSTRING(bas.ServiceNo, 1, 2), ' ', SUBSTRING(bas.ServiceNo, 3, LEN(bas.ServiceNo) - 2))
-                                ELSE
-                                bas.ServiceNo
-                                END AS ModifiedServiceNo,
-                                (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(faulty.RemarksIds,','))) RemarksNameList
+                string query = @"SELECT mcat.CategoryId,req.RequestId,bd.ServiceNo,faulty.RemarksIds,faulty.FromRemark
                                 from TrnFaultyCard faulty
                                 inner join MCategory mcat on mcat.CategoryId = faulty.CategoryId
-                                inner join TrnICardRequest req on req.RequestId = faulty.RequestId
+                                inner join TrnICardRequest req on req.RequestId = faulty.RequestId AND req.StatusId =1
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                                inner join MRank ranks on ranks.RankId=bas.RankId
-                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
-                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId
-                                left join MRegimental regi on regi.RegId=bas.RegimentalId
+                                inner join BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
                                 WHERE faulty.TrnFaultyCardId = @TrnFaultyCardId";
 
 
                 using (var connection = _contextDP.CreateConnection())
                 {
                     // Execute the query and return the first matching record
-                    var allrecord = await connection.QueryAsync<DTOFaultyCardListResponse>(query, new { TrnFaultyCardId });
-                    return allrecord.FirstOrDefault();
+                    var allrecord = await connection.QueryFirstOrDefaultAsync<DTOFaultyCardListResponse>(query, new { TrnFaultyCardId });
+
+                    if (allrecord == null)
+                    {
+                        response.Result = false;
+                        response.Message = "Invalid Id.";
+                    }
+                    else
+                    {
+                        response.Result = true;
+                        response.Value = allrecord;
+                        response.Message = "ok";
+                    }
+
                 }
             }
             catch (Exception ex)
             {
                 // Log the error and return null if an exception occurs
                 _logger.LogError(1001, ex, "FaultyCardDB->GetTrnFaultyCardDetail");
-                return null;
+                response.Result = false;
+                response.Message = "An error occurred while fetching the record.";
             }
-
+            return response;
         }
 
 
@@ -557,14 +471,16 @@ namespace DataAccessLayer
                               (SELECT MAX(TrnFwdId) 
                                 FROM TrnFwds 
                                 WHERE RequestId = currentReq.RequestId) AS TrnFwdId,
-                                currentReq.RequestId,stepcount.ApplyForId,bs.BasicDetailId,
+                                currentReq.RequestId,ISNULL(bd.ApplyForId, basic_2.ApplyForId) AS ApplyForId,ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,
                                        CASE
+                                            WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 0
                                             WHEN faul.IsEditAction = 1 THEN 0
                                             WHEN currentReq.StatusId IN (2,3) THEN 0
                                             WHEN stepcount.StepId != 14 THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
+                                            WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 'Invalid Id.'
                                             WHEN faul.IsEditAction = 1 THEN 'This action has already been completed by you.'
                                             WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
                                             WHEN stepcount.StepId != 14 THEN 'The application is currently being processed.'
@@ -573,8 +489,9 @@ namespace DataAccessLayer
                                 FROM TrnFaultyCard faul
                                 INNER JOIN TrnICardRequest currentReq on faul.RequestId=currentReq.RequestId
                                 INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId
-                                INNER JOIN BasicDetails bs on currentReq.BasicDetailId=bs.BasicDetailId
-                                 WHERE faul.TrnFaultyCardId = @TrnFaultyCardId;";
+                                LEFT JOIN BasicDetails bd on currentReq.BasicDetailId=bd.BasicDetailId
+                                LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=currentReq.BasicDetailId
+                                WHERE faul.TrnFaultyCardId = @TrnFaultyCardId;";
                     }
                     else
                     {
@@ -582,14 +499,16 @@ namespace DataAccessLayer
                                 (SELECT MAX(TrnFwdId) 
                                     FROM TrnFwds 
                                     WHERE RequestId = currentReq.RequestId) AS TrnFwdId,
-                                    currentReq.RequestId,stepcount.ApplyForId,bs.BasicDetailId,
-                                       CASE
+                                    currentReq.RequestId,ISNULL(bd.ApplyForId, basic_2.ApplyForId) AS ApplyForId,ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,
+                                        CASE
+                                            WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 0
                                             WHEN faul.IsEditAction = 0 THEN 0
                                             WHEN currentReq.StatusId IN (2,3) THEN 0
                                             WHEN stepcount.StepId != 6 THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
+                                            WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 'Invalid Id.'
                                             WHEN faul.IsEditAction = 0 THEN 'The faulty request already exists, first take action!'
                                             WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
                                             WHEN stepcount.StepId != 6 THEN 'The application is currently being processed.'
@@ -597,38 +516,51 @@ namespace DataAccessLayer
 		                                END as Message
                                 FROM TrnICardRequest currentReq
                                 INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
-                                INNER JOIN BasicDetails bs on currentReq.BasicDetailId=bs.BasicDetailId
+                                LEFT JOIN BasicDetails bd on currentReq.BasicDetailId=bd.BasicDetailId
+                                LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=currentReq.BasicDetailId
                                 LEFT JOIN TrnFaultyCard faul on faul.TrnFaultyCardId = (SELECT MAX(fal.TrnFaultyCardId) FROM TrnFaultyCard fal WHERE fal.RequestId =currentReq.RequestId)
                                 WHERE currentReq.RequestId = @RequestId;";
-                    }
+                                                    }
 
                 }
                 else
                 {
                     query = @"SELECT
-                                (SELECT MAX(TrnFwdId) 
-                                    FROM TrnFwds 
-                                    WHERE RequestId = currentReq.RequestId) AS TrnFwdId,
-                                    currentReq.RequestId,stepcount.ApplyForId,bs.BasicDetailId,
-                                       CASE
-                                            WHEN bs.UnitId != @UnitId THEN 0
-                                            WHEN faul.RequestId = @RequestId THEN 0
-                                            WHEN currentReq.StatusId IN (2,3) THEN 0
-                                            WHEN stepcount.StepId != 14 THEN 0
-                                            ELSE 1
-                                        END AS Result,
-		                                case
-                                            WHEN bs.UnitId != @UnitId THEN 'You are not an authorized user.'
-                                            WHEN faul.RequestId = @RequestId THEN 'The faulty request already exists!'
-                                            WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
-                                            WHEN stepcount.StepId != 14 THEN 'The application is currently being processed.'
-		                                    ELSE 'Valid'
-		                                END as Message
-                                FROM TrnICardRequest currentReq
-                                INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
-                                INNER JOIN BasicDetails bs on currentReq.BasicDetailId=bs.BasicDetailId
-                                LEFT JOIN TrnFaultyCard faul on faul.RequestId = currentReq.RequestId AND faul.IsComplete = 0
-                                WHERE currentReq.RequestId = @RequestId;";
+                            (SELECT MAX(TrnFwdId) 
+                                FROM TrnFwds 
+                                WHERE RequestId = currentReq.RequestId) AS TrnFwdId,
+                                currentReq.RequestId,ISNULL(bd.ApplyForId, basic_2.ApplyForId) AS ApplyForId,ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,
+                                    CASE
+                                        WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 0
+                                        WHEN ISNULL(bd.UnitId, basic_2.UnitId) != @UnitId THEN 0
+                                        WHEN EXISTS (
+                                            SELECT 1
+                                            FROM TrnFaultyCard faul
+                                            WHERE faul.RequestId = currentReq.RequestId
+                                                AND faul.IsComplete = 0
+                                        ) THEN 0
+                                        WHEN currentReq.StatusId IN (2,3) THEN 0
+                                        WHEN stepcount.StepId != 14 THEN 0
+                                        ELSE 1
+                                    END AS Result,
+		                            case
+                                        WHEN ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) IS NULL THEN 'Invalid Id.'
+                                        WHEN ISNULL(bd.UnitId, basic_2.UnitId) != @UnitId THEN 'You are not an authorized user.'
+                                        WHEN EXISTS (
+                                            SELECT 1
+                                            FROM TrnFaultyCard faul
+                                            WHERE faul.RequestId = currentReq.RequestId
+                                                AND faul.IsComplete = 0
+                                        ) THEN 'The faulty request already exists!'
+                                        WHEN currentReq.StatusId IN (2,3) THEN 'The application is no longer active.'
+                                        WHEN stepcount.StepId != 14 THEN 'The application is currently being processed.'
+		                                ELSE 'Valid'
+		                            END as Message
+                            FROM TrnICardRequest currentReq
+                            INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
+                            LEFT JOIN BasicDetails bd on currentReq.BasicDetailId=bd.BasicDetailId
+                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=currentReq.BasicDetailId
+                            WHERE currentReq.RequestId = @RequestId;";
                 }
 
 

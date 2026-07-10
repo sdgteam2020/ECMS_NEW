@@ -9,6 +9,7 @@ namespace DataTransferObject.Response
     public class DTOArmedIdCheckInFKTableResponse
     {
         public int TotalBD { get; set; }
+        public int TotalBD2 { get; set; }
         public byte TotalRO { get; set; }
     }
 }

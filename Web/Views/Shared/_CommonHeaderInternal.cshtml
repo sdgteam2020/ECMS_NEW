@@ -1,130 +1,265 @@
-﻿@using System.Security.Claims;
-@using Web.WebHelpers;
-@using Microsoft.AspNetCore.Mvc;
-@inject SignInManager<ApplicationUser> signInManager;
-@inject UserManager<ApplicationUser> userManager;
+﻿@using System.Security.Claims
+@using Web.WebHelpers
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Configuration
+
+@inject SignInManager<ApplicationUser> signInManager
+@inject UserManager<ApplicationUser> userManager
 @inject IHttpContextAccessor HttpContextAccessor
-@inject IConfiguration configuration;
+@inject IConfiguration configuration
+
 @{
-    var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var user = await userManager.FindByIdAsync(userId);
-    var RoleList = await userManager.GetRolesAsync(user);
-    var ClaimsList = await userManager.GetClaimsAsync(user);
-    List<string> RoleNameList = new List<string>() { "user" };
-    DtoSession? dtoSession = new DtoSession();
-    if (!string.IsNullOrEmpty(@HttpContextAccessor.HttpContext.Session.GetString("Token")))
-    {
-        dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContextAccessor.HttpContext.Session, "Token");
+    ApplicationUser? user = null;
 
-    }
-    var RoleName = dtoSession != null ? dtoSession.RoleName : "user";
-    if (!string.IsNullOrEmpty(@configuration["Footer:Test"]))
+    IList<string> RoleList = new List<string>();
+    IList<System.Security.Claims.Claim> ClaimsList = new List<System.Security.Claims.Claim>();
+
+    DtoSession? dtoSession = null;
+
+    var userId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (!string.IsNullOrEmpty(userId))
     {
-        string? Footer = @configuration["Footer:Test"];
-        ViewBag.Footer = Footer;
+        user = await userManager.FindByIdAsync(userId);
+
+        if (user != null)
+        {
+            RoleList = await userManager.GetRolesAsync(user);
+            ClaimsList = await userManager.GetClaimsAsync(user);
+        }
     }
 
+    if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext?.Session?.GetString("Token")))
+    {
+        dtoSession = SessionHeplers.GetObject<DtoSession>(
+            HttpContextAccessor.HttpContext.Session,
+            "Token"
+        );
+    }
+
+    var isLoggedIn = User?.Identity?.IsAuthenticated == true && user != null;
+
+    var RoleName = dtoSession?.RoleName ?? "user";
+
+    if (!string.IsNullOrEmpty(configuration["Footer:Test"]))
+    {
+        ViewBag.Footer = configuration["Footer:Test"];
+    }
 }
-<link asp-href-include="~/developercss/commonheaderinternal.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="~/developercss/commonheaderinternal.css" asp-append-version="true" />
+
 <header class="eisac-header">
-    <div class="header-container">
+    <div class="header-container ecms-header-modern">
+
         <!-- Left Logo -->
-        <div class="header-logo">
-            <img src="~/Images/dgis_ico.png" alt="Army Logo" class="logo-img" />
+        <div class="header-logo header-logo-left">
+            <img src="~/Images/dgis_ico.png"
+                 alt="Army Logo"
+                 class="logo-img logo-left-img" />
         </div>
 
-        <!-- Center Title -->
-        <div class="center title-eisac-header">
-            <div class="title-chip">
-                <img src="~/Images/Header-Logo.png" alt="Army Logo" class="logo-img" />
-                <div class="header-title">
-                    <h1 class="title-text">Enterprise Card Management System(ECMS)</h1><!--ENTERPRISE IA SECURE ACCESS CARD (E-ISAC)               Enterprise Card Management System(ECMS)-->
-                    <p class="subtitle">Secure Identity &amp; Access Portal</p>
-                    <div class="title-underline"></div>
-                </div>
-            </div>
-            <div class="ml-3 mr-3">
-                <nav class="navbar-expand shadow navbar-light show" id="sidenavAccordion">
-                    <ul class="navbar-nav align-items-center ml-auto">
-                        <li class="nav-item dropdown no-caret mr-2 dropdown-user">
+        <!-- Center Brand -->
+        <div class="ecms-brand-area">
+            <img src="~/Images/Header-Logo.png"
+                 alt="ECMS Logo"
+                 class="brand-logo-img" />
 
-                            <a class="dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <div class="d-flex justify-content-end">
-                                    <div class="mr-2">
-                                        <div class="text-white ProfileName font-weight-500">WELCOME</div>
-                                        <div class="text-white ProfileName font-weight-500"><span class="text-white ProfileName font-weight-500" id="aspntokenarmyno">@(dtoSession?.ICNO)</span></div>
-                                        <div class="text-white ProfileName font-weight-500"><span class="text-white ProfileName font-weight-500 mr-2" id="ProfileRankName">@(dtoSession?.RankName)</span><span id="ProfileName" class="font-weight-500 text-white ProfileName">@(dtoSession?.Name)</span></div>
+            <div class="brand-text-wrap">
+                <h1 class="title-text">
+                    Enterprise Card Management System (ECMS)
+                </h1>
+                <p class="subtitle">
+                    Secure Identity &amp; Access Portal
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="ecms-header-actions">
+
+            @if (isLoggedIn)
+            {
+                <nav class="navbar-expand shadow-none navbar-light show" id="sidenavAccordion">
+
+                    <ul class="navbar-nav align-items-center ml-auto ecms-action-list">
+
+                        <!-- User Dropdown -->
+                        <li class="nav-item dropdown no-caret dropdown-user ecms-user-menu">
+
+                            <a class="dropdown-toggle ecms-user-toggle"
+                               id="navbarDropdownUserImage"
+                               href="javascript:void(0);"
+                               role="button"
+                               data-toggle="dropdown"
+                               aria-haspopup="true"
+                               aria-expanded="false">
+
+                                <div class="ecms-user-panel">
+
+                                    <div class="ecms-user-text">
+                                        <div class="ProfileName ecms-welcome">
+                                            WELCOME
+                                        </div>
+
+                                        <div class="ProfileName ecms-user-armyno">
+                                            <span id="aspntokenarmyno">
+                                                @(dtoSession?.ICNO ?? "")
+                                            </span>
+                                        </div>
+
+                                        <div class="ProfileName ecms-user-rank">
+                                            <span id="ProfileRankName">
+                                                @(dtoSession?.RankName ?? "")
+                                            </span>
+                                            <span id="ProfileName">
+                                                @(dtoSession?.Name ?? "")
+                                            </span>
+                                        </div>
                                     </div>
-                                    <img class="" src="/Images/user4.png" />
+
+                                    <img class="ecms-user-avatar"
+                                         src="/Images/user4.png"
+                                         alt="User" />
                                 </div>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+
+                            <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up"
+                                 aria-labelledby="navbarDropdownUserImage">
 
                                 <h6 class="dropdown-header d-flex align-items-center">
-                                    <img class="dropdown-user-img" src="/Images/user4.png" />
+                                    <img class="dropdown-user-img"
+                                         src="/Images/user4.png"
+                                         alt="User" />
+
                                     <div class="dropdown-user-details">
                                         <div class="dropdown-user-details-name">
-                                            @user.UserName
+                                            @(user?.UserName ?? "")
                                         </div>
                                     </div>
                                 </h6>
+
                                 <a class="dropdown-item" href="/UserProfile/Profile">
                                     <i class="ti-settings text-primary"></i>
                                     Edit Profile
-                                    <span class="d-none" id="aspndomainUnitID">@(dtoSession?.UnitId)</span>
+
+                                    <span class="d-none" id="aspndomainUnitID">
+                                        @(dtoSession?.UnitId.ToString() ?? "")
+                                    </span>
                                 </a>
 
                                 @foreach (var item in RoleList)
                                 {
-                                    @if (RoleName == item)
+                                    if (RoleName == item)
                                     {
-                                        <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
-                                            <button type="submit" class="dropdown-item disabled btn-disabled-custom"><i class="ti-settings text-primary"></i><span class="fw-bold">@(user.UserName + " (" + item + ")")</span></button>
+                                        <form method="post"
+                                              asp-controller="Account"
+                                              asp-action="SwitchRole"
+                                              asp-route-Id="@item">
+
+                                            <button type="submit"
+                                                    class="dropdown-item disabled btn-disabled-custom">
+
+                                                <i class="ti-settings text-primary"></i>
+
+                                                <span class="fw-bold">
+                                                    @($"{user?.UserName} ({item})")
+                                                </span>
+                                            </button>
                                         </form>
                                     }
                                     else
                                     {
-                                        <form method="post" asp-controller="Account" asp-action="SwitchRole" asp-route-Id="@item">
-                                            <button type="submit" class="dropdown-item"><i class="ti-settings text-primary"></i><span>@(user.UserName + " (" + item + ")")</span></button>
+                                        <form method="post"
+                                              asp-controller="Account"
+                                              asp-action="SwitchRole"
+                                              asp-route-Id="@item">
+
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="ti-settings text-primary"></i>
+
+                                                <span>
+                                                    @($"{user?.UserName} ({item})")
+                                                </span>
+                                            </button>
                                         </form>
                                     }
                                 }
+
                                 @if (ClaimsList.Count > 0)
                                 {
-                                    <div class="text-center fw-bold">Allowed feature</div>
+                                    <div class="text-center fw-bold">
+                                        Allowed feature
+                                    </div>
+
                                     <ul>
                                         @foreach (var item in ClaimsList)
                                         {
-                                            <li><div class="dropdown-item">@item.Type</div></li>
+                                            <li>
+                                                <div class="dropdown-item">
+                                                    @item.Type
+                                                </div>
+                                            </li>
                                         }
                                     </ul>
                                 }
 
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item active logout-item" href="/Account/Logout" id="btnLogout">
-                                    <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
+
+                                <a class="dropdown-item active logout-item"
+                                   href="/Account/Logout"
+                                   id="btnLogout">
+
+                                    <div class="dropdown-item-icon">
+                                        <i data-feather="log-out"></i>
+                                    </div>
+
                                     Logout
                                 </a>
                             </div>
                         </li>
-                        <li>
-                            <a class="dropdown-toggle notif-toggle" id="navbarDropdownUserImage" data-bs-toggle="tooltip" data-bs-placement="top" title="Pending Action" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                        <!-- Notification -->
+                        <li class="ecms-notification-item">
+
+                            <a class="dropdown-toggle notif-toggle"
+                               id="navbarDropdownNotification"
+                               data-bs-toggle="tooltip"
+                               data-bs-placement="top"
+                               title="Pending Action"
+                               href="javascript:void(0);"
+                               role="button"
+                               data-toggle="dropdown"
+                               aria-haspopup="true"
+                               aria-expanded="false">
+
                                 <i class="fa fa-bell" aria-hidden="true"></i>
-                                <span class="btn__badge pulse-button" id="Totalnotification">0</span>
+
+                                <span class="btn__badge pulse-button" id="Totalnotification">
+                                    0
+                                </span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+
+                            <div class="dropdown-menu dropdown-menu-right border-0 pb-0 shadow animated--fade-in-up"
+                                 aria-labelledby="navbarDropdownNotification">
+
                                 <div class="preview-list"></div>
                             </div>
                         </li>
+
                     </ul>
                 </nav>
+
+                <div class="ecms-header-separator"></div>
+            }
+
+            <!-- Right Logo Always Visible -->
+            <div class="header-logo header-logo-right">
+                <img src="~/Images/dgislogo.png"
+                     alt="DGIS Logo"
+                     class="logo-img logo-right-img" />
             </div>
-        </div>
 
-
-        <!-- Right Logo -->
-        <div class="header-logo">
-            <img src="~/Images/dgislogo.png" alt="DGIS Logo" class="logo-img" />
         </div>
     </div>
 </header>

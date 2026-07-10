@@ -31,13 +31,6 @@ function GetDashboardCount(type) {
                     $("#ToPostingInJCO").html(response.ToPostingInJCO);
                     $("#ToPostingOutOffrs").html(response.ToPostingOutOffrs);
                     $("#ToPostingOutJCO").html(response.ToPostingOutJCO);
-                    $("#ToCourseJCO").html(0);
-                    $("#ToObsnRaisedOASIS").html(0);
-                    $("#ToObsnRaisedINDRA").html(0);
-                    $("#ToHotlistedICard").html(0);
-                    $("#ToBlockExistingICard").html(0);
-                    $("#ToDepositICard").html(0);
-
 
                     $('.counter-value').each(function () {
                         $(this).prop('Counter', 0).animate({

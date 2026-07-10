@@ -1,8 +1,6 @@
-﻿using BusinessLogicsLayer;
-using BusinessLogicsLayer.BasicDet;
+﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
-using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.DestructionCard;
 using BusinessLogicsLayer.DispatchCard;
@@ -20,7 +18,6 @@ using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.TrnICardHold;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
-using BusinessLogicsLayer.User;
 using CsvHelper;
 using CsvHelper.Configuration;
 using DataAccessLayer;
@@ -31,42 +28,23 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
-using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
-using Humanizer;
-using iText.Commons.Bouncycastle.Cert.Ocsp;
-using iText.IO.Font.Cmap;
-using iText.Layout.Renderer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Smo.Wmi;
 using Newtonsoft.Json;
-using NuGet.Packaging;
-using Org.BouncyCastle.Ocsp;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.IO.Compression;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
@@ -210,7 +188,6 @@ namespace Web.Controllers
             }
 
             int retint;              // decoded integer identifier
-            int type = 1;            // default type (status group)
             int stepcounter = 0;     // step tracker for workflow
             string title = "List of Drafted Appl"; // default title
 
@@ -235,97 +212,32 @@ namespace Web.Controllers
             {
                 case 0:
                 case 1:  // Request from Dashboard
-                    stepcounter = 1;
-                    break;
-
                 case 11: // Request from Task Board → maps to Dashboard (1)
-                    stepcounter = 1;
-                    break;
-
-                case 2:
-                    title = "I-Card Pending From IO / Superior";
-                    type = 2; stepcounter = 2;
-                    break;
-
-                case 22:    // Request from Dashboard
-                case 2222:  // Request from Task Board
-                    title = "I-Card Rejectd From IO / Superior";
-                    type = 1; stepcounter = 7;
-                    break;
-
-                case 222:
-                    title = "I-Card Approved From IO / Superior";
-                    type = 3; stepcounter = 2;
-                    break;
-
-                case 3:
-                    title = "I-Card Pending From RO / ORO";
-                    type = 2; stepcounter = 3;
-                    break;
-
-                case 33:
-                    title = "I-Card Rejectd From RO / ORO";
-                    type = 1; stepcounter = 8;
-                    break;
-
-                case 333:
-                    title = "I-Card Approved From RO / ORO";
-                    type = 3; stepcounter = 4;
-                    break;
-
-                case 4:
-                    title = "I-Card Pending From AFSAC Cell";
-                    type = 2; stepcounter = 4;
-                    break;
-
-                case 44:
-                    title = "I-Card Rejectd From AFSAC Cell";
-                    type = 1; stepcounter = 9;
-                    break;
-
-                case 444:
-                    title = "I-Card Approved From AFSAC Cell";
-                    type = 3; stepcounter = 5;
-                    break;
-
-                case 5:
-                    title = "I-Card Pending From HQ 54";
-                    type = 2; stepcounter = 5;
-                    break;
-
-                case 55:
-                    title = "I-Card Rejectd From HQ 54";
-                    type = 1; stepcounter = 10;
-                    break;
-
-                case 555:
-                    title = "I-Card Approved From HQ 54";
-                    type = 2; stepcounter = 5;
+                    stepcounter = (int)ApplSubmittedStatusEnum.DraftedSavedApplication;
                     break;
 
                 case 88:   // Request from Task Board
                 case 888:  // Request from Dashboard
                     title = "Status of Appl Approved & Fwd";
-                    type = 2; stepcounter = 888;
+                    stepcounter = (int)ApplSubmittedStatusEnum.Submitted; ;
                     break;
 
                 case 77:
                 case 777:
                     title = "I-Card Completed";
-                    type = 2; stepcounter = 777;
+                    stepcounter = (int)ApplSubmittedStatusEnum.Complete; ;
                     break;
 
                 case 99:   // Request from Task Board
                 case 999:  // Request from Dashboard
                     title = "Appl rejected by Approver, Verifier";
-                    type = 2; stepcounter = 999;
+                    stepcounter = (int)ApplSubmittedStatusEnum.Rejected; ;
                     break;
             }
 
             // Assign resolved values to ViewBag for the view to consume
             ViewBag.Id = retint;
             ViewBag.Title = title;
-            ViewBag.Type = type;
             ViewBag.StepCounter = stepcounter;
             ViewBag.jcoor = jcoor;
 
@@ -381,14 +293,14 @@ namespace Web.Controllers
                 // Case 2: If stepcount > 0 but JCOOR is null/empty
                 else if (string.IsNullOrEmpty(dTORecord.JCOOR))
                 {
-                    dTORecord.applyForId = 1;
+                    dTORecord.applyForId = (int)ApplyForEnum.Officers;
                     var allrecord = await basicDetailBL.GetALLForIcardSttaus(dTORecord);
                     return Json(allrecord);
                 }
                 // Case 3: Otherwise, JCOOR is present → set applyForId = 2
                 else
                 {
-                    dTORecord.applyForId = 2;
+                    dTORecord.applyForId = (int)ApplyForEnum.JCO_ORs;
                     var allrecord = await basicDetailBL.GetALLForIcardSttaus(dTORecord);
                     return Json(allrecord);
                 }
@@ -475,112 +387,63 @@ namespace Web.Controllers
             // Determine Title, Type, StepCounter, and Export flags based on decoded Id
             switch (retint)
             {
-                case 1:
-                    ViewBag.Title = "List of Register I-Card";
-                    ViewBag.Id = 0;
-                    break;
-
                 case 2:
                     ViewBag.Title = "I-Card For Approval";
-                    ViewBag.Id = 1;
-                    type = 2;
+                    type = (int)ForwardStatusEnum.Pending;
+                    stepCounter = (int)ApplicationStepEnum.PendingApplicationApproverLevel;
                     noti.DisplayId = 2;
                     break;
 
                 case 22:
                     ViewBag.Title = "Rejectd I-Card";
-                    ViewBag.Id = 0;
-                    type = 1;
-                    stepCounter = 7;
+                    type = (int)ForwardStatusEnum.Rejected;
+                    stepCounter = (int)ApplicationStepEnum.ApplicationRejectedApproverLevel;
                     break;
 
                 case 222:
                     ViewBag.Title = "Approved I-Card";
-                    ViewBag.Id = 0;
-                    type = 3;
-                    stepCounter = 3;
+                    type = (int)ForwardStatusEnum.Approved;
+                    stepCounter = (int)ApplicationStepEnum.PendingApplicationVerifierLevel;
                     break;
 
                 case 3:
                     ViewBag.Title = "I-Card For Approval";
-                    type = 2;
-                    ViewBag.Id = 1;
-                    stepCounter = 3;
+                    type = (int)ForwardStatusEnum.Pending;
+                    stepCounter = (int)ApplicationStepEnum.PendingApplicationVerifierLevel;
                     break;
 
                 case 33:
                     ViewBag.Title = "Rejectd I-Card";
-                    ViewBag.Id = 0;
-                    type = 1;
-                    stepCounter = 8;
+                    type = (int)ForwardStatusEnum.Rejected;
+                    stepCounter = (int)ApplicationStepEnum.ApplicationRejectedVerifierLevel;
                     break;
 
                 case 333:
                     ViewBag.Title = "Approved I-Card";
-                    ViewBag.Id = 0;
-                    type = 3;
-                    stepCounter = 4;
+                    type = (int)ForwardStatusEnum.Approved;
+                    stepCounter = (int)ApplicationStepEnum.ApplicationStatusAtADC;
                     break;
 
                 case 11:
                     ViewBag.Title = "Internal Forward I-Card";
-                    ViewBag.Id = 0;
-                    type = 3;
-                    stepCounter = 11;
+                    type = (int)ForwardStatusEnum.Forward;
+                    stepCounter = (int)ApplicationStepEnum.PendingApplicationVerifierLevel;
                     break;
 
                 case 4:
                     ViewBag.Title = "I-Card For Export Data";
-                    type = 2;
-                    ViewBag.Id = 1;
-                    ViewBag.dataexport = 4;
-                    break;
-
-                case 44:
-                    ViewBag.Title = "Rejectd I-Card";
-                    ViewBag.Id = 0;
-                    type = 1;
-                    stepCounter = 9;
+                    type = (int)ForwardStatusEnum.Pending;
+                    stepCounter = (int)ApplicationStepEnum.ApplicationStatusAtADC;
                     break;
 
                 case 444:
                     ViewBag.Title = "Exported I-Card";
-                    ViewBag.Id = 0;
-                    type = 3;
-                    stepCounter = 5;
-                    break;
-
-                case 5:
-                    ViewBag.Title = "Export Data";
-                    type = 2;
-                    ViewBag.Id = 1;
-                    ViewBag.dataexport = 5;
-                    break;
-
-                case 55:
-                    ViewBag.Title = "Rejectd I-Card";
-                    ViewBag.Id = 0;
-                    type = 1;
-                    stepCounter = 10;
-                    break;
-
-                case 555:
-                    ViewBag.Title = "Approved I-Card";
-                    ViewBag.Id = 0;
-                    type = 3;
-                    stepCounter = 6;
-                    break;
-
-                case 6:
-                    ViewBag.Title = "Exported Data";
-                    type = 6;
-                    ViewBag.Id = 1;
-                    ViewBag.dataexport = 6;
+                    type = (int)ForwardStatusEnum.Approved;
+                    stepCounter = (int)ApplicationStepEnum.Exported;
                     break;
 
                 default:
                     ViewBag.Title = "I-Card View";
-                    ViewBag.Id = 0;
                     break;
             }
 
@@ -632,14 +495,14 @@ namespace Web.Controllers
                 // If JCOOR == "1" → applyForId = 1 (fetch one type of dataset)
                 if (dTORecord.JCOOR == "1")
                 {
-                    dTORecord.applyForId = 1;
+                    dTORecord.applyForId = (int)ApplyForEnum.Officers;
                     var allrecord = await basicDetailBL.GetALLBasicDetail(dTORecord);
                     return Json(allrecord);
                 }
                 // Otherwise → applyForId = 2 (fetch alternative dataset)
                 else
                 {
-                    dTORecord.applyForId = 2;
+                    dTORecord.applyForId = (int)ApplyForEnum.JCO_ORs;
                     var allrecord = await basicDetailBL.GetALLBasicDetail(dTORecord);
                     return Json(allrecord);
                 }
@@ -705,7 +568,7 @@ namespace Web.Controllers
             }
 
             // Fetch basic detail record by decrypted integer Id
-            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(decryptedIntId);
+            DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(decryptedIntId);
 
             if (basicDetailCrtAndUpdVM != null)
             {
@@ -1067,10 +930,36 @@ namespace Web.Controllers
                     TempData["error"] = "Invalid data.";
                     goto end;
                 }
+
                 if (model.OldServiceNo == "")
                     model.OldServiceNo =null;
                 // Validate ModelState
                 ModelState.Clear();
+                
+                DateTime? dob = ConvertStringToDate.ConvertDob(model.DOB_);
+
+                if (dob == null)
+                {
+                    ModelState.AddModelError("DOB_", "Please enter DOB in dd/MM/yyyy format.");
+                }
+                else
+                {
+                    model.DOB = dob.Value.Date;
+
+                }
+
+                DateTime? doc = ConvertStringToDate.ConvertDob(model.DOC_);
+
+                if (doc == null)
+                {
+                    ModelState.AddModelError("DOC_", "Please enter Date of Commissioning/ Enrollment in dd/MM/yyyy format.");
+                }
+                else
+                {
+                    model.DateOfCommissioning = doc.Value.Date;
+
+                }
+
                 if (TryValidateModel(model))
                 {
                     // Case 1: SubmitType == 1 (new application flow)
@@ -2767,7 +2656,7 @@ namespace Web.Controllers
                 List<CSVImport> dTOClaimsStoreResponses = new List<CSVImport>();
                 var responseData = new DTODataTablesResponse<CSVImport>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOClaimsStoreResponses
@@ -3451,8 +3340,36 @@ namespace Web.Controllers
                     dTODataExported.RequestId = arryRequestId;
                     await _iTrnLoginLogBL.AddDataExport(dTODataExported);
 
-                    // Return last folder name to caller
-                    return Json(lastFolderName);
+                    string zipFilePath = sourceFolderPhotoPhy + ".zip";
+
+                    // clean download file name
+                    string downloadFileName = $"{lastFolderName}.zip";
+                    downloadFileName = downloadFileName.Replace(";", "")
+                                                       .Replace("\"", "")
+                                                       .Replace("'", "")
+                                                       .Trim();
+
+                    byte[] zipBytes = await System.IO.File.ReadAllBytesAsync(zipFilePath);
+
+                    // delete zip
+                    if (System.IO.File.Exists(zipFilePath))
+                    {
+                        System.IO.File.Delete(zipFilePath);
+                    }
+
+                    // delete folder
+                    if (Directory.Exists(sourceFolderPhotoPhy))
+                    {
+                        Directory.Delete(sourceFolderPhotoPhy, true);
+                    }
+
+                    Response.Headers.Remove("Content-Disposition");
+                    Response.Headers.Append(
+                        "Content-Disposition",
+                        $"attachment; filename=\"{downloadFileName}\""
+                    );
+
+                    return File(zipBytes, "application/zip");
                 }
                 else
                 {
@@ -3765,7 +3682,7 @@ namespace Web.Controllers
                 List<DTOFaultyCardListResponse> dTOUserRegnResponses = new List<DTOFaultyCardListResponse>();
                 var responseData = new DTODataTablesResponse<DTOFaultyCardListResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -4465,7 +4382,7 @@ namespace Web.Controllers
             List<DTOLostCardGetResponse> dTOLosts = new List<DTOLostCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
@@ -4734,7 +4651,7 @@ namespace Web.Controllers
             List<DTODistributeCardGetResponse> dTODistributes = new List<DTODistributeCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
@@ -4867,7 +4784,7 @@ namespace Web.Controllers
                     if (checkCardBeforeDist.Result)
                     {
                         // Fetch card history to record distribution details
-                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
+                        ICardHistoryResponseAll cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
                         // Save the distribution record and get the response
                         dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
                     }
@@ -5137,7 +5054,7 @@ namespace Web.Controllers
         public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
             // Fetch the basic detail data for the given request ID
-            BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+            DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
 
             if (basicDetailCrtAndUpdVM != null)
             {
@@ -5326,11 +5243,11 @@ namespace Web.Controllers
         {
             int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             // Initialize the generic response object
-            DTOGenericResponse<BasicDetailCrtAndUpdVM?> response = new DTOGenericResponse<BasicDetailCrtAndUpdVM?>();
+            DTOGenericResponse<DTOBasicDetailByRequestIdResponse?> response = new DTOGenericResponse<DTOBasicDetailByRequestIdResponse?>();
             try
             {
                 // Retrieve the basic detail record for the given RequestId
-                BasicDetailCrtAndUpdVM? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+                DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
 
                 if (basicDetailCrtAndUpdVM != null)
                 {
@@ -5484,7 +5401,7 @@ namespace Web.Controllers
             var dTODispatchCardLists = new List<DTOICardRequestHoldResponse>();
             var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
             {
-                draw = 0,                 // Draw counter for DataTables
+                draw = dTO.Draw,                 // Draw counter for DataTables
                 recordsTotal = 0,         // Total records count
                 recordsFiltered = 0,      // Filtered records count
                 data = dTODispatchCardLists // Empty data list
@@ -5507,7 +5424,7 @@ namespace Web.Controllers
 
                     if (errors.Any())
                     {
-                        int draw = 0;
+                        int draw = dTO.Draw;
                         int.TryParse(Request.Form["draw"], out draw);
 
                         responseData.draw = draw;
@@ -5943,7 +5860,7 @@ namespace Web.Controllers
             List<DTODestructionCardGetResponse> dTODestructions = new List<DTODestructionCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
@@ -6816,7 +6733,7 @@ namespace Web.Controllers
                     List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
                     var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
                     {
-                        draw = 0,
+                        draw = dTO.Draw,
                         recordsTotal = 0,
                         recordsFiltered = 0,
                         data = dTODispatchCardLists
@@ -6830,7 +6747,7 @@ namespace Web.Controllers
                 List<DTODispatchCardListResponse> dTODispatchCardLists = new List<DTODispatchCardListResponse>();
                 var responseData = new DTODataTablesResponse<DTODispatchCardListResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTODispatchCardLists
@@ -6856,16 +6773,17 @@ namespace Web.Controllers
             DTODataTablesRequestForCardDispatchDialog dTO= await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestForCardDispatchDialog>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             List <DTOCardDispatchDialogResponse> dTOCards = new List<DTOCardDispatchDialogResponse>();
             // If an exception occurs, return an empty response to avoid breaking the UI
+
+            if (dTO == null)
+                return BadRequest();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTOCardDispatchDialogResponse>
             {
-                draw = 0,               // DataTables draw counter (0 since error)
+                draw = dTO.Draw,               // DataTables draw counter (0 since error)
                 recordsTotal = 0,       // Total records (0 since error)
                 recordsFiltered = 0,    // Filtered records (0 since error)
                 selectedIds = null,     // No selected IDs
                 data = dTOCards         // Empty list of data
             };
-            if (dTO == null)
-                return BadRequest();
             try
             {
                 ModelState.Clear();
@@ -7158,7 +7076,7 @@ namespace Web.Controllers
                 // Create a response object with zeroed metadata
                 var responseData = new DTODataTablesWithSelectedIdsResponse<DTODispatchCardStatusResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOCards,

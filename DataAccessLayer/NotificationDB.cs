@@ -122,28 +122,30 @@ namespace DataAccessLayer
             };
 
             var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
-            selectFields = @"tre.RequestId as ApplId,noti.UpdatedOn,Message,ranks.RankAbbreviation,bas.FName,bas.LName,bas.ServiceNo,uplod.PhotoImagePath,dis.Url";
+            selectFields = @"tre.RequestId as ApplId,noti.UpdatedOn,Message,ranks.RankAbbreviation,bd.FName,bd.LName,bd.ServiceNo,uplod.PhotoImagePath,dis.Url";
 
             fromJoinClause = @"from TrnNotification noti
                                 inner join TrnNotificationDisplay dis on noti.DisplayId=dis.DisplayId
                                 inner join AspNetUsers users on users.Id=noti.SentAspNetUsersId
                                 inner join TrnStepCounter stepc on stepc.RequestId=noti.RequestId 
-                                inner join TrnICardRequest tre on tre.RequestId = noti.RequestId 
-                                inner join BasicDetails bas on bas.BasicDetailId=tre.BasicDetailId
-                                inner join MRank ranks on ranks.RankId=bas.RankId
-                                inner join TrnUpload uplod on uplod.BasicDetailId=bas.BasicDetailId";
+                                inner join TrnICardRequest tre on tre.RequestId = noti.RequestId AND tre.StatusId = 1
+                                inner join BasicDetails bd on bd.BasicDetailId = tre.BasicDetailId
+                                inner join MRank ranks on ranks.RankId = bd.RankId
+                                inner join TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId";
 
             whereClause = @"WHERE
                             noti.ReciverAspNetUsersId=@ReciverAspNetUsersId 
                             AND [Read]=0
-                            AND
-                            ( (@SearchTerm IS NULL) OR (bas.ServiceNo LIKE @SearchTerm OR tre.RequestId LIKE @SearchTerm))";
+                            AND (
+                                @SearchTerm IS NULL OR
+                                 bd.ServiceNo LIKE @SearchTerm OR
+                                 tre.RequestId LIKE @SearchTerm
+                            )";
 
             try
             {
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
-                ? allowedSortColumns[dTO.sortColumn!]
-                : "bas.ServiceNo";
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "tre.RequestId";
+
 
                 var multiQuery = $@"
                         WITH RecordCTE AS (
@@ -173,8 +175,6 @@ namespace DataAccessLayer
                                          ApplId = e.ApplId,
                                          ServiceNo = e.ServiceNo,
                                          RankAbbreviation = e.RankAbbreviation,
-                                         FName = e.FName,
-                                         LName = e.LName,
                                          UpdatedOn = e.UpdatedOn,
                                          Message = e.Message,
                                          Url= e.Url,
@@ -195,7 +195,7 @@ namespace DataAccessLayer
                 List<DTONotificationResponse> detailVMs = new List<DTONotificationResponse>();
                 var responseData = new DTODataTablesResponse<DTONotificationResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = detailVMs

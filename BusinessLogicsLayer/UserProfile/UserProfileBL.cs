@@ -89,10 +89,6 @@ namespace BusinessLogicsLayer.Master
         {
             return await _iUserProfileDB.GetUserProfileByArmyNo(ArmyNo);
         }
-        public Task<List<BasicDetailVM>> GetByRequestId(int RequestId)
-        {
-            return _iUserProfileDB.GetByRequestId(RequestId);
-        }
         public Task<DTOProfileResponse> CheckArmyNoInUserProfile(string ArmyNo, int AspNetUsersId)
         {
             return _iUserProfileDB.CheckArmyNoInUserProfile(ArmyNo, AspNetUsersId);

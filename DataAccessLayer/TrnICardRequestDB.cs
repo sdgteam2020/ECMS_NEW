@@ -1,9 +1,11 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DataAccessLayer
 {
@@ -66,20 +68,26 @@ namespace DataAccessLayer
         /// <returns>A task that represents the asynchronous operation. The task result contains true if there is a pending request, otherwise false.</returns>
         public async Task<bool> GetRequestPending(int BasicDetailId)
         {
-            string query = "Select count(*) from BasicDetails bd " +
-                            "LEFT JOIN TrnICardRequest tr ON bd.BasicDetailId = tr.BasicDetailId WHERE bd.BasicDetailId = @BasicDetailId and tr.StatusId = 1 ";
-            using (var connection = _contextDP.CreateConnection())
-            {
-                int PendingRequest = await connection.QueryFirstAsync<int>(query, new { BasicDetailId });
-                if (PendingRequest > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            const string query = @"
+                                    SELECT CASE 
+                                        WHEN EXISTS
+                                        (
+                                            SELECT 1
+                                            FROM TrnICardRequest tr
+                                            WHERE tr.BasicDetailId = @BasicDetailId
+                                              AND tr.StatusId = @RunningStatusId
+                                        )
+                                        THEN CAST(1 AS bit)
+                                        ELSE CAST(0 AS bit)
+                                    END;
+                                    ";
+
+            using var connection = _contextDP.CreateConnection();
+            var parameters = new DynamicParameters();
+            parameters.Add("@BasicDetailId", BasicDetailId, DbType.Int32, ParameterDirection.Input);
+            parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running);
+
+            return await connection.QueryFirstAsync<bool>(query, parameters);
         }
 
 

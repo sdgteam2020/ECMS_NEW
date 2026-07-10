@@ -13,7 +13,7 @@ namespace DataTransferObject.Response
         public string ArmyNo { get; set; }
         public string RankAbbreviation { get; set; }
         public string FName { get; set; }
-        public string LName { get; set; }
+        public string? LName { get; set; }
         public string RankAndName => $"{RankAbbreviation} {FName} {(string.IsNullOrEmpty(LName) ? string.Empty : LName)}";
         public string Unit { get; set; }
         public DateTime LostOn { get; set; }

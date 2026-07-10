@@ -84,6 +84,7 @@
     </environment>
 
     <link asp-href-include="~/developercss/layout.css" rel="stylesheet" />
+    @* <link href="~/developercss/moderncss/ecms-modern-theme.css" rel="stylesheet" /> *@
 </head>
 <body class="nav-fixed sidenav-toggled">
     @Html.AntiForgeryToken()
@@ -126,8 +127,8 @@
     <input class="form-control alpha-num-only mb-2 d-none form-space" id="txtspnTokenthumbprint" placeholder="Enter Army No" />
     <input class="form-control alpha-num-only mb-2 d-none form-space" id="txtspnIsToken" />
 
-    <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" />
 
+    <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" />
     <div id="layoutSidenav">
         @*   <div id="layoutSidenav_nav">
         <nav class="sidenav shadow-right sidenav-light" id="SideFirstMenu">
@@ -222,6 +223,7 @@
     <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
     <script asp-src-include="~/developerjs/_notifications.js"></script>
     <script asp-src-include="~/developerjs/encryptepayload.js"></script>
+    <script asp-src-include="~/developerjs/datatablesearchvalidation.js"></script>
     @RenderSection("Scripts", false)
 
 

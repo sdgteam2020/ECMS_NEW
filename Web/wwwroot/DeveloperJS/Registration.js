@@ -3,19 +3,145 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     skey = $('#spnhdns').html();
     $(function () {
-        var dtToday = new Date();
+        let oldText = "";
+        let oldMoment = null;
+        const min = moment().subtract(75, 'year'); 
+        const max = moment().subtract(18, 'year'); 
 
-        var month = dtToday.getMonth() + 1;
-        var day = dtToday.getDate();
-        var year = dtToday.getFullYear() - 18;
+        if ($('#DOB_').data('DateTimePicker')) {
+            $('#DOB_').data('DateTimePicker').destroy();
+        }
 
-        if (month < 10)
-            month = '0' + month.toString();
-        if (day < 10)
-            day = '0' + day.toString();
+        $('#DOB_').datetimepicker({
+            format: 'DD/MM/YYYY',
+            sideBySide: true,
+            useCurrent: false,
+            minDate: min,
+            maxDate: max,
+            showClear: false,
+            showClose: false
+        }).on('dp.show', function () {
 
-        var maxDate = year + '-' + month + '-' + day;
-        $('#DOB').attr('max', maxDate);
+            const picker = $(this).data('DateTimePicker');
+
+            oldText = $(this).val();
+            oldMoment = picker.date() ? picker.date().clone() : null;
+
+            setTimeout(function () {
+                const $widget = $('.bootstrap-datetimepicker-widget:visible').last();
+                if (!$widget.length) return;
+
+                // add buttons once
+                if ($widget.find('.dtp-okcancel').length === 0) {
+                    $widget.append(`
+                <div class="dtp-okcancel">
+                    <button type="button" class="btn btn-sm btn-secondary dtp-cancel">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-success ms-2 dtp-ok">OK</button>
+                </div>
+            `);
+
+                    // OK
+                    $widget.on('click', '.dtp-ok', function () {
+                        picker.hide();
+                    });
+
+                    // Cancel
+                    $widget.on('click', '.dtp-cancel', function () {
+                        if (oldMoment)
+                            picker.date(oldMoment);
+                        else
+                            picker.clear();
+                        $('#DOB_').val(oldText);
+                        picker.hide();
+                    });
+                }
+            }, 0);
+        }).on('dp.change', function (e) {
+
+            var dob = e.date;
+
+            if (!dob || !dob.isValid()) {
+                return;
+            }
+
+            var docMin = dob.clone().add(18, 'year');
+            var docMax = moment();
+
+            var docPicker = $('#DOC_').data('DateTimePicker');
+
+            if (docPicker) {
+                docPicker.minDate(docMin);
+                docPicker.maxDate(docMax);
+
+                var selectedDoc = docPicker.date();
+
+                if (selectedDoc && selectedDoc.isBefore(docMin, 'day')) {
+                    docPicker.clear();
+                    $('#DOC_').val('');
+                }
+            }
+        });
+        $('#DOB_').on('keydown', (e) => {
+            e.preventDefault();
+            return false;
+        });  
+
+        if ($('#DOC_').data('DateTimePicker')) {
+            $('#DOC_').data('DateTimePicker').destroy();
+        }
+        oldText = "";
+        oldMoment = null;
+
+        $('#DOC_').datetimepicker({
+            format: 'DD/MM/YYYY',
+            sideBySide: true,
+            useCurrent: false,
+            minDate: min,
+            //maxDate: max,
+            showClear: false,
+            showClose: false
+        }).on('dp.show', function () {
+
+            const picker = $(this).data('DateTimePicker');
+
+            oldText = $(this).val();
+            oldMoment = picker.date() ? picker.date().clone() : null;
+
+            setTimeout(function () {
+                const $widget = $('.bootstrap-datetimepicker-widget:visible').last();
+                if (!$widget.length) return;
+
+                // add buttons once
+                if ($widget.find('.dtp-okcancel').length === 0) {
+                    $widget.append(`
+                <div class="dtp-okcancel">
+                    <button type="button" class="btn btn-sm btn-secondary dtp-cancel">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-success ms-2 dtp-ok">OK</button>
+                </div>
+            `);
+
+                    // OK
+                    $widget.on('click', '.dtp-ok', function () {
+                        picker.hide();
+                    });
+
+                    // Cancel
+                    $widget.on('click', '.dtp-cancel', function () {
+                        if (oldMoment)
+                            picker.date(oldMoment);
+                        else
+                            picker.clear();
+                        $('#DOC_').val(oldText);
+                        picker.hide();
+                    });
+                }
+            }, 0);
+        });
+        $('#DOC_').on('keydown', (e) => {
+            e.preventDefault();
+            return false;
+        });  
+
     });
 
     // Attach click event to all radios with class submitTypeRadio
@@ -24,22 +150,22 @@ $(function () {
         registrationEnableDisabledField(value);
     });
 
-    $('#DOB').on('change', function () {
-        $("#DateOfCommissioning").val("");
-        var dtToday = new Date();
+    //$('#DOB').on('change', function () {
+    //    $("#DateOfCommissioning").val("");
 
-        var month = dtToday.getMonth() + 1;
-        var day = dtToday.getDate();
-        var year = dtToday.getFullYear() - 18;
+    //    var dobValue = $(this).val(); 
+    //    if (!dobValue) return;
 
-        if (month < 10)
-            month = '0' + month.toString();
-        if (day < 10)
-            day = '0' + day.toString();
+    //    var parts = dobValue.split('-');
 
-        var maxDate = year + '-' + month + '-' + day;
-        $('#DateOfCommissioning').attr('min', maxDate);
-    });
+    //    var year = parseInt(parts[0]) + 18;
+    //    var month = parts[1];
+    //    var day = parts[2];
+
+    //    var minDate = year + '-' + month + '-' + day;
+
+    //    $('#DateOfCommissioning').attr('min', minDate);
+    //});
     $('.paddress').on('change', function () {
         $("#PermanentAddress").val('Village - ' + $("#Village").val() + '\n Post Office-' + $("#PO").val() + ' \n Tehsil- ' + $("#Tehsil").val() + '\n District- ' + $("#District").val() + '\n State- ' + $("#State").val() + '\n Pin Code- ' + $("#PinCode").val());
 
@@ -143,9 +269,9 @@ $(function () {
             $('#FName').attr('readonly', false);
             $('#LName').attr('readonly', false);
             $('#NameAsPerRecord').attr('readonly', false);
-            $('#DOB').attr('readonly', false);
+            $('#DOB_').attr('readonly', false);
             $('#ServiceNo').attr('readonly', false);
-            $('#DateOfCommissioning').attr('readonly', false);
+            $('#DOC_').attr('readonly', false);
             $('.persAddress').addClass('d-none');
             $('.entryaddress').removeClass('d-none');
 
@@ -161,19 +287,13 @@ $(function () {
             $("#PinCode").prop('required', true);
             $("#PermanentAddress").prop('required', false);
 
-            $('#DOB').removeClass('d-none');
-            $("#DOB_").addClass('d-none');
-
-            $('#DateOfCommissioning').removeClass('d-none');
-            $("#DOC_").addClass('d-none');
-
         } else {
             $('#FName').attr('readonly', true);
             $('#LName').attr('readonly', true);
             $('#NameAsPerRecord').attr('readonly', true);
-            $('#DOB').attr('readonly', true);
+            $('#DOB_').attr('readonly', true);
             $('#ServiceNo').attr('readonly', true);
-            $('#DateOfCommissioning').attr('readonly', true);
+            $('#DOC_').attr('readonly', true);
             $('.persAddress').removeClass('d-none');
             $('.entryaddress').addClass('d-none');
 
@@ -186,11 +306,6 @@ $(function () {
             $("#PinCode").prop('required', false);
             $("#PermanentAddress").prop('required', true);
 
-            $('#DOB').addClass('d-none');
-            $("#DOB_").removeClass('d-none');
-
-            $('#DateOfCommissioning').addClass('d-none');
-            $("#DOC_").removeClass('d-none');
         }
 
         /* Getdatafromapi();*/
@@ -324,10 +439,33 @@ function CallDataFromAPI() {
                 }
                 $("#NameAsPerRecord").val(response.Pers_name);
                 $("#ServiceNo").val(response.Pers_Army_No);
-                $("#DOB").val(response.Pers_birth_dt);
-                $("#DOB_").val(DateFormateMMMM_dd_yyyy(response.Pers_birth_dt));
-                $("#DateOfCommissioning").val(response.Pers_enrol_dt);
-                $("#DOC_").val(DateFormateMMMM_dd_yyyy(response.Pers_enrol_dt));
+                const dobValue = response.Pers_birth_dt;
+
+                if (dobValue) {
+                    let dobMoment = moment(dobValue, "YYYY-MM-DD", true);
+
+                    if (!dobMoment.isValid()) {
+                        dobMoment = moment(dobValue); 
+                    }
+                    if (dobMoment.isValid()) {
+                        $("#DOB_").datetimepicker("date", dobMoment);
+                        $("#DOB_").val(dobMoment.format("DD/MM/YYYY"));
+                    }
+                }
+
+                const docValue = response.Pers_enrol_dt;
+
+                if (docValue) {
+                    let docMoment = moment(docValue, "YYYY-MM-DD", true);
+
+                    if (!docMoment.isValid()) {
+                        docMoment = moment(docValue);
+                    }
+                    if (docMoment.isValid()) {
+                        $("#DOC_").datetimepicker("date", docMoment);
+                        $("#DOC_").val(docMoment.format("DD/MM/YYYY"));
+                    }
+                }
 
                 //let address;
                 //if (response.Pers_House_no == null || response.Pers_House_no == '') {
@@ -389,17 +527,15 @@ function Proceed(id) {
     }
     let stype = parseInt($("input[name='SubmitType']:checked").val());
 
-    if ($("#DOB").val() == '') {
-        $("#lblDOB").text('Date of Birth is required.')
+    let isDobValid = validateDateString("DOB_", "Date of Birth");
+    let isDocValid = validateDateString("DOC_", "Date of Commissioning/ Enrollment");
+
+    if (!isDobValid || !isDocValid) {
+        return false;
     }
-    else {
-        $("#lblDOB").text('')
-    }
-    if ($("#DOC").val() == '') {
-        $("#lblDateOfCommissioning").text('Date of Commissioning/ Enrollment is required.')
-    }
-    else {
-        $("#lblDateOfCommissioning").text('')
+
+    if (!validateDOBAndDOC()) {
+        return false;
     }
 
     const encryptedRegistrationApplyFor = sessionStorage.getItem("RegistrationApplyFor");
@@ -452,7 +588,6 @@ function Proceed(id) {
                 if (result.isConfirmed) {
 
                     var formData = {};
-
                     $("#Registration").serializeArray().forEach(function (item) {
                         formData[item.name] = item.value;
                     });
@@ -514,9 +649,7 @@ function ResetField() {
     $('#LName').val("");
     $("#NameAsPerRecord").val("");
     $("#ServiceNo").val("");
-    $("#DOB").val("");
     $("#DOB_").val("");
-    $("#DateOfCommissioning").val("");
     $("#DOC_").val("");
     $("#PermanentAddress").val("");
     $("#State").val("");
@@ -528,4 +661,66 @@ function ResetField() {
     $("#PinCode").val("000000");
     $("#RankId").val("");
     $("#ArmedId").val("");
+}
+function setValidationMessage(fieldName, message) {
+    $("span[data-valmsg-for='" + fieldName + "']").text(message);
+}
+
+function validateDateString(fieldName, displayName) {
+    var value = ($("#" + fieldName).val() || "").trim();
+
+    if (value === "") {
+        setValidationMessage(fieldName, displayName + " is required.");
+        return false;
+    }
+
+    // strict format only: 18/11/1982
+    var pattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+
+    if (!pattern.test(value)) {
+        setValidationMessage(fieldName, displayName + " must be in DD/MM/YYYY format.");
+        return false;
+    }
+
+    var m = moment(value, "DD/MM/YYYY", true);
+
+    if (!m.isValid()) {
+        setValidationMessage(fieldName, displayName + " is not a valid calendar date.");
+        return false;
+    }
+
+    if (m.year() < 1900 || m.isAfter(moment(), "day")) {
+        setValidationMessage(fieldName, displayName + " is not allowed.");
+        return false;
+    }
+
+    setValidationMessage(fieldName, "");
+    return true;
+}
+function validateDOBAndDOC() {
+    var dob = moment($("#DOB_").val(), "DD/MM/YYYY", true);
+    var doc = moment($("#DOC_").val(), "DD/MM/YYYY", true);
+
+    if (!dob.isValid()) {
+        $("span[data-valmsg-for='DOB_']").text("Date of Birth is required.");
+        return false;
+    }
+
+    if (!doc.isValid()) {
+        $("span[data-valmsg-for='DOC_']").text("Date of Commissioning/ Enrollment is required.");
+        return false;
+    }
+
+    var minDocDate = dob.clone().add(18, "year");
+
+    if (doc.isBefore(minDocDate, "day")) {
+        $("span[data-valmsg-for='DOC_']")
+            .text("Date of Commissioning/ Enrollment must be at least 18 years after Date of Birth.");
+        return false;
+    }
+
+    $("span[data-valmsg-for='DOB_']").text("");
+    $("span[data-valmsg-for='DOC_']").text("");
+
+    return true;
 }

@@ -201,7 +201,7 @@ namespace DataAccessLayer
                 List<MUnit> dTOUserRegnResponses = new List<MUnit>();
                 var responseData = new DTODataTablesResponse<MUnit>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses

@@ -6,7 +6,7 @@
         public int? RequestId { get; set; }
         public string? NameAsPerRecord { get; set; }
         public string? Name { get; set; }
-        public string? FName { get; set; }
+        public string FName { get; set; } = string.Empty;
         public string? LName { get; set; }
         public string? ServiceNo { get; set; }
         public string? RankName { get; set; }

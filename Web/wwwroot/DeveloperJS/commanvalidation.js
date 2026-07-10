@@ -1031,6 +1031,22 @@ function convertToISOWithTime_dtp(inputVal) {
     // return ISO string (YYYY-MM-DDTHH:mm:ss)
     return m.format("YYYY-MM-DDTHH:mm:ss");
 }
+function convertToISOWithoutTime_dtp(inputVal) {
+    if (!inputVal) {
+        return null; // nothing entered
+    }
+
+    // parse according to the format you used in datetimepicker
+    var m = moment(inputVal, "DD/MM/YYYY", true);
+
+    if (!m.isValid()) {
+        console.error("Invalid date format: " + inputVal);
+        return null;
+    }
+
+    // return ISO string (YYYY-MM-DDTHH:mm:ss)
+    return m.format("YYYY-MM-DDTHH:mm:ss");
+}
 function WaterMarkOnPdf(doc) {
     //Remove the title created by datatTables
     doc.content.splice(0, 1);

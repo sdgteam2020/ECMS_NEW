@@ -9,6 +9,8 @@ let DomainRegId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    applyDataTableSearchValidation('#tbldata');
+
     BindData();
     AccountCount();
     BindClaims();
@@ -259,6 +261,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Users');
             $("#DataTableDialog").modal('show');
+
+            applyDataTableSearchValidation('#tbldatadialog');
+
             BindDialog("User");
         }
     });
@@ -269,6 +274,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Mapped Users');
             $("#DataTableDialog").modal('show');
+
+            applyDataTableSearchValidation('#tbldatadialog');
+
             BindDialog("MappedUser");
         }
     });
@@ -278,6 +286,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total UnMapped Users');
             $("#DataTableDialog").modal('show');
+
+            applyDataTableSearchValidation('#tbldatadialog');
+
             BindDialog("UnMappedUser");
         }
     });
@@ -287,6 +298,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Active Users');
             $("#DataTableDialog").modal('show');
+
+            applyDataTableSearchValidation('#tbldatadialog');
+
             BindDialog("ActiveUser");
         }
     });
@@ -305,6 +319,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Verified Users');
             $("#DataTableDialog").modal('show');
+
+            applyDataTableSearchValidation('#tbldatadialog');
+
             BindDialog("Verified");
         }
     });
@@ -314,6 +331,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
+
+            applyDataTableSearchValidation('#tbldatadialog');
+
             BindDialog("NotVerifiedUser");
         }
     });
@@ -323,6 +343,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
+
+            applyDataTableSearchValidation('#tbldatadialog');
+
             BindDialog("IO");
         }
         else {
@@ -335,6 +358,9 @@ $(function () {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
             $("#DataTableDialog").modal('show');
+
+            applyDataTableSearchValidation('#tbldatadialog');
+
             BindDialog("CO");
 
         }

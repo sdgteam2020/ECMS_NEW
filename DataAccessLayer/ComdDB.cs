@@ -260,7 +260,7 @@ namespace DataAccessLayer
                 List<DTOAllCommand_PaginationResponse> dTOAllCommands = new List<DTOAllCommand_PaginationResponse>();
                 var responseData = new DTODataTablesResponse<DTOAllCommand_PaginationResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,                                               
                     recordsFiltered = 0,
                     data = dTOAllCommands

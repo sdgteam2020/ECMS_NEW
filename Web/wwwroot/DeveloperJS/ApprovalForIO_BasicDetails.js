@@ -2,6 +2,8 @@
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    applyDataTableSearchValidation('#tbldatatabledata_Fwd');
+
     let Type = parseInt($("#spnType").html());
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();
@@ -32,7 +34,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
     }
 
 
-    const columns = getColumnsForApprovalForIO(cvalue, JCOOR);
+    const columns = getColumnsForApprovalForIO(cvalue, JCOOR, Type);
     table_Fwd = $("#tbldatatabledata_Fwd").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
@@ -264,7 +266,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
     });
 }
 
-function getColumnsForApprovalForIO(cvalue, JCOOR) {
+function getColumnsForApprovalForIO(cvalue, JCOOR, Type) {
     let columns = [];
     switch (JCOOR) {
         case "0":
@@ -309,7 +311,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 {
                     title: "Appl Id",
-                    data: "ApplId",
+                    data: "RequestId",
                     name: "ApplId",
                     className: "nowrap",
                     width: "100px",
@@ -390,7 +392,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     width: "100px",
                     orderable: false,
                     render: function (data, type, row) {
-                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                     }
                 },
                 // Additional column for Edit action
@@ -405,7 +407,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                         // Always include the Print Preview button
                         let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview" onclick="GetICardPrintPreviewByRequestId(${row.RequestId})"><i class="fa fa-eye mt-2"></i></button>`;
 
-                        if (parseInt($("#spnVBId").html()) == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
+                        if (Type == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
                             html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
                         }
                         // Case 2: Processed + Download
@@ -459,7 +461,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                 },
                 {
                     title: "Appl Id",
-                    data: "ApplId",
+                    data: "RequestId",
                     name: "ApplId",
                     className: "nowrap",
                     width: "100px",
@@ -529,7 +531,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                     name: "History",
                     orderable: false,
                     render: function (data, type, row) {
-                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                        return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                     }
                 },
                 // Additional column for Edit action
@@ -544,7 +546,7 @@ function getColumnsForApprovalForIO(cvalue, JCOOR) {
                         // Always include the Print Preview button
                         let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-BasicDetail-PrintPreview"><i class="fa fa-eye mt-2"></i></button>`;
 
-                        if (parseInt($("#spnVBId").html()) == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
+                        if (Type == 1 && (row.StepCounter == 2 || row.StepCounter == 3)) {
                             html += `<button class="btn btn-primary mr-1 cls-fwdrecord">Verify And Send</button>`;
                         }
                         // Case 2: Processed + Download

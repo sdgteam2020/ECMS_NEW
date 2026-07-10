@@ -96,9 +96,12 @@ namespace DataAccessLayer
         public DbSet<TrnDispatchCard> TrnDispatchCard { get; set; } = null!;// For dispatch card details
         public DbSet<TrnDispatchCardMapping> TrnDispatchCardMapping { get; set; } = null!;// For dispatch card mapping details
         public DbSet<MDispatchMode> MDispatchMode { get; set; } = null!;// For dispatch mode details
+        public DbSet<TrnApplCloseMapping> TrnApplCloseMapping { get; set; } = null!;// For application close mapping details
+        public DbSet<CompletedICardRequestMapping> CompletedICardRequestMapping { get; set; } = null!;// For completed ICard request mapping details
         //public DbSet<TrnLogin_Log> TrnLogin_Log { get; set; }
         public DbSet<MArmyPrefixRule> MArmyPrefixRule { get; set; } = null!;// For army prefix rule details
 
+        public DbSet<BasicDetailsAFSAC2> BasicDetailsAFSAC2 { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)// Fluent API configurations
         {
             base.OnModelCreating(builder);
@@ -122,7 +125,13 @@ namespace DataAccessLayer
             builder.Entity<IdentityUserToken<int>>(entity =>
             {
             });
-         
+
+            builder.Entity<BasicDetailsAFSAC2>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("vw_BasicDetails_AFSAC2");
+            });
+
             //Foreign key with NO ACTION ON DELETE
 
             foreach (var foreignKey in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

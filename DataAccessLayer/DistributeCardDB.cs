@@ -76,7 +76,7 @@ namespace DataAccessLayer
             List<DTODistributeCardGetResponse> dTODistributeCardGetResponses = new List<DTODistributeCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTODistributeCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
@@ -87,35 +87,39 @@ namespace DataAccessLayer
                 // Map allowed sort columns to DB fields
                 var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ServiceNo"] = "bas.ServiceNo",
+                    ["ServiceNo"] = "ServiceNo",
                     ["UpdatedOn"] = "tdc.UpdatedOn",
                     ["RequestId"] = "req.RequestId",
                     ["Remark"] = "tdc.Remark"
                 };
 
                 // Default sort column and order
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
-                    ? allowedSortColumns[dTO.sortColumn!]
-                    : "tdc.UpdatedOn";
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "tdc.UpdatedOn";
+
+                if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
+                {
+                    sortColumn = "ISNULL(basic_2.ServiceNo , bd.ServiceNo )";
+                }
 
                 var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
                 string selectFields = @"appl.Name ApplyFor,
                                         req.RequestId,tdc.DistributeCardId,
-                                        bas.ServiceNo,ranks.RankAbbreviation RankName,
-                                        bas.FName,bas.LName,
+                                        ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ranks.RankAbbreviation RankName,
+                                        bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,
                                         Muni.Abbreviation UnitAbbreviation,
                                         tdc.UpdatedOn,tdc.Remark,
                                         tdc.DistributedOn";
                 string fromJoinClause = @"from TrnDistributeCards tdc
                                         inner join TrnICardRequest req on req.RequestId = tdc.RequestId
                                         inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                        inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                                        inner join MRank ranks on ranks.RankId=bas.RankId
-                                        inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+                                        LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId AND bd.UnitId = @UnitMapId
+                                        LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId = @UnitMapId
+                                        inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
+                                        inner join MapUnit uni on uni.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
                                         inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId";
-                string whereClause = @"Where bas.UnitId = @UnitMapId AND bas.ServiceNo like '%' + @SearchTerm + '%' ";
+                                        inner join MApplyFor appl on appl.ApplyForId = ISNULL(basic_2.ApplyForId,bd.ApplyForId)";
+                string whereClause = @"Where  @SearchTerm IS NULL OR bd.ServiceNo LIKE @SearchTerm OR basic_2.ServiceNo LIKE @SearchTerm";
 
                 var multiQuery = $@"
                         WITH RecordCTE AS (
@@ -127,11 +131,12 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     // Parameters for SQL query
-                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue.Trim()}%";
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
                     parameters.Add("@UnitMapId", dTO.UnitMapId, DbType.Int32, ParameterDirection.Input);
 
                     // Execute the SQL query to get the records and total count
@@ -149,6 +154,15 @@ namespace DataAccessLayer
                     else
                     {
                         selectedIds = null;
+                    }
+
+                    if (records != null)
+                    {
+                        foreach (var item in records)
+                        {
+                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                            item.LName = item.LName_2 ?? item.LName_1;
+                        }
                     }
 
                     // Prepare the response data
@@ -188,15 +202,16 @@ namespace DataAccessLayer
             try
             {
                 // SQL query to fetch destruction card details based on Request IDs
-                string query = @"select req.RequestId,tdc.DistributeCardId,bas.ServiceNo as ArmyNo,
-	                                ranks.RankAbbreviation,bas.FName,bas.LName,Muni.Abbreviation Unit,
+                string query = @"select req.RequestId,tdc.DistributeCardId,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ArmyNo,
+	                                ranks.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,Muni.Abbreviation Unit,
 	                                tdc.UpdatedOn as DateAndTime,tdc.Remark,tdc.IsActive as IsActiveBool,
 	                                req.CardSerialNo,req.ChipNo,tdc.DistributedOn
 	                                from TrnDistributeCards tdc
 	                                inner join TrnICardRequest req on req.RequestId = tdc.RequestId
-	                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-	                                inner join MRank ranks on ranks.RankId=bas.RankId
-	                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
+	                                LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
+                                    LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
+	                                inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
+	                                inner join MapUnit uni on uni.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
 	                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
                                   Where req.RequestId in @Ids";
 
@@ -208,6 +223,15 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var ret = await connection.QueryAsync<DTODistributeCardExportResponse>(query, parameters);
+
+                    if (ret != null)
+                    {
+                        foreach (var item in ret)
+                        {
+                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                            item.LName = item.LName_2 ?? item.LName_1;
+                        }
+                    }
                     records = ret.ToList();
                 }
             }
@@ -236,7 +260,7 @@ namespace DataAccessLayer
         /// 3. It optionally updates the `TrnFaultyCard` and `TrnPostingOut` tables based on conditions from the `cardRequestHistory`.
         /// 4. It records the history of the card request in the `CompletedICardRequests` table.
         /// </remarks>
-        public async Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model, ICardHistoryResponseAll cardRequestHistory)
+        public async Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model, ICardHistoryResponseAll cardRequestHistory, List<int> AspNetUsersIds)
         {
             // Initialize the response DTO
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
@@ -245,10 +269,17 @@ namespace DataAccessLayer
             {
                 // Serialize the card request history to store in the database
                 var cardRequestHistoryJson = JsonConvert.SerializeObject(cardRequestHistory);
+                
+                string Name = (cardRequestHistory.BasicDetail.FName + " " + cardRequestHistory.BasicDetail.LName ?? "").Trim();
+                short RankId = cardRequestHistory.BasicDetail.RankId;
+                byte ApplyForId = cardRequestHistory.BasicDetail.ApplyForId;
+                string ServiceNo = cardRequestHistory.BasicDetail.ServiceNo;
 
                 // SQL query to insert the distribution card and update relevant records
-                var insertQuery = @$"Insert into TrnDistributeCards(RequestId,DistributedOn,Remark,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn) 
-                                                             Values(@RequestId,@DistributedOn,@Remark,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn);
+                var insertQuery = @$"
+                                    SET NOCOUNT ON;
+                                    Insert into TrnDistributeCards(RequestId,DistributedOn,Remark,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn) 
+                                    Values(@RequestId,@DistributedOn,@Remark,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn);
 
                                      DECLARE @DistributeCardId INT = SCOPE_IDENTITY();
                                      
@@ -259,10 +290,12 @@ namespace DataAccessLayer
                                      {(cardRequestHistory?.PostingOut?.Count > 0 ? "update TrnPostingOut set TrnFwdId = null where RequestId = @RequestId;" : "")}
                                      
                                      Delete from TrnFwds where RequestId = @RequestId;
-                                     Insert into CompletedICardRequests(RequestId,CardRequestHistoryJson,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn)
-                                     values(@RequestId,@CardRequestHistoryJson,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn);
+                                     Insert into CompletedICardRequests(RequestId,CardRequestHistoryJson,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn,Name,RankId,ServiceNo,ApplyForId)
+                                     values(@RequestId,@CardRequestHistoryJson,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn,@Name,@RankId,@ServiceNo,@ApplyForId);
                                      
-                                     Select @DistributeCardId;
+                                     DECLARE @CompletedId INT = SCOPE_IDENTITY();
+                                     
+                                     SELECT @DistributeCardId AS DistributeCardId,@CompletedId AS CompletedId;
                                     ";
 
                 // Set up the parameters for the SQL query
@@ -275,9 +308,27 @@ namespace DataAccessLayer
                 parameters.Add("@Updatedby", model.Updatedby, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@UpdatedOn", model.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.AnsiString, ParameterDirection.Input, size: -1);
+                parameters.Add("@Name", Name, DbType.String, ParameterDirection.Input,36);
+                parameters.Add("@RankId", RankId, DbType.Int16, ParameterDirection.Input);
+                parameters.Add("@ServiceNo", ServiceNo, DbType.String, ParameterDirection.Input,10);
+                parameters.Add("@ApplyForId", ApplyForId, DbType.Byte, ParameterDirection.Input);
 
                 // Execute the query and get the DistributeCardId of the newly created record
-                model.DistributeCardId = await db.ExecuteScalarAsync<int>(insertQuery, parameters, transaction: transaction);
+                DTOSaveDistributeCardResponse? dTOSave = await db.QuerySingleAsync<DTOSaveDistributeCardResponse>(insertQuery, parameters, transaction: transaction);
+                if (dTOSave != null)
+                {
+                    model.DistributeCardId = dTOSave.DistributeCardId;
+                    foreach (var item in AspNetUsersIds)
+                    {
+                        var insertCompletedICardRequestMapping = @"Insert into CompletedICardRequestMapping(CompletedId,AspNetUsersId) 
+                                                                Values(@CompletedId,@AspNetUsersId);";
+                        var aspNetUserParameters = new DynamicParameters();
+                        aspNetUserParameters.Add("@CompletedId", dTOSave.CompletedId, DbType.Int32, ParameterDirection.Input);
+                        aspNetUserParameters.Add("@AspNetUsersId", item, DbType.Int32, ParameterDirection.Input);
+                        await db.ExecuteAsync(insertCompletedICardRequestMapping, aspNetUserParameters, transaction: transaction);
+                    }
+                }
+
 
                 // Commit the transaction if everything was successful
                 transaction.Commit();

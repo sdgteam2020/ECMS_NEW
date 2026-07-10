@@ -1,6 +1,8 @@
 ﻿$(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    applyDataTableSearchValidation('#tbldata');
+
     BindData();
     $('.select2').select2({
         dropdownParent: $('#AddICardRequestHold'),

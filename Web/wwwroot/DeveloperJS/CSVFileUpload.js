@@ -7,6 +7,9 @@ $(function () {
     $("#btnsave").on("click", function () {
         validateCsvFileOnChange();
     });
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData();
 });
 

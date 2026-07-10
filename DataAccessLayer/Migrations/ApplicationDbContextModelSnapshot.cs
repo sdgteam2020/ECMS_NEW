@@ -1515,6 +1515,42 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("BasicDetailTemps");
                 });
 
+            modelBuilder.Entity("DataTransferObject.Domain.Model.BasicDetailsAFSAC2", b =>
+                {
+                    b.Property<int>("ApplyForId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ArmedId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BasicDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RankId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RegimentalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ServiceNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("vw_BasicDetails_AFSAC2", (string)null);
+                });
+
             modelBuilder.Entity("DataTransferObject.Domain.Model.CSVImport", b =>
                 {
                     b.Property<int>("Id")
@@ -1585,6 +1621,9 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompletedId"));
 
+                    b.Property<byte>("ApplyForId")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("CardRequestHistoryJson")
                         .IsRequired()
                         .HasColumnType("varchar(max)");
@@ -1592,8 +1631,21 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)");
+
+                    b.Property<short>("RankId")
+                        .HasColumnType("smallint");
+
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ServiceNo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime");
@@ -1606,6 +1658,10 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("CompletedId");
 
+                    b.HasIndex("ApplyForId");
+
+                    b.HasIndex("RankId");
+
                     b.HasIndex("RequestId");
 
                     b.HasIndex("Updatedby");
@@ -1613,6 +1669,29 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("UpdatedbyUserId");
 
                     b.ToTable("CompletedICardRequests");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.CompletedICardRequestMapping", b =>
+                {
+                    b.Property<int>("CompletedMappingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompletedMappingId"));
+
+                    b.Property<int>("AspNetUsersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompletedId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CompletedMappingId");
+
+                    b.HasIndex("AspNetUsersId");
+
+                    b.HasIndex("CompletedId");
+
+                    b.ToTable("CompletedICardRequestMapping");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.IAMSetting", b =>
@@ -2002,8 +2081,6 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("RequestId");
 
-                    b.HasIndex("BasicDetailId");
-
                     b.HasIndex("RecordOfficeId");
 
                     b.HasIndex("RegistrationId");
@@ -2220,16 +2297,28 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<byte>("ApplyForId")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("Authority")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("BasicDetailId")
-                        .HasColumnType("int");
+                    b.Property<string>("CardRequestHistoryJson")
+                        .IsRequired()
+                        .HasColumnType("varchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)");
+
+                    b.Property<short>("RankId")
+                        .HasColumnType("smallint");
 
                     b.Property<byte>("ReasonId")
                         .HasColumnType("tinyint");
@@ -2240,6 +2329,11 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ServiceNo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime");
@@ -2252,7 +2346,9 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BasicDetailId");
+                    b.HasIndex("ApplyForId");
+
+                    b.HasIndex("RankId");
 
                     b.HasIndex("ReasonId");
 
@@ -2263,6 +2359,29 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("TrnApplClose");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplCloseMapping", b =>
+                {
+                    b.Property<int>("ApplCloseMappingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplCloseMappingId"));
+
+                    b.Property<int>("AspNetUsersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CloseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplCloseMappingId");
+
+                    b.HasIndex("AspNetUsersId");
+
+                    b.HasIndex("CloseId");
+
+                    b.ToTable("TrnApplCloseMapping");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDestructionCard", b =>
@@ -2804,9 +2923,6 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("BasicDetailId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("DispatchUpdatedBy")
                         .HasColumnType("int");
 
@@ -2860,8 +2976,6 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BasicDetailId");
 
                     b.HasIndex("DispatchUpdatedBy");
 
@@ -3604,6 +3718,18 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.CompletedICardRequest", b =>
                 {
+                    b.HasOne("DataTransferObject.Domain.Master.MApplyFor", "MApplyFor")
+                        .WithMany()
+                        .HasForeignKey("ApplyForId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MRank", "Rank")
+                        .WithMany()
+                        .HasForeignKey("RankId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("DataTransferObject.Domain.Model.MTrnICardRequest", "MTrnICardRequest")
                         .WithMany()
                         .HasForeignKey("RequestId")
@@ -3622,9 +3748,32 @@ namespace DataAccessLayer.Migrations
 
                     b.Navigation("ApplicationUserUpdate");
 
+                    b.Navigation("MApplyFor");
+
                     b.Navigation("MTrnICardRequest");
 
+                    b.Navigation("Rank");
+
                     b.Navigation("UserProfileUserUpdate");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.CompletedICardRequestMapping", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("AspNetUsersId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Model.CompletedICardRequest", "CompletedICardRequest")
+                        .WithMany()
+                        .HasForeignKey("CompletedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("CompletedICardRequest");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MStepCounter", b =>
@@ -3782,12 +3931,6 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnICardRequest", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
-                        .WithMany()
-                        .HasForeignKey("BasicDetailId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Master.MRecordOffice", "MRecordOffice")
                         .WithMany()
                         .HasForeignKey("RecordOfficeId")
@@ -3824,8 +3967,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApplicationUserUpdate");
-
-                    b.Navigation("BasicDetail");
 
                     b.Navigation("MICardType");
 
@@ -3937,9 +4078,15 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplClose", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
+                    b.HasOne("DataTransferObject.Domain.Master.MApplyFor", "MApplyFor")
                         .WithMany()
-                        .HasForeignKey("BasicDetailId")
+                        .HasForeignKey("ApplyForId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Master.MRank", "Rank")
+                        .WithMany()
+                        .HasForeignKey("RankId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -3968,13 +4115,34 @@ namespace DataAccessLayer.Migrations
 
                     b.Navigation("ApplicationUserUpdate");
 
-                    b.Navigation("BasicDetail");
+                    b.Navigation("MApplyFor");
 
                     b.Navigation("MPostingReason");
 
                     b.Navigation("MTrnICardRequest");
 
                     b.Navigation("MUserProfile");
+
+                    b.Navigation("Rank");
+                });
+
+            modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplCloseMapping", b =>
+                {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("AspNetUsersId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataTransferObject.Domain.Model.TrnApplClose", "TrnApplClose")
+                        .WithMany()
+                        .HasForeignKey("CloseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("TrnApplClose");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnDestructionCard", b =>
@@ -4308,12 +4476,6 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnPostingOut", b =>
                 {
-                    b.HasOne("DataTransferObject.Domain.Model.BasicDetail", "BasicDetail")
-                        .WithMany()
-                        .HasForeignKey("BasicDetailId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "DispatchUserUpdate")
                         .WithMany()
                         .HasForeignKey("DispatchUpdatedBy")
@@ -4380,8 +4542,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("ApplicationUserUpdate");
-
-                    b.Navigation("BasicDetail");
 
                     b.Navigation("DispatchUserUpdate");
 

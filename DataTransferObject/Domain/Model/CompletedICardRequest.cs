@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DataTransferObject.Domain.Master;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataTransferObject.Domain.Model
@@ -19,5 +20,21 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("UserProfileUserUpdate"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int? UpdatedbyUserId { get; set; }
         public MUserProfile? UserProfileUserUpdate { get; set; }
+
+        [ForeignKey("MRank"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public short RankId { get; set; }
+        public MRank? Rank { get; set; }
+
+        [StringLength(36)]
+        [Column(TypeName = "varchar(36)")]
+        public string Name { get; set; } = string.Empty;
+
+        [StringLength(10)]
+        [Column(TypeName = "varchar(10)")]
+        public string ServiceNo { get; set; } = string.Empty;
+
+        [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte ApplyForId { get; set; }
+        public MApplyFor? MApplyFor { get; set; }
     }
 }

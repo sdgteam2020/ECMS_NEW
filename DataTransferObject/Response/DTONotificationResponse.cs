@@ -16,6 +16,7 @@
         public string ApplId { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public DateTime UpdatedOn { get; set; }
+
     }
     public class DTONotificationResult
     {

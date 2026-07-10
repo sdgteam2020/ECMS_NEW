@@ -528,26 +528,6 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// This method retrieves the user profile based on RequestId.
-        /// </summary>
-        /// <param name="RequestId">The RequestId associated with the user profile.</param>
-        /// <returns>Returns a JSON response with the user profile data.</returns>
-        [HttpPost]
-        public async Task<IActionResult> GetByRequestId(int RequestId)
-        {
-            try
-            {
-                // Fetch user profile by RequestId
-                return Json(await _userProfileBL.GetByRequestId(RequestId));
-            }
-            catch (Exception ex)
-            {
-                // Log the error and return an internal server error response
-                return Json(KeyConstants.InternalServerError);
-            }
-        }
-
-        /// <summary>
         /// This method checks if the given ArmyNo exists in the user profile.
         /// </summary>
         /// <param name="ArmyNo">The Army number to be checked in the user profile.</param>

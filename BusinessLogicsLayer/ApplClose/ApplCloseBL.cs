@@ -18,9 +18,9 @@ namespace BusinessLogicsLayer.Posting
         {
           return  await _iApplCloseDB.RequestIdExists(DTo);   
         }
-        public async Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data)
-        {
-            return await _iApplCloseDB.ApplCloseWithUpdateStatus(Data);
+        public async Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data, ICardHistoryResponseAll? cardHistoryResponses)
+        {         
+            return await _iApplCloseDB.ApplCloseWithUpdateStatus(Data, cardHistoryResponses);
         }
     }
 }

@@ -28,7 +28,12 @@ namespace BusinessLogicsLayer.DistributeCard
         
         public async Task<DTOCommonSaveResponse> SaveDistributeCard(TrnDistributeCard model, ICardHistoryResponseAll cardRequestHistory)
         {
-            return await _iDistributeCardDB.SaveDistributeCard(model, cardRequestHistory);
+            List<int> AspNetUsersIds = cardRequestHistory.ICardHistory?
+                                                        .Where(x => x.StepId == 2)
+                                                        .Select(x => x.ToAspNetUsersId)
+                                                        .Distinct()
+                                                        .ToList() ?? new List<int>();
+            return await _iDistributeCardDB.SaveDistributeCard(model, cardRequestHistory, AspNetUsersIds);
         }
     }
 }

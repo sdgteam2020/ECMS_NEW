@@ -3,12 +3,13 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     GetTaskIcardRequestCount($("#Id").html(), $("#applyForId").html())
 
-    //GetNotification(1, 1);
-    //GetNotification(1, 2); //
     //GetNotificationRequestId(1, 1); //this notification method for self notifiy
     //GetNotificationRequestId(1, 2); //this notification method for self notifiy
 });
 function GetTaskIcardRequestCount(Id, applyForId) {
+    // show loader until server data received
+    $(".counter-value").html('<span class="count-loader"></span>');
+
     var userdata =
     {
         "Id": Id,
@@ -39,6 +40,21 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#ToSubmitted").html(response.ToSubmitted);
                             $("#ToCompleted").html(response.ToCompleted);
                             $("#ToRejected").html(response.ToRejected);
+
+                            $('.counter-value').each(function () {
+                                let finalValue = parseInt($(this).text()) || 0;
+
+                                $(this).prop('Counter', 0).animate({
+                                    Counter: finalValue
+                                }, {
+                                    duration: 200,
+                                    easing: 'swing',
+                                    step: function (now) {
+                                        $(this).text(Math.ceil(now));
+                                    }
+                                });
+                            });
+
                         }
                         else if (Id == 2) { // Pending
                             $("#_2ndLevelPending").html(response._2ndLevelPending);
@@ -49,11 +65,21 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#_3rdLevelReject").html(response._3rdLevelReject);
                             $("#_4thLevelPending").html(response._4thLevelPending);
                             $("#_4thLevelApproved").html(response._4thLevelApproved);
-                            $("#_4thLevelReject").html(response._4thLevelReject);
-                            $("#ExportPending").html(response.ExportPending);
-                            $("#ExportApproved").html(response.ExportApproved);
-                            $("#ExportReject").html(response.ExportReject);
                             $(".csvUploadCount").html(response.CsvUploadCount);
+
+                            $('.counter-value').each(function () {
+                                let finalValue = parseInt($(this).text()) || 0;
+
+                                $(this).prop('Counter', 0).animate({
+                                    Counter: finalValue
+                                }, {
+                                    duration: 200,
+                                    easing: 'swing',
+                                    step: function (now) {
+                                        $(this).text(Math.ceil(now));
+                                    }
+                                });
+                            });
                         }
                     } else {
                         if (Id == 1) { // Submitted
@@ -61,6 +87,20 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#ToSubmitted").html(response.ToSubmitted);
                             $("#ToCompleted").html(response.ToCompleted);
                             $("#ToRejected").html(response.ToRejected);
+
+                            $('.counter-value').each(function () {
+                                let finalValue = parseInt($(this).text()) || 0;
+
+                                $(this).prop('Counter', 0).animate({
+                                    Counter: finalValue
+                                }, {
+                                    duration: 200,
+                                    easing: 'swing',
+                                    step: function (now) {
+                                        $(this).text(Math.ceil(now));
+                                    }
+                                });
+                            });
                         }
                         else if (Id == 2) { // Pending
                             $("#_2ndLevelPending").html(response._2ndLevelPending);
@@ -73,15 +113,33 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#_4thLevelApproved").html(response._4thLevelApproved);
                             $("#ToInternalForward").html(response.ToInternalForward);
                             $(".csvUploadCount").html(response.CsvUploadCount);
+
+                            $('.counter-value').each(function () {
+                                let finalValue = parseInt($(this).text()) || 0;
+
+                                $(this).prop('Counter', 0).animate({
+                                    Counter: finalValue
+                                }, {
+                                    duration: 200,
+                                    easing: 'swing',
+                                    step: function (now) {
+                                        $(this).text(Math.ceil(now));
+                                    }
+                                });
+                            });
                         }
                     }
                 }
             }
             else {
-
+                // keep loader, do not show zero
+                $(".counter-value").html('<span class="count-loader"></span>');
             }
         },
         error: function (result) {
+            // keep loader, do not show zero
+            $(".counter-value").html('<span class="count-loader"></span>');
+
             Swal.fire({
                 text: errormsg002
             });

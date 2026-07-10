@@ -1,50 +1,591 @@
-﻿.row.mb-1.required .form-label::after {
+﻿/* =====================================================
+   ECMS Profile Page Modern UI
+   Scope: Account/Profile only
+===================================================== */
+
+:root {
+    --ecms-profile-header-height: 120px;
+    --ecms-profile-footer-height: 42px;
+    --ecms-profile-navy: #061f4d;
+    --ecms-profile-blue: #0d6efd;
+    --ecms-profile-sky: #45c7f5;
+    --ecms-profile-border: rgba(144, 184, 240, 0.34);
+    --ecms-profile-text: #10254f;
+    --ecms-profile-muted: #62789f;
+}
+
+/* Required mark */
+.row.mb-1.required .form-label::after {
     content: "*";
-    color: red;
+    color: #e53935;
 }
 
-.login-wrap {
-    margin-top: 100px;
-    margin-left: 20%;
-    margin-right: 20%;
-    width: 60%;
+/* Page background under fixed login layout header/footer */
+.ecms-profile-page,
+.page {
+    min-height: calc(100vh - var(--ecms-profile-footer-height));
+    padding: calc(var(--ecms-profile-header-height) + 22px) 24px calc(var(--ecms-profile-footer-height) + 28px) !important;
+    background: linear-gradient(90deg, rgba(7, 37, 92, 0.86), rgba(15, 93, 180, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+    overflow-x: hidden !important;
 }
 
-.unit-label-background {
-    background-color: #e9ecef;
-    max-width: 200px;
-    min-width: 200px;
-    height: 45px;
+/* Remove old fixed-width login layout for this page */
+.login-wrap,
+.ecms-profile-shell {
+    width: min(1180px, 94vw) !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border-radius: 24px !important;
+    box-shadow: none !important;
 }
 
-.form-label {
-    font-size: 1rem;
+.login,
+.ecms-profile-login {
+    width: 100% !important;
 }
 
-.form-control-Alphabets {
-    display: block;
-    width: 100%;
-    height: 34px;
-    padding: 6px 12px;
+.card-sigin,
+.ecms-profile-card {
+    width: 100% !important;
+    border-radius: 24px !important;
+    padding: 0 !important;
+    background: rgba(238, 247, 255, 0.86) !important;
+    border: 1px solid rgba(255,255,255,0.78) !important;
+    box-shadow: 0 26px 70px rgba(0, 22, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
+    backdrop-filter: blur(16px);
+    overflow: hidden;
+}
+
+.main-signup-header,
+.ecms-profile-form {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* Title / heading */
+.ecms-profile-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 22px 26px 18px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.82), rgba(215,235,255,0.56));
+    border-bottom: 1px solid rgba(120, 165, 230, 0.24);
+    text-align: left;
+}
+
+.ecms-profile-title-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 24px;
+    background: linear-gradient(135deg, #238dff, #004cce);
+    box-shadow: 0 12px 24px rgba(0, 86, 210, 0.24);
+    flex: 0 0 auto;
+}
+
+.ecms-profile-title h2 {
+    margin: 0 !important;
+    font-size: 26px !important;
+    line-height: 1.15;
+    font-weight: 900 !important;
+    color: var(--ecms-profile-text) !important;
+    letter-spacing: -0.2px;
+}
+
+.ecms-profile-title p {
+    margin: 5px 0 0 !important;
+    color: var(--ecms-profile-muted) !important;
     font-size: 14px;
-    line-height: 1.42857143;
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+    font-weight: 600;
 }
 
-    .form-control-Alphabets:focus {
-        border-color: #66afe9;
-        outline: 0;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
-    }
-.textarea-auto-height {
-    height: auto !important;
+/* If original paragraph remains */
+.main-signup-header > p,
+.main-signup-header .font-weight-normal.font-weight-700 {
+    margin: 0 !important;
+    padding: 18px 24px 0 !important;
+    color: var(--ecms-profile-text) !important;
+    font-size: 20px !important;
+    font-weight: 900 !important;
 }
+
+.main-signup-header .pb-3,
+.main-signup-header .mt-3 {
+    margin-top: 0 !important;
+}
+
+.main-signup-header .p-4 {
+    padding: 22px 28px 26px !important;
+}
+
+#Profile {
+    margin-top: 0 !important;
+}
+
+    #Profile .card-body {
+        padding: 0 !important;
+    }
+
+        #Profile > .card-body > .row,
+        #Profile .card-body > .row {
+            row-gap: 6px;
+        }
+
+    #Profile .col-md-6,
+    #Profile .col-lg-6,
+    #Profile .col-xl-6 {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+
+    /* Form rows */
+    #Profile .row.mb-2,
+    #Profile .form-group.row.mb-2 {
+        margin-bottom: 14px !important;
+        align-items: center;
+    }
+
+    #Profile label,
+    #Profile .form-label,
+    #Profile .col-form-label {
+        color: #142b58 !important;
+        font-size: 14px !important;
+        font-weight: 800 !important;
+        line-height: 1.25 !important;
+    }
+
+.mand1,
+.fa-asterisk {
+    color: #e53935 !important;
+    font-size: 7px !important;
+    margin-left: 2px;
+    vertical-align: super;
+}
+
+/* Inputs */
+#Profile .form-control,
+#Profile .form-select,
+#Profile .form-control-Alphabets,
+#Profile textarea.form-control {
+    width: 100% !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 9px 13px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(92, 126, 175, 0.30) !important;
+    background: rgba(255,255,255,0.88) !important;
+    color: #0c234f !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 8px 20px rgba(18, 55, 112, 0.06), inset 0 1px 0 rgba(255,255,255,0.78) !important;
+    transition: all 0.2s ease !important;
+}
+
+#Profile textarea.form-control,
+#Profile .textarea-auto-height {
+    min-height: 86px !important;
+    height: auto !important;
+    resize: vertical;
+}
+
+    #Profile .form-control:focus,
+    #Profile .form-select:focus,
+    #Profile .form-control-Alphabets:focus,
+    #Profile textarea.form-control:focus {
+        border-color: rgba(0, 111, 255, 0.72) !important;
+        background: #ffffff !important;
+        box-shadow: 0 0 0 4px rgba(0,111,255,0.12), 0 10px 24px rgba(18,55,112,0.10) !important;
+        outline: none !important;
+    }
+
+#Profile input[readonly],
+#Profile input:read-only,
+#Profile textarea:read-only {
+    background: rgba(226, 235, 247, 0.92) !important;
+    color: #243b62 !important;
+}
+
+#Profile .form-select {
+    cursor: pointer;
+}
+
+/* Add buttons beside Appointment / Unit */
+#btnAddAppointment,
+#btnAddUnit {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    margin-left: 8px !important;
+    border-radius: 12px !important;
+    border: 0 !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #238dff, #004cce) !important;
+    box-shadow: 0 10px 20px rgba(0, 86, 210, 0.22) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    #btnAddAppointment:hover,
+    #btnAddUnit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 26px rgba(0, 86, 210, 0.30) !important;
+    }
+
+/* Radio button grouping */
+#Profile .form-check-inline {
+    margin-right: 10px !important;
+    margin-bottom: 4px;
+}
+
+#Profile .form-check-input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    border-color: rgba(83, 129, 198, 0.60);
+}
+
+    #Profile .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 4px rgba(13,110,253,0.12);
+    }
+
+#Profile .form-check-label {
+    color: #2f466a !important;
+    font-weight: 700 !important;
+}
+
+/* Read-only unit info labels */
+.unit-label-background {
+    display: flex !important;
+    align-items: center;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+    height: auto !important;
+    padding: 8px 13px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(92, 126, 175, 0.22) !important;
+    background: rgba(226, 235, 247, 0.92) !important;
+    color: #243b62 !important;
+    font-weight: 700 !important;
+}
+
+/* Footer area inside profile card */
+#Profile .card-footer {
+    margin: 10px -28px -26px !important;
+    padding: 18px 24px 22px !important;
+    border-top: 1px solid rgba(120, 165, 230, 0.24) !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.74), rgba(218,236,255,0.44)) !important;
+}
+
+
+/* Alerts / validation */
+.text-danger,
+.field-validation-valid,
+.field-validation-error {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+}
+
+#tokenmsg .alert,
+#Profile .alert {
+    border: 0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08) !important;
+}
+
+/* jQuery UI autocomplete dropdown */
+.ui-autocomplete {
+    z-index: 99999 !important;
+    border: 1px solid rgba(92, 126, 175, 0.30) !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 18px 38px rgba(0, 32, 90, 0.22) !important;
+    background: #ffffff !important;
+    padding: 6px !important;
+}
+
+.ui-menu .ui-menu-item-wrapper {
+    border-radius: 9px !important;
+    padding: 9px 12px !important;
+    color: #10254f !important;
+    font-weight: 700;
+}
+
+    .ui-menu .ui-menu-item-wrapper.ui-state-active {
+        border: 0 !important;
+        background: linear-gradient(135deg, #238dff, #004cce) !important;
+        color: #ffffff !important;
+    }
+
+/* Modals on this page */
+#AddNewUnitmap .modal-content,
+#AddNewAppointment .modal-content {
+    border: 0 !important;
+    border-radius: 22px !important;
+    overflow: hidden;
+    background: rgba(244, 249, 255, 0.98) !important;
+    box-shadow: 0 28px 80px rgba(0, 22, 70, 0.42) !important;
+}
+
+#AddNewUnitmap .modal-header,
+#AddNewAppointment .modal-header {
+    background: linear-gradient(135deg, #073878, #0d6efd) !important;
+    color: #ffffff !important;
+    border-bottom: 0 !important;
+    padding: 16px 22px !important;
+}
+
+#AddNewUnitmap .modal-title,
+#AddNewAppointment .modal-title {
+    color: #ffffff !important;
+    font-weight: 900 !important;
+}
+
+#AddNewUnitmap .close,
+#AddNewAppointment .close {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    border: 0;
+    background: transparent;
+    font-size: 26px;
+}
+
+#AddNewUnitmap .modal-body,
+#AddNewAppointment .modal-body {
+    padding: 24px !important;
+}
+
+#AddNewUnitmap .form-control,
+#AddNewUnitmap .form-select,
+#AddNewUnitmap textarea,
+#AddNewAppointment .form-control,
+#AddNewAppointment .form-select,
+#AddNewAppointment textarea {
+    min-height: 42px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(92, 126, 175, 0.30) !important;
+    background: rgba(255,255,255,0.92) !important;
+    color: #0c234f !important;
+    font-weight: 600 !important;
+}
+
+#btnUnitMapsave,
+#btnNewAppointment {
+    border: 0 !important;
+    border-radius: 12px !important;
+    padding: 10px 24px !important;
+    font-weight: 900 !important;
+    background: linear-gradient(135deg, #087cff, #0045dc) !important;
+    box-shadow: 0 10px 22px rgba(0,84,224,0.22) !important;
+}
+
+#btnUnitMapReset,
+#btnAppointmentReset {
+    border-radius: 12px !important;
+    padding: 10px 22px !important;
+    font-weight: 900 !important;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .ecms-profile-page,
+    .page {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+        padding-top: calc(var(--ecms-profile-header-height) + 16px) !important;
+    }
+
+    .main-signup-header .p-4 {
+        padding: 18px 18px 22px !important;
+    }
+
+    #Profile .col-md-6,
+    #Profile .col-lg-6,
+    #Profile .col-xl-6 {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .ecms-profile-title {
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 767px) {
+    :root {
+        --ecms-profile-header-height: 104px;
+    }
+
+    .ecms-profile-title {
+        padding: 18px 18px 14px;
+    }
+
+    .ecms-profile-title-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        font-size: 20px;
+    }
+
+    .ecms-profile-title h2 {
+        font-size: 22px !important;
+    }
+
+    #Profile .row.mb-2,
+    #Profile .form-group.row.mb-2 {
+        margin-bottom: 12px !important;
+    }
+
+    #Profile label,
+    #Profile .form-label,
+    #Profile .col-form-label {
+        margin-bottom: 5px !important;
+    }
+
+    #Profile .card-footer {
+        margin-left: -18px !important;
+        margin-right: -18px !important;
+        margin-bottom: -22px !important;
+    }
+
+    #btnSubmit,
+    #btnUnitMapsave,
+    #btnNewAppointment,
+    #btnUnitMapReset,
+    #btnAppointmentReset {
+        width: 100% !important;
+        margin-bottom: 8px !important;
+    }
+}
+
+/* =====================================================
+   PROFILE PAGE RADIO + SUBMIT BUTTON FINAL FIX
+   Keep functionality same, only UI change
+===================================================== */
+
+/* Radio button theme */
+.ecms-profile-page input[type="radio"],
+#Profile input[type="radio"] {
+    width: 18px !important;
+    height: 18px !important;
+    margin-right: 6px !important;
+    cursor: pointer !important;
+    accent-color: #1f74ff !important;
+}
+
+/* Bootstrap radio checked state */
+.ecms-profile-page .form-check-input:checked,
+#Profile .form-check-input:checked {
+    background-color: #1f74ff !important;
+    border-color: #1f74ff !important;
+}
+
+/* Focus ring */
+.ecms-profile-page .form-check-input:focus,
+#Profile .form-check-input:focus {
+    border-color: #1f74ff !important;
+    box-shadow: 0 0 0 4px rgba(31, 116, 255, 0.22) !important;
+}
+
+/* Radio labels */
+.ecms-profile-page input[type="radio"] + label,
+#Profile input[type="radio"] + label,
+.ecms-profile-page .form-check-label,
+#Profile .form-check-label {
+    color: #10254f !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+}
+
+/* If old CSS made radios look disabled */
+.ecms-profile-page input[type="radio"]:not(:disabled),
+#Profile input[type="radio"]:not(:disabled) {
+    opacity: 1 !important;
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+    #btnSubmit {
+        width: 100% !important;
+        max-width: 280px !important;
+    }
+}
+
+/* Submit button modern theme */
+.ecms-profile-page #Profile .card-footer #btnSubmit,
+.ecms-profile-page #Profile #btnSubmit,
+#Profile .card-footer button#btnSubmit,
+#Profile button#btnSubmit,
+button#btnSubmit.btn,
+input#btnSubmit.btn {
+    min-width: 150px !important;
+    height: 46px !important;
+    padding: 10px 30px !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    background-color: #1f63f2 !important;
+    background-image: linear-gradient(135deg, #238dff 0%, #1f63f2 50%, #004cce 100%) !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.2px !important;
+    box-shadow: 0 12px 28px rgba(0, 86, 210, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    opacity: 1 !important;
+    filter: none !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+    /* Bootstrap 5 button variable override */
+    --bs-btn-bg: #1f63f2 !important;
+    --bs-btn-border-color: #1f63f2 !important;
+    --bs-btn-color: #ffffff !important;
+    --bs-btn-hover-bg: #0758f0 !important;
+    --bs-btn-hover-border-color: #0758f0 !important;
+    --bs-btn-active-bg: #004cce !important;
+    --bs-btn-active-border-color: #004cce !important;
+}
+
+    .ecms-profile-page #Profile .card-footer #btnSubmit:hover,
+    #Profile .card-footer button#btnSubmit:hover,
+    button#btnSubmit.btn:hover,
+    input#btnSubmit.btn:hover {
+        background-color: #0758f0 !important;
+        background-image: linear-gradient(135deg, #5a96ff 0%, #2f72ff 50%, #0758f0 100%) !important;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 16px 34px rgba(0, 86, 210, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.40) !important;
+    }
+
+    .ecms-profile-page #Profile .card-footer #btnSubmit:focus,
+    #Profile .card-footer button#btnSubmit:focus,
+    button#btnSubmit.btn:focus,
+    input#btnSubmit.btn:focus {
+        outline: none !important;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        box-shadow: 0 0 0 4px rgba(35, 141, 255, 0.25), 0 14px 30px rgba(0, 86, 210, 0.36) !important;
+    }
+
+    /* Even if button has disabled class by mistake, keep color visible */
+    .ecms-profile-page #Profile .card-footer #btnSubmit:disabled,
+    #Profile .card-footer button#btnSubmit:disabled,
+    button#btnSubmit.btn:disabled,
+    input#btnSubmit.btn:disabled {
+        background-color: #1f63f2 !important;
+        background-image: linear-gradient(135deg, #238dff 0%, #1f63f2 50%, #004cce 100%) !important;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        opacity: 0.75 !important;
+    }

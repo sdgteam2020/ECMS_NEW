@@ -4,6 +4,9 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     Reset();
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData();
 
     $("#btnReset").on("click", function () {
@@ -58,22 +61,6 @@ $(function () {
         }
     });
 
-    // ✅ For server-side DataTables: clean invalid search before AJAX goes to server
-    $('#tbldata').on('preXhr.dt', function (e, settings, data) {
-
-        var searchValue = data.search.value || "";
-        var allowedRegex = /^[a-zA-Z0-9\s()\-\/&]*$/;
-
-        if (!allowedRegex.test(searchValue)) {
-            toastr.warning('Only alphabets, numbers, space, ( ), -, / and & are allowed.');
-
-            // remove invalid characters before sending to server
-            data.search.value = searchValue.replace(/[^a-zA-Z0-9\s()\-\/&]/g, '');
-
-            // update search textbox also
-            $('.dt-search input').val(data.search.value);
-        }
-    });
 
 });
 

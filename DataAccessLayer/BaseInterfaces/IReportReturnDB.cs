@@ -8,9 +8,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOReportCardDashboardCountResponse> GetReportCardDashboardCount(DTOMHierarchyRequest dTO);
         public Task<DTODataTablesResponse<DTOReportCardResponse>> GetReportCardData(DTODataTablesRequestForReportCard dTO);
         public Task<List<DTOReportReturnCount>> GetMstepCount(DTOMHierarchyRequest Data, int ApplyForId);
-
-        public Task<List<DTOReportReturnCount>> GetMstepCountApprovedReject(DTOMHierarchyRequest Data, int ApplyForId);
-       
+  
         public Task<List<DTOReportReturnCount>> GetRecordOffOffers(short ArmedIdForORO);
         public Task<List<DTOReportReturnCount>> GetRecordOffOffersCount(DTOMHierarchyRequest Data);
          

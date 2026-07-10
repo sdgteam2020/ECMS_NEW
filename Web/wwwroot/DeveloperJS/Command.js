@@ -4,6 +4,8 @@ let Orderby = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    applyDataTableSearchValidation('#tbldata');
+
     BindData(function () {
     });
     $("#btnReset").on("click",function () {

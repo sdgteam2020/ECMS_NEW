@@ -2,11 +2,12 @@
 $(function () {
     sessionStorage.clear();
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
-    let Type = parseInt($("#spnType").html());
     let StepCounter = parseInt($("#spnStepCounter").html());
     let JCOOR = $("#spnJCOOR").html();
-    let VBId = $("#spnVBId").html();
-    BindData(Type, StepCounter, JCOOR, VBId, function () {
+
+    applyDataTableSearchValidation('#tbldatatabledata_Fwd');
+
+    BindData(StepCounter, JCOOR, function () {
     });
 
     $(window).on('resize', function () {
@@ -16,7 +17,7 @@ $(function () {
         }
     });
 });
-function BindData(Type, StepCounter, JCOOR, VBId) {
+function BindData(StepCounter, JCOOR) {
     if ($.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
         // Destroy the DataTable and clear the table content
         $("#tbldatatabledata_Fwd").DataTable().clear().destroy(); // Clear and destroy DataTable properly
@@ -51,7 +52,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                 UserId: 0,
                 stepcount: StepCounter,
-                TypeId: Type,
+                TypeId: 0,
                 applyForId: 0,
                 JCOOR: JCOOR
             };
@@ -186,7 +187,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 width: "100px",
                 orderable: false,
                 render: function (data, type, row) {
-                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                 }
             },
             {
@@ -197,7 +198,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                 className: "noExport",
                 width: "100px",
                 render: function (data, type, row) {
-                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left" title="${row.Remark}"><i class="fa fa-history" ></i></button>`
+                    return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-cardhistoryRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                 }
             },
             // Additional column for Edit action
@@ -213,7 +214,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-ICardPrintPreviewByRequestId"><i class="fa fa-eye mt-2"></i></button>`;
 
                     // Case 1: Editable + Forward
-                    if ((row.StepCounter == 1 || row.StepCounter == 7 || row.StepCounter == 8 || row.StepCounter == 9 || row.StepCounter == 10) && (VBId == 0 || VBId == 1 || VBId == 11 || row.IsFwdStatusId == 3))
+                    if ((row.StepCounter == 1 || row.StepCounter == 7 || row.StepCounter == 8 || row.StepCounter == 9 || row.StepCounter == 10) && row.IsLock == false)
                     {
                         html += `<a href="/BasicDetail/BasicDetail?Id=${row.EncryptedId}" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
                                 <button class="btn btn-icon btn-round btn-primary mr-1 cls-fwdrecord"><i class="fa fa-step-forward"></i></button>`;
@@ -230,7 +231,7 @@ function BindData(Type, StepCounter, JCOOR, VBId) {
                     {
                         // Case 3: Rejected only
                         if (row.IsFwdStatusId == 3) {
-                            html += `<span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left" title="${row.Remark}">Rejected</span>`;
+                            html += `<span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left">Rejected</span>`;
                         }
                     }
                     return html; // Return the full HTML string

@@ -71,15 +71,28 @@ namespace DataAccessLayer
             try
             {
                 const string query = @"
-                                        IF EXISTS (
+                                        IF EXISTS
+                                        (
                                             SELECT 1
                                             FROM TrnLostCards lc
-                                            JOIN TrnICardRequest tir ON lc.RequestId = tir.RequestId
-                                            JOIN BasicDetails bd ON tir.BasicDetailId = bd.BasicDetailId
-                                            WHERE bd.BasicDetailId = (
+                                            INNER JOIN TrnICardRequest tir ON tir.RequestId = lc.RequestId
+                                            LEFT JOIN BasicDetails bd ON bd.BasicDetailId = tir.BasicDetailId
+                                            LEFT JOIN AFSAC2.dbo.BasicDetails bd2 ON bd2.BasicDetailId = tir.BasicDetailId
+                                            WHERE tir.BasicDetailId =
+                                            (
                                                 SELECT MAX(BasicDetailId)
-                                                FROM BasicDetails
-                                                WHERE ServiceNo = @ServiceNo
+                                                FROM
+                                                (
+                                                    SELECT BasicDetailId
+                                                    FROM BasicDetails
+                                                    WHERE ServiceNo = @ServiceNo
+
+                                                    UNION ALL
+
+                                                    SELECT BasicDetailId
+                                                    FROM AFSAC2.dbo.BasicDetails
+                                                    WHERE ServiceNo = @ServiceNo
+                                                ) x
                                             )
                                         )
                                             SELECT 1;
@@ -110,7 +123,7 @@ namespace DataAccessLayer
             List<DTOLostCardGetResponse> dTOLostCardGetResponses = new List<DTOLostCardGetResponse>();
             var responseData = new DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 selectedIds = null,
@@ -121,36 +134,31 @@ namespace DataAccessLayer
                 // Map allowed sort columns to DB fields
                 var allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    ["ServiceNo"] = "bas.ServiceNo",
+                    ["ServiceNo"] = "ServiceNo",
                     ["UpdatedOn"] = "lost.UpdatedOn",
                     ["LostOn"] = "lost.LostOn",
                     ["Remark"] = "lost.Remark"
                 };
 
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
-                    ? allowedSortColumns[dTO.sortColumn!]
-                    : "lost.UpdatedOn";
-
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "lost.UpdatedOn";
+                
                 var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
 
                 string selectFields = @"appl.Name ApplyFor,
                                         req.RequestId,lost.LostCardId,
-                                        bas.ServiceNo,ranks.RankAbbreviation RankName,
-                                        bas.FName,bas.LName,
-                                        Muni.Abbreviation UnitAbbreviation,
-                                        lost.UpdatedOn,lost.Remark,lost.LostOn,
-                                        lost.IsFIRLogged,lost.SupportDocName,
+                                        basic_2.ServiceNo,ranks.RankAbbreviation RankName,basic_2.FName,basic_2.LName,
+                                        Muni.Abbreviation UnitAbbreviation,lost.UpdatedOn,lost.Remark,lost.LostOn,lost.IsFIRLogged,lost.SupportDocName,
                                         (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(lost.RemarksIds,','))) RemarksNameList";
                 string fromJoinClause = @"from TrnLostCards lost
                                         inner join TrnICardRequest req on req.RequestId = lost.RequestId
                                         inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                        inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-                                        inner join MRank ranks on ranks.RankId=bas.RankId
-                                        inner join MapUnit uni on uni.UnitMapId=bas.UnitId
-                                        inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                        inner join MApplyFor appl on appl.ApplyForId=bas.ApplyForId";
-                string whereClause = @"Where bas.ServiceNo like '%' + @SearchTerm + '%'";
+                                        inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+                                        inner join MRank ranks on ranks.RankId = basic_2.RankId
+                                        inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
+                                        inner join MUnit Muni on Muni.UnitId = uni.UnitId
+                                        inner join MApplyFor appl on appl.ApplyForId = basic_2.ApplyForId";
+                string whereClause = @"Where @SearchTerm IS NULL OR basic_2.ServiceNo LIKE @SearchTerm";
 
                 var multiQuery = $@"
                         WITH RecordCTE AS (
@@ -162,11 +170,12 @@ namespace DataAccessLayer
                 using (var connection = _contextDP.CreateConnection())
                 {
                     // Parameters for SQL query
-                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var searchTerm = string.IsNullOrEmpty(dTO.searchValue) ? null : $"%{dTO.searchValue.Trim()}%";
+
                     var parameters = new DynamicParameters();
                     parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
 
                     var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
                     var records = (await ret.ReadAsync<DTOLostCardGetResponse>()).ToList();
@@ -213,16 +222,16 @@ namespace DataAccessLayer
             var records = new List<DTOLostCardExportResponse>();
             try
             {
-                string query = @"select req.RequestId,lost.LostCardId,bas.ServiceNo as ArmyNo,
-	                                ranks.RankAbbreviation,bas.FName,bas.LName,Muni.Abbreviation Unit,
+                string query = @"select req.RequestId,lost.LostCardId,basic_2.ServiceNo AS ArmyNo,
+	                                ranks.RankAbbreviation,basic_2.FName,basic_2.LName,Muni.Abbreviation Unit,
 	                                lost.UpdatedOn as DateAndTime,lost.Remark,lost.IsActive as IsActiveBool,
 	                                req.CardSerialNo,req.ChipNo,lost.LostOn
 	                                from TrnLostCards lost
 	                                inner join TrnICardRequest req on req.RequestId = lost.RequestId
-	                                inner join BasicDetails bas on bas.BasicDetailId=req.BasicDetailId
-	                                inner join MRank ranks on ranks.RankId=bas.RankId
-	                                inner join MapUnit uni on uni.UnitMapId=bas.UnitId
-	                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                                    inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+	                                inner join MRank ranks on ranks.RankId = basic_2.RankId
+	                                inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
+	                                inner join MUnit Muni on Muni.UnitId = uni.UnitId
                                   Where req.RequestId in @Ids";
 
                 // Parameters for SQL query, adding the list of Request IDs
@@ -237,6 +246,7 @@ namespace DataAccessLayer
 
                     // Convert the results to a list
                     records = ret.ToList();
+
                 }
             }
             catch (Exception ex)
@@ -357,11 +367,10 @@ namespace DataAccessLayer
                     await db.ExecuteAsync(query, parameters4, transaction: transaction);
 
 
-                    var insertApplClose = @$" INSERT INTO TrnApplClose (BasicDetailId, ReasonId, Authority, Remarks, RequestId, IsActive, Updatedby, UpdatedOn, UserId)
-                                         VALUES (@BasicDetailId, @ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @Updatedby, @UpdatedOn, @UserId);";
+                    var insertApplClose = @$" INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, Updatedby, UpdatedOn, UserId)
+                                         VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @Updatedby, @UpdatedOn, @UserId);";
 
                     var parameters3 = new DynamicParameters();
-                    parameters3.Add("@BasicDetailId", Data.BasicDetailId, DbType.Int32, ParameterDirection.Input);
                     parameters3.Add("@ReasonId", ReasonId, DbType.Byte, ParameterDirection.Input);
                     parameters3.Add("@Authority", Data.AppointmentName, DbType.String, ParameterDirection.Input, 50);
                     parameters3.Add("@Remarks", Data.Remark, DbType.String, ParameterDirection.Input, 100);

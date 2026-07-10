@@ -557,62 +557,6 @@ namespace DataAccessLayer
         }
 
         /// <summary>
-        /// Retrieves basic details for a given RequestId.
-        /// </summary>
-        /// <param name="RequestId">The Request ID to fetch related basic details.</param>
-        /// <returns>
-        /// A task that represents the asynchronous operation. The task result contains 
-        /// a list of basic detail view models related to the RequestId.
-        /// </returns>
-        public async Task<List<BasicDetailVM>> GetByRequestId(int RequestId)
-        {
-            //var BasicDetailList = _context.BasicDetails.Where(x => x.IsDeleted == false && x.Updatedby == UserId).ToList();
-
-            string query = "SELECT B.RegistrationId,B.BasicDetailId,B.Name,B.ServiceNo,B.DOB,B.DateOfCommissioning,B.PermanentAddress," +
-                "C.StepId StepCounter,C.Id StepId,ty.TypeId ICardType,trnicrd.RequestId " +
-                " FROM BasicDetails B  inner join TrnICardRequest trnicrd on trnicrd.BasicDetailId = B.BasicDetailId " +
-                " inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId " +
-                " inner join MICardType ty on ty.TypeId = trnicrd.TypeId " +
-                " inner join UserProfile pr on pr.UserId = trnicrd.Updatedby " +
-                " WHERE trnicrd.RequestId=@RequestId";
-
-            try 
-            {
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    var BasicDetailList = await connection.QueryAsync<BasicDetailVM>(query, new { RequestId });
-
-                    int sno = 1;
-                    var allrecord = (from e in BasicDetailList
-                                     select new BasicDetailVM()
-                                     {
-                                         BasicDetailId = e.BasicDetailId,
-
-                                         Sno = sno++,
-                                         FName = e.FName,
-                                         LName = e.LName,
-                                         ServiceNo = e.ServiceNo,
-                                         DOB = e.DOB,
-                                         DateOfCommissioning = e.DateOfCommissioning,
-                                         PermanentAddress = e.PermanentAddress,
-                                         StepCounter = e.StepCounter,
-                                         StepId = e.StepId,
-                                         ICardType = e.ICardType,
-                                         //RegistrationId = e.RegistrationId,
-                                         RequestId = e.RequestId,
-                                     }).ToList();
-                    return await Task.FromResult(allrecord);
-
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "UserProfileDB->GetDataForFwd");
-                return new List<BasicDetailVM>();
-            }
-        }
-
-        /// <summary>
         /// Retrieves a list of forwarded ICARD responses based on multiple filtering criteria.
         /// </summary>
         /// <param name="StepId">The step ID to filter by.</param>

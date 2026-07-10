@@ -21,10 +21,6 @@ namespace DataTransferObject.Response
         public int _3rdLevelReject { get; set; }
         public int _4thLevelPending { get; set; }
         public int _4thLevelApproved { get; set; }
-        public int _4thLevelReject { get; set; }
-        public int ExportPending { get; set; }
-        public int ExportApproved { get; set; }
-        public int ExportReject { get; set; }
         public int CsvUploadCount { get; set; }
 
     }

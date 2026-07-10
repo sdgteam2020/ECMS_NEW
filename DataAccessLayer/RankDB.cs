@@ -87,11 +87,12 @@ namespace DataAccessLayer
         {
             try
             {
-                string query = "Select  count(distinct bd.BasicDetailId) as TotalBD, count(distinct bdt.BasicDetailTempId) as TotalBDT, count(distinct up.UserId) as TotalUP from MRank mrk" +
-                                " left join BasicDetails bd on bd.RankId =mrk.RankId " +
-                                " left join BasicDetailTemps bdt on bdt.RankId = mrk.RankId " +
-                                " left join UserProfile up on up.RankId = mrk.RankId " +
-                                " where mrk.RankId =@RankId";
+                string query = @"Select count(distinct bd.BasicDetailId) as TotalBD, count(distinct bd_2.BasicDetailId) as TotalBD_2, count(distinct bdt.BasicDetailTempId) as TotalBDT, count(distinct up.UserId) as TotalUP from MRank mrk
+                                left join BasicDetails bd on bd.RankId =mrk.RankId 
+                                left join AFSAC2.dbo.BasicDetails bd_2 on bd_2.RankId =mrk.RankId 
+                                left join BasicDetailTemps bdt on bdt.RankId = mrk.RankId 
+                                left join UserProfile up on up.RankId = mrk.RankId 
+                                where mrk.RankId =@RankId";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -168,7 +169,7 @@ namespace DataAccessLayer
                 List<DTORankResponse> dTORanks = new List<DTORankResponse>();
                 var responseData = new DTODataTablesResponse<DTORankResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTORanks

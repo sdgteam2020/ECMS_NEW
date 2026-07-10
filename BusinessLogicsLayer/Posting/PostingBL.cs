@@ -14,10 +14,6 @@ namespace BusinessLogicsLayer.Posting
             postingDB = _postingDB;
         }
 
-        public async Task<List<DTOPostingOutDetilsResponse>> GetAllPostingHistory(int AspNetUsersId)
-        {
-            return await postingDB.GetAllPostingHistory(AspNetUsersId);
-        }
         public async Task<DTODataTablesResponse<DTOPostingOutDetilsResponse>> GetPostingOutWithType(DTODataTablesRequest dTO,int AspNetUsersId, int UnitMapId, int Type, string PostingTy)
         {
             return await postingDB.GetPostingOutWithType(dTO, AspNetUsersId, UnitMapId, Type, PostingTy);

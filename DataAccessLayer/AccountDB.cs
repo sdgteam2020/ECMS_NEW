@@ -218,7 +218,7 @@ namespace DataAccessLayer
                 List<DTODomainRegnResponse> dTOUserRegnResponses = new List<DTODomainRegnResponse>();
                 var responseData = new DTODataTablesResponse<DTODomainRegnResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -890,7 +890,7 @@ namespace DataAccessLayer
                 List<DTOUserRegnResponse> dTOUserRegnResponses = new List<DTOUserRegnResponse>();
                 var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -988,7 +988,7 @@ namespace DataAccessLayer
                 List<DTOUserRegnResponse> dTOUserRegns = new List<DTOUserRegnResponse>();
                 var responseData = new DTODataTablesResponse<DTOUserRegnResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegns
@@ -1016,12 +1016,12 @@ namespace DataAccessLayer
         {
             try
             {
-                var queryableData = (from up in _context.UserProfile
-                                     join rk in _context.MRank on up.RankId equals rk.RankId
-                                     join at in _context.MArmedType on up.ArmedId equals at.ArmedId
-                                     join tdm in _context.TrnDomainMapping on up.UserId equals tdm.UserId into uptdm_jointable
+                var queryableData = (from up in _context.UserProfile.AsNoTracking()
+                                     join rk in _context.MRank.AsNoTracking() on up.RankId equals rk.RankId
+                                     join at in _context.MArmedType.AsNoTracking() on up.ArmedId equals at.ArmedId
+                                     join tdm in _context.TrnDomainMapping.AsNoTracking() on up.UserId equals tdm.UserId into uptdm_jointable
                                      from xtdm in uptdm_jointable.DefaultIfEmpty()
-                                     join u in _context.Users on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
+                                     join u in _context.Users.AsNoTracking() on xtdm.AspNetUsersId equals u.Id into xtdmu_jointable
                                      from xu in xtdmu_jointable.DefaultIfEmpty()
                                      select new DTOProfileManageResponse()
                                      {
@@ -1042,14 +1042,14 @@ namespace DataAccessLayer
                                      }).AsQueryable();
 
                 // Total records without filtering
-                var totalRecords = queryableData.Count();
+                var totalRecords = await  queryableData.CountAsync();
 
                 // Apply filtering
-               if (!string.IsNullOrEmpty(request.searchValue))
+               if (!string.IsNullOrWhiteSpace(request.searchValue))
                {
-                   string searchValue = request.searchValue.ToLower();
+                   string searchValue = request.searchValue.Trim();
 
-                   queryableData = queryableData.Where(x => x.ArmyNo.ToLower().Contains(searchValue));
+                   queryableData = queryableData.Where(x =>x.ArmyNo != null && x.ArmyNo.StartsWith(searchValue));
                 }
 
                 // Apply sorting
@@ -1062,20 +1062,18 @@ namespace DataAccessLayer
                 }
 
                 // Total records after filtering
-                var filteredRecords = queryableData.Count();
+                var filteredRecords = await queryableData.CountAsync();
 
                 // Paginate the result
                 var paginatedData = await queryableData.Skip(request.Start).Take(request.Length).ToListAsync();
 
-                var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
+                return new DTODataTablesResponse<DTOProfileManageResponse>
                 {
                     draw = request.Draw,
                     recordsTotal = totalRecords, // Total records without filtering
                     recordsFiltered = filteredRecords, // Total records after filtering
                     data = paginatedData
                 };  
-
-                return responseData;
             }
             catch (Exception ex)
             {
@@ -1083,7 +1081,7 @@ namespace DataAccessLayer
                 List<DTOProfileManageResponse> dTOUserRegnResponses = new List<DTOProfileManageResponse>();
                 var responseData = new DTODataTablesResponse<DTOProfileManageResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -2132,7 +2130,7 @@ namespace DataAccessLayer
                 List<DTOClaimsStoreResponse> dTOUserRegnResponses = new List<DTOClaimsStoreResponse>();
                 var responseData = new DTODataTablesResponse<DTOClaimsStoreResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -2235,7 +2233,7 @@ namespace DataAccessLayer
                 List<DTOUsersByClaim> dTOUserRegnResponses = new List<DTOUsersByClaim>();
                 var responseData = new DTODataTablesResponse<DTOUsersByClaim>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses

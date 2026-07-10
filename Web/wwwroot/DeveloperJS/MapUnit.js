@@ -3,6 +3,9 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlCommand", 1, "");
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindDataMapUnit();
 
     $("#txtSusno").autocomplete({
@@ -281,6 +284,7 @@ async function GetUnitDetails(val, flag) {
         });
     }
 }
+
 function BindDataMapUnit() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
         // Destroy the DataTable and clear the table content

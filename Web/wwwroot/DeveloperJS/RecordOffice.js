@@ -5,6 +5,9 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlArmType", ArmyType, "");
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData()
     $("#btnAdd").on("click",function () {
         Reset();

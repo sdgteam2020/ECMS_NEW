@@ -8,6 +8,6 @@ namespace BusinessLogicsLayer.Posting
     public interface IApplCloseBL : IGenericRepositoryDL<TrnApplClose>
     {
         public Task<DTOApplicationCloseResponse> RequestIdExists(DTOApplicationCloseRequest DTo);
-        public Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data);
+        public Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data, ICardHistoryResponseAll? cardHistoryResponses);
     }
 }

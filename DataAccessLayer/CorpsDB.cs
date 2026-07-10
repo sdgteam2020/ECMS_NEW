@@ -204,7 +204,7 @@ namespace DataAccessLayer
                 List<DTOCorpsResponse> dTOAllCommands = new List<DTOCorpsResponse>();
                 var responseData = new DTODataTablesResponse<DTOCorpsResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOAllCommands

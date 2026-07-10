@@ -13,7 +13,7 @@ namespace DataTransferObject.Response
         public string ArmyNo { get; set; }
         public string RankAbbreviation { get; set; }
         public string FName { get; set; }
-        public string LName { get; set; }
+        public string? LName { get; set; }
         public string RankAndName => $"{RankAbbreviation} {FName} {(string.IsNullOrEmpty(LName) ? string.Empty : LName)}";
         public string Unit { get; set; }
         public DateTime DestructedOn { get; set; }
@@ -24,5 +24,11 @@ namespace DataTransferObject.Response
         public string Reasons { get; set; }
         public string CardSerialNo { get; set; }
         public string ChipNo { get; set; }
+
+        public string? FName_1 { get; set; }
+        public string? LName_1 { get; set; }
+
+        public string? FName_2 { get; set; }
+        public string? LName_2 { get; set; }
     }
 }

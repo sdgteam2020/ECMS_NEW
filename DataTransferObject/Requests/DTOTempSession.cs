@@ -42,5 +42,7 @@ namespace DataTransferObject.Requests
         public string AppName { get; set; } = string.Empty;
         public string Salt { get; set; } = string.Empty;
 
+        public Guid LoginGuid { get; set; }
+
     }
 }

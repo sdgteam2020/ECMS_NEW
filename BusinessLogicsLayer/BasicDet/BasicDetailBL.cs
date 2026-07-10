@@ -97,10 +97,7 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetAllICardType();
         }
-        public async Task<BasicDetail?> FindServiceNo(string ServiceNo)
-        {
-            return await _iBasicDetailDB.FindServiceNo(ServiceNo);
-        }
+       
         public async Task<int?> MaxBasicDetailId(string ServiceNo)
         {
             return await _iBasicDetailDB.MaxBasicDetailId(ServiceNo);
@@ -114,20 +111,16 @@ namespace BusinessLogicsLayer.BasicDet
             return await _iBasicDetailDB.GetBasicDetailForParitalViewByRequestId(RequestId);
         }
 
-        public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailByRequestId(int RequestId)
+        public async Task<DTOBasicDetailByRequestIdResponse?> GetBasicDetailByRequestId(int RequestId)
         {
             return await _iBasicDetailDB.GetBasicDetailByRequestId(RequestId);
-        }
-        public async Task<BasicDetailCrtAndUpdVM?> GetBasicDetailById(int BasicDetailId)
-        {
-            return await _iBasicDetailDB.GetBasicDetailById(BasicDetailId);
         }
         public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId)
         {
             return _iBasicDetailDB.GetBesicDetailForEditById(BasicDetailId);
         }
 
-        public Task<ICardHistoryResponseAll?> ICardHistory(int RequestId)
+        public Task<ICardHistoryResponseAll> ICardHistory(int RequestId)
         {
             
             return _iBasicDetailDB.ICardHistory(RequestId);
@@ -183,11 +176,6 @@ namespace BusinessLogicsLayer.BasicDet
         public async Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId)
         {
             var data = await _iBasicDetailDB.GetROListByArmedId(ArmedId);
-            return data;
-        }
-        public async Task<DTOApplicationTrack?> ApplicationHistory(int RequestId)
-        {
-            var data = await _iBasicDetailDB.ApplicationHistory(RequestId);
             return data;
         }
         public async Task<DTOUploadChipAndSerialResponse?> CardPrinitngCSVUpload(List<DTOCardPriningRequest> request)

@@ -2,6 +2,9 @@ $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     Reset();
+
+    applyDataTableSearchValidation('#tbldata');
+
     BindData()
     //$("#btnAdd").click(function () {
     //    Reset();

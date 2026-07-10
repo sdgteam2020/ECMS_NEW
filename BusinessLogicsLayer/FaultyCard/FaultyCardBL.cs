@@ -32,13 +32,9 @@ namespace BusinessLogicsLayer.FaultyCard
         {
             return await _iFaultyCardDB.FindRequestId(RequestId);
         }
-        public async Task<DTOFaultyCardListResponse?> GetTrnFaultyCardDetail(int TrnFaultyCardId)
+        public async Task<DTOGenericResponse<DTOFaultyCardListResponse?>> GetTrnFaultyCardDetail(int TrnFaultyCardId)
         {
             return await _iFaultyCardDB.GetTrnFaultyCardDetail(TrnFaultyCardId);
-        }
-        public async Task<List<DTOFaultyCardListResponse>?> GetAllFaulty(bool Claim, int MapUnitId)
-        {
-            return await _iFaultyCardDB.GetAllFaulty(Claim, MapUnitId);
         }
         public async Task<DTODataTablesResponse<DTOFaultyCardListResponse>> GetAllFaulty(DTODataTablesRequestForFaultyCard request)
         {

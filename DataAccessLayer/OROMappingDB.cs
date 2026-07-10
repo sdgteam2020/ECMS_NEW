@@ -136,7 +136,7 @@ namespace DataAccessLayer
                 List<DTOOROMappingResponse> dTOOROs = new List<DTOOROMappingResponse>();
                 var responseData = new DTODataTablesResponse<DTOOROMappingResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOOROs

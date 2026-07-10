@@ -17,7 +17,7 @@ namespace DataTransferObject.Response
         public DateTime LostOn { get; set; }
         public string RemarksNameList { get; set; } = string.Empty;
         public string? Remark { get; set; }
-       
+
         [JsonIgnore]
         public string? SupportDocName { get; set; }
         public bool IsFIRLogged { get; set; }

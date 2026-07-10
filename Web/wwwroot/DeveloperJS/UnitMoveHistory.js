@@ -2,7 +2,8 @@
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 });
 function GetUnitMoveHistory(MapUnitChangeRequestId) {
-    let param = new URLSearchParams({ MapUnitChangeRequestId: MapUnitChangeRequestId });
+
+    //let param = new URLSearchParams({ MapUnitChangeRequestId: MapUnitChangeRequestId });
     var listItem = "";
     fetch('/Master/GetUnitMoveHistory', {
         method: 'POST',
@@ -10,7 +11,9 @@ function GetUnitMoveHistory(MapUnitChangeRequestId) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'RequestVerificationToken': globalThis.RequestVerificationToken
         },
-        body: param
+        body: new URLSearchParams({
+            Request: encryptPayloadData(MapUnitChangeRequestId)
+        })
     })
         .then(response => {
             if (!response.ok) {
@@ -19,12 +22,12 @@ function GetUnitMoveHistory(MapUnitChangeRequestId) {
             return response.json();
         })
         .then(result => {
-            if (result != null) {
-                listItem += `<div class="fw-bold">Unit Name - ${result.UnitAbbreviation} (${result.Sus_no })</div>`;
-                listItem += `<div class="fw-bold">Request By - ${result.RankAbbreviation} ${result.RequestBy} (${result.ArmyNo})</div>`;
-                listItem += `<div class="fw-bold">Approve By - ${result.IsEditAction == true ? result.AproverRankAbbreviation + " " + result.AprovedBy + " (" + result.AproverArmyNo + ")" : ""} </div>`;
-                listItem += `<div class="fw-bold">Status - ${result.IsEditAction === false ? "<span class='badge bg-warning'>Pendding</span>" : result.RequestStatus === true ? "<span class='badge bg-success'>Accepted</span>" : "<span class='badge badge-pill badge-danger'>Rejected</span>"}</div>`;
-                listItem += `<div class="fw-bold">Status Dt & Time - ${result.IsEditAction == true ? DateFormateddMMyyyyhhmmss(result.AdminUpdatedOn) : ""} </div>`;
+            if (result.Result === true) {
+                listItem += `<div class="fw-bold">Unit Name - ${result.Value.UnitAbbreviation} (${result.Value.Sus_no })</div>`;
+                listItem += `<div class="fw-bold">Request By - ${result.Value.RankAbbreviation} ${result.Value.RequestBy} (${result.Value.ArmyNo})</div>`;
+                listItem += `<div class="fw-bold">Approve By - ${result.Value.IsEditAction == true ? result.Value.AproverRankAbbreviation + " " + result.Value.AprovedBy + " (" + result.Value.AproverArmyNo + ")" : ""} </div>`;
+                listItem += `<div class="fw-bold">Status - ${result.Value.IsEditAction === false ? "<span class='badge bg-warning'>Pendding</span>" : result.Value.RequestStatus === true ? "<span class='badge bg-success'>Accepted</span>" : "<span class='badge badge-pill badge-danger'>Rejected</span>"}</div>`;
+                listItem += `<div class="fw-bold">Status Dt & Time - ${result.Value.IsEditAction == true ? DateFormateddMMyyyyhhmmss(result.Value.AdminUpdatedOn) : ""} </div>`;
                 listItem += `<div class="col-sm-12 mt-2">
                                     <div class="card p-1">
                                         <div class="feature-box3">
@@ -37,50 +40,50 @@ function GetUnitMoveHistory(MapUnitChangeRequestId) {
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-sm-5 fw-bold">Unit Type</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.ExistingUnitType === 1 ? "Unit" : result.ExistingUnitType === 2 ? "Fmn HQ" : result.ExistingUnitType === 3 ? "Dte / Sub Dte Branch":""}</label>
+                                                <label class="col-form-label">${result.Value.ExistingUnitType === 1 ? "Unit" : result.Value.ExistingUnitType === 2 ? "Fmn HQ" : result.Value.ExistingUnitType === 3 ? "Dte / Sub Dte Branch":""}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.ExistingUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.ExistingUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Comd / PSO</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.ExistingComdName}</label>
+                                                <label class="col-form-label">${result.Value.ExistingComdName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.ExistingUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.ExistingUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Corps / Dte / Area</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.ExistingCorpsName}</label>
+                                                <label class="col-form-label">${result.Value.ExistingCorpsName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.ExistingUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.ExistingUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Bde</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.ExistingDivName}</label>
+                                                <label class="col-form-label">${result.Value.ExistingDivName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.ExistingUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.ExistingUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Div / Sub Area</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.ExistingBdeName}</label>
+                                                <label class="col-form-label">${result.Value.ExistingBdeName}</label>
                                             </div>
                                         </div>
 
-                                        <div class="form-group row mb-0 ${result.ExistingUnitType === 1 || result.ExistingUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.ExistingUnitType === 1 || result.Value.ExistingUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Fmn / Branch</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.ExistingBranchName}</label>
+                                                <label class="col-form-label">${result.Value.ExistingBranchName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.ExistingUnitType === 1 || result.ExistingUnitType === 2 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.ExistingUnitType === 1 || result.Value.ExistingUnitType === 2 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">PSO / Dte </label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.ExistingPSOName}</label>
+                                                <label class="col-form-label">${result.Value.ExistingPSOName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.ExistingUnitType === 1 || result.ExistingUnitType === 2 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.ExistingUnitType === 1 || result.Value.ExistingUnitType === 2 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">DG / Sub Dte</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.ExistingSubDteName}</label>
+                                                <label class="col-form-label">${result.Value.ExistingSubDteName}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -97,50 +100,50 @@ function GetUnitMoveHistory(MapUnitChangeRequestId) {
                                         <div class="form-group row mb-0">
                                             <label class="col-form-label col-sm-5 fw-bold">Unit Type</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.RequestUnitType === 1 ? "Unit" : result.RequestUnitType === 2 ? "Fmn HQ" : result.RequestUnitType === 3 ? "Dte / Sub Dte Branch" : ""}</label>
+                                                <label class="col-form-label">${result.Value.RequestUnitType === 1 ? "Unit" : result.Value.RequestUnitType === 2 ? "Fmn HQ" : result.Value.RequestUnitType === 3 ? "Dte / Sub Dte Branch" : ""}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.RequestUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.RequestUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Comd / PSO</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.RequestComdName}</label>
+                                                <label class="col-form-label">${result.Value.RequestComdName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.RequestUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.RequestUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Corps / Dte / Area</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.RequestCorpsName}</label>
+                                                <label class="col-form-label">${result.Value.RequestCorpsName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.RequestUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.RequestUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Bde</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.RequestDivName}</label>
+                                                <label class="col-form-label">${result.Value.RequestDivName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.RequestUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.RequestUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Div / Sub Area</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.RequestBdeName}</label>
+                                                <label class="col-form-label">${result.Value.RequestBdeName}</label>
                                             </div>
                                         </div>
 
-                                        <div class="form-group row mb-0 ${result.RequestUnitType === 1 || result.RequestUnitType === 3 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.RequestUnitType === 1 || result.Value.RequestUnitType === 3 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">Fmn / Branch</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.RequestBranchName}</label>
+                                                <label class="col-form-label">${result.Value.RequestBranchName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.RequestUnitType === 1 || result.RequestUnitType === 2 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.RequestUnitType === 1 || result.Value.RequestUnitType === 2 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">PSO / Dte </label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.RequestPSOName}</label>
+                                                <label class="col-form-label">${result.Value.RequestPSOName}</label>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-0 ${result.RequestUnitType === 1 || result.RequestUnitType === 2 ? "d-none" : ""}">
+                                        <div class="form-group row mb-0 ${result.Value.RequestUnitType === 1 || result.Value.RequestUnitType === 2 ? "d-none" : ""}">
                                             <label class="col-form-label col-sm-5 fw-bold">DG / Sub Dte</label>
                                             <div class="col-sm-7">
-                                                <label class="col-form-label">${result.RequestSubDteName}</label>
+                                                <label class="col-form-label">${result.Value.RequestSubDteName}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -156,7 +159,7 @@ function GetUnitMoveHistory(MapUnitChangeRequestId) {
                 myModal.show();
             }
             else {
-                toastr.error('Invalid Input.');
+                toastr.error(result.Message);
             }
         })
         .catch(error => {

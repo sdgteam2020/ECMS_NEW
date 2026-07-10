@@ -1,4 +1,523 @@
-﻿.form-group .labellogin {
+﻿/* =====================================================
+   ECMS MODERN LOGIN PAGE
+   This file only styles login page body.
+===================================================== */
+
+:root {
+    --ecms-login-header-height: 120px;
+    --ecms-login-footer-height: 42px;
+    --ecms-login-blue: #006cf5;
+    --ecms-login-blue-dark: #003e9f;
+    --ecms-login-sky: #48c8ff;
+    --ecms-login-ink: #071b44;
+    --ecms-login-muted: #536985;
+    --ecms-login-white: #ffffff;
+}
+
+html,
+body {
+    min-height: 100%;
+    overflow-x: hidden !important;
+}
+
+body {
+    background: #061b3a !important;
+}
+
+/* Main page background */
+.ecms-login-page {
+    position: relative;
+    min-height: 100vh;
+    padding: calc(var(--ecms-login-header-height) + 34px) 24px calc(var(--ecms-login-footer-height) + 30px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, rgba(3, 36, 86, 0.82) 0%, rgba(5, 58, 134, 0.72) 45%, rgba(7, 49, 116, 0.85) 100%), url('/Images/HomePage/iamselfloginbg.png') left center / cover no-repeat;
+    overflow: hidden;
+}
+
+    /* Blue tech overlay without changing header/footer */
+    .ecms-login-page::before {
+        content: "";
+        position: absolute;
+        inset: var(--ecms-login-header-height) 0 var(--ecms-login-footer-height) 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 18% 32%, rgba(107, 188, 255, 0.18), transparent 30%), radial-gradient(circle at 78% 48%, rgba(72, 200, 255, 0.22), transparent 26%), linear-gradient(135deg, transparent 0 60%, rgba(87, 178, 255, 0.12) 60% 68%, transparent 68%), repeating-radial-gradient(circle at 96% 20%, rgba(103, 205, 255, 0.18) 0 2px, transparent 2px 13px);
+        opacity: 0.9;
+    }
+
+    /* Right-side security watermark like target image */
+    .ecms-login-page::after {
+        content: "";
+        position: absolute;
+        right: 9%;
+        top: 38%;
+        width: 330px;
+        height: 330px;
+        border-radius: 50%;
+        border: 2px solid rgba(112, 204, 255, 0.18);
+        background: radial-gradient(circle, transparent 0 45%, rgba(112, 204, 255, 0.10) 46%, transparent 47%), radial-gradient(circle, transparent 0 62%, rgba(112, 204, 255, 0.08) 63%, transparent 64%);
+        box-shadow: inset 0 0 45px rgba(112, 204, 255, 0.07);
+        opacity: 0.75;
+        pointer-events: none;
+    }
+
+.ecms-login-backdrop {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 33, 86, 0.10), rgba(0, 15, 42, 0.52));
+    pointer-events: none;
+}
+.ecms-token-bg-shield {
+    position: absolute;
+    right: 12%;
+    top: 33%;
+    width: min(360px, 28vw);
+    color: rgba(132, 205, 255, 0.20);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.ecms-login-stage {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* Login card */
+.ecms-login-card {
+    position: relative;
+    width: min(620px, 94vw);
+    padding: 58px 14px 14px;
+    border-radius: 24px;
+    background: rgba(238, 247, 255, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    box-shadow: 0 28px 70px rgba(0, 21, 63, 0.45), 0 0 0 2px rgba(114, 196, 255, 0.28), inset 0 1px 0 rgba(255,255,255,0.8);
+    backdrop-filter: blur(16px);
+}
+
+    .ecms-login-card::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.54);
+        box-shadow: inset 0 0 35px rgba(255,255,255,0.38);
+        pointer-events: none;
+    }
+
+.ecms-login-badge {
+    position: absolute;
+    top: -52px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0b68ff;
+    font-size: 58px;
+    background: rgba(255,255,255,0.94);
+    border: 5px solid rgba(255,255,255,0.72);
+    box-shadow: 0 14px 28px rgba(3, 30, 88, 0.34), 0 0 0 2px rgba(27, 123, 255, 0.18);
+}
+
+.ecms-badge-lock {
+    position: absolute;
+    top: 46px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #0b68ff;
+    font-size: 20px;
+}
+
+.ecms-login-panel {
+    position: relative;
+    z-index: 2;
+    padding: 34px 52px 34px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.46);
+}
+
+.ecms-login-heading {
+    text-align: center;
+    margin-bottom: 26px;
+}
+
+    .ecms-login-heading h1 {
+        margin: 0;
+        color: var(--ecms-login-ink);
+        font-size: clamp(28px, 2.7vw, 40px);
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -0.5px;
+    }
+
+.ecms-login-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 18px 0 18px;
+    color: #006cff;
+}
+
+    .ecms-login-divider span {
+        width: 86px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0,108,255,0.85), transparent);
+    }
+
+    .ecms-login-divider i {
+        font-size: 15px;
+        filter: drop-shadow(0 0 6px rgba(0,108,255,0.55));
+    }
+
+.ecms-login-heading p {
+    margin: 0;
+    color: #14305f;
+    font-size: 18px;
+    line-height: 1.45;
+    font-weight: 500;
+}
+
+.ecms-login-form {
+    margin-top: 0;
+}
+
+.ecms-form-group {
+    margin-bottom: 20px;
+}
+
+.ecms-form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #10254f;
     font-size: 16px;
+    font-weight: 800;
+}
+
+.ecms-input-wrap {
+    position: relative;
+}
+
+.ecms-input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    color: #58739e;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.ecms-input,
+.main-signup-header .ecms-input,
+.ecms-login-form .form-control,
+.ecms-login-form .form-select {
+    width: 100%;
+    height: 54px;
+    min-height: 54px;
+    padding: 12px 18px 12px 56px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(86, 118, 164, 0.34) !important;
+    background-color: rgba(255,255,255,0.86) !important;
+    color: #0a1f49 !important;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(10, 44, 92, 0.08), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+    outline: none !important;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+    .ecms-input:focus,
+    .ecms-login-form .form-control:focus,
+    .ecms-login-form .form-select:focus {
+        border-color: rgba(0, 108, 255, 0.80) !important;
+        background: #ffffff !important;
+        box-shadow: 0 0 0 4px rgba(0,108,255,0.14), 0 10px 28px rgba(10, 44, 92, 0.12) !important;
+    }
+
+    .ecms-input::placeholder {
+        color: #7b8ca8;
+        font-weight: 500;
+    }
+
+.ecms-select {
+    appearance: auto;
+}
+
+.ecms-login-submit {
+    width: 100%;
+    min-height: 66px;
+    margin-top: 8px;
+    border: 0;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #067dff 0%, #0046dc 100%);
+    box-shadow: 0 16px 34px rgba(0, 84, 224, 0.34), inset 0 1px 0 rgba(255,255,255,0.28);
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+    .ecms-login-submit:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.04);
+        box-shadow: 0 20px 40px rgba(0, 84, 224, 0.40), inset 0 1px 0 rgba(255,255,255,0.32);
+    }
+
+    .ecms-login-submit:active {
+        transform: translateY(0);
+    }
+
+    .ecms-login-submit i {
+        font-size: 22px;
+    }
+
+.ecms-secure-note {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #526d98;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+    .ecms-secure-note i {
+        color: #006cff;
+        font-size: 19px;
+    }
+
+.ecms-validation {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
     font-weight: 700;
 }
+
+.ecms-alert {
+    margin-top: 16px;
+    border-radius: 12px;
+}
+
+/* Do not allow old login.css to pull the card using margins */
+.login-wrap,
+.bg-white.login-wrap {
+    margin: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    :root {
+        --ecms-login-header-height: 100px;
+    }
+
+    .ecms-login-page {
+        padding: calc(var(--ecms-login-header-height) + 28px) 18px calc(var(--ecms-login-footer-height) + 28px);
+    }
+
+    .ecms-login-card {
+        width: min(590px, 94vw);
+    }
+}
+
+@media (max-width: 767.98px) {
+    :root {
+        --ecms-login-header-height: 86px;
+        --ecms-login-footer-height: 0px;
+    }
+
+    .ecms-login-page {
+        min-height: 100vh;
+        padding: calc(var(--ecms-login-header-height) + 62px) 12px 26px;
+        overflow-y: auto;
+    }
+
+    .ecms-login-card {
+        padding: 48px 10px 10px;
+        border-radius: 20px;
+    }
+
+    .ecms-login-badge {
+        width: 92px;
+        height: 92px;
+        top: -44px;
+        font-size: 48px;
+    }
+
+    .ecms-badge-lock {
+        top: 38px;
+        font-size: 17px;
+    }
+
+    .ecms-login-panel {
+        padding: 30px 18px 26px;
+    }
+
+    .ecms-login-heading h1 {
+        font-size: 28px;
+    }
+
+    .ecms-login-heading p {
+        font-size: 15px;
+    }
+
+    .ecms-login-divider span {
+        width: 64px;
+    }
+
+    .ecms-input,
+    .main-signup-header .ecms-input,
+    .ecms-login-form .form-control,
+    .ecms-login-form .form-select {
+        height: 50px;
+        min-height: 50px;
+    }
+
+    .ecms-login-submit {
+        min-height: 56px;
+        font-size: 19px;
+    }
+
+    .ecms-secure-note {
+        font-size: 14px;
+        text-align: center;
+    }
+}
+
+@media (max-height: 760px) and (min-width: 768px) {
+    .ecms-login-page {
+        align-items: flex-start;
+        padding-top: calc(var(--ecms-login-header-height) + 82px);
+        overflow-y: auto;
+    }
+
+    .ecms-login-card {
+        margin-bottom: 32px;
+    }
+    .ecms-token-bg-shield {
+        display: none;
+    }
+}
+
+
+/* =====================================================
+   ECMS LOGIN FINAL FIXES
+   Fix shield icon, select double-arrow, and extra inner-card look
+===================================================== */
+
+/* Use SVG badge instead of Font Awesome shield, so icon never goes missing */
+.ecms-login-badge {
+    overflow: visible !important;
+}
+
+    .ecms-login-badge > i,
+    .ecms-badge-lock {
+        display: none !important;
+    }
+
+.ecms-shield-svg {
+    width: 72px;
+    height: 72px;
+    display: block;
+}
+
+    .ecms-shield-svg .shield-outline {
+        fill: rgba(255, 255, 255, 0.88);
+        stroke: #006cff;
+        stroke-width: 3.2;
+        stroke-linejoin: round;
+    }
+
+    .ecms-shield-svg .shield-user-head,
+    .ecms-shield-svg .shield-user-body,
+    .ecms-shield-svg .shield-lock-hook {
+        fill: none;
+        stroke: #006cff;
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .ecms-shield-svg .shield-lock-body {
+        fill: #006cff;
+    }
+
+/* Remove extra inner-card feeling; keep one clean glass card */
+.ecms-login-card::before {
+    display: none !important;
+}
+
+.ecms-login-panel {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Fix double arrow in role dropdown */
+.ecms-select-wrap {
+    position: relative;
+}
+
+.ecms-login-form .ecms-select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-image: none !important;
+    padding-right: 52px !important;
+}
+
+    .ecms-login-form .ecms-select::-ms-expand {
+        display: none !important;
+    }
+
+.ecms-select-wrap::after {
+    content: "";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid #0a1f49;
+    border-bottom: 2px solid #0a1f49;
+    transform: translateY(-65%) rotate(45deg);
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* Keep form inputs on top of background effects */
+.ecms-login-form,
+.ecms-form-group,
+.ecms-input-wrap {
+    position: relative;
+    z-index: 4;
+}
+
+/* Optional compact polish */
+.ecms-login-card {
+    background: rgba(238, 247, 255, 0.88) !important;
+}
+
+.ecms-login-submit i {
+    margin-left: 4px;
+}
+

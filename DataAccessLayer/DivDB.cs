@@ -210,7 +210,7 @@ namespace DataAccessLayer
                 List<DTODivResponse> dTODivs = new List<DTODivResponse>();
                 var responseData = new DTODataTablesResponse<DTODivResponse>
                 {
-                    draw = 0,
+                    draw = dTO.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTODivs

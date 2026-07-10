@@ -267,7 +267,7 @@ namespace DataAccessLayer
                 List<DTOMapUnitResponse> dTOUserRegnResponses = new List<DTOMapUnitResponse>();
                 var responseData = new DTODataTablesResponse<DTOMapUnitResponse>
                 {
-                    draw = 0,
+                     draw = request.Draw,
                     recordsTotal = 0,
                     recordsFiltered = 0,
                     data = dTOUserRegnResponses
@@ -553,14 +553,55 @@ namespace DataAccessLayer
         {
             try
             {
-                string query = "Select count(distinct bd.BasicDetailId) as TotalBD, count(distinct mro.RecordOfficeId) as TotalRO, count(distinct tdm.Id) as TotalTDM, count(distinct tfwd.TrnFwdId) as TotalTF,count(distinct tpo.Id)as TotalTPOFrom,count(distinct tpo_.Id)as TotalTPOTo from MapUnit munit" +
-                                " left join BasicDetails bd on bd.UnitId = munit.UnitMapId " +
-                                " left join MRecordOffice mro on mro.UnitId =  munit.UnitMapId " +
-                                " left join TrnDomainMapping tdm on tdm.UnitId = munit.UnitMapId " +
-                                " left join TrnFwds tfwd on tfwd.UnitId = munit.UnitMapId " +
-                                " left join TrnPostingOut tpo on tpo.FromUnitID= munit.UnitMapId " +
-                                " left join TrnPostingOut tpo_ on tpo_.ToUnitID= munit.UnitMapId " +
-                                " where munit.UnitMapId=@UnitMapId";
+                string query = @"SELECT
+                                    TotalBD =
+                                    (
+                                        SELECT COUNT(DISTINCT bd.BasicDetailId)
+                                        FROM BasicDetails bd
+                                        WHERE bd.UnitId = @UnitMapId
+                                    ),
+
+                                    TotalBD_2 =
+                                    (
+                                        SELECT COUNT(DISTINCT basic_2.BasicDetailId)
+                                        FROM AFSAC2.dbo.BasicDetails basic_2
+                                        WHERE basic_2.UnitId = @UnitMapId
+                                    ),
+
+                                    TotalRO =
+                                    (
+                                        SELECT COUNT(distinct mro.RecordOfficeId)
+                                        FROM MRecordOffice mro
+                                        WHERE mro.UnitId = @UnitMapId
+                                    ),
+
+                                    TotalTDM =
+                                    (
+                                        SELECT COUNT(distinct tdm.Id)
+                                        FROM TrnDomainMapping tdm
+                                        WHERE tdm.UnitId = @UnitMapId
+                                    ),
+
+                                    TotalTF =
+                                    (
+                                        SELECT COUNT(distinct tfwd.TrnFwdId)
+                                        FROM TrnFwds tfwd
+                                        WHERE tfwd.UnitId = @UnitMapId
+                                    ),
+
+                                    TotalTPOFrom =
+                                    (
+                                        SELECT COUNT(distinct tpo.Id)
+                                        FROM TrnPostingOut tpo
+                                        WHERE tpo.FromUnitID = @UnitMapId
+                                    ),
+
+                                    TotalTPOTo =
+                                    (
+                                        SELECT COUNT(distinct tpo_.Id)
+                                        FROM TrnPostingOut tpo_
+                                        WHERE tpo_.ToUnitID = @UnitMapId
+                                    );";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
@@ -625,39 +666,6 @@ namespace DataAccessLayer
                     parameters.Add("@SubDteId", dTO.SubDteId, DbType.Byte, ParameterDirection.Input);
 
                     var ret = await connection.QueryAsync<DTOUnitResponse>(query, parameters);
-                    return ret.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "MapUnitDB->GetUnitByHierarchy");
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Retrieves a list of units for an Icard request, filtered by provided parameters.
-        /// </summary>
-        /// <param name="Data">The DTO containing filtering parameters such as ComdId, CorpsId, DivId, BdeId, and UnitMapId.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result is a list of DTOUnitResponse objects representing units matching the provided filters.</returns>
-        public async Task<List<DTOUnitResponse>> GetUnitByHierarchyForIcardRequest(DTOMHierarchyRequest Data)
-        {
-            try
-            {
-                string query = " SELECT distinct munit.UnitMapId UnitId FROM TrnICardRequest trnicrd" +
-                               " inner join BasicDetails B on trnicrd.BasicDetailId = B.BasicDetailId" +
-                               " inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId" +
-                               " inner join MapUnit munit on map.UnitId=munit.UnitMapId" +
-                               " where munit.ComdId=ISNULL(@ComdId,munit.ComdId) " +
-                               " and munit.CorpsId=ISNULL(@CorpsId,munit.CorpsId)" +
-                               " and munit.DivId=ISNULL(@DivId,munit.DivId)" +
-                               " and munit.BdeId=ISNULL(@BdeId,munit.BdeId)" +
-                               " and munit.UnitMapId=ISNULL(@UnitId,munit.UnitMapId)";
-
-
-                using (var connection = _contextDP.CreateConnection())
-                {
-                    var ret = await connection.QueryAsync<DTOUnitResponse>(query, new { Data.ComdId, Data.CorpsId, Data.DivId, Data.BdeId, Data.UnitMapId });
                     return ret.ToList();
                 }
             }

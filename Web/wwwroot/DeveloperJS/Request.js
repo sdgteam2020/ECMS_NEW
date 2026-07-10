@@ -291,9 +291,16 @@ function GetAllRegistrationApplyFor(Id) {
                     listItem += '<div class="seven"><h1>I-Card Appl Initiated for </h1></div>';
 
                     for (var i = 0; i < response.length; i++) {
-                        if (response[i].RegistrationId == 4 || response[i].RegistrationId == 9) {
-                            continue;
-                        }
+
+                        //if (response[i].RegistrationId == 4) {
+                        //    //No Bind
+                        //}
+                        //else if (response[i].RegistrationId == 9) {
+                        //    //No Bind
+                        //}
+                        //else {
+                        //    listItem += '</div><button type="button" class="btn btn-outline-primary mt-4 mr-2 applyforoffs btn1" id="icardFor' + response[i].RegistrationId + '">' + response[i].Name + '<span class="spnRegistration d-none">' + response[i].RegistrationId + '</span></button>';
+                        //}
 
                         listItem += '<button type="button" class="btn btn-outline-primary mr-2 applyforoffs btn1" id="icardFor' + response[i].RegistrationId + '">';
                         listItem += response[i].Name;

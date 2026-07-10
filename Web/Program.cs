@@ -118,6 +118,8 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });
 
+builder.Services.AddHostedService<BasicDetailsMoveService>();
+
 builder.Services.AddSingleton<ITagHelperInitializer<ScriptTagHelper>, AppendVersionTagHelperInitializer>();
 builder.Services.AddSingleton<ITagHelperInitializer<LinkTagHelper>, AppendVersionTagHelperInitializer>();
 builder.Services.AddInfrastructure();
@@ -155,6 +157,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.IsEssential = true;
 
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     options.SlidingExpiration = false;
@@ -163,6 +166,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
 
+});
+
+// TempData cookie - only needed if you use TempData
+builder.Services.Configure<CookieTempDataProviderOptions>(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddAuthorizationPolicies();
@@ -207,17 +219,17 @@ app.UseCookiePolicy(new CookiePolicyOptions
     Secure = CookieSecurePolicy.Always // Set the Secure flag for all cookies
 });
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();    
-}
-else
-{
-    app.UseExceptionHandler("/Error");
-    app.UseStatusCodePagesWithReExecute("/Error/{0}");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();    
+    }
+    else
+    {
+        app.UseExceptionHandler("/Error");
+        app.UseStatusCodePagesWithReExecute("/Error/{0}");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
 app.Use(async (ctx, next) =>
 {
     // ========== 0) BLOCK DANGEROUS HTTP METHODS FIRST ==========
@@ -251,7 +263,7 @@ app.Use(async (ctx, next) =>
         "style-src 'self'; " + // allow Bootstrap inline styles
         "img-src 'self' data:; " +
         "font-src 'self' data:; " +
-        "connect-src 'self' https://dgisapp.army.mil:55102; " +
+        "connect-src 'self' https://dgisapp.army.mil:55102 https://iam2.army.mil; " +
         "frame-ancestors 'self'; " +
         "base-uri 'self'; " +
         "form-action 'self';";

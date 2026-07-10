@@ -198,7 +198,7 @@ namespace Web.Controllers
         public async Task<IActionResult> DigitalpdfsignatureSave(int RequestId, string base64)
         {
             // Retrieve the basic details of the request based on the RequestId
-            BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
+            DTOBasicDetailByRequestIdResponse? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
 
             // Define the file path where the PDF will be saved
             var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\" + db.ServiceNo + "_" + RequestId + ".pdf");
@@ -248,7 +248,7 @@ namespace Web.Controllers
                 XDocument document = XDocument.Parse(Convert.ToString(XmlFilesRemoveAndChar));
 
                 // Retrieve basic details of the request for naming the XML file
-                BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
+                DTOBasicDetailByRequestIdResponse? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
 
                 // Define the directory where the XML file will be saved
                 string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "DigitallysignatureXml");
@@ -302,12 +302,12 @@ namespace Web.Controllers
                 string ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
 
                 var levelDictionary = new Dictionary<int, string>
-        {
-            { 1, "1st Level" },
-            { 2, "2nd Level" },
-            { 3, "3rd Level" },
-            { 4, "4th Level" }
-        };
+                {
+                    { 1, "1st Level" },
+                    { 2, "2nd Level" },
+                    { 3, "3rd Level" },
+                    { 4, "4th Level" }
+                };
 
                 var now = DateTime.Now;
                 string timestamp = $"{now:yyyy}{now:MMMM}{now:dd}{now:hh}{now:mm}{now:ss}";
@@ -323,7 +323,7 @@ namespace Web.Controllers
 
                 var digitalSignList = ProcessDigitalSignatures(xmlDoc, CERT_SERIAL_1, CERT_SERIAL_2, ARMY_NO_1, ARMY_NO_2);
 
-                BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(requestId);
+                DTOBasicDetailByRequestIdResponse? db = await BasicDetailBL.GetBasicDetailByRequestId(requestId);
                 if (db == null)
                     return NotFound();
 
@@ -356,7 +356,7 @@ namespace Web.Controllers
                 // bool allowed = await _logBL.UserCanAccessRequest(requestId, session.UserId);
                 // if (!allowed) return Forbid();
 
-                BasicDetailCrtAndUpdVM? db = await BasicDetailBL.GetBasicDetailByRequestId(requestId);
+                DTOBasicDetailByRequestIdResponse? db = await BasicDetailBL.GetBasicDetailByRequestId(requestId);
                 if (db == null)
                     return NotFound();
 
@@ -434,7 +434,7 @@ namespace Web.Controllers
 
             return digitalSignList;
         }
-        private List<DTODigitalSignPlusLog> ProcessForwardingDetails(XmlDocument xmlDoc,Dictionary<int, string> levelDictionary, List<DTOFwdLastRecForDigitalSign> digitalSignList,BasicDetailCrtAndUpdVM db)
+        private List<DTODigitalSignPlusLog> ProcessForwardingDetails(XmlDocument xmlDoc,Dictionary<int, string> levelDictionary, List<DTOFwdLastRecForDigitalSign> digitalSignList, DTOBasicDetailByRequestIdResponse db)
         {
             var result = new List<DTODigitalSignPlusLog>();
             XmlNodeList forwardDetails = xmlDoc.GetElementsByTagName("RecForDigitalSign");
@@ -484,7 +484,7 @@ namespace Web.Controllers
         }
 
         private async Task<byte[]> GeneratePdfDocument(
-             BasicDetailCrtAndUpdVM db,
+             DTOBasicDetailByRequestIdResponse db,
              List<DTODigitalSignPlusLog> digitalSignPlusLogList,
              string ipAddress,
              string timestamp,
@@ -527,7 +527,7 @@ namespace Web.Controllers
                 .SetFontSize(15));
         }
 
-        private void AddPersonalDetailsTable(Document document, BasicDetailCrtAndUpdVM db, iTextImage photoImage, iTextImage signatureImage)
+        private void AddPersonalDetailsTable(Document document, DTOBasicDetailByRequestIdResponse db, iTextImage photoImage, iTextImage signatureImage)
         {
             PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
             Table table = new Table(4);

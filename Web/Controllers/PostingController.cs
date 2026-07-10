@@ -9,6 +9,7 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -35,7 +36,8 @@ namespace Web.Controllers
         private readonly IWebHostEnvironment hostingEnvironment;// Hosting environment for accessing web root path
         private readonly IDataProtector _protector;// Data protector for securing sensitive data
         private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// Interface for image encryption and decryption
-        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings, IImageEncryptAndDecrypt imageEncryptAndDecrypt)
+        private readonly IBasicDetailBL basicDetailBL;// For Basic Detail
+        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings, IImageEncryptAndDecrypt imageEncryptAndDecrypt, IBasicDetailBL basicDetailBL)
         {
             _iPostingBL = postingBL;
             _iApplCloseBL = iApplCloseBL;
@@ -46,6 +48,7 @@ namespace Web.Controllers
             _protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
+            this.basicDetailBL = basicDetailBL;
         }
 
         /// <summary>
@@ -108,60 +111,6 @@ namespace Web.Controllers
             // Return the data as a JSON response, including the decrypted photo image
             return Json(data);
         }
-
-
-
-        /// <summary>
-        /// Retrieves the posting out records for the current user.
-        /// This method calls the business logic layer to fetch all posting history for the user.
-        /// </summary>
-        /// <returns>
-        /// Returns the <see cref="IActionResult"/> which will render the posting out records view.
-        /// </returns>
-        [HttpGet]
-        public async Task<IActionResult> GetAllPostingOut()
-        {
-            // Retrieve the user ID from the current logged-in user's claims
-            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            // Call the business logic layer to fetch the posting history for the current user
-            var data = await _iPostingBL.GetAllPostingHistory(userid);
-
-
-            string role = SessionHelper.GetRoleFromSession(HttpContext);
-
-            if (role == "user")
-            {
-                return View(data);  // Return the fetched posting history data to the view
-            }
-            else
-            {
-                TempData["error"] = "Switch to user role.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
-        }
-
-        /// <summary>
-        /// Retrieves the posting out details for the current user.
-        /// This method fetches detailed posting history for the user from the business logic layer.
-        /// </summary>
-        /// <returns>
-        /// Returns the <see cref="IActionResult"/> which will render the posting out details view.
-        /// </returns>
-        [HttpPost]
-        public async Task<IActionResult> GetPostingOutDetails()
-        {
-            // Retrieve the user ID from the current logged-in user's claims
-            int userid = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            // Call the business logic layer to fetch the detailed posting history for the user
-            var data = await _iPostingBL.GetAllPostingHistory(userid);
-
-            return View(data);  // Return the fetched posting history details to the view
-        }
-
-
 
 
         /// <summary>
@@ -241,7 +190,7 @@ namespace Web.Controllers
             List<DTOPostingOutDetilsResponse> dTOPostingOutDetilsResponses = new List<DTOPostingOutDetilsResponse>();
             var responseData = new DTODataTablesResponse<DTOPostingOutDetilsResponse>
             {
-                draw = 0,
+                draw = dTO.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 data = dTOPostingOutDetilsResponses  // Set the initial empty list of data
@@ -337,8 +286,6 @@ namespace Web.Controllers
                     closeResponse = await _iPostingBL.BeforePostingOutCheckedInputData(trnPostingOut);
                     if (closeResponse.Result == true)
                     {
-                        trnPostingOut.BasicDetailId = closeResponse.BasicDetailId;
-
                         // If it's a new record, use UpdateForPosting method (this handles both add and update)
                         bool result = await _iPostingBL.UpdateForPosting(trnPostingOut);  // Attempt to add or update the record
                         if (result == true)
@@ -574,9 +521,10 @@ namespace Web.Controllers
                     // Check if the application close record already exists
                     if (closeResponse.Result == true)
                     {
-                        applClose.BasicDetailId = closeResponse.BasicDetailId;
-                        
-                        bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(applClose);
+                        // Fetch card history to record distribution details
+                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(applClose.RequestId);
+                        // Save the distribution close record and get the response
+                        bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(applClose, cardHistoryResponses);
                         if (reuslt == true)
                         {
                             response.Message = "Appl closed successfully.";
@@ -703,7 +651,7 @@ namespace Web.Controllers
             List<DTOAppClosedListResponse> dTOApps = new List<DTOAppClosedListResponse>();
             var responseData = new DTODataTablesResponse<DTOAppClosedListResponse>
             {
-                draw = 0,
+                draw = dTORecord.Draw,
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 data = dTOApps

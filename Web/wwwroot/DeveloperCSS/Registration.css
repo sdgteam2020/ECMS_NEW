@@ -6,3 +6,28 @@
 .form-group .labelprofile {
     font-weight: 700;
 }
+/* overall popup */
+.bootstrap-datetimepicker-widget {
+/*    width: 440px !important;*/
+    font-size: 13px;
+}
+
+
+    /*make day cells bigger/smaller*/
+    .bootstrap-datetimepicker-widget table td,
+    .bootstrap-datetimepicker-widget table th {
+        width: 36px;
+        height: 32px;
+    }
+
+    /*optional: smaller/bigger buttons*/
+    .bootstrap-datetimepicker-widget .btn {
+        padding: 4px 10px;
+        font-size: 13px;
+    }
+
+.dtp-okcancel {
+    padding: 8px 10px;
+    /*border-top: 1px solid #ddd;*/
+    text-align: right;
+}
