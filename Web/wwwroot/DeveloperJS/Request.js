@@ -6,6 +6,7 @@ var Message = "";
 var IsToken = true;
 var IsWithTokenApply = true;
 var skey = "";
+var CurrentPrefixApplyForId = 0;
 
 $(document).ready(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
@@ -66,7 +67,8 @@ $(document).ready(function () {
     });
 
     $("#btntokenrefresh").on("click", async function () {
-        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg", "ddlForArmyNoRulePrefix");
+        await GetTokenDetails("FetchUniqueTokenDetails", "txtApplyForArmyNo", "", "tokenmsg");
+        applyArmyNoToControl($("#txtApplyForArmyNo").val(), "#ddlForArmyNoRulePrefix", "#txtApplyForArmyNo", false, false);
         $('#btnNext').removeClass("disabled").prop("disabled", false);
     });
 
@@ -291,17 +293,6 @@ function GetAllRegistrationApplyFor(Id) {
                     listItem += '<div class="seven"><h1>I-Card Appl Initiated for </h1></div>';
 
                     for (var i = 0; i < response.length; i++) {
-
-                        //if (response[i].RegistrationId == 4) {
-                        //    //No Bind
-                        //}
-                        //else if (response[i].RegistrationId == 9) {
-                        //    //No Bind
-                        //}
-                        //else {
-                        //    listItem += '</div><button type="button" class="btn btn-outline-primary mt-4 mr-2 applyforoffs btn1" id="icardFor' + response[i].RegistrationId + '">' + response[i].Name + '<span class="spnRegistration d-none">' + response[i].RegistrationId + '</span></button>';
-                        //}
-
                         listItem += '<button type="button" class="btn btn-outline-primary mr-2 applyforoffs btn1" id="icardFor' + response[i].RegistrationId + '">';
                         listItem += response[i].Name;
                         listItem += '<span class="spnRegistration d-none">' + response[i].RegistrationId + '</span>';
@@ -311,7 +302,7 @@ function GetAllRegistrationApplyFor(Id) {
                     $("#btnIcardFor").html(listItem);
                     $("#icardrequestfor").html("");
 
-                    $('.applyforoffs').on("click", function () {   
+                    $('.applyforoffs').on("click", function () {
                         $("#spnNext").addClass("d-none");
                         clearArmyNoFields();
                         hideArmyNoSection();
@@ -335,7 +326,6 @@ function GetAllRegistrationApplyFor(Id) {
         }
     });
 }
-
 function AddAllCardType() {
     lCardType = 0;
 
@@ -387,7 +377,6 @@ function AddAllCardType() {
         toggleNextButton();
     });
 }
-
 function GetByArmyNoIsToken(ArmyNo) {
     let ArmyNoNew = encryptPayloadData(ArmyNo);
 
@@ -429,7 +418,7 @@ function GetByArmyNoIsToken(ArmyNo) {
                                 $("#btntokenrefresh").addClass("d-none");
                                 showArmyNoSection();
                                 showNewArmyNo();
-                                $("#txtApplyForArmyNo").val("");
+                                clearNewArmyNoFields();
                                 $('#txtApplyForArmyNo').attr('readonly', false);
 
                                 if (lCardType != 4) {
@@ -459,67 +448,27 @@ function GetByArmyNoIsToken(ArmyNo) {
                                 showNewArmyNo();
 
                                 var tokenArmyNo = $("#aspntokenarmyno").html();
-                                var prefix = getArmyPrefix(tokenArmyNo);
-                                 
-                                if (lCardType == 4) {
-                                    showOldArmyNo(); 
-                                    // Populate OLD Army No
-                                    if (prefix != '') {
 
-                                        $("#ddlForOldArmyNoRulePrefix")
-                                            .val(prefix)
-                                            .prop("disabled", true);
-
-                                        $("#txtApplyForOldArmyNo")
-                                            .val(tokenArmyNo.substring(prefix.length))
-                                            .prop("readonly", true);
-
-                                    } else {
-
-                                        $("#ddlForOldArmyNoRulePrefix")
-                                            .val('No(OR)')
-                                            .prop("disabled", true);
-
-                                        $("#txtApplyForOldArmyNo")
-                                            .val(tokenArmyNo)
-                                            .prop("readonly", true);
-                                    }
-
-                                    // Keep NEW Army No empty
-                                    $("#ddlForArmyNoRulePrefix")
-                                        .val("")
-                                        .prop("disabled", false);
-
-                                    $("#txtApplyForArmyNo")
-                                        .val("")
-                                        .prop("readonly", false);
-
-                                }
-                                else {
-                                    hideOldArmyNo();
-                                    // Existing logic for normal requests
-                                    if (prefix != '') {
+                                getArmyPrefixRules(OffType, function () {
+                                    if (lCardType == 4) {
+                                        showOldArmyNo();
+                                        applyArmyNoToControl(tokenArmyNo, "#ddlForOldArmyNoRulePrefix", "#txtApplyForOldArmyNo", true, true);
 
                                         $("#ddlForArmyNoRulePrefix")
-                                            .val(prefix)
-                                            .prop("disabled", true);
+                                            .val("")
+                                            .prop("disabled", false);
 
                                         $("#txtApplyForArmyNo")
-                                            .val(tokenArmyNo.substring(prefix.length))
-                                            .prop("readonly", true);
-
-                                    } else {
-
-                                        $("#ddlForArmyNoRulePrefix")
-                                            .val('No(OR)')
-                                            .prop("disabled", true);
-
-                                        $("#txtApplyForArmyNo")
-                                            .val(tokenArmyNo)
-                                            .prop("readonly", true);
+                                            .val("")
+                                            .prop("readonly", false);
                                     }
-                                }
-                                $('#btnNext').removeClass("disabled");
+                                    else {
+                                        hideOldArmyNo();
+                                        applyArmyNoToControl(tokenArmyNo, "#ddlForArmyNoRulePrefix", "#txtApplyForArmyNo", true, true);
+                                    }
+                                    $('#btnNext').removeClass("disabled");
+                                    toggleNextButton();
+                                });
                             }
                         }
                     } else {
@@ -542,7 +491,6 @@ function GetByArmyNoIsToken(ArmyNo) {
         }
     });
 }
-
 function CheckArmyNOExist() {
     let OldServiceNo = getFullOldArmyNumber();
     let NewServiceNo = getFullArmyNumber();
@@ -675,19 +623,22 @@ async function ChkSfx(ServiceNo) {
 }
 
 // Function to get Army Prefix rules
-function getArmyPrefixRules(ApplyForId) {
-    // Encrypt the request parameter if needed
+function getArmyPrefixRules(ApplyForId, onSuccess) {
     var requestData = {
-        ApplyForId // Replace with the actual request data to pass
+        ApplyForId: ApplyForId
     };
 
     $.ajax({
-        url: '/Home/GetArmyPrefixRules', // URL to the method in the controller
+        url: '/Home/GetArmyPrefixRules',
         method: 'POST',
         data: { "request": encryptPayloadData(JSON.stringify(requestData)) },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
             if (response && Array.isArray(response)) {
+                CurrentPrefixApplyForId = ApplyForId;
+
+                var selectedNew = $("#ddlForArmyNoRulePrefix").val();
+                var selectedOld = $("#ddlForOldArmyNoRulePrefix").val();
 
                 $('#ddlForArmyNoRulePrefix').empty();
                 $('#ddlForOldArmyNoRulePrefix').empty();
@@ -698,11 +649,23 @@ function getArmyPrefixRules(ApplyForId) {
                 $('#ddlForOldArmyNoRulePrefix').append('<option value="">Select Prefix</option>');
 
                 response.forEach(function (item) {
-                    $('#ddlForArmyNoRulePrefix').append('<option value="' + item.Prefix + '">' + item.Prefix + '</option>');
-                    $('#ddlForOldArmyNoRulePrefix').append('<option value="' + item.Prefix + '">' + item.Prefix + '</option>');
+                    var optionText = item.Prefix === 'NO' ? 'NO (OR)' : item.Prefix;
+                    $('#ddlForArmyNoRulePrefix').append('<option value="' + item.Prefix + '">' + optionText + '</option>');
+                    $('#ddlForOldArmyNoRulePrefix').append('<option value="' + item.Prefix + '">' + optionText + '</option>');
                 });
+
+                if (selectedNew && $('#ddlForArmyNoRulePrefix option[value="' + selectedNew + '"]').length > 0) {
+                    $('#ddlForArmyNoRulePrefix').val(selectedNew);
+                }
+
+                if (selectedOld && $('#ddlForOldArmyNoRulePrefix option[value="' + selectedOld + '"]').length > 0) {
+                    $('#ddlForOldArmyNoRulePrefix').val(selectedOld);
+                }
+
+                if (typeof onSuccess === 'function') {
+                    onSuccess(response);
+                }
             } else {
-                // Handle error if response is not an array or is empty
                 console.error("Error: Invalid data received.");
             }
         },
@@ -712,7 +675,6 @@ function getArmyPrefixRules(ApplyForId) {
         }
     });
 }
-
 /* =========================
    UI Helper Functions
 ========================= */
@@ -734,6 +696,8 @@ function showOldArmyNo() {
 function hideOldArmyNo() {
     $("#oldArmyNoWrapper").addClass("d-none");
     $("#txtApplyForOldArmyNo").val("").removeAttr("data-val-required");
+    $("#ddlForOldArmyNoRulePrefix").val("").prop("disabled", false);
+    $("#txtApplyForOldArmyNo").prop("readonly", false);
 }
 
 function showNewArmyNo() {
@@ -746,12 +710,14 @@ function hideNewArmyNo() {
 }
 
 function clearArmyNoFields() {
-    $("#txtApplyForArmyNo").val("");
-    $("#txtApplyForOldArmyNo").val("");
-    $("#ddlForArmyNoRulePrefix").val("");
-    $("#ddlForOldArmyNoRulePrefix").val("");
+    clearNewArmyNoFields();
+    $("#txtApplyForOldArmyNo").val("").prop("readonly", false);
+    $("#ddlForOldArmyNoRulePrefix").val("").prop("disabled", false);
 }
-
+function clearNewArmyNoFields() {
+    $("#txtApplyForArmyNo").val("").prop("readonly", false);
+    $("#ddlForArmyNoRulePrefix").val("").prop("disabled", false);
+}
 function resetArmyNoUi() {
     hideArmyNoSection();
     hideOldArmyNo();
@@ -774,8 +740,8 @@ function toggleNextButton() {
 
     var isChangeArmyNo = parseInt(lCardType) === 4;
 
-    var validNew = newPrefix !== "" || newArmyNo.length > 0;
-    var validOld = oldPrefix !== "" || oldArmyNo.length > 0;
+    var validNew = newPrefix !== "" && newArmyNo.length > 0;
+    var validOld = oldPrefix !== "" && oldArmyNo.length > 0;
 
     if (isChangeArmyNo) {
         if (validNew && validOld) {
@@ -792,6 +758,7 @@ function toggleNextButton() {
     }
 }
 
+
 function getFullArmyNumber() {
     if ($("#ddlForArmyNoRulePrefix").val() != 'No(OR)')
         return $("#ddlForArmyNoRulePrefix").val() + $("#txtApplyForArmyNo").val();
@@ -807,16 +774,40 @@ function getFullOldArmyNumber() {
 }
 
 function getArmyPrefix(armyNo) {
-
     if (!armyNo || armyNo.length < 2) {
         return "";
     }
 
-    // Remove last suffix character
     let withoutSuffix = armyNo.slice(0, -1);
-
-    // Extract alphabets from start
     let match = withoutSuffix.match(/^[A-Za-z]+/);
 
     return match ? match[0].toUpperCase() : "";
+}
+
+function applyArmyNoToControl(fullArmyNo, ddlSelector, txtSelector, disablePrefix, readonlyTxt) {
+    fullArmyNo = (fullArmyNo || "").toUpperCase().trim();
+
+    var prefix = getArmyPrefix(fullArmyNo);
+    var body = fullArmyNo;
+
+    if (prefix !== "") {
+        body = fullArmyNo.substring(prefix.length);
+        if ($(ddlSelector + ' option[value="' + prefix + '"]').length > 0) {
+            $(ddlSelector).val(prefix);
+        } else {
+            $(ddlSelector).val("");
+        }
+    } else {
+        if ($(ddlSelector + ' option[value="NO"]').length > 0) {
+            $(ddlSelector).val("NO");
+        } else {
+            $(ddlSelector).val("");
+        }
+        body = fullArmyNo;
+    }
+
+    $(txtSelector).val(body).prop("readonly", !!readonlyTxt);
+    $(ddlSelector).prop("disabled", !!disablePrefix);
+
+    toggleNextButton();
 }
