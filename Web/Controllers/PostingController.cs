@@ -9,6 +9,7 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -35,7 +36,8 @@ namespace Web.Controllers
         private readonly IWebHostEnvironment hostingEnvironment;// Hosting environment for accessing web root path
         private readonly IDataProtector _protector;// Data protector for securing sensitive data
         private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// Interface for image encryption and decryption
-        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings, IImageEncryptAndDecrypt imageEncryptAndDecrypt)
+        private readonly IBasicDetailBL basicDetailBL;// For Basic Detail
+        public PostingController(IPostingBL postingBL, IApplCloseBL iApplCloseBL, ITrnICardRequestBL trnICardRequestBL, IService service, ILogger<PostingController> logger, IWebHostEnvironment hostingEnvironment, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings, IImageEncryptAndDecrypt imageEncryptAndDecrypt, IBasicDetailBL basicDetailBL)
         {
             _iPostingBL = postingBL;
             _iApplCloseBL = iApplCloseBL;
@@ -46,6 +48,7 @@ namespace Web.Controllers
             _protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
             this.imageEncryptAndDecrypt = imageEncryptAndDecrypt;
+            this.basicDetailBL = basicDetailBL;
         }
 
         /// <summary>
@@ -518,8 +521,10 @@ namespace Web.Controllers
                     // Check if the application close record already exists
                     if (closeResponse.Result == true)
                     {
-                    
-                        bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(applClose);
+                        // Fetch card history to record distribution details
+                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(applClose.RequestId);
+                        // Save the distribution close record and get the response
+                        bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(applClose, cardHistoryResponses);
                         if (reuslt == true)
                         {
                             response.Message = "Appl closed successfully.";

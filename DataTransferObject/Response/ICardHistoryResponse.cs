@@ -18,6 +18,7 @@ namespace DataTransferObject.Response
         public string? ToDomain { get; set; }
         public string? ToProfile { get; set; }
         public string? ToRank { get; set; }
+        public int ToAspNetUsersId { get; set; }
         public string? Status { get; set; }
         public string? UpdatedOn { get; set; }
         public string? Remark { get; set; }
@@ -52,10 +53,10 @@ namespace DataTransferObject.Response
     }
     public class ICardHistoryResponseAll
     {
-        public DTOBasicDetailForCompleteClosed BasicDetail { get; set; }
-        public List<ICardHistoryResponse> ICardHistory { get; set; }
-        public List<ICardHistoryPostingOutResponse> PostingOut { get; set; }
-        public List<ICardHistoryFaultyCardResponse> FaultyCard { get; set; }
-        public ICardApplCloseCardResponse CloseCard { get; set; }
+        public DTOBasicDetailForCompleteClosed BasicDetail { get; set; } = new();
+        public List<ICardHistoryResponse> ICardHistory { get; set; } = new();
+        public List<ICardHistoryPostingOutResponse> PostingOut { get; set; } = new();
+        public List<ICardHistoryFaultyCardResponse> FaultyCard { get; set; } = new();
+        public ICardApplCloseCardResponse CloseCard { get; set; } = new();
     }
 }

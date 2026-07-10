@@ -120,7 +120,7 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.GetBesicDetailForEditById(BasicDetailId);
         }
 
-        public Task<ICardHistoryResponseAll?> ICardHistory(int RequestId)
+        public Task<ICardHistoryResponseAll> ICardHistory(int RequestId)
         {
             
             return _iBasicDetailDB.ICardHistory(RequestId);

@@ -33,7 +33,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<int?> MaxBasicDetailId(string ServiceNo);
         public Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto);
         public Task<DTOBasicDetailForParitalViewResponse?> GetBasicDetailForParitalViewByRequestId(int RequestId);
-        public Task<ICardHistoryResponseAll?> ICardHistory(int RequestId);
+        public Task<ICardHistoryResponseAll> ICardHistory(int RequestId);
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
         public Task<List<ICardHistoryResponse>?> ICardHistoryByRequestId(int RequestId);
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);

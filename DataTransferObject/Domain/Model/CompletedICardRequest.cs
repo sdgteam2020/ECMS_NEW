@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DataTransferObject.Domain.Master;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataTransferObject.Domain.Model
@@ -20,9 +21,9 @@ namespace DataTransferObject.Domain.Model
         public int? UpdatedbyUserId { get; set; }
         public MUserProfile? UserProfileUserUpdate { get; set; }
 
-        [Column(TypeName = "varchar(30)")]
-        [MaxLength(30, ErrorMessage = "Maximum length of Rank Abbreviation is thirty character.")]
-        public string RankAbbreviation { get; set; } = string.Empty;
+        [ForeignKey("MRank"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public short RankId { get; set; }
+        public MRank? Rank { get; set; }
 
         [StringLength(36)]
         [Column(TypeName = "varchar(36)")]
@@ -31,5 +32,9 @@ namespace DataTransferObject.Domain.Model
         [StringLength(10)]
         [Column(TypeName = "varchar(10)")]
         public string ServiceNo { get; set; } = string.Empty;
+
+        [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public byte ApplyForId { get; set; }
+        public MApplyFor? MApplyFor { get; set; }
     }
 }
