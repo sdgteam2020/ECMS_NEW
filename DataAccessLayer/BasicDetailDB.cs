@@ -3890,6 +3890,13 @@ FROM
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 7 AND fwd.TypeId = 1
                             ),
+                           _2ndLevelClosed =
+                            (
+                                
+					          SELECT COUNT(DISTINCT appcl.RequestId) from TrnApplClose appcl
+                              INNER JOIN TrnApplCloseMapping ClosMapp ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
+                              WHERE ClosMapp.AspNetUsersId=@UserId 
+                            ),
                             _3rdLevelPending =
                             (
                                 SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
@@ -3912,6 +3919,13 @@ FROM
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 8 AND fwd.TypeId = 1
                             ),
+                          _3rdLevelClosed =
+                            (
+                                   
+					          SELECT COUNT(DISTINCT appcl.RequestId) from TrnApplClose appcl
+                              INNER JOIN TrnApplCloseMapping ClosMapp ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
+                              WHERE ClosMapp.AspNetUsersId=@UserId 
+                            ),
                             _4thLevelPending =
                             (
                                 SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
@@ -3925,6 +3939,11 @@ FROM
                                 INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
                                 WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 1 AND fwd.TypeId = 4
+                            ),
+                          _4thLevelClosed =
+                            (                                  
+					          SELECT COUNT(DISTINCT appcl.RequestId) from TrnApplClose appcl
+                              INNER JOIN TrnApplCloseMapping ClosMapp ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
                             ),
                             ToInternalForward =
                             (
@@ -4831,6 +4850,166 @@ FROM
                 response.Result = false;
                 response.Message = "Something went wrong";
                 response.Value = string.Empty;
+                return response;
+            }
+        }
+     
+        public async Task<DTODataTablesResponse<DTOClosedHistoryResponse>> GetAllClosedHistory(DTODataTableRequestForAppClosedHistory dTO)
+        {
+            // Declare the necessary variables for query construction
+            string selectFields = string.Empty;
+            string fromJoinClause = string.Empty;
+            string fromJoinCount = string.Empty;
+            string searchFilter = string.Empty;
+            List<DTOClosedHistoryResponse> dTOCompleteds = new List<DTOClosedHistoryResponse>();
+            var responseData = new DTODataTablesResponse<DTOClosedHistoryResponse>
+            {
+                draw = dTO.Draw,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                data = dTOCompleteds    // Empty list of data
+            };
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
+
+            // Map the allowed sort columns to the DB fields for flexibility
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ServiceNo"] = "appcl.ServiceNo",
+                ["UpdatedOn"] = "appcl.UpdatedOn",
+                ["Authority"] = "appcl.Authority",
+                ["Remarks"] = "appcl.Remarks"
+            };
+            switch (dTO.UserType)
+            {
+                case "Closed_IO":
+                    selectFields = @"appcl.RequestId,appcl.ServiceNo,RK.RankAbbreviation AS RankName,appcl.Name,appcl.UpdatedOn AS ClosedOn,mpr.Reason,appcl.Authority,appcl.Remarks";
+                    fromJoinClause = @"from TrnApplCloseMapping ClosMapp
+                                  INNER JOIN TrnApplClose appcl ON appcl.Id = ClosMapp.CloseId AND appcl.ApplyForId =@ApplyForId
+                                  INNER JOIN MRank RK ON RK.RankId = appcl.RankId
+                                  INNER JOIN MPostingReason mpr on mpr.Id= appcl.ReasonId";
+                    fromJoinCount = @"from TrnApplCloseMapping ClosMapp
+                                  INNER JOIN TrnApplClose appcl ON appcl.Id = ClosMapp.CloseId AND appcl.ApplyForId =@ApplyForId";
+                    searchFilter = @"WHERE ClosMapp.AspNetUsersId=@AspNetUsersId AND ( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR appcl.RequestId LIKE @SearchTerm))";
+                    break;
+                case "Closed_ADC":
+                    selectFields = @"appcl.RequestId,appcl.ServiceNo,RK.RankAbbreviation AS RankName,appcl.Name,appcl.UpdatedOn AS ClosedOn,mpr.Reason,appcl.Authority,appcl.Remarks";
+                    fromJoinClause = @"from TrnApplClose appcl
+                                  INNER JOIN MRank RK ON RK.RankId = appcl.RankId
+                                  INNER JOIN MPostingReason mpr on mpr.Id= appcl.ReasonId
+                                  INNER JOIN TrnStepCounter tsc ON tsc.RequestId = appcl.RequestId AND tsc.StepId IN (4,5,6,9,10,11,12,13,14,15)";               
+                    fromJoinCount = @"from TrnApplClose appcl";
+                    searchFilter = @"WHERE appcl.ApplyForId =@ApplyForId AND ( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR appcl.RequestId LIKE @SearchTerm))";
+                    break;
+                case "Closed_ORO":
+                case "Closed_RO":
+                    selectFields = @"appcl.RequestId,appcl.ServiceNo,RK.RankAbbreviation AS RankName,appcl.Name,appcl.UpdatedOn AS ClosedOn,mpr.Reason,appcl.Authority,appcl.Remarks";
+                    fromJoinClause = @"from TrnApplClose appcl
+                                  INNER JOIN TrnICardRequest req ON req.RequestId = appcl.RequestId AND req.RecordOfficeId=@RecordOfficeId
+                                  INNER JOIN TrnStepCounter tsc ON tsc.RequestId = appcl.RequestId AND tsc.StepId IN (3,4,5,6,8,9,10,11,12,13,14,15)
+                                  INNER JOIN MRank RK ON RK.RankId = appcl.RankId
+                                  INNER JOIN MPostingReason mpr on mpr.Id= appcl.ReasonId";
+                    fromJoinCount = @"from TrnApplClose appcl
+                                  INNER JOIN TrnICardRequest req ON req.RequestId = appcl.RequestId AND req.RecordOfficeId=@RecordOfficeId";
+                    searchFilter = @"WHERE appcl.ApplyForId =@ApplyForId AND ( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR appcl.RequestId LIKE @SearchTerm))";
+                    break;
+                default:
+                    responseData.Message = "Invalid Selection.";
+                    responseData.Result = false;
+                    return responseData;
+            }
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "appcl.RequestId";
+
+                var sql = $@"
+                      SELECT COUNT(1) AS TotalRecords
+                      {fromJoinCount}
+                      {searchFilter}
+                      OPTION (RECOMPILE);
+
+                      SELECT
+                              {selectFields}     
+                      {fromJoinClause}
+                      {searchFilter}
+                      ORDER BY {sortColumn} {sortOrder}
+                      OFFSET @Start ROWS
+                      FETCH NEXT @Length ROWS ONLY;
+                      ";
+
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var searchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? null : $"{dTO.searchValue}%";
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Start", dTO.Start, DbType.Int32);
+                    parameters.Add("@Length", dTO.Length, DbType.Int32);
+                    parameters.Add("@AspNetUsersId", dTO.AspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@RecordOfficeId", dTO.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@ApplyForId", dTO.ApplyForId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
+
+                    using var multi = await connection.QueryMultipleAsync(sql, parameters);
+
+                    var totalRecords = await multi.ReadFirstOrDefaultAsync<int>();
+
+                    var records = (await multi.ReadAsync<DTOClosedHistoryResponse>()).ToList();
+
+                    responseData.Message = "ok";
+                    responseData.Result = true;
+                    responseData.recordsTotal = totalRecords;
+                    responseData.recordsFiltered = totalRecords;
+                    responseData.data = records;
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllClosedHistory");
+                responseData.Message = "Internal Server Error";
+                responseData.Result = false;
+                return responseData;
+            }
+
+        }
+        public async Task<DTOGetMappingDetailsForClosedHistoryResponse> GetMappingDetailsForClosedHistory(DTODataTableRequestForAppClosedHistory dTO)
+        {
+            DTOGetMappingDetailsForClosedHistoryResponse? response = new DTOGetMappingDetailsForClosedHistoryResponse();
+            string query = string.Empty;
+
+            switch (dTO.UserType)
+            {
+                case "Closed_ADC":
+                    query = @"Select TOP 1 TDMId, UnitId  from AfsacCellMapping";
+                    break;
+                case "Closed_ORO":
+                    query = @"Select TOP 1 RecordOfficeId,UnitId,TDMId from OROMapping WHERE TDMId = @TDMId";
+                    break;
+                case "Closed_RO" when dTO.CValue == 3:
+                    query = @"Select TOP 1 RecordOfficeId,UnitId,TDMId from MRecordOffice WHERE TDMId = @TDMId";
+                    break;
+                case "Closed_RO" when dTO.CValue == 4:
+                    query = @"Select TOP 1 RecordOfficeId,UnitId,TDMId  from MRecordOffice WHERE UnitId = @UnitId";
+                    break;
+                default:
+                    return response;
+            }
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var result = await connection.QueryFirstOrDefaultAsync<DTOGetMappingDetailsForClosedHistoryResponse>(query, new { dTO.TDMId, dTO.UnitId });
+                    return result ?? new DTOGetMappingDetailsForClosedHistoryResponse();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetMappingDetailsForCompletedHistory");
                 return response;
             }
         }

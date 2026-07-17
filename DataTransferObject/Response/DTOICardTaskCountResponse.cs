@@ -16,11 +16,14 @@ namespace DataTransferObject.Response
         public int _2ndLevelPending { get; set; }
         public int _2ndLevelApproved { get; set; }
         public int _2ndLevelReject { get; set; }
+        public int _2ndLevelClosed { get; set; }
         public int _3rdLevelPending { get; set; }
         public int _3rdLevelApproved { get; set; }
         public int _3rdLevelReject { get; set; }
+        public int _3rdLevelClosed { get; set; }
         public int _4thLevelPending { get; set; }
         public int _4thLevelApproved { get; set; }
+        public int _4thLevelClosed { get; set; }
         public int CsvUploadCount { get; set; }
 
     }

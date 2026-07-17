@@ -873,7 +873,7 @@ var _excelMergeCells = function (rels, row, column, rowspan, colspan) {
 // Copy to clipboard
 //
 DataTable.ext.buttons.copyHtml5 = {
-	className: 'buttons-copy buttons-html5',
+	className: 'buttons-copy buttons-html5 d-none',
 
 	text: function (dt) {
 		return dt.i18n('buttons.copy', 'Copy');
