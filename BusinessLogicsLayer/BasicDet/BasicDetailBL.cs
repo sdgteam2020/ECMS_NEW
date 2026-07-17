@@ -1,4 +1,5 @@
-﻿using DataAccessLayer;
+﻿using Azure;
+using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
@@ -6,9 +7,11 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.SqlServer.Management.Smo;
-using Microsoft.AspNetCore.Identity;
 using System.Reflection;
 
 
@@ -19,11 +22,14 @@ namespace BusinessLogicsLayer.BasicDet
         private readonly IBasicDetailDB _iBasicDetailDB;
         private readonly ILogger<BasicDetailBL> _logger;
         private readonly UserManager<ApplicationUser> userManager;// For Identity
-        public BasicDetailBL(ApplicationDbContext context, IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger, UserManager<ApplicationUser> userManager) : base(context)
+        private readonly IWebHostEnvironment hostingEnvironment;// For Hosting Environment
+        private readonly IImageEncryptAndDecrypt imageEncryptAndDecrypt;// For Image Encrypt and Decrypt
+        public BasicDetailBL(ApplicationDbContext context, IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger, UserManager<ApplicationUser> userManager, IWebHostEnvironment hostingEnvironment) : base(context)
         {
             _iBasicDetailDB = BasicDetail;
             _logger = logger;
             this.userManager = userManager;
+            this.hostingEnvironment = hostingEnvironment;
         }
         public async Task<List<DTODispatchCardForCSVResponse>> ExportCsvFileForDispatchCard(int[] RequestIds)
         {
@@ -554,6 +560,33 @@ namespace BusinessLogicsLayer.BasicDet
                     return responseData;
                 }
 
+            }
+
+        }
+        public async Task<DTOGenericResponse<ICardHistoryResponseAll>> GetCompletedHistoryByRequestId(int RequestId)
+        {
+            DTOGenericResponse<ICardHistoryResponseAll> response = new DTOGenericResponse<ICardHistoryResponseAll>();
+            response.Value = await _iBasicDetailDB.ICardHistoryCompleted(RequestId);
+
+            string PhotoImagePath = response.Value.BasicDetail.PhotoImagePath;
+            string SignatureImagePath = response.Value.BasicDetail.SignatureImagePath;
+
+            if (!string.IsNullOrWhiteSpace(PhotoImagePath) && !string.IsNullOrWhiteSpace(SignatureImagePath))
+            {
+                // Define the root physical folder where images are stored
+                string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                // Build the full path for the photo image
+                string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", PhotoImagePath);
+
+                // Decrypt the photo image and assign it to the VM
+                response.Value.BasicDetail.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                // Build the full path for the signature image
+                string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", SignatureImagePath);
+
+                // Decrypt the signature image and assign it to the VM
+                response.Value.BasicDetail.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
             }
 
         }

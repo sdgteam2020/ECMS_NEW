@@ -3582,14 +3582,19 @@ FROM
             try
             {
                 var card = await _context.CompletedICardRequests.FirstOrDefaultAsync(req => req.RequestId == RequestId);
-                if (!string.IsNullOrEmpty(card?.CardRequestHistoryJson))
-                    cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(card.CardRequestHistoryJson); 
+
+                string? historyJson = card?.CardRequestHistoryJson;
+
+                if (!string.IsNullOrWhiteSpace(historyJson))
+                {
+                    return JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->ICardHistoryCompleted");
             }
-            return cardStatus;
+            return new ICardHistoryResponseAll();
         }
 
 
