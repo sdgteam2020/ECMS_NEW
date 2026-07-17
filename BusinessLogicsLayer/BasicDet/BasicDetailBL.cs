@@ -6,8 +6,8 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Microsoft.SqlServer.Management.Smo;
 using System.Reflection;
 
 
@@ -18,7 +18,7 @@ namespace BusinessLogicsLayer.BasicDet
         private readonly IBasicDetailDB _iBasicDetailDB;
         private readonly ILogger<BasicDetailBL> _logger;
         private readonly UserManager<ApplicationUser> userManager;// For Identity
-        public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger, UserManager<ApplicationUser> userManager) : base(context)
+        public BasicDetailBL(ApplicationDbContext context, IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger, UserManager<ApplicationUser> userManager) : base(context)
         {
             _iBasicDetailDB = BasicDetail;
             _logger = logger;
@@ -32,9 +32,9 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetDispatchCardStatusListForDialog(dTO, ClaimValue);
         }
-        public async Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForExport(byte ClaimValue,DTOExportDispatch Data)
+        public async Task<DTODataTablesResponse<DTODispatchCardStatusResponse>> GetDispatchCardStatusListForExport(byte ClaimValue, DTOExportDispatch Data)
         {
-            return await _iBasicDetailDB.GetDispatchCardStatusListForExport(ClaimValue,Data);
+            return await _iBasicDetailDB.GetDispatchCardStatusListForExport(ClaimValue, Data);
         }
         public async Task<DTODataTablesWithSelectedIdsResponse<DTOCardDispatchDialogResponse>> GetDispatchCardDataForDialog(DTODataTablesRequestForCardDispatchDialog dTO)
         {
@@ -102,7 +102,7 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.GetAllICardType();
         }
-       
+
         public async Task<int?> MaxBasicDetailId(string ServiceNo)
         {
             return await _iBasicDetailDB.MaxBasicDetailId(ServiceNo);
@@ -127,17 +127,17 @@ namespace BusinessLogicsLayer.BasicDet
 
         public Task<ICardHistoryResponseAll> ICardHistory(int RequestId)
         {
-            
+
             return _iBasicDetailDB.ICardHistory(RequestId);
         }
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId)
         {
-            
+
             return _iBasicDetailDB.ICardFwdLastRec(RequestId);
         }
         public Task<List<ICardHistoryResponse>?> ICardHistoryByRequestId(int RequestId)
         {
-            
+
             return _iBasicDetailDB.ICardHistoryByRequestId(RequestId);
         }
 
@@ -151,11 +151,49 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.SaveBasicDetailsWithAll(Data, address, trnUpload, mTrnIdentityInfo, mTrnICardRequest, mStepCounter);
         }
 
-        public Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId, int Type, int applyForId)
+        public async Task<DTOGenericResponse<DTOICardTaskCountResponse>> GetTaskCountICardRequest(DTOGetTaskCountICardRequest dTOGetTaskCount)
         {
-            return _iBasicDetailDB.GetTaskCountICardRequest(UserId, Type, applyForId);
-        }
+            DTOGenericResponse<DTOICardTaskCountResponse> response = new DTOGenericResponse<DTOICardTaskCountResponse>();
 
+            if (dTOGetTaskCount.Type == 1) // Submitted
+            {
+                return await _iBasicDetailDB.GetTaskCountICardRequest(dTOGetTaskCount);
+            }
+            else if (dTOGetTaskCount.Type == 2) //Pendding
+            {
+                var user = await userManager.FindByIdAsync(dTOGetTaskCount.UserId.ToString());
+
+                // Retrieve all claims associated with the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+
+                if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    dTOGetTaskCount.CValue = 1; //AFSAC Cell
+                }
+                else if (UserClaims.Any(i => i.Value == "Appl Approver") && UserClaims.Any(i => i.Value == "Internal Wk Distr"))
+                {
+                    dTOGetTaskCount.CValue = 2; //RO
+                }
+                else if (UserClaims.Any(i => i.Value == "Appl Approver"))
+                {
+                    dTOGetTaskCount.CValue = 3; //ORO / RO_2
+                }
+                else
+                {
+                    dTOGetTaskCount.CValue = 0; //Verifier
+                }
+
+                return await _iBasicDetailDB.GetTaskCountICardRequest(dTOGetTaskCount);
+            }
+            else
+            {
+                response.Result = false;
+                response.Message = "Invalid Type";
+                response.Value = new DTOICardTaskCountResponse();
+                return response;
+            }
+
+        }
         public async Task<DTONotificationResult> GetNotification(int UserId)
         {
             return await _iBasicDetailDB.GetNotification(UserId);
@@ -168,7 +206,7 @@ namespace BusinessLogicsLayer.BasicDet
 
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
-            
+
             var data = _iBasicDetailDB.GetBesicdetailsByRequestId(Data, dTOApplFwdCondition);
 
             return data;
@@ -242,7 +280,7 @@ namespace BusinessLogicsLayer.BasicDet
                 // Combine invalid and valid records
                 request = invalidRecords.Concat(validRecords).ToList();
             }
-            catch(Exception ee)
+            catch (Exception ee)
             {
                 _logger.LogError(1001, ee, "BasicDetailBL->ValidateCardPrinitng");
             }
@@ -283,7 +321,7 @@ namespace BusinessLogicsLayer.BasicDet
                 );
         }
 
-        private List<DTOCardPriningRequest> MarkRecordsWithRemarks(List<DTOCardPriningRequest> request,List<PropertyInfo> properties,Dictionary<string, HashSet<string>> duplicateValuesDict)
+        private List<DTOCardPriningRequest> MarkRecordsWithRemarks(List<DTOCardPriningRequest> request, List<PropertyInfo> properties, Dictionary<string, HashSet<string>> duplicateValuesDict)
         {
             return request.Select(r =>
             {
@@ -347,19 +385,19 @@ namespace BusinessLogicsLayer.BasicDet
 
         public Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId)
         {
-            return _iBasicDetailDB.GetCardMovementHistory(requestId); 
+            return _iBasicDetailDB.GetCardMovementHistory(requestId);
         }
 
         public async Task UpdateCardStatus(int requestId, byte status)
-        { 
-             await _iBasicDetailDB.UpdateCardStatus(requestId, status);
+        {
+            await _iBasicDetailDB.UpdateCardStatus(requestId, status);
         }
 
         public async Task<DTOGenericResponse<string>> CheckBeforeDistribution(int requestId, int UnitId)
         {
             return await _iBasicDetailDB.CheckBeforeDistribution(requestId, UnitId);
         }
-        public async Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId,string ToRemark)
+        public async Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId, string ToRemark)
         {
             return await _iBasicDetailDB.DispatchCardIn(dTODispatch, StepId, DispatchCardId, ToRemark);
         }
@@ -370,6 +408,153 @@ namespace BusinessLogicsLayer.BasicDet
         public async Task<DTOGenericResponse<string>> CheckBeforeBesicDetailPost(BasicDetailCrtAndUpdVM basicDetail)
         {
             return await _iBasicDetailDB.CheckBeforeBesicDetailPost(basicDetail);
+        }
+        public async Task<DTODataTablesResponse<DTOCompletedHistoryResponse>> GetAllCompletedHistory(DTODataTablesRequestFor_CompletedHistory dTO)
+        {
+            List<DTOCompletedHistoryResponse> dTOCompleteds = new List<DTOCompletedHistoryResponse>();
+            var responseData = new DTODataTablesResponse<DTOCompletedHistoryResponse>
+            {
+                draw = dTO.Draw,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                data = dTOCompleteds    // Empty list of data
+            };
+            if (dTO.UserType == "Completed_IO")
+            {
+                return await _iBasicDetailDB.GetAllCompletedHistory(dTO);
+            }
+            else
+            {
+                var user = await userManager.FindByIdAsync(dTO.AspNetUsersId.ToString());
+
+                // Retrieve all claims associated with the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+
+                if (dTO.UserType == "Completed_ADC")
+                {
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    {
+                        dTO.CValue = 1; //AFSAC Cell
+
+                        DTOGetMappingDetailsForCompletedHistoryResponse dTOGet =await _iBasicDetailDB.GetMappingDetailsForCompletedHistory(dTO);
+
+                        if (dTOGet.TDMId != 0)
+                        {
+                            if (dTO.TDMId == dTOGet.TDMId) // Match the TDMId for AFSAC Cell Table
+                            {
+                                return await _iBasicDetailDB.GetAllCompletedHistory(dTO);
+                            }
+                            else
+                            {
+                                responseData.Message = "Your mapping not bind.";
+                                responseData.Result = false;
+                                return responseData;
+                            }
+                        }
+                        else
+                        {
+                            responseData.Message = "AFSAC Cell mapping missing.";
+                            responseData.Result = false;
+                            return responseData;
+                        }
+
+                    }
+                    else
+                    {
+                        responseData.Message= "You are not authorized to access this data.";
+                        responseData.Result = false;
+                        return responseData;
+                    }
+                }
+                else if (dTO.UserType == "Completed_ORO")
+                {
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Appl Approver"))
+                    {
+                        dTO.CValue = 2; //ORO
+                        DTOGetMappingDetailsForCompletedHistoryResponse dTOGet = await _iBasicDetailDB.GetMappingDetailsForCompletedHistory(dTO);
+
+                        if (dTOGet.RecordOfficeId != null)
+                        {
+                            dTO.RecordOfficeId = dTOGet.RecordOfficeId;
+                            return await _iBasicDetailDB.GetAllCompletedHistory(dTO);
+                        }
+                        else
+                        {
+                            responseData.Message = "You are not mapped.";
+                            responseData.Result = false;
+                            return responseData;
+                        }
+                    }
+                    else
+                    {
+                        responseData.Message = "You are not authorized to access this data.";
+                        responseData.Result = false;
+                        return responseData;
+                    }
+                }
+                else if(dTO.UserType == "Completed_RO") 
+                {
+                    if (UserClaims.Count > 0)
+                    {
+                        if (UserClaims.Any(i => i.Value == "Appl Approver") && UserClaims.Any(i => i.Value == "Internal Wk Distr"))
+                        {
+                            dTO.CValue = 3; //RO
+
+                            DTOGetMappingDetailsForCompletedHistoryResponse dTOGet = await _iBasicDetailDB.GetMappingDetailsForCompletedHistory(dTO);
+
+                            if (dTOGet.RecordOfficeId != null)
+                            {
+                                dTO.RecordOfficeId = dTOGet.RecordOfficeId;
+                                return await _iBasicDetailDB.GetAllCompletedHistory(dTO);
+                            }
+                            else
+                            {
+                                responseData.Message = "You are not mapped.";
+                                responseData.Result = false;
+                                return responseData;
+                            }
+                        }
+                        else if (UserClaims.Any(i => i.Value == "Appl Approver"))
+                        {
+                            dTO.CValue = 4; //RO_2
+                            
+                            DTOGetMappingDetailsForCompletedHistoryResponse dTOGet = await _iBasicDetailDB.GetMappingDetailsForCompletedHistory(dTO);
+
+                            if (dTOGet.RecordOfficeId != null)
+                            {
+                                dTO.RecordOfficeId = dTOGet.RecordOfficeId;
+                                return await _iBasicDetailDB.GetAllCompletedHistory(dTO);
+                            }
+                            else
+                            {
+                                responseData.Message = "You are not mapped.";
+                                responseData.Result = false;
+                                return responseData;
+                            }
+                        }
+                        else
+                        {
+                            responseData.Message = "You are not authorized to access this data.";
+                            responseData.Result = false;
+                            return responseData;
+                        }
+                    }
+                    else
+                    {
+                        responseData.Message = "You are not authorized to access this data.";
+                        responseData.Result = false;
+                        return responseData;
+                    }
+                }
+                else
+                {
+                    responseData.Message = "You are not authorized to access this data.";
+                    responseData.Result = false;
+                    return responseData;
+                }
+
+            }
+
         }
         public Task<DTOGetMappingDetailsForClosedHistoryResponse> GetMappingDetailsForClosedHistory(DTODataTableRequestForAppClosedHistory dTO)
         {

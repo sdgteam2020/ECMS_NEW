@@ -22,56 +22,50 @@ function GetTaskIcardRequestCount(Id, applyForId) {
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
-            if (response != "null" && response != null) {
+            if (response.Result == true) {
+                if (Id == 1) { // Submitted
+                    $("#ToDrafted").html(response.Value.ToDrafted);
+                    $("#ToSubmitted").html(response.Value.ToSubmitted);
+                    $("#ToCompleted").html(response.Value.ToCompleted);
+                    $("#ToRejected").html(response.Value.ToRejected);
 
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
+                    $('.counter-value').each(function () {
+                        let finalValue = parseInt($(this).text()) || 0;
+
+                        $(this).prop('Counter', 0).animate({
+                            Counter: finalValue
+                        }, {
+                            duration: 200,
+                            easing: 'swing',
+                            step: function (now) {
+                                $(this).text(Math.ceil(now));
+                            }
+                        });
                     });
-                }
-                else if (response == 0) {
 
                 }
+                else if (Id == 2) { // Pending
+                    $("#_2ndLevelPending").html(response.Value._2ndLevelPending);
+                    $("#_2ndLevelApproved").html(response.Value._2ndLevelApproved);
+                    $("#_2ndLevelReject").html(response.Value._2ndLevelReject);
+                    $("#_2ndLevelClosed").html(response.Value._2ndLevelClosed);
+                    $("#_3rdLevelPending").html(response.Value._3rdLevelPending);
+                    $("#_3rdLevelApproved").html(response.Value._3rdLevelApproved);
+                    $("#_3rdLevelReject").html(response.Value._3rdLevelReject);
+                    $("_3rdLevelClosed").html(response.Value._3rdLevelClosed);
+                    $("#_4thLevelPending").html(response.Value._4thLevelPending);
+                    $("#_4thLevelApproved").html(response.Value._4thLevelApproved);
+                    $("#_4thLevelClosed").html(response.Value._4thLevelClosed);
+                    $(".csvUploadCount").html(response.Value.CsvUploadCount);
 
-                else {
-                    if (applyForId == 1) {
-                        if (Id == 1) { // Submitted
-                            $("#ToDrafted").html(response.ToDrafted);
-                            $("#ToSubmitted").html(response.ToSubmitted);
-                            $("#ToCompleted").html(response.ToCompleted);
-                            $("#ToRejected").html(response.ToRejected);
+                    $("#Completed_IO").html(response.Value.Completed_IO);
+                    $("#Completed_ADC").html(response.Value.Completed_ADC);
+                    $("#Completed_ORO").html(response.Value.Completed_ORO);
+                    $("#Completed_RO").html(response.Value.Completed_RO);
+                    $("#Completed_RO_2").html(response.Value.Completed_RO_2);
 
-                            $('.counter-value').each(function () {
-                                let finalValue = parseInt($(this).text()) || 0;
-
-                                $(this).prop('Counter', 0).animate({
-                                    Counter: finalValue
-                                }, {
-                                    duration: 200,
-                                    easing: 'swing',
-                                    step: function (now) {
-                                        $(this).text(Math.ceil(now));
-                                    }
-                                });
-                            });
-
-                        }
-                        else if (Id == 2) { // Pending
-                            $("#_2ndLevelPending").html(response._2ndLevelPending);
-                            $("#_2ndLevelApproved").html(response._2ndLevelApproved);
-                            $("#_2ndLevelReject").html(response._2ndLevelReject);
-                            $("#_2ndLevelClosed").html(response._2ndLevelClosed);
-                            $("#_3rdLevelPending").html(response._3rdLevelPending);
-                            $("#_3rdLevelApproved").html(response._3rdLevelApproved);
-                            $("#_3rdLevelReject").html(response._3rdLevelReject);
-                            $("_3rdLevelClosed").html(response._3rdLevelClosed);
-                            $("#_4thLevelPending").html(response._4thLevelPending);
-                            $("#_4thLevelApproved").html(response._4thLevelApproved);
-                            $("#_4thLevelClosed").html(response._4thLevelClosed);
-                            $(".csvUploadCount").html(response.CsvUploadCount);
-
-                            $('.counter-value').each(function () {
-                                let finalValue = parseInt($(this).text()) || 0;
+                    $('.counter-value').each(function () {
+                        let finalValue = parseInt($(this).text()) || 0;
 
                                 $(this).prop('Counter', 0).animate({
                                     Counter: finalValue
@@ -84,62 +78,12 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                                 });
                             });
                         }
-                    } else {
-                        if (Id == 1) { // Submitted
-                            $("#ToDrafted").html(response.ToDrafted);
-                            $("#ToSubmitted").html(response.ToSubmitted);
-                            $("#ToCompleted").html(response.ToCompleted);
-                            $("#ToRejected").html(response.ToRejected);
 
-                            $('.counter-value').each(function () {
-                                let finalValue = parseInt($(this).text()) || 0;
-
-                                $(this).prop('Counter', 0).animate({
-                                    Counter: finalValue
-                                }, {
-                                    duration: 200,
-                                    easing: 'swing',
-                                    step: function (now) {
-                                        $(this).text(Math.ceil(now));
-                                    }
-                                });
-                            });
-                        }
-                        else if (Id == 2) { // Pending
-                            $("#_2ndLevelPending").html(response._2ndLevelPending);
-                            $("#_2ndLevelApproved").html(response._2ndLevelApproved);
-                            $("#_2ndLevelReject").html(response._2ndLevelReject);
-                            $("#_2ndLevelClosed").html(response._2ndLevelClosed);
-                            $("#_3rdLevelPending").html(response._3rdLevelPending);
-                            $("#_3rdLevelApproved").html(response._3rdLevelApproved);
-                            $("#_3rdLevelReject").html(response._3rdLevelReject);
-                            $("_3rdLevelClosed").html(response._3rdLevelClosed);
-                            $("#_4thLevelPending").html(response._4thLevelPending);
-                            $("#_4thLevelApproved").html(response._4thLevelApproved);
-                            $("#_4thLevelClosed").html(response._4thLevelClosed);
-                            $("#ToInternalForward").html(response.ToInternalForward);
-                            $(".csvUploadCount").html(response.CsvUploadCount);
-
-                            $('.counter-value').each(function () {
-                                let finalValue = parseInt($(this).text()) || 0;
-
-                                $(this).prop('Counter', 0).animate({
-                                    Counter: finalValue
-                                }, {
-                                    duration: 200,
-                                    easing: 'swing',
-                                    step: function (now) {
-                                        $(this).text(Math.ceil(now));
-                                    }
-                                });
-                            });
-                        }
-                    }
-                }
             }
             else {
-                // keep loader, do not show zero
-                $(".counter-value").html('<span class="count-loader"></span>');
+                Swal.fire({
+                    text: response.Message
+                });
             }
         },
         error: function (result) {

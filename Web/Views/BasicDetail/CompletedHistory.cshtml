@@ -1,0 +1,72 @@
+﻿<link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
+
+<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/CompletedHistory.css" rel="stylesheet" />
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+
+                        <div>
+                            @if (Convert.ToInt16(ViewBag.ApplyForId) == 1)
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+
+                            }
+                            else
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+                            }
+                        </div>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            <span class="d-none" id="spnUserType">@ViewBag.UserType</span>
+            <span class="d-none" id="spnApplyForId">@ViewBag.ApplyForId</span>
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        @ViewBag.Title
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body card-body-min-height">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="d-flex justify-content-end">
+
+
+                    </div>
+                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatatabledata_Completed">
+                    </table>
+                </div>
+            </div>
+        </div><!-- Row End -->
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-src-include="~/developerjs/CompletedHistory.js"></script>
+    <partial name="~/Views/Shared/_DataTableJS.cshtml" />
+}
