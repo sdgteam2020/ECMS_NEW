@@ -1,12 +1,15 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+
 
 namespace BusinessLogicsLayer.BasicDet
 {
@@ -14,10 +17,12 @@ namespace BusinessLogicsLayer.BasicDet
     {
         private readonly IBasicDetailDB _iBasicDetailDB;
         private readonly ILogger<BasicDetailBL> _logger;
-        public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger) : base(context)
+        private readonly UserManager<ApplicationUser> userManager;// For Identity
+        public BasicDetailBL(ApplicationDbContext context,IBasicDetailDB BasicDetail, ILogger<BasicDetailBL> logger, UserManager<ApplicationUser> userManager) : base(context)
         {
             _iBasicDetailDB = BasicDetail;
             _logger = logger;
+            this.userManager = userManager;
         }
         public async Task<List<DTODispatchCardForCSVResponse>> ExportCsvFileForDispatchCard(int[] RequestIds)
         {
@@ -366,5 +371,158 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.CheckBeforeBesicDetailPost(basicDetail);
         }
+        public Task<DTOGetMappingDetailsForClosedHistoryResponse> GetMappingDetailsForClosedHistory(DTODataTableRequestForAppClosedHistory dTO)
+        {
+            return _iBasicDetailDB.GetMappingDetailsForClosedHistory(dTO);
+        }
+        public async Task<DTODataTablesResponse<DTOClosedHistoryResponse>> GetAllClosedHistory(DTODataTableRequestForAppClosedHistory dTO)
+        {
+            List<DTOClosedHistoryResponse> dTOCompleteds = new List<DTOClosedHistoryResponse>();
+            var responseData = new DTODataTablesResponse<DTOClosedHistoryResponse>
+            {
+                draw = dTO.Draw,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                data = dTOCompleteds    // Empty list of data
+            };
+            if (dTO.UserType == "Closed_IO")
+            {
+                return await _iBasicDetailDB.GetAllClosedHistory(dTO);
+            }
+            else
+            {
+                var user = await userManager.FindByIdAsync(dTO.AspNetUsersId.ToString());
+
+                // Retrieve all claims associated with the user
+                var UserClaims = await userManager.GetClaimsAsync(user);
+
+                if (dTO.UserType == "Closed_ADC")
+                {
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "ICard Export Data"))
+                    {
+                        dTO.CValue = 1; //AFSAC Cell
+
+                        DTOGetMappingDetailsForClosedHistoryResponse dTOGet = await _iBasicDetailDB.GetMappingDetailsForClosedHistory(dTO);
+
+                        if (dTOGet.TDMId != 0)
+                        {
+                            if (dTO.TDMId == dTOGet.TDMId) // Match the TDMId for AFSAC Cell Table
+                            {
+                                return await _iBasicDetailDB.GetAllClosedHistory(dTO);
+                            }
+                            else
+                            {
+                                responseData.Message = "Your mapping not bind.";
+                                responseData.Result = false;
+                                return responseData;
+                            }
+                        }
+                        else
+                        {
+                            responseData.Message = "AFSAC Cell mapping missing.";
+                            responseData.Result = false;
+                            return responseData;
+                        }
+
+                    }
+                    else
+                    {
+                        responseData.Message = "You are not authorized to access this data.";
+                        responseData.Result = false;
+                        return responseData;
+                    }
+                }
+                else if (dTO.UserType == "Closed_ORO")
+                {
+                    if (UserClaims.Count > 0 && UserClaims.Any(i => i.Value == "Appl Approver"))
+                    {
+                        dTO.CValue = 2; //ORO
+                        DTOGetMappingDetailsForClosedHistoryResponse dTOGet = await _iBasicDetailDB.GetMappingDetailsForClosedHistory(dTO);
+
+                        if (dTOGet.RecordOfficeId != null)
+                        {
+                            dTO.RecordOfficeId = dTOGet.RecordOfficeId;
+                            return await _iBasicDetailDB.GetAllClosedHistory(dTO);
+                        }
+                        else
+                        {
+                            responseData.Message = "You are not mapped.";
+                            responseData.Result = false;
+                            return responseData;
+                        }
+                    }
+                    else
+                    {
+                        responseData.Message = "You are not authorized to access this data.";
+                        responseData.Result = false;
+                        return responseData;
+                    }
+                }
+                else if (dTO.UserType == "Closed_RO")
+                {
+                    if (UserClaims.Count > 0)
+                    {
+                        if (UserClaims.Any(i => i.Value == "Appl Approver") && UserClaims.Any(i => i.Value == "Internal Wk Distr"))
+                        {
+                            dTO.CValue = 3; //RO
+
+                            DTOGetMappingDetailsForClosedHistoryResponse dTOGet = await _iBasicDetailDB.GetMappingDetailsForClosedHistory(dTO);
+
+                            if (dTOGet.RecordOfficeId != null)
+                            {
+                                dTO.RecordOfficeId = dTOGet.RecordOfficeId;
+                                return await _iBasicDetailDB.GetAllClosedHistory(dTO);
+                            }
+                            else
+                            {
+                                responseData.Message = "You are not mapped.";
+                                responseData.Result = false;
+                                return responseData;
+                            }
+                        }
+                        else if (UserClaims.Any(i => i.Value == "Appl Approver"))
+                        {
+                            dTO.CValue = 4; //RO_2
+
+                            DTOGetMappingDetailsForClosedHistoryResponse dTOGet = await _iBasicDetailDB.GetMappingDetailsForClosedHistory(dTO);
+
+                            if (dTOGet.RecordOfficeId != null)
+                            {
+                                dTO.RecordOfficeId = dTOGet.RecordOfficeId;
+                                return await _iBasicDetailDB.GetAllClosedHistory(dTO);
+                            }
+                            else
+                            {
+                                responseData.Message = "You are not mapped.";
+                                responseData.Result = false;
+                                return responseData;
+                            }
+                        }
+                        else
+                        {
+                            responseData.Message = "You are not authorized to access this data.";
+                            responseData.Result = false;
+                            return responseData;
+                        }
+                    }
+                    else
+                    {
+                        responseData.Message = "You are not authorized to access this data.";
+                        responseData.Result = false;
+                        return responseData;
+                    }
+                }
+                else
+                {
+                    responseData.Message = "You are not authorized to access this data.";
+                    responseData.Result = false;
+                    return responseData;
+                }
+
+            }
+
+        }
+        
+
     }
 }

@@ -60,11 +60,14 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#_2ndLevelPending").html(response._2ndLevelPending);
                             $("#_2ndLevelApproved").html(response._2ndLevelApproved);
                             $("#_2ndLevelReject").html(response._2ndLevelReject);
+                            $("#_2ndLevelClosed").html(response._2ndLevelClosed);
                             $("#_3rdLevelPending").html(response._3rdLevelPending);
                             $("#_3rdLevelApproved").html(response._3rdLevelApproved);
                             $("#_3rdLevelReject").html(response._3rdLevelReject);
+                            $("_3rdLevelClosed").html(response._3rdLevelClosed);
                             $("#_4thLevelPending").html(response._4thLevelPending);
                             $("#_4thLevelApproved").html(response._4thLevelApproved);
+                            $("#_4thLevelClosed").html(response._4thLevelClosed);
                             $(".csvUploadCount").html(response.CsvUploadCount);
 
                             $('.counter-value').each(function () {
@@ -106,11 +109,14 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                             $("#_2ndLevelPending").html(response._2ndLevelPending);
                             $("#_2ndLevelApproved").html(response._2ndLevelApproved);
                             $("#_2ndLevelReject").html(response._2ndLevelReject);
+                            $("#_2ndLevelClosed").html(response._2ndLevelClosed);
                             $("#_3rdLevelPending").html(response._3rdLevelPending);
                             $("#_3rdLevelApproved").html(response._3rdLevelApproved);
                             $("#_3rdLevelReject").html(response._3rdLevelReject);
+                            $("_3rdLevelClosed").html(response._3rdLevelClosed);
                             $("#_4thLevelPending").html(response._4thLevelPending);
                             $("#_4thLevelApproved").html(response._4thLevelApproved);
+                            $("#_4thLevelClosed").html(response._4thLevelClosed);
                             $("#ToInternalForward").html(response.ToInternalForward);
                             $(".csvUploadCount").html(response.CsvUploadCount);
 

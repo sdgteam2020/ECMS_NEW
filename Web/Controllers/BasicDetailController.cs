@@ -30,6 +30,7 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -45,6 +46,7 @@ using System.Xml.Serialization;
 using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
@@ -7407,6 +7409,139 @@ namespace Web.Controllers
             return Json(response);
         }
 
+        #endregion
+
+        #region Close Card Dispatch History
+        /// <summary>
+        ///  Closes the dispatch card history for a given dispatch card ID.
+        ///  closes the dispatch card history by calling the business layer method and returns a JSON response indicating success or failure.
+        ///  Closes card dispatch history for a officer and JCO/OR based on the provided dispatch card ID.
+        ///  
+        [HttpGet]
+        public async Task<ActionResult> ClosedHistory(string Id, string jcoor)
+        {
+            // Fetch current role from session and store in ViewBag
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+            ViewBag.Role = role;
+
+            // Extract userId from claims and validate it
+            var userIdStr = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                TempData["error"] = "Invalid User.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            // Validate Id: must be Base64 encoded and non-empty
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }        
+            string userType = string.Empty; 
+            string decodedString = string.Empty; // decoded Base64 string representing user type
+            try
+            {
+                // Decode Base64 Id into integer and assign as stepCounter
+                decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));               
+            }
+            catch (Exception ex)
+            {
+                // Log error and redirect on decoding failure
+                _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            // Determine Title, Type, StepCounter, and Export flags based on decoded Id
+            switch (decodedString)
+            {
+                case "Closed_IO":
+                    userType = decodedString;
+                    break;
+
+                case "Closed_ORO":
+                    userType = decodedString;
+                    break;
+                case "Closed_RO":
+                    userType = decodedString;
+                    break;
+                case "Closed_ADC":
+                    userType = decodedString;
+                    break;
+                default:
+                    userType = "Closed_IO";
+                    break;
+            }
+
+            // Assign computed values to ViewBag for the view
+            ViewBag.UserType = userType;
+           
+            ViewBag.ApplyForId = string.IsNullOrEmpty(jcoor) ? 1 : 2;
+            ViewBag.Title = userType switch
+            {
+                "Closed_IO" => "Closed History for Officer",
+                "Closed_ORO" => "Closed History for JCO/OR",
+                "Closed_RO" => "Closed History for Record Office",
+                "Closed_ADC" => "Closed History for AFSAC Cell",
+                _ => "Closed History"
+            };
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetAllClosedHistory([FromBody] EncryptedRequest request)
+        {
+            DTODataTableRequestForAppClosedHistory dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTableRequestForAppClosedHistory>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTORecord == null)
+            {
+                return BadRequest(new { message = "Invalid Data" });
+            }
+            List<DTOClosedHistoryResponse> dTOApps = new List<DTOClosedHistoryResponse>();
+            var responseData = new DTODataTablesResponse<DTOClosedHistoryResponse>
+            {
+                draw = dTORecord.Draw,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = dTOApps
+            };        
+            try
+            {
+                // Get the current logged-in user's ASP.NET Identity Id
+                dTORecord.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                dTORecord.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                dTORecord.TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+                
+                ModelState.Clear();
+                if (TryValidateModel(dTORecord))
+                {                   
+                    // Call business layer to retrieve dispatch card data for dialog
+                    return Json(await basicDetailBL.GetAllClosedHistory(dTORecord));
+                }
+                else
+                {
+                    return Json(responseData);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error with event id 1001 and return 400 Bad Request
+                _logger.LogError(1001, ex, "BasicDetail->GetAllClosedHistory");
+                return BadRequest(new { message = "Internal Server Error" });
+            }
+        }
         #endregion
     }
 }

@@ -1,0 +1,74 @@
+﻿@{
+    List<Claim> claims = ViewBag.UserClaims;
+}
+<link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
+<link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
+<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="containerMain">
+        <div class="page-header-content">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+
+                        <div>
+                            <span id="Isspnjcoor" class="d-none">@ViewBag.jcoor</span>
+                            @if (Convert.ToString(ViewBag.jcoor) == "1")
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+
+                            }
+                            else
+                            {
+                                <span>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="mr-2">I-Card Status</a>  >
+                                    @ViewBag.Title
+                                </span>
+                            }
+                        </div>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="containerMain mt-n10">
+    <div class="card mb-3 ">
+        <div class="card-header">
+            <span class="d-none" id="spnType">@ViewBag.UserType</span>
+            <span class="d-none" id="spnJCOOR">@ViewBag.ApplyForId</span>
+                  
+            <div class="row">
+                <div class="col-xl-12 text-left">
+                    <h3>
+                        @ViewBag.Title
+                        <small class="text-muted"></small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body card-body-min-height">
+            <div class="row">
+                <div class="col-xl-12">                          
+                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatatabledata_ClosedHistory">
+                    </table>
+                </div>
+            </div>
+        </div><!-- Row End -->
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-src-include="~/developerjs/ClosedHistoryDetails.js"></script>
+     
+    <partial name="~/Views/Shared/_DataTableJS.cshtml" />
+}
