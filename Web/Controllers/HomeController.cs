@@ -866,21 +866,30 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetTaskCountICardRequest(int Id, int applyForId)
         {
-            // Retrieve the user ID from the claims
-            int userId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            DTOGenericResponse<DTOICardTaskCountResponse> response = new DTOGenericResponse<DTOICardTaskCountResponse>();
+
+            DTOGetTaskCountICardRequest dTOGetTaskCount = new DTOGetTaskCountICardRequest();
+
+            // Retrieve session data
+            DtoSession? dtoSession = new DtoSession();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+            {
+                dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            }
+            if (dtoSession != null)
+            {
+                dTOGetTaskCount.UnitId = dtoSession.UnitId;
+                dTOGetTaskCount.TDMId = dtoSession.TrnDomainMappingId;
+            }
+                // Retrieve the user ID from the claims
+            dTOGetTaskCount.UserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            dTOGetTaskCount.Type = Id;
+            dTOGetTaskCount.ApplyForId = applyForId;
 
             // Fetch the I-Card task count based on the user ID, request ID, and applyForId
-            DTOICardTaskCountResponse? dTOICardTaskCountResponse = await _basicDetailBL.GetTaskCountICardRequest(userId, Id, applyForId);
+            response = await _basicDetailBL.GetTaskCountICardRequest(dTOGetTaskCount);
 
-            // Return the task count as a JSON response, or null if no data is found
-            if (dTOICardTaskCountResponse != null)
-            {
-                return Json(dTOICardTaskCountResponse);
-            }
-            else
-            {
-                return Json(null);
-            }
+            return Json(response);
         }
 
         #endregion

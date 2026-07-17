@@ -30,10 +30,12 @@ using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Management.Smo;
 using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
@@ -7319,6 +7321,135 @@ namespace Web.Controllers
             return Json(fileName);
         }
 
+        #endregion
+
+        #region Completed Card History
+        [HttpGet]
+        public async Task<ActionResult> CompletedHistory(string Id, string jcoor)
+        {
+            // Fetch current role from session and store in ViewBag
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+            ViewBag.Role = role;
+
+            // Validate Id: must be Base64 encoded and non-empty
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            string decodedString = string.Empty; // decoded string from Base64 Id
+            string UserType = string.Empty;
+
+            try
+            {
+                // Decode Base64 Id into integer and assign as stepCounter
+                decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));
+            }
+            catch (Exception ex)
+            {
+                // Log error and redirect on decoding failure
+                _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            // Determine Title, Type, StepCounter, and Export flags based on decoded Id
+            switch (decodedString)
+            {
+                case "Completed_IO":
+                    UserType = decodedString;
+                    break;
+
+                case "Completed_ORO":
+                    UserType = decodedString;
+                    break;
+                
+                case "Completed_RO":
+                    UserType = decodedString;
+                    break;
+
+                case "Completed_ADC":
+                    UserType = decodedString;
+                    break;
+                default:
+                    UserType = "Completed_IO";
+                    break;
+            }
+
+            // Assign computed values to ViewBag for the view
+            ViewBag.UserType = UserType;
+            ViewBag.ApplyForId = string.IsNullOrEmpty(jcoor) ? 1 : 2;
+            ViewBag.Title = "I-Card Completed History";
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllCompletedHistory([FromBody] EncryptedRequest Data)
+        {
+            DTODataTablesRequestFor_CompletedHistory dTO = await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestFor_CompletedHistory>(Data.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+
+            List<DTOCompletedHistoryResponse> dTOCompleteds = new List<DTOCompletedHistoryResponse>();
+            // If an exception occurs, return an empty response to avoid breaking the UI
+            
+            var responseData = new DTODataTablesResponse<DTOCompletedHistoryResponse>
+            {
+                draw = 1,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                data = dTOCompleteds    // Empty list of data
+            };
+            
+            if (dTO == null)
+            {
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                return Json(responseData);
+            }
+
+            try
+            {
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
+                {
+                    // Get the current logged-in user's ASP.NET Identity Id
+                    dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                    DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                    dTO.TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+
+                    // Call business layer to retrieve dispatch card data for dialog
+                    return Json(await basicDetailBL.GetAllCompletedHistory(dTO));
+                }
+                else
+                {
+                    responseData.Result = false;
+                    responseData.Message = "Invalid Input";
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging and tracking
+                _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                // Return JSON with empty data
+                return Json(responseData);
+            }
+        }
         #endregion
 
         #region Set Session and Get Session

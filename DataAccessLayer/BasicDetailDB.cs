@@ -1,4 +1,5 @@
-﻿using Azure.Core;
+﻿using Azure;
+using Azure.Core;
 using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Healpers;
@@ -3823,10 +3824,11 @@ FROM
         /// Throws an exception if there is an error executing the database query or processing the results.
         /// The exception is logged for debugging purposes.
         /// </exception>
-        public async Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId, int Type, int applyForId)
+        public async Task<DTOGenericResponse<DTOICardTaskCountResponse>> GetTaskCountICardRequest(DTOGetTaskCountICardRequest dTOGetTaskCount)
         {
+            DTOGenericResponse<DTOICardTaskCountResponse> response = new DTOGenericResponse<DTOICardTaskCountResponse>();
             string query = "";
-            if (Type == 1) // Submitted
+            if (dTOGetTaskCount.Type == 1) // Submitted
             {
                 query = @"
                         SELECT
@@ -3835,7 +3837,7 @@ FROM
                             SELECT COUNT(req.RequestId) FROM TrnDomainMapping domain
                             INNER JOIN TrnICardRequest req ON req.TrnDomainMappingId = domain.Id AND req.StatusId = 1
                             INNER JOIN TrnStepCounter trnstepcout ON trnstepcout.RequestId = req.RequestId AND trnstepcout.StepId = 1
-                            INNER JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId AND bd.ApplyForId = @applyForId
+                            INNER JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId AND bd.ApplyForId = @ApplyForId
                             WHERE domain.AspNetUsersId = @UserId
                         ),
                         ToSubmitted =
@@ -3843,14 +3845,14 @@ FROM
                             SELECT COUNT(req.RequestId) FROM TrnDomainMapping domain
                             INNER JOIN TrnICardRequest req ON req.TrnDomainMappingId = domain.Id
                             INNER JOIN TrnStepCounter trnstepcout ON trnstepcout.RequestId = req.RequestId AND trnstepcout.StepId > 1
-                            INNER JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId AND bd.ApplyForId = @applyForId
+                            INNER JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId AND bd.ApplyForId = @ApplyForId
                             WHERE domain.AspNetUsersId = @UserId
                         ),
                         ToCompleted =
                         (
                             SELECT COUNT(req.RequestId) FROM TrnDomainMapping domain
                             INNER JOIN TrnICardRequest req ON req.TrnDomainMappingId = domain.Id AND req.StatusId = 2
-                            INNER JOIN AFSAC2.dbo.BasicDetails basic_2 ON basic_2.BasicDetailId = req.BasicDetailId AND basic_2.ApplyForId = @applyForId
+                            INNER JOIN AFSAC2.dbo.BasicDetails basic_2 ON basic_2.BasicDetailId = req.BasicDetailId AND basic_2.ApplyForId = @ApplyForId
                             WHERE domain.AspNetUsersId = @UserId
                         ),
 
@@ -3859,27 +3861,29 @@ FROM
                             SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
                             INNER JOIN TrnICardRequest req ON req.RequestId = fwd.RequestId AND req.StatusId = 1
                             INNER JOIN TrnStepCounter trnstepcout ON trnstepcout.RequestId = req.RequestId AND trnstepcout.StepId IN (7,8,9,10)
-                            INNER JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId AND bd.ApplyForId = @applyForId
+                            INNER JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId AND bd.ApplyForId = @ApplyForId
                             WHERE fwd.ToAspNetUsersId = @UserId AND fwd.FwdStatusId = 3
                         )
                         OPTION (RECOMPILE);";
             }
-            else if (Type == 2) // Pending
+            else if (dTOGetTaskCount.Type == 2) // Pending
             {
-                query = @"
+                if (dTOGetTaskCount.CValue == 1)
+                {
+                    query = @"
                         SELECT
                             _2ndLevelPending =
                             (
                                 SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
                                 INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
-                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 0 AND fwd.TypeId = 2
                             ),
                             _2ndLevelApproved =
                             (
                                 SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
                                 INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
-                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId = 2 AND fwd.TypeId = 3
                             ),
 
@@ -3887,14 +3891,80 @@ FROM
                             (
                                 SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
                                 INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
-                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 7 AND fwd.TypeId = 1
+                            ),
+                            Completed_IO = 
+                            (
+                                Select COUNT(ComplMapp.CompletedMappingId) from CompletedICardRequestMapping ComplMapp
+                                INNER JOIN CompletedICardRequests ComplReq ON ComplReq.CompletedId = ComplMapp.CompletedId AND ComplReq.ApplyForId =@ApplyForId
+                                WHERE ComplMapp.AspNetUsersId=@UserId
+                            ),
+                            _4thLevelPending =
+                            (
+                                SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 0 AND fwd.TypeId = 4
+                            ),
+                            _4thLevelApproved =
+                            (
+                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 1 AND fwd.TypeId = 4
+                            ),
+                            CsvUploadCount =
+                            (
+                                SELECT COUNT(Id)
+                                FROM CSVImports
+                            ),
+                            Completed_ADC = 
+                            (
+                                Select COUNT(ComplReq.RequestId)
+                                from CompletedICardRequests ComplReq
+                                WHERE ComplReq.ApplyForId =@ApplyForId
+                            )
+
+                        OPTION (RECOMPILE);";
+                }
+                else if (dTOGetTaskCount.CValue == 2)
+                {
+                    query = @"
+                        SELECT
+                            _2ndLevelPending =
+                            (
+                                SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 0 AND fwd.TypeId = 2
+                            ),
+                            _2ndLevelApproved =
+                            (
+                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId = 2 AND fwd.TypeId = 3
+                            ),
+
+                            _2ndLevelReject =
+                            (
+                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 7 AND fwd.TypeId = 1
+                            ),
+                            Completed_IO = 
+                            (
+                                Select COUNT(ComplMapp.CompletedMappingId) from CompletedICardRequestMapping ComplMapp
+                                INNER JOIN CompletedICardRequests ComplReq ON ComplReq.CompletedId = ComplMapp.CompletedId AND ComplReq.ApplyForId =@ApplyForId
+                                WHERE ComplMapp.AspNetUsersId=@UserId
                             ),
                             _3rdLevelPending =
                             (
                                 SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
                                 INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
-                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 0 AND fwd.TypeId = 3
                             ),
 
@@ -3902,43 +3972,142 @@ FROM
                             (
                                 SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
                                 INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
-                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId = 2 AND fwd.TypeId = 4
                             ),
                             _3rdLevelReject =
                             (
                                 SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
                                 INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
-                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 8 AND fwd.TypeId = 1
                             ),
-                            _4thLevelPending =
+                            Completed_RO =
                             (
-                                SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
-                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
-                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
-                                WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 0 AND fwd.TypeId = 4
-                            ),
-                            _4thLevelApproved =
-                            (
-                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
-                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId
-                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
-                                WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 1 AND fwd.TypeId = 4
+                                Select Count(req.RequestId)
+                                from MRecordOffice Mreco
+                                INNER JOIN TrnICardRequest req ON req.RecordOfficeId = Mreco.RecordOfficeId AND req.StatusId = 2
+                                INNER JOIN CompletedICardRequests ComplReq ON ComplReq.RequestId = req.RequestId AND ComplReq.ApplyForId =@ApplyForId
+                                WHERE Mreco.TDMId = @TDMId
                             ),
                             ToInternalForward =
                             (
                                 SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
                                 INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
-                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @applyForId
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId = 4
-                            ),
-                            CsvUploadCount =
+                            )
+
+                        OPTION (RECOMPILE);";
+                }
+                else if (dTOGetTaskCount.CValue == 3)
+                {
+                    query = @"
+                        SELECT
+                            _2ndLevelPending =
                             (
-                                SELECT COUNT(Id)
-                                FROM CSVImports
+                                SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 0 AND fwd.TypeId = 2
+                            ),
+                            _2ndLevelApproved =
+                            (
+                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId = 2 AND fwd.TypeId = 3
+                            ),
+
+                            _2ndLevelReject =
+                            (
+                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 7 AND fwd.TypeId = 1
+                            ),
+                            Completed_IO = 
+                            (
+                                Select COUNT(ComplMapp.CompletedMappingId) from CompletedICardRequestMapping ComplMapp
+                                INNER JOIN CompletedICardRequests ComplReq ON ComplReq.CompletedId = ComplMapp.CompletedId AND ComplReq.ApplyForId =@ApplyForId
+                                WHERE ComplMapp.AspNetUsersId=@UserId
+                            ),
+                            _3rdLevelPending =
+                            (
+                                SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 0 AND fwd.TypeId = 3
+                            ),
+
+                            _3rdLevelApproved =
+                            (
+                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId = 2 AND fwd.TypeId = 4
+                            ),
+                            _3rdLevelReject =
+                            (
+                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 8 AND fwd.TypeId = 1
+                            ),
+                            Completed_ORO =
+                            (
+                                Select Count(req.RequestId)
+                                from OROMapping ORO
+                                INNER JOIN TrnICardRequest req ON req.RecordOfficeId = ORO.RecordOfficeId AND req.StatusId = 2
+                                INNER JOIN CompletedICardRequests ComplReq ON ComplReq.RequestId = req.RequestId AND ComplReq.ApplyForId =@ApplyForId
+                                WHERE ORO.TDMId = @TDMId
+                            ),
+                            Completed_RO_2 =
+                            (
+                                Select Count(req.RequestId)
+                                from OROMapping ORO
+                                INNER JOIN TrnICardRequest req ON req.RecordOfficeId = ORO.RecordOfficeId AND req.StatusId = 2
+                                INNER JOIN CompletedICardRequests ComplReq ON ComplReq.RequestId = req.RequestId AND ComplReq.ApplyForId =@ApplyForId
+                                WHERE ORO.TDMId = @TDMId
+                            )
+
+                        OPTION (RECOMPILE);";
+                }
+                else
+                {
+                    query = @"
+                        SELECT
+                            _2ndLevelPending =
+                            (
+                                SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 0 AND fwd.TypeId = 2
+                            ),
+                            _2ndLevelApproved =
+                            (
+                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.FromAspNetUsersId = @UserId AND fwd.FwdStatusId = 2 AND fwd.TypeId = 3
+                            ),
+
+                            _2ndLevelReject =
+                            (
+                                SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
+                                INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
+                                WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 7 AND fwd.TypeId = 1
+                            ),
+                            Completed_IO = 
+                            (
+                                Select COUNT(ComplMapp.CompletedMappingId) from CompletedICardRequestMapping ComplMapp
+                                INNER JOIN CompletedICardRequests ComplReq ON ComplReq.CompletedId = ComplMapp.CompletedId AND ComplReq.ApplyForId =@ApplyForId
+                                WHERE ComplMapp.AspNetUsersId=@UserId
                             )
                         OPTION (RECOMPILE);";
+                }
+
 
             }
 
@@ -3946,13 +4115,18 @@ FROM
             {
                 try
                 {
-                    var ret = await connection.QueryAsync<DTOICardTaskCountResponse>(query, new { UserId, applyForId });
-                    return ret.FirstOrDefault();
+                    var result = await connection.QueryFirstOrDefaultAsync<DTOICardTaskCountResponse>(query, new { dTOGetTaskCount.UserId, dTOGetTaskCount.ApplyForId, dTOGetTaskCount.TDMId, dTOGetTaskCount.UnitId });
+                    response.Value = result ?? new DTOICardTaskCountResponse();
+                    response.Result = true;
+                    response.Message = "Task count retrieved successfully.";
+                    return response;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(1001, ex, "BasicDetailDB->GetTaskCountICardRequest");
-                    return null;
+                    response.Result = false;
+                    response.Message = "Internal Server Error.";
+                    return response;
                 }
 
             }
@@ -4831,6 +5005,160 @@ FROM
                 response.Result = false;
                 response.Message = "Something went wrong";
                 response.Value = string.Empty;
+                return response;
+            }
+        }
+
+        public async Task<DTODataTablesResponse<DTOCompletedHistoryResponse>> GetAllCompletedHistory(DTODataTablesRequestFor_CompletedHistory dTO)
+        {
+            // Declare the necessary variables for query construction
+            string selectFields = string.Empty;
+            string fromJoinClause = string.Empty;
+            string fromJoinCount = string.Empty;
+            string searchFilter = string.Empty;
+
+            List<DTOCompletedHistoryResponse> dTOCompleteds = new List<DTOCompletedHistoryResponse>();
+            var responseData = new DTODataTablesResponse<DTOCompletedHistoryResponse>
+            {
+                draw = dTO.Draw,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                data = dTOCompleteds    // Empty list of data
+            };
+            // Map allowed sort columns to DB fields
+            Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
+
+            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
+
+            // Map the allowed sort columns to the DB fields for flexibility
+            allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["RequestId"] = "ComplReq.RequestId",
+                ["CompletedOn"] = "ComplReq.UpdatedOn",
+                ["ServiceNo"] = "ComplReq.ServiceNo"
+            };
+            switch (dTO.UserType)
+            {
+                case "Completed_IO":
+                    selectFields = @"ComplReq.RequestId,ComplReq.ServiceNo,RK.RankAbbreviation AS RankName,ComplReq.Name,ComplReq.UpdatedOn AS CompletedOn";
+                    fromJoinClause = @"from CompletedICardRequestMapping ComplMapp
+                                        INNER JOIN CompletedICardRequests ComplReq ON ComplReq.CompletedId = ComplMapp.CompletedId AND ComplReq.ApplyForId =@ApplyForId
+                                        INNER JOIN MRank RK ON RK.RankId = ComplReq.RankId";
+                    fromJoinCount = @"from CompletedICardRequestMapping ComplMapp
+                                        INNER JOIN CompletedICardRequests ComplReq ON ComplReq.CompletedId = ComplMapp.CompletedId AND ComplReq.ApplyForId =@ApplyForId";
+                    searchFilter= @"WHERE ComplMapp.AspNetUsersId=@AspNetUsersId AND ( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR ComplReq.RequestId LIKE @SearchTerm))";
+                    break;
+                case "Completed_ADC":
+                    selectFields = @"ComplReq.RequestId,ComplReq.ServiceNo,RK.RankAbbreviation AS RankName,ComplReq.Name,ComplReq.UpdatedOn AS CompletedOn";
+                    fromJoinClause = @"from CompletedICardRequests ComplReq
+                                        INNER JOIN MRank RK ON RK.RankId = ComplReq.RankId";
+                    fromJoinCount = @"from CompletedICardRequests ComplReq";
+                    searchFilter = @"WHERE ComplReq.ApplyForId =@ApplyForId AND ( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR ComplReq.RequestId LIKE @SearchTerm))";
+                    break;
+                case "Completed_ORO":
+                case "Completed_RO":
+                    selectFields = @"ComplReq.RequestId,ComplReq.ServiceNo,RK.RankAbbreviation AS RankName,ComplReq.Name,ComplReq.UpdatedOn AS CompletedOn";
+                    fromJoinClause = @"from CompletedICardRequests ComplReq
+                                        INNER JOIN TrnICardRequest req ON req.RequestId = ComplReq.RequestId AND req.RecordOfficeId=@RecordOfficeId
+                                        INNER JOIN MRank RK ON RK.RankId = ComplReq.RankId";
+                    fromJoinCount = @"from CompletedICardRequests ComplReq
+                                        INNER JOIN TrnICardRequest req ON req.RequestId = ComplReq.RequestId AND req.RecordOfficeId=@RecordOfficeId";
+                    searchFilter = @"WHERE ComplReq.ApplyForId =@ApplyForId AND ( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR ComplReq.RequestId LIKE @SearchTerm))";
+                    break;
+                default:
+                    responseData.Message = "Invalid Selection.";
+                    responseData.Result = false;
+                    return responseData;
+            }
+            try
+            {
+                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "ComplReq.RequestId";
+
+                var sql = $@"
+                            SELECT COUNT(1) AS TotalRecords
+                            {fromJoinCount}
+                            {searchFilter}
+                            OPTION (RECOMPILE);
+
+                            SELECT
+                                    {selectFields}     
+                            {fromJoinClause}
+                            {searchFilter}
+                            ORDER BY {sortColumn} {sortOrder}
+                            OFFSET @Start ROWS
+                            FETCH NEXT @Length ROWS ONLY;
+                            ";
+
+
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    var searchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? null : $"{dTO.searchValue}%";
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Start", dTO.Start, DbType.Int32);
+                    parameters.Add("@Length", dTO.Length, DbType.Int32);
+                    parameters.Add("@AspNetUsersId", dTO.AspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@RecordOfficeId", dTO.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
+                    parameters.Add("@ApplyForId", dTO.ApplyForId, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
+
+                    using var multi = await connection.QueryMultipleAsync(sql, parameters);
+
+                    var totalRecords = await multi.ReadFirstOrDefaultAsync<int>();
+
+                    var records = (await multi.ReadAsync<DTOCompletedHistoryResponse>()).ToList();
+
+                    responseData.Message = "ok";
+                    responseData.Result = true;
+                    responseData.recordsTotal = totalRecords;
+                    responseData.recordsFiltered = totalRecords;
+                    responseData.data = records;
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetAllCompletedHistory");
+                responseData.Message = "Internal Server Error";
+                responseData.Result = false;
+                return responseData;
+            }
+
+        }
+        public async Task<DTOGetMappingDetailsForCompletedHistoryResponse> GetMappingDetailsForCompletedHistory(DTODataTablesRequestFor_CompletedHistory dTO) 
+        {
+            DTOGetMappingDetailsForCompletedHistoryResponse? response = new DTOGetMappingDetailsForCompletedHistoryResponse();
+            string query = string.Empty;
+
+            switch (dTO.UserType)
+            {
+                case "Completed_ADC":
+                    query = @"Select TOP 1 TDMId, UnitId  from AfsacCellMapping";
+                    break;
+                case "Completed_ORO":
+                    query = @"Select TOP 1 RecordOfficeId,UnitId,TDMId from OROMapping WHERE TDMId = @TDMId";
+                    break;
+                case "Completed_RO" when dTO.CValue == 3 :
+                    query = @"Select TOP 1 RecordOfficeId,UnitId,TDMId from MRecordOffice WHERE TDMId = @TDMId";
+                    break;
+                case "Completed_RO" when dTO.CValue == 4:
+                    query = @"Select TOP 1 RecordOfficeId,UnitId,TDMId  from MRecordOffice WHERE UnitId = @UnitId";
+                    break;
+                default:
+                    return response;
+            }
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                     var result = await connection.QueryFirstOrDefaultAsync<DTOGetMappingDetailsForCompletedHistoryResponse>(query, new { dTO.TDMId, dTO.UnitId });
+                    return result ?? new DTOGetMappingDetailsForCompletedHistoryResponse();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetMappingDetailsForCompletedHistory");
                 return response;
             }
         }

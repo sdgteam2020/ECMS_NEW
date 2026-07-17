@@ -23,5 +23,11 @@ namespace DataTransferObject.Response
         public int _4thLevelApproved { get; set; }
         public int CsvUploadCount { get; set; }
 
+        public int Completed_IO { get; set; }
+        public int Completed_ADC { get; set; }
+        public int Completed_ORO { get; set; }
+        public int Completed_RO { get; set; }
+        public int Completed_RO_2 { get; set; }
+
     }
 }
