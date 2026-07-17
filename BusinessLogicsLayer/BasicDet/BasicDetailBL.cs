@@ -708,7 +708,5 @@ namespace BusinessLogicsLayer.BasicDet
             }
 
         }
-        
-
     }
 }

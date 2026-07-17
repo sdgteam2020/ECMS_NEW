@@ -7395,6 +7395,7 @@ namespace Web.Controllers
                 return RedirectToAction("ContactUs", "Home");
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> GetAllCompletedHistory([FromBody] EncryptedRequest Data)
         {
@@ -7451,6 +7452,73 @@ namespace Web.Controllers
                 return Json(responseData);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCompletedHistory(string Request)
+        {
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            // Initialize the generic response object
+            DTOGenericResponse<ICardHistoryResponseAll> response = new DTOGenericResponse<ICardHistoryResponseAll>();
+            try
+            {
+                ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();
+                // Retrieve the basic detail record for the given RequestId
+                DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetCompletedHistoryByRequestId(RequestId);
+
+                if (basicDetailCrtAndUpdVM != null)
+                {
+                    // Define the root physical folder where images are stored
+                    string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                    // Build the full path for the photo image
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+
+                    // Decrypt the photo image and assign it to the VM
+                    basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                    // Build the full path for the signature image
+                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+
+                    // Decrypt the signature image and assign it to the VM
+                    basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+                    // Return the VM as JSON
+                    response.Result = true;
+                    response.Message = "Success";
+                    response.Value = basicDetailCrtAndUpdVM;
+                    return Json(response);
+                }
+                else
+                {
+                    // Return null if no record was found for the given RequestId
+                    response.Result = false;
+                    response.Message = "RequestId not found.";
+                    response.Value = null;
+                    return Json(response);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetICardPrintPreviewByRequestId");
+                response.Result = false;
+                response.Message = "Photo and Signature not found.";
+                response.Value = null;
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetICardPrintPreviewByRequestId");
+                response.Result = false;
+                response.Message = "Internal Error.";
+                response.Value = null;
+                return Json(response);
+            }
+
+        }
+
+
         #endregion
 
         #region Set Session and Get Session
