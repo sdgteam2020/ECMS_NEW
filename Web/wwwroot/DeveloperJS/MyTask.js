@@ -47,16 +47,19 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                 else if (Id == 2) { // Pending
                     $("#_2ndLevelPending").html(response.Value._2ndLevelPending);
                     $("#_2ndLevelApproved").html(response.Value._2ndLevelApproved);
-                    $("#_2ndLevelReject").html(response.Value._2ndLevelReject);
-                    $("#_2ndLevelClosed").html(response.Value._2ndLevelClosed);
+                    $("#_2ndLevelReject").html(response.Value._2ndLevelReject);                  
                     $("#_3rdLevelPending").html(response.Value._3rdLevelPending);
                     $("#_3rdLevelApproved").html(response.Value._3rdLevelApproved);
-                    $("#_3rdLevelReject").html(response.Value._3rdLevelReject);
-                    $("_3rdLevelClosed").html(response.Value._3rdLevelClosed);
+                    $("#_3rdLevelReject").html(response.Value._3rdLevelReject);                    
                     $("#_4thLevelPending").html(response.Value._4thLevelPending);
-                    $("#_4thLevelApproved").html(response.Value._4thLevelApproved);
-                    $("#_4thLevelClosed").html(response.Value._4thLevelClosed);
+                    $("#_4thLevelApproved").html(response.Value._4thLevelApproved);                
                     $(".csvUploadCount").html(response.Value.CsvUploadCount);
+
+                    $("#Closed_IO").html(response.Value.Closed_IO);
+                    $("#Closed_ADC").html(response.Value.Closed_ADC);
+                    $("#Closed_ORO").html(response.Value.Closed_ORO);
+                    $("#Closed_RO").html(response.Value.Closed_RO);
+                    $("#Closed_RO_2").html(response.Value.Closed_RO_2);
 
                     $("#Completed_IO").html(response.Value.Completed_IO);
                     $("#Completed_ADC").html(response.Value.Completed_ADC);

@@ -3894,11 +3894,10 @@ FROM
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 7 AND fwd.TypeId = 1
                             ),
-                           _2ndLevelClosed =
-                            (
-                                
-					          SELECT COUNT(DISTINCT appcl.RequestId) from TrnApplClose appcl
-                              INNER JOIN TrnApplCloseMapping ClosMapp ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
+                           Closed_IO =
+                            (                                
+					          SELECT COUNT(appcl.RequestId) from  TrnApplCloseMapping ClosMapp 
+                              INNER JOIN TrnApplClose appcl ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
                               WHERE ClosMapp.AspNetUsersId=@UserId 
                             ),
                             Completed_IO = 
@@ -3921,15 +3920,17 @@ FROM
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 1 AND fwd.TypeId = 4
                             ),
-                          _4thLevelClosed =
-                            (                                  
-					          SELECT COUNT(DISTINCT appcl.RequestId) from TrnApplClose appcl
-                              INNER JOIN TrnApplCloseMapping ClosMapp ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
-                            ),
+                         
                             CsvUploadCount =
                             (
                                 SELECT COUNT(Id)
                                 FROM CSVImports
+                            ),
+                           Closed_ADC = 
+                            (
+                                Select COUNT(appcl.RequestId)
+                                from TrnApplClose appcl
+                                WHERE appcl.ApplyForId =@ApplyForId
                             ),
                             Completed_ADC = 
                             (
@@ -3965,11 +3966,10 @@ FROM
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 7 AND fwd.TypeId = 1
                             ),
-                           _2ndLevelClosed =
-                            (
-                                
-					          SELECT COUNT(DISTINCT appcl.RequestId) from TrnApplClose appcl
-                              INNER JOIN TrnApplCloseMapping ClosMapp ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
+                          Closed_IO =
+                            (                                
+					          SELECT COUNT(appcl.RequestId) from  TrnApplCloseMapping ClosMapp 
+                              INNER JOIN TrnApplClose appcl ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
                               WHERE ClosMapp.AspNetUsersId=@UserId 
                             ),
                             Completed_IO = 
@@ -4000,12 +4000,13 @@ FROM
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 8 AND fwd.TypeId = 1
                             ),
-                          _3rdLevelClosed =
+                         Closed_RO =
                             (
-                                   
-					          SELECT COUNT(DISTINCT appcl.RequestId) from TrnApplClose appcl
-                              INNER JOIN TrnApplCloseMapping ClosMapp ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
-                              WHERE ClosMapp.AspNetUsersId=@UserId 
+                                Select Count(req.RequestId)
+                                from MRecordOffice Mreco
+                                INNER JOIN TrnICardRequest req ON req.RecordOfficeId = Mreco.RecordOfficeId AND req.StatusId = 2
+                                INNER JOIN TrnApplClose appClose ON appClose.RequestId = req.RequestId AND appClose.ApplyForId =@ApplyForId
+                                WHERE Mreco.TDMId = @TDMId
                             ),
                             Completed_RO =
                             (
@@ -4050,11 +4051,10 @@ FROM
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 7 AND fwd.TypeId = 1
                             ),
-                           _2ndLevelClosed =
-                            (
-                                
-					          SELECT COUNT(DISTINCT appcl.RequestId) from TrnApplClose appcl
-                              INNER JOIN TrnApplCloseMapping ClosMapp ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
+                            Closed_IO =
+                            (                                
+					          SELECT COUNT(appcl.RequestId) from  TrnApplCloseMapping ClosMapp 
+                              INNER JOIN TrnApplClose appcl ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
                               WHERE ClosMapp.AspNetUsersId=@UserId 
                             ),
                             Completed_IO = 
@@ -4085,6 +4085,22 @@ FROM
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 8 AND fwd.TypeId = 1
                             ),
+                          Closed_ORO =
+                            (
+                                Select Count(req.RequestId)
+                                from OROMapping ORO
+                                INNER JOIN TrnICardRequest req ON req.RecordOfficeId = ORO.RecordOfficeId AND req.StatusId = 2
+                                INNER JOIN TrnApplClose appClose ON appClose.RequestId = req.RequestId AND appClose.ApplyForId =@ApplyForId
+                                WHERE ORO.TDMId = @TDMId
+                            ),
+                            Closed_RO_2 =
+                            (
+                                Select Count(req.RequestId)
+                                from MRecordOffice Mreco
+                                INNER JOIN TrnICardRequest req ON req.RecordOfficeId = Mreco.RecordOfficeId AND req.StatusId = 2
+                                INNER JOIN TrnApplClose appClose ON appClose.RequestId = req.RequestId AND appClose.ApplyForId =@ApplyForId
+                                WHERE Mreco.UnitId = @UnitId
+                            )
                             Completed_ORO =
                             (
                                 Select Count(req.RequestId)
@@ -4129,6 +4145,12 @@ FROM
                                 INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.FromAspNetUsersId = @UserId AND fwd.StepId = 7 AND fwd.TypeId = 1
+                            ),
+                           Closed_IO =
+                            (                                
+					          SELECT COUNT(appcl.RequestId) from  TrnApplCloseMapping ClosMapp 
+                              INNER JOIN TrnApplClose appcl ON appcl.Id = ClosMapp.CloseId  AND appcl.ApplyForId =@applyForId                                
+                              WHERE ClosMapp.AspNetUsersId=@UserId 
                             ),
                             Completed_IO = 
                             (
@@ -5218,10 +5240,10 @@ FROM
             // Map the allowed sort columns to the DB fields for flexibility
             allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
+                ["RequestId"] = "appcl.RequestId",
                 ["ServiceNo"] = "appcl.ServiceNo",
                 ["UpdatedOn"] = "appcl.UpdatedOn",
-                ["Authority"] = "appcl.Authority",
-                ["Remarks"] = "appcl.Remarks"
+               
             };
             switch (dTO.UserType)
             {
@@ -5238,12 +5260,12 @@ FROM
                 case "Closed_ADC":
                     selectFields = @"appcl.RequestId,appcl.ServiceNo,RK.RankAbbreviation AS RankName,appcl.Name,appcl.UpdatedOn AS ClosedOn,mpr.Reason,appcl.Authority,appcl.Remarks";
                     fromJoinClause = @"from TrnApplClose appcl
-                                  INNER JOIN MRank RK ON RK.RankId = appcl.RankId
-                                  INNER JOIN MPostingReason mpr on mpr.Id= appcl.ReasonId
-                                  INNER JOIN TrnStepCounter tsc ON tsc.RequestId = appcl.RequestId AND tsc.StepId IN (4,5,6,9,10,11,12,13,14,15)";               
+                                      INNER JOIN MPostingReason mpr on mpr.Id= appcl.ReasonId
+                                      INNER JOIN MRank RK ON RK.RankId = appcl.RankId
+                                      INNER JOIN TrnStepCounter tsc ON tsc.RequestId = appcl.RequestId AND tsc.StepId IN (2,4,5,6,9,10,11,12,13,14,15)";  
                     fromJoinCount = @"from TrnApplClose appcl";
                     searchFilter = @"WHERE appcl.ApplyForId =@ApplyForId AND ( (@SearchTerm IS NULL) OR (ServiceNo LIKE @SearchTerm OR appcl.RequestId LIKE @SearchTerm))";
-                    break;
+                    break;              
                 case "Closed_ORO":
                 case "Closed_RO":
                     selectFields = @"appcl.RequestId,appcl.ServiceNo,RK.RankAbbreviation AS RankName,appcl.Name,appcl.UpdatedOn AS ClosedOn,mpr.Reason,appcl.Authority,appcl.Remarks";
