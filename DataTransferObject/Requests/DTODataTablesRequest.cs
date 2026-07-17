@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DataTransferObject.Requests;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace DataTransferObject.Requests
@@ -258,8 +259,6 @@ namespace DataTransferObject.Requests
         public int AspNetUsersId { get; set; }
 
     }
-}
-
     public class DTODataTableRequestForAppClosedHistory : DTODataTablesRequest
     {
         [RegularExpression("^[a-zA-Z0-9_ ]*$", ErrorMessage = "Only Alphabets and Numbers are allowed.")]
@@ -279,5 +278,4 @@ namespace DataTransferObject.Requests
         [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
         public int AspNetUsersId { get; set; }
     }
-
-    }
+}
