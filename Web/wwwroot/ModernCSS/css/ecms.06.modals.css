@@ -1,0 +1,252 @@
+/*
+Developer note:
+Each CSS rule below has an 'Effect' comment. These comments explain
+what UI area the rule controls so future developers can safely change
+forms, pages, DataTables, modals, header/footer and utilities from one place.
+*/
+
+/*
+=====================================================
+ECMS GLOBAL MODALS
+Modern modal header/body/footer, close button, form fields,
+select2 z-index and modal datatable compatibility.
+=====================================================
+*/
+
+/* Effect: Applies common ECMS modal behavior. */
+.modal {
+    z-index: var(--ecms-z-modal) !important;
+}
+
+/* Effect: Styles the dark overlay behind modals. */
+.modal-backdrop {
+    background: rgba(2,11,30,.78) !important;
+}
+
+/* Effect: Controls modal width, centering and viewport-safe height. */
+.modal-dialog {
+    margin: 1.35rem auto !important;
+    max-height: calc(100vh - 2.7rem) !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Effect: Controls modal width, centering and viewport-safe height. */
+.modal-dialog.ecms-modal-sm {
+    width: min(520px, calc(100vw - 28px)) !important;
+    max-width: min(520px, calc(100vw - 28px)) !important;
+}
+
+/* Effect: Controls modal width, centering and viewport-safe height. */
+.modal-dialog.ecms-modal-md {
+    width: min(760px, calc(100vw - 28px)) !important;
+    max-width: min(760px, calc(100vw - 28px)) !important;
+}
+
+/* Effect: Controls modal width, centering and viewport-safe height. */
+.modal-dialog.ecms-modal-lg,
+.modal-lg {
+    width: min(920px, calc(100vw - 28px)) !important;
+    max-width: min(920px, calc(100vw - 28px)) !important;
+}
+
+/* Effect: Controls modal width, centering and viewport-safe height. */
+.modal-dialog.ecms-modal-xl,
+.modal-xl {
+    width: min(1240px, calc(100vw - 28px)) !important;
+    max-width: min(1240px, calc(100vw - 28px)) !important;
+}
+
+/* Effect: Styles the modal shell, border, radius, background and shadow. */
+.modal-content {
+    max-height: calc(100vh - 3rem) !important;
+    border: 1px solid rgba(255,255,255,.72) !important;
+    border-radius: var(--ecms-radius-lg) !important;
+    background: var(--ecms-modal-surface) !important;
+    box-shadow: var(--ecms-shadow-lg) !important;
+    overflow: hidden !important;
+    color: var(--ecms-text) !important;
+}
+
+/* Effect: Styles the modal header and positions modal controls. */
+.modal-header {
+    min-height: 56px !important;
+    padding: 12px 54px 12px 18px !important;
+    border: 0 !important;
+    background: linear-gradient(135deg, var(--ecms-primary-800), var(--ecms-primary-600), var(--ecms-primary-400)) !important;
+    color: #ffffff !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    box-shadow: 0 12px 28px rgba(34,91,210,.28), inset 0 1px 0 rgba(255,255,255,.22) !important;
+}
+
+/* Effect: Styles modal title text and optional title icon. */
+.modal-title {
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: var(--ecms-font-size-lg) !important;
+    font-weight: 900 !important;
+    line-height: 1.15 !important;
+    letter-spacing: .15px !important;
+    text-shadow: 0 2px 8px rgba(0,0,0,.22) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+/* Effect: Styles modal title text and optional title icon. */
+.modal-title::before {
+    content: "\f05a";
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 11px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255,255,255,.16) !important;
+    border: 1px solid rgba(255,255,255,.26) !important;
+    font-family: "Font Awesome 5 Free", FontAwesome, Arial, sans-serif !important;
+    font-weight: 900 !important;
+    font-size: 14px !important;
+    color: #ffffff !important;
+}
+
+/* Close button must stay inside right side of modal header */
+/* Effect: Styles buttons with ECMS radius, gradients, sizing and shadows. */
+.modal-header .btn-close,
+.modal-header .close {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 2px solid rgba(255,255,255,.88) !important;
+    border-radius: 50% !important;
+    background-color: var(--ecms-danger-500) !important;
+    background-image: none !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    top: 11px !important;
+    right: 14px !important;
+    z-index: 10 !important;
+    box-shadow: 0 8px 20px rgba(223,63,92,.35) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-indent: 0 !important;
+    float: none !important;
+    text-shadow: none !important;
+    font-size: 0 !important;
+}
+
+/* Effect: Styles buttons with ECMS radius, gradients, sizing and shadows. */
+.modal-header .btn-close::before,
+.modal-header .close::before {
+    content: "\00d7" !important;
+    color: #ffffff !important;
+    font-size: 26px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+}
+
+/* Effect: Styles the modal header and positions modal controls. */
+.modal-header .close span {
+    display: none !important;
+}
+
+/* Effect: Applies global body-level ECMS colors, background image and page foundation. */
+.modal-body {
+    padding: 16px !important;
+    background: linear-gradient(135deg, rgba(248,252,255,.98), rgba(226,240,255,.96)) !important;
+    color: var(--ecms-text) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    max-height: calc(100vh - 166px) !important;
+    scrollbar-width: thin !important;
+}
+
+/* Effect: Styles the fixed bottom footer and keeps it above page content. */
+.modal-footer {
+    min-height: 58px !important;
+    padding: 12px 16px !important;
+    border: 0 !important;
+    border-top: 1px solid rgba(188,210,242,.70) !important;
+    background: linear-gradient(180deg, rgba(232,242,255,.96), rgba(215,232,253,.98)) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+}
+
+/* Modal datatables */
+/* Effect: Enables internal vertical/horizontal scrolling and prevents last-row hiding. */
+.modal .dataTables_scrollBody {
+    max-height: 42vh !important;
+}
+
+/* Print modal: allow wider content */
+/* Effect: Controls modal width, centering and viewport-safe height. */
+.modal.ecms-print-modal .modal-dialog,
+#ICardPrint .modal-dialog {
+    width: min(1240px, calc(100vw - 28px)) !important;
+    max-width: min(1240px, calc(100vw - 28px)) !important;
+}
+
+/* Effect: Applies global body-level ECMS colors, background image and page foundation. */
+.modal.ecms-print-modal .modal-body,
+#ICardPrint .modal-body {
+    max-height: calc(100vh - 126px) !important;
+    background: #f5f9ff !important;
+    overflow: auto !important;
+}
+
+/* Modal-specific icon overrides by common IDs */
+/* Effect: Styles modal title text and optional title icon. */
+#FwdInternalRecord .modal-title::before,
+#FwdRecord .modal-title::before { content: "\f064"; }
+
+/* Effect: Styles modal title text and optional title icon. */
+#BasicDetails .modal-title::before { content: "\f2bb"; }
+/* Effect: Styles modal title text and optional title icon. */
+#BasicDetailViewPurpose .modal-title::before { content: "\f06e"; }
+/* Effect: Styles modal title text and optional title icon. */
+#HistoryModal .modal-title::before { content: "\f1da"; }
+/* Effect: Styles modal title text and optional title icon. */
+#unitoffrsModal .modal-title::before { content: "\f002"; }
+/* Effect: Styles modal title text and optional title icon. */
+#ICardPrint .modal-title::before { content: "\f02f"; }
+/* Effect: Controls modal width, centering and viewport-safe height. */
+#ConfirmationDialog .modal-title::before { content: "\f058"; }
+/* Effect: Controls modal width, centering and viewport-safe height. */
+#MessageDialog .modal-title::before { content: "\f05a"; }
+
+/* Effect: Applies the nested rules only for the specified responsive/print condition. */
+@media (max-width: 768px) {
+    .modal-dialog {
+        width: calc(100vw - 18px) !important;
+        max-width: calc(100vw - 18px) !important;
+        margin: .75rem auto !important;
+    }
+
+    .modal-content {
+        max-height: calc(100vh - 1.5rem) !important;
+    }
+
+    .modal-header {
+        min-height: 52px !important;
+        padding: 10px 50px 10px 14px !important;
+    }
+
+    .modal-title {
+        font-size: 15px !important;
+    }
+
+    .modal-body {
+        max-height: calc(100vh - 150px) !important;
+        padding: 12px !important;
+    }
+}

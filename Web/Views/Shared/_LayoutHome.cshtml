@@ -15,7 +15,7 @@
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC </title>
-        <!-- Development: Load normal JS -->
+    <!-- Development: Load normal JS -->
     <environment include="Development">
         <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
         <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
@@ -28,8 +28,8 @@
         <link asp-href-include="~/css/background.css" rel="stylesheet" />
         <link asp-href-include="~/css/typography.css" rel="stylesheet" />
         <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
-        
-@*         <link asp-href-include="~/css/cssStyle.css" rel="stylesheet" /> *@
+
+        @*         <link asp-href-include="~/css/cssStyle.css" rel="stylesheet" /> *@
         <script asp-src-include="~/fonts/feather/feather.min.js"></script>
         <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
         <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -40,7 +40,7 @@
 
         <script asp-src-include="~/lib/jquery/jquery.js"></script>
     </environment>
-    
+
     <!-- Production: Load minified JS -->
     <environment exclude="Development">
         <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
@@ -53,8 +53,8 @@
         <link asp-href-include="~/css/extra.css" rel="stylesheet" />
         <link asp-href-include="~/css/background.css" rel="stylesheet" />
         <link asp-href-include="~/css/typography.css" rel="stylesheet" />
-       
-@*         <link asp-href-include="~/css/cssstyle.min.css" rel="stylesheet" /> *@
+
+        @*         <link asp-href-include="~/css/cssstyle.min.css" rel="stylesheet" /> *@
         <script asp-src-include="~/fonts/feather/feather.min.js"></script>
         <script asp-src-include="~/fonts/allfont/webfont.min.js"></script>
         <link asp-href-include="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -67,6 +67,7 @@
     </environment>
 
     <link asp-href-include="~/developercss/layouthome.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/ModernCSS/css/ecms.theme.bundle.css" asp-append-version="true" />
 </head>
 <body class="nav-fixed">
     @Html.AntiForgeryToken()
@@ -83,58 +84,63 @@
 
         }
         var RoleName = dtoSession != null ? dtoSession.RoleName : "user";
-        
+
         if (!string.IsNullOrEmpty(@configuration["Footer:Test"]))
         {
             string? Footer = @configuration["Footer:Test"];
             ViewBag.Footer = Footer;
         }
     }
-    <div class="d-none" id="postingouthtml"></div>
-    <div class="d-none" id="content-container"></div>
-    <div class="d-none" id="spnPostedOffrsfornoti"></div>
+    <div class="row">
+        <div class="d-none" id="postingouthtml"></div>
+        <div class="d-none" id="content-container"></div>
+        <div class="d-none" id="spnPostedOffrsfornoti"></div>
 
-    <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" />
-
-    <!-- partial -->
-    <div class="page-body-wrapper">
-
-
-        <!-- partial -->
-
-        <partial name="_Notification" />
-        @RenderBody()
-
-        <!-- partial -->
-        <!-- main-panel ends -->
-        <!-- partial -->
-        <!-- main-panel ends -->
+        <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" />
     </div>
-    <footer class="fixed-bottom">
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <!-- Invisible placeholder for balancing the center -->
-                    <div class="footer-placeholder"></div>
+    <div class="row">
+        <!-- partial -->
+        <div class="page-body-wrapper">
 
-                    <!-- Left Section: Centered Content -->
-                    <div class="flex-grow-1 text-center fw-bold">
-                        @if (ViewBag.Footer != null)
-                        {
-                            @(ViewBag.Footer)
-                        }
-                    </div>
-                    <!-- Right Section: Info Spans -->
-                    <div class="text-end">
-                        <span id="today" class="me-2"></span>
-                        <span id="week" class="me-2"></span>
-                        <span id="month" class="me-2"></span>
-                        <span id="total"></span>
+
+            <!-- partial -->
+
+            <partial name="_Notification" />
+            @RenderBody()
+
+            <!-- partial -->
+            <!-- main-panel ends -->
+            <!-- partial -->
+            <!-- main-panel ends -->
+        </div>
+    </div>
+    <div class="row">
+        <footer class="fixed-bottom">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- Invisible placeholder for balancing the center -->
+                        <div class="footer-placeholder"></div>
+
+                        <!-- Left Section: Centered Content -->
+                        <div class="flex-grow-1 text-center fw-bold">
+                            @if (ViewBag.Footer != null)
+                            {
+                                @(ViewBag.Footer)
+                            }
+                        </div>
+                        <!-- Right Section: Info Spans -->
+                        <div class="text-end">
+                            <span id="today" class="me-2"></span>
+                            <span id="week" class="me-2"></span>
+                            <span id="month" class="me-2"></span>
+                            <span id="total"></span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
     <!-- page-body-wrapper ends -->
     @*  <script asp-src-include="~/select2/dist/js/select2.min.js"></script>*@
     @RenderSection("Scripts", false)
@@ -151,8 +157,8 @@
     <script asp-src-include="~/toastr/toastr.min.js"></script>
     <script asp-src-include="~/js/moment.min.js"></script>
     <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
-    <script asp-src-include="~/developerjs/layout.js"></script> 
-@*     <script asp-src-include="~/developerjs/commanvalidation.js"></script> *@
+    <script asp-src-include="~/developerjs/layout.js"></script>
+    @*     <script asp-src-include="~/developerjs/commanvalidation.js"></script> *@
     <script asp-src-include="~/developerjs/pagevalidation.js"></script>
     <script asp-src-include="~/developerjs/_notifications.js"></script>
 </body>

@@ -1,0 +1,89 @@
+/*
+Developer note:
+Each CSS rule below has an 'Effect' comment. These comments explain
+what UI area the rule controls so future developers can safely change
+forms, pages, DataTables, modals, header/footer and utilities from one place.
+*/
+
+/*
+=====================================================
+ECMS UTILITIES
+Small helper classes.
+=====================================================
+*/
+
+/* Effect: Hides an element when this utility class is applied. */
+.ecms-hide {
+    display: none !important;
+}
+
+/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
+.ecms-full-width {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+/* Effect: Provides reusable internal scrolling behavior. */
+.ecms-no-page-scroll {
+    overflow: hidden !important;
+}
+
+/* Effect: Provides reusable internal scrolling behavior. */
+.ecms-scroll-y {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin !important;
+}
+
+/* Effect: Provides reusable internal scrolling behavior. */
+.ecms-scroll-x {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: thin !important;
+}
+
+/* Effect: Provides reusable internal scrolling behavior. */
+.ecms-scroll-both {
+    overflow: auto !important;
+    scrollbar-width: thin !important;
+}
+
+/* Effect: Provides reusable text alignment utility. */
+.ecms-text-center {
+    text-align: center !important;
+}
+
+/* Effect: Provides reusable text alignment utility. */
+.ecms-text-left {
+    text-align: left !important;
+}
+
+/* Effect: Keeps the element sticky at the bottom of its scroll container. */
+.ecms-sticky-bottom {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 5 !important;
+    background: linear-gradient(180deg, rgba(231,241,254,.70), rgba(231,241,254,.98)) !important;
+    border-top: 1px solid rgba(170,194,227,.48) !important;
+}
+
+/* Effect: Provides reusable spacing/gap utility. */
+.ecms-gap-sm { gap: 6px !important; }
+/* Effect: Provides reusable spacing/gap utility. */
+.ecms-gap-md { gap: 10px !important; }
+/* Effect: Provides reusable spacing/gap utility. */
+.ecms-gap-lg { gap: 16px !important; }
+
+/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
+.ecms-mb-0 { margin-bottom: 0 !important; }
+/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
+.ecms-mt-0 { margin-top: 0 !important; }
+/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
+.ecms-p-0 { padding: 0 !important; }
+
+/* Effect: Provides reusable shadow utility. */
+.ecms-shadow-sm { box-shadow: var(--ecms-shadow-sm) !important; }
+/* Effect: Provides reusable shadow utility. */
+.ecms-shadow-md { box-shadow: var(--ecms-shadow-md) !important; }
+/* Effect: Provides reusable shadow utility. */
+.ecms-shadow-lg { box-shadow: var(--ecms-shadow-lg) !important; }

@@ -1,0 +1,31 @@
+/*
+Developer note:
+Each CSS rule below has an 'Effect' comment. These comments explain
+what UI area the rule controls so future developers can safely change
+forms, pages, DataTables, modals, header/footer and utilities from one place.
+*/
+
+/*
+=====================================================
+ECMS THEME BUNDLE
+Use this one file in _Layout if you prefer single include.
+Place after Bootstrap, DataTables, Select2 and old CSS.
+=====================================================
+*/
+
+/* Effect: Imports another ECMS CSS module into the bundle. Change import order only if dependency order changes. */
+@import url('./ecms.00.tokens.css');
+/* Effect: Imports another ECMS CSS module into the bundle. Change import order only if dependency order changes. */
+@import url('./ecms.01.layout.css');
+/* Effect: Imports another ECMS CSS module into the bundle. Change import order only if dependency order changes. */
+@import url('./ecms.02.pages.css');
+/* Effect: Imports another ECMS CSS module into the bundle. Change import order only if dependency order changes. */
+@import url('./ecms.03.forms.css');
+/* Effect: Imports another ECMS CSS module into the bundle. Change import order only if dependency order changes. */
+@import url('./ecms.04.buttons-badges.css');
+/* Effect: Imports another ECMS CSS module into the bundle. Change import order only if dependency order changes. */
+@import url('./ecms.05.datatables.css');
+/* Effect: Imports another ECMS CSS module into the bundle. Change import order only if dependency order changes. */
+@import url('./ecms.06.modals.css');
+/* Effect: Imports another ECMS CSS module into the bundle. Change import order only if dependency order changes. */
+@import url('./ecms.07.utilities.css');

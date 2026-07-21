@@ -1,0 +1,26 @@
+Recommended _Layout.cshtml link order:
+
+<!-- Vendor CSS first -->
+<link rel="stylesheet" href="~/NewDataTables/dataTables.bootstrap5.min.css" />
+<link rel="stylesheet" href="~/NewDataTables/fixedHeader.dataTables.min.css" />
+<link rel="stylesheet" href="~/NewDataTables/buttons.bootstrap5.min.css" />
+<link rel="stylesheet" href="~/select2/select2.min.css" />
+
+<!-- Your old/common CSS next -->
+<link rel="stylesheet" href="~/css/StyleSheetForDataTable.css" />
+<link rel="stylesheet" href="~/DeveloperCSS/Common.css" />
+<link rel="stylesheet" href="~/DeveloperCSS/Layout.css" />
+
+<!-- ECMS global theme LAST, so it fixes old page/global conflicts -->
+<link rel="stylesheet" href="~/DeveloperCSS/ECMS/ecms.theme.bundle.css" asp-append-version="true" />
+
+If your environment blocks @import, include separate files in this exact order:
+
+<link rel="stylesheet" href="~/DeveloperCSS/ECMS/ecms.00.tokens.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/DeveloperCSS/ECMS/ecms.01.layout.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/DeveloperCSS/ECMS/ecms.02.pages.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/DeveloperCSS/ECMS/ecms.03.forms.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/DeveloperCSS/ECMS/ecms.04.buttons-badges.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/DeveloperCSS/ECMS/ecms.05.datatables.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/DeveloperCSS/ECMS/ecms.06.modals.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/DeveloperCSS/ECMS/ecms.07.utilities.css" asp-append-version="true" />

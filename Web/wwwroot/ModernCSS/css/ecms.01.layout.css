@@ -1,0 +1,218 @@
+/*
+Developer note:
+Each CSS rule below has an 'Effect' comment. These comments explain
+what UI area the rule controls so future developers can safely change
+forms, pages, DataTables, modals, header/footer and utilities from one place.
+*/
+
+/*
+=====================================================
+ECMS GLOBAL LAYOUT
+Header, navigation, breadcrumb, background and footer.
+Load after tokens.
+=====================================================
+*/
+
+/* Effect: Sets the base document height and font behavior for the full application. */
+html,
+body {
+    min-height: 100%;
+    font-family: var(--ecms-font-family);
+}
+
+/* Effect: Applies global body-level ECMS colors, background image and page foundation. */
+body {
+    color: var(--ecms-text);
+    background: var(--ecms-bg-overlay), var(--ecms-bg-image) center center / cover fixed no-repeat !important;
+}
+
+/* Use this class for pages where only inner grids/datatables should scroll. */
+/* Effect: Locks browser/page scrolling so only internal cards or DataTables scroll. */
+body.ecms-lock-page-scroll {
+    width: 100vw !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+}
+
+/* Header should stay visually consistent. */
+/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
+header,
+.header,
+.main-header,
+.navbar-brand-wrapper {
+    z-index: var(--ecms-z-header);
+}
+
+/* Main three-tab navigation */
+/* Effect: Styles the top three-tab navigation bar. */
+#layouttask {
+    margin: 0 !important;
+    min-height: var(--ecms-nav-height) !important;
+    padding: 5px 14px !important;
+    gap: 8px !important;
+    background: linear-gradient(90deg, rgba(39,130,219,.96), rgba(31,100,196,.98)) !important;
+    border-top: 1px solid rgba(255,255,255,.22) !important;
+    border-bottom: 1px solid rgba(255,255,255,.30) !important;
+    box-shadow: 0 10px 26px rgba(0,35,95,.22), inset 0 1px 0 rgba(255,255,255,.20) !important;
+}
+
+/* Effect: Styles each top navigation tab inside Dashboard / Initiate Request / Task. */
+#layouttask .nav-link {
+    height: 38px !important;
+    min-height: 38px !important;
+    margin: 0 !important;
+    border-radius: var(--ecms-radius-sm) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: rgba(255,255,255,.96) !important;
+    font-size: 17px !important;
+    font-weight: 800 !important;
+    letter-spacing: .2px !important;
+    text-decoration: none !important;
+    background: rgba(255,255,255,.08) !important;
+    border: 1px solid rgba(255,255,255,.22) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 8px 18px rgba(0,26,70,.10) !important;
+    transition: all .22s ease-in-out !important;
+}
+
+/* Effect: Adds hover feedback for the top navigation tab. */
+#layouttask .nav-link:hover {
+    background: rgba(255,255,255,.18) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Effect: Styles the currently active top navigation tab. */
+#layouttask .nav-link.active,
+#layouttask .nav-link.show,
+#layouttask .nav-link.selected,
+#layouttask .nav-link.current {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #9be18b, #59bd43) !important;
+    border-color: rgba(255,255,255,.55) !important;
+    box-shadow: 0 12px 28px rgba(76,188,66,.34), inset 0 1px 0 rgba(255,255,255,.45) !important;
+}
+
+/* Breadcrumb / Page header */
+/* Effect: Styles the breadcrumb row so it stays visible below the main header. */
+.page-header {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: var(--ecms-breadcrumb-height) !important;
+    background: linear-gradient(90deg, rgba(67,200,244,.96), rgba(42,121,226,.98)) !important;
+    border-bottom: 1px solid rgba(255,255,255,.28) !important;
+    box-shadow: 0 10px 24px rgba(0,40,110,.18), inset 0 1px 0 rgba(255,255,255,.22) !important;
+}
+
+/* Effect: Styles the breadcrumb row so it stays visible below the main header. */
+.page-header .page-header-content {
+    min-height: var(--ecms-breadcrumb-height) !important;
+    padding: 5px 28px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Effect: Styles the breadcrumb row so it stays visible below the main header. */
+.page-header-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 900 !important;
+    line-height: 1.2 !important;
+    text-shadow: 0 1px 4px rgba(0,0,0,.20) !important;
+}
+
+/* Effect: Styles the breadcrumb row so it stays visible below the main header. */
+.page-header-title::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* Effect: Styles the breadcrumb row so it stays visible below the main header. */
+.page-header-title i,
+.page-header-title .fa,
+.page-header-title .fas {
+    width: 22px !important;
+    height: 22px !important;
+    margin-right: 6px !important;
+    border-radius: 7px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255,255,255,.16) !important;
+    border: 1px solid rgba(255,255,255,.24) !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+}
+
+/* Effect: Styles the breadcrumb row so it stays visible below the main header. */
+.page-header-title a,
+.breadcrumb-item,
+.breadcrumb-item a {
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-weight: 900 !important;
+}
+
+/* Effect: Styles the breadcrumb row so it stays visible below the main header. */
+.breadcrumb {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* Content area */
+/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
+#layoutSidenav_content,
+.content-wrapper,
+.main-panel {
+    min-width: 0 !important;
+}
+
+/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
+#layoutSidenav_content main {
+    padding-bottom: var(--ecms-footer-height) !important;
+}
+
+/* Fixed footer */
+/* Effect: Styles the fixed bottom footer and keeps it above page content. */
+footer,
+footer.fixed-bottom {
+    min-height: var(--ecms-footer-height) !important;
+    padding: 5px !important;
+    margin-top: 0 !important;
+    background: #003060 !important;
+    color: #ffffff !important;
+    z-index: var(--ecms-z-footer) !important;
+}
+
+/* Effect: Styles the fixed bottom footer and keeps it above page content. */
+footer .text-end span {
+    font-size: .9rem;
+}
+
+/* Mobile */
+/* Effect: Applies the nested rules only for the specified responsive/print condition. */
+@media (max-width: 768px) {
+    #layouttask {
+        overflow-x: auto !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        scrollbar-width: thin;
+    }
+
+    #layouttask .nav-link {
+        min-width: 145px !important;
+        flex: 0 0 auto !important;
+        font-size: 14px !important;
+    }
+
+    .page-header .page-header-content {
+        padding: 5px 14px !important;
+    }
+}
