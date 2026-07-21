@@ -10,9 +10,10 @@ footer {
     margin-top: 20px;
 }
 
-footer .text-end span {
-    font-size: 0.9rem; /* Optional: Adjust the font size for span values */
-}
+    footer .text-end span {
+        font-size: 0.9rem; /* Optional: Adjust the font size for span values */
+    }
+
 .select2-hidden-accessible {
     border: 0 !important;
     clip: rect(0 0 0 0) !important;
@@ -199,6 +200,7 @@ footer .text-end span {
 .select2-container--default .select2-selection--multiple .select2-search__field {
     min-width: 100% !important;
 }
+
 .modal-body {
     color: black;
 }
@@ -259,33 +261,43 @@ footer .text-end span {
     width: 700px;
     height: 700px;
 }
+
 .footer-placeholder {
     width: 20%;
 }
+
 .mt--20 {
     margin-top: -20px;
 }
+
 .signature-box {
     background-color: white;
 }
+
 .identification-mark {
     line-height: 1;
 }
+
 .line-zero {
     line-height: 0 !important;
 }
+
 .modal-history {
     width: 500px !important;
 }
+
 .full-width {
     width: 100%;
 }
+
 .card-body-min-height {
     min-height: 150px;
 }
+
 .textarea-auto-height {
     height: auto !important;
 }
+
 #unitoffrsModal #suggesstion-box {
     position: relative;
 }
@@ -310,10 +322,1144 @@ footer .text-end span {
     .line-zero p span {
         float: right;
     }
+
 }
+
 .width-auto {
     width: auto;
 }
+
 .mt-initiate {
     margin-top: 3.5rem !important;
+}
+
+/* =====================================================
+   ECMS GLOBAL NAV + BREADCRUMB MODERN UI
+   Scope: Layout nav and breadcrumb only
+   Do not affect header/footer/page functionality
+===================================================== */
+
+:root {
+    --ecms-nav-blue-1: #123f8c;
+    --ecms-nav-blue-2: #2578df;
+    --ecms-nav-blue-3: #43c7f4;
+    --ecms-nav-active-1: #9be18b;
+    --ecms-nav-active-2: #59bd43;
+    --ecms-nav-text: #ffffff;
+    --ecms-nav-border: rgba(255,255,255,0.28);
+}
+
+/* =========================
+   Main three-tab navigation
+========================= */
+
+#layouttask {
+    margin: 0 !important;
+    padding: 7px 18px !important;
+    min-height: 58px !important;
+    background: linear-gradient(90deg, rgba(39, 130, 219, 0.96), rgba(31, 100, 196, 0.98)) !important;
+    border-top: 1px solid rgba(255,255,255,0.22) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.30) !important;
+    box-shadow: 0 10px 26px rgba(0, 35, 95, 0.22), inset 0 1px 0 rgba(255,255,255,0.20) !important;
+    gap: 10px !important;
+}
+
+    #layouttask .nav-link {
+        height: 44px !important;
+        min-height: 44px !important;
+        margin: 0 !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: rgba(255,255,255,0.96) !important;
+        font-size: 19px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.2px !important;
+        text-decoration: none !important;
+        background: rgba(255,255,255,0.08) !important;
+        border: 1px solid rgba(255,255,255,0.22) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 8px 18px rgba(0, 26, 70, 0.10) !important;
+        transition: all 0.22s ease-in-out !important;
+    }
+
+        #layouttask .nav-link:hover {
+            color: #ffffff !important;
+            background: rgba(255,255,255,0.18) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 12px 26px rgba(0, 38, 105, 0.18) !important;
+        }
+
+        /* Active tab - works when your existing JS/layout adds active class */
+        #layouttask .nav-link.active,
+        #layouttask .nav-link.show,
+        #layouttask .nav-link:focus.active {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--ecms-nav-active-1), var(--ecms-nav-active-2)) !important;
+            border-color: rgba(255,255,255,0.55) !important;
+            box-shadow: 0 12px 28px rgba(76, 188, 66, 0.34), inset 0 1px 0 rgba(255,255,255,0.45) !important;
+        }
+
+        /* If your code uses custom selected class */
+        #layouttask .nav-link.selected,
+        #layouttask .nav-link.current {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--ecms-nav-active-1), var(--ecms-nav-active-2)) !important;
+            border-color: rgba(255,255,255,0.55) !important;
+        }
+
+/* Admin hidden nav area */
+#_layouttask.nav-hide-for-admin {
+    min-height: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* =========================
+   Breadcrumb / Page header
+========================= */
+
+.page-header {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: linear-gradient(90deg, rgba(67, 200, 244, 0.96), rgba(42, 121, 226, 0.98)) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.28) !important;
+    box-shadow: 0 10px 24px rgba(0, 40, 110, 0.18), inset 0 1px 0 rgba(255,255,255,0.22) !important;
+}
+
+    .page-header .page-header-content {
+        padding: 9px 32px !important;
+        min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+.page-header-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    line-height: 1.2 !important;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.20) !important;
+}
+
+    .page-header-title::before {
+        content: "\f0c9";
+        font-family: FontAwesome;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        color: #ffffff;
+        background: rgba(255,255,255,0.16);
+        border: 1px solid rgba(255,255,255,0.24);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.22);
+        font-size: 13px;
+    }
+
+    .page-header-title a {
+        color: #ffffff !important;
+        text-decoration: none !important;
+        font-weight: 900 !important;
+    }
+
+        .page-header-title a:hover {
+            color: #eaf7ff !important;
+            text-decoration: none !important;
+        }
+
+/* Bootstrap breadcrumb support if used anywhere */
+.breadcrumb {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.breadcrumb-item,
+.breadcrumb-item a {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+}
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        color: rgba(255,255,255,0.78) !important;
+        font-weight: 900 !important;
+    }
+
+/* =========================
+   Responsive nav/breadcrumb
+========================= */
+
+@media (max-width: 991px) {
+    #layouttask {
+        padding: 6px 10px !important;
+        gap: 6px !important;
+    }
+
+        #layouttask .nav-link {
+            height: 40px !important;
+            min-height: 40px !important;
+            font-size: 15px !important;
+            border-radius: 8px !important;
+        }
+
+    .page-header .page-header-content {
+        padding: 8px 14px !important;
+    }
+
+    .page-header-title {
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    #layouttask {
+        overflow-x: auto !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        scrollbar-width: thin;
+    }
+
+        #layouttask .nav-link {
+            min-width: 150px !important;
+            flex: 0 0 auto !important;
+        }
+}
+/* =====================================================
+   FINAL GLOBAL NAV + BREADCRUMB SPACE FIX
+   Fix double breadcrumb icon + reduce vertical height
+===================================================== */
+
+/* Reduce nav height for better screen space */
+#layouttask {
+    min-height: 48px !important;
+    padding: 5px 14px !important;
+    gap: 8px !important;
+}
+
+    #layouttask .nav-link {
+        height: 38px !important;
+        min-height: 38px !important;
+        font-size: 17px !important;
+        border-radius: 8px !important;
+    }
+
+/* Reduce breadcrumb bar height */
+.page-header .page-header-content {
+    min-height: 34px !important;
+    padding: 5px 28px !important;
+}
+
+/* Remove duplicate icon created by CSS */
+.page-header-title::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* Style the existing HTML fa/fa-bars icon only */
+.page-header-title i,
+.page-header-title .fa,
+.page-header-title .fas {
+    width: 22px !important;
+    height: 22px !important;
+    margin-right: 6px !important;
+    border-radius: 7px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255,255,255,0.16) !important;
+    border: 1px solid rgba(255,255,255,0.24) !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+}
+
+.page-header-title {
+    gap: 4px !important;
+    font-size: 14px !important;
+}
+/* =====================================================
+   GLOBAL FOOTER TOP GAP FIX
+   Do not change footer design, only remove extra gap
+===================================================== */
+
+footer.fixed-bottom {
+    margin-top: 0 !important;
+}
+
+/* Keep page content above fixed footer */
+#layoutSidenav_content main {
+    padding-bottom: 42px !important;
+}
+
+/* Remove accidental white strip before footer on modern pages */
+.ecms-dashboard-page,
+.request-compact-page,
+.ecms-profile-page,
+.ecms-token-page,
+.ecms-login-page {
+    margin-bottom: 0 !important;
+}
+
+/* =====================================================
+   ECMS GLOBAL 9 MODALS MODERN UI
+   Scope only:
+   #FwdInternalRecord, #FwdRecord, #BasicDetails,
+   #BasicDetailViewPurpose, #HistoryModal, #unitoffrsModal,
+   #ICardPrint, #ConfirmationDialog, #MessageDialog
+   UI only - IDs, buttons, forms, validation and JS hooks unchanged.
+===================================================== */
+
+:root {
+    --ecms-modal-blue-1: #173b86;
+    --ecms-modal-blue-2: #2f67e6;
+    --ecms-modal-blue-3: #5b8cff;
+    --ecms-modal-navy: #061b44;
+    --ecms-modal-text: #071b42;
+    --ecms-modal-soft: rgba(239, 247, 255, .96);
+    --ecms-modal-border: rgba(195, 215, 244, .92);
+    --ecms-modal-shadow: 0 28px 70px rgba(0, 0, 0, .35);
+}
+
+#FwdInternalRecord,
+#FwdRecord,
+#BasicDetails,
+#BasicDetailViewPurpose,
+#HistoryModal,
+#unitoffrsModal,
+#ICardPrint,
+#ConfirmationDialog,
+#MessageDialog {
+    z-index: 1060 !important;
+}
+
+    #FwdInternalRecord + .modal-backdrop,
+    #FwdRecord + .modal-backdrop,
+    #BasicDetails + .modal-backdrop,
+    #BasicDetailViewPurpose + .modal-backdrop,
+    #HistoryModal + .modal-backdrop,
+    #unitoffrsModal + .modal-backdrop,
+    #ICardPrint + .modal-backdrop,
+    #ConfirmationDialog + .modal-backdrop,
+    #MessageDialog + .modal-backdrop {
+        z-index: 1055 !important;
+    }
+
+    #FwdInternalRecord .modal-dialog,
+    #FwdRecord .modal-dialog,
+    #BasicDetails .modal-dialog,
+    #BasicDetailViewPurpose .modal-dialog,
+    #HistoryModal .modal-dialog,
+    #unitoffrsModal .modal-dialog,
+    #ICardPrint .modal-dialog,
+    #ConfirmationDialog .modal-dialog,
+    #MessageDialog .modal-dialog {
+        margin: 1.35rem auto !important;
+        max-height: calc(100vh - 2.7rem) !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    #FwdInternalRecord .modal-dialog,
+    #FwdRecord .modal-dialog,
+    #BasicDetails .modal-dialog,
+    #BasicDetailViewPurpose .modal-dialog,
+    #unitoffrsModal .modal-dialog {
+        width: min(920px, calc(100vw - 28px)) !important;
+        max-width: min(920px, calc(100vw - 28px)) !important;
+    }
+
+    #HistoryModal .modal-dialog {
+        width: min(760px, calc(100vw - 28px)) !important;
+        max-width: min(760px, calc(100vw - 28px)) !important;
+    }
+
+    #ICardPrint .modal-dialog {
+        width: min(1220px, calc(100vw - 28px)) !important;
+        max-width: min(1220px, calc(100vw - 28px)) !important;
+    }
+
+    #ConfirmationDialog .modal-dialog {
+        width: min(560px, calc(100vw - 28px)) !important;
+        max-width: min(560px, calc(100vw - 28px)) !important;
+    }
+
+    #MessageDialog .modal-dialog {
+        width: min(420px, calc(100vw - 28px)) !important;
+        max-width: min(420px, calc(100vw - 28px)) !important;
+    }
+
+    #FwdInternalRecord .modal-content,
+    #FwdRecord .modal-content,
+    #BasicDetails .modal-content,
+    #BasicDetailViewPurpose .modal-content,
+    #HistoryModal .modal-content,
+    #unitoffrsModal .modal-content,
+    #ICardPrint .modal-content,
+    #ConfirmationDialog .modal-content,
+    #MessageDialog .modal-content {
+        max-height: calc(100vh - 3rem) !important;
+        border: 1px solid rgba(255,255,255,.72) !important;
+        border-radius: 18px !important;
+        background: linear-gradient(135deg, rgba(249,252,255,.99), rgba(224,238,255,.97)) !important;
+        box-shadow: var(--ecms-modal-shadow) !important;
+        overflow: hidden !important;
+        color: var(--ecms-modal-text) !important;
+    }
+
+    /* Header */
+    #FwdInternalRecord .modal-header,
+    #FwdRecord .modal-header,
+    #BasicDetails .modal-header,
+    #BasicDetailViewPurpose .modal-header,
+    #HistoryModal .modal-header,
+    #unitoffrsModal .modal-header,
+    #ICardPrint .modal-header,
+    #ConfirmationDialog .modal-header,
+    #MessageDialog .modal-header {
+        min-height: 56px !important;
+        padding: 12px 54px 12px 18px !important;
+        border: 0 !important;
+        background: linear-gradient(135deg, var(--ecms-modal-blue-1), var(--ecms-modal-blue-2), var(--ecms-modal-blue-3)) !important;
+        color: #ffffff !important;
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        box-shadow: 0 12px 28px rgba(34, 91, 210, .28), inset 0 1px 0 rgba(255,255,255,.22) !important;
+    }
+
+    #FwdInternalRecord .modal-title,
+    #FwdRecord .modal-title,
+    #BasicDetails .modal-title,
+    #BasicDetailViewPurpose .modal-title,
+    #HistoryModal .modal-title,
+    #unitoffrsModal .modal-title,
+    #ICardPrint .modal-title,
+    #ConfirmationDialog .modal-title,
+    #MessageDialog .modal-title {
+        margin: 0 !important;
+        color: #ffffff !important;
+        font-size: 18px !important;
+        font-weight: 900 !important;
+        line-height: 1.15 !important;
+        letter-spacing: .15px !important;
+        text-shadow: 0 2px 8px rgba(0,0,0,.22) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+        #FwdInternalRecord .modal-title::before,
+        #FwdRecord .modal-title::before,
+        #BasicDetails .modal-title::before,
+        #BasicDetailViewPurpose .modal-title::before,
+        #HistoryModal .modal-title::before,
+        #unitoffrsModal .modal-title::before,
+        #ICardPrint .modal-title::before,
+        #ConfirmationDialog .modal-title::before,
+        #MessageDialog .modal-title::before {
+            width: 34px !important;
+            height: 34px !important;
+            min-width: 34px !important;
+            border-radius: 11px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: rgba(255,255,255,.16) !important;
+            border: 1px solid rgba(255,255,255,.26) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.24) !important;
+            font-family: "Font Awesome 5 Free", FontAwesome, Arial, sans-serif !important;
+            font-weight: 900 !important;
+            font-size: 14px !important;
+            color: #ffffff !important;
+        }
+
+        #FwdInternalRecord .modal-title::before {
+            content: "\f064";
+        }
+
+        #FwdRecord .modal-title::before {
+            content: "\f064";
+        }
+
+        #BasicDetails .modal-title::before {
+            content: "\f2bb";
+        }
+
+        #BasicDetailViewPurpose .modal-title::before {
+            content: "\f06e";
+        }
+
+        #HistoryModal .modal-title::before {
+            content: "\f1da";
+        }
+
+        #unitoffrsModal .modal-title::before {
+            content: "\f002";
+        }
+
+        #ICardPrint .modal-title::before {
+            content: "\f02f";
+        }
+
+        #ConfirmationDialog .modal-title::before {
+            content: "\f058";
+        }
+
+        #MessageDialog .modal-title::before {
+            content: "\f05a";
+        }
+
+    /* Close button - inside right side of modal header */
+    #FwdInternalRecord .btn-close,
+    #FwdRecord .btn-close,
+    #BasicDetails .btn-close,
+    #BasicDetailViewPurpose .btn-close,
+    #unitoffrsModal .btn-close,
+    #ConfirmationDialog .btn-close,
+    #MessageDialog .btn-close,
+    #HistoryModal .close,
+    #ICardPrint .close {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        min-height: 34px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 2px solid rgba(255,255,255,.88) !important;
+        border-radius: 50% !important;
+        background-color: #df3f5c !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        position: absolute !important;
+        top: 11px !important;
+        right: 14px !important;
+        z-index: 10 !important;
+        box-shadow: 0 8px 20px rgba(223,63,92,.35) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-indent: 0 !important;
+    }
+
+    #FwdInternalRecord .btn-close,
+    #FwdRecord .btn-close,
+    #BasicDetails .btn-close,
+    #BasicDetailViewPurpose .btn-close,
+    #unitoffrsModal .btn-close,
+    #ConfirmationDialog .btn-close,
+    #MessageDialog .btn-close {
+        background-image: none !important;
+    }
+
+        #FwdInternalRecord .btn-close::before,
+        #FwdRecord .btn-close::before,
+        #BasicDetails .btn-close::before,
+        #BasicDetailViewPurpose .btn-close::before,
+        #unitoffrsModal .btn-close::before,
+        #ConfirmationDialog .btn-close::before,
+        #MessageDialog .btn-close::before,
+        #HistoryModal .close span,
+        #ICardPrint .close span {
+            content: "\00d7" !important;
+            color: #ffffff !important;
+            font-size: 26px !important;
+            font-weight: 900 !important;
+            line-height: 1 !important;
+            display: inline-block !important;
+        }
+
+    #HistoryModal .close,
+    #ICardPrint .close {
+        float: none !important;
+        text-shadow: none !important;
+        font-size: 0 !important;
+    }
+
+        #HistoryModal .close:hover,
+        #ICardPrint .close:hover,
+        #FwdInternalRecord .btn-close:hover,
+        #FwdRecord .btn-close:hover,
+        #BasicDetails .btn-close:hover,
+        #BasicDetailViewPurpose .btn-close:hover,
+        #unitoffrsModal .btn-close:hover,
+        #ConfirmationDialog .btn-close:hover,
+        #MessageDialog .btn-close:hover {
+            transform: scale(1.05) !important;
+            filter: brightness(1.04) !important;
+        }
+
+    /* Body and footer */
+    #FwdInternalRecord .modal-body,
+    #FwdRecord .modal-body,
+    #BasicDetails .modal-body,
+    #BasicDetailViewPurpose .modal-body,
+    #HistoryModal .modal-body,
+    #unitoffrsModal .modal-body,
+    #ICardPrint .modal-body,
+    #ConfirmationDialog .modal-body,
+    #MessageDialog .modal-body {
+        padding: 16px !important;
+        background: linear-gradient(135deg, rgba(248,252,255,.98), rgba(226,240,255,.96)) !important;
+        color: var(--ecms-modal-text) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        scrollbar-width: thin !important;
+    }
+
+    #FwdInternalRecord .modal-body,
+    #FwdRecord .modal-body,
+    #BasicDetails .modal-body,
+    #BasicDetailViewPurpose .modal-body,
+    #HistoryModal .modal-body,
+    #unitoffrsModal .modal-body,
+    #ConfirmationDialog .modal-body,
+    #MessageDialog .modal-body {
+        max-height: calc(100vh - 166px) !important;
+    }
+
+    #ICardPrint .modal-body {
+        max-height: calc(100vh - 126px) !important;
+        background: #f5f9ff !important;
+    }
+
+    #FwdInternalRecord .modal-footer,
+    #FwdRecord .modal-footer,
+    #BasicDetails .modal-footer,
+    #BasicDetailViewPurpose .modal-footer,
+    #unitoffrsModal .modal-footer,
+    #ConfirmationDialog .modal-footer,
+    #MessageDialog .modal-footer {
+        min-height: 58px !important;
+        padding: 12px 16px !important;
+        border: 0 !important;
+        border-top: 1px solid rgba(188,210,242,.70) !important;
+        background: linear-gradient(180deg, rgba(232,242,255,.96), rgba(215,232,253,.98)) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 10px !important;
+    }
+
+    /* Inner cards except print preview content */
+    #FwdInternalRecord .modal-body .card,
+    #FwdRecord .modal-body .card,
+    #BasicDetails .modal-body .card,
+    #BasicDetailViewPurpose .modal-body .card,
+    #HistoryModal .modal-body .card,
+    #unitoffrsModal .modal-body .card,
+    #ConfirmationDialog .modal-body .card,
+    #MessageDialog .modal-body .card {
+        border: 1px solid var(--ecms-modal-border) !important;
+        border-radius: 14px !important;
+        background: rgba(255,255,255,.86) !important;
+        box-shadow: 0 12px 28px rgba(10,43,96,.12) !important;
+        overflow: hidden !important;
+    }
+
+        #FwdInternalRecord .modal-body .card > .mt-2,
+        #FwdRecord .modal-body .card > .mt-2,
+        #BasicDetails .modal-body .card > .mt-2,
+        #BasicDetailViewPurpose .modal-body .card > .mt-2,
+        #unitoffrsModal .modal-body .card > .mt-2 {
+            margin: 0 !important;
+            padding: 14px !important;
+        }
+
+    #FwdInternalRecord .card-title,
+    #FwdRecord .card-title,
+    #BasicDetails .card-title,
+    #BasicDetailViewPurpose .card-title,
+    #unitoffrsModal .card-title {
+        margin: 0 0 12px 0 !important;
+        padding: 9px 12px !important;
+        border-radius: 10px !important;
+        background: linear-gradient(90deg, #284ba0, #477fff) !important;
+        color: #ffffff !important;
+        font-size: 15px !important;
+        font-weight: 900 !important;
+    }
+
+    /* Forms */
+    #FwdInternalRecord .form-group,
+    #FwdRecord .form-group,
+    #BasicDetails .form-group,
+    #BasicDetailViewPurpose .form-group,
+    #unitoffrsModal .form-group {
+        margin-bottom: 10px !important;
+        align-items: center !important;
+    }
+
+    #FwdInternalRecord .col-form-label,
+    #FwdRecord .col-form-label,
+    #BasicDetails .col-form-label,
+    #BasicDetailViewPurpose .col-form-label,
+    #unitoffrsModal .col-form-label,
+    #ConfirmationDialog label,
+    #MessageDialog label {
+        color: var(--ecms-modal-navy) !important;
+        font-size: 13px !important;
+        font-weight: 900 !important;
+        line-height: 1.25 !important;
+    }
+
+    #FwdInternalRecord .form-control,
+    #FwdInternalRecord .form-control1,
+    #FwdInternalRecord .form-select,
+    #FwdInternalRecord textarea,
+    #FwdInternalRecord select,
+    #FwdRecord .form-control,
+    #FwdRecord .form-control1,
+    #FwdRecord .form-select,
+    #FwdRecord textarea,
+    #FwdRecord select,
+    #BasicDetails .form-control,
+    #BasicDetails .form-control1,
+    #BasicDetails .form-select,
+    #BasicDetails textarea,
+    #BasicDetails select,
+    #BasicDetailViewPurpose .form-control,
+    #BasicDetailViewPurpose .form-control1,
+    #BasicDetailViewPurpose .form-select,
+    #BasicDetailViewPurpose textarea,
+    #BasicDetailViewPurpose select,
+    #unitoffrsModal .form-control,
+    #unitoffrsModal .form-control1,
+    #unitoffrsModal .form-select,
+    #unitoffrsModal textarea,
+    #unitoffrsModal select,
+    #ConfirmationDialog .form-control,
+    #ConfirmationDialog .form-select,
+    #MessageDialog .form-control,
+    #MessageDialog .form-select {
+        min-height: 36px !important;
+        height: auto !important;
+        border: 1px solid rgba(165,187,219,.95) !important;
+        border-radius: 9px !important;
+        background-color: rgba(255,255,255,.98) !important;
+        color: #0b234f !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        box-shadow: inset 0 1px 2px rgba(6,27,68,.04) !important;
+    }
+
+    #FwdInternalRecord textarea,
+    #FwdRecord textarea,
+    #unitoffrsModal textarea {
+        min-height: 72px !important;
+        resize: vertical !important;
+    }
+
+    #FwdInternalRecord label.form-control,
+    #FwdRecord label.form-control,
+    #BasicDetails label.form-control,
+    #BasicDetailViewPurpose label.form-control {
+        display: flex !important;
+        align-items: center !important;
+        margin-bottom: 0 !important;
+        background: linear-gradient(135deg, #eef4fb, #dfe9f6) !important;
+        color: #33435d !important;
+        opacity: 1 !important;
+    }
+
+    #FwdInternalRecord .form-control:focus,
+    #FwdInternalRecord .form-select:focus,
+    #FwdRecord .form-control:focus,
+    #FwdRecord .form-select:focus,
+    #BasicDetails .form-control:focus,
+    #BasicDetails .form-select:focus,
+    #BasicDetailViewPurpose .form-control:focus,
+    #BasicDetailViewPurpose .form-select:focus,
+    #unitoffrsModal .form-control:focus,
+    #unitoffrsModal .form-select:focus {
+        border-color: #3f7cff !important;
+        box-shadow: 0 0 0 3px rgba(63,124,255,.16) !important;
+        outline: none !important;
+    }
+
+    /* Radio buttons */
+    #FwdRecord .form-check-input,
+    #unitoffrsModal .form-check-input,
+    #ConfirmationDialog .form-check-input,
+    #MessageDialog .form-check-input {
+        width: 17px !important;
+        height: 17px !important;
+        margin-top: .15rem !important;
+        accent-color: #315be8 !important;
+        border: 1px solid #89a5d8 !important;
+        box-shadow: none !important;
+    }
+
+    #FwdRecord .form-check-label,
+    #unitoffrsModal .form-check-label {
+        color: #061b44 !important;
+        font-weight: 800 !important;
+        margin-left: 4px !important;
+    }
+
+    /* Select2 and dropdown cleanup inside global modals */
+    #FwdInternalRecord .select2-container,
+    #FwdRecord .select2-container,
+    #BasicDetails .select2-container,
+    #BasicDetailViewPurpose .select2-container,
+    #unitoffrsModal .select2-container,
+    #ConfirmationDialog .select2-container,
+    #MessageDialog .select2-container {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    #FwdInternalRecord .select2-hidden-accessible,
+    #FwdRecord .select2-hidden-accessible,
+    #BasicDetails .select2-hidden-accessible,
+    #BasicDetailViewPurpose .select2-hidden-accessible,
+    #unitoffrsModal .select2-hidden-accessible,
+    #ConfirmationDialog .select2-hidden-accessible,
+    #MessageDialog .select2-hidden-accessible {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0,0,0,0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+
+    #FwdInternalRecord .select2-container--default .select2-selection--single,
+    #FwdRecord .select2-container--default .select2-selection--single,
+    #BasicDetails .select2-container--default .select2-selection--single,
+    #BasicDetailViewPurpose .select2-container--default .select2-selection--single,
+    #unitoffrsModal .select2-container--default .select2-selection--single,
+    #ConfirmationDialog .select2-container--default .select2-selection--single,
+    #MessageDialog .select2-container--default .select2-selection--single,
+    #FwdInternalRecord .select2-container--default .select2-selection--multiple,
+    #FwdRecord .select2-container--default .select2-selection--multiple,
+    #BasicDetails .select2-container--default .select2-selection--multiple,
+    #BasicDetailViewPurpose .select2-container--default .select2-selection--multiple,
+    #unitoffrsModal .select2-container--default .select2-selection--multiple,
+    #ConfirmationDialog .select2-container--default .select2-selection--multiple,
+    #MessageDialog .select2-container--default .select2-selection--multiple {
+        min-height: 36px !important;
+        height: auto !important;
+        border: 1px solid rgba(165,187,219,.95) !important;
+        border-radius: 9px !important;
+        background: rgba(255,255,255,.98) !important;
+        padding: 4px 36px 4px 10px !important;
+        box-shadow: inset 0 1px 2px rgba(6,27,68,.04) !important;
+    }
+
+        #FwdInternalRecord .select2-container--default .select2-selection--single .select2-selection__rendered,
+        #FwdRecord .select2-container--default .select2-selection--single .select2-selection__rendered,
+        #BasicDetails .select2-container--default .select2-selection--single .select2-selection__rendered,
+        #BasicDetailViewPurpose .select2-container--default .select2-selection--single .select2-selection__rendered,
+        #unitoffrsModal .select2-container--default .select2-selection--single .select2-selection__rendered,
+        #ConfirmationDialog .select2-container--default .select2-selection--single .select2-selection__rendered,
+        #MessageDialog .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 26px !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-top: 0 !important;
+            color: #0b234f !important;
+            font-weight: 700 !important;
+        }
+
+        #FwdInternalRecord .select2-container--default .select2-selection--single .select2-selection__arrow,
+        #FwdRecord .select2-container--default .select2-selection--single .select2-selection__arrow,
+        #BasicDetails .select2-container--default .select2-selection--single .select2-selection__arrow,
+        #BasicDetailViewPurpose .select2-container--default .select2-selection--single .select2-selection__arrow,
+        #unitoffrsModal .select2-container--default .select2-selection--single .select2-selection__arrow,
+        #ConfirmationDialog .select2-container--default .select2-selection--single .select2-selection__arrow,
+        #MessageDialog .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 34px !important;
+            width: 28px !important;
+            top: 1px !important;
+            right: 5px !important;
+        }
+
+.select2-container--open {
+    z-index: 1085 !important;
+}
+
+.select2-dropdown {
+    border: 1px solid rgba(88,126,202,.60) !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    box-shadow: 0 18px 38px rgba(0,0,0,.24) !important;
+}
+
+/* Tables inside modal bodies */
+#FwdInternalRecord .dataTables_wrapper,
+#FwdRecord .dataTables_wrapper,
+#BasicDetails .dataTables_wrapper,
+#BasicDetailViewPurpose .dataTables_wrapper,
+#unitoffrsModal .dataTables_wrapper,
+#ConfirmationDialog .dataTables_wrapper,
+#MessageDialog .dataTables_wrapper {
+    width: 100% !important;
+}
+
+#FwdInternalRecord table.dataTable,
+#FwdRecord table.dataTable,
+#BasicDetails table.dataTable,
+#BasicDetailViewPurpose table.dataTable,
+#unitoffrsModal table.dataTable,
+#ConfirmationDialog table.dataTable,
+#MessageDialog table.dataTable {
+    width: 100% !important;
+    border-collapse: collapse !important;
+}
+
+    #FwdInternalRecord table.dataTable thead th,
+    #FwdRecord table.dataTable thead th,
+    #BasicDetails table.dataTable thead th,
+    #BasicDetailViewPurpose table.dataTable thead th,
+    #unitoffrsModal table.dataTable thead th,
+    #ConfirmationDialog table.dataTable thead th,
+    #MessageDialog table.dataTable thead th {
+        background: linear-gradient(90deg, #214f9a, #376ad0) !important;
+        color: #ffffff !important;
+        font-weight: 900 !important;
+        border: 0 !important;
+        white-space: nowrap !important;
+    }
+
+    #FwdInternalRecord table.dataTable tbody td,
+    #FwdRecord table.dataTable tbody td,
+    #BasicDetails table.dataTable tbody td,
+    #BasicDetailViewPurpose table.dataTable tbody td,
+    #unitoffrsModal table.dataTable tbody td,
+    #ConfirmationDialog table.dataTable tbody td,
+    #MessageDialog table.dataTable tbody td {
+        color: #071b42 !important;
+        font-weight: 700 !important;
+        vertical-align: middle !important;
+    }
+
+/* Buttons */
+#FwdInternalRecord .btn,
+#FwdRecord .btn,
+#BasicDetails .btn,
+#BasicDetailViewPurpose .btn,
+#unitoffrsModal .btn,
+#ConfirmationDialog .btn,
+#MessageDialog .btn {
+    min-height: 38px !important;
+    padding: 8px 18px !important;
+    border-radius: 10px !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    border: 0 !important;
+    box-shadow: 0 10px 22px rgba(0,0,0,.14) !important;
+}
+
+#FwdInternalRecord .btn-success,
+#FwdRecord .btn-success,
+#unitoffrsModal .btn-success {
+    background: linear-gradient(135deg, #35ad56, #238a40) !important;
+    color: #ffffff !important;
+}
+
+#FwdRecord .btn-danger,
+#ConfirmationDialog .btn-danger,
+#MessageDialog .btn-danger {
+    background: linear-gradient(135deg, #ef4a57, #c82136) !important;
+    color: #ffffff !important;
+}
+
+#BasicDetails .btn-secondary,
+#BasicDetailViewPurpose .btn-secondary,
+#unitoffrsModal .btn-secondary,
+#ConfirmationDialog .btn-secondary,
+#MessageDialog .btn-secondary {
+    background: linear-gradient(135deg, #5d72a0, #344869) !important;
+    color: #ffffff !important;
+}
+
+/* Confirmation and message content */
+#ConfirmationDialog_Data,
+#MessageDialogBody {
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    line-height: 1.45 !important;
+    color: #0b5724 !important;
+    padding: 10px !important;
+}
+
+#MessageDialogBody {
+    min-height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* History timeline */
+#HistoryModal #HistoryModal_Title {
+    text-align: center !important;
+    margin-bottom: 12px !important;
+}
+
+#HistoryModal #HistoryModal_Title_Content,
+#HistoryModal .badge {
+    background: linear-gradient(135deg, #2f67e6, #5b8cff) !important;
+    color: #ffffff !important;
+    border-radius: 999px !important;
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+}
+
+#HistoryModal .timeline {
+    padding: 10px 8px !important;
+}
+
+/* Search Army No modal */
+#unitoffrsModal .modal-body {
+    text-align: left !important;
+}
+
+#unitoffrsModal #suggesstion-box {
+    position: relative !important;
+    width: 100% !important;
+}
+
+#unitoffrsModal .ui-autocomplete {
+    z-index: 1086 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 18px 38px rgba(0,0,0,.22) !important;
+}
+
+/* Print preview special handling: modern wrapper but do not disturb I-card print design */
+#ICardPrint .modal-content {
+    background: #f5f9ff !important;
+}
+
+#ICardPrint .section-to-print-popup {
+    background: #ffffff !important;
+    border-radius: 0 0 18px 18px !important;
+}
+
+#ICardPrint .card-fotter {
+    background: transparent !important;
+}
+
+/* Keep print output clean and unchanged */
+@media print {
+    #ICardPrint,
+    #ICardPrint .modal-dialog,
+    #ICardPrint .modal-content,
+    #ICardPrint .modal-body,
+    #ICardPrint .section-to-print-popup {
+        position: static !important;
+        max-height: none !important;
+        height: auto !important;
+        width: auto !important;
+        max-width: none !important;
+        overflow: visible !important;
+        box-shadow: none !important;
+        border: 0 !important;
+        background: #ffffff !important;
+    }
+
+        #ICardPrint .modal-header,
+        #ICardPrint .close,
+        #ICardPrint .no-print {
+            display: none !important;
+        }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #FwdInternalRecord .modal-dialog,
+    #FwdRecord .modal-dialog,
+    #BasicDetails .modal-dialog,
+    #BasicDetailViewPurpose .modal-dialog,
+    #HistoryModal .modal-dialog,
+    #unitoffrsModal .modal-dialog,
+    #ICardPrint .modal-dialog,
+    #ConfirmationDialog .modal-dialog,
+    #MessageDialog .modal-dialog {
+        width: calc(100vw - 18px) !important;
+        max-width: calc(100vw - 18px) !important;
+        margin: .75rem auto !important;
+    }
+
+    #FwdInternalRecord .modal-content,
+    #FwdRecord .modal-content,
+    #BasicDetails .modal-content,
+    #BasicDetailViewPurpose .modal-content,
+    #HistoryModal .modal-content,
+    #unitoffrsModal .modal-content,
+    #ICardPrint .modal-content,
+    #ConfirmationDialog .modal-content,
+    #MessageDialog .modal-content {
+        max-height: calc(100vh - 1.5rem) !important;
+    }
+
+    #FwdInternalRecord .modal-header,
+    #FwdRecord .modal-header,
+    #BasicDetails .modal-header,
+    #BasicDetailViewPurpose .modal-header,
+    #HistoryModal .modal-header,
+    #unitoffrsModal .modal-header,
+    #ICardPrint .modal-header,
+    #ConfirmationDialog .modal-header,
+    #MessageDialog .modal-header {
+        min-height: 52px !important;
+        padding: 10px 50px 10px 14px !important;
+    }
+
+    #FwdInternalRecord .modal-title,
+    #FwdRecord .modal-title,
+    #BasicDetails .modal-title,
+    #BasicDetailViewPurpose .modal-title,
+    #HistoryModal .modal-title,
+    #unitoffrsModal .modal-title,
+    #ICardPrint .modal-title,
+    #ConfirmationDialog .modal-title,
+    #MessageDialog .modal-title {
+        font-size: 15px !important;
+    }
+
+        #FwdInternalRecord .modal-title::before,
+        #FwdRecord .modal-title::before,
+        #BasicDetails .modal-title::before,
+        #BasicDetailViewPurpose .modal-title::before,
+        #HistoryModal .modal-title::before,
+        #unitoffrsModal .modal-title::before,
+        #ICardPrint .modal-title::before,
+        #ConfirmationDialog .modal-title::before,
+        #MessageDialog .modal-title::before {
+            width: 30px !important;
+            height: 30px !important;
+            min-width: 30px !important;
+        }
+
+    #FwdInternalRecord .modal-body,
+    #FwdRecord .modal-body,
+    #BasicDetails .modal-body,
+    #BasicDetailViewPurpose .modal-body,
+    #HistoryModal .modal-body,
+    #unitoffrsModal .modal-body,
+    #ConfirmationDialog .modal-body,
+    #MessageDialog .modal-body {
+        max-height: calc(100vh - 150px) !important;
+        padding: 12px !important;
+    }
+
+    #ICardPrint .modal-body {
+        max-height: calc(100vh - 112px) !important;
+        padding: 10px !important;
+        overflow-x: auto !important;
+    }
 }

@@ -3,244 +3,170 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link asp-href-include="~/developercss/dashboardmaster.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        Dashboard
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        Home <span>&gt;</span> Dashboard
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="row">
-        <div class="card p-4 mb-3">
-            <div class="seven">
-                <h1>Fmn/Unit</h1>
-            </div>
-            <div class="row">
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/Command">
-                        <div class="counter blue">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotComd">0</span>
-                            <h3>Comd / PSO</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/Corps">
-                        <div class="counter blue">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotCorps">0</span>
-                            <h3>Corps / Dte / Area</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/Div">
-                        <div class="counter blue">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotDiv">0</span>
-                            <h3>Div / Branch / Sub Area</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/Bde">
-                        <div class="counter blue">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotBde">0</span>
-                            <h3>Bde</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/MapUnit">
-                        <div class="counter blue">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotMapUnit">0</span>
-                            <h3>Map Unit</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/MapUnitChange">
-                        <div class="counter blue">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotMapUnitChangeRequest">0</span>
-                            <h3>Unit Move Request</h3>
-                        </div>
-                    </a>
+
+<div class="containerMain mt-n10 ecms-dashboardmaster-page">
+    <div class="ecms-dashboardmaster-shell">
+        <div class="ecms-dashboardmaster-titlebar">
+            <div class="ecms-dashboardmaster-title-wrap">
+                <span class="ecms-dashboardmaster-title-icon"><i class="fa fa-dashboard"></i></span>
+                <div>
+                    <h3>Master Dashboard</h3>
+                    <p>Administration summary for formation, unit mapping, master data and user configuration</p>
                 </div>
             </div>
+            <span class="ecms-dashboardmaster-pill"><i class="fa fa-shield"></i> Admin Panel</span>
         </div>
-        <div class="card p-4 mb-3">
-            <div class="seven">
-                <h1>Master</h1>
-            </div>
-            <div class="row">
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/Unit/&$&&&">
-                        <div class="counter green">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotUnit">0</span>
-                            <h3>Unit</h3>
-                        </div>
+
+        <div class="ecms-dashboardmaster-content">
+            <section class="ecms-dashboardmaster-section section-blue">
+                <div class="ecms-section-heading">
+                    <span><i class="fa fa-sitemap"></i> Fmn / Unit</span>
+                </div>
+
+                <div class="ecms-dashboardmaster-cards cards-six">
+                    <a href="/Master/Command" class="ecms-dash-card blue">
+                        <span class="ecms-dash-icon"><i class="fa fa-university"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotComd">0</span>
+                        <span class="ecms-dash-label">Comd / PSO</span>
+                    </a>
+
+                    <a href="/Master/Corps" class="ecms-dash-card blue">
+                        <span class="ecms-dash-icon"><i class="fa fa-sitemap"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotCorps">0</span>
+                        <span class="ecms-dash-label">Corps / Dte / Area</span>
+                    </a>
+
+                    <a href="/Master/Div" class="ecms-dash-card blue">
+                        <span class="ecms-dash-icon"><i class="fa fa-code-fork"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotDiv">0</span>
+                        <span class="ecms-dash-label">Div / Branch / Sub Area</span>
+                    </a>
+
+                    <a href="/Master/Bde" class="ecms-dash-card blue">
+                        <span class="ecms-dash-icon"><i class="fa fa-map-marker"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotBde">0</span>
+                        <span class="ecms-dash-label">Bde</span>
+                    </a>
+
+                    <a href="/Master/MapUnit" class="ecms-dash-card blue">
+                        <span class="ecms-dash-icon"><i class="fa fa-map"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotMapUnit">0</span>
+                        <span class="ecms-dash-label">Map Unit</span>
+                    </a>
+
+                    <a href="/Master/MapUnitChange" class="ecms-dash-card blue">
+                        <span class="ecms-dash-icon"><i class="fa fa-exchange"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotMapUnitChangeRequest">0</span>
+                        <span class="ecms-dash-label">Unit Move Request</span>
                     </a>
                 </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/Rank">
-                        <div class="counter green">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotRank">0</span>
-                            <h3>Rank</h3>
-                        </div>
+            </section>
+
+            <section class="ecms-dashboardmaster-section section-green">
+                <div class="ecms-section-heading">
+                    <span><i class="fa fa-database"></i> Master</span>
+                </div>
+
+                <div class="ecms-dashboardmaster-cards cards-nine">
+                    <a href="/Master/Unit/&$&&&" class="ecms-dash-card green">
+                        <span class="ecms-dash-icon"><i class="fa fa-building"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotUnit">0</span>
+                        <span class="ecms-dash-label">Unit</span>
+                    </a>
+
+                    <a href="/Master/Rank" class="ecms-dash-card green">
+                        <span class="ecms-dash-icon"><i class="fa fa-star"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotRank">0</span>
+                        <span class="ecms-dash-label">Rank</span>
+                    </a>
+
+                    <a href="/Master/Appointment" class="ecms-dash-card green">
+                        <span class="ecms-dash-icon"><i class="fa fa-briefcase"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotAppointment">0</span>
+                        <span class="ecms-dash-label">Appointment</span>
+                    </a>
+
+                    <a href="/Master/ArmedType" class="ecms-dash-card green">
+                        <span class="ecms-dash-icon"><i class="fa fa-shield"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotArms">0</span>
+                        <span class="ecms-dash-label">Arms / Service</span>
+                    </a>
+
+                    <a href="/Master/Regimental" class="ecms-dash-card green">
+                        <span class="ecms-dash-icon"><i class="fa fa-flag"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotRegtCentre">0</span>
+                        <span class="ecms-dash-label">Regt Centre</span>
+                    </a>
+
+                    <a href="/Master/RecordOffice" class="ecms-dash-card green">
+                        <span class="ecms-dash-icon"><i class="fa fa-folder-open"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotRecordOffice">0</span>
+                        <span class="ecms-dash-label">Record Office</span>
+                    </a>
+
+                    <a href="/Master/OROMapping" class="ecms-dash-card green">
+                        <span class="ecms-dash-icon"><i class="fa fa-link"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotOROMapping">0</span>
+                        <span class="ecms-dash-label">ORO Mapping</span>
+                    </a>
+
+                    <a href="/Master/AfsacCellMapping" class="ecms-dash-card green">
+                        <span class="ecms-dash-icon"><i class="fa fa-cubes"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotAfsacCellMapping">0</span>
+                        <span class="ecms-dash-label">AFSAC Cell Mapping</span>
+                    </a>
+
+                    <a href="/Account/Claims" class="ecms-dash-card green">
+                        <span class="ecms-dash-icon"><i class="fa fa-file-text"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotalClaims">0</span>
+                        <span class="ecms-dash-label">Claims</span>
                     </a>
                 </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/Appointment">
-                        <div class="counter green">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotAppointment">0</span>
-                            <h3>Appointment</h3>
-                        </div>
+            </section>
+
+            <section class="ecms-dashboardmaster-section section-orange">
+                <div class="ecms-section-heading">
+                    <span><i class="fa fa-users"></i> User Config</span>
+                </div>
+
+                <div class="ecms-dashboardmaster-cards cards-three">
+                    <a href="/Account/DomainRegn" class="ecms-dash-card orange">
+                        <span class="ecms-dash-icon"><i class="fa fa-key"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotDomainRegn">0</span>
+                        <span class="ecms-dash-label">Domain Regn</span>
+                    </a>
+
+                    <a href="/Account/UserRegn" class="ecms-dash-card orange">
+                        <span class="ecms-dash-icon"><i class="fa fa-user-plus"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotUserRegn">0</span>
+                        <span class="ecms-dash-label">User Regn</span>
+                    </a>
+
+                    <a href="/Account/ProfileManage" class="ecms-dash-card orange">
+                        <span class="ecms-dash-icon"><i class="fa fa-address-card"></i></span>
+                        <span class="counter-value ecms-dash-count" id="TotUserProfile">0</span>
+                        <span class="ecms-dash-label">User Profile</span>
                     </a>
                 </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/ArmedType">
-                        <div class="counter green">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotArms">0</span>
-                            <h3>Arms / Service</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/Regimental">
-                        <div class="counter green">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotRegtCentre">0</span>
-                            <h3>Regt Centre</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/RecordOffice">
-                        <div class="counter green">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotRecordOffice">0</span>
-                            <h3>Record Office</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/OROMapping">
-                        <div class="counter green">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotOROMapping">0</span>
-                            <h3>ORO Mapping</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Master/AfsacCellMapping">
-                        <div class="counter green">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotAfsacCellMapping">0</span>
-                            <h3>Afsac Cell Mapping</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Account/Claims">
-                        <div class="counter green  ">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotalClaims">0</span>
-                            <h3>Claims</h3>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="card p-4 mb-3">
-            <div class="seven">
-                <h1>User Config</h1>
-            </div>
-            <div class="row">
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Account/DomainRegn">
-                        <div class="counter orange">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotDomainRegn">0</span>
-                            <h3>Domain Regn</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Account/UserRegn">
-                        <div class="counter orange">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotUserRegn">0</span>
-                            <h3>User Regn</h3>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 clsforMargin  col-sm-6">
-                    <a href="/Account/ProfileManage">
-                        <div class="counter orange  ">
-                            <div class="counter-icon">
-                                <i class="fa fa-address-card"></i>
-                            </div>
-                            <span class="counter-value" id="TotUserProfile">0</span>
-                            <h3>User Profile</h3>
-                        </div>
-                    </a>
-                </div>
-                
-            </div>
+            </section>
         </div>
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/DashboardMaster.js"></script>

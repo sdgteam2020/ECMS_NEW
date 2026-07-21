@@ -1,14 +1,814 @@
-﻿.modal.left .modal-dialog, .modal.right .modal-dialog {
-    position: fixed;
-    margin: auto;
-    width: 700px;
-    height: 100%;
-    text-align: left;
-    -webkit-transform: translate3d(0%, 0, 0);
-    -ms-transform: translate3d(0%, 0, 0);
-    -o-transform: translate3d(0%, 0, 0);
-    transform: translate3d(0%, 0, 0);
+﻿/* =====================================================
+   ECMS Basic Detail Index / Application List Modern UI
+   Only page UI changes. Header/footer/layout/JS untouched.
+===================================================== */
+
+:root {
+    --ecms-basic-blue-1: #102f73;
+    --ecms-basic-blue-2: #2f7dff;
+    --ecms-basic-cyan: #55d7ff;
+    --ecms-basic-green: #31c48d;
+    --ecms-basic-orange: #f59e0b;
+    --ecms-basic-red: #ef4444;
+    --ecms-basic-ink: #071b44;
+    --ecms-basic-muted: #5b729a;
+    --ecms-basic-panel: rgba(232, 244, 255, 0.88);
 }
-.card-body-min-height {
-    min-height: 150px;
+
+/* Keep this page inside visible area and prevent whole document scroll */
+html:has(.ecms-basic-index-page),
+body:has(.ecms-basic-index-page) {
+    overflow-y: hidden !important;
+}
+
+.ecms-basic-index-page {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: calc(100vh - 255px) !important;
+    height: calc(100vh - 255px) !important;
+    margin: 0 !important;
+    padding: 12px 26px 46px !important;
+    overflow: hidden !important;
+    background: linear-gradient(90deg, rgba(5, 22, 62, 0.88), rgba(20, 70, 154, 0.74)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+}
+
+    .ecms-basic-index-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 16% 18%, rgba(89, 200, 255, 0.15), transparent 28%), radial-gradient(circle at 84% 74%, rgba(59, 130, 246, 0.18), transparent 32%);
+    }
+
+.ecms-basic-index-shell {
+    position: relative !important;
+    z-index: 1 !important;
+    width: min(1540px, 96vw) !important;
+    max-width: 1540px !important;
+    height: calc(100vh - 284px) !important;
+    max-height: calc(100vh - 284px) !important;
+    margin: 0 auto !important;
+    padding: 12px !important;
+    border: 1px solid rgba(255,255,255,0.72) !important;
+    border-radius: 22px !important;
+    background: var(--ecms-basic-panel) !important;
+    box-shadow: 0 22px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
+    overflow: hidden !important;
+}
+
+.ecms-basic-index-card-header {
+    min-height: 62px !important;
+    padding: 10px 14px !important;
+    margin: 0 0 10px 0 !important;
+    border: 1px solid rgba(255,255,255,0.64) !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.74), rgba(255,255,255,0.38)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.72) !important;
+}
+
+    .ecms-basic-index-card-header .row {
+        margin: 0 !important;
+    }
+
+.ecms-basic-index-heading {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin: 0 !important;
+    color: var(--ecms-basic-ink) !important;
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    line-height: 1.15 !important;
+}
+
+.ecms-basic-index-heading-icon {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 15px !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #238dff, #064bd8) !important;
+    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.32) !important;
+    font-size: 19px !important;
+}
+
+.ecms-basic-index-body {
+    height: calc(100% - 74px) !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: transparent !important;
+}
+
+    .ecms-basic-index-body > .row,
+    .ecms-basic-index-table-col {
+        height: 100% !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+    }
+
+.ecms-basic-index-table-col {
+    padding: 0 !important;
+}
+
+/* =========================
+   DataTables modern styling
+========================= */
+
+.ecms-basic-index-page .dataTables_wrapper {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+    color: var(--ecms-basic-ink) !important;
+}
+
+    .ecms-basic-index-page .dt-top,
+    .ecms-basic-index-page .dataTables_wrapper .dt-top {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+        padding: 10px 12px !important;
+        margin: 0 0 10px 0 !important;
+        border-radius: 14px !important;
+        background: linear-gradient(135deg, rgba(255,255,255,0.84), rgba(242, 248, 255, 0.70)) !important;
+        border: 1px solid rgba(255,255,255,0.68) !important;
+        box-shadow: 0 12px 28px rgba(0, 26, 88, 0.12) !important;
+    }
+
+.ecms-basic-index-page .dataTables_length,
+.ecms-basic-index-page .dt-buttons,
+.ecms-basic-index-page .dataTables_filter {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+}
+
+    .ecms-basic-index-page .dataTables_length label,
+    .ecms-basic-index-page .dataTables_filter label {
+        margin: 0 !important;
+        color: #153263 !important;
+        font-size: 12.5px !important;
+        font-weight: 900 !important;
+    }
+
+    .ecms-basic-index-page .dataTables_length select,
+    .ecms-basic-index-page .dataTables_filter input {
+        height: 36px !important;
+        border-radius: 11px !important;
+        border: 1px solid rgba(93, 125, 175, 0.34) !important;
+        background-color: rgba(255,255,255,0.96) !important;
+        color: #10254f !important;
+        font-size: 12.5px !important;
+        font-weight: 800 !important;
+        box-shadow: 0 8px 18px rgba(0, 30, 80, 0.06), inset 0 1px 0 rgba(255,255,255,0.88) !important;
+    }
+
+    .ecms-basic-index-page .dataTables_filter input {
+        width: 220px !important;
+        padding: 7px 12px !important;
+    }
+
+        .ecms-basic-index-page .dataTables_length select:focus,
+        .ecms-basic-index-page .dataTables_filter input:focus {
+            outline: none !important;
+            border-color: #227dff !important;
+            box-shadow: 0 0 0 4px rgba(31, 124, 255, 0.16) !important;
+        }
+
+    .ecms-basic-index-page .dt-buttons .btn,
+    .ecms-basic-index-page .dt-button {
+        height: 34px !important;
+        min-width: 78px !important;
+        padding: 7px 14px !important;
+        border: 0 !important;
+        border-radius: 11px !important;
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #238dff, #064bd8) !important;
+        box-shadow: 0 10px 20px rgba(0, 82, 220, 0.22) !important;
+        font-size: 12px !important;
+        font-weight: 900 !important;
+    }
+
+        .ecms-basic-index-page .dt-buttons .btn:hover,
+        .ecms-basic-index-page .dt-button:hover {
+            background: linear-gradient(135deg, #4aa0ff, #0758f0) !important;
+            transform: translateY(-1px) !important;
+        }
+
+.ecms-basic-index-page .dataTables_scroll {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255,255,255,0.62) !important;
+    box-shadow: 0 14px 32px rgba(0, 26, 88, 0.14) !important;
+}
+
+.ecms-basic-index-page .dataTables_scrollHead,
+.ecms-basic-index-page .dataTables_scrollHeadInner {
+    background: transparent !important;
+}
+
+.ecms-basic-index-page .dataTables_scrollBody {
+    max-height: calc(100vh - 455px) !important;
+    height: calc(100vh - 455px) !important;
+    min-height: 190px !important;
+    overflow: auto !important;
+    background: rgba(255,255,255,0.88) !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(31, 124, 255, 0.60) rgba(255,255,255,0.25);
+}
+
+    .ecms-basic-index-page .dataTables_scrollBody::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+    }
+
+    .ecms-basic-index-page .dataTables_scrollBody::-webkit-scrollbar-thumb {
+        background: rgba(31, 124, 255, 0.62);
+        border-radius: 999px;
+    }
+
+    .ecms-basic-index-page .dataTables_scrollBody::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.24);
+        border-radius: 999px;
+    }
+
+.ecms-basic-index-page table.dataTable,
+.ecms-basic-index-page #tbldatatabledata_Fwd {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    color: var(--ecms-basic-ink) !important;
+    background: rgba(255,255,255,0.96) !important;
+}
+
+    .ecms-basic-index-page table.dataTable thead th,
+    .ecms-basic-index-page #tbldatatabledata_Fwd thead th {
+        height: 42px !important;
+        padding: 10px 12px !important;
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #153f8f, #236dd2) !important;
+        border-color: rgba(255,255,255,0.22) !important;
+        font-size: 13px !important;
+        font-weight: 900 !important;
+        text-align: left !important;
+        vertical-align: middle !important;
+        white-space: nowrap !important;
+    }
+
+    .ecms-basic-index-page table.dataTable tbody td,
+    .ecms-basic-index-page #tbldatatabledata_Fwd tbody td {
+        padding: 10px 12px !important;
+        color: #10254f !important;
+        font-size: 12.5px !important;
+        font-weight: 750 !important;
+        vertical-align: middle !important;
+        border-top: 1px solid rgba(35, 99, 170, 0.10) !important;
+        background: rgba(255,255,255,0.94) !important;
+    }
+
+    .ecms-basic-index-page table.dataTable tbody tr:hover td {
+        background: rgba(236, 246, 255, 0.98) !important;
+    }
+
+.ecms-basic-index-page .dt-ellipsis {
+    display: inline-block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.ecms-basic-index-page .service-no-link {
+    color: #075de3 !important;
+    font-weight: 900 !important;
+    text-decoration: none !important;
+}
+
+    .ecms-basic-index-page .service-no-link:hover {
+        color: #003caa !important;
+        text-decoration: underline !important;
+    }
+
+/* DataTable footer */
+.ecms-basic-index-page .dataTables_info,
+.ecms-basic-index-page .dataTables_paginate {
+    margin-top: 10px !important;
+    color: #10254f !important;
+    font-size: 12.5px !important;
+    font-weight: 800 !important;
+}
+
+.ecms-basic-index-page .dataTables_paginate {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 4px !important;
+}
+
+    .ecms-basic-index-page .dataTables_paginate .paginate_button {
+        min-width: 34px !important;
+        height: 34px !important;
+        padding: 7px 10px !important;
+        margin: 0 2px !important;
+        border-radius: 10px !important;
+        border: 1px solid rgba(85, 130, 195, 0.30) !important;
+        color: #123f8c !important;
+        background: rgba(255,255,255,0.78) !important;
+        font-weight: 900 !important;
+    }
+
+        .ecms-basic-index-page .dataTables_paginate .paginate_button.current,
+        .ecms-basic-index-page .dataTables_paginate .paginate_button:hover {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #238dff, #064bd8) !important;
+            border-color: transparent !important;
+        }
+
+/* Action buttons generated by JS */
+.ecms-basic-index-page .btn-icon,
+.ecms-basic-index-page .btn-round {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 11px !important;
+    border: 0 !important;
+    color: #ffffff !important;
+    box-shadow: 0 9px 18px rgba(0, 45, 120, 0.20) !important;
+}
+
+    .ecms-basic-index-page .btn-icon i,
+    .ecms-basic-index-page .btn-round i {
+        margin: 0 !important;
+        font-size: 14px !important;
+        line-height: 1 !important;
+    }
+
+.ecms-basic-index-page .btn-primary {
+    background: linear-gradient(135deg, #238dff, #064bd8) !important;
+}
+
+.ecms-basic-index-page .btn-warning {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+    color: #ffffff !important;
+}
+
+.ecms-basic-index-page .badge {
+    border-radius: 999px !important;
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+}
+
+.ecms-basic-index-page .cls-btndownloadpdf {
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin-left: 6px !important;
+}
+
+    .ecms-basic-index-page .cls-btndownloadpdf img {
+        width: 34px !important;
+        height: 34px !important;
+        object-fit: contain !important;
+        filter: drop-shadow(0 6px 10px rgba(0, 45, 120, 0.22));
+    }
+
+/* =========================
+   Modal visual cleanup used by this page
+========================= */
+
+#BasicDetails .modal-dialog,
+#FwdRecord .modal-dialog,
+#FwdInternalRecord .modal-dialog,
+#CardReport .modal-dialog {
+    max-width: min(1180px, 96vw) !important;
+}
+
+.modal.left .modal-dialog,
+.modal.right .modal-dialog {
+    position: fixed !important;
+    margin: auto !important;
+    width: min(760px, 96vw) !important;
+    max-width: min(760px, 96vw) !important;
+    height: 100% !important;
+    text-align: left !important;
+    transform: translate3d(0%, 0, 0) !important;
+}
+
+#BasicDetails .modal-content,
+#FwdRecord .modal-content,
+#FwdInternalRecord .modal-content,
+#CardReport .modal-content {
+    border: 1px solid rgba(255,255,255,0.70) !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    box-shadow: 0 30px 70px rgba(0, 20, 60, 0.42) !important;
+}
+
+#BasicDetails .modal-header,
+#FwdRecord .modal-header,
+#FwdInternalRecord .modal-header,
+#CardReport .modal-header {
+    min-height: 56px !important;
+    padding: 14px 54px 14px 18px !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #123f8c, #2f7dff) !important;
+    border-bottom: 0 !important;
+    position: relative !important;
+}
+
+#BasicDetails .modal-title,
+#FwdRecord .modal-title,
+#FwdInternalRecord .modal-title,
+#CardReport .modal-title {
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+}
+
+#BasicDetails .modal-header .close,
+#FwdRecord .modal-header .close,
+#FwdInternalRecord .modal-header .close,
+#CardReport .modal-header .close,
+#BasicDetails .modal-header button.close,
+#FwdRecord .modal-header button.close,
+#FwdInternalRecord .modal-header button.close,
+#CardReport .modal-header button.close {
+    position: absolute !important;
+    top: 10px !important;
+    right: 12px !important;
+    z-index: 10 !important;
+    width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid rgba(255,255,255,0.35) !important;
+    border-radius: 50% !important;
+    color: #ffffff !important;
+    background: rgba(255,255,255,0.18) !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+    #BasicDetails .modal-header .close span,
+    #FwdRecord .modal-header .close span,
+    #FwdInternalRecord .modal-header .close span,
+    #CardReport .modal-header .close span {
+        display: block !important;
+        color: #ffffff !important;
+        font-size: 28px !important;
+        font-weight: 700 !important;
+        line-height: 28px !important;
+        margin-top: -2px !important;
+    }
+
+#BasicDetails .modal-body,
+#FwdRecord .modal-body,
+#FwdInternalRecord .modal-body,
+#CardReport .modal-body {
+    background: #f5f9ff !important;
+}
+
+/* Select2 visual only */
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    min-height: 38px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(93, 125, 175, 0.34) !important;
+    background: rgba(255,255,255,0.94) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.88) !important;
+}
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px !important;
+        color: #10254f !important;
+        font-weight: 800 !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+    }
+
+@media (max-width: 1199px) {
+    html:has(.ecms-basic-index-page),
+    body:has(.ecms-basic-index-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-basic-index-page {
+        height: auto !important;
+        min-height: calc(100vh - 255px) !important;
+        overflow: visible !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .ecms-basic-index-shell {
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    .ecms-basic-index-body {
+        height: auto !important;
+    }
+
+    .ecms-basic-index-page .dataTables_scrollBody {
+        height: 55vh !important;
+        max-height: 55vh !important;
+    }
+
+    .ecms-basic-index-page .dataTables_filter input {
+        width: 170px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .ecms-basic-index-heading {
+        font-size: 17px !important;
+    }
+
+    .ecms-basic-index-heading-icon {
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+    }
+
+    .ecms-basic-index-page .dt-top,
+    .ecms-basic-index-page .dataTables_wrapper .dt-top {
+        align-items: stretch !important;
+        flex-direction: column !important;
+    }
+
+    .ecms-basic-index-page .dataTables_filter input {
+        width: 100% !important;
+    }
+}
+
+/* =====================================================
+   FINAL FIX: DataTables duplicate/blank header row
+   Only UI change - no functionality / ID changes
+===================================================== */
+
+/* DataTables with scrollX/scrollY keeps the real THEAD inside scrollBody.
+   Hide that body THEAD so only the visible scrollHead header remains. */
+.ecms-basic-index-page .dataTables_scrollBody thead,
+.ecms-basic-index-page .dataTables_scrollBody thead tr,
+.ecms-basic-index-page .dataTables_scrollBody thead th,
+.ecms-basic-index-page .dataTables_scrollBody thead td {
+    height: 0 !important;
+    max-height: 0 !important;
+    min-height: 0 !important;
+    line-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    overflow: hidden !important;
+    visibility: collapse !important;
+}
+
+    .ecms-basic-index-page .dataTables_scrollBody thead th *,
+    .ecms-basic-index-page .dataTables_scrollBody thead td * {
+        display: none !important;
+    }
+
+/* Style only the real visible header in DataTables scrollHead */
+.ecms-basic-index-page .dataTables_scrollHead table.dataTable thead th {
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 10px 12px !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #153f8f, #236dd2) !important;
+    border-right: 1px solid rgba(255,255,255,0.18) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.36) !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    text-align: left !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+
+/* Remove extra blank spacing below header */
+.ecms-basic-index-page .dataTables_scrollHead {
+    border-radius: 14px 14px 0 0 !important;
+    overflow: hidden !important;
+}
+
+.ecms-basic-index-page .dataTables_scrollBody {
+    border-top: 0 !important;
+}
+
+/* DataTable sorting icons should stay inside the same header row */
+.ecms-basic-index-page table.dataTable thead .sorting,
+.ecms-basic-index-page table.dataTable thead .sorting_asc,
+.ecms-basic-index-page table.dataTable thead .sorting_desc {
+    background-position: right 8px center !important;
+}
+
+/* =====================================================
+   FINAL V2: DataTable duplicate blue blank header fix
+   Reason: DataTables CSS must be overridden after partial.
+   This file must load AFTER _DataTableCSS.cshtml.
+===================================================== */
+
+/* Hide the duplicate cloned/original THEAD inside scroll body */
+.ecms-basic-index-page div.dataTables_scrollBody table.dataTable > thead,
+.ecms-basic-index-page div.dataTables_scrollBody table.dataTable > thead > tr,
+.ecms-basic-index-page div.dataTables_scrollBody table.dataTable > thead > tr > th,
+.ecms-basic-index-page div.dataTables_scrollBody table.dataTable > thead > tr > td {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+/* If DataTables creates a second empty header row in the visible header, hide only that row */
+.ecms-basic-index-page div.dataTables_scrollHead table.dataTable > thead > tr:nth-child(n+2) {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+}
+
+/* Keep only one visible header row */
+.ecms-basic-index-page div.dataTables_scrollHead table.dataTable > thead > tr:first-child,
+.ecms-basic-index-page div.dataTables_scrollHead table.dataTable > thead > tr:first-child > th {
+    display: table-row !important;
+    visibility: visible !important;
+}
+
+    .ecms-basic-index-page div.dataTables_scrollHead table.dataTable > thead > tr:first-child > th {
+        display: table-cell !important;
+        height: 40px !important;
+        padding: 10px 12px !important;
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #153f8f, #236dd2) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.45) !important;
+        vertical-align: middle !important;
+        white-space: nowrap !important;
+    }
+
+/* Remove top border/gap below the header */
+.ecms-basic-index-page div.dataTables_scrollBody {
+    border-top: 0 !important;
+}
+
+    .ecms-basic-index-page div.dataTables_scrollBody table.dataTable {
+        margin-top: 0 !important;
+    }
+
+
+/* =====================================================
+   FINAL V3: DataTables scrollBody hidden header row fix
+   Use with the small UI-only script in Index.cshtml.
+===================================================== */
+
+.ecms-basic-index-page #tbldatatabledata_Fwd_wrapper div.dataTables_scrollBody table.dataTable > thead {
+    visibility: hidden !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+}
+
+    .ecms-basic-index-page #tbldatatabledata_Fwd_wrapper div.dataTables_scrollBody table.dataTable > thead > tr,
+    .ecms-basic-index-page #tbldatatabledata_Fwd_wrapper div.dataTables_scrollBody table.dataTable > thead > tr > th,
+    .ecms-basic-index-page #tbldatatabledata_Fwd_wrapper div.dataTables_scrollBody table.dataTable > thead > tr > td {
+        height: 0 !important;
+        max-height: 0 !important;
+        min-height: 0 !important;
+        line-height: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border-top: 0 !important;
+        border-bottom: 0 !important;
+        font-size: 0 !important;
+        color: transparent !important;
+        background: transparent !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-basic-index-page #tbldatatabledata_Fwd_wrapper div.dataTables_scrollBody table.dataTable > thead .dataTables_sizing,
+    .ecms-basic-index-page #tbldatatabledata_Fwd_wrapper div.dataTables_scrollBody table.dataTable > thead div,
+    .ecms-basic-index-page #tbldatatabledata_Fwd_wrapper div.dataTables_scrollBody table.dataTable > thead span {
+        height: 0 !important;
+        max-height: 0 !important;
+        line-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 0 !important;
+        overflow: hidden !important;
+    }
+
+/* Keep visible header clean */
+.ecms-basic-index-page #tbldatatabledata_Fwd_wrapper div.dataTables_scrollHead table.dataTable > thead > tr > th {
+    height: 40px !important;
+    min-height: 40px !important;
+    line-height: 1.2 !important;
+    vertical-align: middle !important;
+}
+
+/* =====================================================
+   V4 FINAL FIX: DataTables 2 duplicate body header row
+   Your DOM uses .dt-scroll-body, not old .dataTables_scrollBody.
+   Keep columns sized; collapse only the duplicate header visuals.
+===================================================== */
+
+.ecms-basic-index-page .dt-scroll-body thead,
+.ecms-basic-index-page .dt-scroll-body thead tr,
+.ecms-basic-index-page .dt-scroll-body thead th,
+.ecms-basic-index-page .dt-scroll-body thead td,
+.ecms-basic-index-page #tbldatatabledata_Fwd thead,
+.ecms-basic-index-page #tbldatatabledata_Fwd thead tr,
+.ecms-basic-index-page #tbldatatabledata_Fwd thead th,
+.ecms-basic-index-page #tbldatatabledata_Fwd thead td {
+    height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    overflow: hidden !important;
+    visibility: collapse !important;
+    background: transparent !important;
+    color: transparent !important;
+    font-size: 0 !important;
+}
+
+    .ecms-basic-index-page .dt-scroll-body thead *,
+    .ecms-basic-index-page #tbldatatabledata_Fwd thead * {
+        height: 0 !important;
+        max-height: 0 !important;
+        min-height: 0 !important;
+        line-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 0 !important;
+        overflow: hidden !important;
+        visibility: hidden !important;
+        display: block !important;
+        font-size: 0 !important;
+    }
+
+    .ecms-basic-index-page .dt-scroll-body .dt-scroll-sizing,
+    .ecms-basic-index-page #tbldatatabledata_Fwd thead .dt-scroll-sizing {
+        height: 0 !important;
+        max-height: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        visibility: hidden !important;
+    }
+
+/* Make sure only the real header in .dt-scroll-head stays visible */
+.ecms-basic-index-page .dt-scroll-head thead,
+.ecms-basic-index-page .dt-scroll-head thead tr,
+.ecms-basic-index-page .dt-scroll-head thead th {
+    visibility: visible !important;
+    height: 42px !important;
+    line-height: normal !important;
+    overflow: visible !important;
+}
+
+    .ecms-basic-index-page .dt-scroll-head thead th * {
+        visibility: visible !important;
+    }
+
+/* Remove remaining blue strip if browser still reserves body-head height */
+.ecms-basic-index-page .dt-scroll-body table.dataTable > thead {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: translateY(-9999px) !important;
+    pointer-events: none !important;
+}
+
+.ecms-basic-index-page .dt-scroll-body table.dataTable > tbody > tr:first-child > td.dt-empty,
+.ecms-basic-index-page .dt-scroll-body table.dataTable > tbody > tr:first-child > td.dataTables_empty {
+    border-top: 0 !important;
 }

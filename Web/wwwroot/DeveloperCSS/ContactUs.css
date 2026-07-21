@@ -1,8 +1,320 @@
-﻿.font-color {
+﻿/* =====================================================
+   ECMS Contact Us Page - Modern UI
+   Only UI changes. Header/footer and functionality untouched.
+===================================================== */
+
+.font-color {
     color: #167DCF;
 }
 
 .p-4 {
     padding: 1.5rem !important;
     padding-bottom: 4.5rem !important;
+}
+
+.ecms-contact-breadcrumb-header {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+    .ecms-contact-breadcrumb-header .page-header-content {
+        padding: 0.58rem 0 !important;
+    }
+
+.ecms-contact-breadcrumb {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.2px !important;
+    line-height: 1 !important;
+    text-shadow: 0 2px 8px rgba(0, 24, 70, 0.35) !important;
+}
+
+    .ecms-contact-breadcrumb .page-header-icon {
+        width: 23px !important;
+        height: 23px !important;
+        min-width: 23px !important;
+        border-radius: 50% !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        color: #ffffff !important;
+        background: rgba(255,255,255,0.18) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.32) !important;
+    }
+
+    .ecms-contact-breadcrumb a,
+    .ecms-contact-breadcrumb span {
+        color: #ffffff !important;
+        text-decoration: none !important;
+    }
+
+.ecms-breadcrumb-separator {
+    opacity: .9;
+}
+
+.ecms-contact-page.mt-n10 {
+    margin-top: 0 !important;
+}
+
+.ecms-contact-page {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: calc(100vh - 260px) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 24px 28px 92px !important;
+    overflow: hidden !important;
+    background: linear-gradient(90deg, rgba(6, 24, 66, 0.88), rgba(15, 78, 165, 0.82)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+}
+
+    .ecms-contact-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 20%, rgba(98, 190, 255, 0.28), transparent 32%), linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.15));
+        pointer-events: none;
+    }
+
+.ecms-contact-shell {
+    position: relative;
+    z-index: 1;
+    width: min(1180px, 94vw);
+    margin: 0 auto;
+}
+
+.ecms-contact-card {
+    width: 100%;
+    min-height: 460px;
+    padding: 26px 34px 32px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(232, 242, 255, 0.94), rgba(207, 225, 246, 0.88));
+    border: 1px solid rgba(255,255,255,0.78);
+    box-shadow: 0 30px 70px rgba(0, 12, 45, 0.38), inset 0 1px 0 rgba(255,255,255,0.92);
+    overflow: hidden;
+}
+
+.ecms-contact-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    padding: 12px 18px 22px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(235, 245, 255, 0.72));
+    border: 1px solid rgba(255,255,255,0.88);
+}
+
+.ecms-contact-logo-wrap {
+    width: 150px;
+    height: 150px;
+    min-width: 150px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 35% 25%, #ffffff, #eef5ff 58%, #d8e6f9);
+    border: 1px solid rgba(255,255,255,0.95);
+    box-shadow: 0 18px 34px rgba(0, 35, 95, 0.22), inset 0 1px 0 rgba(255,255,255,1);
+}
+
+.ecms-contact-logo {
+    width: 126px;
+    height: 126px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 16px rgba(0, 28, 80, 0.22));
+}
+
+.ecms-contact-title-block {
+    text-align: left;
+}
+
+.ecms-contact-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    color: #0b5fd7;
+    background: rgba(47, 120, 255, 0.10);
+    border: 1px solid rgba(47, 120, 255, 0.22);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .2px;
+    text-transform: uppercase;
+}
+
+.ecms-contact-title-block h2 {
+    margin: 12px 0 8px;
+    color: #061947;
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.05;
+    text-shadow: 0 2px 0 rgba(255,255,255,0.75);
+}
+
+.ecms-contact-title-block p {
+    margin: 0;
+    color: #31527d;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.ecms-contact-message {
+    width: fit-content;
+    max-width: 100%;
+    margin: 24px auto 22px;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    border-radius: 999px;
+    color: #0d5fcc;
+    background: rgba(255,255,255,0.74);
+    border: 1px solid rgba(255,255,255,0.85);
+    box-shadow: 0 12px 26px rgba(0, 35, 95, 0.12);
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .35px;
+}
+
+    .ecms-contact-message i {
+        color: #43d6f6;
+        text-shadow: 0 0 12px rgba(67, 214, 246, 0.55);
+    }
+
+.ecms-contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.ecms-contact-info-card {
+    position: relative;
+    min-height: 180px;
+    padding: 28px 22px 24px;
+    border-radius: 20px;
+    text-align: center;
+    background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(241, 247, 255, 0.90));
+    border: 1px solid rgba(70, 135, 255, 0.32);
+    box-shadow: 0 18px 36px rgba(0, 28, 80, 0.16), inset 0 1px 0 rgba(255,255,255,0.95);
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    overflow: hidden;
+}
+
+    .ecms-contact-info-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 5px;
+        background: linear-gradient(90deg, #347cff, #0e47bb);
+    }
+
+    .ecms-contact-info-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(47, 120, 255, 0.62);
+        box-shadow: 0 28px 50px rgba(0, 28, 80, 0.24);
+    }
+
+.ecms-contact-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 30px;
+    box-shadow: 0 16px 28px rgba(0, 34, 90, 0.26), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.ecms-contact-mail .ecms-contact-icon {
+    background: linear-gradient(135deg, #3b82f6, #0e47bb);
+}
+
+.ecms-contact-phone .ecms-contact-icon {
+    background: linear-gradient(135deg, #28c4b7, #087f76);
+}
+
+.ecms-contact-help .ecms-contact-icon {
+    background: linear-gradient(135deg, #7c5cff, #4930b5);
+}
+
+.ecms-contact-info span {
+    display: block;
+    margin-bottom: 6px;
+    color: #5c7196;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .25px;
+}
+
+.ecms-contact-info h5 {
+    margin: 0 0 9px;
+    color: #075de3;
+    font-size: 17px;
+    font-weight: 900;
+    line-height: 1.22;
+}
+
+.ecms-contact-info p {
+    margin: 0 auto;
+    max-width: 260px;
+    color: #526680;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+@media (max-width: 1100px) {
+    .ecms-contact-card {
+        padding: 22px;
+    }
+
+    .ecms-contact-grid {
+        gap: 16px;
+    }
+}
+
+@media (max-width: 900px) {
+    .ecms-contact-page {
+        padding: 18px 16px 92px !important;
+        overflow-y: auto !important;
+    }
+
+    .ecms-contact-top {
+        flex-direction: column;
+        text-align: center;
+        gap: 14px;
+    }
+
+    .ecms-contact-title-block {
+        text-align: center;
+    }
+
+    .ecms-contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-contact-logo-wrap {
+        width: 122px;
+        height: 122px;
+        min-width: 122px;
+    }
+
+    .ecms-contact-logo {
+        width: 100px;
+        height: 100px;
+    }
 }

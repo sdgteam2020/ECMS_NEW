@@ -1,19 +1,244 @@
-﻿.clickable {
-    display: block;
-    text-decoration: none;
-    color: inherit;
+﻿/* =====================================================
+   ECMS Task Page Modern UI
+   Scope: Home/Task only
+   Only UI change - functionality IDs/classes preserved
+===================================================== */
+
+:root {
+    --ecms-task-footer-height: 42px;
+    --ecms-task-text: #071d48;
+    --ecms-task-muted: #5f769d;
+    --ecms-task-blue-1: #123f8c;
+    --ecms-task-blue-2: #2578df;
+    --ecms-task-blue-3: #3f82ff;
+    --ecms-task-glass: rgba(230, 242, 255, 0.88);
+    --ecms-task-border: rgba(255,255,255,0.74);
 }
-.counter-title {
-    margin-top: 2.0rem !important;
+
+/* Page background and height control */
+.ecms-task-page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 14px 18px calc(var(--ecms-task-footer-height) + 10px) !important;
+    min-height: calc(100vh - 255px) !important;
+    background: linear-gradient(90deg, rgba(6, 28, 76, 0.82), rgba(16, 87, 177, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+    overflow: hidden !important;
 }
+
+.ecms-task-shell {
+    width: min(1440px, 96vw) !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+.ecms-task-grid {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1.22fr 1.22fr 0.62fr;
+    gap: 18px 22px;
+    align-items: start;
+    justify-content: center;
+}
+
+.ecms-task-group-lg {
+    grid-column: span 1;
+}
+
+.ecms-task-group-md,
+.ecms-task-group-sm,
+.ecms-task-group-xs {
+    grid-column: span 1;
+}
+
+/* Card group */
+.ecms-task-page .card.new_css,
+.ecms-task-group {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid var(--ecms-task-border) !important;
+    border-radius: 18px !important;
+    background: var(--ecms-task-glass) !important;
+    box-shadow: 0 18px 46px rgba(0, 26, 80, 0.24), inset 0 1px 0 rgba(255,255,255,0.88) !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(12px);
+}
+
+    .ecms-task-group .seven {
+        margin: 0 !important;
+    }
+
+        .ecms-task-group .seven h1 {
+            height: 36px !important;
+            line-height: 36px !important;
+            margin: 0 !important;
+            padding: 0 12px !important;
+            border-radius: 0 !important;
+            color: #ffffff !important;
+            font-size: 15px !important;
+            font-weight: 900 !important;
+            letter-spacing: 0.1px !important;
+            text-align: center !important;
+            background: linear-gradient(135deg, var(--ecms-task-blue-1), var(--ecms-task-blue-3)) !important;
+            box-shadow: 0 10px 22px rgba(0, 69, 190, 0.20), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+        }
+
+    .ecms-task-card-row,
+    .ecms-task-group > .row {
+        margin: 0 !important;
+        padding: 16px 14px 18px !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: stretch !important;
+        flex-wrap: nowrap !important;
+        gap: 16px !important;
+    }
+
+    .ecms-task-item-col,
+    .ecms-task-group .col-md-2,
+    .ecms-task-group .col-sm-6 {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        max-width: none !important;
+        padding: 0 !important;
+    }
+
+.clickable {
+    display: block !important;
+    height: 100% !important;
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+    .clickable:hover,
+    .clickable:focus {
+        color: inherit !important;
+        text-decoration: none !important;
+    }
+
+/* Counter tiles */
+.ecms-task-page .counter {
+    width: 150px !important;
+    height: 150px !important;
+    min-width: 150px !important;
+    min-height: 150px !important;
+    margin: 0 !important;
+    padding: 16px 10px 12px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(32, 122, 255, 0.88) !important;
+    color: #0a57df !important;
+    background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(244,249,255,0.92)) !important;
+    box-shadow: 0 16px 34px rgba(0, 43, 125, 0.16), inset 0 1px 0 rgba(255,255,255,0.90) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+}
+
+    .ecms-task-page .counter::before,
+    .ecms-task-page .counter::after {
+        content: none !important;
+        display: none !important;
+    }
+
+    .ecms-task-page .counter:hover {
+        transform: translateY(-4px) !important;
+        border-color: #3f82ff !important;
+        box-shadow: 0 22px 44px rgba(0, 68, 170, 0.24), 0 0 0 4px rgba(63, 130, 255, 0.10), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    }
+
+.ecms-task-page .counter-icon {
+    width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    margin: 0 0 8px !important;
+    border-radius: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    background: linear-gradient(135deg, #4d8dff, #1157e8) !important;
+    box-shadow: 0 12px 24px rgba(17, 87, 232, 0.28) !important;
+    transition: transform 0.25s ease !important;
+}
+
+.ecms-task-page .counter:hover .counter-icon {
+    transform: translateY(-2px) scale(1.04) !important;
+}
+
+.ecms-task-page .counter-icon i {
+    color: #ffffff !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+}
+
+.ecms-task-page .counter-value {
+    display: block !important;
+    min-height: 24px !important;
+    margin: 0 0 6px !important;
+    color: #123f8c !important;
+    font-size: 23px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+}
+
+.ecms-task-page .counter h3,
+.ecms-task-page .counter-title {
+    margin: 0 !important;
+    padding: 0 4px !important;
+    color: #095eff !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.15px !important;
+}
+
+/* Add buttons inside task tiles */
+.ecms-task-page .counter .btn,
+.ecms-task-page .counter .btnAdd {
+    min-width: 74px !important;
+    height: 30px !important;
+    padding: 4px 10px !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(0, 150, 92, 0.46) !important;
+    color: #087844 !important;
+    background: rgba(255,255,255,0.92) !important;
+    box-shadow: 0 8px 18px rgba(0, 56, 120, 0.10) !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+}
+
+    .ecms-task-page .counter .btn:hover,
+    .ecms-task-page .counter .btnAdd:hover {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #10a76b, #087844) !important;
+        border-color: transparent !important;
+    }
+
+    .ecms-task-page .counter .btn i,
+    .ecms-task-page .counter .btnAdd i {
+        color: inherit !important;
+        font-size: 12px !important;
+        margin-right: 3px !important;
+    }
+
+/* Loader */
 .count-loader {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    border: 3px solid #ddd;
-    border-top: 3px solid #333;
-    border-radius: 50%;
-    animation: spinCounter 0.8s linear infinite;
+    display: inline-block !important;
+    width: 18px !important;
+    height: 18px !important;
+    border: 3px solid rgba(18, 63, 140, 0.18) !important;
+    border-top: 3px solid #1157e8 !important;
+    border-radius: 50% !important;
+    animation: spinCounter 0.8s linear infinite !important;
 }
 
 @keyframes spinCounter {
@@ -24,4 +249,153 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+/* Desktop: keep the task board inside the visible page */
+@media (min-width: 1200px) {
+    html:has(.ecms-task-page),
+    body:has(.ecms-task-page) {
+        overflow-y: hidden !important;
+    }
+
+    .ecms-task-page {
+        height: calc(100vh - 255px) !important;
+    }
+}
+
+/* Medium screens */
+@media (max-width: 1399px) {
+    .ecms-task-shell {
+        width: min(1320px, 96vw) !important;
+    }
+
+    .ecms-task-grid {
+        gap: 16px !important;
+    }
+
+    .ecms-task-page .counter {
+        width: 142px !important;
+        height: 142px !important;
+        min-width: 142px !important;
+        min-height: 142px !important;
+    }
+
+    .ecms-task-card-row,
+    .ecms-task-group > .row {
+        gap: 14px !important;
+        padding: 15px 12px 17px !important;
+    }
+}
+
+@media (max-width: 1199px) {
+    html,
+    body {
+        overflow-y: auto !important;
+    }
+
+    .ecms-task-page {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .ecms-task-grid {
+        grid-template-columns: repeat(2, minmax(280px, 1fr));
+    }
+
+    .ecms-task-card-row,
+    .ecms-task-group > .row {
+        flex-wrap: wrap !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .ecms-task-page {
+        padding: 12px 12px calc(var(--ecms-task-footer-height) + 18px) !important;
+    }
+
+    .ecms-task-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-task-page .counter {
+        width: 138px !important;
+        height: 138px !important;
+        min-width: 138px !important;
+        min-height: 138px !important;
+    }
+}
+/* FINAL FIX: Bottom task cards + Add button layout */
+
+.ecms-task-page .counter:has(.counter-icon > .btn) {
+    padding: 14px 10px 12px !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+}
+
+/* Remove blue icon square behind Add button */
+.ecms-task-page .counter .counter-icon:has(> .btn) {
+    width: auto !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    margin: 0 0 2px 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* Green Add pill button */
+.ecms-task-page .counter .counter-icon > .btn,
+.ecms-task-page .counter .counter-icon > .btnAdd,
+.ecms-task-page #btnAddUnitChangeRequest {
+    position: relative !important;
+    z-index: 3 !important;
+    min-width: 74px !important;
+    height: 28px !important;
+    padding: 4px 11px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(23, 150, 88, 0.36) !important;
+    color: #087844 !important;
+    background: linear-gradient(180deg, #ffffff 0%, #eefdf5 100%) !important;
+    box-shadow: 0 8px 18px rgba(0, 40, 100, 0.12), inset 0 1px 0 rgba(255,255,255,0.85) !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+    .ecms-task-page .counter .counter-icon > .btn:hover,
+    .ecms-task-page .counter .counter-icon > .btnAdd:hover,
+    .ecms-task-page #btnAddUnitChangeRequest:hover {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #19b56f, #087844) !important;
+        border-color: transparent !important;
+        transform: translateY(-1px) !important;
+    }
+
+    .ecms-task-page .counter .counter-icon > .btn i,
+    .ecms-task-page .counter .counter-icon > .btnAdd i,
+    .ecms-task-page #btnAddUnitChangeRequest i {
+        color: inherit !important;
+        font-size: 12px !important;
+        margin-right: 4px !important;
+        line-height: 1 !important;
+    }
+
+/* Proper spacing for Add + count + title */
+.ecms-task-page .counter:has(.counter-icon > .btn) .counter-value {
+    margin: 1px 0 4px !important;
+    min-height: 20px !important;
+    font-size: 22px !important;
+}
+
+.ecms-task-page .counter:has(.counter-icon > .btn) h3,
+.ecms-task-page .counter:has(.counter-icon > .btn) .counter-title {
+    min-height: 34px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }

@@ -16,7 +16,7 @@
     @* <meta http-equiv="content-security-policy"content="default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'sha256-CwE3Bg0VYQOIdNAkbB/Btdkhul49qZuwgNCMPgNY5zw=';" /> *@
     <title> E-ISAC</title>
     <link rel="stylesheet" href="~/static/css/all.min.css" />
-@*     <link asp-href-include="~/css/chatbot.css" rel="stylesheet" /> *@
+    @*     <link asp-href-include="~/css/chatbot.css" rel="stylesheet" /> *@
     <!-- Development: Load normal JS -->
     <environment include="Development">
         <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
@@ -45,8 +45,8 @@
         <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
         <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
         <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
-        
 
+        
 
     </environment>
 
@@ -71,7 +71,7 @@
         <link asp-href-include="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
         <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
         <link asp-href-include="~/toastr/toastr.min.css" rel="stylesheet" />
-        <link asp-href-include="~/css/main.css" rel="stylesheet" />        
+        <link asp-href-include="~/css/main.css" rel="stylesheet" />
         @*     <link asp-href-include="~/css/DashBoard.css" rel="stylesheet" /> *@
 
         <script asp-src-include="~/lib/jquery/jquery.min.js"></script>
@@ -84,16 +84,15 @@
     </environment>
 
     <link asp-href-include="~/developercss/layout.css" rel="stylesheet" />
-    @* <link href="~/developercss/moderncss/ecms-modern-theme.css" rel="stylesheet" /> *@
 </head>
 <body class="nav-fixed sidenav-toggled">
     @Html.AntiForgeryToken()
     <div id="loading" class="loader">
         <div class="loader-container">
-        <img src="/Images/load.gif" width="100">
+            <img src="/Images/load.gif" width="100">
             <div>
                 <h4 class="mt--20">Loading...</h4>
-            <span>Please wait. This may take few seconds.</span>
+                <span>Please wait. This may take few seconds.</span>
             </div>
         </div>
     </div>
@@ -117,7 +116,7 @@
         }
 
     }
-        <input type="hidden" value="@dtoSession.Salt" id="hiddenSa" />
+    <input type="hidden" value="@dtoSession.Salt" id="hiddenSa" />
     <div class="watermark yes-print"></div>
     <div class="d-none" id="IpaddresGloble">@(Context.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "0.0.0.0")</div>
     <div class="d-none" id="postingouthtml"></div>
@@ -213,13 +212,13 @@
     @*<script asp-src-include="~/fonts/feather/feather.min.js"></script>*@
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
     <script asp-src-include="~/toastr/toastr.min.js"></script>
-    <script asp-src-include="~/js/moment.min.js"></script> 
-    <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script> 
+    <script asp-src-include="~/js/moment.min.js"></script>
+    <script asp-src-include="~/js/bootstrap-datetimepicker.min.js"></script>
     <script asp-src-include="~/developerjs/layout.js"></script>
     <script asp-src-include="~/developerjs/keyconstants.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
     <script asp-src-include="~/developerjs/icardhistory.js"></script>
-@*     <script asp-src-include="~/developerjs/chatbot.js"></script> *@
+    @*     <script asp-src-include="~/developerjs/chatbot.js"></script> *@
     <script asp-src-include="~/lib/crypto-js/crypto-js.min.js"></script>
     <script asp-src-include="~/developerjs/_notifications.js"></script>
     <script asp-src-include="~/developerjs/encryptepayload.js"></script>
@@ -231,7 +230,7 @@
 </html>
 
 <!-- Fwd Internal Record  -->
-<div class="modal fade" id="FwdInternalRecord" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="FwdInternalRecord" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -305,7 +304,7 @@
 </div>
 
 <!-- Fwd Record  -->
-<div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -452,7 +451,7 @@
 </div>
 
 <!-- Basic Details   -->
-<div class="modal fade" id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -463,7 +462,6 @@
                 <div class="card">
                     <div class="row">
                         <div id="BasicDetails_Data">
-
                         </div>
                         <div class="col-md-12 ">
                             <div class="form-group row recectopt  mb-3">
@@ -495,7 +493,7 @@
 </div>
 
 <!-- Basic Details for View Purpose  -->
-<div class="modal fade" id="BasicDetailViewPurpose" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="BasicDetailViewPurpose" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -507,7 +505,6 @@
                     <div class="row ">
                         <div class="col-sm-12 mb-3">
                             <div id="BasicDetailViewPurpose_Data">
-
                             </div>
                         </div>
                     </div>
@@ -520,17 +517,16 @@
     </div>
 </div>
 
-<div class="modal fade right" id="HistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade right" id="HistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg modal-history" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                 <h4 class="modal-title"><span id="HistoryModal_Header">I-Card History</span></h4>
             </div>
             <div class="modal-body" id="exampleModal1111">
                 <div id="HistoryModal_Title"><h5 class="text-center badge badge-success"><span id="HistoryModal_Title_Content">Step Wise I Card Request History</span></h5></div>
                 <div class="timeline timeline-xs" id="HistoryModal_Body">
-
                 </div>
 
             </div>
@@ -539,7 +535,7 @@
     </div><!-- modal-dialog -->
 </div>
 
-<div class="modal fade" id="unitoffrsModal" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade" id="unitoffrsModal" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -574,11 +570,11 @@
     </div>
 </div>
 
-<div class="modal fade right" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade right" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-xl " role="document">
         <div class="modal-content ">
             <div class="modal-header ">
-                <button type="button" class="close no-print" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
+                <button type="button" class="close no-print" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                 <h4 class="modal-title no-print" id="lblICardPrint">I-Card Print Preview</h4>
             </div>
             <div class="modal-body section-to-print-popup" id="section-to-print-popup">
@@ -702,7 +698,7 @@
 </div>
 
 <!-- Confirmation Dialog  -->
-<div class="modal fade" id="ConfirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="ConfirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -728,7 +724,7 @@
 </div>
 
 <!-- Message Dialog  -->
-<div class="modal fade" id="MessageDialog" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="MessageDialog" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

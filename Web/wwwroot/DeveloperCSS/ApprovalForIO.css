@@ -1,14 +1,780 @@
-﻿.modal.left .modal-dialog, .modal.right .modal-dialog {
-    position: fixed;
-    margin: auto;
-    width: 700px;
-    height: 100%;
-    text-align: left;
-    -webkit-transform: translate3d(0%, 0, 0);
-    -ms-transform: translate3d(0%, 0, 0);
-    -o-transform: translate3d(0%, 0, 0);
-    transform: translate3d(0%, 0, 0);
+﻿/* =====================================================
+   ECMS Approval For IO Modern UI
+   Only page UI changes. Header/footer/layout/JS unchanged.
+===================================================== */
+
+:root {
+    --ecms-approval-blue-1: #102f73;
+    --ecms-approval-blue-2: #2f7dff;
+    --ecms-approval-cyan: #55d7ff;
+    --ecms-approval-green: #31c48d;
+    --ecms-approval-orange: #f59e0b;
+    --ecms-approval-red: #ef4444;
+    --ecms-approval-ink: #071b44;
+    --ecms-approval-muted: #5b729a;
+    --ecms-approval-panel: rgba(232, 244, 255, 0.88);
 }
-#tbldatatabledata_Fwd {
+
+html:has(.ecms-approval-page),
+body:has(.ecms-approval-page) {
+    overflow-y: hidden !important;
+}
+
+.ecms-approval-page {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: calc(100vh - 255px) !important;
+    height: calc(100vh - 255px) !important;
+    margin: 0 !important;
+    padding: 12px 26px 46px !important;
+    overflow: hidden !important;
+    background: linear-gradient(90deg, rgba(5, 22, 62, 0.88), rgba(20, 70, 154, 0.74)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+}
+
+    .ecms-approval-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 15% 18%, rgba(89, 200, 255, 0.15), transparent 28%), radial-gradient(circle at 84% 74%, rgba(59, 130, 246, 0.18), transparent 32%);
+    }
+
+.ecms-approval-shell {
+    position: relative !important;
+    z-index: 1 !important;
+    width: min(1540px, 96vw) !important;
+    max-width: 1540px !important;
+    height: calc(100vh - 284px) !important;
+    max-height: calc(100vh - 284px) !important;
+    margin: 0 auto !important;
+    padding: 12px !important;
+    border: 1px solid rgba(255,255,255,0.72) !important;
+    border-radius: 22px !important;
+    background: var(--ecms-approval-panel) !important;
+    box-shadow: 0 22px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
+    overflow: hidden !important;
+}
+
+.ecms-approval-header {
+    min-height: 62px !important;
+    padding: 10px 14px !important;
+    margin: 0 0 10px 0 !important;
+    border: 1px solid rgba(255,255,255,0.64) !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.74), rgba(255,255,255,0.38)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.72) !important;
+}
+
+.ecms-approval-title-wrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.ecms-approval-title-icon {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 15px !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #238dff, #064bd8) !important;
+    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.32) !important;
+    font-size: 19px !important;
+}
+
+.ecms-approval-title-wrap h3 {
+    margin: 0 !important;
+    color: var(--ecms-approval-ink) !important;
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    line-height: 1.15 !important;
+}
+
+.ecms-approval-title-wrap p {
+    margin: 4px 0 0 0 !important;
+    color: #415a88 !important;
+    font-size: 12px !important;
+    font-weight: 850 !important;
+    line-height: 1.2 !important;
+}
+
+.ecms-approval-actions {
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    margin: 0 0 10px 0 !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.80), rgba(242, 248, 255, 0.64)) !important;
+    border: 1px solid rgba(255,255,255,0.66) !important;
+}
+
+    .ecms-approval-actions .btn,
+    .ecms-approval-page .btn-warning,
+    .ecms-approval-page .btn-primary {
+        min-height: 34px !important;
+        padding: 8px 14px !important;
+        border: 0 !important;
+        border-radius: 11px !important;
+        color: #ffffff !important;
+        font-size: 12px !important;
+        font-weight: 900 !important;
+        line-height: 1.1 !important;
+        box-shadow: 0 10px 22px rgba(0, 50, 120, 0.20) !important;
+    }
+
+.ecms-approval-page .btn-warning {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+}
+
+.ecms-approval-page .btn-primary {
+    background: linear-gradient(135deg, #238dff, #064bd8) !important;
+}
+
+    .ecms-approval-actions .btn:hover,
+    .ecms-approval-page .btn-primary:hover,
+    .ecms-approval-page .btn-warning:hover {
+        transform: translateY(-1px) !important;
+        filter: brightness(1.05) !important;
+    }
+
+.ecms-approval-table-panel {
+    height: calc(100% - 74px) !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+.ecms-approval-shell:has(.ecms-approval-actions) .ecms-approval-table-panel {
+    height: calc(100% - 128px) !important;
+}
+
+/* =========================
+   DataTables modern styling
+========================= */
+
+.ecms-approval-page .dt-container,
+.ecms-approval-page .dataTables_wrapper {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+    color: var(--ecms-approval-ink) !important;
+}
+
+    .ecms-approval-page .dt-top,
+    .ecms-approval-page .dataTables_wrapper .dt-top {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+        padding: 10px 12px !important;
+        margin: 0 0 10px 0 !important;
+        border-radius: 14px !important;
+        background: linear-gradient(135deg, rgba(255,255,255,0.84), rgba(242, 248, 255, 0.70)) !important;
+        border: 1px solid rgba(255,255,255,0.68) !important;
+        box-shadow: 0 12px 28px rgba(0, 26, 88, 0.12) !important;
+    }
+
+.ecms-approval-page .dt-length,
+.ecms-approval-page .dt-buttons,
+.ecms-approval-page .dt-search,
+.ecms-approval-page .dataTables_length,
+.ecms-approval-page .dataTables_filter {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+}
+
+    .ecms-approval-page .dt-length label,
+    .ecms-approval-page .dt-search label,
+    .ecms-approval-page .dataTables_length label,
+    .ecms-approval-page .dataTables_filter label {
+        margin: 0 !important;
+        color: #153263 !important;
+        font-size: 12.5px !important;
+        font-weight: 900 !important;
+    }
+
+    .ecms-approval-page .dt-length select,
+    .ecms-approval-page .dt-search input,
+    .ecms-approval-page .dataTables_length select,
+    .ecms-approval-page .dataTables_filter input {
+        height: 36px !important;
+        border-radius: 11px !important;
+        border: 1px solid rgba(93, 125, 175, 0.34) !important;
+        background-color: rgba(255,255,255,0.96) !important;
+        color: #10254f !important;
+        font-size: 12.5px !important;
+        font-weight: 800 !important;
+        box-shadow: 0 8px 18px rgba(0, 30, 80, 0.06), inset 0 1px 0 rgba(255,255,255,0.88) !important;
+    }
+
+    .ecms-approval-page .dt-search input,
+    .ecms-approval-page .dataTables_filter input {
+        width: 220px !important;
+        padding: 7px 12px !important;
+    }
+
+        .ecms-approval-page .dt-length select:focus,
+        .ecms-approval-page .dt-search input:focus,
+        .ecms-approval-page .dataTables_length select:focus,
+        .ecms-approval-page .dataTables_filter input:focus {
+            outline: none !important;
+            border-color: #227dff !important;
+            box-shadow: 0 0 0 4px rgba(31, 124, 255, 0.16) !important;
+        }
+
+    .ecms-approval-page .dt-buttons .btn,
+    .ecms-approval-page .dt-button {
+        height: 34px !important;
+        min-width: 78px !important;
+        padding: 7px 14px !important;
+        border: 0 !important;
+        border-radius: 11px !important;
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #238dff, #064bd8) !important;
+        box-shadow: 0 10px 20px rgba(0, 82, 220, 0.22) !important;
+        font-size: 12px !important;
+        font-weight: 900 !important;
+    }
+
+.ecms-approval-page .dt-scroll,
+.ecms-approval-page .dataTables_scroll {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255,255,255,0.62) !important;
+    box-shadow: 0 14px 32px rgba(0, 26, 88, 0.14) !important;
+    background: rgba(255,255,255,0.92) !important;
+}
+
+.ecms-approval-page .dt-scroll-head,
+.ecms-approval-page .dt-scroll-headInner,
+.ecms-approval-page .dataTables_scrollHead,
+.ecms-approval-page .dataTables_scrollHeadInner {
+    background: transparent !important;
+}
+
+.ecms-approval-page .dt-scroll-body,
+.ecms-approval-page .dataTables_scrollBody {
+    max-height: calc(100vh - 475px) !important;
+    height: calc(100vh - 475px) !important;
+    min-height: 190px !important;
+    overflow: auto !important;
+    background: rgba(255,255,255,0.88) !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(31, 124, 255, 0.60) rgba(255,255,255,0.25);
+}
+
+.ecms-approval-shell:has(.ecms-approval-actions) .dt-scroll-body,
+.ecms-approval-shell:has(.ecms-approval-actions) .dataTables_scrollBody {
+    max-height: calc(100vh - 530px) !important;
+    height: calc(100vh - 530px) !important;
+}
+
+.ecms-approval-page .dt-scroll-body::-webkit-scrollbar,
+.ecms-approval-page .dataTables_scrollBody::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+.ecms-approval-page .dt-scroll-body::-webkit-scrollbar-thumb,
+.ecms-approval-page .dataTables_scrollBody::-webkit-scrollbar-thumb {
+    background: rgba(31, 124, 255, 0.62);
+    border-radius: 999px;
+}
+
+.ecms-approval-page table.dataTable,
+.ecms-approval-page #tbldatatabledata_Fwd {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
     table-layout: fixed !important;
+    color: var(--ecms-approval-ink) !important;
+    background: rgba(255,255,255,0.96) !important;
 }
+
+    .ecms-approval-page table.dataTable thead th,
+    .ecms-approval-page #tbldatatabledata_Fwd thead th {
+        height: 42px !important;
+        padding: 10px 12px !important;
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #153f8f, #236dd2) !important;
+        border-color: rgba(255,255,255,0.22) !important;
+        font-size: 13px !important;
+        font-weight: 900 !important;
+        text-align: left !important;
+        vertical-align: middle !important;
+        white-space: nowrap !important;
+    }
+
+    .ecms-approval-page table.dataTable tbody td,
+    .ecms-approval-page #tbldatatabledata_Fwd tbody td {
+        padding: 10px 12px !important;
+        color: #10254f !important;
+        font-size: 12.5px !important;
+        font-weight: 750 !important;
+        vertical-align: middle !important;
+        border-top: 1px solid rgba(35, 99, 170, 0.10) !important;
+        background: rgba(255,255,255,0.94) !important;
+    }
+
+    .ecms-approval-page table.dataTable tbody tr:hover td {
+        background: rgba(236, 246, 255, 0.98) !important;
+    }
+
+.ecms-approval-page .dt-ellipsis,
+.ecms-approval-page .nowrap {
+    white-space: nowrap !important;
+}
+
+.ecms-approval-page .dt-ellipsis {
+    display: inline-block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.ecms-approval-page .dt-info,
+.ecms-approval-page .dt-paging,
+.ecms-approval-page .dataTables_info,
+.ecms-approval-page .dataTables_paginate {
+    margin-top: 10px !important;
+    color: #10254f !important;
+    font-size: 12.5px !important;
+    font-weight: 800 !important;
+}
+
+.ecms-approval-page .dt-paging,
+.ecms-approval-page .dataTables_paginate {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 4px !important;
+}
+
+    .ecms-approval-page .dt-paging .page-link,
+    .ecms-approval-page .dataTables_paginate .paginate_button {
+        min-width: 34px !important;
+        height: 34px !important;
+        padding: 7px 10px !important;
+        margin: 0 2px !important;
+        border-radius: 10px !important;
+        border: 1px solid rgba(85, 130, 195, 0.30) !important;
+        color: #123f8c !important;
+        background: rgba(255,255,255,0.78) !important;
+        font-weight: 900 !important;
+    }
+
+        .ecms-approval-page .dt-paging .active .page-link,
+        .ecms-approval-page .dt-paging .page-link:hover,
+        .ecms-approval-page .dataTables_paginate .paginate_button.current,
+        .ecms-approval-page .dataTables_paginate .paginate_button:hover {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #238dff, #064bd8) !important;
+            border-color: transparent !important;
+        }
+
+/* Hide duplicate hidden header generated inside scroll body - DataTables 1 and 2 */
+.ecms-approval-page .dt-scroll-body table.dataTable > thead,
+.ecms-approval-page .dt-scroll-body table.dataTable > thead > tr,
+.ecms-approval-page .dt-scroll-body table.dataTable > thead > tr > th,
+.ecms-approval-page .dt-scroll-body table.dataTable > thead > tr > td,
+.ecms-approval-page div.dataTables_scrollBody table.dataTable > thead,
+.ecms-approval-page div.dataTables_scrollBody table.dataTable > thead > tr,
+.ecms-approval-page div.dataTables_scrollBody table.dataTable > thead > tr > th,
+.ecms-approval-page div.dataTables_scrollBody table.dataTable > thead > tr > td {
+    height: 0 !important;
+    max-height: 0 !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+    visibility: collapse !important;
+    background: transparent !important;
+}
+
+.ecms-approval-page .dt-scroll-body thead *,
+.ecms-approval-page .dataTables_scrollBody thead * {
+    height: 0 !important;
+    max-height: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+    color: transparent !important;
+}
+
+.ecms-approval-page .dt-scroll-body .dt-scroll-sizing,
+.ecms-approval-page .dataTables_scrollBody .dataTables_sizing {
+    height: 0 !important;
+    max-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+}
+
+/* Checkbox column */
+.ecms-approval-page .custom-control.custom-checkbox,
+.ecms-approval-page .wd-30-f {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: 24px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.ecms-approval-page .custom-control-input,
+.ecms-approval-page input[type="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    cursor: pointer !important;
+    accent-color: #31c48d !important;
+}
+
+.ecms-approval-page .custom-control-label {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 16px !important;
+}
+
+/* Action buttons generated by JS */
+.ecms-approval-page .btn-icon,
+.ecms-approval-page .btn-round {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 11px !important;
+    border: 0 !important;
+    color: #ffffff !important;
+    box-shadow: 0 9px 18px rgba(0, 45, 120, 0.20) !important;
+}
+
+    .ecms-approval-page .btn-icon i,
+    .ecms-approval-page .btn-round i {
+        margin: 0 !important;
+        font-size: 14px !important;
+        line-height: 1 !important;
+    }
+
+.ecms-approval-page .cls-btndownloadpdf,
+.ecms-approval-page .cls-btndownloadxml {
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin-left: 6px !important;
+}
+
+    .ecms-approval-page .cls-btndownloadpdf img,
+    .ecms-approval-page .cls-btndownloadxml img {
+        width: 34px !important;
+        height: 34px !important;
+        object-fit: contain !important;
+        filter: drop-shadow(0 6px 10px rgba(0, 45, 120, 0.22));
+    }
+
+/* Modal visual cleanup used by this page */
+.modal.left .modal-dialog,
+.modal.right .modal-dialog {
+    position: fixed !important;
+    margin: auto !important;
+    width: min(760px, 96vw) !important;
+    max-width: min(760px, 96vw) !important;
+    height: 100% !important;
+    text-align: left !important;
+    transform: translate3d(0%, 0, 0) !important;
+}
+
+#BasicDetails .modal-dialog,
+#FwdRecord .modal-dialog,
+#FwdInternalRecord .modal-dialog,
+#CardReport .modal-dialog {
+    max-width: min(1180px, 96vw) !important;
+}
+
+#BasicDetails .modal-content,
+#FwdRecord .modal-content,
+#FwdInternalRecord .modal-content,
+#CardReport .modal-content {
+    border: 1px solid rgba(255,255,255,0.70) !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    box-shadow: 0 30px 70px rgba(0, 20, 60, 0.42) !important;
+}
+
+#BasicDetails .modal-header,
+#FwdRecord .modal-header,
+#FwdInternalRecord .modal-header,
+#CardReport .modal-header {
+    min-height: 56px !important;
+    padding: 14px 54px 14px 18px !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #123f8c, #2f7dff) !important;
+    border-bottom: 0 !important;
+    position: relative !important;
+}
+
+#BasicDetails .modal-title,
+#FwdRecord .modal-title,
+#FwdInternalRecord .modal-title,
+#CardReport .modal-title {
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+}
+
+#BasicDetails .modal-header .close,
+#FwdRecord .modal-header .close,
+#FwdInternalRecord .modal-header .close,
+#CardReport .modal-header .close,
+#BasicDetails .modal-header button.close,
+#FwdRecord .modal-header button.close,
+#FwdInternalRecord .modal-header button.close,
+#CardReport .modal-header button.close {
+    position: absolute !important;
+    top: 10px !important;
+    right: 12px !important;
+    z-index: 10 !important;
+    width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid rgba(255,255,255,0.35) !important;
+    border-radius: 50% !important;
+    color: #ffffff !important;
+    background: rgba(255,255,255,0.18) !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+    #BasicDetails .modal-header .close span,
+    #FwdRecord .modal-header .close span,
+    #FwdInternalRecord .modal-header .close span,
+    #CardReport .modal-header .close span {
+        display: block !important;
+        color: #ffffff !important;
+        font-size: 28px !important;
+        font-weight: 700 !important;
+        line-height: 28px !important;
+        margin-top: -2px !important;
+    }
+
+#BasicDetails .modal-body,
+#FwdRecord .modal-body,
+#FwdInternalRecord .modal-body,
+#CardReport .modal-body {
+    background: #f5f9ff !important;
+}
+
+/* Select2 visual only */
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    min-height: 38px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(93, 125, 175, 0.34) !important;
+    background: rgba(255,255,255,0.94) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.88) !important;
+}
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px !important;
+        color: #10254f !important;
+        font-weight: 800 !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+    }
+
+@media (max-width: 1199px) {
+    html:has(.ecms-approval-page),
+    body:has(.ecms-approval-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-approval-page {
+        height: auto !important;
+        min-height: calc(100vh - 255px) !important;
+        overflow: auto !important;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+
+    .ecms-approval-shell {
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    .ecms-approval-table-panel {
+        height: auto !important;
+    }
+
+    .ecms-approval-page .dt-scroll-body,
+    .ecms-approval-page .dataTables_scrollBody {
+        max-height: 420px !important;
+        height: 420px !important;
+    }
+}
+
+
+/* =====================================================
+   FINAL FIX: ApprovalForIO table header checkbox alignment
+   UI only - no JS / ID / functionality change
+===================================================== */
+
+/* First checkbox column: give enough safe width and center it */
+.ecms-approval-page .dt-scroll-head table.dataTable thead th.noExport:first-child,
+.ecms-approval-page .dataTables_scrollHead table.dataTable thead th.noExport:first-child,
+.ecms-approval-page #tbldatatabledata_Fwd thead th.noExport:first-child {
+    width: 50px !important;
+    min-width: 50px !important;
+    max-width: 50px !important;
+    padding: 0 !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+}
+
+    /* Center DataTables 2 header wrapper content */
+    .ecms-approval-page .dt-scroll-head table.dataTable thead th.noExport:first-child .dt-column-header,
+    .ecms-approval-page #tbldatatabledata_Fwd thead th.noExport:first-child .dt-column-header {
+        width: 100% !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Remove sort indicator space from checkbox header column */
+    .ecms-approval-page .dt-scroll-head table.dataTable thead th.noExport:first-child .dt-column-order,
+    .ecms-approval-page #tbldatatabledata_Fwd thead th.noExport:first-child .dt-column-order {
+        display: none !important;
+        width: 0 !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+/* The checkbox HTML is generated from JS as wd-30-f + custom-control.
+   Reset Bootstrap custom-control positioning so the checkbox does not stick outside the header. */
+.ecms-approval-page .wd-30-f,
+.ecms-approval-page .wd-30-f .custom-control,
+.ecms-approval-page .custom-control.custom-checkbox.small,
+.ecms-approval-page td.noExport .custom-control.custom-checkbox,
+.ecms-approval-page th.noExport .custom-control.custom-checkbox {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    overflow: visible !important;
+}
+
+/* Show the real checkbox in the center, not Bootstrap's hidden absolute input */
+.ecms-approval-page #chkAll_ApprovalForIO,
+.ecms-approval-page .chkRequestId,
+.ecms-approval-page .custom-control-input {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    float: none !important;
+    display: inline-block !important;
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
+    max-width: 16px !important;
+    max-height: 16px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 5 !important;
+    cursor: pointer !important;
+    transform: none !important;
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    accent-color: #31c48d !important;
+}
+
+/* Hide Bootstrap pseudo-checkbox because we are showing real checkbox */
+.ecms-approval-page .custom-control-label {
+    display: none !important;
+}
+
+    .ecms-approval-page .custom-control-label::before,
+    .ecms-approval-page .custom-control-label::after {
+        display: none !important;
+        content: none !important;
+    }
+
+/* Body checkbox cells should also stay centered */
+.ecms-approval-page #tbldatatabledata_Fwd tbody td.noExport:first-child,
+.ecms-approval-page .dt-scroll-body table.dataTable tbody td.noExport:first-child,
+.ecms-approval-page .dataTables_scrollBody table.dataTable tbody td.noExport:first-child {
+    width: 50px !important;
+    min-width: 50px !important;
+    max-width: 50px !important;
+    padding: 0 !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+}
+
+/* Hide duplicate header inside DataTables scroll body, but do not affect the visible scroll-head header */
+.ecms-approval-page .dt-scroll-body table#tbldatatabledata_Fwd > thead,
+.ecms-approval-page .dataTables_scrollBody table#tbldatatabledata_Fwd > thead {
+    height: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    visibility: collapse !important;
+}
+
+    .ecms-approval-page .dt-scroll-body table#tbldatatabledata_Fwd > thead th,
+    .ecms-approval-page .dataTables_scrollBody table#tbldatatabledata_Fwd > thead th {
+        height: 0 !important;
+        max-height: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border: 0 !important;
+        line-height: 0 !important;
+        font-size: 0 !important;
+        color: transparent !important;
+    }

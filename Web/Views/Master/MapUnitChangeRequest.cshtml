@@ -2,6 +2,7 @@
     ViewData["Title"] = "Unit Mapping Change Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <link asp-href-include="~/developercss/mapunitchangerequest.css" rel="stylesheet" />
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -10,235 +11,195 @@
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
                         @if (ViewBag.RoleName == "admin")
                         {
-                            <div><a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> >  Unit Move Request</div>
+                            <div><a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> &gt; Unit Move Request</div>
                         }
                         else
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Unit Move Request</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt; Unit Move Request</div>
                         }
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Profile Mapping Details
-                        <small class="text-muted"> </small>
 
+<div class="containerMain mt-n10 ecms-mapunitreq-page">
+    <div class="ecms-mapunitreq-shell">
+        <form action="" id="SaveMapUnitChange" method="post" name="SaveMapUnitChange" class="ecms-mapunitreq-form">
+            <span class="d-none" id="spnMapUnitChangeRequestId">@(ViewBag.MapUnitChangeRequestId ?? 0)</span>
+            <span class="d-none" id="spnUnitMapId">@ViewBag.MapUnitId</span>
+            <span class="d-none" id="spnRN">@ViewBag.RoleName</span>
 
-                    </h3>
+            <div class="ecms-mapunitreq-titlebar">
+                <div class="ecms-mapunitreq-title-wrap">
+                    <span class="ecms-mapunitreq-title-icon"><i class="fa fa-random"></i></span>
+                    <div>
+                        <h3>Profile Mapping Details</h3>
+                        <p>Review existing hierarchy and submit unit hierarchy recalibration request</p>
+                    </div>
                 </div>
 
-
+                <span class="ecms-mapunitreq-role-pill">
+                    <i class="fa fa-user"></i>
+                    @ViewBag.RoleName
+                </span>
             </div>
-        </div>
-        <div class="card-body" >
-            <div class="row g-3 row-deck mb-3">
-                <form action="" id="SaveMapUnitChange" method="post" name="SaveMapUnitChange">
-                    <div class="row">
-                        <span class=" d-none" id="spnMapUnitChangeRequestId">@(ViewBag.MapUnitChangeRequestId ?? 0)</span>
-                        <span class=" d-none" id="spnUnitMapId">@ViewBag.MapUnitId</span>
-                        <span class=" d-none" id="spnRN">@ViewBag.RoleName</span>
-                       
-                        
-                        <div class="col-sm-6">
 
-                            <div class="card p-1 mb-2 alert alert-primary">
-                                    <div class="mb-1 d-flex justify-content-between align-items-center">
-                                        <div class="text-start ml-2 labelUnit">
-                                            Unit Name - <label id="lblUnit" class="col-form-label"></label> (<label id="lblSUSNo" class="col-form-label"></label>)
-                                        </div>
+            <div class="ecms-mapunitreq-info-row">
+                <div class="ecms-mapunitreq-info-card unit-info">
+                    <span class="ecms-mapunitreq-info-icon"><i class="fa fa-building"></i></span>
+                    <div>
+                        <span class="ecms-mapunitreq-info-label">Unit Name</span>
+                        <strong><label id="lblUnit" class="col-form-label"></label> <span>(<label id="lblSUSNo" class="col-form-label"></label>)</span></strong>
+                    </div>
+                </div>
 
-                                    </div>
-                                </div>
-                            
-                            <div class="card h-90">
-                                <div class="card-header">
-                                    <div class="row">
-                                        <div class="col-xl-12 text-left">
-                                            <h3>
-                                                Current Hierarchy
-                                                <small class="text-muted"> </small>
-                                            </h3>
-                                        </div>
-                                    </div>
-                                </div>
-                               
-                                <div id="CurrentUnitHierarchy" class="p-4 d-none">
-                                    <div class="form-group row mb-0">
-                                        <label for="ddlUnitType" class="col-form-label col-sm-5 labelUnit">Unit Type</label>
-                                        <div class="col-sm-7">
-                                            <label id="lblUnitType" class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-0 ExistingCh-UnitType">
-                                        <label for="ddlCommand" class="col-form-label col-sm-5 labelUnit">Comd / PSO</label>
-                                        <div class="col-sm-7">
-                                            <label id="lblComd" class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-0 ExistingCh-UnitType">
-                                        <label for="ddlCorps" class="col-form-label col-sm-5 labelUnit">Corps / Dte / Area</label>
-                                        <div class="col-sm-7">
-                                            <label id="lblCorps" class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-0 ExistingCh-UnitType">
-                                        <label for="ddlDiv" class="col-form-label col-sm-5 labelUnit">Div / Sub Area</label>
-                                        <div class="col-sm-7">
-                                            <label id="lblDiv" class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-0 ExistingCh-UnitType">
-                                        <label for="ddlBde" class="col-form-label col-sm-5 labelUnit">Bde</label>
-                                        <div class="col-sm-7">
-                                            <label id="lblBde" class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-0 ExistingCh-FmnBranch">
-                                        <label for="ddlFmnBranch" class="col-form-label col-sm-5 labelUnit">Fmn / Branch</label>
-                                        <div class="col-sm-7">
-                                            <label id="lblFmnBranch" class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-0 ExistingCh-DteBranch">
-                                        <label for="ddlPSODte" class="col-form-label col-sm-5 labelUnit">PSO / Dte </label>
-                                        <div class="col-sm-7">
-                                            <label id="lblPSODte" class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-0 ExistingCh-DteBranch">
-                                        <label for="ddlDgSubDte" class="col-form-label col-sm-5 labelUnit">DG / Sub Dte</label>
-                                        <div class="col-sm-7">
-                                            <label id="lblDgSubDte" class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="ecms-mapunitreq-info-card request-info">
+                    <span class="ecms-mapunitreq-info-icon"><i class="fa fa-user-circle"></i></span>
+                    <div>
+                        <span class="ecms-mapunitreq-info-label">Request By</span>
+                        <strong><label id="lblRequestBy" class="col-form-label"></label></strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ecms-mapunitreq-grid">
+                <div class="ecms-mapunitreq-panel">
+                    <div class="ecms-mapunitreq-panel-header">
+                        <i class="fa fa-sitemap"></i>
+                        <span>Current Hierarchy</span>
+                    </div>
+
+                    <div id="CurrentUnitHierarchy" class="ecms-mapunitreq-panel-body d-none">
+                        <div class="ecms-mapunitreq-detail-row">
+                            <span class="labelUnit">Unit Type</span>
+                            <strong id="lblUnitType"></strong>
                         </div>
-                        <div class="col-sm-6">
 
-                            <div class="card p-1 mb-2 alert alert-info mt-2">
-                                    <div class="mb-1 d-flex justify-content-between align-items-center">
+                        <div class="ecms-mapunitreq-detail-row ExistingCh-UnitType">
+                            <span class="labelUnit">Comd / PSO</span>
+                            <strong id="lblComd"></strong>
+                        </div>
 
-                                    <div class="text-start ml-2 labelUnit">
-                                            Request By - <label id="lblRequestBy"  class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="ecms-mapunitreq-detail-row ExistingCh-UnitType">
+                            <span class="labelUnit">Corps / Dte / Area</span>
+                            <strong id="lblCorps"></strong>
+                        </div>
 
-                            <div class="card h-90">
-                                   
-                                <div class="card-header">
-                                    <div class="row">
-                                        <div class="col-xl-12 text-left">
-                                            <h3>
-                                                Unit Hierarchy Recalibration
-                                                <small class="text-muted"> </small>
+                        <div class="ecms-mapunitreq-detail-row ExistingCh-UnitType">
+                            <span class="labelUnit">Div / Sub Area</span>
+                            <strong id="lblDiv"></strong>
+                        </div>
 
+                        <div class="ecms-mapunitreq-detail-row ExistingCh-UnitType">
+                            <span class="labelUnit">Bde</span>
+                            <strong id="lblBde"></strong>
+                        </div>
 
-                                            </h3>
-                                        </div>
+                        <div class="ecms-mapunitreq-detail-row ExistingCh-FmnBranch">
+                            <span class="labelUnit">Fmn / Branch</span>
+                            <strong id="lblFmnBranch"></strong>
+                        </div>
 
+                        <div class="ecms-mapunitreq-detail-row ExistingCh-DteBranch">
+                            <span class="labelUnit">PSO / Dte</span>
+                            <strong id="lblPSODte"></strong>
+                        </div>
 
-                                    </div>
-                                </div>
-                                <div id="ChangeUnitHierarchy" class="p-4 d-none">
-                                    <div class="form-group row mb-2 unittype">
-                                        <label for="ddlCommand" class="col-form-label col-sm-4 labelUnit">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-8">
-                                            <select class="form-select"   name="ddlCommand" required id="ddlCommand">
-                                                <option value="0">Select Comd / PSO </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-4 unittype">
-                                        <label for="ddlCorps" class="col-form-label col-sm-4 labelUnit">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-8">
-                                            <select class="form-select"   name="ddlCorps" required id="ddlCorps">
-                                                <option value="0">Select Corps / Dte / Area </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2 unittype">
-                                        <label for="ddlDiv" class="col-form-label col-sm-4 labelUnit">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-8">
-                                            <select class="form-select"   name="ddlDiv" required id="ddlDiv">
-                                                <option value="0">Select One </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2 unittype">
-                                        <label for="ddlBde" class="col-form-label col-sm-4 labelUnit">Bde<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-8">
-                                            <select class="form-select"   name="ddlBde" required id="ddlBde">
-                                                <option value="0">Select Bde </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2 FmnBranch  d-none">
-                                        <label for="ddlFmnBranch" class="col-form-label col-sm-4 labelUnit">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-8">
-                                            <select class="form-select"   name="ddlFmnBranch" required id="ddlFmnBranch">
-                                                <option value="1">Select Fmn/Branch </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2 DteBranch d-none">
-                                        <label for="ddlPSODte" class="col-form-label col-sm-4 labelUnit">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-8">
-                                            <select class="form-select"   name="ddlPSODte" required id="ddlPSODte">
-                                                <option value="1">Select DG / Sub Dte </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2 DteBranch d-none">
-                                        <label for="ddlDgSubDte" class="col-form-label col-sm-4 labelUnit">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-8">
-                                            <select class="form-select"   name="ddlDgSubDte" required id="ddlDgSubDte">
-                                                <option value="1">Select DG / Sub Dte</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2">
-                                        <label for="txtRemark" class="col-form-label col-sm-4 labelUnit">Remark<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-8">
-                                            <textarea class="form-control1 textarea-auto-height js-uppercase" name="txtRemark" id="txtRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtRemark" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2 AdminRemark d-none">
-                                        <label for="txtAdminRemark" class="col-form-label col-sm-4 labelUnit">Admin Remark<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-8">
-                                            <textarea class="form-control1 textarea-auto-height js-uppercase" name="txtAdminRemark" id="txtAdminRemark" rows="3" maxlength="100"  data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtAdminRemark" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 text-center mb-4 mt-4">
-                                        <input type="button" class="btn btn-primary" id="btnReject" value="Reject" />
-                                        <input type="button" class="btn btn-primary" id="btnAccept" value="Accept and Update Mapping" />
-                                        <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" />
-                                    </div>
-                                </div>
-                                </div>
-
-                            
+                        <div class="ecms-mapunitreq-detail-row ExistingCh-DteBranch">
+                            <span class="labelUnit">DG / Sub Dte</span>
+                            <strong id="lblDgSubDte"></strong>
                         </div>
                     </div>
-                </form>
+                </div>
+
+                <div class="ecms-mapunitreq-panel">
+                    <div class="ecms-mapunitreq-panel-header">
+                        <i class="fa fa-refresh"></i>
+                        <span>Unit Hierarchy Recalibration</span>
+                    </div>
+
+                    <div id="ChangeUnitHierarchy" class="ecms-mapunitreq-panel-body d-none">
+                        <div class="ecms-mapunitreq-control-row unittype">
+                            <label for="ddlCommand" class="labelUnit">Comd / PSO<i class="fa fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlCommand" required id="ddlCommand">
+                                <option value="0">Select Comd / PSO</option>
+                            </select>
+                        </div>
+
+                        <div class="ecms-mapunitreq-control-row unittype">
+                            <label for="ddlCorps" class="labelUnit">Corps / Dte / Area<i class="fa fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlCorps" required id="ddlCorps">
+                                <option value="0">Select Corps / Dte / Area</option>
+                            </select>
+                        </div>
+
+                        <div class="ecms-mapunitreq-control-row unittype">
+                            <label for="ddlDiv" class="labelUnit">Div/Sub Area<i class="fa fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlDiv" required id="ddlDiv">
+                                <option value="0">Select One</option>
+                            </select>
+                        </div>
+
+                        <div class="ecms-mapunitreq-control-row unittype">
+                            <label for="ddlBde" class="labelUnit">Bde<i class="fa fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlBde" required id="ddlBde">
+                                <option value="0">Select Bde</option>
+                            </select>
+                        </div>
+
+                        <div class="ecms-mapunitreq-control-row FmnBranch d-none">
+                            <label for="ddlFmnBranch" class="labelUnit">Type of Fmn / Branch<i class="fa fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlFmnBranch" required id="ddlFmnBranch">
+                                <option value="1">Select Fmn/Branch</option>
+                            </select>
+                        </div>
+
+                        <div class="ecms-mapunitreq-control-row DteBranch d-none">
+                            <label for="ddlPSODte" class="labelUnit">PSO / Dte<i class="fa fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlPSODte" required id="ddlPSODte">
+                                <option value="1">Select DG / Sub Dte</option>
+                            </select>
+                        </div>
+
+                        <div class="ecms-mapunitreq-control-row DteBranch d-none">
+                            <label for="ddlDgSubDte" class="labelUnit">DG / Sub Dte<i class="fa fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlDgSubDte" required id="ddlDgSubDte">
+                                <option value="1">Select DG / Sub Dte</option>
+                            </select>
+                        </div>
+
+                        <div class="ecms-mapunitreq-control-row textarea-row">
+                            <label for="txtRemark" class="labelUnit">Remark<i class="fa fa-asterisk mand1"></i></label>
+                            <div class="ecms-mapunitreq-field-wrap">
+                                <textarea class="form-control1 textarea-auto-height js-uppercase" name="txtRemark" id="txtRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="txtRemark" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="ecms-mapunitreq-control-row textarea-row AdminRemark d-none">
+                            <label for="txtAdminRemark" class="labelUnit">Admin Remark<i class="fa fa-asterisk mand1"></i></label>
+                            <div class="ecms-mapunitreq-field-wrap">
+                                <textarea class="form-control1 textarea-auto-height js-uppercase" name="txtAdminRemark" id="txtAdminRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="txtAdminRemark" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="ecms-mapunitreq-button-row">
+                            <input type="button" class="btn btn-primary ecms-reject-btn" id="btnReject" value="Reject" />
+                            <input type="button" class="btn btn-primary ecms-accept-btn" id="btnAccept" value="Accept and Update Mapping" />
+                            <input type="button" class="btn btn-primary ecms-submit-btn" id="btnSubmit" value="Submit" />
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/MapUnitChangeRequest.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>

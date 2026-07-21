@@ -17,17 +17,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // UI fix: remove old DataTables cloned header/body markup
     }
 
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: false,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -60,10 +61,16 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                setTimeout(function () { FixClaimsDataTableUI('#tbldatadialog'); }, 30);
+                setTimeout(function () { FixClaimsDataTableUI('#tbldata'); }, 30);
 
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                setTimeout(function () { FixClaimsDataTableUI("#tbldata"); }, 30);
             }
         },
         columns: [
@@ -131,7 +138,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Type / Value" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
         buttons: [
             //{
             //    extend: 'copy',
@@ -160,29 +167,30 @@ function BindData() {
         initComplete: function () {
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
+            FixClaimsDataTableUI('#tbldata');
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    table.columns.adjust();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            this.api().columns.adjust();
+            FixClaimsDataTableUI('#tbldata');
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btneyetotalusers").on("click", ".cls-btneyetotalusers", function () {
                 var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null)
-                {
+                if (rowData != null) {
                     BindDialog(rowData.ClaimType);
                 }
             });
-            
+
         }
     });
 }
@@ -195,19 +203,20 @@ function BindDialog(claimValue) {
             $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
             $("#tbldatadialog thead").empty(); // Clear old thead
             $("#tbldatadialog tbody").empty(); // Clear old tbody
+            $("#tbldatadialog").empty(); // UI fix: remove old DataTables cloned header/body markup
         }
 
         $("#lblModelTitle").html(claimValue);
 
         tableView = $("#tbldatadialog").DataTable({
-            scrollY: '65vh',          // ✅ vertical scroll
+            scrollY: '100%',          // ✅ vertical scroll
             scrollX: true,            // ✅ horizontal scroll
-            scrollCollapse: true,
-            scroller: true,           // ✅ Enable virtual scrolling for better performance
-            deferScroll: true,        // ✅ Improve scrolling performance
+            scrollCollapse: false,
+            scroller: false,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: false,        // ✅ Improve scrolling performance
             fixedHeader: false,       // ❌ disable when using scrollY
 
-            processing: true,
+            processing: false,
             serverSide: true,
             filter: true,
             stateSave: false,
@@ -245,6 +254,10 @@ function BindDialog(claimValue) {
 
                 } catch (error) {
                     console.error("Error fetching data:", error);
+                    $("#loading").addClass("d-none").hide();
+                    $(".dataTables_processing").hide();
+                    callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                    setTimeout(function () { FixClaimsDataTableUI("#tbldatadialog"); }, 30);
                 }
             },
             columns: [
@@ -355,7 +368,7 @@ function BindDialog(claimValue) {
                 search: "", // Remove the default "Search:" label
                 searchPlaceholder: "Search IC No" // Add custom placeholder
             },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
             buttons: [
                 //{
                 //    extend: 'copy',
@@ -384,26 +397,30 @@ function BindDialog(claimValue) {
             initComplete: function () {
                 // Force DataTables to calculate optimal widths
                 this.api().columns.adjust();
+                FixClaimsDataTableUI('#tbldatadialog');
 
                 // Handle zoom/resize
                 var resizeTimer;
                 $(window).on('resize', function () {
                     clearTimeout(resizeTimer);
                     resizeTimer = setTimeout(function () {
-                        tableView.columns.adjust().responsive.recalc();
+                        tableView.columns.adjust();
                     }, 100);
                 });
             },
             drawCallback: function (settings) {
                 // Recalculate widths on each data load
-                this.api().columns.adjust().responsive.recalc();
+                this.api().columns.adjust();
+                FixClaimsDataTableUI('#tbldatadialog');
 
                 const tooltipTriggerList = [].slice.call(
                     document.querySelectorAll('[data-bs-toggle="tooltip"]')
                 );
-                tooltipTriggerList.forEach(el => {
-                    new bootstrap.Tooltip(el);
-                });
+                if (window.bootstrap && bootstrap.Tooltip) {
+                    tooltipTriggerList.forEach(el => {
+                        try { new bootstrap.Tooltip(el); } catch (e) { }
+                    });
+                }
 
             }
         });
@@ -413,3 +430,68 @@ function BindDialog(claimValue) {
     $("#DataTableDialog").modal("show");
 
 }
+
+function FixClaimsDataTableUI(tableSelector) {
+    try {
+        const $table = $(tableSelector);
+        const $wrapper = $(tableSelector + "_wrapper");
+
+        $("#loading").addClass("d-none").hide();
+        $(".dataTables_processing, " + tableSelector + "_processing").hide();
+
+        // Hide only the cloned sizing header inside the DataTables scroll body.
+        // This removes the duplicate/blank blue header row without removing the real header.
+        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").css({
+            display: "none",
+            height: "0",
+            maxHeight: "0",
+            minHeight: "0",
+            visibility: "collapse",
+            overflow: "hidden"
+        });
+
+        $wrapper.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
+            display: "none",
+            height: "0",
+            maxHeight: "0",
+            minHeight: "0",
+            lineHeight: "0",
+            fontSize: "0",
+            padding: "0",
+            margin: "0",
+            border: "0",
+            overflow: "hidden",
+            visibility: "collapse"
+        });
+
+        $wrapper.find(".dt-bottom, .dataTables_info, .dataTables_paginate, .pagination").css({
+            visibility: "visible",
+            opacity: "1"
+        });
+
+        const $bottom = $wrapper.children(".dt-bottom");
+        if ($bottom.length) {
+            $bottom.css({
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%"
+            });
+        }
+
+        if ($.fn.DataTable.isDataTable(tableSelector)) {
+            setTimeout(function () {
+                $table.DataTable().columns.adjust();
+            }, 80);
+        }
+    } catch (e) {
+        console.warn("Claims DataTable UI fix skipped:", e);
+    }
+}
+
+
+$('#DataTableDialog').on('shown.bs.modal.claimsUi', function () {
+    setTimeout(function () {
+        FixClaimsDataTableUI('#tbldatadialog');
+    }, 120);
+});

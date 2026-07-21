@@ -18,10 +18,10 @@ $(function () {
         ProceedForMapping();
     });
 
-    $("#AddNewDomain input[name='txtapproval']").on("click",function () {
+    $("#AddNewDomain input[name='txtapproval']").on("click", function () {
         $("#txtapproval-error").html("");
     });
-    $("#AddNewDomain input[name='txtactive']").on("click",function () {
+    $("#AddNewDomain input[name='txtactive']").on("click", function () {
         $("#txtactive-error").html("");
     });
 
@@ -78,10 +78,10 @@ $(function () {
                 }
             });
         },
-        
+
     });
 
-    $('#txtArmyNo').on("keyup",function (e) {
+    $('#txtArmyNo').on("keyup", function (e) {
         if (e.key === 'Delete' || e.key === 'Del' || e.key === 'Backspace') {
             UserProfileId = 0;
             $("#txtArmyNo").val('');
@@ -90,7 +90,7 @@ $(function () {
         }
     });
 
-    $("#txtSearch").on("keyup",function () {
+    $("#txtSearch").on("keyup", function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
             var ChoiceValue = $("input[type='radio'][name=choice]:checked").val();
@@ -114,7 +114,7 @@ $(function () {
         }
     });
 
-    $("#btnUser").on("click",function () {
+    $("#btnUser").on("click", function () {
 
         if ($("#lblUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -216,7 +216,7 @@ $(function () {
             applyDataTableSearchValidation('#tbldatadialog');
 
             BindDialog("CO");
-         }
+        }
     });
     //$("#btnRO").click(function () {
     //    if ($("#lblRO").html() > 0) {
@@ -481,7 +481,7 @@ function BindDialog(Choice) {
     // STEP 2: Show modal (this triggers the above)
     $("#DataTableDialog").modal("show");
 
-    
+
 }
 function BindData() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
@@ -1240,3 +1240,164 @@ function AccountCount() {
         }
     });
 }
+
+
+/* =====================================================
+   User Registration UI-only fixes
+   - Removes DataTables duplicate cloned header
+   - Keeps DataTable info/pagination visible
+   - Hides stuck processing/loader overlay
+   - Repaints custom radio selected state in modals
+===================================================== */
+function UserRegn_FinalTableCleanup(tableSelector) {
+    try {
+        var $wrapper = $(tableSelector + "_wrapper");
+
+        $("#loading").addClass("d-none").hide();
+        $(".dataTables_processing, .dt-processing, " + tableSelector + "_processing").hide();
+
+        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").each(function () {
+            $(this).attr("aria-hidden", "true").css({
+                "display": "none",
+                "visibility": "collapse",
+                "height": "0",
+                "min-height": "0",
+                "max-height": "0",
+                "line-height": "0",
+                "font-size": "0",
+                "padding": "0",
+                "margin": "0",
+                "border": "0",
+                "overflow": "hidden",
+                "opacity": "0"
+            });
+        });
+
+        $wrapper.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
+            "display": "none",
+            "visibility": "collapse",
+            "height": "0",
+            "min-height": "0",
+            "max-height": "0",
+            "line-height": "0",
+            "font-size": "0",
+            "padding": "0",
+            "margin": "0",
+            "border": "0",
+            "overflow": "hidden",
+            "opacity": "0"
+        });
+
+        $wrapper.find(".dataTables_info, .dataTables_paginate, .dt-info, .dt-paging, .pagination").css({
+            "visibility": "visible",
+            "opacity": "1"
+        });
+
+        if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+            setTimeout(function () {
+                try { $(tableSelector).DataTable().columns.adjust(); } catch (e) { }
+            }, 50);
+        }
+    } catch (e) {
+        console.warn("UserRegn_FinalTableCleanup skipped:", e);
+    }
+}
+
+$(document).on("draw.dt", function (e, settings) {
+    try {
+        var id = settings && settings.nTable ? settings.nTable.id : "";
+        if (id === "tbldata") {
+            setTimeout(function () { UserRegn_FinalTableCleanup("#tbldata"); }, 20);
+        }
+        if (id === "tbldatadialog") {
+            setTimeout(function () { UserRegn_FinalTableCleanup("#tbldatadialog"); }, 20);
+        }
+    } catch (e) { }
+});
+
+$(document).ajaxStop(function () {
+    $("#loading").addClass("d-none").hide();
+    $(".dataTables_processing, .dt-processing").hide();
+});
+
+$("#DataTableDialog").on("shown.bs.modal.userRegnFinal shown.userRegnFinal", function () {
+    setTimeout(function () { UserRegn_FinalTableCleanup("#tbldatadialog"); }, 120);
+});
+
+$("#AddDomainFlag, #AddMapping").on("shown.bs.modal.userRegnRadioFix shown.userRegnRadioFix", function () {
+    var $m = $(this);
+    setTimeout(function () {
+        $m.find("input[type='radio']").each(function () { this.offsetHeight; });
+    }, 50);
+});
+
+$(document).on("change.userRegnRadioFix", ".ecms-userregn-modal input[type='radio']", function () {
+    var $modal = $(this).closest(".modal");
+    var radioName = $(this).attr("name");
+    if (radioName) {
+        $modal.find("input[type='radio'][name='" + radioName + "']").removeClass("ecms-radio-checked");
+        $modal.find("input[type='radio'][name='" + radioName + "']:checked").addClass("ecms-radio-checked");
+    }
+});
+
+
+/* UI-only footer fix: calculate safe table body height so info/pagination never go under the card/footer */
+function UserRegn_KeepMainFooterVisible() {
+    try {
+        var shell = document.querySelector('.ecms-userregn-shell');
+        var tableCard = document.querySelector('.ecms-userregn-page .ecms-table-card');
+        var wrapper = document.querySelector('#tbldata_wrapper');
+        if (!shell || !tableCard || !wrapper) return;
+
+        var top = wrapper.querySelector('.dt-top, .dataTables_length');
+        var scrollHead = wrapper.querySelector('.dataTables_scrollHead, .dt-scroll-head');
+        var tableCardHeight = tableCard.getBoundingClientRect().height;
+        var topHeight = top ? top.getBoundingClientRect().height : 42;
+        var headHeight = scrollHead ? scrollHead.getBoundingClientRect().height : 42;
+        var footerReserve = 54;
+        var sectionReserve = 42;
+
+        var safeHeight = Math.floor(tableCardHeight - topHeight - headHeight - footerReserve - sectionReserve);
+        safeHeight = Math.max(150, Math.min(safeHeight, 300));
+
+        tableCard.style.setProperty('--userregn-main-scroll-height', safeHeight + 'px');
+
+        $('#tbldata_wrapper .dataTables_info, #tbldata_wrapper .dataTables_paginate, #tbldata_wrapper .dt-info, #tbldata_wrapper .dt-paging')
+            .css({ visibility: 'visible', opacity: '1' });
+
+        $('#tbldata_wrapper .dataTables_scrollBody, #tbldata_wrapper .dt-scroll-body').css({
+            height: safeHeight + 'px',
+            maxHeight: safeHeight + 'px',
+            overflow: 'auto'
+        });
+    } catch (e) {
+        console.warn('UserRegn_KeepMainFooterVisible skipped:', e);
+    }
+}
+
+$(document).on('draw.dt', function (e, settings) {
+    try {
+        var id = settings && settings.nTable ? settings.nTable.id : '';
+        if (id === 'tbldata') {
+            setTimeout(UserRegn_KeepMainFooterVisible, 30);
+            setTimeout(UserRegn_KeepMainFooterVisible, 180);
+        }
+    } catch (e) { }
+});
+
+$(window).on('resize.userRegnFooterFix', function () {
+    clearTimeout(window.__userRegnFooterFixTimer);
+    window.__userRegnFooterFixTimer = setTimeout(function () {
+        UserRegn_KeepMainFooterVisible();
+        try {
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tbldata')) {
+                $('#tbldata').DataTable().columns.adjust();
+            }
+        } catch (e) { }
+    }, 120);
+});
+
+$(function () {
+    setTimeout(UserRegn_KeepMainFooterVisible, 250);
+    setTimeout(UserRegn_KeepMainFooterVisible, 800);
+});

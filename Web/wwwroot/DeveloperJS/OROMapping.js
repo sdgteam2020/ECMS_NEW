@@ -17,7 +17,7 @@ $(function () {
         dropdownParent: $('#AddNewOROMapping'),
         closeOnSelect: false
     });
-    $("#btnAdd").on("click",function () {
+    $("#btnAdd").on("click", function () {
         Reset();
         ResetErrorMessage();
         $("#btnOROMappingAdd").val("Save");
@@ -111,7 +111,7 @@ $(function () {
                 }
             });
         },
-        
+
     });
 
     $("#ddlRank").prop('disabled', true);
@@ -159,17 +159,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty();       // UI FIX: remove any old DataTables cloned sizing/header markup
     }
     const columns = getColumnsForOROMapping();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // UI FIX: internal vertical scroll height; keeps last row visible
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // UI FIX: disable Scroller because rows have variable height lists
+        deferScroll: false,       // UI FIX: normal DataTable scroll prevents hidden last rows
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -202,10 +203,15 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                setTimeout(function () { FixOROMappingDataTableUI(); FixOROMappingFooterUI(); }, 30);
+                $('.ecms-oro-page .dataTables_processing').hide();
 
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $('.ecms-oro-page .dataTables_processing').hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                setTimeout(function () { FixOROMappingDataTableUI(); FixOROMappingFooterUI(); }, 30);
             }
         },
         columns: columns,
@@ -232,7 +238,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -265,27 +271,34 @@ function BindData() {
 
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
+            FixOROMappingDataTableUI();
+            FixOROMappingFooterUI();
+
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    table.columns.adjust();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            this.api().columns.adjust();
+            FixOROMappingDataTableUI();
+            FixOROMappingFooterUI();
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(el => {
+                    try { new bootstrap.Tooltip(el); } catch (e) { }
+                });
+            }
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -428,7 +441,7 @@ function Reset() {
     $("#ddlRO").prop('disabled', false);
 }
 function ResetErrorMessage() {
-    $("#ddlArmedIdList-error").html(""); 
+    $("#ddlArmedIdList-error").html("");
     $("#ddlRO-error").html("");
     $("#ddlRank-error").html("");
     $("#txtUnitName-error").html("");
@@ -687,4 +700,91 @@ function getColumnsForOROMapping() {
         }
     ];
     return columns;
+}
+
+
+
+
+function FixOROMappingDataTableUI() {
+    try {
+        const $page = $(".ecms-oro-page");
+        const $wrapper = $("#tbldata_wrapper");
+
+        // Hide DataTables cloned sizing header inside scroll body.
+        $page.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").css({
+            height: "0",
+            maxHeight: "0",
+            visibility: "collapse",
+            overflow: "hidden"
+        });
+
+        $page.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
+            height: "0",
+            maxHeight: "0",
+            minHeight: "0",
+            lineHeight: "0",
+            fontSize: "0",
+            paddingTop: "0",
+            paddingBottom: "0",
+            paddingLeft: "0",
+            paddingRight: "0",
+            borderTop: "0",
+            borderBottom: "0",
+            overflow: "hidden",
+            visibility: "collapse"
+        });
+
+        // Hide DataTables and layout loader if left visible after draw.
+        $wrapper.find(".dataTables_processing").hide();
+        $("#loading").addClass("d-none").hide();
+        $(".loading, .loader, .page-loader, .data-loader").hide();
+
+        // Footer and pagination must remain visible.
+        $wrapper.find(".dt-bottom, .dataTables_info, .dataTables_paginate, .pagination").css({
+            visibility: "visible",
+            opacity: "1"
+        });
+
+        const $bottom = $wrapper.children(".dt-bottom");
+        if ($bottom.length) {
+            $bottom.css({
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%"
+            });
+        }
+    } catch (e) {
+        console.warn("ORO table UI fix skipped:", e);
+    }
+}
+
+
+function FixOROMappingFooterUI() {
+    try {
+        const $wrapper = $("#tbldata_wrapper");
+        $wrapper.find(".dataTables_processing").hide();
+        $("#loading").addClass("d-none").hide();
+        $(".loading, .loader, .page-loader, .data-loader").hide();
+
+        const $bottom = $wrapper.children(".dt-bottom");
+        if ($bottom.length) {
+            $bottom.css({
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                visibility: "visible",
+                opacity: "1",
+                width: "100%"
+            });
+        }
+
+        $wrapper.find(".dataTables_info, .dataTables_paginate, .pagination").css({
+            visibility: "visible",
+            opacity: "1",
+            display: ""
+        });
+    } catch (e) {
+        console.warn("ORO footer UI adjust skipped:", e);
+    }
 }

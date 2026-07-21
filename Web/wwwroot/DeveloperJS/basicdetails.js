@@ -34,7 +34,7 @@ $(async function () {
         else {
             mMsater($("#spnRegimentalId").val(), "RegimentalId", Regimental, $("#spnArmedId").val());
         }
-        
+
     }
     else {
         mMsater("", "ArmedId", ArmyType, "");
@@ -51,10 +51,10 @@ $(async function () {
     $("#ArmedId").on("change", function () {
         //GetRegimentalListByArmedId(this.value, "");
         mMsater("", "RegimentalId", Regimental, this.value);
-        GetROListByArmedId(this.value,"");
+        GetROListByArmedId(this.value, "");
     });
 
-    $("#TermsConditions").on("click",function () {
+    $("#TermsConditions").on("click", function () {
 
         if ($("#TermsConditions").prop("checked") == true) {
             $("#btnsave").removeClass("disabled");
@@ -115,7 +115,7 @@ $(async function () {
 
 
         $("#ServiceNumber").val(decryptedArmyNo);
-        $("#icarddetails").html('I-Card Appl Request For  (' + decryptedArmyNo +')');
+        $("#icarddetails").html('I-Card Appl Request For  (' + decryptedArmyNo + ')');
         if (decryptedOffType === "1") {
             $(".OptionsRegimental").addClass("d-none");
             mMsater($("#spnrankid").val(), "RankId", Rank, "");
@@ -173,11 +173,11 @@ $(async function () {
         },
         select: function (e, i) {
             e.preventDefault();
-           /* $("#txtUnit").val(i.item.label);*/
+            /* $("#txtUnit").val(i.item.label);*/
             //alert(i.item.value)
             getunitbymapid(i.item.value);
         },
-        
+
     });
 
     $("#ApplyForId, #RegimentalId").on("change", function () {
@@ -355,7 +355,7 @@ function GetUnit() {
         success: function (response) {
             if (response != "null" && response != null) {
                 if (response == 0) {
-   
+
                 }
                 else {
                     getunitbymapid(response.UnitId)
@@ -364,9 +364,8 @@ function GetUnit() {
         }
     });
 }
-function getunitbymapid(value)
-{
-    
+function getunitbymapid(value) {
+
     var param1 = { "UnitMapId": encryptPayloadData(value) };
     $.ajax({
         url: '/Master/GetALLByUnitMapId',
@@ -395,11 +394,11 @@ function getApplyIcardDetails() {
         url: "/Home/GetApplyCardDetails",
         type: "POST",
         data: { "request": encryptPayloadData(JSON.stringify(userdata)) },
-       
+
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response != null) {
-                
+
                 if (response.ApplyFor == "Offrs") {
                     $("#IssuingAuth").val("OIC Unit");
                     $("#tempDateOfIssue").val("Depends on Unit of Second level approver");
@@ -533,3 +532,22 @@ function photoChange(id) {
         reader.readAsDataURL(file);
     }
 }
+
+
+/* BasicDetail UI-only helper */
+$(function () {
+    document.body.classList.add("ecms-basicdetail-body");
+
+    // Recalculate select2 widths after existing dropdowns are populated.
+    setTimeout(function () {
+        try {
+            $(".ecms-basicdetail-page select").each(function () {
+                if ($(this).data("select2")) {
+                    $(this).select2({ width: "100%" });
+                }
+            });
+        } catch (e) {
+            console.warn("BasicDetail UI select resize skipped:", e);
+        }
+    }, 400);
+});

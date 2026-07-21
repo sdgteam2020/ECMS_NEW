@@ -29,8 +29,7 @@ $(function () {
         this.value = this.value.toUpperCase();
     });
     $("#btnProfileAddButton").on("click", async function () {
-        if ($("#txtArmyNo").val().length > 7 && $("#txtArmyNo").val().length < 10)
-        {
+        if ($("#txtArmyNo").val().length > 7 && $("#txtArmyNo").val().length < 10) {
             let ArmyNoSfx = ($("#txtArmyNo").val() || "").trim().toUpperCase();
 
             let pattern = /^[A-Z]{2}\d{5,6}[A-Z]$/;
@@ -53,40 +52,40 @@ $(function () {
 
         }
         else {
-                toastr.error("Minimum eight and Maximum nine length of Army No.");
+            toastr.error("Minimum eight and Maximum nine length of Army No.");
         }
 
     });
 
-    $("#IsTokenWaiverYes").on("click", function () { 
+    $("#IsTokenWaiverYes").on("click", function () {
         $("#spnReasonTokenWaiver").removeClass("d-none");
         $('#txtMessage').prop('required', true);
         $("#txtMessage-error").html('Reason for IACA Token Waiver is required.');
     });
-    $("#IsTokenWaiverNo").on("click", function () { 
-        $("#spnReasonTokenWaiver").addClass("d-none"); 
+    $("#IsTokenWaiverNo").on("click", function () {
+        $("#spnReasonTokenWaiver").addClass("d-none");
         $('#txtMessage').prop('required', false);
         $('#txtMessage').val('');
         $("#txtMessage-error").html('');
     });
 
-    $("#btnProfileAdd").on("click",function () {
+    $("#btnProfileAdd").on("click", function () {
         Reset();
         ResetErrorMessage();
         $("#btnProfileAddButton").val("Save");
-        $("#spnReasonTokenWaiver").addClass("d-none"); 
+        $("#spnReasonTokenWaiver").addClass("d-none");
         $("#AddNewProfile").modal('show');
     });
-    $("#btnProfileAddReset").on("click",function () {
+    $("#btnProfileAddReset").on("click", function () {
         Reset();
         ResetErrorMessage();
     });
-    
-    $("#txtSearch").on("keyup",function () {
+
+    $("#txtSearch").on("keyup", function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
             if ($("input[type='radio'][name=choice]:checked").val() == "UserId") {
-                var num_val = parseInt(eThis.val()); 
+                var num_val = parseInt(eThis.val());
                 if (isNaN(num_val)) {
                     alert("Enter only number");
                     eThis.val('')
@@ -146,7 +145,7 @@ function BindData() {
     }
 
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '32vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: true,
         scroller: true,           // ✅ Enable virtual scrolling for better performance
@@ -185,7 +184,7 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-                
+
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -272,7 +271,7 @@ function BindData() {
                 width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
-                    return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>" ;
+                    return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
                 }
             },
             {
@@ -365,13 +364,13 @@ function BindData() {
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    table.columns.adjust();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            this.api().columns.adjust();
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -471,16 +470,16 @@ function ProfileCount() {
     });
 }
 function Save() {
-    let param ={
-            "UserId": UserProfileId,
-            "ArmyNo": $("#txtArmyNo").val(),
-            "Name": $("#txtName").val(),
-            "RankId": $("#ddlRank").val(),
-            "ArmedId": $("#ddlArmType").val(),
-            "IsTokenWaiver": $('input:radio[name=IsTokenWaiver]:checked').val(),
-            "ReasonTokenWaiver": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
-            "IsToken": $('input:radio[name=IsToken]:checked').val(),
-            "IsWithTokenApply": $('input:radio[name=IsWithTokenApply]:checked').val(),
+    let param = {
+        "UserId": UserProfileId,
+        "ArmyNo": $("#txtArmyNo").val(),
+        "Name": $("#txtName").val(),
+        "RankId": $("#ddlRank").val(),
+        "ArmedId": $("#ddlArmType").val(),
+        "IsTokenWaiver": $('input:radio[name=IsTokenWaiver]:checked').val(),
+        "ReasonTokenWaiver": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
+        "IsToken": $('input:radio[name=IsToken]:checked').val(),
+        "IsWithTokenApply": $('input:radio[name=IsWithTokenApply]:checked').val(),
     }
     $.ajax({
         url: '/Account/SaveProfileManage',
@@ -524,7 +523,7 @@ function Save() {
                     for (var i = 0; i < result.length; i++) {
                         toastr.error(result[i][0].ErrorMessage)
                     }
-                }       
+                }
             }
         }
     });
@@ -699,3 +698,130 @@ async function ChkSfx(ServiceNo) {
     }
 
 }
+
+/* =====================================================
+   UI ONLY FIXES - Profile Management
+   Does not change save/update/delete/ajax logic.
+===================================================== */
+function ProfileManage_UIFixDataTable(tableSelector) {
+    try {
+        var $wrapper = $(tableSelector + "_wrapper");
+
+        $("#loading").addClass("d-none").hide();
+        $(".dataTables_processing, .dt-processing, " + tableSelector + "_processing").hide();
+
+        // Hide DataTables cloned THEAD inside scroll body.
+        // Real header remains visible in DataTables scrollHead.
+        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").each(function () {
+            $(this).attr("aria-hidden", "true").css({
+                display: "none",
+                visibility: "collapse",
+                height: "0",
+                minHeight: "0",
+                maxHeight: "0",
+                lineHeight: "0",
+                fontSize: "0",
+                padding: "0",
+                margin: "0",
+                border: "0",
+                overflow: "hidden",
+                opacity: "0"
+            });
+        });
+
+        $wrapper.find(".dataTables_info, .dataTables_paginate, .dt-info, .dt-paging, .pagination").css({
+            visibility: "visible",
+            opacity: "1",
+            display: ""
+        });
+
+        if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+            setTimeout(function () {
+                try { $(tableSelector).DataTable().columns.adjust(); } catch (e) { }
+            }, 40);
+        }
+    } catch (e) {
+        console.warn("ProfileManage_UIFixDataTable skipped:", e);
+    }
+}
+
+$(document).on("draw.dt", function (e, settings) {
+    try {
+        var id = settings && settings.nTable ? settings.nTable.id : "";
+        if (id === "tbldata") {
+            setTimeout(function () { ProfileManage_UIFixDataTable("#tbldata"); }, 20);
+        }
+    } catch (e) { }
+});
+
+$(window).on("resize.profileManageUiFix", function () {
+    setTimeout(function () { ProfileManage_UIFixDataTable("#tbldata"); }, 80);
+});
+
+$("#AddNewProfile").on("shown.bs.modal.profileManageUiFix shown.profileManageUiFix", function () {
+    $(".modal-backdrop").not(":last").remove();
+
+    // repaint custom radio checked state
+    setTimeout(function () {
+        $("#AddNewProfile input[type='radio']").each(function () {
+            this.offsetHeight;
+        });
+    }, 80);
+});
+
+$(document).on("change.profileManageUiFix", "#AddNewProfile input[type='radio']", function () {
+    var radioName = $(this).attr("name");
+    if (radioName) {
+        $("#AddNewProfile input[type='radio'][name='" + radioName + "']").removeClass("ecms-radio-checked");
+        $("#AddNewProfile input[type='radio'][name='" + radioName + "']:checked").addClass("ecms-radio-checked");
+    }
+});
+
+$(document).ready(function () {
+    setTimeout(function () { ProfileManage_UIFixDataTable("#tbldata"); }, 300);
+});
+
+
+/* Final UI-only ProfileManage DataTable sizing fix */
+function ProfileManage_FinalScrollFix() {
+    try {
+        var $w = $("#tbldata_wrapper");
+        if (!$w.length) return;
+
+        $(".dataTables_processing, .dt-processing, #tbldata_processing, #loading").hide();
+
+        $w.find(".dataTables_scrollBody table thead").css({
+            display: "none",
+            visibility: "collapse",
+            height: 0,
+            lineHeight: 0,
+            fontSize: 0,
+            padding: 0,
+            margin: 0,
+            border: 0
+        });
+
+        $w.find(".dataTables_info, .dataTables_paginate").css({
+            visibility: "visible",
+            opacity: "1",
+            display: "block"
+        });
+
+        if ($.fn.DataTable.isDataTable("#tbldata")) {
+            $("#tbldata").DataTable().columns.adjust();
+        }
+    } catch (e) {
+        console.warn("ProfileManage_FinalScrollFix skipped:", e);
+    }
+}
+
+$(document).on("draw.dt", function (e, settings) {
+    if (settings && settings.nTable && settings.nTable.id === "tbldata") {
+        setTimeout(ProfileManage_FinalScrollFix, 30);
+        setTimeout(ProfileManage_FinalScrollFix, 250);
+    }
+});
+
+$(window).on("load.profileManageFinal resize.profileManageFinal", function () {
+    setTimeout(ProfileManage_FinalScrollFix, 150);
+});

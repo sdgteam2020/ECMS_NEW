@@ -1,6 +1,504 @@
-﻿.card-body-min-height {
+﻿/* =====================================================
+   ECMS APP CLOSE LIST - MODERN UI
+   Only UI change. Header/footer/global functionality untouched.
+===================================================== */
+
+.ecms-appclose-page {
+    width: 100% !important;
+    max-width: 1450px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 14px 18px 58px !important;
+}
+
+.ecms-appclose-shell {
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+
+.ecms-appclose-page .ecms-list-card {
+    position: relative !important;
+    overflow: hidden !important;
+    border-radius: 22px !important;
+    background: linear-gradient(135deg, rgba(239, 248, 255, 0.94), rgba(211, 226, 244, 0.90)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.75) !important;
+    box-shadow: 0 24px 58px rgba(0, 24, 75, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
+}
+
+    .ecms-appclose-page .ecms-list-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 14% 24%, rgba(255,255,255,0.32), transparent 31%), radial-gradient(circle at 80% 34%, rgba(70, 132, 238, 0.12), transparent 32%);
+    }
+
+.ecms-appclose-page .ecms-list-header {
+    position: relative !important;
+    z-index: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+    min-height: 66px !important;
+    margin: 10px 10px 8px !important;
+    padding: 10px 16px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(241, 248, 255,0.70)) !important;
+    border: 1px solid rgba(255,255,255,0.76) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.95) !important;
+}
+
+.ecms-appclose-page .ecms-list-title-wrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.ecms-appclose-page .ecms-list-icon {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    border-radius: 13px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+    box-shadow: 0 12px 26px rgba(37, 99, 235, 0.28) !important;
+}
+
+    .ecms-appclose-page .ecms-list-icon i {
+        font-size: 19px !important;
+        line-height: 1 !important;
+    }
+
+.ecms-appclose-page .ecms-list-title {
+    margin: 0 !important;
+    color: #06193f !important;
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    line-height: 1.1 !important;
+    letter-spacing: .2px !important;
+}
+
+.ecms-appclose-page .ecms-list-subtitle {
+    margin: 4px 0 0 !important;
+    color: #3d5681 !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+}
+
+.ecms-appclose-page .ecms-list-count {
+    padding: 8px 12px !important;
+    border-radius: 999px !important;
+    color: #0b2864 !important;
+    background: rgba(255,255,255,0.62) !important;
+    border: 1px solid rgba(74, 140, 244, 0.22) !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+}
+
+.ecms-appclose-page .ecms-list-body {
+    position: relative !important;
+    z-index: 1 !important;
+    padding: 0 12px 14px !important;
+    min-height: 190px !important;
+}
+
+/* DataTables top controls */
+.ecms-appclose-page #tbldata_wrapper .dt-top {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+    margin: 0 0 8px !important;
+    padding: 10px 12px !important;
+    border-radius: 13px !important;
+    background: rgba(255,255,255,0.62) !important;
+    border: 1px solid rgba(255,255,255,0.70) !important;
+}
+
+.ecms-appclose-page #tbldata_wrapper .dt-length,
+.ecms-appclose-page #tbldata_wrapper .dt-search,
+.ecms-appclose-page #tbldata_wrapper .dt-buttons {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+    .ecms-appclose-page #tbldata_wrapper .dt-length label {
+        color: #102a5f !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+    }
+
+    .ecms-appclose-page #tbldata_wrapper .dt-length select,
+    .ecms-appclose-page #tbldata_wrapper .dt-search input {
+        height: 36px !important;
+        border-radius: 10px !important;
+        border: 1px solid rgba(44, 116, 225, 0.30) !important;
+        background: rgba(255,255,255,0.92) !important;
+        color: #0b1f4f !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.04) !important;
+    }
+
+    .ecms-appclose-page #tbldata_wrapper .dt-search input {
+        width: 210px !important;
+        padding: 7px 10px !important;
+    }
+
+    .ecms-appclose-page #tbldata_wrapper .dt-buttons .btn,
+    .ecms-appclose-page #tbldata_wrapper .dt-buttons button {
+        height: 34px !important;
+        padding: 6px 13px !important;
+        border-radius: 10px !important;
+        border: 0 !important;
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.20) !important;
+        font-size: 12px !important;
+        font-weight: 900 !important;
+    }
+
+/* DataTable modern surface */
+.ecms-appclose-page #tbldata_wrapper .dt-scroll {
+    overflow: hidden !important;
+    border-radius: 14px !important;
+    border: 1px solid rgba(54, 123, 233, 0.26) !important;
+    background: rgba(255,255,255,0.76) !important;
+}
+
+.ecms-appclose-page #tbldata_wrapper table.dataTable,
+.ecms-appclose-page #tbldata {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    font-size: 13px !important;
+}
+
+    .ecms-appclose-page #tbldata_wrapper .dt-scroll-head table thead th,
+    .ecms-appclose-page #tbldata_wrapper table.dataTable thead th {
+        height: 42px !important;
+        padding: 9px 12px !important;
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #214c96, #2f73df) !important;
+        border: 0 !important;
+        border-right: 1px solid rgba(255,255,255,0.12) !important;
+        font-size: 13px !important;
+        font-weight: 900 !important;
+        line-height: 1.1 !important;
+        white-space: nowrap !important;
+        text-align: left !important;
+    }
+
+    .ecms-appclose-page #tbldata_wrapper table.dataTable tbody td {
+        padding: 10px 12px !important;
+        color: #0d244d !important;
+        border-bottom: 1px solid rgba(38, 95, 180, 0.12) !important;
+        font-size: 13px !important;
+        vertical-align: middle !important;
+        background: rgba(255,255,255,0.76) !important;
+    }
+
+    .ecms-appclose-page #tbldata_wrapper table.dataTable tbody tr:hover td {
+        background: rgba(230, 241, 255, 0.95) !important;
+    }
+
+.ecms-appclose-page #tbldata_wrapper .dt-empty {
+    height: 44px !important;
+    color: #0a1e47 !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+}
+
+.ecms-appclose-page .dt-ellipsis {
+    display: inline-block !important;
+    max-width: 160px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+/* Critical DataTables 2 duplicate scroll-body header fix */
+.ecms-appclose-page #tbldata_wrapper .dt-scroll-body thead,
+.ecms-appclose-page #tbldata_wrapper .dt-scroll-body thead tr,
+.ecms-appclose-page #tbldata_wrapper .dt-scroll-body thead th,
+.ecms-appclose-page #tbldata_wrapper .dt-scroll-body thead td,
+.ecms-appclose-page #tbldata_wrapper .dt-scroll-body .dt-scroll-sizing {
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    font-size: 0 !important;
+    overflow: hidden !important;
+    visibility: collapse !important;
+}
+
+    .ecms-appclose-page #tbldata_wrapper .dt-scroll-body thead * {
+        height: 0 !important;
+        line-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 0 !important;
+        font-size: 0 !important;
+        overflow: hidden !important;
+        visibility: collapse !important;
+    }
+
+.ecms-appclose-page #tbldata_wrapper .dt-scroll-body {
+    max-height: calc(100vh - 405px) !important;
+    min-height: 86px !important;
+    background: rgba(255,255,255,0.58) !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(59,130,246,.65) rgba(255,255,255,.25);
+}
+
+    .ecms-appclose-page #tbldata_wrapper .dt-scroll-body::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .ecms-appclose-page #tbldata_wrapper .dt-scroll-body::-webkit-scrollbar-thumb {
+        background: rgba(59,130,246,.65);
+        border-radius: 999px;
+    }
+
+.ecms-appclose-page #tbldata_wrapper .dt-info {
+    margin-top: 8px !important;
+    color: #0b2458 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+}
+
+.ecms-appclose-page #tbldata_wrapper .dt-paging {
+    display: flex !important;
+    justify-content: flex-end !important;
+    margin-top: 4px !important;
+}
+
+.ecms-appclose-page #tbldata_wrapper .pagination {
+    gap: 5px !important;
+    margin: 0 !important;
+}
+
+.ecms-appclose-page #tbldata_wrapper .page-link {
+    min-width: 32px !important;
+    height: 32px !important;
+    border-radius: 9px !important;
+    color: #1d4ed8 !important;
+    border: 1px solid rgba(29, 78, 216, 0.18) !important;
+    background: rgba(255,255,255,0.86) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+}
+
+    .ecms-appclose-page #tbldata_wrapper .page-item.active .page-link,
+    .ecms-appclose-page #tbldata_wrapper .page-link:hover {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+    }
+
+.card-body-min-height {
     min-height: 150px;
 }
+
 .full-width {
     width: 100% !important;
+}
+
+@media (max-width: 991px) {
+    .ecms-appclose-page {
+        padding: 12px 10px 58px !important;
+    }
+
+        .ecms-appclose-page .ecms-list-title {
+            font-size: 18px !important;
+        }
+
+        .ecms-appclose-page #tbldata_wrapper .dt-search input {
+            width: 100% !important;
+        }
+
+        .ecms-appclose-page #tbldata_wrapper .dt-top {
+            align-items: stretch !important;
+        }
+}
+
+/* =====================================================
+   FINAL ALIGNMENT FIX - APP CLOSE LIST
+   Keeps functionality untouched. Fixes mt-n10 overlap.
+===================================================== */
+
+/* This page was using Bootstrap mt-n10, which pulls the card upward
+   and makes it overlap the nav/breadcrumb. Override only on this page. */
+.containerMain.mt-n10.ecms-appclose-page,
+.ecms-appclose-page.mt-n10 {
+    margin-top: 14px !important;
+}
+
+.ecms-appclose-page {
+    max-width: 1280px !important;
+    padding: 12px 16px 58px !important;
+}
+
+.ecms-appclose-shell {
+    max-width: 100% !important;
+    margin: 0 auto !important;
+}
+
+.ecms-appclose-page .ecms-list-card {
+    margin: 0 auto !important;
+}
+
+/* Make the list panel height compact and balanced like previous pages */
+.ecms-appclose-page .ecms-list-body {
+    min-height: 190px !important;
+    padding-bottom: 14px !important;
+}
+
+/* Keep DataTable body compact when there are no rows */
+.ecms-appclose-page #tbldata_wrapper .dt-scroll-body {
+    min-height: 74px !important;
+    max-height: calc(100vh - 420px) !important;
+}
+
+/* Footer should remain visible and not overlap content */
+.ecms-appclose-page #tbldata_wrapper .dt-paging {
+    padding-bottom: 0 !important;
+}
+
+@media (min-width: 1400px) {
+    .ecms-appclose-page {
+        max-width: 1250px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .containerMain.mt-n10.ecms-appclose-page,
+    .ecms-appclose-page.mt-n10 {
+        margin-top: 10px !important;
+    }
+
+    .ecms-appclose-page {
+        max-width: 100% !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+
+/* =====================================================
+   FINAL FIX: APP CLOSE LIST BACKGROUND + PAGE ALIGNMENT
+   Only UI change - no JS / ID / functionality change
+===================================================== */
+
+/* Make the page area full-width so the soldier background is visible */
+html:has(.ecms-appclose-page),
+body:has(.ecms-appclose-page) {
+    overflow-y: hidden !important;
+    background: #071b44 !important;
+}
+
+.containerMain.mt-n10.ecms-appclose-page,
+.ecms-appclose-page.mt-n10,
+.ecms-appclose-page {
+    position: relative !important;
+    width: 100vw !important;
+    max-width: none !important;
+    min-height: calc(100vh - 255px) !important;
+    height: calc(100vh - 255px) !important;
+    margin-top: 0 !important;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+    padding: 16px 18px 54px !important;
+    overflow: hidden !important;
+    background: linear-gradient(90deg, rgba(5, 22, 62, 0.88), rgba(21, 75, 165, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+}
+
+    .ecms-appclose-page::before {
+        content: "" !important;
+        position: absolute !important;
+        inset: 0 !important;
+        pointer-events: none !important;
+        background: radial-gradient(circle at 18% 18%, rgba(88, 199, 255, 0.13), transparent 28%), radial-gradient(circle at 84% 70%, rgba(59, 130, 246, 0.18), transparent 34%) !important;
+        z-index: 0 !important;
+    }
+
+.ecms-appclose-shell {
+    position: relative !important;
+    z-index: 1 !important;
+    width: min(1240px, 94vw) !important;
+    max-width: 1240px !important;
+    margin: 12px auto 0 !important;
+}
+
+.ecms-appclose-page .ecms-list-card {
+    width: 100% !important;
+    min-height: 300px !important;
+    max-height: calc(100vh - 310px) !important;
+    margin: 0 auto !important;
+    background: linear-gradient(135deg, rgba(239, 248, 255, 0.90), rgba(210, 226, 244, 0.84)) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+.ecms-appclose-page .ecms-list-body {
+    min-height: 175px !important;
+    padding-bottom: 12px !important;
+}
+
+/* Keep table compact inside the available area */
+.ecms-appclose-page #tbldata_wrapper .dt-scroll-body {
+    min-height: 74px !important;
+    max-height: calc(100vh - 430px) !important;
+}
+
+/* Keep footer visible without a white strip */
+.ecms-appclose-page + footer,
+footer.fixed-bottom {
+    margin-top: 0 !important;
+}
+
+@media (min-width: 1500px) {
+    .ecms-appclose-shell {
+        width: min(1260px, 92vw) !important;
+        max-width: 1260px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    html:has(.ecms-appclose-page),
+    body:has(.ecms-appclose-page) {
+        overflow-y: auto !important;
+    }
+
+    .containerMain.mt-n10.ecms-appclose-page,
+    .ecms-appclose-page.mt-n10,
+    .ecms-appclose-page {
+        height: auto !important;
+        min-height: calc(100vh - 230px) !important;
+        overflow: visible !important;
+        padding: 12px 10px 62px !important;
+    }
+
+    .ecms-appclose-shell {
+        width: 100% !important;
+        margin-top: 10px !important;
+    }
+
+    .ecms-appclose-page .ecms-list-card {
+        max-height: none !important;
+    }
 }
