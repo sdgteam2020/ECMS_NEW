@@ -117,8 +117,8 @@ body:has(.ecms-command-page) {
     position: relative !important;
     width: 100% !important;
     max-width: none !important;
-    height: calc(100vh - 255px) !important;
-    min-height: calc(100vh - 255px) !important;
+    height: calc(100vh - 196px) !important;
+    min-height: calc(100vh - 196px) !important;
     margin: 0 !important;
     padding: 12px 26px 44px !important;
     overflow: hidden !important;
@@ -1183,8 +1183,8 @@ html body:has(.ecms-command-page) .page-header.page-header-dark {
 /* reduce available page height by the same 26px so footer gap/overlap does not return */
 html body .containerMain.ecms-command-page,
 html body .ecms-command-page {
-    height: calc(100vh - 248px) !important;
-    min-height: calc(100vh - 248px) !important;
+    height: calc(100vh - 196px) !important;
+    min-height: calc(100vh - 196px) !important;
     padding-top: 12px !important;
     padding-bottom: 46px !important;
 }
@@ -1233,8 +1233,8 @@ html body .ecms-command-page .dt-scroll-body {
 
 /* let the page panel use available height cleanly */
 html body .ecms-command-shell {
-    height: calc(100vh - 318px) !important;
-    max-height: calc(100vh - 318px) !important;
+    height: calc(100vh - 220px) !important;
+    max-height: calc(100vh - 220px) !important;
     min-height: 500px !important;
 }
 

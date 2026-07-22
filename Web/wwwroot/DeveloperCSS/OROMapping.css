@@ -139,8 +139,8 @@ body:has(.ecms-oro-page) {
     box-sizing: border-box !important;
     width: min(1500px, calc(100% - 80px)) !important;
     min-width: 1120px !important;
-    height: calc(100vh - 318px) !important;
-    max-height: calc(100vh - 318px) !important;
+    height: calc(100vh - 220px) !important;
+    max-height: calc(100vh - 220px) !important;
     min-height: 500px !important;
     margin: 0 auto !important;
     padding: 12px !important;
@@ -942,8 +942,8 @@ body:has(.ecms-oro-page) {
 
 /* Give the card enough working height, but keep footer visible */
 .ecms-oro-page {
-    height: calc(100vh - 248px) !important;
-    min-height: calc(100vh - 248px) !important;
+    height: calc(100vh - 196px) !important;
+    min-height: calc(100vh - 196px) !important;
     padding-bottom: 58px !important;
 }
 
@@ -1609,6 +1609,7 @@ body:has(.ecms-oro-page) {
     grid-template-columns: 100% !important;
     gap: 0 !important;
     overflow: hidden !important;
+    padding:16px;
 }
 
     /* top row: length/search */
@@ -1755,8 +1756,8 @@ body:has(.ecms-oro-page) {
 
 /* Shell height gives enough room for footer + pagination */
 .ecms-oro-shell {
-    height: calc(100vh - 298px) !important;
-    max-height: calc(100vh - 298px) !important;
+    height: calc(100vh - 220px) !important;
+    max-height: calc(100vh - 220px) !important;
     min-height: 550px !important;
 }
 

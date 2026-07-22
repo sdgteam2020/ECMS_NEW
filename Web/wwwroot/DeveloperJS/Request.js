@@ -198,7 +198,7 @@ $(document).ready(function () {
                     let result;
 
                     if (OffType == 1 && parseInt(RegistrationApplyFor) == 1) {
-                        if (getFullArmyNumber() === $("#aspntokenarmyno").html()) {
+                        if (getFullArmyNumber() === $("#aspntokenarmyno").html().trim()) {
                             result = await ChkSfx(ArmyNoSfx);
                             IsValid = result == false ? 0 : 1;
 

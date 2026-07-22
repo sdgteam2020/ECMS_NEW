@@ -183,8 +183,7 @@ header,
 /* Effect: Styles the fixed bottom footer and keeps it above page content. */
 footer,
 footer.fixed-bottom {
-    min-height: var(--ecms-footer-height) !important;
-    padding: 5px !important;
+    min-height: var(--ecms-footer-height) !important;    
     margin-top: 0 !important;
     background: #003060 !important;
     color: #ffffff !important;

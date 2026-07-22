@@ -1,19 +1,171 @@
-﻿.swal2-confirm, .swal2-styled {
+﻿/*
+    LayoutLogin.css
+    Purpose:
+    This file controls only the login layout structure.
+
+    Required layout:
+    1. Header row fixed at top
+    2. RenderBody row in middle
+    3. Footer row fixed at bottom
+
+    No margin/gap between the three Bootstrap rows.
+*/
+
+/* Effect: Sets login layout heights from one place. Increase header height if your header partial is taller. */
+/*:root {
+    --ecms-header-height: 126px;
+    --ecms-footer-height: 34px;
+}*/
+
+/* Effect: Keeps SweetAlert confirm buttons using existing orange branding. */
+.swal2-confirm,
+.swal2-styled {
     background: #D97924 !important;
 }
 
+/* Effect: Makes the complete document use full browser height with no default margin or horizontal scroll. */
+html,
 body {
-    /*   background-image: url('/images/logo-white.jpg'); */
-    background-size: cover;
-    background-color: lightskyblue;
-    background-repeat: no-repeat;
-    /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
+    width: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
 }
 
+    /* Effect: Applies ECMS themed background for the login layout body. */
+    body.ecms-login-layout-body {
+        min-height: 100vh !important;
+        background-color: #08275a !important;
+        background-image: linear-gradient(90deg, rgba(5, 23, 58, .88), rgba(22, 86, 186, .78)), var(--ecms-bg-image, none) !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+    }
+
+/* Effect: Preserves existing white background utility wherever old pages use .bg-white. */
 .bg-white {
     background: #fff !important;
 }
 
+/* Effect: Preserves existing logo header gradient utility. */
 .logoheader {
-    background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%);
+    background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%) !important;
+}
+
+/* Effect: Creates the outer Bootstrap container with zero spacing and full viewport height. */
+.ecms-login-layout {
+    width: 100% !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+    /* Effect: Removes all Bootstrap row gaps/margins inside this login layout. */
+    .ecms-login-layout > .row {
+        --bs-gutter-x: 0 !important;
+        --bs-gutter-y: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+/* Effect: Keeps the header fixed at the top and above all page content. */
+.ecms-login-header-row {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1050 !important;
+    min-height: var(--ecms-header-height) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+    /* Effect: Removes unwanted spacing from common header elements inside the fixed header row. */
+    .ecms-login-header-row header,
+    .ecms-login-header-row .page_header,
+    .ecms-login-header-row .navbar,
+    .ecms-login-header-row .container,
+    .ecms-login-header-row .container-fluid {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+/* Effect: Creates the middle RenderBody row between fixed header and fixed footer. */
+.ecms-login-render-row {
+    width: 100% !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+/*    padding: var(--ecms-header-height) 0 var(--ecms-footer-height) 0 !important;*/
+}
+
+/* Effect: Makes RenderBody content fill the available middle screen area. */
+.ecms-login-render-col {
+    width: 100% !important;
+    min-height: calc(100vh - var(--ecms-header-height) - var(--ecms-footer-height)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Effect: Keeps the footer fixed at the bottom and above page content. */
+.ecms-login-footer-row {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 1050 !important;
+    min-height: var(--ecms-footer-height) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #10396d !important;
+    box-shadow: 0 -1px 0 rgba(255,255,255,.18) !important;
+}
+
+/* Effect: Removes default section padding and vertically centers footer text. */
+.ecms-login-footer-section {
+    height: var(--ecms-footer-height) !important;
+    min-height: var(--ecms-footer-height) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #10396d !important;
+}
+
+/* Effect: Styles footer text and prevents footer content from adding extra height. */
+.ecms-login-footer-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    line-height: var(--ecms-footer-height) !important;
+}
+
+    /* Effect: Removes unwanted margins from any paragraph/span rendered inside ViewBag.Footer. */
+    .ecms-login-footer-content p,
+    .ecms-login-footer-content span {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+/* Effect: Allows smaller laptop screens to use a slightly smaller header spacing. */
+@media (max-width: 1366px) {
+    :root {
+        --ecms-header-height: 126px;
+    }
+}
+
+/* Effect: Optimizes the fixed header/footer layout on tablets and mobiles. */
+@media (max-width: 768px) {
+    :root {
+        --ecms-header-height: 112px;
+        --ecms-footer-height: 38px;
+    }
+
+    .ecms-login-footer-content {
+        font-size: 11px !important;
+        line-height: 1.2 !important;
+        padding: 0 8px !important;
+    }
 }
