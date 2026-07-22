@@ -1,36 +1,1299 @@
-﻿.count-label {
-    background-color: #044C92;
-    text-align: center;
-    padding: 0.5rem !important;
-    margin-right: 0.25rem !important;
-    border: hidden;
-    font-weight: 700 !important;
-    color: #fff !important;
-    width: 120px;
-    height: 60px;
+﻿
+/* =====================================================
+   Domain Registration - Modern UI
+   UI-only styling. Original IDs, routes and JS hooks are preserved.
+===================================================== */
+
+.swal2-html-container {
+    color: red !important;
 }
 
-.modal-xl {
-    max-width: 90% !important;
-    width: 90% !important;
+html:has(.ecms-domainregn-page),
+body:has(.ecms-domainregn-page) {
+    min-height: 100vh !important;
+    overflow-y: hidden !important;
+    background: linear-gradient(90deg, rgba(7, 25, 68, 0.96), rgba(15, 70, 160, 0.92)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat fixed !important;
 }
 
-.table {
-    min-width: 100% !important;
+    body:has(.ecms-domainregn-page) .main-panel,
+    body:has(.ecms-domainregn-page) .content-wrapper,
+    body:has(.ecms-domainregn-page) .main-content,
+    body:has(.ecms-domainregn-page) .content,
+    body:has(.ecms-domainregn-page) .page-content,
+    body:has(.ecms-domainregn-page) .containerMain {
+        background-color: transparent !important;
+    }
+
+    body:has(.ecms-domainregn-page) header.page-header.page-header-dark.bg-gradient-primary-to-secondary,
+    body:has(.ecms-domainregn-page) .page-header.page-header-dark.bg-gradient-primary-to-secondary {
+        margin-top: 26px !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        max-height: 42px !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        display: flex !important;
+        align-items: center !important;
+        background: linear-gradient(90deg, rgba(86, 198, 231, 0.96), rgba(60, 120, 237, 0.96)) !important;
+        box-shadow: 0 12px 28px rgba(12, 41, 99, 0.20) !important;
+    }
+
+.ecms-domainregn-breadcrumb .containerMain,
+.ecms-domainregn-breadcrumb .page-header-content,
+.ecms-domainregn-breadcrumb .row {
+    height: 42px !important;
+    min-height: 42px !important;
+    align-items: center !important;
 }
 
-.modal .modal-body .table-responsive {
-    max-height: 500px;
+.ecms-domainregn-breadcrumb .page-header-title {
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.28) !important;
 }
-.requested-generated-col {
-    width: 6rem;
+
+.ecms-domainregn-breadcrumb .page-header-icon {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    border: 1px solid rgba(255, 255, 255, 0.38) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-right: 4px !important;
 }
-#tbldatadialog td {
-    cursor: pointer;
+
+.ecms-domainregn-breadcrumb a {
+    color: #ffffff !important;
+    text-decoration: none !important;
 }
-#tbldatadialog {
+
+.ecms-domainregn-page {
+    position: relative !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: calc(100vh - 248px) !important;
+    min-height: calc(100vh - 248px) !important;
+    margin: 0 !important;
+    padding: 12px 26px 46px !important;
+    overflow: hidden !important;
+    background: linear-gradient(90deg, rgba(7, 25, 68, 0.88), rgba(15, 70, 160, 0.79)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+}
+
+    .ecms-domainregn-page::before {
+        content: "" !important;
+        position: absolute !important;
+        inset: 0 !important;
+        pointer-events: none !important;
+        background: radial-gradient(circle at 24% 18%, rgba(96, 213, 255, 0.13), transparent 30%), radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)) !important;
+    }
+
+.ecms-domainregn-shell {
+    position: relative !important;
+    z-index: 1 !important;
+    width: min(1480px, calc(100% - 64px)) !important;
+    min-width: 1120px !important;
+    height: calc(100vh - 292px) !important;
+    min-height: 540px !important;
+    max-height: calc(100vh - 292px) !important;
+    margin: 0 auto !important;
+    padding: 12px !important;
+    border-radius: 22px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(219,235,255,0.88)) !important;
+    border: 1px solid rgba(255,255,255,0.92) !important;
+    box-shadow: 0 28px 70px rgba(4, 27, 82, 0.34) !important;
+    backdrop-filter: blur(10px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+}
+
+.ecms-domainregn-title-card,
+.ecms-domainregn-sub-card {
+    flex: 0 0 auto !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232,242,255,0.88)) !important;
+    border: 1px solid rgba(255,255,255,0.90) !important;
+    padding: 10px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9) !important;
+}
+
+.ecms-title-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-width: 0 !important;
+}
+
+.ecms-title-icon,
+.ecms-sub-icon {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, #2f6bff, #6d5dfc) !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 18px !important;
+    box-shadow: 0 12px 26px rgba(47, 107, 255, 0.28) !important;
+}
+
+.ecms-sub-icon {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #1d4ed8, #407bff) !important;
+    font-size: 16px !important;
+}
+
+.ecms-domainregn-title-card h3,
+.ecms-domainregn-sub-card h5 {
+    color: #061b44 !important;
+    margin: 0 !important;
+    font-weight: 950 !important;
+    letter-spacing: 0.2px !important;
+    text-shadow: none !important;
+}
+
+.ecms-domainregn-title-card h3 {
+    font-size: 22px !important;
+}
+
+.ecms-domainregn-sub-card h5 {
+    font-size: 15px !important;
+}
+
+.ecms-domainregn-title-card p,
+.ecms-domainregn-sub-card p {
+    margin: 3px 0 0 0 !important;
+    color: #315082 !important;
+    font-size: 12px !important;
+    font-weight: 850 !important;
+}
+
+.ecms-title-pill {
+    padding: 8px 18px !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, #315bea, #407bff) !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+    font-weight: 950 !important;
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28) !important;
+}
+
+.ecms-btn-add {
+    border: 0 !important;
+    border-radius: 10px !important;
+    padding: 9px 18px !important;
+    background: linear-gradient(135deg, #15803d, #22a447) !important;
+    color: #ffffff !important;
+    font-weight: 950 !important;
+    font-size: 13px !important;
+    box-shadow: 0 12px 28px rgba(21, 128, 61, 0.28) !important;
+}
+
+    .ecms-btn-add:hover,
+    .ecms-btn-add:focus {
+        color: #ffffff !important;
+    }
+
+/* Summary cards */
+.ecms-domain-stats {
+    flex: 0 0 auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+}
+
+.ecms-stat-card,
+.count-label.ecms-stat-card {
+    border: 1px solid rgba(62, 117, 217, 0.32) !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(232,242,255,0.92)) !important;
+    border-radius: 14px !important;
+    min-height: 78px !important;
+    padding: 9px 8px !important;
+    color: #061b44 !important;
+    font-weight: 950 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    box-shadow: 0 10px 20px rgba(12, 41, 99, 0.10), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    cursor: pointer !important;
+    transition: transform .15s ease, box-shadow .15s ease !important;
+}
+
+    .ecms-stat-card:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 14px 26px rgba(12, 41, 99, 0.16), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    }
+
+.ecms-stat-icon {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 9px !important;
+    background: linear-gradient(135deg, #2f6bff, #6d5dfc) !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+}
+
+.ecms-stat-title {
+    font-size: 11px !important;
+    color: #1d4ed8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .2px !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+}
+
+.ecms-stat-count {
+    font-size: 19px !important;
+    color: #061b44 !important;
+    line-height: 1 !important;
+}
+
+/* Table card */
+.ecms-domain-table-card {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.62), rgba(219,235,255,0.66)) !important;
+    border: 1px solid rgba(255,255,255,0.82) !important;
+    padding: 10px !important;
+}
+
+.ecms-section-bar {
+    flex: 0 0 32px !important;
+    height: 32px !important;
+    border-radius: 10px !important;
+    background: linear-gradient(90deg, #214795, #407bff) !important;
+    color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 950 !important;
+    font-size: 13px !important;
+    box-shadow: 0 10px 24px rgba(33, 71, 149, 0.20) !important;
+}
+
+.ecms-domain-table-wrap {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+/* DataTables layout */
+.ecms-domainregn-page #tbldata_wrapper,
+.ecms-domain-dialog-modal #tbldatadialog_wrapper {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: 42px minmax(0, 1fr) 46px !important;
+    grid-template-columns: 100% !important;
+    overflow: hidden !important;
+}
+
+    .ecms-domainregn-page #tbldata_wrapper > .dt-top,
+    .ecms-domain-dialog-modal #tbldatadialog_wrapper > .dt-top {
+        grid-row: 1 !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        max-height: 42px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        padding: 0 0 8px 0 !important;
+        margin: 0 !important;
+    }
+
+    .ecms-domainregn-page #tbldata_wrapper > .dataTables_scroll,
+    .ecms-domainregn-page #tbldata_wrapper > .dt-scroll,
+    .ecms-domain-dialog-modal #tbldatadialog_wrapper > .dataTables_scroll,
+    .ecms-domain-dialog-modal #tbldatadialog_wrapper > .dt-scroll {
+        grid-row: 2 !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+        border-radius: 11px !important;
+    }
+
+    .ecms-domainregn-page #tbldata_wrapper .dataTables_scrollHead,
+    .ecms-domain-dialog-modal #tbldatadialog_wrapper .dataTables_scrollHead {
+        flex: 0 0 auto !important;
+    }
+
+    .ecms-domainregn-page #tbldata_wrapper .dataTables_scrollBody,
+    .ecms-domain-dialog-modal #tbldatadialog_wrapper .dataTables_scrollBody {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow-y: auto !important;
+        overflow-x: auto !important;
+    }
+
+    .ecms-domainregn-page #tbldata_wrapper > .dt-bottom,
+    .ecms-domain-dialog-modal #tbldatadialog_wrapper > .dt-bottom {
+        grid-row: 3 !important;
+        height: 46px !important;
+        min-height: 46px !important;
+        max-height: 46px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
+        padding: 8px 0 0 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+    }
+
+/* Tables */
+.ecms-domainregn-page table.dataTable,
+.ecms-domainregn-page #tbldata,
+.ecms-domain-dialog-modal table.dataTable,
+.ecms-domain-dialog-modal #tbldatadialog {
+    width: 100% !important;
+    margin: 0 !important;
     table-layout: fixed !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: transparent !important;
 }
-#tbldata {
-    table-layout: fixed !important;
+
+    .ecms-domainregn-page table.dataTable thead th,
+    .ecms-domain-dialog-modal table.dataTable thead th {
+        background: linear-gradient(90deg, #214f9a, #356ed0) !important;
+        color: #ffffff !important;
+        border: 0 !important;
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        font-weight: 950 !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        white-space: nowrap !important;
+    }
+
+    .ecms-domainregn-page table.dataTable tbody td,
+    .ecms-domain-dialog-modal table.dataTable tbody td {
+        color: #061b44 !important;
+        font-size: 13px !important;
+        font-weight: 850 !important;
+        vertical-align: middle !important;
+        border-top: 1px solid rgba(23, 67, 130, 0.08) !important;
+        padding: 10px 12px !important;
+    }
+
+    .ecms-domainregn-page table.dataTable tbody tr:nth-child(odd),
+    .ecms-domain-dialog-modal table.dataTable tbody tr:nth-child(odd) {
+        background: rgba(240, 246, 255, 0.88) !important;
+    }
+
+    .ecms-domainregn-page table.dataTable tbody tr:nth-child(even),
+    .ecms-domain-dialog-modal table.dataTable tbody tr:nth-child(even) {
+        background: rgba(255, 255, 255, 0.92) !important;
+    }
+
+.ecms-domainregn-page .dt-ellipsis,
+.ecms-domain-dialog-modal .dt-ellipsis {
+    display: inline-block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+.ecms-domainregn-page .badge,
+.ecms-domain-dialog-modal .badge {
+    min-width: 36px !important;
+    padding: 5px 8px !important;
+    border-radius: 999px !important;
+    font-size: 10px !important;
+    font-weight: 950 !important;
+    text-transform: uppercase !important;
+}
+
+.ecms-domainregn-page .badge-success,
+.ecms-domain-dialog-modal .badge-success {
+    background: #40bf75 !important;
+    color: #ffffff !important;
+}
+
+.ecms-domainregn-page .badge-danger,
+.ecms-domain-dialog-modal .badge-danger {
+    background: #d42f5d !important;
+    color: #ffffff !important;
+}
+
+.ecms-domainregn-page .btn-icon,
+.ecms-domainregn-page .btn-round,
+.ecms-domain-dialog-modal .btn-icon,
+.ecms-domain-dialog-modal .btn-round {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 4px !important;
+    box-shadow: 0 10px 20px rgba(10, 33, 78, 0.16) !important;
+}
+
+.ecms-domainregn-page .btn-warning,
+.ecms-domain-dialog-modal .btn-warning {
+    background: linear-gradient(135deg, #f8c400, #f0a400) !important;
+    color: #061b44 !important;
+}
+
+/* Hide cloned DataTables sizing header */
+.ecms-domainregn-page .dataTables_scrollBody table thead,
+.ecms-domainregn-page .dataTables_scrollBody table thead tr,
+.ecms-domainregn-page .dataTables_scrollBody table thead th,
+.ecms-domainregn-page .dataTables_scrollBody table thead td,
+.ecms-domain-dialog-modal .dataTables_scrollBody table thead,
+.ecms-domain-dialog-modal .dataTables_scrollBody table thead tr,
+.ecms-domain-dialog-modal .dataTables_scrollBody table thead th,
+.ecms-domain-dialog-modal .dataTables_scrollBody table thead td {
+    display: none !important;
+    visibility: collapse !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+.ecms-domainregn-page .dataTables_processing,
+.ecms-domainregn-page #tbldata_processing,
+.ecms-domain-dialog-modal .dataTables_processing,
+.ecms-domain-dialog-modal #tbldatadialog_processing {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Controls */
+.ecms-domainregn-page .dataTables_length label,
+.ecms-domainregn-page .dataTables_filter label,
+.ecms-domain-dialog-modal .dataTables_length label,
+.ecms-domain-dialog-modal .dataTables_filter label {
+    color: #061b44 !important;
+    font-weight: 850 !important;
+    font-size: 13px !important;
+    margin: 0 !important;
+}
+
+.ecms-domainregn-page .dataTables_length select,
+.ecms-domainregn-page .dataTables_filter input,
+.ecms-domain-dialog-modal .dataTables_length select,
+.ecms-domain-dialog-modal .dataTables_filter input {
+    border: 1px solid rgba(71, 112, 191, 0.28) !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: #061b44 !important;
+    height: 34px !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    box-shadow: none !important;
+}
+
+.ecms-domainregn-page .dataTables_filter input,
+.ecms-domain-dialog-modal .dataTables_filter input {
+    width: 170px !important;
+}
+
+.ecms-domainregn-page .dataTables_info,
+.ecms-domain-dialog-modal .dataTables_info {
+    color: #061b44 !important;
+    font-weight: 850 !important;
+    font-size: 13px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 34px !important;
+    white-space: nowrap !important;
+}
+
+.ecms-domainregn-page .dataTables_paginate,
+.ecms-domain-dialog-modal .dataTables_paginate {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+    .ecms-domainregn-page .dataTables_paginate .paginate_button,
+    .ecms-domainregn-page .dataTables_paginate .paginate_button a,
+    .ecms-domainregn-page .pagination .page-link,
+    .ecms-domain-dialog-modal .dataTables_paginate .paginate_button,
+    .ecms-domain-dialog-modal .dataTables_paginate .paginate_button a,
+    .ecms-domain-dialog-modal .pagination .page-link {
+        min-width: 34px !important;
+        height: 34px !important;
+        padding: 0 10px !important;
+        margin: 0 2px !important;
+        border-radius: 8px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #1d4ed8 !important;
+        background: rgba(255,255,255,0.96) !important;
+        border: 1px solid rgba(46, 104, 203, 0.22) !important;
+        font-size: 12px !important;
+        font-weight: 950 !important;
+    }
+
+        .ecms-domainregn-page .dataTables_paginate .paginate_button.current,
+        .ecms-domainregn-page .dataTables_paginate .paginate_button.current a,
+        .ecms-domainregn-page .pagination .active .page-link,
+        .ecms-domain-dialog-modal .dataTables_paginate .paginate_button.current,
+        .ecms-domain-dialog-modal .dataTables_paginate .paginate_button.current a,
+        .ecms-domain-dialog-modal .pagination .active .page-link {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #1d4ed8, #4338ca) !important;
+            border-color: transparent !important;
+        }
+
+/* Modal common */
+.ecms-domain-modal .modal-dialog {
+    max-width: min(92vw, 980px) !important;
+}
+
+.ecms-domain-dialog-modal .modal-xl {
+    max-width: min(92vw, 1540px) !important;
+    width: min(92vw, 1540px) !important;
+}
+
+.ecms-domain-dialog-modal .modal-dialog {
+    margin-top: 5.4rem !important;
+}
+
+.ecms-domain-modal .modal-content,
+.ecms-domain-dialog-modal .modal-content,
+.ecms-claims-show-modal .modal-content {
+    border: 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.94), rgba(224,238,255,0.96)) !important;
+    box-shadow: 0 30px 90px rgba(2, 20, 59, 0.42) !important;
+}
+
+.ecms-modal-header {
+    min-height: 62px !important;
+    padding: 12px 16px !important;
+    background: linear-gradient(135deg, #214f9a, #4a7cff) !important;
+    color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+}
+
+.ecms-modal-title-wrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-width: 0 !important;
+}
+
+.ecms-modal-icon {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    border-radius: 12px !important;
+    background: rgba(255,255,255,0.16) !important;
+    border: 1px solid rgba(255,255,255,0.28) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+}
+
+.ecms-domain-modal .modal-title,
+.ecms-domain-dialog-modal .modal-title,
+.ecms-claims-show-modal .modal-title {
+    color: #ffffff !important;
+    font-weight: 950 !important;
+    font-size: 18px !important;
+    margin: 0 !important;
+}
+
+.ecms-modal-title-wrap p {
+    color: rgba(255,255,255,0.88) !important;
+    font-size: 11px !important;
+    font-weight: 850 !important;
+    margin: 2px 0 0 0 !important;
+}
+
+.ecms-modal-close {
+    position: static !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, #e11d48, #f43f5e) !important;
+    border: 2px solid rgba(255,255,255,0.88) !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    margin: 0 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 8px 18px rgba(95, 0, 22, 0.28) !important;
+    transform: none !important;
+    top: auto !important;
+    right: auto !important;
+}
+
+    .ecms-modal-close span {
+        color: #ffffff !important;
+        font-size: 19px !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+.ecms-bs-close {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    background-color: #e11d48 !important;
+    opacity: 1 !important;
+    margin-left: auto !important;
+}
+
+.ecms-domain-modal .modal-body {
+    padding: 18px !important;
+    max-height: calc(100vh - 170px) !important;
+    overflow-y: auto !important;
+}
+
+.ecms-domain-dialog-modal .modal-body {
+    padding: 14px !important;
+}
+
+.ecms-dialog-table-wrap {
+    height: min(66vh, 560px) !important;
+    min-height: 420px !important;
+    overflow: hidden !important;
+}
+
+.ecms-form-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+}
+
+.ecms-form-field,
+.ecms-radio-card {
+    min-width: 0 !important;
+    border-radius: 12px !important;
+    background: rgba(255,255,255,0.70) !important;
+    border: 1px solid rgba(100,132,190,0.20) !important;
+    padding: 10px !important;
+}
+
+.ecms-form-label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    color: #061b44 !important;
+    font-size: 13px !important;
+    font-weight: 950 !important;
+    margin-bottom: 7px !important;
+}
+
+    .ecms-form-label span {
+        width: 24px !important;
+        height: 24px !important;
+        min-width: 24px !important;
+        border-radius: 50% !important;
+        background: linear-gradient(135deg, #2f6bff, #6d5dfc) !important;
+        color: #ffffff !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 11px !important;
+    }
+
+.ecms-domain-modal .form-control,
+.ecms-domain-modal .form-select,
+.ecms-domain-modal .form-control-domainId,
+.ecms-domain-modal input,
+.ecms-domain-modal select,
+.ecms-domain-modal .select2-container--default .select2-selection--multiple {
+    min-height: 42px !important;
+    border-radius: 9px !important;
+    border: 1px solid rgba(100,132,190,0.32) !important;
+    background-color: rgba(255,255,255,0.96) !important;
+    color: #061b44 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    box-shadow: none !important;
+    width: 100% !important;
+}
+
+    .ecms-domain-modal input[type="radio"] {
+        width: 15px !important;
+        height: 15px !important;
+        min-height: 15px !important;
+    }
+
+.ecms-domain-modal .unit-label-background {
+    display: block !important;
+    min-height: 42px !important;
+    padding: 9px 11px !important;
+    border-radius: 9px !important;
+    background: rgba(230,236,245,0.96) !important;
+    color: #061b44 !important;
+    font-weight: 850 !important;
+    width: 100% !important;
+}
+
+.ecms-domain-modal .select2-container {
+    width: 100% !important;
+}
+
+.ecms-domain-modal .select2-container--default .select2-selection--multiple {
+    padding: 3px 8px !important;
+}
+
+    .ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background: #315bea !important;
+        border: 0 !important;
+        color: #ffffff !important;
+        border-radius: 999px !important;
+        font-size: 11px !important;
+        font-weight: 850 !important;
+    }
+
+    .ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: #ffffff !important;
+        margin-right: 4px !important;
+    }
+
+.ecms-radio-grid {
+    margin-top: 12px !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+}
+
+.ecms-radio-title {
+    display: block !important;
+    color: #061b44 !important;
+    font-size: 13px !important;
+    font-weight: 950 !important;
+    margin-bottom: 8px !important;
+}
+
+.ecms-radio-options {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+}
+
+    .ecms-radio-options .form-check {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin: 0 !important;
+    }
+
+    .ecms-radio-options .form-check-label {
+        color: #061b44 !important;
+        font-weight: 850 !important;
+        margin: 0 !important;
+    }
+
+.ecms-modal-actions {
+    margin-top: 16px !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+}
+
+.ecms-btn-save,
+.ecms-btn-reset {
+    border: 0 !important;
+    border-radius: 10px !important;
+    min-width: 86px !important;
+    height: 40px !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 950 !important;
+    box-shadow: 0 12px 28px rgba(15,23,42,0.16) !important;
+}
+
+.ecms-btn-save {
+    background: linear-gradient(135deg, #315bea, #407bff) !important;
+}
+
+.ecms-btn-reset {
+    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+}
+
+/* Select2 dropdown and jQuery UI autocomplete above modal */
+.select2-container {
+    z-index: 20000 !important;
+}
+
+.ui-autocomplete {
+    z-index: 20000 !important;
+    max-height: 260px !important;
+    overflow-y: auto !important;
+    border-radius: 10px !important;
+    box-shadow: 0 18px 40px rgba(4, 27, 82, 0.24) !important;
+}
+
+@media (max-width: 1300px) {
+    .ecms-domainregn-shell {
+        width: 94vw !important;
+        min-width: 0 !important;
+    }
+
+    .ecms-domain-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    html:has(.ecms-domainregn-page),
+    body:has(.ecms-domainregn-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-domainregn-page {
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: calc(100vh - 248px) !important;
+    }
+
+    .ecms-domainregn-shell {
+        width: 94vw !important;
+        min-width: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        min-height: 560px !important;
+    }
+
+    .ecms-domain-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .ecms-form-grid,
+    .ecms-radio-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-domainregn-title-card,
+    .ecms-domainregn-sub-card {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+}
+
+
+/* =====================================================
+   FINAL FIXES - DataTable double header, modal dropdowns,
+   save/reset button sizing and modal horizontal scrollbar.
+   Keep this block at end of DomainRegn.css.
+===================================================== */
+
+/* Prevent Add Domain modal horizontal scrollbar */
+.ecms-domain-modal .modal-dialog,
+.ecms-domain-modal .modal-content,
+.ecms-domain-modal .modal-body,
+.ecms-domain-modal form,
+.ecms-domain-modal .ecms-form-grid,
+.ecms-domain-modal .ecms-radio-grid,
+.ecms-domain-modal .ecms-form-field,
+.ecms-domain-modal .ecms-radio-card {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+.ecms-domain-modal .modal-content,
+.ecms-domain-modal .modal-body {
+    overflow-x: hidden !important;
+}
+
+.ecms-domain-modal .modal-body {
+    padding: 16px !important;
+}
+
+/* Inputs should be full width, but buttons must NOT become full width */
+.ecms-domain-modal .ecms-form-field input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="radio"]),
+.ecms-domain-modal .ecms-form-field select,
+.ecms-domain-modal .ecms-form-field textarea,
+.ecms-domain-modal .form-control-domainId,
+.ecms-domain-modal .form-control,
+.ecms-domain-modal .form-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Select2 dropdown width/placeholder issue */
+.ecms-domain-modal .select2-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+.ecms-domain-modal .select2-container--default .select2-selection--multiple,
+.ecms-domain-modal .select2-container--default .select2-selection--single {
+    width: 100% !important;
+    min-height: 42px !important;
+    height: auto !important;
+    border-radius: 9px !important;
+    border: 1px solid rgba(100,132,190,0.32) !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    padding: 4px 10px !important;
+}
+
+    .ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-search--inline {
+        flex: 1 1 auto !important;
+        width: auto !important;
+        min-width: 180px !important;
+        margin: 0 !important;
+    }
+
+    .ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-search__field {
+        width: 100% !important;
+        min-width: 180px !important;
+        height: 28px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #061b44 !important;
+        font-weight: 800 !important;
+    }
+
+    .ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
+    }
+
+/* Save/reset button normal size */
+.ecms-domain-modal .ecms-modal-actions {
+    margin-top: 14px !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+    .ecms-domain-modal .ecms-modal-actions .btn,
+    .ecms-domain-modal .ecms-modal-actions input[type="button"],
+    .ecms-domain-modal .ecms-modal-actions button {
+        width: auto !important;
+        min-width: 90px !important;
+        max-width: 120px !important;
+        flex: 0 0 auto !important;
+        padding: 0 18px !important;
+        height: 40px !important;
+        line-height: 40px !important;
+        text-align: center !important;
+    }
+
+.ecms-domain-modal #btnDomainAddDialog {
+    width: 90px !important;
+}
+
+.ecms-domain-modal #btnDomainAddReset {
+    width: 90px !important;
+}
+
+/* Hide DataTables cloned body header on main table and every modal table */
+.ecms-domainregn-page .dataTables_scrollBody > table > thead,
+.ecms-domainregn-page .dt-scroll-body > table > thead,
+.ecms-domain-dialog-modal .dataTables_scrollBody > table > thead,
+.ecms-domain-dialog-modal .dt-scroll-body > table > thead,
+.modal .dataTables_scrollBody > table > thead,
+.modal .dt-scroll-body > table > thead {
+    display: none !important;
+    visibility: collapse !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+    .ecms-domainregn-page .dataTables_scrollBody > table > thead > tr,
+    .ecms-domainregn-page .dataTables_scrollBody > table > thead > tr > th,
+    .ecms-domainregn-page .dataTables_scrollBody > table > thead > tr > td,
+    .ecms-domainregn-page .dt-scroll-body > table > thead > tr,
+    .ecms-domainregn-page .dt-scroll-body > table > thead > tr > th,
+    .ecms-domainregn-page .dt-scroll-body > table > thead > tr > td,
+    .ecms-domain-dialog-modal .dataTables_scrollBody > table > thead > tr,
+    .ecms-domain-dialog-modal .dataTables_scrollBody > table > thead > tr > th,
+    .ecms-domain-dialog-modal .dataTables_scrollBody > table > thead > tr > td,
+    .ecms-domain-dialog-modal .dt-scroll-body > table > thead > tr,
+    .ecms-domain-dialog-modal .dt-scroll-body > table > thead > tr > th,
+    .ecms-domain-dialog-modal .dt-scroll-body > table > thead > tr > td,
+    .modal .dataTables_scrollBody > table > thead > tr,
+    .modal .dataTables_scrollBody > table > thead > tr > th,
+    .modal .dataTables_scrollBody > table > thead > tr > td,
+    .modal .dt-scroll-body > table > thead > tr,
+    .modal .dt-scroll-body > table > thead > tr > th,
+    .modal .dt-scroll-body > table > thead > tr > td {
+        display: none !important;
+        visibility: collapse !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        line-height: 0 !important;
+        font-size: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 0 !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+
+/* Make scroll body start immediately after the real header */
+.ecms-domainregn-page .dataTables_scrollHead,
+.ecms-domainregn-page .dt-scroll-head,
+.ecms-domain-dialog-modal .dataTables_scrollHead,
+.ecms-domain-dialog-modal .dt-scroll-head,
+.modal .dataTables_scrollHead,
+.modal .dt-scroll-head {
+    margin-bottom: 0 !important;
+    border-bottom: 0 !important;
+}
+
+.ecms-domainregn-page .dataTables_scrollBody,
+.ecms-domainregn-page .dt-scroll-body,
+.ecms-domain-dialog-modal .dataTables_scrollBody,
+.ecms-domain-dialog-modal .dt-scroll-body,
+.modal .dataTables_scrollBody,
+.modal .dt-scroll-body {
+    border-top: 0 !important;
+}
+
+/* Keep footer info and pagination visible in modal datatables */
+.ecms-domain-dialog-modal #tbldatadialog_wrapper,
+.modal #tbldatadialog_wrapper {
+    overflow: hidden !important;
+}
+
+    .ecms-domain-dialog-modal #tbldatadialog_wrapper .dt-bottom,
+    .ecms-domain-dialog-modal #tbldatadialog_wrapper .dataTables_info,
+    .ecms-domain-dialog-modal #tbldatadialog_wrapper .dataTables_paginate,
+    .modal #tbldatadialog_wrapper .dt-bottom,
+    .modal #tbldatadialog_wrapper .dataTables_info,
+    .modal #tbldatadialog_wrapper .dataTables_paginate {
+        visibility: visible !important;
+        opacity: 1 !important;
+        display: flex !important;
+    }
+
+/* Avoid unnecessary horizontal scrollbar in modal dialog datatable wrapper */
+.ecms-domain-dialog-modal .modal-body,
+.ecms-domain-dialog-modal .ecms-dialog-table-wrap {
+    overflow-x: hidden !important;
+}
+
+.ecms-domain-dialog-modal .dataTables_scrollBody,
+.ecms-domain-dialog-modal .dt-scroll-body {
+    overflow-x: auto !important;
+}
+
+/* Make modal close stay inside header right side */
+.ecms-modal-header .ecms-modal-close {
+    position: static !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+/* Smaller modal on normal screens to avoid bottom scroll */
+@media (min-width: 992px) {
+    .ecms-domain-modal .modal-dialog {
+        max-width: 900px !important;
+    }
+}
+
+
+/* =====================================================
+   RADIO + SELECT2 INNER-BORDER FIX
+   Keep this block at the very end of DomainRegn.css.
+===================================================== */
+
+/* Stop the general input style from affecting Select2's internal search input.
+   This removes the double border visible inside Role / Assign Claims dropdown fields. */
+.ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-search__field,
+.ecms-domain-modal .select2-container--default .select2-selection--single .select2-search__field,
+.ecms-domain-modal .select2-search__field {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    min-height: 26px !important;
+    height: 26px !important;
+    line-height: 26px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    max-width: 100% !important;
+}
+
+/* Select2 should have only one clean outer border */
+.ecms-domain-modal .select2-container--default .select2-selection--multiple,
+.ecms-domain-modal .select2-container--default .select2-selection--single {
+    border: 1px solid rgba(100, 132, 190, 0.38) !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+}
+
+.ecms-domain-modal .select2-container--default.select2-container--focus .select2-selection--multiple,
+.ecms-domain-modal .select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #4b7cff !important;
+    box-shadow: 0 0 0 3px rgba(75, 124, 255, 0.14) !important;
+}
+
+/* Hide original select boxes fully after Select2 is initialized */
+.ecms-domain-modal select.select2-hidden-accessible {
+    position: absolute !important;
+    left: -10000px !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Reliable radio button selected state */
+.ecms-domain-modal input[type="radio"].form-check-input,
+.ecms-domain-modal input[type="radio"] {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
+    max-width: 16px !important;
+    max-height: 16px !important;
+    padding: 0 !important;
+    margin: 0 7px 0 0 !important;
+    border: 2px solid #b8c8e6 !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    position: relative !important;
+    flex: 0 0 16px !important;
+}
+
+    .ecms-domain-modal input[type="radio"].form-check-input:checked,
+    .ecms-domain-modal input[type="radio"]:checked {
+        border-color: #2563eb !important;
+        background: radial-gradient(circle at center, #2563eb 0 42%, transparent 45% 100%), #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16) !important;
+    }
+
+    .ecms-domain-modal input[type="radio"].form-check-input:focus,
+    .ecms-domain-modal input[type="radio"]:focus {
+        outline: 0 !important;
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+    }
+
+    .ecms-domain-modal input[type="radio"].form-check-input:disabled,
+    .ecms-domain-modal input[type="radio"]:disabled {
+        opacity: 0.55 !important;
+        cursor: not-allowed !important;
+    }
+
+.ecms-domain-modal .form-check,
+.ecms-domain-modal .form-check-inline,
+.ecms-domain-modal .ecms-radio-options .form-check {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    min-height: 22px !important;
+    padding-left: 0 !important;
+    margin-right: 18px !important;
+}
+
+.ecms-domain-modal .form-check-label,
+.ecms-domain-modal .ecms-radio-options .form-check-label {
+    cursor: pointer !important;
+    color: #061b44 !important;
+    font-weight: 900 !important;
+    line-height: 16px !important;
+    margin: 0 !important;
+    user-select: none !important;
 }

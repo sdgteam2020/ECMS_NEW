@@ -201,7 +201,7 @@ $(function () {
                 }
             });
         },
-        
+
     });
 
     $('#txtUnitName').on("keyup", function (e) {
@@ -392,17 +392,18 @@ function BindDialog(Choice) {
             $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
             $("#tbldatadialog thead").empty(); // Clear old thead
             $("#tbldatadialog tbody").empty(); // Clear old tbody
+            $("#tbldatadialog").empty(); // UI fix: remove old DataTables cloned header/body markup
         }
 
         tabledialog = $("#tbldatadialog").DataTable({
-            scrollY: '65vh',          // ✅ vertical scroll
+            scrollY: '100%',          // ✅ vertical scroll
             scrollX: true,            // ✅ horizontal scroll
-            scrollCollapse: true,
-            scroller: true,           // ✅ Enable virtual scrolling for better performance
-            deferScroll: true,        // ✅ Improve scrolling performance
+            scrollCollapse: false,
+            scroller: false,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: false,        // ✅ Improve scrolling performance
             fixedHeader: false,       // ❌ disable when using scrollY
 
-            processing: true,
+            processing: false,
             serverSide: true,
             filter: true,
             stateSave: false,
@@ -571,7 +572,7 @@ function BindDialog(Choice) {
                 search: "", // Remove the default "Search:" label
                 searchPlaceholder: "Search Domain ID" // Add custom placeholder
             },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
             buttons: [
                 //{
                 //    extend: 'copy',
@@ -604,13 +605,14 @@ function BindDialog(Choice) {
 
                 // Force DataTables to calculate optimal widths
                 this.api().columns.adjust();
+                FixDomainRegnDataTableUI('#tbldatadialog');
 
                 // Handle zoom/resize
                 var resizeTimer;
                 $(window).on('resize', function () {
                     clearTimeout(resizeTimer);
                     resizeTimer = setTimeout(function () {
-                        tabledialog.columns.adjust().responsive.recalc();
+                        tabledialog.columns.adjust();
                     }, 100);
                 });
 
@@ -618,14 +620,17 @@ function BindDialog(Choice) {
             drawCallback: function (settings) {
 
                 // Recalculate widths on each data load
-                this.api().columns.adjust().responsive.recalc();
+                this.api().columns.adjust();
+                FixDomainRegnDataTableUI('#tbldatadialog');
 
                 const tooltipTriggerList = [].slice.call(
                     document.querySelectorAll('[data-bs-toggle="tooltip"]')
                 );
-                tooltipTriggerList.forEach(el => {
-                    new bootstrap.Tooltip(el);
-                });
+                if (window.bootstrap && bootstrap.Tooltip) {
+                    tooltipTriggerList.forEach(el => {
+                        try { new bootstrap.Tooltip(el); } catch (e) { }
+                    });
+                }
             }
         });
     });
@@ -709,13 +714,13 @@ function ValidateInput() {
     //    $("#IsORO-error").html("");
     //}
 
-    if ((ApptId == 0 ) && $("#txtAppointmentName").val().length > 0) {
+    if ((ApptId == 0) && $("#txtAppointmentName").val().length > 0) {
         $("#txtAppointmentName").val('');
         $("#txtAppointmentName-error").html("Appointment name is invalid.");
         toastr.error('Appointment name is invalid.');
     }
 
-    if ((UnitMapId == 0 ) && $("#txtUnitName").val().length > 0) {
+    if ((UnitMapId == 0) && $("#txtUnitName").val().length > 0) {
         $("#txtUnitName").val('');
         $("#txtAppointmentName-error").html("Unit name is invalid.");
         toastr.error('Unit name is invalid.');
@@ -728,17 +733,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // UI fix: remove old DataTables cloned header/body markup
     }
 
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: false,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -770,8 +776,14 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                setTimeout(function () { FixDomainRegnDataTableUI('#tbldata'); }, 30);
+                setTimeout(function () { FixDomainRegnDataTableUI('#tbldatadialog'); }, 30);
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                setTimeout(function () { FixDomainRegnDataTableUI("#tbldata"); }, 30);
             }
         },
         columns: [
@@ -916,7 +928,7 @@ function BindData() {
         ],
         /* ===== FORCE WIDTHS (IMPORTANT) ===== */
         columnDefs: [
-            { targets: 0,width: "60px",  },
+            { targets: 0, width: "60px", },
             { targets: 1, width: "120px" },
             { targets: 2, width: "180px" },
             { targets: 3, width: "150px" },
@@ -937,7 +949,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Domain ID" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
         buttons: [
             //{
             //    extend: 'copy',
@@ -969,27 +981,31 @@ function BindData() {
             searchBox.attr('title', 'Search Comd/Abbreviation');
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
+            FixDomainRegnDataTableUI('#tbldata');
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    table.columns.adjust();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            this.api().columns.adjust();
+            FixDomainRegnDataTableUI('#tbldata');
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(el => {
+                    try { new bootstrap.Tooltip(el); } catch (e) { }
+                });
+            }
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -1315,3 +1331,185 @@ function AccountCount() {
         }
     });
 }
+
+
+function FixDomainRegnDataTableUI(tableSelector) {
+    try {
+        const $wrapper = $(tableSelector + "_wrapper");
+        $("#loading").addClass("d-none").hide();
+        $(".dataTables_processing, " + tableSelector + "_processing").hide();
+
+        // Hide cloned sizing header inside DataTables scroll body.
+        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").css({
+            display: "none",
+            height: "0",
+            maxHeight: "0",
+            minHeight: "0",
+            visibility: "collapse",
+            overflow: "hidden"
+        });
+
+        $wrapper.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
+            display: "none",
+            height: "0",
+            maxHeight: "0",
+            minHeight: "0",
+            lineHeight: "0",
+            fontSize: "0",
+            padding: "0",
+            margin: "0",
+            border: "0",
+            overflow: "hidden",
+            visibility: "collapse"
+        });
+
+        $wrapper.find(".dt-bottom, .dataTables_info, .dataTables_paginate, .pagination").css({
+            visibility: "visible",
+            opacity: "1"
+        });
+
+        const $bottom = $wrapper.children(".dt-bottom");
+        if ($bottom.length) {
+            $bottom.css({
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%"
+            });
+        }
+
+        if ($.fn.DataTable.isDataTable(tableSelector)) {
+            setTimeout(function () {
+                $(tableSelector).DataTable().columns.adjust();
+            }, 80);
+        }
+    } catch (e) {
+        console.warn("DomainRegn DataTable UI fix skipped:", e);
+    }
+}
+
+$('#DataTableDialog').on('shown.bs.modal.domainRegnUi', function () {
+    setTimeout(function () {
+        FixDomainRegnDataTableUI('#tbldatadialog');
+    }, 120);
+});
+
+$('#AddNewDomain').on('shown.bs.modal.domainRegnUi', function () {
+    try {
+        $('#ddlRoles, #ddClaims').trigger('change.select2');
+    } catch (e) { }
+});
+
+
+/* UI-only final fixes: remove DataTables cloned body header, keep modal controls aligned */
+function DomainRegn_FinalTableCleanup(tableSelector) {
+    try {
+        var $wrapper = $(tableSelector + "_wrapper");
+
+        $("#loading").addClass("d-none").hide();
+        $(".dataTables_processing, .dt-processing, " + tableSelector + "_processing").hide();
+
+        // DataTables creates a cloned THEAD inside scroll body for width sizing.
+        // Hide only the cloned body THEAD; keep the real header in scrollHead visible.
+        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").each(function () {
+            $(this).attr("aria-hidden", "true").css({
+                "display": "none",
+                "visibility": "collapse",
+                "height": "0",
+                "min-height": "0",
+                "max-height": "0",
+                "line-height": "0",
+                "font-size": "0",
+                "padding": "0",
+                "margin": "0",
+                "border": "0",
+                "overflow": "hidden"
+            });
+        });
+
+        $wrapper.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
+            "display": "none",
+            "visibility": "collapse",
+            "height": "0",
+            "min-height": "0",
+            "max-height": "0",
+            "line-height": "0",
+            "font-size": "0",
+            "padding": "0",
+            "margin": "0",
+            "border": "0",
+            "overflow": "hidden"
+        });
+
+        $wrapper.find(".dataTables_info, .dataTables_paginate, .dt-info, .dt-paging, .pagination").css({
+            "visibility": "visible",
+            "opacity": "1"
+        });
+
+        if ($.fn.DataTable.isDataTable(tableSelector)) {
+            setTimeout(function () {
+                try { $(tableSelector).DataTable().columns.adjust(); } catch (e) { }
+            }, 50);
+        }
+    } catch (e) {
+        console.warn("DomainRegn_FinalTableCleanup skipped:", e);
+    }
+}
+
+$(document).on("draw.dt", function (e, settings) {
+    try {
+        var id = settings && settings.nTable ? settings.nTable.id : "";
+        if (id === "tbldata") {
+            setTimeout(function () { DomainRegn_FinalTableCleanup("#tbldata"); }, 20);
+        }
+        if (id === "tbldatadialog") {
+            setTimeout(function () { DomainRegn_FinalTableCleanup("#tbldatadialog"); }, 20);
+        }
+    } catch (e) { }
+});
+
+$("#DataTableDialog").on("shown.bs.modal.domainRegnFinal shown.domainRegnFinal", function () {
+    setTimeout(function () { DomainRegn_FinalTableCleanup("#tbldatadialog"); }, 100);
+});
+
+$("#AddNewDomain").on("shown.bs.modal.domainRegnFinal shown.domainRegnFinal", function () {
+    $(".modal-backdrop").not(":last").remove();
+    setTimeout(function () {
+        try {
+            $("#ddlRoles, #ddClaims").select2({
+                width: "100%",
+                dropdownParent: $("#AddNewDomain"),
+                closeOnSelect: false
+            });
+            $("#ddlRoles, #ddClaims").trigger("change.select2");
+        } catch (e) { }
+    }, 80);
+});
+
+
+/* UI-only: keep radio checked state and Select2 clean after modal opens */
+$("#AddNewDomain").on("shown.bs.modal.domainRegnRadioFix", function () {
+    setTimeout(function () {
+        try {
+            $("#ddlRoles, #ddClaims").select2({
+                width: "100%",
+                dropdownParent: $("#AddNewDomain"),
+                closeOnSelect: false
+            });
+            $("#ddlRoles, #ddClaims").trigger("change.select2");
+        } catch (e) { }
+
+        // Force browser repaint for custom radio checked state.
+        $("#AddNewDomain input[type='radio']").each(function () {
+            this.offsetHeight;
+        });
+    }, 80);
+});
+
+$(document).on("change.domainRegnRadioFix", "#AddNewDomain input[type='radio']", function () {
+    var radioName = $(this).attr("name");
+    if (radioName) {
+        $("#AddNewDomain input[type='radio'][name='" + radioName + "']").removeClass("ecms-radio-checked");
+        $("#AddNewDomain input[type='radio'][name='" + radioName + "']:checked").addClass("ecms-radio-checked");
+    }
+});

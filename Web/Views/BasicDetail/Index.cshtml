@@ -1,7 +1,7 @@
 ﻿<link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
-<link asp-href-include="~/developercss/indexbasicdetail.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/indexbasicdetail.css" rel="stylesheet" />
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -11,153 +11,153 @@
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
                         @if (Convert.ToString(ViewBag.Id) == "0")
                         {
-                                <div>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                            <span>Appl All I-Card</span>
+                                    <span>Appl All I-Card</span>
                                 }
                                 else
                                 {
-                                            <span>Appl All I-Card</span>
+                                    <span>Appl All I-Card</span>
                                 }
 
-                                </div>
+                            </div>
                         }
 
                         else if (Convert.ToString(ViewBag.Id) == "1")
                         {
-                                <div>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                            <span>Appl Drafted for Offrs</span>
+                                    <span>Appl Drafted for Offrs</span>
                                 }
                                 else
                                 {
-                                            <span>Appl Drafted for JCOs/OR</span>
+                                    <span>Appl Drafted for JCOs/OR</span>
                                 }
 
-                                </div>
+                            </div>
                         }
                         else if (Convert.ToString(ViewBag.Id) == "11")
                         {
-                                <div>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                            <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Drafted for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Drafted for Offrs</span>
                                 }
                                 else
                                 {
-                                            <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Drafted for JCOs/OR</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Drafted for JCOs/OR</span>
                                 }
-                                </div>
+                            </div>
                         }
                         else if (Convert.ToString(ViewBag.Id) == "888")
                         {
-                                <div>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a> >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                            <span>Appl Submitted for Offrs</span>
+                                    <span>Appl Submitted for Offrs</span>
                                 }
                                 else
                                 {
-                                            <span>Appl Submitted for JCOs/OR</span>
+                                    <span>Appl Submitted for JCOs/OR</span>
                                 }
 
-                                </div>
+                            </div>
                         }
                         else if (Convert.ToString(ViewBag.Id) == "88")
                         {
-                                <div>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                            <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Submitted for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Submitted for Offrs</span>
                                 }
                                 else
                                 {
-                                            <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Submitted for JCOs/OR</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Submitted for JCOs/OR</span>
                                 }
-                                </div>
+                            </div>
                         }
                         else if (Convert.ToString(ViewBag.Id) == "999")
                         {
-                                <div>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                            <span>Appl Rejected for Offrs</span>
+                                    <span>Appl Rejected for Offrs</span>
                                 }
                                 else
                                 {
-                                            <span>Appl Rejected for JCOs/OR</span>
+                                    <span>Appl Rejected for JCOs/OR</span>
                                 }
 
-                                </div>
+                            </div>
                         }
                         else if (Convert.ToString(ViewBag.Id) == "99")
                         {
-                                <div>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                            <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Rejected for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Rejected for Offrs</span>
                                 }
                                 else
                                 {
-                                            <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Rejected for JCOs/OR</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Rejected for JCOs/OR</span>
                                 }
-                                </div>
+                            </div>
                         }
                         else if (Convert.ToString(ViewBag.Id) == "777")
                         {
-                                <div>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>  >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                            <span>Appl Completed for Offrs</span>
+                                    <span>Appl Completed for Offrs</span>
                                 }
                                 else
                                 {
-                                            <span>Appl Completed for JCOs/OR</span>
+                                    <span>Appl Completed for JCOs/OR</span>
                                 }
 
-                                </div>
+                            </div>
                         }
                         else if (Convert.ToString(ViewBag.Id) == "77")
                         {
-                                <div>
-                                    <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
+                            <div>
+                                <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Task" class="mr-2">Task</a> >
                                 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.jcoor)))
                                 {
-                                            <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Completed for Offrs</span>
+                                    <span><a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=">I-Card Status</a> >Appl Completed for Offrs</span>
                                 }
                                 else
                                 {
-                                            <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Completed for JCOs/OR</span>
+                                    <span><a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==">I-Card Status</a> >Appl Completed for JCOs/OR</span>
                                 }
-                                </div>
+                            </div>
                         }
                         else
                         {
                             if (Convert.ToString(ViewBag.jcoor) == "SmNvL09ycw==")
                             {
-                                        <div>
-                                            <a href="/Home/Index" class="mr-2">Home</a> >
-                                            <a href="/Home/Task" class="mr-2">Task</a> >
-                                            <a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==" class="mr-2">I-Card Status</a> > @ViewBag.Title
-                                        </div>
+                                <div>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==" class="mr-2">I-Card Status</a> > @ViewBag.Title
+                                </div>
                             }
                             else
                             {
-                                        <div>
-                                            <a href="/Home/Index" class="mr-2">Home</a> > 
-                                            <a href="/Home/Task" class="mr-2">Task</a> >
-                                            <a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=" class="mr-2">I-Card Status</a> > @ViewBag.Title
-                                        </div>
+                                <div>
+                                    <a href="/Home/Index" class="mr-2">Home</a> >
+                                    <a href="/Home/Task" class="mr-2">Task</a> >
+                                    <a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=" class="mr-2">I-Card Status</a> > @ViewBag.Title
+                                </div>
                             }
 
                         }
@@ -169,24 +169,25 @@
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
+<div class="containerMain mt-n10 ecms-basic-index-page">
+    <div class="card mb-3 ecms-basic-index-shell">
+        <div class="card-header ecms-basic-index-card-header">
             <span class="d-none" id="spnStepCounter">@ViewBag.StepCounter</span>
             <span class="d-none" id="spnJCOOR">@ViewBag.jcoor</span>
             <div class="row">
                 <div class="col-xl-12 text-left">
-                    <h3>
-                        @ViewBag.Title
+                    <h3 class="ecms-basic-index-heading">
+                        <span class="ecms-basic-index-heading-icon"><i class="fa fa-list-alt"></i></span>
+                        <span>@ViewBag.Title</span>
                         <small class="text-muted"></small>
                     </h3>
                 </div>
             </div>
         </div>
-        <div class="card-body card-body-min-height">
+        <div class="card-body card-body-min-height ecms-basic-index-body">
             <div class="row">
-                <div class="col-xl-12">
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatatabledata_Fwd">
+                <div class="col-xl-12 ecms-basic-index-table-col">
+                    <table class="table table-striped table-hover border border-purple ecms-basic-index-table" role="grid" id="tbldatatabledata_Fwd">
                     </table>
                 </div>
             </div>
@@ -195,13 +196,14 @@
 </div>
 
 @section Scripts {
-        <script asp-src-include="~/developerjs/fwdrecord.js"></script>
-        <script asp-src-include="~/developerjs/Index_BasicDetails.js"></script>
-        <script asp-src-include="~/js/CustomScript.js"></script>
-        <script asp-src-include="~/developerjs/ICardPrint.js"></script>
-        <script asp-src-include="~/developerjs/Token.js"></script>
-        <script asp-src-include="~/developerjs/mtables.js"></script>
-        <script asp-src-include="~/select2/js/select2.min.js"></script>
+    <script asp-src-include="~/developerjs/fwdrecord.js"></script>
+    <script asp-src-include="~/developerjs/Index_BasicDetails.js"></script>
+    <script asp-src-include="~/js/CustomScript.js"></script>
+    <script asp-src-include="~/developerjs/ICardPrint.js"></script>
+    <script asp-src-include="~/developerjs/Token.js"></script>
+    <script asp-src-include="~/developerjs/mtables.js"></script>
+    <script asp-src-include="~/select2/js/select2.min.js"></script>
 
-        <partial name="~/Views/Shared/_DataTableJS.cshtml" />
+    <partial name="~/Views/Shared/_DataTableJS.cshtml" />
+
 }

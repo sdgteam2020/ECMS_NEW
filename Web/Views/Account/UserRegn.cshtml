@@ -2,371 +2,344 @@
     ViewData["Title"] = "User Regn";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link asp-href-include="~/developercss/userregn.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<link asp-href-include="~/developercss/userregn.css" rel="stylesheet" />
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10 ecms-userregn-breadcrumb">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > User Registration
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
+                        <span class="ecms-crumb-separator">&gt;</span>
+                        <span>User Registration</span>
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        User Registration Details
-                        <small class="text-muted"></small>
-                    </h3>
+
+<div class="containerMain mt-0 ecms-userregn-page">
+    <div class="ecms-userregn-shell">
+        <div class="ecms-userregn-title-card">
+            <div class="ecms-title-left">
+                <span class="ecms-title-icon"><i class="fa fa-user-plus"></i></span>
+                <div>
+                    <h3>User Registration Details</h3>
+                    <p>Create, update, approve, activate and map user registration records</p>
+                </div>
+            </div>
+            <span class="ecms-title-pill"><i class="fa fa-users-cog"></i> User Config</span>
+        </div>
+
+        <div class="ecms-userregn-sub-card">
+            <div class="ecms-title-left">
+                <span class="ecms-sub-icon"><i class="fa fa-chart-pie"></i></span>
+                <div>
+                    <h5>User Registration Summary</h5>
+                    <p>Click a card to view users by category</p>
                 </div>
             </div>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row">
-                <div class="col-xl-6">
-                </div>
-                <div class="col-xl-6">
-                    <div class="d-flex d-md-flex justify-content-md-between align-items-md-center">
-                        <h6 class="mb-3 mb-md-0">
-                            &nbsp;
-                        </h6>
-                        <div class="d-flex">
-                        </div>
+
+        <div class="ecms-count-grid">
+            <button class="count-label ecms-count-card" id="btnUser" name="btnUser" type="button">
+                <span class="ecms-count-icon"><i class="fa fa-users"></i></span>
+                <span class="ecms-count-title">Total Users</span>
+                <span class="ecms-count-number" id="lblUser">0</span>
+            </button>
+            <button class="count-label ecms-count-card" id="btnMappedUser" name="btnMappedUser" type="button">
+                <span class="ecms-count-icon"><i class="fa fa-link"></i></span>
+                <span class="ecms-count-title">Mapped</span>
+                <span class="ecms-count-number" id="lblMappedUser">0</span>
+            </button>
+            <button class="count-label ecms-count-card" id="btnUnMappedUser" name="btnUnMappedUser" type="button">
+                <span class="ecms-count-icon"><i class="fa fa-unlink"></i></span>
+                <span class="ecms-count-title">Not Mapped</span>
+                <span class="ecms-count-number" id="lblUnMappedUser">0</span>
+            </button>
+            <button class="count-label ecms-count-card" id="btnActiveUser" name="btnActiveUser" type="button">
+                <span class="ecms-count-icon"><i class="fa fa-check-circle"></i></span>
+                <span class="ecms-count-title">Active</span>
+                <span class="ecms-count-number" id="lblActiveUser">0</span>
+            </button>
+            <button class="count-label ecms-count-card" id="btnInActiveUser" name="btnActiveUser" type="button">
+                <span class="ecms-count-icon"><i class="fa fa-times-circle"></i></span>
+                <span class="ecms-count-title">Inactive</span>
+                <span class="ecms-count-number" id="lblInActiveUser">0</span>
+            </button>
+            <button class="count-label ecms-count-card" id="btnVerified" name="btnVerified" type="button">
+                <span class="ecms-count-icon"><i class="fa fa-shield-alt"></i></span>
+                <span class="ecms-count-title">Verified</span>
+                <span class="ecms-count-number" id="lblVerifiedUser">0</span>
+            </button>
+            <button class="count-label ecms-count-card" id="btnNotVerifiedUser" name="btnNotVerifiedUser" type="button">
+                <span class="ecms-count-icon"><i class="fa fa-exclamation-circle"></i></span>
+                <span class="ecms-count-title">Not Verified</span>
+                <span class="ecms-count-number" id="lblNotVerifiedUser">0</span>
+            </button>
+        </div>
+
+        <div class="ecms-table-card">
+            <div class="ecms-section-bar"><i class="fa fa-table"></i> User Registration Records</div>
+            <table class="table table-striped table-hover border border-purple ecms-data-table" role="grid" id="tbldata"></table>
+        </div>
+    </div>
+</div>
+
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/developerjs/userregn.js"></script>
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />
+
+<div class="modal fade ecms-userregn-modal ecms-userregn-flag-modal" id="AddDomainFlag" tabindex="-1" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header ecms-modal-header">
+                <div class="ecms-modal-title-wrap">
+                    <span class="ecms-modal-icon"><i class="fa fa-user-check"></i></span>
+                    <div>
+                        <h5 class="modal-title" id="exampleModalLabel">Update Approval / Active of Domain</h5>
+                        <small>Review domain details and update approval / active status</small>
                     </div>
                 </div>
-                <div class="d-flex mt-1 mb-1">
-                    <button class="count-label" id="btnUser" name="btnUser">Total Users <br /><span id="lblUser">0</span></button>
-                    <button class="count-label" id="btnMappedUser" name="btnMappedUser">Mapped <br /><span id="lblMappedUser">0</span></button>
-                    <button class="count-label" id="btnUnMappedUser" name="btnUnMappedUser">Not Mapped <br /><span id="lblUnMappedUser">0</span></button>
-                    <button class="count-label" id="btnActiveUser" name="btnActiveUser">Active <br /><span id="lblActiveUser">0</span></button>
-                    <button class="count-label" id="btnInActiveUser" name="btnActiveUser">Inactive <br /><span id="lblInActiveUser">0</span></button>
-                    <button class="count-label" id="btnVerified" name="btnVerified">Verified <br /><span id="lblVerifiedUser">0</span></button>
-                    <button class="count-label" id="btnNotVerifiedUser" name="btnNotVerifiedUser">Not Verified <br /><span id="lblNotVerifiedUser">0</span></button>
-                    
-                </div>
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
+                <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="UpdateDomainFlag" name="UpdateDomainFlag" method="post">
+                    <div class="ecms-form-grid">
+                        <div class="ecms-form-field">
+                            <label>Domain ID</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblDomainId"></label>
+                        </div>
+                        <div class="ecms-form-field">
+                            <label>Role<i class="fas fa-asterisk mand1"></i></label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblRole"></label>
+                        </div>
+
+                        <div class="ecms-radio-card">
+                            <label>Approval<i class="fas fa-asterisk mand1"></i></label>
+                            <div class="ecms-radio-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyes" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="txtapprovalyes">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtapproval" value="false" id="txtapprovalno" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="txtapprovalno">No</label>
+                                </div>
+                            </div>
+                            <span class="text-danger field-validation-valid" id="txtapproval-error"></span>
+                        </div>
+
+                        <div class="ecms-radio-card">
+                            <label>Active<i class="fas fa-asterisk mand1"></i></label>
+                            <div class="ecms-radio-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyes" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="txtactiveyes">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtactive" value="false" id="txtactiveno" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="txtactiveno">No</label>
+                                </div>
+                            </div>
+                            <span class="text-danger field-validation-valid" id="txtactive-error"></span>
+                        </div>
+
+                        <div class="ecms-form-field ecms-span-2">
+                            <label>Message for User</label>
+                            <textarea class="form-control1 textarea-auto-height" name="txtadminmessage" id="txtadminmessage" rows="3" maxlength="200" data-val-maxlength="Maximum length of Message is 200 character." data-val-maxlength-max="200" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtadminmessage" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-form-field">
+                            <label>Appointment Name</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblAppointmentName"></label>
+                        </div>
+                        <div class="ecms-form-field">
+                            <label>Unit Name</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblUnitName"></label>
+                        </div>
+                        <div class="ecms-form-field">
+                            <label>SUS No</label>
+                            <label id="lblSusno" class="unit-label-background ecms-readonly-box"></label>
+                        </div>
+
+                        <div id="lbl1" class="ecms-form-field d-none">
+                            <label>PSO / Dte</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblPso"></label>
+                        </div>
+                        <div id="lbl2" class="ecms-form-field d-none">
+                            <label>DG / Sub Dte</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblDG"></label>
+                        </div>
+                        <div id="lbl3" class="ecms-form-field d-none">
+                            <label>Comd / PSO</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblComd"></label>
+                        </div>
+                        <div id="lbl4" class="ecms-form-field d-none">
+                            <label>Corps / Dte / Area</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblCorps"></label>
+                        </div>
+                        <div id="lbl5" class="ecms-form-field d-none">
+                            <label>Div / Branch / Sub Area</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblDiv"></label>
+                        </div>
+                        <div id="lbl6" class="ecms-form-field d-none">
+                            <label>Bde</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblBde"></label>
+                        </div>
+                        <div id="lbl7" class="ecms-form-field d-none">
+                            <label>Type of Fmn / Branch</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblFmn"></label>
+                        </div>
+                    </div>
+                    <div class="ecms-modal-actions">
+                        <input type="button" class="btn btn-outline-primary ecms-save-btn" value="Save" id="btnDomainFlag" />
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
-<script asp-src-include="~/developerjs/mtables.js"></script>
-<script asp-src-include="~/developerjs/userregn.js"></script>
 
-<partial name="~/Views/Shared/_DataTableJS.cshtml" />
-
-<div class="modal fade" id="AddDomainFlag" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade ecms-userregn-modal ecms-userregn-mapping-modal" id="AddMapping" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Update Approval / Active of Domain</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <form action="" id="UpdateDomainFlag" name="UpdateDomainFlag" method="post">
-                        <div class="row">
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Domain ID</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblDomainId"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Role<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblRole"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4 fw-bold">Approval<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyes" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtapprovalyes">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtapproval" value="false" id="txtapprovalno" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtapprovalno">
-                                            No
-                                        </label>
-                                    </div>
-                                    <span class="text-danger field-validation-valid" id="txtapproval-error"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4 fw-bold">Active<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyes" data-val="true" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtactiveyes">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtactive" value="false" id="txtactiveno" data-val="true" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtactiveno">
-                                            No
-                                        </label>
-                                    </div>
-                                    <span class="text-danger field-validation-valid" id="txtactive-error"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Message for User</label>
-                                <div class="col-sm-8">
-                                    <textarea class="form-control1 textarea-auto-height" name="txtadminmessage" id="txtadminmessage" rows="3" maxlength="200" data-val-maxlength="Maximum length of Message is 200 character." data-val-maxlength-max="200" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtadminmessage" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Appointment Name</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblAppointmentName"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Unit Name</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblUnitName"></label>
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">SUS No</label>
-                                <div class="col-sm-8">
-                                    <label id="lblSusno" class="col-form-label unit-label-background"></label>
-                                </div>
-                            </div>
-                            <div id="lbl1" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">PSO / Dte</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblPso"></label>
-                                </div>
-                            </div>
-                            <div id="lbl2" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblDG"></label>
-                                </div>
-                            </div>
-                            <div id="lbl3" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Comd / PSO</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblComd"></label>
-                                </div>
-                            </div>
-                            <div id="lbl4" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblCorps"></label>
-                                </div>
-                            </div>
-                            <div id="lbl5" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Div / Branch / Sub Area</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblDiv"></label>
-                                </div>
-                            </div>
-                            <div id="lbl6" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Bde</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblBde"></label>
-                                </div>
-                            </div>
-                            <div id="lbl7" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Type of Fmn / Branch</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblFmn"></label>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnDomainFlag" />
-                            </div>
-                        </div>
-                    </form>
+            <div class="modal-header ecms-modal-header">
+                <div class="ecms-modal-title-wrap">
+                    <span class="ecms-modal-icon"><i class="fa fa-link"></i></span>
+                    <div>
+                        <h5 class="modal-title" id="exampleModalLabel_AddMapping">Mapping Add / Remove</h5>
+                        <small>Update user mapping without changing existing request flow</small>
+                    </div>
                 </div>
-            </div>
-
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
-
-<div class="modal fade" id="AddMapping" tabindex="-1" aria-labelledby="exampleModalLabel" >
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_AddMapping">Mapping Add / Remove</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
+                <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
             </div>
             <div class="modal-body model-body-background">
-                <div class="row">
-                    <form action="" id="SaveMapping" name="SaveMapping" method="post">
-                        <div class="row">
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 model-body-label fw-bold">Domain ID</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblDomainIdForMapping"></label>
+                <form action="" id="SaveMapping" name="SaveMapping" method="post">
+                    <div class="ecms-form-grid">
+                        <div class="ecms-form-field">
+                            <label class="model-body-label">Domain ID</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblDomainIdForMapping"></label>
+                        </div>
+                        <div class="ecms-form-field">
+                            <label>Role</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblRoleForMapping"></label>
+                        </div>
+
+                        <div class="ecms-radio-card">
+                            <label>Approval</label>
+                            <div class="ecms-radio-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyesForMapping" disabled>
+                                    <label class="form-check-label" for="txtapprovalyesForMapping">Yes</label>
                                 </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Role</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblRoleForMapping"></label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtapproval" value="false" id="txtapprovalnoForMapping" disabled>
+                                    <label class="form-check-label" for="txtapprovalnoForMapping">No</label>
                                 </div>
-                            </div>
-                            <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4 fw-bold">Approval</label>
-                                <div class="col-sm-8">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyesForMapping" disabled>
-                                        <label class="form-check-label" for="txtapprovalyesForMapping">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtapproval" value="false" id="txtapprovalnoForMapping" disabled>
-                                        <label class="form-check-label" for="txtapprovalnoForMapping">
-                                            No
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4 fw-bold">Active</label>
-                                <div class="col-sm-8">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyesForMapping" disabled>
-                                        <label class="form-check-label" for="txtactiveyesForMapping">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtactive" value="false" id="txtactivenoForMapping" disabled>
-                                        <label class="form-check-label" for="txtactivenoForMapping">
-                                            No
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Appointment Name</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblAppointmentNameForMapping"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Unit Name</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblUnitNameForMapping"></label>
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">SUS No</label>
-                                <div class="col-sm-8">
-                                    <label id="lblSusnoForMapping" class="col-form-label unit-label-background"></label>
-                                </div>
-                            </div>
-                            <div id="lblM1" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">PSO / Dte</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblPsoForMapping"></label>
-                                </div>
-                            </div>
-                            <div id="lblM2" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblDGForMapping"></label>
-                                </div>
-                            </div>
-                            <div id="lblM3" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Comd / PSO</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblComdForMapping"></label>
-                                </div>
-                            </div>
-                            <div id="lblM4" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblCorpsForMapping"></label>
-                                </div>
-                            </div>
-                            <div id="lblM5" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Div / Branch / Sub Area</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblDivForMapping"></label>
-                                </div>
-                            </div>
-                            <div id="lblM6" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Bde</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblBdeForMapping"></label>
-                                </div>
-                            </div>
-                            <div id="lblM7" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Type of Fmn / Branch</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblFmnForMapping"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Army No</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control alpha-num-only" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" minlength="7" maxlength="15" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-regex-pattern="^[\w\-]+$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Rank</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblRank"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Name</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblName"></label>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnAddMapping" />
-                            </div>
-                            <div class="col-sm-12" id="msg">
                             </div>
                         </div>
-                    </form>
-                </div>
-            </div>
 
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
+                        <div class="ecms-radio-card">
+                            <label>Active</label>
+                            <div class="ecms-radio-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyesForMapping" disabled>
+                                    <label class="form-check-label" for="txtactiveyesForMapping">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtactive" value="false" id="txtactivenoForMapping" disabled>
+                                    <label class="form-check-label" for="txtactivenoForMapping">No</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ecms-form-field">
+                            <label>Appointment Name</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblAppointmentNameForMapping"></label>
+                        </div>
+                        <div class="ecms-form-field">
+                            <label>Unit Name</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblUnitNameForMapping"></label>
+                        </div>
+                        <div class="ecms-form-field">
+                            <label>SUS No</label>
+                            <label id="lblSusnoForMapping" class="unit-label-background ecms-readonly-box"></label>
+                        </div>
+
+                        <div id="lblM1" class="ecms-form-field d-none">
+                            <label>PSO / Dte</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblPsoForMapping"></label>
+                        </div>
+                        <div id="lblM2" class="ecms-form-field d-none">
+                            <label>DG / Sub Dte</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblDGForMapping"></label>
+                        </div>
+                        <div id="lblM3" class="ecms-form-field d-none">
+                            <label>Comd / PSO</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblComdForMapping"></label>
+                        </div>
+                        <div id="lblM4" class="ecms-form-field d-none">
+                            <label>Corps / Dte / Area</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblCorpsForMapping"></label>
+                        </div>
+                        <div id="lblM5" class="ecms-form-field d-none">
+                            <label>Div / Branch / Sub Area</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblDivForMapping"></label>
+                        </div>
+                        <div id="lblM6" class="ecms-form-field d-none">
+                            <label>Bde</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblBdeForMapping"></label>
+                        </div>
+                        <div id="lblM7" class="ecms-form-field d-none">
+                            <label>Type of Fmn / Branch</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblFmnForMapping"></label>
+                        </div>
+
+                        <div class="ecms-form-field">
+                            <label>Army No</label>
+                            <input class="form-control alpha-num-only" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" minlength="7" maxlength="15" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-regex-pattern="^[\w\-]+$" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="ecms-form-field">
+                            <label>Rank</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblRank"></label>
+                        </div>
+                        <div class="ecms-form-field">
+                            <label>Name</label>
+                            <label class="unit-label-background ecms-readonly-box" id="lblName"></label>
+                        </div>
+                    </div>
+                    <div class="ecms-modal-actions">
+                        <input type="button" class="btn btn-outline-primary ecms-save-btn" value="Save" id="btnAddMapping" />
+                    </div>
+                    <div class="col-sm-12" id="msg"></div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="modal fade" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade ecms-userregn-dialog-modal" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_DataTableDialog"><span id="lblModelTitle"></span></h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
+            <div class="modal-header ecms-modal-header">
+                <div class="ecms-modal-title-wrap">
+                    <span class="ecms-modal-icon"><i class="fa fa-table"></i></span>
+                    <h5 class="modal-title" id="exampleModalLabel_DataTableDialog"><span id="lblModelTitle"></span></h5>
+                </div>
+                <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                     <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatadialog">
-                    </table>
+                <div class="ecms-dialog-table-wrap">
+                    <table class="table table-striped table-hover border border-purple ecms-data-table" role="grid" id="tbldatadialog"></table>
                 </div>
             </div>
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
+        </div>
+    </div>
 </div>

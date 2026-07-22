@@ -344,3 +344,54 @@ function BindData(StepCounter, JCOOR) {
         }
     });
 }
+
+// UI-only fix: DataTables with scrollX/scrollY keeps a hidden THEAD inside scrollBody.
+// Some project CSS makes that hidden THEAD visible as a blank blue row, so hide it after DataTables draws.
+(function () {
+    function fixBasicDetailDataTableHeader() {
+        var $wrapper = $('#tbldatatabledata_Fwd_wrapper');
+        if (!$wrapper.length) return;
+
+        var $bodyHead = $wrapper.find('div.dataTables_scrollBody table.dataTable thead');
+        $bodyHead.css({
+            'visibility': 'hidden',
+            'height': '0px',
+            'max-height': '0px',
+            'line-height': '0px',
+            'overflow': 'hidden'
+        });
+
+        $bodyHead.find('tr, th, td').css({
+            'height': '0px',
+            'max-height': '0px',
+            'min-height': '0px',
+            'line-height': '0px',
+            'padding-top': '0px',
+            'padding-bottom': '0px',
+            'border-top': '0px',
+            'border-bottom': '0px',
+            'font-size': '0px',
+            'color': 'transparent',
+            'background': 'transparent'
+        });
+
+        $bodyHead.find('.dataTables_sizing, div, span').css({
+            'height': '0px',
+            'max-height': '0px',
+            'line-height': '0px',
+            'overflow': 'hidden',
+            'font-size': '0px',
+            'padding': '0px',
+            'margin': '0px'
+        });
+    }
+
+    $(document).on('init.dt draw.dt column-sizing.dt', '#tbldatatabledata_Fwd', function () {
+        setTimeout(fixBasicDetailDataTableHeader, 0);
+        setTimeout(fixBasicDetailDataTableHeader, 100);
+    });
+
+    $(window).on('load resize', function () {
+        setTimeout(fixBasicDetailDataTableHeader, 150);
+    });
+})();

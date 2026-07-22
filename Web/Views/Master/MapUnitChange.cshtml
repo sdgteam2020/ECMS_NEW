@@ -2,68 +2,65 @@
     ViewData["Title"] = "List of Unit Move Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/mapunitchange.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
                         @if (ViewBag.RoleName == "admin")
                         {
-                            <div><a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > Unit Move Request</div>
+                            <div><a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> &gt; Unit Move Request</div>
                         }
                         else
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Task" class="mr-2">Task</a> > Unit Move Request</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Task" class="mr-2">Task</a> &gt; Unit Move Request</div>
                         }
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <span class="d-none" id="spnRoleName">@ViewBag.RoleName</span>
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Details of Unit Move
-                        <small class="text-muted"></small>
-                    </h3>
+
+<div class="containerMain mt-n10 ecms-mapunitchange-page">
+    <div class="ecms-mapunitchange-shell">
+        <span class="d-none" id="spnRoleName">@ViewBag.RoleName</span>
+
+        <div class="ecms-mapunitchange-header">
+            <div class="ecms-mapunitchange-title-wrap">
+                <span class="ecms-mapunitchange-title-icon"><i class="fa fa-exchange"></i></span>
+                <div>
+                    <h3>Details of Unit Move</h3>
+                    <p>Track unit move requests, remarks, status and approval actions</p>
                 </div>
+            </div>
+
+            <div class="ecms-mapunitchange-actions">
+                @if (ViewBag.RoleName == "admin")
+                {
+                    <span class="ecms-admin-pill"><i class="fa fa-user-shield"></i> Admin View</span>
+                }
+                else
+                {
+                    <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm ecms-add-btn">
+                        <i class="fa fa-plus mr-1 font-weight-700"></i>Add
+                    </button>
+                }
             </div>
         </div>
-        <div class="card-body card-body-min-height">
-            <div class="col-xl-12">
-                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                    <h6 class="mb-3 mb-md-0">
-                        
-                    </h6>
-                    <div>
-                        @if (ViewBag.RoleName == "admin")
-                        {
-                            <span>&nbsp;</span>
-                        }
-                        else
-                        {
-                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700"></i>Add</button>
-                        }
-                       
-                    </div>
-                </div>
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
-            </div>
+
+        <div class="ecms-mapunitchange-table-panel">
+            <table class="table table-striped table-hover border border-purple ecms-mapunitchange-table" role="grid" id="tbldata"></table>
         </div>
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/MapUnitChange.js"></script>
 <script asp-src-include="~/developerjs/UnitMoveHistory.js"></script>
-
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

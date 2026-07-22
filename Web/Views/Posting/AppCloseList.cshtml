@@ -1,49 +1,53 @@
-﻿<link asp-href-include="~/developercss/appcloselist.css" rel="stylesheet" />
-<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+﻿<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/appcloselist.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
                         <div>
-                            <a href="/Home/Index" class="mr-2">Home</a> >
-                            <a href="/Home/Dashboard" class="mr-2">Dashboard</a> >
-                            <a href="/Home/SubDashboard" class="mr - 2">I-Card Request</a> >@ViewBag.Title
+                            <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                            <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt;
+                            <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a> &gt; @ViewBag.Title
                         </div>
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <span class="d-none" id="spnapplyFor">@ViewBag.applyFor</span>
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        @ViewBag.Title
-                        <small class="text-muted"></small>
-                    </h3>
+
+<div class="containerMain mt-n10 ecms-appclose-page">
+    <div class="ecms-appclose-shell">
+        <div class="ecms-list-card">
+            <div class="ecms-list-header">
+                <span class="d-none" id="spnapplyFor">@ViewBag.applyFor</span>
+                <div class="ecms-list-title-wrap">
+                    <div class="ecms-list-icon">
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                    <div>
+                        <h3 class="ecms-list-title">@ViewBag.Title</h3>
+                        <p class="ecms-list-subtitle">Closed application records and authorization summary</p>
+                    </div>
                 </div>
+                <div class="ecms-list-count d-none">
+                    Total: <span id="lblTotal">0</span>
+                </div>
+            </div>
+
+            <div class="ecms-list-body card-body-min-height">
+                <table id="tbldata" class="table table-striped table-hover border border-purple ecms-appclose-table">
+                </table>
             </div>
         </div>
-        <div class="card-body card-body-min-height">
-            <div class="row">
-                <div class="col-xl-12">
-                    <table id="tbldata" class="table table-striped table-hover border border-purple">
-                    </table>
-                </div>
-            </div>
-        </div><!-- Row End -->
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
     <script asp-src-include="~/developerjs/appcloselist.js"></script>
 }

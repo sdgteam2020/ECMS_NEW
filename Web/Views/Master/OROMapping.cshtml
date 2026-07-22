@@ -13,123 +13,174 @@
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > ORO Mapping
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
+                        <span>&gt;</span>
+                        <span>ORO Mapping Details</span>
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <span id="SpnTxnId" class="d-none">0</span> 
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        ORO Mapping  Details
-                        <small class="text-muted"></small>
-                    </h3>
+
+<div class="containerMain ecms-oro-page">
+    <div class="ecms-oro-shell">
+        <div class="ecms-oro-titlebar">
+            <div class="ecms-oro-title-wrap">
+                <span class="ecms-oro-title-icon"><i class="fa fa-link"></i></span>
+                <div>
+                    <h3>ORO Mapping Details</h3>
+                    <p>Create, update and manage officer record office mapping details</p>
                 </div>
             </div>
+            <span class="ecms-oro-pill"><i class="fa fa-database"></i> Master</span>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                        <h6 class="mb-3 mb-md-0">
-                            &nbsp;
-                        </h6>
-                        <div>
-                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-md"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add ORO Mapping</button>
-                             
 
-                        </div>
-                    </div>
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                    </table>
+        <div class="ecms-oro-toolbar-card">
+            <div class="ecms-oro-toolbar-text">
+                <span class="ecms-oro-toolbar-icon"><i class="fa fa-list"></i></span>
+                <div>
+                    <h5>ORO Mapping Records</h5>
+                    <p>View record office mappings, arms/service links, ranks and linked domain personnel details</p>
                 </div>
+            </div>
+
+            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm ecms-oro-add-btn">
+                <i class="fa fa-plus"></i>
+                Add ORO Mapping
+            </button>
+        </div>
+
+        <div class="ecms-oro-table-card">
+            <div class="ecms-oro-table-title">
+                <span><i class="fa fa-table"></i> ORO Mapping Records</span>
+            </div>
+
+            <div class="ecms-oro-table-wrap">
+                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
+                </table>
             </div>
         </div>
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/OROMapping.js"></script>
 <script asp-src-include="~/select2/js/select2.min.js"></script>
 
-
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 
-<div class="modal fade" id="AddNewOROMapping" tabindex="-1" aria-labelledby="exampleModalLabel" >
+<div class="modal fade ecms-oro-modal" id="AddNewOROMapping" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Enter Officer Record Office Mapping Details</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <form action="" id="SaveOROMapping" name="SaveOROMapping" method="post">
-                        <div class="row">
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Record Office<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlRO" id="ddlRO" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Record Office is required." data-val-regex-pattern="^[\d]+$">
-                                        <option value="0">Select Record Office</option>
-                                    </select>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlRO" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Select Arms</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" multiple="" placeholder="Select Arms"   name="ddlArmedIdList" id="ddlArmedIdList" data-val="true" data-val-regex="This special chars and space not allowed for security reasons.">
-                                    </select>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlArmedIdList" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Select Rank</label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlRank" id="ddlRank" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\d]+$">
-                                        <option value="0">Select Rank</option>
-                                    </select>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlRank" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">SUS No</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control alpha-num-only" placeholder="Type SUS No" id="txtUnitName" name="txtUnitName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w ]*$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Linked Domain ID & Pers Details</label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlTDMId" id="ddlTDMId" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\d]+$">
-                                        <option value="0">Select Domain Id</option>
-                                    </select>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlTDMId" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnOROMappingAdd" />
-                                <button type="button" id="btnOROMappingReset" class="btn btn-outline-danger">Reset</button>
-                            </div>
-                            <div class="col-sm-12" id="msg">
-                            </div>
-                        </div>
-                    </form>
-
-                    <div class="col-sm-12" id="msg">
+                <div class="ecms-oro-modal-title-wrap">
+                    <span class="ecms-oro-modal-icon"><i class="fa fa-link"></i></span>
+                    <div>
+                        <h5 class="modal-title" id="exampleModalLabel">Enter Officer Record Office Mapping Details</h5>
+                        <small>Fill record office, arms/service, rank, SUS no and linked domain details</small>
                     </div>
                 </div>
+
+                <button type="button" class="close ecms-oro-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" title="Close">
+                    <span aria-hidden="true"><i class="fa fa-times"></i></span>
+                </button>
             </div>
 
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
+            <div class="modal-body">
+                <form action="" id="SaveOROMapping" name="SaveOROMapping" method="post">
+                    <div class="ecms-oro-modal-grid">
+                        <div class="ecms-oro-modal-field">
+                            <label class="ecms-oro-modal-label" for="ddlRO">
+                                <i class="fa fa-address-book"></i>
+                                Record Office
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+                            <select class="form-select"
+                                    name="ddlRO"
+                                    id="ddlRO"
+                                    data-val="true"
+                                    data-val-regex="This special chars not allowed for security reasons."
+                                    data-val-required="Record Office is required."
+                                    data-val-regex-pattern="^[\d]+$">
+                                <option value="0">Select Record Office</option>
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlRO" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-oro-modal-field">
+                            <label class="ecms-oro-modal-label" for="ddlRank">
+                                <i class="fa fa-star"></i>
+                                Select Rank
+                            </label>
+                            <select class="form-select"
+                                    name="ddlRank"
+                                    id="ddlRank"
+                                    data-val="true"
+                                    data-val-regex="This special chars not allowed for security reasons."
+                                    data-val-regex-pattern="^[\d]+$">
+                                <option value="0">Select Rank</option>
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlRank" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-oro-modal-field ecms-oro-modal-field-wide">
+                            <label class="ecms-oro-modal-label" for="ddlArmedIdList">
+                                <i class="fa fa-shield"></i>
+                                Select Arms
+                            </label>
+                            <select class="form-control"
+                                    multiple
+                                    placeholder="Select Arms"
+                                    name="ddlArmedIdList"
+                                    id="ddlArmedIdList"
+                                    data-val="true"
+                                    data-val-regex="This special chars and space not allowed for security reasons.">
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlArmedIdList" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-oro-modal-field">
+                            <label class="ecms-oro-modal-label" for="txtUnitName">
+                                <i class="fa fa-search"></i>
+                                SUS No
+                            </label>
+                            <input class="form-control alpha-num-only"
+                                   placeholder="Type SUS No"
+                                   id="txtUnitName"
+                                   name="txtUnitName"
+                                   data-val="true"
+                                   data-val-regex="This special chars not allowed for security reasons."
+                                   data-val-regex-pattern="^[\w ]*$" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-oro-modal-field">
+                            <label class="ecms-oro-modal-label" for="ddlTDMId">
+                                <i class="fa fa-user"></i>
+                                Linked Domain ID & Pers Details
+                            </label>
+                            <select class="form-select"
+                                    name="ddlTDMId"
+                                    id="ddlTDMId"
+                                    data-val="true"
+                                    data-val-regex="This special chars not allowed for security reasons."
+                                    data-val-regex-pattern="^[\d]+$">
+                                <option value="0">Select Domain Id</option>
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlTDMId" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-oro-modal-actions">
+                            <input type="button" class="btn btn-outline-primary" value="Save" id="btnOROMappingAdd" />
+                            <button type="button" id="btnOROMappingReset" class="btn btn-outline-danger">Reset</button>
+                        </div>
+
+                        <div class="ecms-oro-message" id="msg"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

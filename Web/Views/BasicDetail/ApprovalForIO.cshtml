@@ -6,32 +6,31 @@
 
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/approvalforio.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
                         <div>
                             <span id="Isspnjcoor" class="d-none">@ViewBag.jcoor</span>
                             @if (Convert.ToString(ViewBag.jcoor) == "1")
                             {
                                 <span>
-                                    <a href="/Home/Index" class="mr-2">Home</a> >
-                                    <a href="/Home/Task" class="mr-2">Task</a> >
-                                    <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="mr-2">I-Card Status</a>  >
+                                    <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                                    <a href="/Home/Task" class="mr-2">Task</a> &gt;
+                                    <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="mr-2">I-Card Status</a> &gt;
                                     @ViewBag.Title
                                 </span>
-
                             }
                             else
                             {
                                 <span>
-                                    <a href="/Home/Index" class="mr-2">Home</a> >
-                                    <a href="/Home/Task" class="mr-2">Task</a> >
-                                    <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="mr-2">I-Card Status</a>  >
+                                    <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                                    <a href="/Home/Task" class="mr-2">Task</a> &gt;
+                                    <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="mr-2">I-Card Status</a> &gt;
                                     @ViewBag.Title
                                 </span>
                             }
@@ -42,53 +41,43 @@
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <span class="d-none" id="spnType">@ViewBag.Type</span>
-            <span class="d-none" id="spnStepCounter">@ViewBag.StepCounter</span>
-            <span class="d-none" id="spnJCOOR">@ViewBag.jcoor</span>
-            <span class="d-none" id="spnClaim">@((claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")) ? "Internal Wk Distr" : "")</span>
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        @ViewBag.Title
-                        <small class="text-muted"></small>
-                    </h3>
+
+<div class="containerMain mt-n10 ecms-approval-page">
+    <div class="ecms-approval-shell">
+        <div class="ecms-approval-header">
+            <div class="ecms-approval-title-wrap">
+                <span class="ecms-approval-title-icon"><i class="fa fa-check-square"></i></span>
+                <div>
+                    <h3>@ViewBag.Title</h3>
+                    <p>Review, verify and forward I-Card approval requests</p>
                 </div>
             </div>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row">
-                <div class="col-xl-12">
-                    @if (ViewBag.StepCounter == (int)ApplicationStepEnum.ApplicationStatusAtADC || ViewBag.StepCounter == (int)ApplicationStepEnum.Exported)
-                    {
-                        <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                            <h6 class="mb-3 mb-md-0">
-                                &nbsp;
-                            </h6>
-                            <div class="d-flex">
-                                @if (ViewBag.StepCounter == (int)ApplicationStepEnum.ApplicationStatusAtADC && claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))
-                                {
-                                    <button type="button" id="btnDataExportsEncry" class="btn btn-warning font-weight-600 btn-sm mr-2">Data Exports with Encry</button>
-                                    <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm">Data Exports without Encry</button>
-                                }
-                            </div>
 
-                        </div>
-                    }
-                    <div class="d-flex justify-content-end">
-                        
-                        @if (ViewBag.StepCounter == (int)ApplicationStepEnum.PendingApplicationVerifierLevel && ViewBag.Type == (int)ForwardStatusEnum.Pending && claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
-                        {
-                            <button type="button" id="btnInternalFwd" class="btn btn-warning font-weight-600 btn-sm mb-2 ml-2">Forward</button>
-                        }
-                    </div>
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatatabledata_Fwd">
-                    </table>
-                </div>
+        <span class="d-none" id="spnType">@ViewBag.Type</span>
+        <span class="d-none" id="spnStepCounter">@ViewBag.StepCounter</span>
+        <span class="d-none" id="spnJCOOR">@ViewBag.jcoor</span>
+        <span class="d-none" id="spnClaim">@((claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")) ? "Internal Wk Distr" : "")</span>
+
+        @if (ViewBag.StepCounter == (int)ApplicationStepEnum.ApplicationStatusAtADC || ViewBag.StepCounter == (int)ApplicationStepEnum.Exported || (ViewBag.StepCounter == (int)ApplicationStepEnum.PendingApplicationVerifierLevel && ViewBag.Type == (int)ForwardStatusEnum.Pending && claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr")))
+        {
+            <div class="ecms-approval-actions">
+                @if (ViewBag.StepCounter == (int)ApplicationStepEnum.ApplicationStatusAtADC && claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))
+                {
+                    <button type="button" id="btnDataExportsEncry" class="btn btn-warning font-weight-600 btn-sm mr-2"><i class="fa fa-lock mr-1"></i> Data Exports with Encry</button>
+                    <button type="button" id="btnDataExports" class="btn btn-warning font-weight-600 btn-sm"><i class="fa fa-unlock-alt mr-1"></i> Data Exports without Encry</button>
+                }
+
+                @if (ViewBag.StepCounter == (int)ApplicationStepEnum.PendingApplicationVerifierLevel && ViewBag.Type == (int)ForwardStatusEnum.Pending && claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
+                {
+                    <button type="button" id="btnInternalFwd" class="btn btn-warning font-weight-600 btn-sm mb-2 ml-2"><i class="fa fa-share mr-1"></i> Forward</button>
+                }
             </div>
-        </div><!-- Row End -->
+        }
+
+        <div class="ecms-approval-table-panel">
+            <table class="table table-striped table-hover border border-purple ecms-approval-table" role="grid" id="tbldatatabledata_Fwd"></table>
+        </div>
     </div>
 </div>
 

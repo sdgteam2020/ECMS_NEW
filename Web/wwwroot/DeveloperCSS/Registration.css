@@ -8,7 +8,7 @@
 }
 /* overall popup */
 .bootstrap-datetimepicker-widget {
-/*    width: 440px !important;*/
+    /*    width: 440px !important;*/
     font-size: 13px;
 }
 
@@ -30,4 +30,579 @@
     padding: 8px 10px;
     /*border-top: 1px solid #ddd;*/
     text-align: right;
+}
+
+
+/* =====================================================
+   ECMS REGISTRATION PAGE MODERN UI
+   UI-only changes. Existing IDs, asp-for bindings, form posts,
+   validation and JavaScript functionality remain unchanged.
+===================================================== */
+
+body.ecms-registration-body,
+body:has(.ecms-registration-page) {
+    min-height: 100vh !important;
+    background: linear-gradient(90deg, rgba(4, 20, 58, 0.92), rgba(18, 74, 164, 0.78)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover fixed no-repeat !important;
+    overflow-x: hidden !important;
+    padding-bottom: 66px !important;
+}
+
+.ecms-registration-page {
+    max-width: 1280px !important;
+    margin: 26px auto 78px auto !important;
+    padding: 0 14px !important;
+    color: #061b44 !important;
+}
+
+.ecms-registration-card {
+    border: 1px solid rgba(255, 255, 255, 0.78) !important;
+    border-radius: 18px !important;
+    background: linear-gradient(135deg, rgba(245, 250, 255, 0.96), rgba(215, 231, 249, 0.94)) !important;
+    box-shadow: 0 24px 52px rgba(0, 0, 0, 0.26) !important;
+    overflow: visible !important;
+    padding: 12px !important;
+}
+
+.ecms-registration-main-header {
+    border: 1px solid rgba(255, 255, 255, 0.82) !important;
+    border-radius: 14px !important;
+    background: radial-gradient(circle at left top, rgba(255,255,255,.92), rgba(224,237,251,.92)), linear-gradient(135deg, rgba(255,255,255,.96), rgba(226,239,253,.92)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 10px 24px rgba(27,71,140,.12) !important;
+    padding: 14px 18px !important;
+    margin-bottom: 12px !important;
+}
+
+    .ecms-registration-main-header h3 {
+        margin: 0 !important;
+        color: #0a2460 !important;
+        font-size: 24px !important;
+        font-weight: 900 !important;
+        letter-spacing: .2px !important;
+    }
+
+        .ecms-registration-main-header h3::before {
+            content: "\f2bb";
+            font-family: "Font Awesome 5 Free", "FontAwesome";
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            margin-right: 12px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4b7bff, #295bdd);
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(52, 96, 224, .28);
+            vertical-align: middle;
+        }
+
+    .ecms-registration-main-header small,
+    .ecms-registration-main-header #icarddetails {
+        color: #334155 !important;
+        font-weight: 800 !important;
+    }
+
+.ecms-registration-card > .card-body {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.ecms-registration-page .row-deck,
+.ecms-registration-page .card1 {
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+    .ecms-registration-page .card1 > .row {
+        margin: 0 !important;
+    }
+
+/* Section panels */
+.ecms-reg-section {
+    border: 1px solid rgba(255, 255, 255, 0.82) !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(226,239,253,.86)) !important;
+    box-shadow: 0 8px 22px rgba(11, 42, 96, .12) !important;
+    overflow: hidden !important;
+    margin: 10px 0 14px 0 !important;
+}
+
+.ecms-requisition-section {
+    min-height: auto !important;
+}
+
+.ecms-applicant-section {
+    min-height: auto !important;
+}
+
+.ecms-registration-page .seven {
+    margin: 0 !important;
+}
+
+    .ecms-registration-page .seven h1 {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 40px !important;
+        margin: 0 !important;
+        padding: 10px 18px !important;
+        border-radius: 12px 12px 0 0 !important;
+        background: linear-gradient(90deg, #27499d, #3f7cff) !important;
+        color: #fff !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
+        letter-spacing: .2px !important;
+        text-transform: none !important;
+        box-shadow: 0 12px 25px rgba(41, 91, 221, .20) !important;
+    }
+
+.ecms-requisition-section .seven h1::before {
+    content: "\f15c";
+    font-family: "Font Awesome 5 Free", "FontAwesome";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+.ecms-applicant-section .seven h1::before {
+    content: "\f007";
+    font-family: "Font Awesome 5 Free", "FontAwesome";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+.ecms-registration-page .mt-2.ml-4 {
+    margin: 0 !important;
+    padding: 18px 20px 12px 20px !important;
+}
+
+.ecms-registration-page .cardbg .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Requisition detail cards */
+.ecms-requisition-section .form-group {
+    min-height: 54px !important;
+    margin-bottom: 10px !important;
+    padding: 10px 12px !important;
+    border: 1px solid rgba(181, 202, 231, .72) !important;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,.96), rgba(239,246,255,.92)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.78) !important;
+}
+
+.ecms-requisition-section .labelprofile {
+    color: #061b44 !important;
+    font-weight: 900 !important;
+    font-size: 13px !important;
+}
+
+.ecms-requisition-section label[id] {
+    color: #123067 !important;
+    font-weight: 700 !important;
+}
+
+/* Applicant form */
+.ecms-registration-form-body {
+    padding: 20px 18px 18px 18px !important;
+}
+
+    .ecms-registration-form-body > .row,
+    .ecms-registration-form-body .row {
+        row-gap: 8px !important;
+    }
+
+.ecms-registration-page .form-group.row {
+    align-items: center !important;
+}
+
+.ecms-registration-page .labelprofile,
+.ecms-registration-page .form-label {
+    color: #061b44 !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    line-height: 1.35 !important;
+}
+
+.ecms-registration-page .required .form-label::after,
+.ecms-registration-page label.form-label::after {
+    color: #e11d48 !important;
+    font-weight: 900 !important;
+}
+
+.ecms-registration-page .form-control,
+.ecms-registration-page .form-select,
+.ecms-registration-page select,
+.ecms-registration-page textarea {
+    min-height: 38px !important;
+    border: 1px solid rgba(165, 187, 219, .95) !important;
+    border-radius: 8px !important;
+    background-color: rgba(255,255,255,.96) !important;
+    color: #0b234f !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    box-shadow: inset 0 1px 2px rgba(6,27,68,.04) !important;
+    transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease !important;
+}
+
+    .ecms-registration-page .form-control:focus,
+    .ecms-registration-page .form-select:focus,
+    .ecms-registration-page select:focus,
+    .ecms-registration-page textarea:focus {
+        border-color: #3f7cff !important;
+        box-shadow: 0 0 0 3px rgba(63, 124, 255, .16) !important;
+        outline: none !important;
+    }
+
+    .ecms-registration-page .form-control[readonly],
+    .ecms-registration-page .form-control:disabled,
+    .ecms-registration-page .form-select:disabled,
+    .ecms-registration-page select:disabled,
+    .ecms-registration-page textarea[readonly] {
+        background: linear-gradient(135deg, #eef3fa, #dce5f0) !important;
+        color: #48566d !important;
+        opacity: 1 !important;
+    }
+
+.ecms-registration-page textarea {
+    min-height: 112px !important;
+    resize: vertical !important;
+}
+
+.ecms-registration-page .text-danger {
+    display: block !important;
+    margin-top: 3px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+}
+
+/* Fetch button beside Service No */
+.ecms-registration-page #btngetdata {
+    min-height: 38px !important;
+    padding: 8px 16px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: linear-gradient(135deg, #3269f5, #2350d8) !important;
+    color: #fff !important;
+    font-weight: 900 !important;
+    box-shadow: 0 10px 22px rgba(35, 80, 216, .24) !important;
+}
+
+/* Radio buttons */
+.ecms-registration-page .submitTypeRadio {
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 5px 0 0 !important;
+    vertical-align: middle !important;
+    accent-color: #315be8 !important;
+    cursor: pointer !important;
+}
+
+    .ecms-registration-page .submitTypeRadio + label {
+        margin-right: 14px !important;
+        color: #061b44 !important;
+        font-weight: 800 !important;
+        vertical-align: middle !important;
+    }
+
+/* Remarks select2 */
+.ecms-registration-page .Remarks {
+    margin-top: 8px !important;
+}
+
+.ecms-registration-page .select2-container {
+    width: 100% !important;
+}
+
+.ecms-registration-page .select2-container--default .select2-selection--single,
+.ecms-registration-page .select2-container--default .select2-selection--multiple {
+    min-height: 38px !important;
+    border: 1px solid rgba(165, 187, 219, .95) !important;
+    border-radius: 8px !important;
+    background-color: rgba(255,255,255,.96) !important;
+    box-shadow: none !important;
+}
+
+.ecms-registration-page .select2-container--default.select2-container--focus .select2-selection--single,
+.ecms-registration-page .select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: #3f7cff !important;
+    box-shadow: 0 0 0 3px rgba(63, 124, 255, .16) !important;
+}
+
+/* Note */
+.ecms-registration-note {
+    margin: 12px 0 6px 0 !important;
+    padding: 12px 14px !important;
+    border: 1px dashed rgba(54, 100, 205, .32) !important;
+    border-radius: 12px !important;
+    background: rgba(239, 246, 255, .85) !important;
+}
+
+    .ecms-registration-note label {
+        margin: 0 !important;
+        color: #071d49 !important;
+        font-size: 13px !important;
+    }
+
+/* Footer buttons */
+.ecms-registration-actions {
+    margin: 14px 0 8px 0 !important;
+}
+
+.ecms-registration-page #btnclear,
+.ecms-registration-page #btnsubmit {
+    min-width: 110px !important;
+    min-height: 40px !important;
+    padding: 9px 22px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    color: #fff !important;
+    font-weight: 900 !important;
+    box-shadow: 0 12px 22px rgba(18, 54, 128, .18) !important;
+}
+
+.ecms-registration-page #btnclear {
+    background: linear-gradient(135deg, #64748b, #334155) !important;
+}
+
+.ecms-registration-page #btnsubmit.btn-primary,
+.ecms-registration-page #btnsubmit.btn-success {
+    background: linear-gradient(135deg, #2fb56f, #15914d) !important;
+}
+
+.ecms-registration-page #btnsubmit.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #c62828) !important;
+}
+
+.ecms-registration-page #btnsubmit:disabled {
+    background: linear-gradient(135deg, #93a4c5, #64748b) !important;
+    cursor: not-allowed !important;
+    opacity: .82 !important;
+}
+
+/* Date picker UI */
+.bootstrap-datetimepicker-widget {
+    border: 1px solid rgba(148, 163, 184, .35) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 18px 38px rgba(15, 23, 42, .22) !important;
+    overflow: hidden !important;
+}
+
+.dtp-okcancel {
+    padding: 8px 10px !important;
+    text-align: right !important;
+    background: #f8fbff !important;
+    border-top: 1px solid #e2e8f0 !important;
+}
+
+/* Keep footer from covering the bottom buttons on smaller screens */
+@media (max-height: 820px) {
+    .ecms-registration-page {
+        margin-top: 18px !important;
+        margin-bottom: 90px !important;
+    }
+}
+
+@media (max-width: 1200px) {
+    .ecms-registration-page {
+        max-width: 96vw !important;
+    }
+
+    .ecms-registration-main-header h3 {
+        font-size: 20px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .ecms-registration-page .col-sm-6,
+    .ecms-registration-page .col-sm-4,
+    .ecms-registration-page .col-sm-3,
+    .ecms-registration-page .col-sm-10,
+    .ecms-registration-page .col-sm-2 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    .ecms-registration-page .form-group.row {
+        align-items: stretch !important;
+        row-gap: 6px !important;
+    }
+
+    .ecms-registration-page .ecms-registration-main-header h3::before {
+        display: none !important;
+    }
+}
+
+
+/* =====================================================
+   FINAL FIX - Registration: remove PAGE scrollbar
+   The browser/page scrollbar is removed. If content is taller,
+   only the registration card body scrolls internally, and that
+   internal scrollbar is hidden visually.
+   UI only - no functionality changed.
+===================================================== */
+
+html:has(.ecms-registration-page),
+body.ecms-registration-body,
+body:has(.ecms-registration-page) {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    padding-bottom: 0 !important;
+}
+
+    body:has(.ecms-registration-page) .content-wrapper,
+    body:has(.ecms-registration-page) .main-panel,
+    body:has(.ecms-registration-page) main {
+        overflow: hidden !important;
+    }
+
+/* Keep the full registration page between breadcrumb row and fixed footer */
+.ecms-registration-page {
+    height: calc(100vh - 237px) !important;
+    max-height: calc(100vh - 237px) !important;
+    min-height: 560px !important;
+    margin: 14px auto 14px auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Main white/glass card should not create document scroll */
+.ecms-registration-card {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Title stays fixed inside the card */
+.ecms-registration-main-header {
+    flex: 0 0 auto !important;
+    padding: 10px 14px !important;
+    margin-bottom: 8px !important;
+}
+
+    .ecms-registration-main-header h3 {
+        font-size: 22px !important;
+        line-height: 1.15 !important;
+    }
+
+        .ecms-registration-main-header h3::before {
+            width: 38px !important;
+            height: 38px !important;
+        }
+
+/* This is the only scrollable area, but scrollbar is hidden */
+.ecms-registration-card > .card-body.card-body-min-height,
+.ecms-registration-card > .card-body {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 0 4px 18px 4px !important;
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* Old Edge/IE */
+}
+
+    .ecms-registration-card > .card-body.card-body-min-height::-webkit-scrollbar,
+    .ecms-registration-card > .card-body::-webkit-scrollbar {
+        width: 0 !important;
+        height: 0 !important;
+        display: none !important;
+    }
+
+/* Compact the two sections so most of the form is visible without page scroll */
+.ecms-reg-section {
+    margin: 6px 0 10px 0 !important;
+}
+
+.ecms-registration-page .seven h1 {
+    min-height: 32px !important;
+    padding: 7px 14px !important;
+    font-size: 15px !important;
+}
+
+.ecms-registration-page .mt-2.ml-4 {
+    padding: 12px 14px 8px 14px !important;
+}
+
+.ecms-requisition-section .form-group {
+    min-height: 44px !important;
+    margin-bottom: 7px !important;
+    padding: 7px 10px !important;
+}
+
+.ecms-registration-form-body {
+    padding: 12px 16px 12px 16px !important;
+}
+
+.ecms-registration-page .form-group.row {
+    margin-bottom: 7px !important;
+}
+
+.ecms-registration-page .form-control,
+.ecms-registration-page .form-select,
+.ecms-registration-page select,
+.ecms-registration-page textarea {
+    min-height: 34px !important;
+    height: auto !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+}
+
+.ecms-registration-page textarea {
+    min-height: 86px !important;
+}
+
+.ecms-registration-note {
+    margin: 8px 0 6px 0 !important;
+    padding: 9px 12px !important;
+}
+
+.ecms-registration-actions {
+    margin: 10px 0 4px 0 !important;
+}
+
+.ecms-registration-page #btnclear,
+.ecms-registration-page #btnsubmit {
+    min-height: 36px !important;
+    padding: 7px 20px !important;
+}
+
+/* On smaller height screens, keep browser scrollbar hidden and allow hidden inner-scroll */
+@media (max-height: 850px) {
+    .ecms-registration-page {
+        height: calc(100vh - 302px) !important;
+        max-height: calc(100vh - 302px) !important;
+        min-height: 520px !important;
+        margin-top: 10px !important;
+        margin-bottom: 44px !important;
+    }
+
+    .ecms-registration-main-header {
+        padding: 8px 12px !important;
+    }
+
+        .ecms-registration-main-header h3 {
+            font-size: 20px !important;
+        }
+
+    .ecms-requisition-section .form-group {
+        min-height: 40px !important;
+        padding: 6px 10px !important;
+    }
+
+    .ecms-registration-form-body {
+        padding: 10px 14px !important;
+    }
+
+    .ecms-registration-page textarea {
+        min-height: 76px !important;
+    }
 }

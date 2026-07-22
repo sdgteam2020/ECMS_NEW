@@ -2,47 +2,43 @@
     ViewData["Title"] = "Registered User";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link asp-href-include="~/developercss/registeruser.css" rel="stylesheet" />
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/registeruser.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > <a href="/Home/DashboardUserMgt" class="mr-2"> User Mgt</a> >Registered User
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> >
+                        <a href="/Home/Dashboard" class="mr-2">Dashboard</a> >
+                        <a href="/Home/DashboardUserMgt" class="mr-2">User Mgt</a> >
+                        Registered User
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Details of Registered Users
-                        <small class="text-muted"></small>
-                    </h3>
-                </div>
+
+<div class="containerMain ecms-register-user-page">
+    <div class="card mb-3 ecms-register-shell">
+        <div class="card-header ecms-register-heading">
+            <div class="ecms-register-heading-icon">
+                <i class="fa fa-users"></i>
+            </div>
+            <div>
+                <h3>Details of Registered Users</h3>
+                <p>Registered domain users and mapped appointment details</p>
             </div>
         </div>
-        <div class="card-body card-body-min-height">
-            <div class="row">
-                <div class="col-xl-6">
-                </div>
-                <div class="col-xl-6">
-                    <div class="d-flex d-md-flex justify-content-md-between align-items-md-center">
-                        <h6 class="mb-3 mb-md-0">
-                        </h6>
-                    </div>
-                </div>
-                <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldata">
+
+        <div class="card-body card-body-min-height ecms-register-body">
+            <div class="ecms-register-table-wrap">
+                <table class="table border border-purple table-striped no-footer table-hover ecms-register-table" role="grid" id="tbldata">
                     <thead>
                         <tr>
                             <th class="nowrap">S No</th>

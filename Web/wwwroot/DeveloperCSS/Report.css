@@ -1,33 +1,683 @@
-﻿.clickable {
-    height: 190px;
-    width: 190px;
-    display: block;
-    margin-bottom: 25px;
+﻿/* =====================================================
+   ECMS Report & Returns (Cards) Modern UI
+   Only page UI changes. Header/footer/layout untouched.
+===================================================== */
+
+:root {
+    --ecms-card-report-blue-1: #102f73;
+    --ecms-card-report-blue-2: #2f7dff;
+    --ecms-card-report-cyan: #55d7ff;
+    --ecms-card-report-ink: #071b44;
+    --ecms-card-report-muted: #5d739c;
+    --ecms-card-report-panel: rgba(232, 244, 255, 0.88);
+    --ecms-card-report-white: rgba(255,255,255,0.95);
 }
 
-.p-4 {
-    padding: 1.5rem !important;
-    padding-bottom: 4.5rem !important;
+html:has(.ecms-card-report-page),
+body:has(.ecms-card-report-page) {
+    overflow-y: hidden !important;
+}
+
+.ecms-card-report-page {
+    position: relative;
+    min-height: calc(100vh - 255px);
+    height: calc(100vh - 255px);
+    padding: 12px 18px 46px;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(5, 22, 62, 0.86), rgba(20, 70, 154, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;
+}
+
+    .ecms-card-report-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 18% 20%, rgba(89, 200, 255, 0.14), transparent 26%), radial-gradient(circle at 84% 72%, rgba(59, 130, 246, 0.18), transparent 30%);
+    }
+
+.ecms-card-report-container {
+    position: relative;
+    z-index: 1;
+    width: min(1500px, 98vw) !important;
+    max-width: 1500px !important;
+    margin: 0 auto !important;
+}
+
+.ecms-card-report-shell {
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 12px !important;
+    border: 1px solid rgba(255,255,255,0.70) !important;
+    border-radius: 22px !important;
+    background: var(--ecms-card-report-panel) !important;
+    box-shadow: 0 22px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
+    overflow: visible !important;
+}
+
+.ecms-report-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px 12px;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,255,255,0.36));
+    border: 1px solid rgba(255,255,255,0.62);
+}
+
+.ecms-report-head-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1f7cff, #004bd6);
+    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.32);
+    font-size: 21px;
+}
+
+.ecms-report-head h2 {
+    margin: 0;
+    color: var(--ecms-card-report-ink);
+    font-size: 21px;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.ecms-report-head p {
+    margin: 4px 0 0;
+    color: var(--ecms-card-report-muted);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+/* Filter panel */
+.ecms-filter-panel {
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(242, 248, 255, 0.70));
+    border: 1px solid rgba(255,255,255,0.72);
+    box-shadow: 0 12px 28px rgba(0, 26, 88, 0.13);
+}
+
+    .ecms-filter-panel .SearchTab {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+.ecms-unit-type-row {
+    align-items: center;
+    margin: 0 0 8px !important;
+}
+
+.ecms-filter-panel label,
+.ecms-filter-panel .col-form-label {
+    color: #10254f !important;
+    font-size: 12.5px !important;
+    font-weight: 900 !important;
+    margin-bottom: 4px !important;
+}
+
+.ecms-radio-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    .ecms-radio-group .form-check {
+        margin: 0 !important;
+        padding: 7px 12px 7px 34px !important;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.74);
+        border: 1px solid rgba(75, 125, 205, 0.22);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.82);
+    }
+
+.ecms-card-report-page input[type="radio"],
+.ecms-card-report-page .form-check-input {
+    width: 16px !important;
+    height: 16px !important;
+    accent-color: #1f74ff !important;
+    cursor: pointer;
+}
+
+.ecms-card-report-page .form-check-label {
+    color: #153263 !important;
+    font-size: 12.5px !important;
+    font-weight: 900 !important;
+    cursor: pointer;
+}
+
+.ecms-filter-grid {
+    row-gap: 8px;
+}
+
+    .ecms-filter-grid > [class*="col-"] {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+    }
+
+.ecms-card-report-page .form-select,
+.ecms-card-report-page .form-control {
+    height: 38px !important;
+    min-height: 38px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(93, 125, 175, 0.34) !important;
+    background-color: rgba(255,255,255,0.92) !important;
+    color: #10254f !important;
+    font-size: 12.5px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 8px 18px rgba(0, 30, 80, 0.06), inset 0 1px 0 rgba(255,255,255,0.88) !important;
+}
+
+    .ecms-card-report-page .form-select:focus,
+    .ecms-card-report-page .form-control:focus {
+        border-color: #227dff !important;
+        box-shadow: 0 0 0 4px rgba(31, 124, 255, 0.16) !important;
+    }
+
+/* Report cards */
+.ecms-card-report-grid {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 14px 14px 18px;
+}
+
+.ecms-card-report-item {
+    flex: 0 0 185px;
+    width: 185px;
+}
+
+.ecms-card-report-page .clickable {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 !important;
+    text-decoration: none !important;
+}
+
+.ecms-card-report-page .counter,
+.ecms-card-report-page .ecms-report-counter {
+    width: 100% !important;
+    height: 178px !important;
+    min-height: 178px !important;
+    padding: 20px 12px 14px !important;
+    border-radius: 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(244, 249, 255,0.92)) !important;
+    border: 1px solid rgba(65, 136, 255, 0.50) !important;
+    box-shadow: 0 18px 38px rgba(0, 32, 85, 0.16), inset 0 1px 0 rgba(255,255,255,0.92) !important;
+    color: #0b2360 !important;
+    text-align: center !important;
+    cursor: pointer;
+    transition: all 0.22s ease !important;
+}
+
+    .ecms-card-report-page .counter:hover {
+        transform: translateY(-4px) !important;
+        border-color: rgba(31, 124, 255, 0.82) !important;
+        box-shadow: 0 24px 48px rgba(0, 45, 120, 0.24), 0 0 0 5px rgba(31, 124, 255, 0.10), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    }
+
+.ecms-card-report-page .counter-icon {
+    width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    border-radius: 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #357cff, #1f4fd8) !important;
+    box-shadow: 0 14px 28px rgba(31, 99, 242, 0.32) !important;
+    margin: 0 !important;
+}
+
+    .ecms-card-report-page .counter-icon i {
+        color: #ffffff !important;
+        font-size: 24px !important;
+        line-height: 1 !important;
+    }
+
+.ecms-card-report-page #btnLostCase .counter-icon {
+    background: linear-gradient(135deg, #36b4ff, #0c6fd8) !important;
+}
+
+.ecms-card-report-page #btnMonthlyProcessed .counter-icon {
+    background: linear-gradient(135deg, #14b8a6, #0f766e) !important;
+}
+
+.ecms-card-report-page #btnNonFunctionalCard .counter-icon {
+    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+}
+
+.ecms-card-report-page .counter-value {
+    display: block !important;
+    color: #071b44 !important;
+    font-size: 28px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    margin: 3px 0 0 !important;
+}
+
+.ecms-card-report-page .counter h3 {
+    width: 100% !important;
+    margin: auto 0 0 !important;
+    color: #0d5be1 !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    line-height: 1.18 !important;
+    letter-spacing: 0.1px !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+}
+
+/* Modal + DataTable */
+.ecms-card-report-modal .modal-dialog {
+    max-width: min(1320px, 96vw) !important;
+}
+
+.ecms-card-report-modal .modal-content {
+    border: 1px solid rgba(255,255,255,0.72) !important;
+    border-radius: 18px !important;
+    overflow: hidden;
+    box-shadow: 0 30px 70px rgba(0, 20, 60, 0.42) !important;
+}
+
+.ecms-card-report-modal .modal-header {
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ffffff;
+    background: linear-gradient(135deg, #123f8c, #2f7dff) !important;
+    border-bottom: 0 !important;
+}
+
+.ecms-card-report-modal .modal-title {
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+    margin: 0 !important;
+}
+
+.ecms-card-report-modal .close {
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    color: #ffffff;
+    background: rgba(255,255,255,0.14);
+    font-size: 24px;
+    line-height: 1;
+    order: 2;
+}
+
+.ecms-card-report-modal .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 1;
+}
+
+.ecms-card-report-modal .modal-body {
+    padding: 14px !important;
+    background: #f5f9ff !important;
+}
+
+.ecms-card-report-modal .modal-footer {
+    border-top: 1px solid rgba(15, 70, 150, 0.14) !important;
+    background: #f5f9ff !important;
+}
+
+.ecms-card-report-modal .btn-primary,
+#btnMonthlyProcessedDialogOk {
+    border: 0 !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #238dff, #064bd8) !important;
+    font-weight: 900 !important;
+    padding: 8px 18px !important;
+}
+
+.ecms-card-report-modal .btn-secondary {
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: #64748b !important;
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    padding: 8px 18px !important;
+}
+
+#txtMonthYear {
+    cursor: pointer;
+}
+
+#CardReport_tbldatadialog {
+    width: 100% !important;
+    table-layout: fixed !important;
+    font-size: 12px !important;
+}
+
+    #CardReport_tbldatadialog th,
+    #CardReport_tbldatadialog td {
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+    }
+
+    #CardReport_tbldatadialog thead th {
+        color: #ffffff !important;
+        background: #153f8f !important;
+        border-color: rgba(255,255,255,0.2) !important;
+        font-weight: 900 !important;
+    }
+
+    #CardReport_tbldatadialog tbody td {
+        color: #10254f !important;
+        font-weight: 700 !important;
+    }
+
+.dt-top,
+.dataTables_wrapper .dt-top {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    height: 34px !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(93, 125, 175, 0.34) !important;
+    padding: 6px 10px !important;
+}
+
+.dt-button,
+.dataTables_wrapper .dt-button {
+    border: 0 !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #238dff, #064bd8) !important;
+    font-weight: 900 !important;
+    padding: 7px 14px !important;
 }
 
 .ui-datepicker-calendar {
     display: none !important;
 }
 
-#CardReport_tbldatadialog {
-    table-layout: auto !important;
-    width: 100% !important;
-}
-
-    #CardReport_tbldatadialog th,
-    #CardReport_tbldatadialog td {
-        white-space: nowrap; /* Optional: prevent line wrap */
-        vertical-align: middle;
-    }
-
 .modal .modal-body .table-responsive {
     max-height: 500px;
 }
-#CardReport_tbldatadialog {
-    table-layout: fixed !important;
+
+@media (max-width: 1200px) {
+    html:has(.ecms-card-report-page),
+    body:has(.ecms-card-report-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-card-report-page {
+        height: auto !important;
+        min-height: calc(100vh - 255px) !important;
+        overflow: visible !important;
+    }
+
+    .ecms-card-report-item {
+        flex-basis: 170px;
+        width: 170px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ecms-card-report-page {
+        padding: 10px 10px 56px;
+    }
+
+    .ecms-report-head {
+        align-items: flex-start;
+    }
+
+    .ecms-card-report-grid {
+        gap: 14px;
+        padding: 10px 4px 14px;
+    }
+
+    .ecms-card-report-item {
+        flex: 1 1 150px;
+        width: auto;
+    }
+
+    .ecms-card-report-page .counter {
+        height: 165px !important;
+        min-height: 165px !important;
+    }
+}
+
+@media print {
+    @page {
+        margin: 5mm 5mm 8mm 5mm;
+    }
+
+    .ecms-card-report-page,
+    .ecms-card-report-shell {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+    }
+
+    .ecms-report-head,
+    .ecms-filter-panel {
+        display: none !important;
+    }
+}
+
+
+/* =====================================================
+   FINAL FIX: Report page cards + modal close buttons
+   Only UI change - no functionality / ID changes
+===================================================== */
+
+/* Keep all report cards same size and stop icon zoom on hover */
+.ecms-card-report-page .ecms-card-report-grid {
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 22px !important;
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+}
+
+.ecms-card-report-page .ecms-card-report-item {
+    flex: 0 0 168px !important;
+    width: 168px !important;
+    max-width: 168px !important;
+    min-width: 168px !important;
+}
+
+/* Card content: icon/count/title vertically balanced */
+.ecms-card-report-page .counter,
+.ecms-card-report-page .ecms-report-counter {
+    height: 168px !important;
+    min-height: 168px !important;
+    padding: 18px 12px 14px !important;
+    gap: 7px !important;
+    justify-content: flex-start !important;
+    overflow: hidden !important;
+}
+
+    /* Prevent old/global hover CSS from increasing icon size */
+    .ecms-card-report-page .counter .counter-icon,
+    .ecms-card-report-page .counter:hover .counter-icon,
+    .ecms-card-report-page .ecms-report-counter .counter-icon,
+    .ecms-card-report-page .ecms-report-counter:hover .counter-icon {
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+        min-height: 48px !important;
+        max-width: 48px !important;
+        max-height: 48px !important;
+        margin: 0 0 4px 0 !important;
+        padding: 0 !important;
+        transform: none !important;
+        border-radius: 15px !important;
+        flex: 0 0 48px !important;
+    }
+
+        .ecms-card-report-page .counter .counter-icon i,
+        .ecms-card-report-page .counter:hover .counter-icon i,
+        .ecms-card-report-page .ecms-report-counter .counter-icon i,
+        .ecms-card-report-page .ecms-report-counter:hover .counter-icon i {
+            font-size: 22px !important;
+            line-height: 1 !important;
+            transform: none !important;
+        }
+
+    /* Count should stay in middle, not push title too low */
+    .ecms-card-report-page .counter-value,
+    .ecms-card-report-page .counter:hover .counter-value {
+        display: block !important;
+        font-size: 24px !important;
+        line-height: 1 !important;
+        margin: 2px 0 5px 0 !important;
+        padding: 0 !important;
+        flex: 0 0 auto !important;
+    }
+
+    /* Title should not sit at the very bottom */
+    .ecms-card-report-page .counter h3,
+    .ecms-card-report-page .counter:hover h3 {
+        width: 100% !important;
+        min-height: 30px !important;
+        margin: 0 !important;
+        padding: 0 2px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #075de3 !important;
+        font-size: 11.5px !important;
+        font-weight: 900 !important;
+        line-height: 1.12 !important;
+        letter-spacing: 0 !important;
+        text-align: center !important;
+        text-transform: uppercase !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
+
+    /* Hover should move only the card slightly, not change inner sizes */
+    .ecms-card-report-page .counter:hover,
+    .ecms-card-report-page .ecms-report-counter:hover {
+        transform: translateY(-3px) !important;
+    }
+
+    /* Active/focus state should not enlarge first card icon */
+    .ecms-card-report-page .counter:focus,
+    .ecms-card-report-page .counter:active,
+    .ecms-card-report-page .clickable:focus .counter,
+    .ecms-card-report-page .clickable:active .counter {
+        outline: none !important;
+    }
+
+.ecms-card-report-page .clickable:focus .counter-icon,
+.ecms-card-report-page .clickable:active .counter-icon,
+.ecms-card-report-page .clickable:focus .counter-icon i,
+.ecms-card-report-page .clickable:active .counter-icon i {
+    transform: none !important;
+}
+
+/* Modal header: make close button always visible */
+.ecms-card-report-modal .modal-header {
+    position: relative !important;
+    padding: 14px 54px 14px 18px !important;
+}
+
+    .ecms-card-report-modal .modal-header .close,
+    .ecms-card-report-modal .modal-header button.close {
+        position: absolute !important;
+        top: 10px !important;
+        right: 12px !important;
+        z-index: 10 !important;
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        min-height: 34px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 1px solid rgba(255,255,255,0.35) !important;
+        border-radius: 50% !important;
+        color: #ffffff !important;
+        background: rgba(255,255,255,0.18) !important;
+        opacity: 1 !important;
+        text-shadow: none !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.25) !important;
+        cursor: pointer !important;
+    }
+
+        .ecms-card-report-modal .modal-header .close span,
+        .ecms-card-report-modal .modal-header button.close span {
+            display: block !important;
+            color: #ffffff !important;
+            font-size: 28px !important;
+            font-weight: 700 !important;
+            line-height: 28px !important;
+            margin-top: -2px !important;
+        }
+
+        .ecms-card-report-modal .modal-header .close:hover,
+        .ecms-card-report-modal .modal-header button.close:hover {
+            background: rgba(239, 68, 68, 0.92) !important;
+            border-color: rgba(255,255,255,0.50) !important;
+        }
+
+    /* Bootstrap 5 btn-close in monthly modal */
+    .ecms-card-report-modal .modal-header .btn-close {
+        position: absolute !important;
+        top: 14px !important;
+        right: 16px !important;
+        z-index: 10 !important;
+        opacity: 1 !important;
+        filter: invert(1) grayscale(100%) brightness(200%) !important;
+    }
+
+/* Better modal table header spacing */
+.ecms-card-report-modal .dataTables_wrapper {
+    width: 100% !important;
+}
+
+.ecms-card-report-modal .modal-body .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Compact screen adjustment */
+@media (max-width: 1200px) {
+    .ecms-card-report-page .ecms-card-report-item {
+        flex-basis: 160px !important;
+        width: 160px !important;
+        max-width: 160px !important;
+        min-width: 160px !important;
+    }
+
+    .ecms-card-report-page .counter,
+    .ecms-card-report-page .ecms-report-counter {
+        height: 162px !important;
+        min-height: 162px !important;
+    }
 }

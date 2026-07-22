@@ -102,7 +102,7 @@ $(function () {
                 }
             });
         },
-        
+
     });
 });
 
@@ -144,17 +144,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // UI fix: remove old DataTables cloned header/body markup
     }
     const columns = getColumnsForAfsacCell();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: false,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -187,10 +188,19 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                setTimeout(function () {
+                    FixAfsacCellMappingUI();
+                    FixAfsacCellDoubleHeaderAndThemeUI();
+                    FixAfsacCellDoubleHeaderAndThemeUI();
+                }, 30);
 
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                setTimeout(function () { FixAfsacCellMappingUI(); FixAfsacCellDoubleHeaderAndThemeUI(); }, 30);
             }
         },
         columns: columns,
@@ -214,7 +224,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -247,27 +257,31 @@ function BindData() {
 
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
+            FixAfsacCellMappingUI();
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    table.columns.adjust();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            this.api().columns.adjust();
+            FixAfsacCellMappingUI();
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(el => {
+                    try { new bootstrap.Tooltip(el); } catch (e) { }
+                });
+            }
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -537,4 +551,107 @@ function getColumnsForAfsacCell() {
         }
     ];
     return columns;
+}
+
+function FixAfsacCellMappingUI() {
+    try {
+        const $page = $(".ecms-afsac-cell-page");
+        const $wrapper = $("#tbldata_wrapper");
+
+        $("#loading").addClass("d-none").hide();
+        $(".dataTables_processing, #tbldata_processing").hide();
+
+        // Hide DataTables cloned sizing header inside the scroll body.
+        $page.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").css({
+            height: "0",
+            maxHeight: "0",
+            visibility: "collapse",
+            overflow: "hidden"
+        });
+
+        $page.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
+            height: "0",
+            maxHeight: "0",
+            minHeight: "0",
+            lineHeight: "0",
+            fontSize: "0",
+            paddingTop: "0",
+            paddingBottom: "0",
+            paddingLeft: "0",
+            paddingRight: "0",
+            borderTop: "0",
+            borderBottom: "0",
+            overflow: "hidden",
+            visibility: "collapse"
+        });
+
+        // Keep footer and pagination visible.
+        $wrapper.find(".dt-bottom, .dataTables_info, .dataTables_paginate, .pagination").css({
+            visibility: "visible",
+            opacity: "1"
+        });
+
+        const $bottom = $wrapper.children(".dt-bottom");
+        if ($bottom.length) {
+            $bottom.css({
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%"
+            });
+        }
+
+        if (table && $.fn.DataTable.isDataTable("#tbldata")) {
+            setTimeout(function () {
+                table.columns.adjust();
+            }, 80);
+        }
+    } catch (e) {
+        console.warn("Afsac Cell Mapping UI fix skipped:", e);
+    }
+}
+
+
+function FixAfsacCellDoubleHeaderAndThemeUI() {
+    try {
+        const $page = $(".ecms-afsac-cell-page");
+        const $wrapper = $("#tbldata_wrapper");
+
+        $("#loading").addClass("d-none").hide();
+        $(".dataTables_processing, #tbldata_processing").hide();
+
+        // IMPORTANT: DataTables creates a cloned header inside scrollBody.
+        // Hide/remove only the cloned sizing header, not the real scrollHead header.
+        $page.find(".dataTables_scrollBody thead, .dt-scroll-body thead").each(function () {
+            $(this).css({
+                display: "none",
+                height: "0",
+                maxHeight: "0",
+                minHeight: "0",
+                visibility: "collapse",
+                overflow: "hidden"
+            });
+        });
+
+        $page.find(".dataTables_scrollBody thead tr, .dataTables_scrollBody thead th, .dataTables_scrollBody thead td, .dt-scroll-body thead tr, .dt-scroll-body thead th, .dt-scroll-body thead td").css({
+            display: "none",
+            height: "0",
+            maxHeight: "0",
+            minHeight: "0",
+            lineHeight: "0",
+            fontSize: "0",
+            padding: "0",
+            margin: "0",
+            border: "0",
+            visibility: "collapse",
+            overflow: "hidden"
+        });
+
+        $wrapper.find(".dt-bottom, .dataTables_info, .dataTables_paginate, .pagination").css({
+            visibility: "visible",
+            opacity: "1"
+        });
+    } catch (e) {
+        console.warn("Afsac Cell theme/header UI fix skipped:", e);
+    }
 }

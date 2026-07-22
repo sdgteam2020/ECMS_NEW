@@ -1,222 +1,216 @@
 ﻿@{
-    ViewData["Title"] = "DashBoard";
+    ViewData["Title"] = "Task";
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<string> RoleNameList = new List<string>() { "user" };
     List<Claim> claims = ViewBag.UserClaims;
 }
 <link asp-href-include="~/developercss/home_task.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >Task
-
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt; Task
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
+
+<div class="containerMain mt-n10 ecms-task-page">
     @if (RoleNameList.Contains(ViewBag.Role))
     {
-        <div class="row">
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>Offrs</h1>
-                </div>
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=" class="clickable">
-                            @*  OffrsSubmitted *@
-                            <div class="counter blue">
-                                <div class="counter-icon">
-                                    <i class="fa fa-user"></i>
-                                </div>
-                                <h3 class="counter-title">
-                                    Status of Appl Submitted
-                                </h3>
-                            </div>
-                        </a>
+        <div class="ecms-task-shell">
+            <div class="ecms-task-grid">
+
+                <div class="card new_css ecms-task-group ecms-task-group-sm">
+                    <div class="seven">
+                        <h1>Offrs</h1>
                     </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="clickable">
-                            @*  OffrsPending *@
-                            <div class="counter blue">
-                                <div class="counter-icon">
-                                    <i class="fa fa-user-circle"></i>
+                    <div class="row ecms-task-card-row">
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="/Home/MyTask/T2ZmcnNTdWJtaXR0ZWQ=" class="clickable">
+                                @* OffrsSubmitted *@
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <h3 class="counter-title">Status of Appl Submitted</h3>
                                 </div>
-                                <h3 class="counter-title">
-                                    Pending Actions (Approver)
-                                </h3>
-                            </div>
-                        </a>
-                    </div>
-                   
-                </div>
-            </div>
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>JCOs/OR</h1>
-                </div>
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==" class="clickable">
-                            @*  JCOsSubmitted *@
-                            <div class="counter red">
-                                <div class="counter-icon">
-                                    <i class="fa fa-street-view"></i>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="/Home/MyTask/T2ZmcnNQZW5kaW5n" class="clickable">
+                                @* OffrsPending *@
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-user-circle"></i>
+                                    </div>
+                                    <h3 class="counter-title">Pending Actions (Approver)</h3>
                                 </div>
-                                <h3 class="counter-title">
-                                    Status of Appl Submitted
-                                </h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="clickable">
-                            @*  JCOsPending *@
-                            <div class="counter red">
-                                <div class="counter-icon">
-                                    <i class="fa fa-ban"></i>
-                                </div>
-                                <h3 class="counter-title">
-                                    Pending Actions (Approver)
-                                </h3>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>
-                        AFSAC Dispatching
-                    </h1>
-                </div>
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter pink armyNoallserchPopup" id="btnDispatchCard">
-                                <div class="counter-icon">
-                                    <i class="fa fa-truck"></i>
+
+                <div class="card new_css ecms-task-group ecms-task-group-sm">
+                    <div class="seven">
+                        <h1>JCOs/OR</h1>
+                    </div>
+                    <div class="row ecms-task-card-row">
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="/Home/MyTask/SkNPc1N1Ym1pdHRlZA==" class="clickable">
+                                @* JCOsSubmitted *@
+                                <div class="counter red">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-street-view"></i>
+                                    </div>
+                                    <h3 class="counter-title">Status of Appl Submitted</h3>
                                 </div>
-                                <span class="counter-value" id="TotDispatchCards"></span>
-                                <h3>
-                                    AFSAC Dispatching
-                                </h3>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="/Home/MyTask/SkNPc1BlbmRpbmc=" class="clickable">
+                                @* JCOsPending *@
+                                <div class="counter red">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-ban"></i>
+                                    </div>
+                                    <h3 class="counter-title">Pending Actions (Approver)</h3>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>
-                        AFSAC Issuance & Destruction
-                    </h1>
-                </div>
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter pink armyNoallserchPopup" id="btnLostCard">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddLostCard" data-type="54"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
-                                </div>
-                                <span class="counter-value" id="TotLostCards"></span>
-                                <h3>REPORT LOSS OF AFSAC</h3>
-                            </div>
-                        </a>
+
+                <div class="card new_css ecms-task-group ecms-task-group-xs">
+                    <div class="seven">
+                        <h1>AFSAC Dispatching</h1>
                     </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter pink armyNoallserchPopup" id="btnDistCard">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddDistsCard" data-type="55"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
+                    <div class="row ecms-task-card-row">
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="#" class="clickable">
+                                <div class="counter pink armyNoallserchPopup" id="btnDispatchCard">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-truck"></i>
+                                    </div>
+                                    <span class="counter-value" id="TotDispatchCards"></span>
+                                    <h3>AFSAC Dispatching</h3>
                                 </div>
-                                <span class="counter-value" id="TotDistCards"></span>
-                                <h3>
-                                    AFSAC Issuance
-                                </h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter pink armyNoallserchPopup" id="btnDestCard">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddDestsCard" data-type="56"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
-                                </div>
-                                <span class="counter-value" id="TotDestCards"></span>
-                                <h3>
-                                    AFSAC Destruction
-                                </h3>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>
-                        AFSAC Management Post Issuance
-                    </h1>
-                </div>
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter purple armyNoallserchPopup" id="btnHotlistCard">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddHotlistCard" data-type="53"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
-                                </div>
-                                <span class="counter-value" id="TotHotlistCards"></span>
-                                <h3>
-                                    Hotlisting of AFSAC
-                                </h3>
-                            </div>
-                        </a>
+
+                <div class="card new_css ecms-task-group ecms-task-group-lg">
+                    <div class="seven">
+                        <h1>AFSAC Issuance &amp; Destruction</h1>
                     </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter purple armyNoallserchPopup" id="btnMisprintedCard">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddMisprintedCard" data-type="52"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
+                    <div class="row ecms-task-card-row">
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="#" class="clickable">
+                                <div class="counter pink armyNoallserchPopup" id="btnLostCard">
+                                    <div class="counter-icon">
+                                        <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddLostCard" data-type="54">
+                                            <i class="fa fa-plus mr-1 font-weight-700"></i>Add
+                                        </button>
+                                    </div>
+                                    <span class="counter-value" id="TotLostCards"></span>
+                                    <h3>Report Loss of AFSAC</h3>
                                 </div>
-                                <span class="counter-value" id="TotMisprintedCard"></span>
-                                <h3>
-                                    Faulty/Non Functional AFSAC
-                                </h3>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>
-                        SD Move Units & Indls Mov
-                    </h1>
-                </div>
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
-                        <a href="#" class="clickable">
-                            <div class="counter purple armyNoallserchPopup" id="btnUnitChangeRequest">
-                                <div class="counter-icon">
-                                    <button class="btn btn-outline-success font-weight-600 btn-sm" id="btnAddUnitChangeRequest"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="#" class="clickable">
+                                <div class="counter pink armyNoallserchPopup" id="btnDistCard">
+                                    <div class="counter-icon">
+                                        <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddDistsCard" data-type="55">
+                                            <i class="fa fa-plus mr-1 font-weight-700"></i>Add
+                                        </button>
+                                    </div>
+                                    <span class="counter-value" id="TotDistCards"></span>
+                                    <h3>AFSAC Issuance</h3>
                                 </div>
-                                <span class="counter-value" id="TotUnitChangeRequest"></span>
-                                <h3>Unit Move Request</h3>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="#" class="clickable">
+                                <div class="counter pink armyNoallserchPopup" id="btnDestCard">
+                                    <div class="counter-icon">
+                                        <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddDestsCard" data-type="56">
+                                            <i class="fa fa-plus mr-1 font-weight-700"></i>Add
+                                        </button>
+                                    </div>
+                                    <span class="counter-value" id="TotDestCards"></span>
+                                    <h3>AFSAC Destruction</h3>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
+
+                <div class="card new_css ecms-task-group ecms-task-group-md">
+                    <div class="seven">
+                        <h1>AFSAC Management Post Issuance</h1>
+                    </div>
+                    <div class="row ecms-task-card-row">
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="#" class="clickable">
+                                <div class="counter purple armyNoallserchPopup" id="btnHotlistCard">
+                                    <div class="counter-icon">
+                                        <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddHotlistCard" data-type="53">
+                                            <i class="fa fa-plus mr-1 font-weight-700"></i>Add
+                                        </button>
+                                    </div>
+                                    <span class="counter-value" id="TotHotlistCards"></span>
+                                    <h3>Hotlisting of AFSAC</h3>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="#" class="clickable">
+                                <div class="counter purple armyNoallserchPopup" id="btnMisprintedCard">
+                                    <div class="counter-icon">
+                                        <button class="btn btn-outline-success font-weight-600 btn-sm btnAdd" id="btnAddMisprintedCard" data-type="52">
+                                            <i class="fa fa-plus mr-1 font-weight-700"></i>Add
+                                        </button>
+                                    </div>
+                                    <span class="counter-value" id="TotMisprintedCard"></span>
+                                    <h3>Faulty/Non Functional AFSAC</h3>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card new_css ecms-task-group ecms-task-group-xs">
+                    <div class="seven">
+                        <h1>SD Move Units &amp; Indls Mov</h1>
+                    </div>
+                    <div class="row ecms-task-card-row">
+                        <div class="col-md-2 col-sm-6 ecms-task-item-col">
+                            <a href="#" class="clickable">
+                                <div class="counter purple armyNoallserchPopup" id="btnUnitChangeRequest">
+                                    <div class="counter-icon">
+                                        <button class="btn btn-outline-success font-weight-600 btn-sm" id="btnAddUnitChangeRequest">
+                                            <i class="fa fa-plus mr-1 font-weight-700"></i>Add
+                                        </button>
+                                    </div>
+                                    <span class="counter-value" id="TotUnitChangeRequest"></span>
+                                    <h3>Unit Move Request</h3>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     }
 </div>
+
 <script asp-src-include="~/developerjs/Task.js"></script>

@@ -1,5 +1,7 @@
 ﻿@model List<DTOBasicDetailTempRequest>
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/inaccuratedata.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
@@ -7,33 +9,32 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > Incorrect Details/Data
-
-
+                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Incorrect Details/Data
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        @ViewBag.Title
-                        <small class="text-muted"></small>
-                    </h3>
+
+<div class="ecms-inaccurate-page">
+    <div class="containerMain ecms-inaccurate-container">
+        <div class="ecms-inaccurate-shell">
+            <div class="ecms-inaccurate-head">
+                <div class="ecms-inaccurate-head-icon">
+                    <i class="fa fa-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <h2>@ViewBag.Title</h2>
+                    <p>Requests pending due to incorrect details or observation data</p>
                 </div>
             </div>
-        </div>
-        <div class="card-body card-body-min-height">
-                <div class="row">
+
+            <div class="ecms-inaccurate-table-card">
                 <span id="spnhdns" class="d-none">@ViewBag.hdns</span>
-                    <div class="col-xl-12">
-                    <table id="tbldatatabledata" class="table table-striped table-hover border border-purple">
+
+                <div class="ecms-table-wrap">
+                    <table id="tbldatatabledata" class="table table-striped table-hover border border-purple ecms-inaccurate-table">
                         <thead>
                             <tr>
                                 <th>@Html.DisplayNameFor(model => model[0].Sno)</th>
@@ -57,7 +58,7 @@
                                     <td>@item.RankName @item.FName @(item.LName == null ? "" : item.LName)</td>
                                     <td>@item.UpdatedOn.ToString().Replace("-", "/").Replace("00:00:00", "")</td>
                                     <td>
-                                        <ul>
+                                        <ul class="ecms-observation-list">
                                             @if (rem != null)
                                             {
                                                 foreach (var data in rem)
@@ -68,7 +69,9 @@
                                         </ul>
                                     </td>
                                     <td>
-                                        <a asp-controller="BasicDetail" asp-action="InaccurateDataView" asp-route-Id="@item.EncryptedId" class="btn btn-primary mr-2 ">View Details</a>
+                                        <a asp-controller="BasicDetail" asp-action="InaccurateDataView" asp-route-Id="@item.EncryptedId" class="btn btn-primary mr-2 ecms-view-btn">
+                                            <i class="fa fa-eye"></i> View Details
+                                        </a>
                                         <span id="RegistrationApplyFor" class="d-none">@item.RegistrationId</span>
                                         <span id="OffType" class="d-none">@item.ApplyForId</span>
                                         <span id="lCardType" class="d-none">@item.TypeId</span>
@@ -79,13 +82,13 @@
                             }
                         </tbody>
                     </table>
-                    </div>
                 </div>
             </div>
-       
+        </div>
     </div>
 </div>
-@section Scripts{
+
+@section Scripts {
     <script asp-src-include="~/developerjs/inaccuratedata.js"></script>
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }

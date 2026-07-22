@@ -1,24 +1,405 @@
-﻿.clickable {
-    height: 190px;
-    width: 190px;
-    display: block;
-}
-.count-loader {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    border: 3px solid #ddd;
-    border-top: 3px solid #333;
-    border-radius: 50%;
-    animation: spinCounter 0.8s linear infinite;
+﻿/* =====================================================
+   ECMS SubDashboard Modern UI
+   Scope: Home/SubDashboard only
+   Only UI change - do not change JS/IDs/functionality
+===================================================== */
+
+:root {
+    --ecms-subdash-footer-height: 42px;
+    --ecms-subdash-navy: #061f4d;
+    --ecms-subdash-blue: #1f74ff;
+    --ecms-subdash-blue-dark: #173f91;
+    --ecms-subdash-cyan: #45c7f5;
+    --ecms-subdash-green: #6bcf50;
+    --ecms-subdash-panel: rgba(229, 242, 255, 0.88);
+    --ecms-subdash-border: rgba(255,255,255,0.72);
+    --ecms-subdash-text: #08204d;
 }
 
-@keyframes spinCounter {
-    0% {
-        transform: rotate(0deg);
+/* Page background */
+.ecms-subdashboard-page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 16px 20px calc(var(--ecms-subdash-footer-height) + 16px) !important;
+    min-height: calc(100vh - 255px) !important;
+    background: linear-gradient(90deg, rgba(6, 28, 72, 0.88), rgba(16, 88, 178, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+    overflow: hidden !important;
+}
+
+/* Content width */
+.ecms-subdashboard-shell {
+    width: min(1260px, 96vw) !important;
+    margin: 0 auto !important;
+}
+
+/* Main grid */
+.ecms-subdashboard-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(300px, 1fr)) !important;
+    gap: 18px 24px !important;
+    align-items: start !important;
+    justify-content: center !important;
+    margin: 0 !important;
+}
+
+/* Group cards */
+.ecms-subdashboard-page .card.new_css,
+.ecms-subdashboard-page .ecms-status-group {
+    width: 100% !important;
+    max-width: 390px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    display: block !important;
+    text-align: center !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    border: 1px solid var(--ecms-subdash-border) !important;
+    background: var(--ecms-subdash-panel) !important;
+    box-shadow: 0 20px 50px rgba(0, 22, 70, 0.28), inset 0 1px 0 rgba(255,255,255,0.86) !important;
+    backdrop-filter: blur(14px);
+}
+
+/* Bottom row centered */
+.ecms-subdashboard-page .ecms-closed {
+    grid-column: 1 / 2;
+    justify-self: end;
+}
+
+.ecms-subdashboard-page .ecms-completed {
+    grid-column: 2 / 3;
+    justify-self: center;
+}
+
+/* Header of group */
+.ecms-subdashboard-page .seven {
+    margin: 0 !important;
+}
+
+    .ecms-subdashboard-page .seven h1 {
+        margin: 0 !important;
+        height: 40px !important;
+        line-height: 40px !important;
+        padding: 0 12px !important;
+        border-radius: 0 !important;
+        color: #ffffff !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.1px !important;
+        text-align: center !important;
+        background: linear-gradient(135deg, #173f91 0%, #347cff 100%) !important;
+        box-shadow: 0 9px 20px rgba(12, 69, 168, 0.24), inset 0 1px 0 rgba(255,255,255,0.22) !important;
     }
 
-    100% {
-        transform: rotate(360deg);
+/* Row inside group */
+.ecms-subdashboard-page .ecms-status-row,
+.ecms-subdashboard-page .card.new_css > .row {
+    margin: 0 !important;
+    padding: 18px 18px 20px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    gap: 18px !important;
+    flex-wrap: nowrap !important;
+}
+
+    /* Override Bootstrap columns inside these cards */
+    .ecms-subdashboard-page .ecms-status-row > [class*="col-"],
+    .ecms-subdashboard-page .card.new_css > .row > [class*="col-"] {
+        width: auto !important;
+        max-width: none !important;
+        flex: 0 0 auto !important;
+        padding: 0 !important;
     }
+
+/* Clickable areas */
+.ecms-subdashboard-page .clickable {
+    width: 145px !important;
+    height: 145px !important;
+    display: block !important;
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+/* Status counter */
+.ecms-subdashboard-page .counter {
+    width: 145px !important;
+    height: 145px !important;
+    min-height: 145px !important;
+    padding: 15px 10px 12px !important;
+    margin: 0 !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(31, 116, 255, 0.75) !important;
+    background: radial-gradient(circle at 22% 12%, rgba(255,255,255,0.95), rgba(255,255,255,0.72) 40%, rgba(241,247,255,0.96) 100%) !important;
+    color: #0b48d6 !important;
+    box-shadow: 0 14px 30px rgba(0, 32, 92, 0.16), inset 0 1px 0 rgba(255,255,255,0.92) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    transition: all 0.22s ease !important;
+}
+
+    /* Remove old pseudo paper effect */
+    .ecms-subdashboard-page .counter::before,
+    .ecms-subdashboard-page .counter::after {
+        content: none !important;
+        display: none !important;
+    }
+
+    .ecms-subdashboard-page .counter:hover {
+        transform: translateY(-4px) !important;
+        border-color: rgba(51, 132, 255, 0.95) !important;
+        box-shadow: 0 18px 38px rgba(0, 47, 128, 0.26), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    }
+
+/* Icon bubble */
+.ecms-subdashboard-page .counter-icon {
+    width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    margin: 0 0 7px !important;
+    border-radius: 15px !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #4f8dff 0%, #1d55e7 100%) !important;
+    box-shadow: 0 12px 24px rgba(31, 99, 242, 0.32), inset 0 1px 0 rgba(255,255,255,0.28) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.25s ease !important;
+}
+
+.ecms-subdashboard-page .counter:hover .counter-icon {
+    transform: translateY(-2px) scale(1.04) !important;
+}
+
+.ecms-subdashboard-page .counter-icon i,
+.ecms-subdashboard-page .counter .counter-icon .fa {
+    color: #ffffff !important;
+    font-size: 22px !important;
+    line-height: 1 !important;
+}
+
+/* Counts */
+.ecms-subdashboard-page .counter-value {
+    display: block !important;
+    min-height: 22px !important;
+    margin: 0 0 5px !important;
+    color: #071f4c !important;
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    text-shadow: none !important;
+}
+
+/* Text */
+.ecms-subdashboard-page .counter h3,
+.ecms-subdashboard-page .counter-title {
+    margin: 0 !important;
+    padding: 0 3px !important;
+    min-height: 34px !important;
+    color: #075cff !important;
+    font-size: 11.5px !important;
+    font-weight: 900 !important;
+    line-height: 1.12 !important;
+    letter-spacing: 0.15px !important;
+    text-transform: uppercase !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Status-specific icon colors */
+.ecms-subdashboard-page .ecms-drafted .counter-icon {
+    background: linear-gradient(135deg, #4f8dff, #1d55e7) !important;
+}
+
+.ecms-subdashboard-page .ecms-submitted .counter-icon {
+    background: linear-gradient(135deg, #33bdb0, #0a8f83) !important;
+}
+
+.ecms-subdashboard-page .ecms-rejected .counter-icon {
+    background: linear-gradient(135deg, #ff6a6a, #d53030) !important;
+}
+
+.ecms-subdashboard-page .ecms-closed .counter-icon {
+    background: linear-gradient(135deg, #778399, #40506e) !important;
+}
+
+.ecms-subdashboard-page .ecms-completed .counter-icon {
+    background: linear-gradient(135deg, #35c873, #109447) !important;
+}
+
+/* Loader */
+.ecms-subdashboard-page .count-loader {
+    display: inline-block !important;
+    width: 18px !important;
+    height: 18px !important;
+    border: 3px solid rgba(31, 116, 255, 0.18) !important;
+    border-top: 3px solid #1f74ff !important;
+    border-radius: 50% !important;
+    animation: spinCounter 0.8s linear infinite !important;
+}
+
+/* Fit page without document scrollbar on desktop */
+@media (min-width: 1200px) {
+    html:has(.ecms-subdashboard-page),
+    body:has(.ecms-subdashboard-page) {
+        overflow-y: hidden !important;
+    }
+
+    .ecms-subdashboard-page {
+        height: calc(100vh - 255px) !important;
+        min-height: 0 !important;
+    }
+}
+
+/* Medium screens */
+@media (max-width: 1199px) {
+    .ecms-subdashboard-page {
+        overflow: visible !important;
+        min-height: calc(100vh - 255px) !important;
+    }
+
+    .ecms-subdashboard-grid {
+        grid-template-columns: repeat(2, minmax(300px, 390px)) !important;
+        gap: 18px !important;
+    }
+
+    .ecms-subdashboard-page .ecms-closed,
+    .ecms-subdashboard-page .ecms-completed {
+        grid-column: auto !important;
+        justify-self: center !important;
+    }
+}
+
+/* Tablet and mobile */
+@media (max-width: 767px) {
+    html,
+    body {
+        overflow-y: auto !important;
+    }
+
+    .ecms-subdashboard-page {
+        padding: 12px 12px calc(var(--ecms-subdash-footer-height) + 18px) !important;
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    .ecms-subdashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-subdashboard-page .card.new_css {
+        max-width: 100% !important;
+    }
+
+        .ecms-subdashboard-page .ecms-status-row,
+        .ecms-subdashboard-page .card.new_css > .row {
+            flex-wrap: wrap !important;
+            gap: 14px !important;
+            padding: 16px !important;
+        }
+
+    .ecms-subdashboard-page .clickable,
+    .ecms-subdashboard-page .counter {
+        width: 145px !important;
+        height: 145px !important;
+    }
+}
+
+
+/* =====================================================
+   FINAL TEXT FIX - SubDashboard cards
+   Reason: old title text used nested lowercase spans, which broke
+   OFFRS / JCOS/OR into separated characters.
+   Only UI/text layout change. IDs and links remain unchanged.
+===================================================== */
+
+.ecms-subdashboard-page .counter h3,
+.ecms-subdashboard-page .counter-title {
+    width: 100% !important;
+    max-width: 126px !important;
+    min-height: 38px !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    color: #075cff !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0 !important;
+    white-space: normal !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+}
+
+    .ecms-subdashboard-page .counter h3 .ecms-card-title-main,
+    .ecms-subdashboard-page .counter h3 .ecms-card-title-sub {
+        display: block !important;
+        width: 100% !important;
+        white-space: nowrap !important;
+        word-break: keep-all !important;
+        overflow-wrap: normal !important;
+        hyphens: none !important;
+        text-align: center !important;
+        font-weight: 900 !important;
+        letter-spacing: 0 !important;
+    }
+
+    .ecms-subdashboard-page .counter h3 .ecms-card-title-main {
+        font-size: 11px !important;
+        line-height: 1.05 !important;
+    }
+
+    .ecms-subdashboard-page .counter h3 .ecms-card-title-sub {
+        font-size: 10px !important;
+        line-height: 1.05 !important;
+    }
+
+    /* Fallback if any old text remains without title spans */
+    .ecms-subdashboard-page .counter h3:not(:has(.ecms-card-title-main)) {
+        font-size: 10.5px !important;
+        line-height: 1.08 !important;
+    }
+
+/* Make the small cards slightly wider so titles stay clean */
+.ecms-subdashboard-page .clickable,
+.ecms-subdashboard-page .counter {
+    width: 152px !important;
+    min-width: 152px !important;
+}
+
+.ecms-subdashboard-page .counter {
+    height: 145px !important;
+    min-height: 145px !important;
+    padding: 13px 10px 11px !important;
+}
+
+.ecms-subdashboard-page .ecms-status-row,
+.ecms-subdashboard-page .card.new_css > .row {
+    gap: 16px !important;
+}
+
+@media (max-width: 768px) {
+    .ecms-subdashboard-page .clickable,
+    .ecms-subdashboard-page .counter {
+        width: 148px !important;
+        min-width: 148px !important;
+    }
+
+        .ecms-subdashboard-page .counter h3 .ecms-card-title-main {
+            font-size: 10.5px !important;
+        }
+
+        .ecms-subdashboard-page .counter h3 .ecms-card-title-sub {
+            font-size: 9.5px !important;
+        }
 }

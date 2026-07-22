@@ -3,84 +3,65 @@
 @{
     ViewData["Title"] = "LoginLog";
 }
+
 <link asp-href-include="~/css/offrstimeline.css" rel="stylesheet" />
 <link asp-href-include="~/css/horizontaltimeline.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/loginlog.css" rel="stylesheet" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10 ecms-page-crumb-header">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > <a href="/Home/DashboardUserMgt" class="mr-2"> User Mgt</a> > Login Log
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                        <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt;
+                        <a href="/Home/DashboardUserMgt" class="mr-2">User Mgt</a> &gt; Login Log
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
 
-           
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        All Users in Your Unit
-                        <small class="text-muted"></small>
+<div class="ecms-loginlog-page">
+    <div class="containerMain ecms-loginlog-container">
+        <div class="ecms-loginlog-shell card mb-3">
+            <div class="ecms-loginlog-heading card-header">
+                <div class="ecms-loginlog-title-wrap">
+                    <span class="ecms-loginlog-heading-icon"><i class="fa fa-history"></i></span>
+                    <div>
+                        <h3>All Users in Your Unit</h3>
+                        <p>View user details and login activity history</p>
+                    </div>
+                </div>
+            </div>
 
-
-                    </h3>
+            <div class="card-body ecms-loginlog-body">
+                <div class="ecms-loginlog-toolbar">
+                    <div class="ecms-loginlog-toolbar-left">
+                        <span class="ecms-filter-icon"><i class="fa fa-filter"></i></span>
+                        <span class="ecms-filter-title">Filter Login History</span>
+                    </div>
+                    <div class="ecms-date-filter d-flex">
+                        <label class="form-label mr-2" for="FmDate">From</label>
+                        <input type="text" class="form-control mr-2" id="FmDate" autocomplete="off" />
+                        <label class="form-label mr-2" for="ToDate">To</label>
+                        <input type="text" class="form-control ml-2" id="ToDate" autocomplete="off" />
+                    </div>
                 </div>
 
-
-            </div>
-        </div>
-
-
-
-        <div class="card-body">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                        <h6 class="mb-3 mb-md-0">
-                            &nbsp;
-                        </h6>
-                        <div class="d-flex">
-                           <label class="form-label mr-2">From</label>
-                            <input type="text" class="form-control mr-2" id="FmDate" />
-                            <label class="form-label mr-2">To</label>
-                          <input type="text" class="form-control ml-2" id="ToDate" />
-                         
-                        </div>
-
-                    </div>
+                <div class="ecms-loginlog-table-wrap">
                     <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldatatabledata">
-
                         <thead>
                             <tr>
-
-                                <th>
-                                    Role
-                                </th>
-                                <th>
-                                    Domain ID
-                                </th>
-                                <th>
-                                    Army No
-                                </th>
-                                <th>
-                                    Rank
-                                </th>
-                                <th>
-                                    Name
-                                </th>
-
+                                <th>Role</th>
+                                <th>Domain ID</th>
+                                <th>Army No</th>
+                                <th>Rank</th>
+                                <th>Name</th>
                                 <th>View Login History</th>
                             </tr>
                         </thead>
@@ -88,26 +69,16 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
-
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.RoleName)
-                                    </td>
-                                    <td class="DomainID">
-                                        @Html.DisplayFor(modelItem => item.DomainID)
-                                    </td>
-                                    <td class="ArmyNo">
-                                        @Html.DisplayFor(modelItem => item.ArmyNo)
-                                    </td>
-                                    <td class="RankName">
-                                        @Html.DisplayFor(modelItem => item.RankName)
-                                    </td>
-                                    <td class="Name">
-                                        @Html.DisplayFor(modelItem => item.Name)
-                                    </td>
-
+                                    <td>@Html.DisplayFor(modelItem => item.RoleName)</td>
+                                    <td class="DomainID">@Html.DisplayFor(modelItem => item.DomainID)</td>
+                                    <td class="ArmyNo">@Html.DisplayFor(modelItem => item.ArmyNo)</td>
+                                    <td class="RankName">@Html.DisplayFor(modelItem => item.RankName)</td>
+                                    <td class="Name">@Html.DisplayFor(modelItem => item.Name)</td>
                                     <td>
                                         <span class="d-none" id="AspNetUsersId">@Html.DisplayFor(modelItem => item.AspNetUsersId)</span>
-                                        <button type='button' class='cls-btnhistory btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-history'></i></button>
+                                        <button type="button" class="cls-btnhistory btn btn-icon btn-round btn-warning mr-1" title="View Login History">
+                                            <i class="fas fa-history"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             }
@@ -116,64 +87,46 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
-<script asp-src-include="~/developerjs/loginlog.js"></script>
 
+<script asp-src-include="~/developerjs/loginlog.js"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 
-<div class="modal fade" id="modalLoginLog"  aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+<div class="modal fade ecms-loginlog-modal" id="modalLoginLog" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-
-                <h5 class="modal-title" id="exampleModalToggleLabel">Login History of <span class="loginlodetails"></span><small class="text-muted"></small></h5>
+                <h5 class="modal-title" id="exampleModalToggleLabel">
+                    <span class="ecms-modal-title-icon"><i class="fa fa-clock"></i></span>
+                    Login History of <span class="loginlodetails"></span><small class="text-muted"></small>
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row ecms-loginlog-export-row">
                     <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
-
-
                         <thead class="d-none">
                             <tr>
-
-                                <th>
-                                    Role Name
-                                </th>
-                                <th>
-                                    Domain ID
-                                </th>
-                                <th>
-                                    Service No
-                                </th>
-                                <th>
-                                    Rank Name
-                                </th>
-                                <th>
-                                    Name
-                                </th>
-                                <th>
-                                    Login On
-                                </th>
-                                <th>
-                                    Login IP
-                                </th>
-
+                                <th>Role Name</th>
+                                <th>Domain ID</th>
+                                <th>Service No</th>
+                                <th>Rank Name</th>
+                                <th>Name</th>
+                                <th>Login On</th>
+                                <th>Login IP</th>
                             </tr>
                         </thead>
                         <tbody id="DataBoady" class="d-none">
                         </tbody>
                     </table>
                 </div>
-                <div class="row">
+                <div class="row ecms-timeline-row">
                     <div class="row justify-content-center">
                         <div class="col-xl-10 col-12">
                             <div class="timeline timeline-line-solid" id="timelineData">
                             </div>
                         </div>
-                        
                     </div>
                 </div>
             </div>
