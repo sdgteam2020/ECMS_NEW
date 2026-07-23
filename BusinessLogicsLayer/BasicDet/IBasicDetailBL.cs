@@ -58,6 +58,6 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTODataTablesResponse<DTOCompletedHistoryResponse>> GetAllCompletedHistory(DTODataTablesRequestFor_CompletedHistory dTO);
         public Task<DTODataTablesResponse<DTOClosedHistoryResponse>> GetAllClosedHistory(DTODataTableRequestForAppClosedHistory dTO);
         public Task<DTOGetMappingDetailsForClosedHistoryResponse> GetMappingDetailsForClosedHistory(DTODataTableRequestForAppClosedHistory dTO);
-        public Task<DTOGenericResponse<ICardHistoryResponseAll>> GetCompletedHistoryByRequestId(int RequestId);
+        public Task<ICardHistoryResponseAll> GetCompletedHistoryByRequestId(int RequestId);
     }
 }

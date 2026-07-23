@@ -51,5 +51,9 @@ namespace DataTransferObject.Domain.Model
         [ForeignKey("MApplyFor"), DatabaseGenerated(DatabaseGeneratedOption.None)]
         public byte ApplyForId { get; set; }
         public MApplyFor? MApplyFor { get; set; }
+
+        [ForeignKey("TrnDestructionCard"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? DestructedCardId { get; set; }
+        public TrnDestructionCard? TrnDestructionCard { get; set; }
     }
 }

@@ -7461,58 +7461,58 @@ namespace Web.Controllers
             DTOGenericResponse<ICardHistoryResponseAll> response = new DTOGenericResponse<ICardHistoryResponseAll>();
             try
             {
-                ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();
                 // Retrieve the basic detail record for the given RequestId
-                DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetCompletedHistoryByRequestId(RequestId);
+                ICardHistoryResponseAll responseAll = await basicDetailBL.GetCompletedHistoryByRequestId(RequestId);
+                responseAll.CardMovement = await basicDetailBL.GetCardMovementHistory(RequestId);
 
-                if (basicDetailCrtAndUpdVM != null)
+                string PhotoImagePath = responseAll.BasicDetail.PhotoImagePath;
+                string SignatureImagePath = responseAll.BasicDetail.SignatureImagePath;
+
+                if (!string.IsNullOrWhiteSpace(PhotoImagePath) && !string.IsNullOrWhiteSpace(SignatureImagePath))
                 {
                     // Define the root physical folder where images are stored
                     string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
                     // Build the full path for the photo image
-                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", PhotoImagePath);
 
                     // Decrypt the photo image and assign it to the VM
-                    basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    responseAll.BasicDetail.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
 
                     // Build the full path for the signature image
-                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
+                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", SignatureImagePath);
 
                     // Decrypt the signature image and assign it to the VM
-                    basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                    responseAll.BasicDetail.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
 
-                    // Return the VM as JSON
                     response.Result = true;
                     response.Message = "Success";
-                    response.Value = basicDetailCrtAndUpdVM;
-                    return Json(response);
+                    response.Value = responseAll;
                 }
                 else
                 {
-                    // Return null if no record was found for the given RequestId
                     response.Result = false;
-                    response.Message = "RequestId not found.";
-                    response.Value = null;
-                    return Json(response);
+                    response.Message = "Photo and Signature not found.";
+                    response.Value = new ICardHistoryResponseAll();
                 }
+                return Json(response);
             }
             catch (FileNotFoundException ex)
             {
                 // Log any exception with an error code and context
-                _logger.LogError(1001, ex, "BasicDetail->GetICardPrintPreviewByRequestId");
+                _logger.LogError(1001, ex, "BasicDetail->GetCompletedHistory");
                 response.Result = false;
                 response.Message = "Photo and Signature not found.";
-                response.Value = null;
+                response.Value = new ICardHistoryResponseAll();
                 return Json(response);
             }
             catch (Exception ex)
             {
                 // Log any exception with an error code and context
-                _logger.LogError(1001, ex, "BasicDetail->GetICardPrintPreviewByRequestId");
+                _logger.LogError(1001, ex, "BasicDetail->GetCompletedHistory");
                 response.Result = false;
                 response.Message = "Internal Error.";
-                response.Value = null;
+                response.Value = new ICardHistoryResponseAll();
                 return Json(response);
             }
 

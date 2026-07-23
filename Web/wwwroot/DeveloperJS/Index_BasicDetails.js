@@ -171,7 +171,7 @@ function BindData(StepCounter, JCOOR) {
                 className: "noExport nowrap",
                 width: "100px",
                 render: function (data, type, row) {
-                    if (data > 0) {
+                    if (data == 1) {
                         return ` <span class="badge badge-pill badge-danger">Yes</span> `;
                     }
                     else {

@@ -2413,7 +2413,6 @@ FROM
                 };
                 return responseData;
             }
-            return response;
         }
 
         public async Task<DTODataTablesResponse<DTOBasicDetailIndexResponse>> GetALLForIcardSttaus(DTODataTablesRequestFor_BasicDetails_Index dTO)
@@ -2445,9 +2444,21 @@ FROM
                 (int)ApplicationStepEnum.PrintReject
             };
 
+            string isPostingColumn = @"
+                CASE
+                    WHEN EXISTS
+                    (
+                        SELECT 1
+                        FROM TrnPostingOut AS PO
+                        WHERE PO.RequestId = trnicrd.RequestId
+                    )
+                    THEN 1
+                    ELSE 0
+                END AS IsPosting";
+
             if (dTO.stepcount == (int)ApplSubmittedStatusEnum.DraftedSavedApplication)//////For Draft
             {
-                selectColumns = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting";
+                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,{isPostingColumn}";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                             inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId = @stepcount AND trnicrd.StatusId = @RunningStatusId                        
                             INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
@@ -2457,8 +2468,7 @@ FROM
                             inner join MUnit munit on munit.UnitId=mapunit.UnitId
                             inner join MICardType ty on ty.TypeId = trnicrd.TypeId
                             inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId and map.AspNetUsersId = @UserId
-                            left join TrnFwds fwd on fwd.FromAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId
-                            left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId";
+                            left join TrnFwds fwd on fwd.FromAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=0 and fwd.RequestId=trnicrd.RequestId";
                 
                 fromJoinCount = @"FROM TrnICardRequest trnicrd
                             inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId = @stepcount AND trnicrd.StatusId = @RunningStatusId                        
@@ -2471,7 +2481,7 @@ FROM
             }
             else if (dTO.stepcount == (int)ApplSubmittedStatusEnum.Complete)//////For Completed   
             {
-                selectColumns = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting";
+                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,{isPostingColumn}";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND trnicrd.StatusId = @CompleteStatusId                        
                         INNER JOIN AFSAC2.dbo.BasicDetails B ON B.BasicDetailId = trnicrd.BasicDetailId
@@ -2481,8 +2491,7 @@ FROM
                         inner join MUnit munit on munit.UnitId=mapunit.UnitId 
                         inner join MICardType ty on ty.TypeId = trnicrd.TypeId 
                         inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId AND map.AspNetUsersId = @UserId  
-                        left join TrnFwds fwd on fwd.FromAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=1 and fwd.RequestId=trnicrd.RequestId 
-                        left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId";
+                        left join TrnFwds fwd on fwd.FromAspNetUsersId= map.AspNetUsersId and fwd.IsComplete=1 and fwd.RequestId=trnicrd.RequestId";
 
                 fromJoinCount = @"FROM TrnICardRequest trnicrd
                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND trnicrd.StatusId = @CompleteStatusId                       
@@ -2495,7 +2504,7 @@ FROM
             }
             else if (dTO.stepcount == (int)ApplSubmittedStatusEnum.Submitted)//////For Submitted
             {
-                selectColumns = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting";
+                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,{isPostingColumn}";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                         INNER join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId > @DraftedSavedApplication                        
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
@@ -2504,8 +2513,7 @@ FROM
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
                         inner join MUnit munit on munit.UnitId=mapunit.UnitId 
                         inner join MICardType ty on ty.TypeId = trnicrd.TypeId 
-                        inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId AND map.AspNetUsersId = @UserId
-                        left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId";
+                        inner join TrnDomainMapping map on map.Id= trnicrd.TrnDomainMappingId AND map.AspNetUsersId = @UserId";
 
                 fromJoinCount = @"FROM TrnICardRequest trnicrd
                         INNER join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId > @DraftedSavedApplication                        
@@ -2518,7 +2526,7 @@ FROM
             }
             else if (dTO.stepcount == (int)ApplSubmittedStatusEnum.Rejected)//Reject From IO,RO and AFSAC Cell
             {
-                selectColumns = @"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,ISNULL(Postout.Id,0) AS IsPosting";
+                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,{isPostingColumn}";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId IN @RejectedSteps AND trnicrd.StatusId = @RunningStatusId                       
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
@@ -2527,8 +2535,7 @@ FROM
                         inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId 
                         inner join MUnit munit on munit.UnitId=mapunit.UnitId 
                         inner join MICardType ty on ty.TypeId = trnicrd.TypeId
-                        inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId  and fwd.FwdStatusId=@RejectedForward                        
-                        left join TrnPostingOut Postout on Postout.RequestId=trnicrd.RequestId";
+                        inner join TrnFwds fwd on fwd.RequestId = trnicrd.RequestId and fwd.ToAspNetUsersId = @UserId  and fwd.FwdStatusId=@RejectedForward";
 
 
                 fromJoinCount = @"FROM TrnICardRequest trnicrd
@@ -4497,7 +4504,7 @@ FROM
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetCardMovementHistory");
+                _logger.LogError(1001, ex, "BasicDetailDB->CardDispatchCSVUpload");
                 response.Message = "";
                 response.Result = false;
             }
@@ -4551,7 +4558,7 @@ FROM
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetCardMovementHistory");
+                _logger.LogError(1001, ex, "BasicDetailDB->DispatchCardIn");
                 response.Message = "";
                 response.Result = false;
             }
@@ -4601,18 +4608,18 @@ FROM
                                           {
                                               StepName = "I-Card Exported",
                                               ReportedBy = "afsac_cell",
-                                              ReportedOn = request.CardExportedOn.Value,
+                                              ReportedOn = request.CardExportedOn.GetValueOrDefault(),
                                               Remark = "Card Exported"
-                                          }).ToListAsync();
-                    var printed = new List<DTOCardMovementHistoryResponse>();
-                    var CardDispatchToRegimentObliqueORO = new List<DTOCardMovementHistoryResponse>();
-                    var CardInRegimentObliqueORO = new List<DTOCardMovementHistoryResponse>();
-                    var CardDispatchToUnit = new List<DTOCardMovementHistoryResponse>();
-                    var CardDispatchInUnit = new List<DTOCardMovementHistoryResponse>();
-                    var losted = new List<DTOCardMovementHistoryResponse>();
-                    var distributed = new List<DTOCardMovementHistoryResponse>();
-                    var hotlisted = new List<DTOCardMovementHistoryResponse>();
-                    var destroyed = new List<DTOCardMovementHistoryResponse>();
+                                          }).FirstOrDefaultAsync();
+                    var printed = new DTOCardMovementHistoryResponse();
+                    var CardDispatchToRegimentObliqueORO = new DTOCardMovementHistoryResponse();
+                    var CardInRegimentObliqueORO = new DTOCardMovementHistoryResponse();
+                    var CardDispatchToUnit = new DTOCardMovementHistoryResponse();
+                    var CardDispatchInUnit = new DTOCardMovementHistoryResponse();
+                    var losted = new DTOCardMovementHistoryResponse();
+                    var distributed = new DTOCardMovementHistoryResponse();
+                    var hotlisted = new DTOCardMovementHistoryResponse();
+                    var destroyed = new DTOCardMovementHistoryResponse();
 
                     if (cardStep > (byte)CardStepEnum.Exported)
                     {
@@ -4622,9 +4629,9 @@ FROM
                                          {
                                              StepName = "I-Card Printed",
                                              ReportedBy = "afsac_cell",
-                                             ReportedOn = request.CardPrintedOn.Value,
+                                             ReportedOn = request.CardPrintedOn.GetValueOrDefault(),
                                              Remark = "Card Printed"
-                                         }).ToListAsync();
+                                         }).FirstOrDefaultAsync();
                         losted = await (from lost in _context.TrnLostCards.AsNoTracking()
                                             //join dist in _context.TrnDistributeCards.AsNoTracking()
                                             //    on lost.RequestId equals dist.RequestId into distGroup
@@ -4641,9 +4648,9 @@ FROM
                                         {
                                             StepName = "I-Card Lost",
                                             ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
-                                            ReportedOn = lost.UpdatedOn.Value,
-                                            Remark = lost.Remark
-                                        }).ToListAsync();
+                                            ReportedOn = lost.UpdatedOn.GetValueOrDefault(),
+                                            Remark = lost.Remark ?? string.Empty
+                                        }).FirstOrDefaultAsync();
                     }
                     if (cardStep >= (byte)CardStepEnum.CardDispatchToRegimentObliqueORO)
                     {
@@ -4667,7 +4674,7 @@ FROM
                                                                ReportedBy = $"({aspu.DomainId}) { mr.RankAbbreviation } { up.Name }",
                                                                ReportedOn = dispatchC.OutDate,
                                                                Remark = dispatchC.FromRemark??string.Empty
-                                                           }).ToListAsync();
+                                                           }).FirstOrDefaultAsync();
                     }
                     if (cardStep >= (byte)CardStepEnum.CardInRegimentObliqueORO)
                     {
@@ -4689,9 +4696,9 @@ FROM
                                                                   {
                                                                       StepName = mstepC.Name,
                                                                       ReportedBy = $"({aspu.DomainId}) {mr.RankAbbreviation} {up.Name}",
-                                                                      ReportedOn = dispatchC.ReceiptDate ?? DateTime.MinValue,
+                                                                      ReportedOn = dispatchC.ReceiptDate.GetValueOrDefault(),
                                                                       Remark = dispatchC.ToRemark ?? string.Empty
-                                                                  }).ToListAsync();
+                                                                  }).FirstOrDefaultAsync();
                     }
                     if (cardStep >= (byte)CardStepEnum.CardDispatchToUnit)
                     {
@@ -4715,7 +4722,7 @@ FROM
                                                                       ReportedBy = $"({aspu.DomainId}) {mr.RankAbbreviation} {up.Name}",
                                                                       ReportedOn = dispatchC.OutDate,
                                                                       Remark = dispatchC.FromRemark ?? string.Empty
-                                                                  }).ToListAsync();
+                                                                  }).FirstOrDefaultAsync();
                     }
                     if (cardStep >= (byte)CardStepEnum.CardDispatchInUnit)
                     {
@@ -4737,9 +4744,9 @@ FROM
                                                           {
                                                               StepName = mstepC.Name,
                                                               ReportedBy = $"({aspu.DomainId}) {mr.RankAbbreviation} {up.Name}",
-                                                              ReportedOn = dispatchC.ReceiptDate ?? DateTime.MinValue,
+                                                              ReportedOn = dispatchC.ReceiptDate.GetValueOrDefault(),
                                                               Remark = dispatchC.ToRemark ?? string.Empty
-                                                          }).ToListAsync();
+                                                          }).FirstOrDefaultAsync();
                     }
 
                     if (cardStep == (byte)CardStepEnum.CardDistributed)
@@ -4756,9 +4763,9 @@ FROM
                                              {
                                                  StepName = "I-Card Distributed",
                                                  ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
-                                                 ReportedOn = dist.DistributedOn.Value,
-                                                 Remark = dist.Remark
-                                             }).ToListAsync();
+                                                 ReportedOn = dist.DistributedOn.GetValueOrDefault(),
+                                                 Remark = dist.Remark ?? string.Empty
+                                             }).FirstOrDefaultAsync();
                         hotlisted = await (from hotlist in _context.TrnHotlistCards.AsNoTracking()
                                            join user in _context.Users.AsNoTracking()
                                               on hotlist.Updatedby equals user.Id
@@ -4771,9 +4778,9 @@ FROM
                                            {
                                                StepName = "I-Card Holtist",
                                                ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
-                                               ReportedOn = hotlist.UpdatedOn.Value,
-                                               Remark = hotlist.Remark
-                                           }).ToListAsync();
+                                               ReportedOn = hotlist.UpdatedOn.GetValueOrDefault(),
+                                               Remark = hotlist.Remark ?? string.Empty
+                                           }).FirstOrDefaultAsync();
                     }
                     destroyed = await (from dest in _context.TrnDestructionCards.AsNoTracking()
                                        join user in _context.Users.AsNoTracking()
@@ -4787,23 +4794,55 @@ FROM
                                        {
                                            StepName = "I-Card Destruction",
                                            ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
-                                           ReportedOn = dest.DestructedOn.Value,
-                                           Remark = dest.Remark
-                                       }).ToListAsync();
+                                           ReportedOn = dest.DestructedOn.GetValueOrDefault(),
+                                           Remark = dest.Remark ?? string.Empty
+                                       }).FirstOrDefaultAsync();
 
-                    responseList = exported
-                            .Concat(printed)
-                            .Concat(CardDispatchToRegimentObliqueORO)
-                            .Concat(CardInRegimentObliqueORO)
-                            .Concat(CardDispatchToUnit)
-                            .Concat(CardDispatchInUnit)
-                            .Concat(losted)
-                            .Concat(distributed)
-                            .Concat(hotlisted)
-                            .Concat(destroyed)
-                            .OrderBy(x => x.ReportedOn)
-                            .ToList();
+                    if (exported != null)
+                    {
+                        responseList.Add(exported);
+                    }
+                    if (printed != null)
+                    {
+                        responseList.Add(printed);
+                    }
+                    if (CardDispatchToRegimentObliqueORO != null)
+                    {
+                        responseList.Add(CardDispatchToRegimentObliqueORO);
+                    }
+                    if (CardInRegimentObliqueORO != null)
+                    {
+                        responseList.Add(CardInRegimentObliqueORO);
+                    }
+                    if (CardDispatchToUnit != null)
+                    {
+                        responseList.Add(CardDispatchToUnit);
+                    }
+                    if (CardDispatchInUnit != null)
+                    {
+                        responseList.Add(CardDispatchInUnit);
+                    }
+                    if (losted != null)
+                    {
+                        responseList.Add(losted);
+                    }
+                    if (distributed != null)
+                    {
+                        responseList.Add(distributed);
+                    }
+                    if (hotlisted != null)
+                    {
+                        responseList.Add(hotlisted);
+                    }
+                    if (destroyed != null)
+                    {
+                        responseList.Add(destroyed);
+                    }
 
+                    if (responseList.Count > 0)
+                    {
+                        responseList.OrderBy((x => x.ReportedOn));
+                    }
                 }
             }
             catch (Exception ee)

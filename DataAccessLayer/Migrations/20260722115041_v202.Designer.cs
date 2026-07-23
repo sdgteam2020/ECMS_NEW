@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260722115041_v202")]
+    partial class v202
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2334,9 +2337,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(max)");
 
-                    b.Property<int?>("DestructedCardId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -2375,8 +2375,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApplyForId");
-
-                    b.HasIndex("DestructedCardId");
 
                     b.HasIndex("RankId");
 
@@ -4149,11 +4147,6 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DataTransferObject.Domain.Model.TrnDestructionCard", "TrnDestructionCard")
-                        .WithMany()
-                        .HasForeignKey("DestructedCardId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("DataTransferObject.Domain.Master.MRank", "Rank")
                         .WithMany()
                         .HasForeignKey("RankId")
@@ -4194,8 +4187,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MUserProfile");
 
                     b.Navigation("Rank");
-
-                    b.Navigation("TrnDestructionCard");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplCloseMapping", b =>

@@ -51,6 +51,7 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                     $("#_2ndLevelClosed").html(response.Value._2ndLevelClosed);
                     $("#_3rdLevelPending").html(response.Value._3rdLevelPending);
                     $("#_3rdLevelApproved").html(response.Value._3rdLevelApproved);
+                    $("#ToInternalForward").html(response.Value.ToInternalForward);
                     $("#_3rdLevelReject").html(response.Value._3rdLevelReject);
                     $("_3rdLevelClosed").html(response.Value._3rdLevelClosed);
                     $("#_4thLevelPending").html(response.Value._4thLevelPending);
