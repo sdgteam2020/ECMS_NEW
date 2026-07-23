@@ -1,4 +1,5 @@
-﻿using DataAccessLayer;
+﻿using Azure;
+using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Identitytable;
 using DataTransferObject.Domain.Master;
@@ -6,11 +7,12 @@ using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.SqlServer.Management.Smo;
-using Microsoft.AspNetCore.Identity;
 using System.Reflection;
-
 
 namespace BusinessLogicsLayer.BasicDet
 {
@@ -556,6 +558,13 @@ namespace BusinessLogicsLayer.BasicDet
 
             }
 
+        }
+        public async Task<ICardHistoryResponseAll> GetCompletedHistoryByRequestId(int RequestId)
+        {
+            ICardHistoryResponseAll response = new ICardHistoryResponseAll();
+            response = await _iBasicDetailDB.ICardHistoryCompleted(RequestId);
+
+            return response;
         }
         public Task<DTOGetMappingDetailsForClosedHistoryResponse> GetMappingDetailsForClosedHistory(DTODataTableRequestForAppClosedHistory dTO)
         {

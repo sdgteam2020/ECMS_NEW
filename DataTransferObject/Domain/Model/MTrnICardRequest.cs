@@ -1,4 +1,6 @@
-﻿using DataTransferObject.Domain.Master;
+﻿using DataTransferObject.Domain.Identitytable;
+using DataTransferObject.Domain.Master;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -41,7 +43,27 @@ namespace DataTransferObject.Domain.Model
         [StringLength(30)]
         [Column(TypeName = "varchar(30)")]
         public string? ChipNo { get; set; }
+
+        [ForeignKey("ApplicationUserCardPrinted"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? CardPrintedByAspNetUserId { get; set; }
+
+        [JsonIgnore]
+        public ApplicationUser? ApplicationUserCardPrinted { get; set; }
+
+        [ForeignKey("UserProfileCardPrinted"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? CardPrintedByUserId { get; set; }
+        public MUserProfile? UserProfileCardPrinted { get; set; }
         public DateTime? CardPrintedOn { get; set; }
+
+        [ForeignKey("ApplicationUserCardExported"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? CardExportedByAspNetUserId { get; set; }
+
+        [JsonIgnore]
+        public ApplicationUser? ApplicationUserCardExported { get; set; }
+
+        [ForeignKey("UserProfileCardExported"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int? CardExportedByUserId { get; set; }
+        public MUserProfile? UserProfileCardExported { get; set; }
         public DateTime? CardExportedOn { get; set; }
     }
 }
