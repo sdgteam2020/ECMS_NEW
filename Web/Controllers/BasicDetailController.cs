@@ -7610,14 +7610,7 @@ namespace Web.Controllers
             ViewBag.UserType = userType;
            
             ViewBag.ApplyForId = string.IsNullOrEmpty(jcoor) ? 1 : 2;
-            ViewBag.Title = userType switch
-            {
-                "Closed_IO" => "Closed History for Officer",
-                "Closed_ORO" => "Closed History for JCO/OR",
-                "Closed_RO" => "Closed History for Record Office",
-                "Closed_ADC" => "Closed History for AFSAC Cell",
-                _ => "Closed History"
-            };
+            ViewBag.Title = "I-Card Closed History";
             if (role == "user")
             {
                 return View();
@@ -7670,6 +7663,78 @@ namespace Web.Controllers
                 // Log the error with event id 1001 and return 400 Bad Request
                 _logger.LogError(1001, ex, "BasicDetail->GetAllClosedHistory");
                 return BadRequest(new { message = "Internal Server Error" });
+            }
+        }      
+        [HttpPost]
+        public async Task<IActionResult> GetClosedHistoryByRequestId(string RequestId)
+        {
+            string photoPath = string.Empty;
+            string signaturePath = string.Empty;
+            int decryptedRequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(RequestId, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            // Initialize the generic response object            
+            DTOGenericResponse<ICardHistoryResponseAll?> response = new DTOGenericResponse<ICardHistoryResponseAll?>();          
+            try
+            {
+                // Fetch the basic detail data for the given request ID
+                ICardHistoryResponseAll? cardHistoryResponseAll = await basicDetailBL.GetClosedHistoryByRequestId(decryptedRequestId);
+
+                if (cardHistoryResponseAll != null)
+                {
+                    cardHistoryResponseAll.CardMovement = await basicDetailBL.GetCardMovementHistory(decryptedRequestId);
+                    photoPath = cardHistoryResponseAll.BasicDetail.PhotoImagePath;
+                    signaturePath = cardHistoryResponseAll.BasicDetail.SignatureImagePath;
+                    if (!string.IsNullOrEmpty(photoPath) || !string.IsNullOrEmpty(signaturePath))
+                    {
+                        // Set the physical path to the storage folder for images
+                        string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                        // Construct full path for the photo and decrypt it to Base64
+                        string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", photoPath);
+                        cardHistoryResponseAll.BasicDetail.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                        // Construct full path for the signature and decrypt it to Base64
+                        string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", signaturePath);
+                        cardHistoryResponseAll.BasicDetail.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                        // Return the VM as JSON
+                        response.Result = true;
+                        response.Message = "Success";
+                        response.Value = cardHistoryResponseAll;
+                        return Json(response);
+                    }
+                    else
+                    {
+                        response.Result = false;
+                        response.Message = "Photo or Signature path is missing.";
+                        response.Value = null;
+                        return Json(response);
+                    }
+                }
+                else
+                {
+                    // Return null if no basic detail found for the request ID                
+                    response.Result = false;
+                    response.Message = "RequestId not found.";
+                    response.Value = null;
+                    return Json(response);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetClosedHistoryByRequestId");
+                response.Result = false;
+                response.Message = "Photo and Signature not found.";
+                response.Value = null;
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetClosedHistoryByRequestId");
+                response.Result = false;
+                response.Message = "Internal Error.";
+                response.Value = null;
+                return Json(response);
             }
         }
         #endregion

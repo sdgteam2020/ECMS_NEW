@@ -39,5 +39,9 @@ namespace DataTransferObject.Response
         public string ApplyFor { get; set; } = string.Empty;
         public string CardSerialNo { get; set; } = string.Empty;
         public string ChipNo { get; set; } = string.Empty;
+        public string SignatureImagePath { get; set; } = string.Empty;
+        public string PhotoImagePath { get; set; } = string.Empty;
+        public string? SignatureInBase64 { get; set; }
+        public string? PhotoInBase64 { get; set; }
     }
 }

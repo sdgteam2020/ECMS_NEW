@@ -708,7 +708,10 @@ namespace BusinessLogicsLayer.BasicDet
             }
 
         }
-        
 
+        public async Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId)
+        {
+            return await _iBasicDetailDB.GetClosedHistoryByRequestId(RequestId);
+        }
     }
 }

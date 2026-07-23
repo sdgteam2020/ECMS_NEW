@@ -3616,7 +3616,7 @@ FROM
         {
             ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();
 
-            string query = @"SELECT bd.PaperIcardNo,bd.NameAsPerRecord,bd.FName,bd.LName,bd.ServiceNo,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,
+            string query = @"SELECT bd.PaperIcardNo,bd.NameAsPerRecord,bd.FName,bd.LName,bd.ServiceNo,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,trnup.PhotoImagePath, trnup.SignatureImagePath,
                             trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,trninfo.IdenMark1,trninfo.Height,trninfo.AadhaarNo,bld.BloodGroup,regi.Abbreviation RegimentalName,
                             Muni.UnitName,bd.RankId,ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,icardreq.RequestId,icardreq.UpdatedOn RequestDate,bd.ApplyForId,appl.Name ApplyFor,icardreq.CardSerialNo,icardreq.ChipNo
                             from TrnICardRequest icardreq
@@ -3630,6 +3630,7 @@ FROM
                             INNER JOIN TrnAddress trnadd on trnadd.BasicDetailId = bd.BasicDetailId
                             INNER JOIN TrnIdentityInfo trninfo on trninfo.BasicDetailId = bd.BasicDetailId
                             INNER JOIN MBloodGroup bld on bld.BloodGroupId = trninfo.BloodGroupId
+                            INNER JOIN TrnUpload trnup on trnup.BasicDetailId = bd.BasicDetailId
                             left join MRegimental regi on regi.RegId = bd.RegimentalId
                             where icardreq.RequestId=@RequestId
 
@@ -5375,5 +5376,22 @@ FROM
                 return response;
             }
         }
+
+        public async Task<ICardHistoryResponseAll> GetClosedHistoryByRequestId(int RequestId)
+        {
+            ICardHistoryResponseAll cardStatus = new ICardHistoryResponseAll();
+            try
+            {
+                var card = await _context.TrnApplClose.FirstOrDefaultAsync(req => req.RequestId == RequestId);
+                if (!string.IsNullOrEmpty(card?.CardRequestHistoryJson))
+                    cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(card.CardRequestHistoryJson);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetClosedHistoryByRequestId");
+            }
+            return cardStatus;
+        }
+     
     }
 }
