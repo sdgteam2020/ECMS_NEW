@@ -240,6 +240,11 @@ namespace BusinessLogicsLayer.BasicDet
             var data = await _iBasicDetailDB.ICardHistoryCompleted(RequestId);
             return data;
         }
+        public async Task<ICardHistoryResponseAll> ICardHistoryClosed(int RequestId)
+        {
+            var data = await _iBasicDetailDB.ICardHistoryClosed(RequestId);
+            return data;
+        }
         public async Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO)
         {
             List<DTOCardDispatchCheckRequest> checkDbRecords = new List<DTOCardDispatchCheckRequest>();

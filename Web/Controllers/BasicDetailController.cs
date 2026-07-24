@@ -5109,7 +5109,11 @@ namespace Web.Controllers
                 // If card is completed, fetch completed card history
                 cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
             }
-
+            else if (cardStatus.GetValueOrDefault() == 3)
+            {
+                // If card is completed, fetch completed card history
+                cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
+            }
             // Return the card history as JSON
             return Json(cardHistoryResponses);
         }

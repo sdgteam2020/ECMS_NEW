@@ -3607,6 +3607,39 @@ FROM
 
 
         /// <summary>
+        /// Retrieves the completed card history for the specified RequestId.
+        /// This method fetches the completed card request from the `CompletedICardRequests` table based on the provided `RequestId` and deserializes the associated card request history into an object.
+        /// </summary>
+        /// <param name="RequestId">The unique identifier for the completed card request whose history is to be retrieved.</param>
+        /// <returns>
+        /// An instance of <see cref="ICardHistoryResponseAll"/> containing the deserialized card request history. If the card request is not found or the history is empty, an empty response object is returned.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Throws an exception if an error occurs during database query execution or during the deserialization of the card history. The exception is logged for debugging purposes.
+        /// </exception>
+        public async Task<ICardHistoryResponseAll> ICardHistoryClosed(int RequestId)
+        {
+            ICardHistoryResponseAll cardStatus = new ICardHistoryResponseAll();
+            try
+            {
+                var card = await _context.TrnApplClose.FirstOrDefaultAsync(req => req.RequestId == RequestId);
+
+                string? historyJson = card?.CardRequestHistoryJson;
+
+                if (!string.IsNullOrWhiteSpace(historyJson))
+                {
+                    return JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->ICardHistoryClosed");
+            }
+            return new ICardHistoryResponseAll();
+        }
+
+
+        /// <summary>
         /// Retrieves the complete history of a card request based on the provided RequestId.
         /// This includes data related to forwarding, posting, faulty card information, and application closure.
         /// The method queries multiple related tables and returns the data in a structured response object.
