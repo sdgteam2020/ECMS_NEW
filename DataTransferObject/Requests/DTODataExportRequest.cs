@@ -21,5 +21,7 @@ namespace DataTransferObject.Requests
 
         [RegularExpression(@"^[\w ]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string privateKey { get; set; } = string.Empty;
+        public int CardExportedByAspNetUserId { get; set; }
+        public int CardExportedByUserId { get; set; }
     }
 }

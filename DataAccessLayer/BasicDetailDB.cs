@@ -1774,9 +1774,9 @@ namespace DataAccessLayer
 
                         mTrnICardRequest.BasicDetailId = BasicDetailId;
 
-                        var insertTrnICardRequest = " INSERT INTO TrnICardRequest (BasicDetailId, TypeId, RegistrationId, TrnDomainMappingId, IsActive, Updatedby, UpdatedOn, StatusId, CardSerialNo, ChipNo)" +
+                        var insertTrnICardRequest = " INSERT INTO TrnICardRequest (BasicDetailId, TypeId, RegistrationId, TrnDomainMappingId, IsActive, Updatedby, UpdatedOn, StatusId, CardSerialNo, ChipNo, RecordOfficeId, CardExportedByAspNetUserId, CardExportedByUserId, CardPrintedByAspNetUserId, CardPrintedByUserId)" +
                                                     " OUTPUT INSERTED.RequestId " +
-                                                    " VALUES (@BasicDetailId, @TypeId, @RegistrationId, @TrnDomainMappingId, @IsActive, @Updatedby, @UpdatedOn, @StatusId, @CardSerialNo, @ChipNo);";
+                                                    " VALUES (@BasicDetailId, @TypeId, @RegistrationId, @TrnDomainMappingId, @IsActive, @Updatedby, @UpdatedOn, @StatusId, @CardSerialNo, @ChipNo, @RecordOfficeId, @CardExportedByAspNetUserId, @CardExportedByUserId, @CardPrintedByAspNetUserId, @CardPrintedByUserId);";
                         var parametersTrnICardRequest = new DynamicParameters();
                         //parametersTrnICardRequest.Add("@RequestId", mTrnICardRequest.RequestId, DbType.Int32, ParameterDirection.Output);
                         parametersTrnICardRequest.Add("@BasicDetailId", mTrnICardRequest.BasicDetailId, DbType.Int32, ParameterDirection.Input);
@@ -1789,6 +1789,11 @@ namespace DataAccessLayer
                         parametersTrnICardRequest.Add("@StatusId", mTrnICardRequest.StatusId, DbType.Byte, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@CardSerialNo", mTrnICardRequest.CardSerialNo, DbType.String, ParameterDirection.Input, 30);
                         parametersTrnICardRequest.Add("@ChipNo", mTrnICardRequest.ChipNo, DbType.String, ParameterDirection.Input, 30);
+                        parametersTrnICardRequest.Add("@RecordOfficeId", mTrnICardRequest.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardExportedByAspNetUserId", mTrnICardRequest.CardExportedByAspNetUserId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardExportedByUserId", mTrnICardRequest.CardExportedByUserId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardPrintedByAspNetUserId", mTrnICardRequest.CardPrintedByAspNetUserId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardPrintedByUserId", mTrnICardRequest.CardPrintedByUserId, DbType.Int32, ParameterDirection.Input);
                         int RequestId = await db.QuerySingleAsync<int>(insertTrnICardRequest, parametersTrnICardRequest, transaction: transaction);
                         mStepCounter.RequestId = RequestId;
 
@@ -1872,7 +1877,7 @@ namespace DataAccessLayer
                         parametersIdentityInfo.Add("@BloodGroupId", mTrnIdentityInfo.BloodGroupId, DbType.Byte, ParameterDirection.Input);
                         await db.ExecuteAsync(updateIdentityInfo, parametersIdentityInfo, transaction: transaction);
 
-                        var updateTrnICardRequest = " UPDATE TrnICardRequest SET BasicDetailId=@BasicDetailId, TypeId=@TypeId, RegistrationId=@RegistrationId, TrnDomainMappingId=@TrnDomainMappingId, IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, StatusId=@StatusId, CardSerialNo=@CardSerialNo, ChipNo=@ChipNo,RecordOfficeId=@RecordOfficeId WHERE RequestId=@RequestId";
+                        var updateTrnICardRequest = " UPDATE TrnICardRequest SET BasicDetailId=@BasicDetailId, TypeId=@TypeId, RegistrationId=@RegistrationId, TrnDomainMappingId=@TrnDomainMappingId, IsActive=@IsActive, Updatedby=@Updatedby, UpdatedOn=@UpdatedOn, StatusId=@StatusId, CardSerialNo=@CardSerialNo, ChipNo=@ChipNo,RecordOfficeId=@RecordOfficeId, CardExportedByAspNetUserId=@CardExportedByAspNetUserId, CardExportedByUserId=@CardExportedByUserId, CardPrintedByAspNetUserId=@CardPrintedByAspNetUserId, CardPrintedByUserId=@CardPrintedByUserId WHERE RequestId=@RequestId";
                         var parametersTrnICardRequest = new DynamicParameters();
                         parametersTrnICardRequest.Add("@RequestId", mTrnICardRequest.RequestId, DbType.Int32, ParameterDirection.Input);
                         parametersTrnICardRequest.Add("@BasicDetailId", mTrnICardRequest.BasicDetailId, DbType.Int32, ParameterDirection.Input);
@@ -1886,6 +1891,10 @@ namespace DataAccessLayer
                         parametersTrnICardRequest.Add("@CardSerialNo", mTrnICardRequest.CardSerialNo, DbType.String, ParameterDirection.Input, 30);
                         parametersTrnICardRequest.Add("@ChipNo", mTrnICardRequest.ChipNo, DbType.String, ParameterDirection.Input, 30);
                         parametersTrnICardRequest.Add("@RecordOfficeId", mTrnICardRequest.RecordOfficeId, DbType.Byte, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardExportedByAspNetUserId", mTrnICardRequest.CardExportedByAspNetUserId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardExportedByUserId", mTrnICardRequest.CardExportedByUserId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardPrintedByAspNetUserId", mTrnICardRequest.CardPrintedByAspNetUserId, DbType.Int32, ParameterDirection.Input);
+                        parametersTrnICardRequest.Add("@CardPrintedByUserId", mTrnICardRequest.CardPrintedByUserId, DbType.Int32, ParameterDirection.Input);
                         await db.ExecuteAsync(updateTrnICardRequest, parametersTrnICardRequest, transaction: transaction);
 
                         transaction.Commit();
@@ -3236,17 +3245,19 @@ FROM
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
             int[] Ids = Data.Ids;
             string query = "";
-            DateTime dateTime = DateTime.Now;    
+            DateTime CardExportedOn = DateTime.Now;    
             try
             {
-                string query1 = @"update TrnFwds set IsComplete=1 where RequestId in @Ids ";
-                await db.ExecuteAsync(query1, new { Ids }, transaction: transaction);
+                string query1 = @"UPDATE TrnFwds SET IsComplete=1 WHERE RequestId IN @Ids 
+                                  UPDATE TrnStepCounter SET StepId=5 WHERE RequestId IN @Ids 
+                                  UPDATE TrnICardRequest SET CardExportedOn = @CardExportedOn, CardExportedByAspNetUserId = @CardExportedByAspNetUserId, CardExportedByUserId = @CardExportedByUserId WHERE  RequestId IN @Ids";
 
-                string query2 = @"update TrnStepCounter set StepId=5 where RequestId in @Ids ";
-                await db.ExecuteAsync(query2, new { Ids }, transaction: transaction);
-
-                string query3 = @"update TrnICardRequest set CardExportedOn=@dateTime where  RequestId in @Ids ";
-                await db.ExecuteAsync(query3, new { Ids, dateTime }, transaction: transaction);
+                var parameters2 = new DynamicParameters();
+                parameters2.Add("@Ids", Ids);
+                parameters2.Add("@CardExportedOn", CardExportedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters2.Add("@CardExportedByAspNetUserId", Data.CardExportedByAspNetUserId, DbType.Int32, ParameterDirection.Input);
+                parameters2.Add("@CardExportedByUserId", Data.CardExportedByUserId, DbType.Int32, ParameterDirection.Input);
+                await db.ExecuteAsync(query1, parameters2, transaction: transaction);
 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();
@@ -4352,7 +4363,7 @@ FROM
         /// Throws an exception if an error occurs during the processing of the requests or while interacting with the database. 
         /// The exception is logged for debugging purposes.
         /// </exception>
-        public async Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests)
+        public async Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests, int CardPrintedByAspNetUserId, int CardPrintedByUserId)
         {
             byte StepId = 5;
             var response = new List<DTOCardPriningRequest>();
@@ -4379,6 +4390,8 @@ FROM
                                               CardSerialNo = record.CardSerialNo,
                                               IsValid = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null && armyNoCheck != null,
                                               Status = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null ? "Valid" : "DbInvalid",
+                                              CardPrintedByAspNetUserId = CardPrintedByAspNetUserId,
+                                              CardPrintedByUserId = CardPrintedByUserId,
                                               Remarks = (matchRecord == null ? "ApplId not exists; " : "") +
                                                             (cardNoExists != null ? "CardSerialNo already exists; " : "") +
                                                             (chipNoExists != null ? "ChipNo already exists; " : "") +
@@ -4625,11 +4638,17 @@ FROM
                 if (allowedSteps.Contains((CardStepEnum)cardStep))
                 {
                     var exported = await (from request in _context.TrnICardRequest.AsNoTracking()
+                                          join user in _context.Users.AsNoTracking()
+                                             on request.CardExportedByAspNetUserId equals user.Id
+                                          join profile in _context.UserProfile.AsNoTracking()
+                                             on request.CardExportedByUserId equals profile.UserId
+                                          join rank in _context.MRank.AsNoTracking()
+                                             on profile.RankId equals rank.RankId
                                           where request.RequestId == requestId && request.CardExportedOn.HasValue
                                           select new DTOCardMovementHistoryResponse
                                           {
                                               StepName = "I-Card Exported",
-                                              ReportedBy = "afsac_cell",
+                                              ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
                                               ReportedOn = request.CardExportedOn.GetValueOrDefault(),
                                               Remark = "Card Exported"
                                           }).FirstOrDefaultAsync();
@@ -4646,11 +4665,17 @@ FROM
                     if (cardStep > (byte)CardStepEnum.Exported)
                     {
                         printed = await (from request in _context.TrnICardRequest.AsNoTracking()
+                                         join user in _context.Users.AsNoTracking()
+                                            on request.CardPrintedByAspNetUserId equals user.Id
+                                         join profile in _context.UserProfile.AsNoTracking()
+                                            on request.CardPrintedByUserId equals profile.UserId
+                                         join rank in _context.MRank.AsNoTracking()
+                                            on profile.RankId equals rank.RankId
                                          where request.RequestId == requestId && request.CardPrintedOn.HasValue
                                          select new DTOCardMovementHistoryResponse
                                          {
                                              StepName = "I-Card Printed",
-                                             ReportedBy = "afsac_cell",
+                                             ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
                                              ReportedOn = request.CardPrintedOn.GetValueOrDefault(),
                                              Remark = "Card Printed"
                                          }).FirstOrDefaultAsync();

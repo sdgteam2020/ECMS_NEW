@@ -8,10 +8,12 @@ namespace DataTransferObject.Requests
 {
     public class DTOCardPriningRequest
     {
-        public string ApplId { get; set; }
-        public string ServiceNo { get; set; }
-        public string CardSerialNo { get; set; }
-        public string ChipNo { get; set; }
+        public string ApplId { get; set; } = string.Empty;
+        public string ServiceNo { get; set; } = string.Empty;
+        public string CardSerialNo { get; set; } = string.Empty;
+        public string ChipNo { get; set; } = string.Empty;
+        public int CardPrintedByAspNetUserId { get; set; }
+        public int CardPrintedByUserId { get; set; }
         public bool IsValid { get; set; } = true;
         public string Status { get; set; } = "Valid";
         public string Remarks { get; set; } = string.Empty;

@@ -16,7 +16,9 @@ namespace Web.Healpers
                 if (isSample)
                 {
                     ignoreProperties.Add("Remarks");
-                    ignoreProperties.Add("Status");
+                    ignoreProperties.Add("Status"); 
+                    ignoreProperties.Add("CardPrintedByAspNetUserId");
+                    ignoreProperties.Add("CardPrintedByUserId");
                 }
             }
             else if (csvClassMapTypeEnum == CsvClassMapTypeEnum.HotlistExport || csvClassMapTypeEnum == CsvClassMapTypeEnum.LostCard || csvClassMapTypeEnum == CsvClassMapTypeEnum.DistributeCard)

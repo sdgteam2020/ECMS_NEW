@@ -253,7 +253,7 @@ namespace BusinessLogicsLayer.BasicDet
             }
             return checkDbRecords;
         }
-        public async Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request)
+        public async Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request, int CardPrintedByAspNetUserId, int CardPrintedByUserId)
         {
             try
             {
@@ -275,7 +275,7 @@ namespace BusinessLogicsLayer.BasicDet
                 // Check valid records in the database
                 if (validRecords.Any())
                 {
-                    var checkDbRecords = await _iBasicDetailDB.CardPrintingCSVCheck(validRecords);
+                    var checkDbRecords = await _iBasicDetailDB.CardPrintingCSVCheck(validRecords, CardPrintedByAspNetUserId, CardPrintedByUserId);
                     validRecords = checkDbRecords.Where(r => r.IsValid).ToList();
                     invalidRecords = invalidRecords.Concat(checkDbRecords.Where(r => !r.IsValid)).ToList();
                 }
