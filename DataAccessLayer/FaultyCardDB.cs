@@ -345,16 +345,10 @@ namespace DataAccessLayer
                 if (dTO.Choice == 2)
                 {
                     // SQL query to update the step counter (StepId = 4 for acceptance)
-                    query2 = @"UPDATE TrnStepCounter set StepId = 4 where RequestId=@RequestId ";
-                    await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
-
-                    // SQL query to mark the forward as incomplete
-                    query3 = @"UPDATE TrnFwds set IsComplete = 0 where TrnFwdId=@TrnFwdId ";
-                    await db.ExecuteAsync(query3, new { dTO.TrnFwdId }, transaction: transaction);
-
-                    // SQL query to reset certain fields in the TrnICardRequest table
-                    query4 = @"UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null where RequestId=@RequestId ";
-                    await db.ExecuteAsync(query4, new { dTO.RequestId }, transaction: transaction);
+                    query2 = @" UPDATE TrnStepCounter set StepId = 4 where RequestId=@RequestId 
+                                UPDATE TrnFwds set IsComplete = 0 where TrnFwdId=@TrnFwdId 
+                                UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null, CardExportedByAspNetUserId=null, CardExportedByUserId=null, CardPrintedByAspNetUserId=null, CardPrintedByUserId=null where RequestId=@RequestId ";
+                    await db.ExecuteAsync(query2, new { dTO.RequestId, dTO.TrnFwdId }, transaction: transaction);
 
                 }
                 /// Handle "Reject" action if Choice is 3
@@ -416,20 +410,11 @@ namespace DataAccessLayer
                         await db.ExecuteAsync(query6, parameters2, transaction: transaction);
                     }
                     // SQL queries to reset the XmlFiles and update the step counter for rejection
-                    query3 = @"UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles=@XmlFiles WHERE RequestId=@RequestId";
-                    await db.ExecuteAsync(query3, new { dTO.RequestId, XmlFiles }, transaction: transaction);
-
-                    query2 = @"UPDATE TrnStepCounter set StepId = 9 where RequestId=@RequestId ";
-                    await db.ExecuteAsync(query2, new { dTO.RequestId }, transaction: transaction);
-
-                    // Reset card fields on rejection
-                    query4 = @"UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null where RequestId=@RequestId ";
-                    await db.ExecuteAsync(query4, new { dTO.RequestId }, transaction: transaction);
-
-                    query5 = @"Update BasicDetails set IsLock = 0 where BasicDetailId=@BasicDetailId";
-                    await db.ExecuteAsync(query5, new { dTO.BasicDetailId }, transaction: transaction);
-
-
+                    query3 = @" UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles=@XmlFiles WHERE RequestId=@RequestId
+                                UPDATE TrnStepCounter set StepId = 9 where RequestId=@RequestId
+                                UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null, CardExportedByAspNetUserId=null, CardExportedByUserId=null, CardPrintedByAspNetUserId=null, CardPrintedByUserId=null where RequestId=@RequestId
+                                Update BasicDetails set IsLock = 0 where BasicDetailId=@BasicDetailId";
+                    await db.ExecuteAsync(query3, new { dTO.RequestId, XmlFiles, dTO.BasicDetailId }, transaction: transaction);
                 }
 
 

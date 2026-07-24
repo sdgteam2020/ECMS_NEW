@@ -2180,6 +2180,13 @@ namespace Web.Controllers
                             mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                             mTrnICardRequest.UpdatedOn = DateTime.Now;
                             mTrnICardRequest.Updatedby = Convert.ToInt32(userId);
+                            mTrnICardRequest.CardSerialNo = null;
+                            mTrnICardRequest.ChipNo = null;
+                            mTrnICardRequest.CardExportedByAspNetUserId = null;
+                            mTrnICardRequest.CardExportedByUserId = null;
+                            mTrnICardRequest.CardPrintedByAspNetUserId = null;
+                            mTrnICardRequest.CardPrintedByUserId = null;
+
                             //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
                             // mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
 
@@ -3212,12 +3219,24 @@ namespace Web.Controllers
                     return Json(KeyConstants.InternalServerError);
                 }
 
+                DtoSession? dtoSession = null;
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
+
+                if (dtoSession == null)
+                {
+                    return Json(KeyConstants.InternalServerError);
+                }
+
+                Data.CardExportedByUserId = dtoSession.UserId;
+                Data.CardExportedByAspNetUserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
                 // Fetch basic details for requested data export
                 List<DTODataExportsResponse> retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data, dTOApplFwdCondition);
                 if (retdata.Count() > 0)
                 {
-                    // Retrieve session object
-                    DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
                     // Create folder for export with unique random name
                     string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell"), dtoSession.DoaminId));
@@ -5099,21 +5118,22 @@ namespace Web.Controllers
             // Check the current status of the card for the given request
             var cardStatus = await basicDetailBL.CheckCardStatus(RequestId);
 
-            if (cardStatus.GetValueOrDefault() == 1 || cardStatus.GetValueOrDefault() == 3)
+            if (cardStatus.GetValueOrDefault() == 1)
             {
                 // If card is pending, fetch pending card history
                 cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
             }
-            else if (cardStatus.GetValueOrDefault() == 2)
+            else if (cardStatus.GetValueOrDefault() == 2 )
             {
                 // If card is completed, fetch completed card history
                 cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
             }
             else if (cardStatus.GetValueOrDefault() == 3)
             {
-                // If card is completed, fetch completed card history
-                cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
+                //Closed
+
             }
+
             // Return the card history as JSON
             return Json(cardHistoryResponses);
         }
@@ -5691,8 +5711,18 @@ namespace Web.Controllers
                 }
                 #endregion Upload File Without Remarks
 
+                // Initialize session DTO
+                DtoSession? dtoSession = null;
+
+                // Retrieve session token if available
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
+                int CardPrintedByUserId  = dtoSession != null ? dtoSession.UserId : 0;
+                int CardPrintedByAspNetUserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 // Validate the CSV records
-                var validateResult = await basicDetailBL.ValidateCardPrinitng(records);
+                var validateResult = await basicDetailBL.ValidateCardPrinitng(records, CardPrintedByAspNetUserId , CardPrintedByUserId);
 
                 // Update response with validation statistics
                 response.Result = true;
@@ -5743,7 +5773,7 @@ namespace Web.Controllers
                     DbInvalidRecords = response.DbInValidRecords,
                     SheetInvalidRecords = response.SheetInValidRecords,
                     DBUpdated = false,
-                    ImportedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                    ImportedBy = CardPrintedByAspNetUserId,
                     ImportedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
                 };
 
