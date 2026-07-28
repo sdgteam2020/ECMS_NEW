@@ -2107,7 +2107,7 @@ FROM
             {
                 query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                             from TrnICardRequest req
-                            INNER JOIN TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId in (15) AND req.StatusId = 2
+                            INNER JOIN TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND ((stepcount.StepId in (15) AND req.StatusId = 2) OR (stepcount.StepId in (14) AND req.StatusId = 3))
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                             LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId 
                             LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
@@ -3618,10 +3618,10 @@ FROM
 
 
         /// <summary>
-        /// Retrieves the completed card history for the specified RequestId.
-        /// This method fetches the completed card request from the `CompletedICardRequests` table based on the provided `RequestId` and deserializes the associated card request history into an object.
+        /// Retrieves the Close card history for the specified RequestId.
+        /// This method fetches the Close card request from the `TrnApplClose` table based on the provided `RequestId` and deserializes the associated card request history into an object.
         /// </summary>
-        /// <param name="RequestId">The unique identifier for the completed card request whose history is to be retrieved.</param>
+        /// <param name="RequestId">The unique identifier for the Close card request whose history is to be retrieved.</param>
         /// <returns>
         /// An instance of <see cref="ICardHistoryResponseAll"/> containing the deserialized card request history. If the card request is not found or the history is empty, an empty response object is returned.
         /// </returns>
@@ -4157,7 +4157,7 @@ FROM
                                 INNER JOIN TrnICardRequest req ON req.RecordOfficeId = Mreco.RecordOfficeId AND req.StatusId = 2
                                 INNER JOIN TrnApplClose appClose ON appClose.RequestId = req.RequestId AND appClose.ApplyForId =@ApplyForId
                                 WHERE Mreco.UnitId = @UnitId
-                            )
+                            ),
                             Completed_ORO =
                             (
                                 Select Count(req.RequestId)

@@ -523,6 +523,7 @@ namespace Web.Controllers
                     {
                         // Fetch card history to record distribution details
                         ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(applClose.RequestId);
+                        cardHistoryResponses.CardMovement = await basicDetailBL.GetCardMovementHistory(applClose.RequestId);
                         // Save the distribution close record and get the response
                         bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(applClose, cardHistoryResponses);
                         if (reuslt == true)

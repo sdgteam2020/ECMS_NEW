@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -246,16 +247,16 @@ namespace DataAccessLayer
             DTOGenericResponse<string> response = new DTOGenericResponse<string>();
             try
             {
-                string query = @"SELECT CASE
+                string query = @"SELECT currentReq.StatusId, CASE
                                             WHEN dest.RequestId = @RequestId THEN 0
-                                            WHEN currentReq.StatusId IN (1,3)  THEN 0
-                                            WHEN stepcount.StepId != 15 THEN 0
+                                            WHEN currentReq.StatusId = 1  THEN 0
+                                            WHEN stepcount.StepId NOT IN (6,11,12,13,14,15) THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
                                             WHEN dest.RequestId = @RequestId THEN 'This card has already been reported as destroyed in the system.'
-                                            WHEN currentReq.StatusId IN (1,3) THEN 'The application is no longer active.'
-                                            WHEN stepcount.StepId != 15 THEN 'The application is currently being processed.'
+                                            WHEN currentReq.StatusId = 1 THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId NOT IN (6,11,12,13,14,15) THEN 'The card has not been printed.'
 		                                    ELSE 'Valid'
 		                                END as Message
                                 FROM TrnICardRequest currentReq
@@ -284,5 +285,63 @@ namespace DataAccessLayer
                 return response;
             }
         }
-    }
+
+        public async Task<DTOCheckApplicationCloseRequestIdResponse> CheckRequestIdInClosed(int RequestId, int DestructedCardId)
+        {
+            DTOApplicationCloseResponse closeResponse = new DTOApplicationCloseResponse();
+            // Creating a connection and transaction for database operations.
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+            try
+            {
+                var query = @"SELECT trnClose.Id, trnClose.RequestId,ISNULL(trnClose.DestructedCardId,0) as DestructedCardId from trnapplclose trnClose WHERE trnClose.RequestId = @RequestId;";
+                
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
+                    var result = await db.QuerySingleAsync<DTOCheckApplicationCloseRequestIdResponse>(query, parameters, transaction: transaction);
+                if (result != null && result.DestructedCardId == 0)
+                {
+                    // SQL query to update the status of the RequestId in the TrnApplClose table.
+                    string query1 = "UPDATE TrnApplClose SET DestructedCardId = @DestructedCardId WHERE RequestId = @RequestId and Id = @Id";
+
+                    var query1_parameters = new DynamicParameters();
+                    query1_parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
+                    query1_parameters.Add("@DestructedCardId", DestructedCardId, DbType.Int32, ParameterDirection.Input);
+                    query1_parameters.Add("@Id", result.Id, DbType.Int32, ParameterDirection.Input);
+                    // Execute the update query asynchronously with transaction.
+                    await db.ExecuteAsync(query1, query1_parameters, transaction: transaction);
+                }
+                else
+                {
+                    closeResponse.Result = false;
+                    closeResponse.Message = "Request is already closed.";
+                    return new DTOCheckApplicationCloseRequestIdResponse
+                    {
+                        RequestId = RequestId,
+                        DestructedCardId = 0 // or any default value indicating failure
+                    };           
+                }
+                // Commit the transaction if both operations succeed.
+                transaction.Commit();
+                return result;
+            }
+            catch (Exception ee)
+            {
+                // Rollback the transaction if any operation fails.
+                transaction.Rollback();
+                _logger.LogError(1001, ee, "DestructionCardDB->CheckRequestIdInClosed");
+                closeResponse.Result = false;
+                closeResponse.Message = "Something went wrong";  
+                return new DTOCheckApplicationCloseRequestIdResponse
+                {
+                    RequestId = RequestId,
+                    DestructedCardId = 0 // or any default value indicating failure
+                };
+            }
+            finally
+            {
+                // Dispose of the connection to free up resources.
+                db.Dispose();
+            }
+        }
+     }
 }

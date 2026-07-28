@@ -13,6 +13,7 @@ using BusinessLogicsLayer.HotlistCard;
 using BusinessLogicsLayer.LostCard;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.OROMapp;
+using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.TrnICardHold;
@@ -4565,6 +4566,9 @@ namespace Web.Controllers
 
                     if (checkCardBeforeLost.Result)
                     {
+                        // Fetch card history to record distribution details
+                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
+                        cardHistoryResponses.CardMovement = await basicDetailBL.GetCardMovementHistory(model.RequestId);
                         #region Upload Supporting Document
                         string fileName = string.Empty;
                         if (model.File != null)
@@ -4601,7 +4605,7 @@ namespace Web.Controllers
                         model.HotlistCardId = checkCardBeforeLost.HotlistCardId;
 
                         // Save entity and trigger related business logic
-                        dTOResponse = await _lostCardBL.SaveLostCardRequest(model);
+                        dTOResponse = await _lostCardBL.SaveLostCardRequest(model, cardHistoryResponses);
                     }
                     else
                     {
@@ -5130,7 +5134,8 @@ namespace Web.Controllers
             }
             else if (cardStatus.GetValueOrDefault() == 3)
             {
-                //Closed
+                // If card is closed, fetch closed card history
+                cardHistoryResponses = await basicDetailBL.ICardHistoryClosed(RequestId);
 
             }
 
@@ -6067,14 +6072,24 @@ namespace Web.Controllers
 
                 // Add the new destruction card and return success response
                 var result = await _destructionCardBL.AddWithReturn(model);
-
+               
                 if (result == null)
                 {
                     dTOFaulty.Result = false;
                     dTOFaulty.Message = "Failed to save record.";
                     return Json(dTOFaulty);
                 }
-
+                if(checkCardBeforeDistruction.StatusId == 3)
+                {
+                    var checkRequestIdInClosed = await _destructionCardBL.CheckRequestIdInClosed(result.RequestId, result.DestructedCardId);
+                    if (checkRequestIdInClosed.RequestId == 0 && checkRequestIdInClosed.DestructedCardId == 0)
+                    {
+                        dTOFaulty.Result = false;
+                        dTOFaulty.Message = "Request is already closed.";
+                        return Json(dTOFaulty);
+                    }
+                }
+               
                 dTOFaulty.Result = true;
                 dTOFaulty.Message = "Record created!";
                 dTOFaulty.Value.CurrentTime = result.UpdatedOn.GetValueOrDefault();
@@ -7781,8 +7796,7 @@ namespace Web.Controllers
                 ICardHistoryResponseAll? cardHistoryResponseAll = await basicDetailBL.GetClosedHistoryByRequestId(decryptedRequestId);
 
                 if (cardHistoryResponseAll != null)
-                {
-                    cardHistoryResponseAll.CardMovement = await basicDetailBL.GetCardMovementHistory(decryptedRequestId);
+                {              
                     photoPath = cardHistoryResponseAll.BasicDetail.PhotoImagePath;
                     signaturePath = cardHistoryResponseAll.BasicDetail.SignatureImagePath;
                     if (!string.IsNullOrEmpty(photoPath) || !string.IsNullOrEmpty(signaturePath))

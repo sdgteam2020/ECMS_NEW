@@ -11,5 +11,6 @@ namespace BusinessLogicsLayer.DestructionCard
         Task<DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>> GetAllDestruction(DTODataTablesRequestForCommanCheckAll dTO);
         Task<List<DTODestructionCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data);
         public Task<DTOGenericResponse<string>> CheckBeforeDestructionCardReport(int RequestId);
+        public Task<DTOCheckApplicationCloseRequestIdResponse> CheckRequestIdInClosed(int RequestId, int DestructedCardId);
     }
 }

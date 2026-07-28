@@ -29,5 +29,9 @@ namespace BusinessLogicsLayer.DestructionCard
         {
             return await _iDestructionCardDB.CheckBeforeDestructionCardReport(RequestId);
         }
+        public async Task<DTOCheckApplicationCloseRequestIdResponse> CheckRequestIdInClosed(int RequestId, int DestructedCardId)
+        {
+            return await _iDestructionCardDB.CheckRequestIdInClosed(RequestId, DestructedCardId);
+        }
     }
 }
