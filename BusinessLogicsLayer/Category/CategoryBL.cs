@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogicsLayer.FaultyStage
+namespace BusinessLogicsLayer.Category
 {
     public class CategoryBL : GenericRepositoryDL<MCategory>, ICategoryBL
     {

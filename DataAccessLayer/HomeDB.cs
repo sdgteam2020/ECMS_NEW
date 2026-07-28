@@ -70,9 +70,15 @@ namespace DataAccessLayer
                             select @TotUnitChangeRequest=COUNT(MapUnitChangeRequestId) from TrnMapUnitChangeRequest
                             where UnitMapId=@MapUnitId
 
-                            select @TotLostCards=COUNT(LostCardId) from TrnLostCards
+                            select @TotLostCards=COUNT(LostCardId) from TrnLostCards lost
+                            INNER JOIN TrnICardRequest  trnicard on trnicard.RequestId = lost.RequestId
+                            INNER JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId =  trnicard.BasicDetailId
+
                             select @TotHotlistCards=COUNT(HotlistCardId) from TrnHotlistCards
-                            select @TotDestCards=COUNT(DestructedCardId) from TrnDestructionCards                            
+                            
+                            select @TotDestCards=COUNT(DestructedCardId) from TrnDestructionCards dest
+                            INNER JOIN TrnICardRequest  trnicard on trnicard.RequestId = dest.RequestId
+                            INNER JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId =  trnicard.BasicDetailId
                             
                             select @TotDistCards=COUNT(dist.DistributeCardId) from TrnDistributeCards dist
                             INNER JOIN TrnICardRequest  trnicard on trnicard.RequestId = dist.RequestId
@@ -235,30 +241,46 @@ namespace DataAccessLayer
             switch (Type)
             {
                 case "Posting Out":
-                    query = @"declare @ToPostingOutOffrs int=0 declare @ToPostingOutJCO int=0  
-                            select @ToPostingOutOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout
-                            inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId AND pout.FromUnitId=@UnitMapId
-                            LEFT JOIN BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId=1 
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId AND basic_2.ApplyForId=1 
-                          
-                            select @ToPostingOutJCO=COUNT(distinct pout.Id) from TrnPostingOut pout
-                            inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId AND pout.FromUnitId=@UnitMapId
-                            LEFT JOIN BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId=2 
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId AND basic_2.ApplyForId=2 
-                            select @ToPostingOutOffrs ToPostingOutOffrs,@ToPostingOutJCO ToPostingOutJCO";
+                    query = @"
+                        SELECT
+                            COUNT(DISTINCT CASE
+                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = 1
+                                THEN pout.Id
+                            END) AS ToPostingOutOffrs,
+
+                            COUNT(DISTINCT CASE
+                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = 2
+                                THEN pout.Id
+                            END) AS ToPostingOutJCO
+                        FROM TrnPostingOut pout
+                        INNER JOIN TrnICardRequest trnicardr
+                            ON trnicardr.RequestId = pout.RequestId
+                        LEFT JOIN BasicDetails basic
+                            ON basic.BasicDetailId = trnicardr.BasicDetailId
+                        LEFT JOIN AFSAC2.dbo.BasicDetails basic_2
+                            ON basic_2.BasicDetailId = trnicardr.BasicDetailId
+                        WHERE pout.FromUnitId = @UnitMapId;";
                     break;
                 case "Posting In":
-                    query = @"declare @ToPostingInOffrs int=0 declare @ToPostingInJCO int=0 
-                            select @ToPostingInOffrs=COUNT(distinct pout.Id) from TrnPostingOut pout 
-                            inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId AND pout.ToUnitId=@UnitMapId
-                            LEFT JOIN BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId=1 
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId AND basic_2.ApplyForId=1
-                          
-                            select @ToPostingInJCO=COUNT(distinct pout.Id) from TrnPostingOut pout 
-                            inner join TrnICardRequest trnicardr on trnicardr.RequestId=pout.RequestId AND pout.ToUnitId=@UnitMapId
-                            LEFT JOIN BasicDetails basic on basic.BasicDetailId=trnicardr.BasicDetailId AND basic.ApplyForId=2 
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicardr.BasicDetailId AND basic_2.ApplyForId=2
-                            select @ToPostingInOffrs ToPostingInOffrs,@ToPostingInJCO ToPostingInJCO";
+                    query = @"
+                        SELECT
+                            COUNT(DISTINCT CASE
+                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = 1
+                                THEN pout.Id
+                            END) AS ToPostingInOffrs,
+
+                            COUNT(DISTINCT CASE
+                                WHEN COALESCE(basic.ApplyForId, basic_2.ApplyForId) = 2
+                                THEN pout.Id
+                            END) AS ToPostingInJCO
+                        FROM TrnPostingOut pout
+                        INNER JOIN TrnICardRequest trnicardr
+                            ON trnicardr.RequestId = pout.RequestId
+                        LEFT JOIN BasicDetails basic
+                            ON basic.BasicDetailId = trnicardr.BasicDetailId
+                        LEFT JOIN AFSAC2.dbo.BasicDetails basic_2
+                            ON basic_2.BasicDetailId = trnicardr.BasicDetailId
+                        WHERE pout.ToUnitId = @UnitMapId;";
                     break;
             }
 

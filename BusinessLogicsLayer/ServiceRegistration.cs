@@ -9,6 +9,7 @@ using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
 using BusinessLogicsLayer.BdeCate;
 using BusinessLogicsLayer.BloodGroup;
+using BusinessLogicsLayer.CompletedICard;
 using BusinessLogicsLayer.Corps;
 using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.DestructionCard;
@@ -19,7 +20,7 @@ using BusinessLogicsLayer.DistributeCard;
 using BusinessLogicsLayer.Div;
 using BusinessLogicsLayer.EncryptionSetting;
 using BusinessLogicsLayer.FaultyCard;
-using BusinessLogicsLayer.FaultyStage;
+using BusinessLogicsLayer.Category;
 using BusinessLogicsLayer.Formation;
 using BusinessLogicsLayer.Home;
 using BusinessLogicsLayer.HotlistCard;
@@ -40,6 +41,7 @@ using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
+using DataTransferObject.Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BusinessLogicsLayer
@@ -206,6 +208,9 @@ namespace BusinessLogicsLayer
             services.AddTransient<IDispatchCardMappingDB, DispatchCardMappingDB>();
 
             services.AddTransient<IEncryptionSettingBL, EncryptionSettingBL>();
+
+            services.AddScoped<ICompletedICardRequestBL, CompletedICardRequestBL>();
+            services.AddScoped<ICompletedICardRequestDB, CompletedICardRequestDB>();
 
         }
 

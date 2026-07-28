@@ -2107,7 +2107,7 @@ FROM
             {
                 query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                             from TrnICardRequest req
-                            INNER JOIN TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId in (15) AND req.StatusId = 2
+                            INNER JOIN TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND ((stepcount.StepId in (15) AND req.StatusId = 2) OR (stepcount.StepId in (14) AND req.StatusId = 3))
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                             LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId 
                             LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
@@ -2869,7 +2869,7 @@ FROM
                                     ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,
                                     Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName,mreg.Abbreviation RegimentalName";
                     fromJoinClause = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and AND trnicrd.StatusId=@RunningStatusId
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND trnicrd.StatusId=@RunningStatusId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) 
@@ -2885,7 +2885,7 @@ FROM
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) ";
 
-                    whereClause = @"WHERE fwd.ToAspNetUsersId = @UserId and fwd.TypeId=@AFSCCellTypeId and fwd.IsComplete=1 ";
+                    whereClause = @"WHERE fwd.ToAspNetUsersId = @UserId AND fwd.TypeId=@AFSCCellTypeId AND fwd.IsComplete=1 ";
                     searchFilter = @"AND ((@SearchTerm IS NULL) OR (B.ServiceNo LIKE @SearchTerm OR trnicrd.RequestId LIKE @SearchTerm))";
                 }
                 else // For For Show
@@ -3601,12 +3601,41 @@ FROM
             {
                 var card = await _context.CompletedICardRequests.FirstOrDefaultAsync(req => req.RequestId == RequestId);
 
-                string? historyJson = card?.CardRequestHistoryJson;
 
-                if (!string.IsNullOrWhiteSpace(historyJson))
+                if (card != null)
                 {
-                    return JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                    string? historyJson = card?.CardRequestHistoryJson;
+
+                    if (!string.IsNullOrWhiteSpace(historyJson))
+                    {
+                        cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                    }
+                    if (card?.DestructedCardId != null)
+                    {
+                        var destroyed = new DTOCardMovementHistoryResponse();
+                        destroyed = await (from dest in _context.TrnDestructionCards.AsNoTracking()
+                                           join user in _context.Users.AsNoTracking()
+                                              on dest.Updatedby equals user.Id
+                                           join profile in _context.UserProfile.AsNoTracking()
+                                              on dest.UpdatedbyUserId equals profile.UserId
+                                           join rank in _context.MRank.AsNoTracking()
+                                              on profile.RankId equals rank.RankId
+                                           where dest.DestructedCardId == card.DestructedCardId
+                                           select new DTOCardMovementHistoryResponse
+                                           {
+                                               StepName = "I-Card Destruction",
+                                               ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
+                                               ReportedOn = dest.DestructedOn.GetValueOrDefault(),
+                                               Remark = dest.Remark ?? string.Empty
+                                           }).FirstOrDefaultAsync();
+                        if (destroyed != null)
+                        {
+                            cardStatus.CardMovement.Append(destroyed);
+                        }
+                    }
                 }
+                return cardStatus;
+
             }
             catch (Exception ex)
             {
@@ -3973,7 +4002,7 @@ FROM
                             _4thLevelApproved =
                             (
                                 SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
-                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 1 AND fwd.TypeId = 4
                             ),
