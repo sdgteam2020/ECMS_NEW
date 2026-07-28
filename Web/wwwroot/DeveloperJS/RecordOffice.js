@@ -1,26 +1,234 @@
-﻿var table; // Declare table variable outside the function to preserve the instance
+﻿var table; // DataTable API instance
 var RecordOfficeId = 0;
 var UnitMapId = 0;
+var recordOfficeResizeTimer;
+
+function setRecordOfficeModalMode(isEdit) {
+    $("#exampleModalLabel").text(isEdit ? "Update Record Office Details" : "Add Record Office Details");
+    $("#recordOfficeModalSubtitle").text(
+        isEdit
+            ? "Review and update the selected record office and mapping details"
+            : "Fill record office, arms/service, message and linked domain mapping details"
+    );
+    $("#btnRecordOfficeAdd").val(isEdit ? "Update" : "Save");
+}
+
+function moveRecordOfficeModalToBody() {
+    const modalElement = document.getElementById("AddNewRecordOffice");
+    if (!modalElement) return null;
+
+    /*
+       Keep the modal as a direct child of body before it opens. This prevents
+       a layout stacking context from placing the backdrop over the dialog.
+    */
+    if (modalElement.parentElement !== document.body) {
+        document.body.appendChild(modalElement);
+    }
+
+    return modalElement;
+}
+
+function openRecordOfficeModalFallback(modalElement) {
+    if (!modalElement || modalElement.classList.contains("show")) return;
+
+    document.querySelectorAll("body > .modal-backdrop.ecms-recordoffice-manual-backdrop")
+        .forEach(function (backdrop) { backdrop.remove(); });
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop fade show ecms-recordoffice-manual-backdrop";
+    backdrop.addEventListener("click", hideRecordOfficeModal);
+    document.body.appendChild(backdrop);
+
+    modalElement.style.display = "block";
+    modalElement.removeAttribute("aria-hidden");
+    modalElement.setAttribute("aria-modal", "true");
+    modalElement.setAttribute("role", "dialog");
+    modalElement.classList.add("show");
+    document.body.classList.add("modal-open");
+
+    const firstInput = modalElement.querySelector("input:not([type='hidden']), select, textarea, button");
+    if (firstInput) {
+        window.setTimeout(function () { firstInput.focus(); }, 0);
+    }
+}
+
+function closeRecordOfficeModalFallback(modalElement) {
+    if (!modalElement) return;
+
+    modalElement.classList.remove("show");
+    modalElement.style.display = "none";
+    modalElement.setAttribute("aria-hidden", "true");
+    modalElement.removeAttribute("aria-modal");
+
+    document.querySelectorAll("body > .modal-backdrop.ecms-recordoffice-manual-backdrop")
+        .forEach(function (backdrop) { backdrop.remove(); });
+
+    if (!document.querySelector("body > .modal.show")) {
+        document.body.classList.remove("modal-open");
+        document.body.style.removeProperty("padding-right");
+        document.body.style.removeProperty("overflow");
+    }
+}
+
+function showRecordOfficeModal() {
+    const modalElement = moveRecordOfficeModalToBody();
+    if (!modalElement) return;
+
+    document.querySelectorAll("body > .modal-backdrop.ecms-recordoffice-manual-backdrop")
+        .forEach(function (backdrop) { backdrop.remove(); });
+
+    /* Bootstrap 4 / jQuery modal is used first because the existing project uses it. */
+    if (window.jQuery && $.fn && typeof $.fn.modal === "function") {
+        try {
+            $(modalElement).modal("show");
+
+            window.setTimeout(function () {
+                if (!modalElement.classList.contains("show")) {
+                    openRecordOfficeModalFallback(modalElement);
+                }
+            }, 150);
+            return;
+        } catch (error) {
+            console.warn("Bootstrap jQuery modal could not open Record Office modal:", error);
+        }
+    }
+
+    if (window.bootstrap && window.bootstrap.Modal) {
+        try {
+            const instance = typeof window.bootstrap.Modal.getOrCreateInstance === "function"
+                ? window.bootstrap.Modal.getOrCreateInstance(modalElement, { backdrop: true, keyboard: true })
+                : new window.bootstrap.Modal(modalElement, { backdrop: true, keyboard: true });
+            instance.show();
+            return;
+        } catch (error) {
+            console.warn("Bootstrap modal could not open Record Office modal:", error);
+        }
+    }
+
+    openRecordOfficeModalFallback(modalElement);
+}
+
+function hideRecordOfficeModal() {
+    const modalElement = document.getElementById("AddNewRecordOffice");
+    if (!modalElement) return;
+
+    if (window.jQuery && $.fn && typeof $.fn.modal === "function") {
+        try {
+            $(modalElement).modal("hide");
+            window.setTimeout(function () {
+                if (modalElement.classList.contains("show")) {
+                    closeRecordOfficeModalFallback(modalElement);
+                } else {
+                    document.querySelectorAll("body > .modal-backdrop.ecms-recordoffice-manual-backdrop")
+                        .forEach(function (backdrop) { backdrop.remove(); });
+                }
+            }, 200);
+            return;
+        } catch (error) {
+            console.warn("Bootstrap jQuery modal could not close Record Office modal:", error);
+        }
+    }
+
+    if (window.bootstrap && window.bootstrap.Modal) {
+        try {
+            const instance = typeof window.bootstrap.Modal.getInstance === "function"
+                ? window.bootstrap.Modal.getInstance(modalElement)
+                : null;
+            if (instance) {
+                instance.hide();
+                return;
+            }
+        } catch (error) {
+            console.warn("Bootstrap modal could not close Record Office modal:", error);
+        }
+    }
+
+    closeRecordOfficeModalFallback(modalElement);
+}
+
+function adjustRecordOfficeTable() {
+    if (!table || typeof table.columns !== "function") return;
+
+    table.columns.adjust();
+
+    if (table.responsive && typeof table.responsive.recalc === "function") {
+        table.responsive.recalc();
+    }
+}
+
+function initializeRecordOfficeTooltips() {
+    if (!(window.bootstrap && bootstrap.Tooltip)) return;
+
+    document.querySelectorAll('#tbldata [data-bs-toggle="tooltip"]').forEach(function (element) {
+        if (typeof bootstrap.Tooltip.getOrCreateInstance === "function") {
+            bootstrap.Tooltip.getOrCreateInstance(element);
+        } else {
+            new bootstrap.Tooltip(element);
+        }
+    });
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    /* Bind modal actions before DataTable startup so a table error cannot block the Add button. */
+    moveRecordOfficeModalToBody();
+
+    $(document)
+        .off("click.ecmsRecordOfficeAdd", "#btnAdd")
+        .on("click.ecmsRecordOfficeAdd", "#btnAdd", function (e) {
+            e.preventDefault();
+            Reset();
+            ResetErrorMessage();
+            setRecordOfficeModalMode(false);
+            showRecordOfficeModal();
+        })
+        .off("click.ecmsRecordOfficeClose", "#AddNewRecordOffice [data-dismiss='modal'], #AddNewRecordOffice [data-bs-dismiss='modal']")
+        .on("click.ecmsRecordOfficeClose", "#AddNewRecordOffice [data-dismiss='modal'], #AddNewRecordOffice [data-bs-dismiss='modal']", function (e) {
+            e.preventDefault();
+            hideRecordOfficeModal();
+        });
+
+    $(document)
+        .off("keydown.ecmsRecordOfficeModal")
+        .on("keydown.ecmsRecordOfficeModal", function (e) {
+            const modalElement = document.getElementById("AddNewRecordOffice");
+            if (e.key === "Escape" && modalElement && modalElement.classList.contains("show")) {
+                hideRecordOfficeModal();
+            }
+        });
+
+    $("#AddNewRecordOffice")
+        .off("hidden.bs.modal.ecmsRecordOffice")
+        .on("hidden.bs.modal.ecmsRecordOffice", function () {
+            document.querySelectorAll("body > .modal-backdrop.ecms-recordoffice-manual-backdrop")
+                .forEach(function (backdrop) { backdrop.remove(); });
+        });
+
     mMsater(0, "ddlArmType", ArmyType, "");
 
-    applyDataTableSearchValidation('#tbldata');
+    if (typeof applyDataTableSearchValidation === "function") {
+        applyDataTableSearchValidation('#tbldata');
+    }
 
-    BindData()
-    $("#btnAdd").on("click",function () {
-        Reset();
-        ResetErrorMessage();
-        $("#AddNewRecordOffice").modal('show');
-    });
-    $("#btnRecordOfficeReset").on("click", function () {
-        Reset();
-        ResetErrorMessage();
-    });
-    $("#btnRecordOfficeAdd").on("click", function () {
-        Proceed()
-    });
+    try {
+        BindData();
+    } catch (error) {
+        console.error("Record Office DataTable initialisation failed:", error);
+    }
+
+    $("#btnRecordOfficeReset")
+        .off("click.ecmsRecordOfficeReset")
+        .on("click.ecmsRecordOfficeReset", function () {
+            Reset();
+            ResetErrorMessage();
+        });
+
+    $("#btnRecordOfficeAdd")
+        .off("click.ecmsRecordOfficeSave")
+        .on("click.ecmsRecordOfficeSave", function () {
+            Proceed();
+        });
 
     $("#txtUnitName").autocomplete({
         source: function (request, response) {
@@ -103,7 +311,7 @@ $(function () {
                 }
             });
         },
-        
+
     });
 
     $('#txtUnitName').on('keyup', function (e) {
@@ -135,7 +343,7 @@ function Proceed() {
             if (result.isConfirmed) {
                 Save();
             }
-        })
+        });
     }
     else {
         Swal.fire({
@@ -143,7 +351,7 @@ function Proceed() {
             title: 'Oops...',
             text: 'Please fill required field.',
 
-        })
+        });
         toastr.error('Please fill required field.');
         return false;
     }
@@ -157,12 +365,10 @@ function BindData() {
     }
     const columns = getColumnsForRecordOffice();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
-        fixedHeader: false,       // ❌ disable when using scrollY
+        scrollY: 'var(--ecms-recordoffice-scroll-height)',
+        scrollX: true,
+        scrollCollapse: false,
+        fixedHeader: false,
 
         processing: true,
         serverSide: true,
@@ -212,12 +418,12 @@ function BindData() {
                 width: "0px",
                 searchable: false
             },
-            { targets: 1, width: "60px" },
-            { targets: 2, width: "200px" },
-            { targets: 3, width: "200px" },
-            { targets: 4, width: "200px" },
-            { targets: 5, width: "200px" },
-            { targets: 6, width: "120px" },
+            { targets: 1, width: "6%" },
+            { targets: 2, width: "22%" },
+            { targets: 3, width: "16%" },
+            { targets: 4, width: "22%" },
+            { targets: 5, width: "24%" },
+            { targets: 6, width: "10%" },
             {
                 targets: '_all',  // Apply to all visible columns
                 orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
@@ -227,7 +433,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'dt-top'lBf>rt<'ecms-dt-footer row g-2'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -245,7 +451,7 @@ function BindData() {
                 extend: 'pdfHtml5',
                 orientation: 'portrait',
                 pageSize: 'A4',
-                title: 'E-IASC_Regimental',
+                title: 'E-IASC_RecordOffice',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 },
@@ -254,33 +460,24 @@ function BindData() {
                 }
             }],
         initComplete: function () {
-            // Add tooltip to the search input box
-            let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search Comd/Abbreviation');
-
-            // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
-
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
-                }, 100);
+            const searchBox = $('#tbldata_wrapper .dataTables_filter input, #tbldata_wrapper .dt-search input');
+            searchBox.attr({
+                title: 'Search Record Office, Abbreviation or Arms / Service',
+                'aria-label': 'Search record office records'
             });
+
+            adjustRecordOfficeTable();
+
+            $(window)
+                .off('resize.ecmsRecordOfficeTable')
+                .on('resize.ecmsRecordOfficeTable', function () {
+                    clearTimeout(recordOfficeResizeTimer);
+                    recordOfficeResizeTimer = setTimeout(adjustRecordOfficeTable, 120);
+                });
         },
-        drawCallback: function (settings) {
-
-            // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
-
-            const tooltipTriggerList = [].slice.call(
-                document.querySelectorAll('[data-bs-toggle="tooltip"]')
-            );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+        drawCallback: function () {
+            adjustRecordOfficeTable();
+            initializeRecordOfficeTooltips();
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -311,8 +508,8 @@ function BindData() {
                     else {
                         $("#ddlTDMId").val("0");
                     }
-                    $("#btnRecordOfficeAdd").val("Update");
-                    $("#AddNewRecordOffice").modal('show');
+                    setRecordOfficeModalMode(true);
+                    showRecordOfficeModal();
                 }
                 else {
                     //Invalid Data
@@ -371,7 +568,7 @@ function Save() {
 
             if (result.Result == true) {
                 toastr.success(result.Message);
-                $("#AddNewRecordOffice").modal('hide');
+                hideRecordOfficeModal();
                 BindData();
                 Reset();
                 ResetErrorMessage();
@@ -412,6 +609,7 @@ function Reset() {
     $("#ddlTDMId").val("0");
     RecordOfficeId = 0;
     UnitMapId = 0;
+    setRecordOfficeModalMode(false);
 }
 function ResetErrorMessage() {
     $("#txtName-error").html("");
@@ -422,7 +620,7 @@ function ResetErrorMessage() {
     $("#ddlTDMId-error").html("");
 }
 
-function GetDDMappedForRecord(UnitId,TDMId) {
+function GetDDMappedForRecord(UnitId, TDMId) {
     var param1 = { "UnitMapId": UnitId };
     $.ajax({
         url: '/Master/GetDDMappedForRecord',
@@ -528,7 +726,7 @@ function getColumnsForRecordOffice() {
             name: "SerialNumber",
             orderable: false, // Disable sorting for this column
             className: "text-center col-sno",
-            width: "60px",
+            width: "6%",
             render: function (data, type, row, meta) {
                 // Calculate serial number based on row index
                 return meta.row + meta.settings._iDisplayStart + 1;
@@ -539,7 +737,7 @@ function getColumnsForRecordOffice() {
             data: "RecordOfficeName",
             name: "RecordOfficeName",
             className: "nowrap",
-            width: "200px",
+            width: "22%",
             orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
@@ -551,7 +749,7 @@ function getColumnsForRecordOffice() {
             data: "Abbreviation",
             name: "Abbreviation",
             className: "nowrap",
-            width: "200px",
+            width: "16%",
             orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
@@ -563,7 +761,7 @@ function getColumnsForRecordOffice() {
             data: "ArmedName",
             name: "ArmedName",
             className: "text-center nowrap",
-            width: "200px",
+            width: "22%",
             orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
@@ -575,7 +773,7 @@ function getColumnsForRecordOffice() {
             data: "Name",
             name: "Name",
             className: "nowrap",
-            width: "200px",
+            width: "24%",
             orderable: false,
             render: function (data, type, row, meta) {
                 if (row.TDMId != null) {
@@ -585,7 +783,7 @@ function getColumnsForRecordOffice() {
                 else {
                     return ``;
                 }
-                
+
             }
         },
         // Additional column for Edit action
@@ -596,12 +794,26 @@ function getColumnsForRecordOffice() {
             name: "Action",
             orderable: false,
             className: "noExport text-center col-action",
-            width: "200px",
+            searchable: false,
+            width: "10%",
             render: function (data, type, row) {
                 if (row.ArmedId != $("#ArmedIdForORO").html()) {
-                    let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
-                    return Action;
+                    return `<button type="button"
+                                class="cls-btnedit btn btn-warning ecms-action-btn"
+                                title="Edit"
+                                aria-label="Edit record office"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top">
+                            <i class="fas fa-edit" aria-hidden="true"></i>
+                        </button>
+                        <button type="button"
+                                class="cls-btnDelete btn btn-danger ecms-action-btn"
+                                title="Delete"
+                                aria-label="Delete record office"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top">
+                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                        </button>`;
                 }
                 else {
                     return `<span class='badge rounded-pill bg-success'></span>`;

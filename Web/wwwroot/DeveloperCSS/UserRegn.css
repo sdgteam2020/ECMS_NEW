@@ -1,520 +1,258 @@
-﻿/* =====================================================
-   User Registration - Modern UI
-   UI-only styling. All original IDs, routes, forms and JS hooks are preserved.
-===================================================== */
+﻿/* ==============================================================
+   Account / User Registration
+   PAGE-SPECIFIC UI ONLY
+
+   Important:
+   - ModernCSS files remain unchanged.
+   - Existing ECMS common classes provide the base theme.
+   - Every additional rule below is scoped to this page/modals.
+================================================================ */
 
 .swal2-html-container {
-    color: red !important;
+    color: var(--ecms-danger-500, #ef405c) !important;
 }
 
-html:has(.ecms-userregn-page),
-body:has(.ecms-userregn-page) {
-    min-height: 100vh !important;
-    overflow-y: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.96), rgba(15, 70, 160, 0.92)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat fixed !important;
-}
-
-    body:has(.ecms-userregn-page) .main-panel,
-    body:has(.ecms-userregn-page) .content-wrapper,
-    body:has(.ecms-userregn-page) .main-content,
-    body:has(.ecms-userregn-page) .content,
-    body:has(.ecms-userregn-page) .page-content,
-    body:has(.ecms-userregn-page) .containerMain {
-        background-color: transparent !important;
-    }
-
-    body:has(.ecms-userregn-page) header.page-header.page-header-dark.bg-gradient-primary-to-secondary,
-    body:has(.ecms-userregn-page) .page-header.page-header-dark.bg-gradient-primary-to-secondary {
-        margin-top: 26px !important;
-        height: 42px !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-        padding: 0 !important;
-        overflow: visible !important;
-        display: flex !important;
-        align-items: center !important;
-        background: linear-gradient(90deg, rgba(86, 198, 231, 0.96), rgba(60, 120, 237, 0.96)) !important;
-        box-shadow: 0 12px 28px rgba(12, 41, 99, 0.20) !important;
-    }
-
-.ecms-userregn-breadcrumb .containerMain,
-.ecms-userregn-breadcrumb .page-header-content,
-.ecms-userregn-breadcrumb .row {
-    height: 42px !important;
-    min-height: 42px !important;
-    align-items: center !important;
-}
-
-.ecms-userregn-breadcrumb .page-header-title {
-    color: #ffffff !important;
-    font-size: 13px !important;
-    font-weight: 900 !important;
-    margin: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.28) !important;
-}
-
-.ecms-userregn-breadcrumb .page-header-icon {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    border-radius: 50% !important;
-    background: rgba(255, 255, 255, 0.22) !important;
-    border: 1px solid rgba(255, 255, 255, 0.38) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin-right: 4px !important;
-}
-
-.ecms-userregn-breadcrumb a {
-    color: #ffffff !important;
-    text-decoration: none !important;
+/* ---------- Page stage and fixed-height shell ---------- */
+.ecms-screen-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
 }
 
 .ecms-userregn-page {
-    position: relative !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
-    max-width: none !important;
-    height: calc(100vh - 248px) !important;
-    min-height: calc(100vh - 248px) !important;
-    margin: 0 !important;
-    padding: 12px 26px 46px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.88), rgba(15, 70, 160, 0.79)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1.5rem );
+    min-height: 560px;
+    margin: .65rem auto;
+    overflow: hidden;
 }
-
-    .ecms-userregn-page::before {
-        content: "" !important;
-        position: absolute !important;
-        inset: 0 !important;
-        pointer-events: none !important;
-        background: radial-gradient(circle at 24% 18%, rgba(96, 213, 255, 0.13), transparent 30%), radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)) !important;
-    }
 
 .ecms-userregn-shell {
-    position: relative !important;
-    z-index: 1 !important;
-    width: min(1480px, calc(100% - 64px)) !important;
-    min-width: 1120px !important;
-    height: calc(100vh - 292px) !important;
-    min-height: 540px !important;
-    max-height: calc(100vh - 292px) !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border-radius: 22px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(219,235,255,0.88)) !important;
-    border: 1px solid rgba(255,255,255,0.92) !important;
-    box-shadow: 0 28px 70px rgba(4, 27, 82, 0.34) !important;
-    backdrop-filter: blur(10px) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    overflow: hidden !important;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: .7rem;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: .65rem;
+    box-sizing: border-box;
 }
 
-.ecms-userregn-title-card,
-.ecms-userregn-sub-card {
-    flex: 0 0 auto !important;
-    border-radius: 14px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232,242,255,0.88)) !important;
-    border: 1px solid rgba(255,255,255,0.90) !important;
-    padding: 10px 14px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9) !important;
+/* ---------- Page title ---------- */
+.ecms-user-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 }
 
-.ecms-title-left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
+.ecms-user-title-content {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
 }
 
-.ecms-title-icon,
-.ecms-sub-icon {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    border-radius: 14px !important;
-    background: linear-gradient(135deg, #2f6bff, #6d5dfc) !important;
-    color: #ffffff !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 18px !important;
-    box-shadow: 0 12px 26px rgba(47, 107, 255, 0.28) !important;
+.ecms-user-title-copy {
+    min-width: 0;
 }
 
-.ecms-sub-icon {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    border-radius: 12px !important;
-    background: linear-gradient(135deg, #1d4ed8, #407bff) !important;
-    font-size: 16px !important;
-}
-
-.ecms-userregn-title-card h3,
-.ecms-userregn-sub-card h5 {
-    color: #061b44 !important;
-    margin: 0 !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.2px !important;
-    text-shadow: none !important;
-}
-
-.ecms-userregn-title-card h3 {
-    font-size: 22px !important;
-}
-
-.ecms-userregn-sub-card h5 {
-    font-size: 15px !important;
-}
-
-.ecms-userregn-title-card p,
-.ecms-userregn-sub-card p {
-    margin: 3px 0 0 0 !important;
-    color: #315082 !important;
-    font-size: 12px !important;
-    font-weight: 850 !important;
-}
-
-.ecms-title-pill {
-    padding: 8px 18px !important;
-    border-radius: 999px !important;
-    color: #ffffff !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.35px !important;
-    font-size: 12px !important;
-    background: linear-gradient(135deg, #2f6bff, #4b7cff) !important;
-    box-shadow: 0 12px 26px rgba(47, 107, 255, 0.25) !important;
-}
-
-.ecms-count-grid {
-    flex: 0 0 auto !important;
-    display: grid !important;
-    grid-template-columns: repeat(7, minmax(120px, 1fr)) !important;
-    gap: 9px !important;
-}
-
-.count-label.ecms-count-card {
-    width: auto !important;
-    height: 74px !important;
-    min-height: 74px !important;
-    margin: 0 !important;
-    padding: 8px 10px !important;
-    border-radius: 13px !important;
-    border: 1px solid rgba(84, 132, 255, 0.35) !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(233,243,255,0.92)) !important;
-    color: #061b44 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 3px !important;
-    box-shadow: 0 10px 26px rgba(19, 66, 160, 0.10), inset 0 1px 0 rgba(255,255,255,0.9) !important;
-    cursor: pointer !important;
-    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease !important;
-}
-
-    .count-label.ecms-count-card:hover {
-        transform: translateY(-2px) !important;
-        border-color: rgba(47, 107, 255, 0.65) !important;
-        box-shadow: 0 14px 34px rgba(19, 66, 160, 0.20), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    .ecms-user-title-copy h3 {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: 1.18rem;
+        font-weight: 950;
+        line-height: 1.15;
     }
 
-.ecms-count-icon {
-    width: 24px !important;
-    height: 24px !important;
-    border-radius: 8px !important;
-    background: linear-gradient(135deg, #2f6bff, #6d5dfc) !important;
-    color: #ffffff !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 12px !important;
+.ecms-user-title-pill {
+    flex: 0 0 auto;
+    min-height: 2.2rem;
+    padding: .48rem 1rem;
+    border-radius: var(--ecms-radius-pill, 999px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient(135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff));
+    box-shadow: 0 .65rem 1.3rem rgba(47, 103, 230, .24);
+    font-size: .72rem;
+    font-weight: 950;
+    letter-spacing: .25px;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
 
-.ecms-count-title {
-    color: #1d4ed8 !important;
-    font-size: 10px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.25px !important;
-    line-height: 1.05 !important;
+/* ---------- Summary tiles ---------- */
+.ecms-user-stats {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: .55rem;
 }
 
-.ecms-count-number {
-    color: #061b44 !important;
-    font-size: 18px !important;
-    font-weight: 950 !important;
-    line-height: 1 !important;
+.ecms-stat-card {
+    min-width: 0;
+    min-height: 4.65rem;
+    padding: .55rem .4rem;
+    border: var(--ecms-border, 1px solid rgba(195, 215, 244, .92));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .2rem;
+    cursor: pointer;
+    color: var(--ecms-text, #061b44);
+    transition: transform .15s ease, box-shadow .15s ease;
 }
 
-.ecms-table-card {
-    flex: 1 1 auto !important;
+    .ecms-stat-card:hover,
+    .ecms-stat-card:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: var(--ecms-shadow-md, 0 1rem 2.25rem rgba(10, 43, 96, .18));
+    }
+
+    .ecms-stat-card:focus-visible {
+        outline: 3px solid rgba(63, 124, 255, .24);
+        outline-offset: 1px;
+    }
+
+.ecms-stat-icon {
+    width: 1.7rem;
+    height: 1.7rem;
+    min-width: 1.7rem;
+    border-radius: .55rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient(135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff));
+    font-size: .72rem;
+}
+
+.ecms-stat-title {
+    max-width: 100%;
+    overflow: hidden;
+    color: var(--ecms-primary-600, #2f67e6);
+    font-size: .67rem;
+    font-weight: 950;
+    line-height: 1.05;
+    text-align: center;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ecms-stat-count {
+    color: var(--ecms-text, #061b44);
+    font-size: 1.1rem;
+    font-weight: 950;
+    line-height: 1;
+}
+
+/* ---------- Main DataTable ---------- */
+.ecms-user-table-section {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+.ecms-user-table-wrap,
+.ecms-user-dialog-table-wrap {
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-user-table-wrap {
+    height: 100%;
+    padding: .45rem .55rem .35rem;
+}
+
+.ecms-userregn-page #tbldata_wrapper,
+.ecms-userregn-dialog-modal #tbldatadialog_wrapper {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 2.45rem minmax(0, 1fr) 2.75rem;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: hidden;
+}
+
+.ecms-userregn-page .dt-top,
+.ecms-userregn-dialog-modal .dt-top {
+    grid-row: 1;
+    min-width: 0;
+    min-height: 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .65rem;
+    margin-top:2px;
+    padding-bottom: .4rem;
+}
+
+.ecms-userregn-page .dataTables_scroll,
+.ecms-userregn-dialog-modal .dataTables_scroll,
+.ecms-userregn-page .dt-scroll,
+.ecms-userregn-dialog-modal .dt-scroll {
+    grid-row: 2;
+    min-width: 0;
     min-height: 0 !important;
-    border-radius: 14px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.91), rgba(232,242,255,0.87)) !important;
-    border: 1px solid rgba(255,255,255,0.88) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9) !important;
-    padding: 10px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.ecms-section-bar {
-    flex: 0 0 auto !important;
-    height: 34px !important;
-    border-radius: 10px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    font-weight: 950 !important;
-    font-size: 13px !important;
-    background: linear-gradient(90deg, #234898, #4b7cff) !important;
-    box-shadow: 0 10px 24px rgba(35, 72, 152, 0.17) !important;
-    margin-bottom: 8px !important;
-}
-
-/* DataTable common fixes */
-.ecms-table-card .dataTables_wrapper,
-.ecms-userregn-dialog-modal .dataTables_wrapper {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-    width: 100% !important;
-}
-
-.ecms-table-card .dt-top,
-.ecms-userregn-dialog-modal .dt-top,
-.dataTables_wrapper .dt-top {
-    flex: 0 0 auto !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    padding: 0 0 8px 0 !important;
-}
-
-.dataTables_length label,
-.dataTables_filter label {
-    color: #061b44 !important;
-    font-weight: 800 !important;
-    margin: 0 !important;
-}
-
-.dataTables_length select,
-.dataTables_filter input {
-    height: 34px !important;
-    border-radius: 7px !important;
-    border: 1px solid rgba(100, 132, 190, 0.40) !important;
-    background: #ffffff !important;
-    color: #061b44 !important;
-    font-weight: 800 !important;
-    box-shadow: none !important;
-}
-
-.dataTables_filter input {
-    min-width: 160px !important;
-    padding: 0 10px !important;
-}
-
-.ecms-table-card .dataTables_scroll,
-.ecms-userregn-dialog-modal .dataTables_scroll {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(77, 116, 183, 0.20) !important;
-    border-radius: 10px !important;
-    background: rgba(255,255,255,0.98) !important;
-}
-
-.ecms-table-card .dataTables_scrollHead,
+.ecms-userregn-page .dataTables_scrollHead,
 .ecms-userregn-dialog-modal .dataTables_scrollHead,
-.ecms-table-card .dt-scroll-head,
+.ecms-userregn-page .dt-scroll-head,
 .ecms-userregn-dialog-modal .dt-scroll-head {
-    flex: 0 0 auto !important;
-    margin-bottom: 0 !important;
-    border-bottom: 0 !important;
+    flex: 0 0 auto;
 }
 
-.ecms-table-card .dataTables_scrollBody,
-.ecms-table-card .dt-scroll-body {
-    height: calc(100vh - 640px) !important;
-    max-height: calc(100vh - 640px) !important;
-    min-height: 145px !important;
-    border-top: 0 !important;
-    overflow: auto !important;
-    padding-bottom: 28px !important;
-}
-
+.ecms-userregn-page .dataTables_scrollBody,
 .ecms-userregn-dialog-modal .dataTables_scrollBody,
+.ecms-userregn-page .dt-scroll-body,
 .ecms-userregn-dialog-modal .dt-scroll-body {
-    max-height: 50vh !important;
-    min-height: 160px !important;
-    border-top: 0 !important;
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
     overflow: auto !important;
-    padding-bottom: 20px !important;
 }
 
-#tbldata,
-#tbldatadialog,
-.ecms-data-table {
-    table-layout: fixed !important;
-    width: 100% !important;
-    margin: 0 !important;
-    border-collapse: collapse !important;
+.ecms-userregn-page .dt-bottom,
+.ecms-userregn-dialog-modal .dt-bottom {
+    grid-row: 3;
+    min-width: 0;
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding-top: .45rem;
 }
 
-    #tbldata thead th,
-    #tbldatadialog thead th,
-    .ecms-data-table thead th {
-        background: linear-gradient(90deg, #23539d, #3369c7) !important;
-        color: #ffffff !important;
-        font-size: 12px !important;
-        font-weight: 950 !important;
-        text-align: center !important;
-        vertical-align: middle !important;
-        border-color: rgba(255,255,255,0.12) !important;
-        padding: 10px 8px !important;
-        white-space: nowrap !important;
-    }
-
-    #tbldata tbody td,
-    #tbldatadialog tbody td,
-    .ecms-data-table tbody td {
-        color: #061b44 !important;
-        font-size: 12px !important;
-        font-weight: 800 !important;
-        text-align: center !important;
-        vertical-align: middle !important;
-        padding: 10px 8px !important;
-        border-color: rgba(77, 116, 183, 0.15) !important;
-    }
-
-    #tbldata tbody tr:nth-child(odd),
-    #tbldatadialog tbody tr:nth-child(odd) {
-        background: rgba(234, 241, 251, 0.88) !important;
-    }
-
-    #tbldata tbody tr:nth-child(even),
-    #tbldatadialog tbody tr:nth-child(even) {
-        background: rgba(255,255,255,0.97) !important;
-    }
-
-.badge,
-.badge-pill {
-    border-radius: 999px !important;
-    font-size: 10px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.2px !important;
-    padding: 4px 8px !important;
+.ecms-userregn-page .badge,
+.ecms-userregn-dialog-modal .badge {
+    min-width: 2.25rem;
+    padding: .28rem .48rem;
+    font-size: .62rem;
+    text-transform: uppercase;
 }
 
-.badge-success {
-    background: #47bd77 !important;
-    color: #ffffff !important;
+.ecms-userregn-page .cls-btnedit,
+.ecms-userregn-page .cls-btneditMapping {
+    margin: 0;
 }
 
-.badge-danger {
-    background: #cf315b !important;
-    color: #ffffff !important;
-}
-
-.btn-icon.btn-round,
-.cls-btnedit,
-.cls-btneditMapping {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    border-radius: 10px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: 0 8px 18px rgba(14, 48, 96, 0.18) !important;
-}
-
-.btn-warning,
-.cls-btnedit,
-.cls-btneditMapping {
-    background: #ffc107 !important;
-    color: #061b44 !important;
-}
-
-.dataTables_info,
-.dt-info {
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    padding-top: 8px !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-.dataTables_paginate,
-.dt-paging {
-    padding-top: 8px !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-    .dataTables_paginate .paginate_button,
-    .dt-paging .dt-paging-button,
-    .pagination .page-link {
-        border: 1px solid rgba(90, 125, 181, 0.25) !important;
-        background: rgba(255,255,255,0.92) !important;
-        color: #1d4ed8 !important;
-        font-weight: 950 !important;
-        border-radius: 7px !important;
-        margin: 0 2px !important;
-        min-width: 32px !important;
-        height: 32px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-        .dataTables_paginate .paginate_button.current,
-        .dt-paging .dt-paging-button.current,
-        .pagination .active .page-link {
-            background: #263bd8 !important;
-            color: #ffffff !important;
-        }
-
-.dataTables_processing,
-.dt-processing,
-#tbldata_processing,
-#tbldatadialog_processing {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-}
-
-/* Hide cloned body headers created by DataTables scrollX/scrollY */
-.ecms-userregn-page .dataTables_scrollBody > table > thead,
-.ecms-userregn-page .dt-scroll-body > table > thead,
-.ecms-userregn-dialog-modal .dataTables_scrollBody > table > thead,
-.ecms-userregn-dialog-modal .dt-scroll-body > table > thead,
-.modal .dataTables_scrollBody > table > thead,
-.modal .dt-scroll-body > table > thead {
+/* Page-local fallback for DataTables cloned sizing headers. */
+.ecms-userregn-page .dataTables_scrollBody table thead,
+.ecms-userregn-page .dt-scroll-body table thead,
+.ecms-userregn-dialog-modal .dataTables_scrollBody table thead,
+.ecms-userregn-dialog-modal .dt-scroll-body table thead {
     display: none !important;
     visibility: collapse !important;
     height: 0 !important;
@@ -526,473 +264,301 @@ body:has(.ecms-userregn-page) {
     margin: 0 !important;
     border: 0 !important;
     overflow: hidden !important;
+}
+
+.ecms-userregn-page .dataTables_processing,
+.ecms-userregn-dialog-modal .dataTables_processing,
+.ecms-userregn-page .dt-processing,
+.ecms-userregn-dialog-modal .dt-processing,
+#tbldata_processing,
+#tbldatadialog_processing {
+    display: none !important;
+    visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
 }
 
-    .ecms-userregn-page .dataTables_scrollBody > table > thead > tr,
-    .ecms-userregn-page .dataTables_scrollBody > table > thead > tr > th,
-    .ecms-userregn-page .dataTables_scrollBody > table > thead > tr > td,
-    .ecms-userregn-dialog-modal .dataTables_scrollBody > table > thead > tr,
-    .ecms-userregn-dialog-modal .dataTables_scrollBody > table > thead > tr > th,
-    .ecms-userregn-dialog-modal .dataTables_scrollBody > table > thead > tr > td,
-    .modal .dataTables_scrollBody > table > thead > tr,
-    .modal .dataTables_scrollBody > table > thead > tr > th,
-    .modal .dataTables_scrollBody > table > thead > tr > td {
-        display: none !important;
-        visibility: collapse !important;
-        height: 0 !important;
-        min-height: 0 !important;
-        max-height: 0 !important;
-        line-height: 0 !important;
-        font-size: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border: 0 !important;
-        overflow: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
+/* ---------- Modal root / fade correction ---------- */
+.ecms-userregn-modal,
+.ecms-userregn-dialog-modal {
+    z-index: 1080 !important;
+}
+
+    .ecms-userregn-modal.show,
+    .ecms-userregn-dialog-modal.show,
+    .ecms-userregn-modal.show .modal-dialog,
+    .ecms-userregn-dialog-modal.show .modal-dialog,
+    .ecms-userregn-modal.show .modal-content,
+    .ecms-userregn-dialog-modal.show .modal-content {
+        opacity: 1 !important;
+        visibility: visible !important;
+        filter: none !important;
+        pointer-events: auto !important;
     }
 
-/* Modals */
-.ecms-userregn-modal .modal-dialog,
-.ecms-userregn-dialog-modal .modal-dialog {
-    max-width: 900px !important;
-    width: min(900px, calc(100vw - 60px)) !important;
+/* Loaded only on User Registration, therefore this backdrop rule is page-local. */
+body.modal-open .modal-backdrop,
+body.modal-open .modal-backdrop.show {
+    z-index: 1070 !important;
+    opacity: .72 !important;
 }
 
-.ecms-userregn-dialog-modal .modal-dialog {
-    max-width: 92vw !important;
-    width: 92vw !important;
+.ecms-userregn-modal .modal-dialog {
+    width: min(920px, calc(100vw - 2rem));
+    max-width: min(920px, calc(100vw - 2rem));
 }
 
-.ecms-userregn-modal .modal-content,
-.ecms-userregn-dialog-modal .modal-content {
-    border: 1px solid rgba(255,255,255,0.82) !important;
-    border-radius: 18px !important;
-    overflow: hidden !important;
-    background: linear-gradient(135deg, rgba(249,252,255,0.98), rgba(227,239,255,0.96)) !important;
-    box-shadow: 0 28px 85px rgba(0,0,0,0.35) !important;
+.ecms-userregn-modal .modal-content {
+    max-height: calc(100vh - 2rem);
 }
 
-.ecms-userregn-modal .modal-content,
 .ecms-userregn-modal .modal-body {
-    overflow-x: hidden !important;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-.ecms-modal-header {
-    min-height: 58px !important;
-    background: linear-gradient(90deg, #23539d, #4b7cff) !important;
-    color: #ffffff !important;
-    border-bottom: 0 !important;
-    padding: 11px 14px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
+.ecms-user-users-dialog {
+    width: min(1420px, calc(100vw - 2rem));
+    max-width: min(1420px, calc(100vw - 2rem));
 }
 
-.ecms-modal-title-wrap {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    min-width: 0 !important;
+.ecms-userregn-dialog-modal .modal-content {
+    max-height: calc(100vh - 2rem);
 }
 
-.ecms-modal-icon {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    border-radius: 10px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: rgba(255,255,255,0.15) !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255,255,255,0.28) !important;
-}
-
-.ecms-modal-header h5,
-.ecms-modal-header .modal-title {
-    color: #ffffff !important;
-    margin: 0 !important;
-    font-size: 18px !important;
-    font-weight: 950 !important;
-}
-
-.ecms-modal-header small {
-    display: block !important;
-    margin-top: 1px !important;
-    color: rgba(255,255,255,0.88) !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
-}
-
-.ecms-modal-close,
-button.close.ecms-modal-close {
-    position: static !important;
-    right: auto !important;
-    top: auto !important;
-    transform: none !important;
-    margin: 0 !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    border-radius: 50% !important;
-    border: 2px solid rgba(255,255,255,0.82) !important;
-    background: #e7345b !important;
-    color: #ffffff !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    opacity: 1 !important;
-    font-size: 24px !important;
-    line-height: 1 !important;
-    padding: 0 !important;
-    box-shadow: 0 10px 26px rgba(231, 52, 91, 0.32) !important;
-}
-
-    .ecms-modal-close span {
-        line-height: 1 !important;
-        color: #ffffff !important;
-        font-weight: 900 !important;
-        display: block !important;
-        margin-top: -2px !important;
-    }
-
-.ecms-userregn-modal .modal-body,
 .ecms-userregn-dialog-modal .modal-body {
-    padding: 16px !important;
+    min-height: 0;
+    padding: .75rem;
+    overflow: hidden;
 }
 
-.ecms-form-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px 12px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
+.ecms-user-dialog-table-wrap {
+    height: min(68vh, 35rem);
+    min-height: 25rem;
+    padding: 0;
+    overflow: hidden;
 }
 
-.ecms-span-2 {
-    grid-column: 1 / -1 !important;
+/* ---------- Modal title content ---------- */
+.ecms-userregn-modal .ecms-modal-title-wrap,
+.ecms-userregn-dialog-modal .ecms-modal-title-wrap {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
 }
 
-.ecms-form-field,
-.ecms-radio-card {
-    min-width: 0 !important;
-    border: 1px solid rgba(100, 132, 190, 0.20) !important;
-    border-radius: 12px !important;
-    background: rgba(255,255,255,0.70) !important;
-    padding: 9px !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.84) !important;
+.ecms-userregn-modal .ecms-modal-icon,
+.ecms-userregn-dialog-modal .ecms-modal-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: .7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: rgba(255, 255, 255, .14);
 }
 
-    .ecms-form-field > label:first-child,
-    .ecms-radio-card > label:first-child {
-        color: #061b44 !important;
-        font-size: 12px !important;
-        font-weight: 950 !important;
-        margin: 0 0 6px 0 !important;
-        display: block !important;
+.ecms-userregn-modal .ecms-modal-header small {
+    display: block;
+    margin-top: .12rem;
+    color: rgba(255, 255, 255, .86);
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+/* ---------- Approval and mapping forms ---------- */
+.ecms-userregn-modal .ecms-form-grid {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .65rem;
+}
+
+.ecms-userregn-modal .ecms-span-2 {
+    grid-column: 1 / -1;
+}
+
+.ecms-userregn-modal .ecms-form-field,
+.ecms-userregn-modal .ecms-radio-card {
+    min-width: 0;
+    padding: .6rem;
+    border: 1px solid rgba(100, 132, 190, .2);
+    border-radius: .75rem;
+    background: rgba(255, 255, 255, .7);
+    box-sizing: border-box;
+}
+
+    .ecms-userregn-modal .ecms-form-field > label:first-child,
+    .ecms-userregn-modal .ecms-radio-card > label:first-child {
+        margin: 0 0 .38rem;
+        display: block;
+        color: var(--ecms-text, #061b44);
+        font-size: .78rem;
+        font-weight: 950;
+        line-height: 1.25;
     }
 
-    .ecms-form-field input,
-    .ecms-form-field textarea,
-    .ecms-readonly-box,
-    .unit-label-background {
-        width: 100% !important;
-        min-height: 36px !important;
-        border-radius: 9px !important;
-        border: 1px solid rgba(100,132,190,0.32) !important;
-        background: #ffffff !important;
-        color: #061b44 !important;
-        font-size: 12px !important;
-        font-weight: 850 !important;
-        padding: 8px 10px !important;
-        box-sizing: border-box !important;
-        display: block !important;
+.ecms-userregn-modal .form-control,
+.ecms-userregn-modal .form-control1,
+.ecms-userregn-modal textarea,
+.ecms-userregn-modal .unit-label-background {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.ecms-userregn-modal textarea {
+    min-height: 4.1rem;
+    resize: vertical;
+}
+
+.ecms-userregn-modal .unit-label-background {
+    min-height: var(--ecms-control-height, 36px);
+    margin: 0;
+    padding: .48rem .65rem;
+    border: 1px solid rgba(165, 187, 219, .75);
+    border-radius: var(--ecms-radius-sm, .55rem);
+    display: block;
+    color: var(--ecms-text, #061b44);
+    background: linear-gradient(135deg, #eef3fa, #dce5f0);
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+}
+
+    .ecms-userregn-modal .unit-label-background:empty::after {
+        content: "—";
+        color: var(--ecms-text-muted, #73819b);
     }
 
-    .ecms-form-field textarea {
-        min-height: 72px !important;
-        resize: vertical !important;
+.ecms-userregn-modal .ecms-radio-options {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .9rem;
+}
+
+    .ecms-userregn-modal .ecms-radio-options .form-check,
+    .ecms-userregn-modal .ecms-radio-options .form-check-inline {
+        min-height: 1.25rem;
+        margin: 0;
+        padding-left: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
     }
 
-.ecms-readonly-box:empty::after,
-.unit-label-background:empty::after {
-    content: "—" !important;
-    color: rgba(6, 27, 68, 0.35) !important;
-}
-
-.ecms-radio-options {
-    display: flex !important;
-    align-items: center !important;
-    gap: 14px !important;
-    min-height: 36px !important;
-    padding: 0 2px !important;
-}
-
-.ecms-userregn-modal .form-check,
-.ecms-userregn-modal .form-check-inline {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    padding-left: 0 !important;
-    margin: 0 14px 0 0 !important;
-}
-
-.ecms-userregn-modal input[type="radio"].form-check-input,
 .ecms-userregn-modal input[type="radio"] {
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    width: 16px !important;
-    height: 16px !important;
-    min-width: 16px !important;
-    min-height: 16px !important;
-    max-width: 16px !important;
-    max-height: 16px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 2px solid #b8c8e6 !important;
-    border-radius: 50% !important;
-    background: #ffffff !important;
-    box-shadow: none !important;
-    cursor: pointer !important;
-    display: inline-block !important;
-    vertical-align: middle !important;
-    flex: 0 0 16px !important;
+    position: static;
+    margin: 0;
+    flex: 0 0 1rem;
+    accent-color: var(--ecms-primary-600, #2f67e6);
 }
 
-    .ecms-userregn-modal input[type="radio"].form-check-input:checked,
-    .ecms-userregn-modal input[type="radio"]:checked {
-        border-color: #2563eb !important;
-        background: radial-gradient(circle at center, #2563eb 0 42%, transparent 45% 100%), #ffffff !important;
-        box-shadow: 0 0 0 3px rgba(37,99,235,0.16) !important;
-    }
-
-    .ecms-userregn-modal input[type="radio"].form-check-input:disabled,
     .ecms-userregn-modal input[type="radio"]:disabled {
-        opacity: 0.72 !important;
-        cursor: not-allowed !important;
+        cursor: not-allowed;
+        opacity: .72;
     }
 
-.ecms-userregn-modal .form-check-label {
-    color: #061b44 !important;
-    font-weight: 900 !important;
-    margin: 0 !important;
-    line-height: 16px !important;
-    cursor: pointer !important;
+.ecms-userregn-modal .ecms-modal-actions {
+    width: 100%;
+    margin-top: .8rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .55rem;
 }
 
-.ecms-modal-actions {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    gap: 10px !important;
-    margin-top: 14px !important;
+    .ecms-userregn-modal .ecms-modal-actions .btn,
+    .ecms-userregn-modal .ecms-modal-actions input[type="button"] {
+        width: auto;
+        min-width: 5.5rem;
+        max-width: 8rem;
+        min-height: 2.4rem;
+        padding: .45rem 1rem;
+        flex: 0 0 auto;
+    }
+
+.ecms-userregn-modal #msg {
+    margin-top: .5rem;
 }
 
-.ecms-save-btn,
-#btnDomainFlag,
-#btnAddMapping {
-    width: auto !important;
-    min-width: 100px !important;
-    max-width: 130px !important;
-    height: 40px !important;
-    border-radius: 10px !important;
-    border: 0 !important;
-    background: linear-gradient(135deg, #2f6bff, #4b7cff) !important;
-    color: #ffffff !important;
-    font-weight: 950 !important;
-    box-shadow: 0 12px 25px rgba(47, 107, 255, 0.25) !important;
-    flex: 0 0 auto !important;
-}
-
-.ecms-dialog-table-wrap {
-    width: 100% !important;
-    overflow: hidden !important;
-}
-
-.modal-backdrop.show {
-    opacity: 0.70 !important;
-}
-
-/* Autocomplete list over the modal */
+/* Autocomplete must remain above the open mapping dialog. */
 .ui-autocomplete {
-    z-index: 20000 !important;
+    z-index: 1095 !important;
+    max-height: 16rem;
+    overflow-y: auto;
+    border-radius: var(--ecms-radius-sm, .55rem);
+    box-shadow: var(--ecms-shadow-md, 0 1rem 2.25rem rgba(10, 43, 96, .18));
 }
 
-@media (max-width: 1366px) {
-    .ecms-count-grid {
-        grid-template-columns: repeat(4, minmax(120px, 1fr)) !important;
+/* ---------- Responsive behavior ---------- */
+@media (max-width: 1199.98px) {
+    .ecms-userregn-page {
+        width: calc(100vw - 1.25rem);
     }
 
-    .ecms-userregn-shell {
-        min-width: 980px !important;
+    .ecms-user-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
 
-@media (max-width: 992px) {
-    html:has(.ecms-userregn-page),
-    body:has(.ecms-userregn-page) {
-        overflow-y: auto !important;
+@media (max-width: 767.98px) {
+    .ecms-screen-stage {
+        overflow: visible;
     }
 
     .ecms-userregn-page {
-        height: auto !important;
-        min-height: calc(100vh - 248px) !important;
-        overflow: auto !important;
-        align-items: flex-start !important;
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
     }
 
     .ecms-userregn-shell {
-        width: 100% !important;
-        min-width: 760px !important;
-        height: auto !important;
-        max-height: none !important;
+        height: auto;
+        min-height: 42rem;
     }
 
-    .ecms-count-grid {
-        grid-template-columns: repeat(2, minmax(120px, 1fr)) !important;
+    .ecms-user-title-row {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
-    .ecms-form-grid {
-        grid-template-columns: 1fr !important;
+    .ecms-user-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .ecms-span-2 {
-        grid-column: auto !important;
+    .ecms-userregn-page .dt-top,
+    .ecms-userregn-dialog-modal .dt-top,
+    .ecms-userregn-page .dt-bottom,
+    .ecms-userregn-dialog-modal .dt-bottom {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ecms-userregn-page #tbldata_wrapper,
+    .ecms-userregn-dialog-modal #tbldatadialog_wrapper {
+        grid-template-rows: auto minmax(18rem, 1fr) auto;
+    }
+
+    .ecms-userregn-modal .ecms-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-userregn-modal .ecms-span-2 {
+        grid-column: auto;
+    }
+
+    .ecms-user-dialog-table-wrap {
+        height: 62vh;
+        min-height: 21rem;
     }
 }
-
-
-/* =====================================================
-   FINAL FOOTER VISIBILITY FIX - User Registration table
-   Keeps DataTables info + pagination visible below scroll body.
-   UI-only: no route, ID, ajax, column or business logic changes.
-===================================================== */
-.ecms-userregn-page .ecms-table-card {
-    min-height: 0 !important;
-    overflow: hidden !important;
-    padding-bottom: 10px !important;
-}
-
-.ecms-userregn-page #tbldata_wrapper {
-    position: relative !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    padding-bottom: 50px !important; /* reserved space for info + pagination */
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-}
-
-    .ecms-userregn-page #tbldata_wrapper .dt-top {
-        flex: 0 0 auto !important;
-    }
-
-    .ecms-userregn-page #tbldata_wrapper .dataTables_scroll,
-    .ecms-userregn-page #tbldata_wrapper .dt-scroll {
-        flex: 0 1 auto !important;
-        min-height: 0 !important;
-        max-height: calc(100% - 90px) !important;
-        overflow: hidden !important;
-        margin-bottom: 0 !important;
-    }
-
-    .ecms-userregn-page #tbldata_wrapper .dataTables_scrollBody,
-    .ecms-userregn-page #tbldata_wrapper .dt-scroll-body {
-        height: var(--userregn-main-scroll-height, 210px) !important;
-        max-height: var(--userregn-main-scroll-height, 210px) !important;
-        min-height: 150px !important;
-        overflow: auto !important;
-        padding-bottom: 6px !important;
-        box-sizing: border-box !important;
-    }
-
-    .ecms-userregn-page #tbldata_wrapper .dataTables_info,
-    .ecms-userregn-page #tbldata_wrapper .dt-info {
-        position: absolute !important;
-        left: 0 !important;
-        bottom: 8px !important;
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        z-index: 5 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        color: #061b44 !important;
-        font-size: 13px !important;
-        font-weight: 800 !important;
-        line-height: 32px !important;
-    }
-
-    .ecms-userregn-page #tbldata_wrapper .dataTables_paginate,
-    .ecms-userregn-page #tbldata_wrapper .dt-paging {
-        position: absolute !important;
-        right: 0 !important;
-        bottom: 4px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-end !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        z-index: 5 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-        .ecms-userregn-page #tbldata_wrapper .dataTables_paginate .paginate_button,
-        .ecms-userregn-page #tbldata_wrapper .dt-paging .dt-paging-button,
-        .ecms-userregn-page #tbldata_wrapper .pagination .page-link {
-            min-width: 34px !important;
-            height: 34px !important;
-        }
-
-/* Modal DataTables: keep their footer visible too, without changing functionality */
-.ecms-userregn-dialog-modal #tbldatadialog_wrapper,
-.modal #tbldatadialog_wrapper {
-    position: relative !important;
-    padding-bottom: 48px !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-}
-
-    .ecms-userregn-dialog-modal #tbldatadialog_wrapper .dataTables_scrollBody,
-    .modal #tbldatadialog_wrapper .dataTables_scrollBody {
-        max-height: 42vh !important;
-        padding-bottom: 6px !important;
-        overflow: auto !important;
-    }
-
-    .ecms-userregn-dialog-modal #tbldatadialog_wrapper .dataTables_info,
-    .modal #tbldatadialog_wrapper .dataTables_info,
-    .ecms-userregn-dialog-modal #tbldatadialog_wrapper .dt-info,
-    .modal #tbldatadialog_wrapper .dt-info {
-        position: absolute !important;
-        left: 0 !important;
-        bottom: 8px !important;
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        z-index: 5 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        line-height: 32px !important;
-    }
-
-    .ecms-userregn-dialog-modal #tbldatadialog_wrapper .dataTables_paginate,
-    .modal #tbldatadialog_wrapper .dataTables_paginate,
-    .ecms-userregn-dialog-modal #tbldatadialog_wrapper .dt-paging,
-    .modal #tbldatadialog_wrapper .dt-paging {
-        position: absolute !important;
-        right: 0 !important;
-        bottom: 4px !important;
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        z-index: 5 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }

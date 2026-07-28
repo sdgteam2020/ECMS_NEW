@@ -1,13 +1,25 @@
 ﻿//const { debug } = require("util");
 
 var table; // Declare table variable outside the function to preserve the instance
+function safeAdjustMapUnitChangeDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     applyDataTableSearchValidation('#tbldata');
 
     BindData();
-    $("#btnAdd").on("click", function (){
+    $("#btnAdd").on("click", function () {
         location.href = '/Master/MapUnitChangeRequest';
     });
 });
@@ -20,11 +32,11 @@ function BindData() {
         $("#tbldata tbody").empty(); // Clear old tbody
     }
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '300px',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // UI only: normal DataTables scroll inside card
+        deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
@@ -36,7 +48,7 @@ function BindData() {
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
         order: [[0, 'desc']], // Default sorting on the first column
-        searching:false,
+        searching: true,
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -104,7 +116,7 @@ function BindData() {
                 data: "Sus_no",
                 name: "Sus_no",
                 width: "110px",
-                orderable: false, 
+                orderable: false,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}${row.Suffix}">${data}${row.Suffix}</span>`;
@@ -115,7 +127,7 @@ function BindData() {
                 data: "FromArmyNo",
                 name: "FromArmyNo",
                 width: "110px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -138,7 +150,7 @@ function BindData() {
                 data: "FromDID",
                 name: "FromDID",
                 width: "100px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -150,7 +162,7 @@ function BindData() {
                 data: "FromUpdatedOn",
                 name: "FromUpdatedOn",
                 width: "150px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
                 }
@@ -160,7 +172,7 @@ function BindData() {
                 data: "Remark",
                 name: "Remark",
                 width: "150px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -172,7 +184,7 @@ function BindData() {
                 data: "AdminRemark",
                 name: "AdminRemark",
                 width: "150px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -184,7 +196,7 @@ function BindData() {
                 data: "IsEditAction",
                 name: "Status",
                 width: "100px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row) {
                     return data == false ? "<span class='badge bg-warning'>Pendding</span>" : row.RequestStatus == true ? "<span class='badge bg-success'>Accepted</span>" : "<span class='badge badge-pill badge-danger'>Rejected</span>";
                 }
@@ -201,14 +213,13 @@ function BindData() {
                 render: function (data, type, row) {
                     let role = $("#spnRoleName").html(); // Get current role
                     if (data === false && role === "admin") {
-                        return `<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
+                        return `<span id='btnedit'><button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><span id='btnview'><button type='button' class='cls-btnview btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
                     }
-                    else if (data === true && role === "admin")
-                    {
-                        return `<span class='badge badge-pill badge-danger mr-1'>NA</span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
+                    else if (data === true && role === "admin") {
+                        return `<span class='badge badge-pill badge-danger mr-1'>NA</span><span id='btnview'><button type='button' class='cls-btnview btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
                     }
                     else {
-                        return `<span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
+                        return `<span id='btnview'><button type='button' class='cls-btnview btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
                     }
                 }
             }
@@ -236,7 +247,9 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search SUS No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
+            "rt" +
+            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -265,21 +278,21 @@ function BindData() {
         // 👇 Show modal only after table (header + data) is fully rendered
         initComplete: function () {
             // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            safeAdjustMapUnitChangeDataTable(this.api());
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    safeAdjustMapUnitChangeDataTable(table);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustMapUnitChangeDataTable(this.api());
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')

@@ -2,11 +2,12 @@
     ViewData["Title"] = "Domain Regn";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/domainregn.css" rel="stylesheet" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10 ecms-domainregn-breadcrumb">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
@@ -23,107 +24,110 @@
     </div>
 </header>
 
-<div class="containerMain ecms-domainregn-page">
-    <div class="ecms-domainregn-shell">
-        <div class="ecms-domainregn-title-card">
-            <div class="ecms-title-left">
-                <div class="ecms-title-icon">
-                    <i class="fa fa-key"></i>
-                </div>
-                <div>
-                    <h3>Domain Registration Details</h3>
-                    <p>Create, update and manage domain ID, claims and user configuration</p>
-                </div>
-            </div>
-            <span class="ecms-title-pill">
-                <i class="fa fa-user-shield mr-1"></i> USER CONFIG
-            </span>
-        </div>
-
-        <div class="ecms-domainregn-sub-card">
-            <div class="ecms-title-left">
-                <div class="ecms-sub-icon">
-                    <i class="fa fa-users"></i>
-                </div>
-                <div>
-                    <h5>Domain User Summary</h5>
-                    <p>Click a card to view user details by category</p>
-                </div>
-            </div>
-            <button type="button" id="btnDomainAdd" class="btn ecms-btn-add">
-                <i class="fa fa-plus mr-1"></i>Add Domain
-            </button>
-        </div>
-
-        <div class="ecms-domain-stats">
-            <button class="count-label ecms-stat-card" id="btnUser" name="btnUser">
-                <span class="ecms-stat-icon"><i class="fa fa-users"></i></span>
-                <span class="ecms-stat-title">Total Users</span>
-                <span class="ecms-stat-count" id="lblUser">0</span>
-            </button>
-            <button class="count-label ecms-stat-card" id="btnMappedUser" name="btnMappedUser">
-                <span class="ecms-stat-icon"><i class="fa fa-link"></i></span>
-                <span class="ecms-stat-title">Mapped</span>
-                <span class="ecms-stat-count" id="lblMappedUser">0</span>
-            </button>
-            <button class="count-label ecms-stat-card" id="btnUnMappedUser" name="btnUnMappedUser">
-                <span class="ecms-stat-icon"><i class="fa fa-unlink"></i></span>
-                <span class="ecms-stat-title">Not Mapped</span>
-                <span class="ecms-stat-count" id="lblUnMappedUser">0</span>
-            </button>
-            <button class="count-label ecms-stat-card" id="btnActiveUser" name="btnActiveUser">
-                <span class="ecms-stat-icon"><i class="fa fa-check-circle"></i></span>
-                <span class="ecms-stat-title">Active</span>
-                <span class="ecms-stat-count" id="lblActiveUser">0</span>
-            </button>
-            <button class="count-label ecms-stat-card" id="btnInActiveUser" name="btnActiveUser">
-                <span class="ecms-stat-icon"><i class="fa fa-times-circle"></i></span>
-                <span class="ecms-stat-title">Inactive</span>
-                <span class="ecms-stat-count" id="lblInActiveUser">0</span>
-            </button>
-            <button class="count-label ecms-stat-card" id="btnVerified" name="btnVerified">
-                <span class="ecms-stat-icon"><i class="fa fa-shield-alt"></i></span>
-                <span class="ecms-stat-title">Verified</span>
-                <span class="ecms-stat-count" id="lblVerifiedUser">0</span>
-            </button>
-            <button class="count-label ecms-stat-card" id="btnNotVerifiedUser" name="btnNotVerifiedUser">
-                <span class="ecms-stat-icon"><i class="fa fa-exclamation-circle"></i></span>
-                <span class="ecms-stat-title">Not Verified</span>
-                <span class="ecms-stat-count" id="lblNotVerifiedUser">0</span>
-            </button>
-        </div>
-
-        <div class="ecms-domain-table-card">
-            <div class="ecms-section-bar">
-                <i class="fa fa-table mr-1"></i>Domain Registration Records
-            </div>
-
-            <div class="ecms-domain-table-wrap">
-                <span id="SpnTxnId" class="d-none">0</span>
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata"></table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script asp-src-include="~/developerjs/mtables.js"></script>
-<script asp-src-include="~/developerjs/domainregn.js"></script>
-<script asp-src-include="~/select2/js/select2.min.js"></script>
-
-<partial name="~/Views/Shared/_DataTableJS.cshtml" />
-
-<div class="modal fade ecms-domain-modal" id="AddNewDomain" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header ecms-modal-header">
-                <div class="ecms-modal-title-wrap">
-                    <span class="ecms-modal-icon"><i class="fa fa-key"></i></span>
-                    <div>
-                        <h5 class="modal-title" id="exampleModalLabel">Enter Domain Details</h5>
-                        <p>Fill domain, role, claims, appointment and unit mapping details</p>
+<div class="ecms-screen-stage ecms-bg">
+    <main class="ecms-page ecms-page-full ecms-fit-screen ecms-domainregn-page">
+        <section class="ecms-card ecms-domainregn-shell">
+            <div class="ecms-page-title ecms-domain-title-row">
+                <div class="ecms-domain-title-content">
+                    <span class="ecms-title-icon" aria-hidden="true">
+                        <i class="fa fa-key"></i>
+                    </span>
+                    <div class="ecms-domain-title-copy">
+                        <h3>Domain Registration Details</h3>
+                        <p class="ecms-title-subtitle">Create, update and manage domain ID, claims and user configuration</p>
                     </div>
                 </div>
-                <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" title="Close">
+
+                <button type="button" id="btnDomainAdd" class="btn btn-success ecms-btn-success ecms-domain-add-btn">
+                    <i class="fa fa-plus mr-1"></i>
+                    Add Domain
+                </button>
+            </div>
+
+            <section class="ecms-domain-stats" aria-label="Domain registration summary">
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnUser" name="btnUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-users"></i></span>
+                    <span class="ecms-stat-title">Total Users</span>
+                    <span class="ecms-stat-count" id="lblUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnMappedUser" name="btnMappedUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-link"></i></span>
+                    <span class="ecms-stat-title">Mapped</span>
+                    <span class="ecms-stat-count" id="lblMappedUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnUnMappedUser" name="btnUnMappedUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-unlink"></i></span>
+                    <span class="ecms-stat-title">Not Mapped</span>
+                    <span class="ecms-stat-count" id="lblUnMappedUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnActiveUser" name="btnActiveUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-check-circle"></i></span>
+                    <span class="ecms-stat-title">Active</span>
+                    <span class="ecms-stat-count" id="lblActiveUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnInActiveUser" name="btnActiveUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-times-circle"></i></span>
+                    <span class="ecms-stat-title">Inactive</span>
+                    <span class="ecms-stat-count" id="lblInActiveUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnVerified" name="btnVerified">
+                    <span class="ecms-stat-icon"><i class="fa fa-shield-alt"></i></span>
+                    <span class="ecms-stat-title">Verified</span>
+                    <span class="ecms-stat-count" id="lblVerifiedUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnNotVerifiedUser" name="btnNotVerifiedUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-exclamation-circle"></i></span>
+                    <span class="ecms-stat-title">Not Verified</span>
+                    <span class="ecms-stat-count" id="lblNotVerifiedUser">0</span>
+                </button>
+            </section>
+
+            <section class="ecms-section ecms-domain-table-section">
+                <h2 class="ecms-section-title">
+                    <i class="fa fa-table" aria-hidden="true"></i>
+                    Domain Registration Records
+                </h2>
+
+                <div class="ecms-dt-wrap ecms-domain-table-wrap">
+                    <span id="SpnTxnId" class="d-none">0</span>
+                    <table id="tbldata"
+                           class="table table-striped table-hover ecms-dt-table"
+                           role="grid"
+                           aria-label="Domain registration records"></table>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+
+<div class="modal fade ecms-domain-modal"
+     id="AddNewDomain"
+     tabindex="-1"
+     aria-labelledby="addDomainModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ecms-modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="ecms-modal-heading">
+                    <span class="ecms-modal-title-icon" aria-hidden="true"><i class="fa fa-key"></i></span>
+                    <div class="ecms-min-0">
+                        <h5 class="modal-title" id="addDomainModalTitle">Enter Domain Details</h5>
+                        <p class="ecms-modal-subtitle">Fill domain, role, claims, appointment and unit mapping details</p>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                        title="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -132,47 +136,80 @@
                 <form action="" id="SaveDomain" name="SaveDomain" method="post">
                     <div class="ecms-form-grid">
                         <div class="ecms-form-field">
-                            <label class="ecms-form-label">
+                            <label class="ecms-form-label" for="txtDomainId">
                                 <span><i class="fa fa-id-card"></i></span>
                                 Domain ID<i class="fas fa-asterisk mand1"></i>
                             </label>
-                            <input class="form-control-domainId" placeholder="Enter Domain ID" id="txtDomainId" name="txtDomainId" maxlength="20" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Domain Id is required." data-val-regex-pattern="^[\w]+$" />
+                            <input class="form-control-domainId"
+                                   placeholder="Enter Domain ID"
+                                   id="txtDomainId"
+                                   name="txtDomainId"
+                                   maxlength="20"
+                                   data-val="true"
+                                   data-val-regex="This special chars and space not allowed for security reasons."
+                                   data-val-required="Domain Id is required."
+                                   data-val-regex-pattern="^[\w]+$" />
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtDomainId" data-valmsg-replace="true"></span>
                         </div>
 
                         <div class="ecms-form-field">
-                            <label class="ecms-form-label">
+                            <label class="ecms-form-label" for="ddlRoles">
                                 <span><i class="fa fa-user-tag"></i></span>
                                 Role<i class="fas fa-asterisk mand1"></i>
                             </label>
-                            <select class="form-select" multiple="" placeholder="Select Role" name="ddlRoles" id="ddlRoles" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Role is required."></select>
+                            <select class="form-select"
+                                    multiple="multiple"
+                                    name="ddlRoles"
+                                    id="ddlRoles"
+                                    data-val="true"
+                                    data-val-regex="This special chars and space not allowed for security reasons."
+                                    data-val-required="Role is required."></select>
                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlRoles" data-valmsg-replace="true"></span>
                         </div>
 
                         <div class="ecms-form-field">
-                            <label class="ecms-form-label">
+                            <label class="ecms-form-label" for="ddClaims">
                                 <span><i class="fa fa-list-check"></i></span>
                                 Assign Claims
                             </label>
-                            <select class="form-select" multiple="" placeholder="Select Claims" name="ddClaims" id="ddClaims" data-val="true" data-val-regex="This special chars and space not allowed for security reasons."></select>
+                            <select class="form-select"
+                                    multiple="multiple"
+                                    name="ddClaims"
+                                    id="ddClaims"
+                                    data-val="true"
+                                    data-val-regex="This special chars and space not allowed for security reasons."></select>
                             <span class="text-danger field-validation-valid" data-valmsg-for="ddClaims" data-valmsg-replace="true"></span>
                         </div>
 
                         <div class="ecms-form-field">
-                            <label class="ecms-form-label">
+                            <label class="ecms-form-label" for="txtAppointmentName">
                                 <span><i class="fa fa-briefcase"></i></span>
                                 Appointment<i class="fas fa-asterisk mand1"></i>
                             </label>
-                            <input class="form-control alpha-num-only" placeholder="Type Appointment" id="txtAppointmentName" name="txtAppointmentName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Appointment Name is required." data-val-regex-pattern="^[\w \& \()]*$" />
+                            <input class="form-control alpha-num-only"
+                                   placeholder="Type Appointment"
+                                   id="txtAppointmentName"
+                                   name="txtAppointmentName"
+                                   data-val="true"
+                                   data-val-regex="This special chars not allowed for security reasons."
+                                   data-val-required="Appointment Name is required."
+                                   data-val-regex-pattern="^[\w \& \()]*$" />
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointmentName" data-valmsg-replace="true"></span>
                         </div>
 
                         <div class="ecms-form-field">
-                            <label class="ecms-form-label">
+                            <label class="ecms-form-label" for="txtUnitName">
                                 <span><i class="fa fa-building"></i></span>
                                 Unit Name<i class="fas fa-asterisk mand1"></i>
                             </label>
-                            <input class="form-control alpha-num-only" placeholder="Type SUS No" id="txtUnitName" name="txtUnitName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit Name is required." data-val-regex-pattern="^[\w ]*$" />
+                            <input class="form-control alpha-num-only"
+                                   placeholder="Type SUS No"
+                                   id="txtUnitName"
+                                   name="txtUnitName"
+                                   data-val="true"
+                                   data-val-regex="This special chars not allowed for security reasons."
+                                   data-val-required="Unit Name is required."
+                                   data-val-regex-pattern="^[\w ]*$" />
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
                         </div>
 
@@ -282,9 +319,9 @@
                         </div>
                     </div>
 
-                    <div class="ecms-modal-actions">
-                        <input type="button" class="btn ecms-btn-save" value="Save" id="btnDomainAddDialog" />
-                        <button type="button" id="btnDomainAddReset" class="btn ecms-btn-reset">Reset</button>
+                    <div class="ecms-form-actions ecms-modal-actions">
+                        <input type="button" class="btn btn-primary ecms-btn-primary" value="Save" id="btnDomainAddDialog" />
+                        <button type="button" id="btnDomainAddReset" class="btn btn-danger ecms-btn-danger">Reset</button>
                     </div>
 
                     <div class="col-sm-12" id="msg"></div>
@@ -294,25 +331,38 @@
     </div>
 </div>
 
-<div class="modal fade ecms-domain-dialog-modal" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+<div class="modal fade ecms-domain-dialog-modal"
+     id="DataTableDialog"
+     tabindex="-1"
+     aria-labelledby="domainUsersModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ecms-domain-users-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header ecms-modal-header">
-                <div class="ecms-modal-title-wrap">
-                    <span class="ecms-modal-icon"><i class="fa fa-users"></i></span>
-                    <div>
-                        <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitle"></span></h5>
-                        <p>Domain user list by selected category</p>
+            <div class="modal-header">
+                <div class="ecms-modal-heading">
+                    <span class="ecms-modal-title-icon" aria-hidden="true"><i class="fa fa-users"></i></span>
+                    <div class="ecms-min-0">
+                        <h5 class="modal-title" id="domainUsersModalTitle"><span id="lblModelTitle"></span></h5>
+                        <p class="ecms-modal-subtitle">Domain user list by selected category</p>
                     </div>
                 </div>
-                <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" title="Close">
+
+                <button type="button"
+                        class="close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                        title="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
             <div class="modal-body">
-                <div class="ecms-dialog-table-wrap">
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatadialog"></table>
+                <div class="ecms-dt-wrap ecms-domain-dialog-table-wrap">
+                    <table id="tbldatadialog"
+                           class="table table-striped table-hover ecms-dt-table"
+                           role="grid"
+                           aria-label="Domain users"></table>
                 </div>
                 <div class="col-sm-12" id="msg"></div>
             </div>
@@ -320,20 +370,37 @@
     </div>
 </div>
 
-<div class="modal fade ecms-claims-show-modal" id="ClaimsShow" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
+<div class="modal fade ecms-claims-show-modal"
+     id="ClaimsShow"
+     tabindex="-1"
+     aria-labelledby="claimsShowModalTitle"
+     aria-hidden="true"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered ecms-claims-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header ecms-modal-header">
-                <div class="ecms-modal-title-wrap">
-                    <span class="ecms-modal-icon"><i class="fa fa-list-check"></i></span>
-                    <div>
-                        <h6 class="modal-title" id="exampleModalLabel">Claims Details of Domain Id (<span id="claimDomainId"></span>)</h6>
+            <div class="modal-header">
+                <div class="ecms-modal-heading">
+                    <span class="ecms-modal-title-icon" aria-hidden="true"><i class="fa fa-list"></i></span>
+                    <div class="ecms-min-0">
+                        <h6 class="modal-title" id="claimsShowModalTitle">
+                            Claims Details of Domain Id (<span id="claimDomainId"></span>)
+                        </h6>
                     </div>
                 </div>
-                <button type="button" class="btn-close ecms-bs-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close"></button>
             </div>
             <div id="ClaimsShowBody" class="modal-body"></div>
-            <div class="modal-footer"></div>
         </div>
     </div>
 </div>
+
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/developerjs/domainregn.js"></script>
+<script asp-src-include="~/select2/js/select2.min.js"></script>
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />

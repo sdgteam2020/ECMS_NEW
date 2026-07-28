@@ -1,5 +1,17 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 let ApptId = 0;
+function safeAdjustAppointmentDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -14,7 +26,7 @@ $(function () {
         ResetErrorMessage();
     });
 
-    $("#btnsave").on("click",function (e) {
+    $("#btnsave").on("click", function (e) {
         e.preventDefault();
 
         Proceed();
@@ -25,19 +37,19 @@ $(function () {
         $("#Approved-error").text("");
     });
 
-    $('#btnMultiDelete').on("click",function () {
+    $('#btnMultiDelete').on("click", function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
 
             memberTable.$('input[type="checkbox"]:checked').each(function () {
 
-                
+
                 var id = $(this).attr("Id");
                 lst.push(id);
 
             });
-          
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Delete",
@@ -48,7 +60,7 @@ $(function () {
                 confirmButtonText: 'Yes, Delete it!'
             }).then((result) => {
                 if (result.value) {
-                   
+
                     DeleteMultiple(lst);
 
                 }
@@ -105,11 +117,11 @@ function BindData() {
     }
     const columns = getColumnsForAppointment();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
+        scrollY: '300px',          // DataTables managed vertical scroll
+        scrollX: true,            // DataTables managed horizontal scroll
         scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scroller: true,           // DataTables managed scroll rendering
+        deferScroll: true,        // DataTables managed scroll rendering
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
@@ -153,27 +165,24 @@ function BindData() {
         columns: columns,
         /* ===== FORCE WIDTHS (IMPORTANT) ===== */
         columnDefs: [
+            { targets: 0, visible: false, searchable: false, width: "0px" },
+            { targets: 1, width: "70px", className: "text-center" },
+            { targets: 2, width: "360px" },
+            { targets: 3, width: "260px" },
+            { targets: 4, width: "140px", className: "text-center" },
+            { targets: 5, width: "160px", className: "text-center" },
             {
-                targets: 0,     // index of ApptId
-                visible: false,
-                width: "0px",
-                searchable: false
-            },
-            { targets: 1, width: "60px" },
-            { targets: 2, width: "200px" },
-            { targets: 3, width: "200px" },
-            { targets: 4, width: "200px" },
-            { targets: 5, width: "120px" },
-            {
-                targets: '_all',  // Apply to all visible columns
-                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+                targets: '_all',
+                orderSequence: ["asc", "desc"]
             },
         ],
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
+            "rt" +
+            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -210,21 +219,22 @@ function BindData() {
                 .attr('title', 'Search Appointment/Abbreviation');
 
             // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            safeAdjustAppointmentDataTable(this.api());
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    safeAdjustAppointmentDataTable(table);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustAppointmentDataTable(this.api());
+            setTimeout(function () { safeAdjustAppointmentDataTable(table); }, 80);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -352,7 +362,7 @@ function ResetErrorMessage() {
 }
 
 function Delete(Id) {
-  
+
     var userdata =
     {
         "ApptId": Id,
@@ -394,7 +404,7 @@ function Delete(Id) {
 }
 
 function DeleteMultiple(Ids) {
-   
+
     var userdata =
     {
         "ints": Ids,
@@ -449,7 +459,7 @@ function getColumnsForAppointment() {
             name: "SerialNumber",
             orderable: false, // Disable sorting for this column
             className: "text-center col-sno",
-            width: "60px",
+            width: "70px",
             render: function (data, type, row, meta) {
                 // Calculate serial number based on row index
                 return meta.row + meta.settings._iDisplayStart + 1;
@@ -460,8 +470,8 @@ function getColumnsForAppointment() {
             data: "AppointmentName",
             name: "AppointmentName",
             className: "nowrap",
-            width: "200px",
-            orderable: true, 
+            width: "360px",
+            orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
                 return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -472,8 +482,8 @@ function getColumnsForAppointment() {
             data: "AppointmentAbbreviation",
             name: "AppointmentAbbreviation",
             className: "nowrap",
-            width: "200px",
-            orderable: true, 
+            width: "260px",
+            orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
                 return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -484,8 +494,8 @@ function getColumnsForAppointment() {
             data: "Approved",
             name: "Approved",
             className: "nowrap",
-            width: "200px",
-            orderable: true, 
+            width: "140px",
+            orderable: true,
             render: function (data, type, row, meta) {
                 return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
             }
@@ -498,10 +508,10 @@ function getColumnsForAppointment() {
             name: "Action",
             orderable: false,
             className: "noExport text-center col-action",
-            width: "120px",
+            width: "160px",
             render: function (data, type, row) {
-                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                let Action = `<button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn ecms-action-btn btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
                 return Action;
             }
         }

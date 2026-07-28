@@ -1,1771 +1,302 @@
 ﻿/* =====================================================
-   ECMS ORO Mapping Modern UI
-   Only UI changed. Functionality IDs/classes are preserved.
+   ORO Mapping page
+   Page-specific layout and modal stacking only.
+   Shared colors, controls, field icons, buttons,
+   DataTables and modal skin come from the ECMS theme.
 ===================================================== */
 
-:root {
-    --ecms-oro-blue-1: #153f8f;
-    --ecms-oro-blue-2: #347dff;
-    --ecms-oro-cyan: #55d7ff;
-    --ecms-oro-green: #31c48d;
-    --ecms-oro-red: #dc2626;
-    --ecms-oro-yellow: #f5b800;
-    --ecms-oro-ink: #061b44;
-    --ecms-oro-muted: #536f9a;
-}
-
-/* Breadcrumb row: keep below fixed top header */
-html body:has(.ecms-oro-page) header.page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-oro-page) header.page-header.page-header-dark,
-html body:has(.ecms-oro-page) .page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-oro-page) .page-header.page-header-dark {
-    width: 100% !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    max-height: 42px !important;
-    padding: 0 !important;
-    margin-top: 26px !important;
-    margin-bottom: 0 !important;
-    overflow: visible !important;
-    position: relative !important;
-    z-index: 100 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    background: linear-gradient(90deg, rgba(75, 207, 239, 0.96), rgba(61, 126, 244, 0.96)) !important;
-    box-shadow: 0 12px 25px rgba(0, 38, 95, 0.22) !important;
-}
-
-    html body:has(.ecms-oro-page) .page-header.page-header-dark .containerMain {
-        width: 100% !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        margin: 0 !important;
-        padding: 0 14px 0 66px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-    }
-
-    html body:has(.ecms-oro-page) .page-header.page-header-dark .page-header-content,
-    html body:has(.ecms-oro-page) .page-header.page-header-dark .page-header-content > .row,
-    html body:has(.ecms-oro-page) .page-header.page-header-dark .page-header-content .col-auto {
-        width: auto !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        flex: 0 0 auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-    }
-
-    html body:has(.ecms-oro-page) .page-header.page-header-dark .page-header-title {
-        width: auto !important;
-        max-width: calc(100vw - 90px) !important;
-        min-width: 0 !important;
-        height: 42px !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        flex-wrap: nowrap !important;
-        gap: 8px !important;
-        white-space: nowrap !important;
-        color: #ffffff !important;
-        font-size: 14px !important;
-        line-height: 42px !important;
-        font-weight: 900 !important;
-        text-shadow: 0 2px 7px rgba(0, 30, 80, 0.38) !important;
-    }
-
-        html body:has(.ecms-oro-page) .page-header.page-header-dark .page-header-title .page-header-icon {
-            width: 26px !important;
-            height: 26px !important;
-            min-width: 26px !important;
-            margin-right: 4px !important;
-            border-radius: 50% !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            background: rgba(255, 255, 255, 0.22) !important;
-            border: 1px solid rgba(255, 255, 255, 0.42) !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 10px rgba(0,33,90,0.16) !important;
-        }
-
-            html body:has(.ecms-oro-page) .page-header.page-header-dark .page-header-title .page-header-icon i,
-            html body:has(.ecms-oro-page) .page-header.page-header-dark .page-header-title a,
-            html body:has(.ecms-oro-page) .page-header.page-header-dark .page-header-title span {
-                color: #ffffff !important;
-                text-decoration: none !important;
-            }
-
-/* Page background */
-html:has(.ecms-oro-page),
-body:has(.ecms-oro-page) {
-    min-height: 100vh !important;
-    overflow-y: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.96), rgba(15, 70, 160, 0.92)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat fixed !important;
-}
-
 .ecms-oro-page {
-    position: relative !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
-    max-width: none !important;
-    height: calc(100vh - 248px) !important;
-    min-height: calc(100vh - 248px) !important;
-    margin: 0 !important;
-    padding: 12px 26px 46px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.88), rgba(15, 70, 160, 0.79)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+    --ecms-oro-scroll-height: clamp(16rem, calc(100vh - 31.5rem), 29rem);
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem );
+    min-height: 0;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
 }
 
-    .ecms-oro-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 24% 18%, rgba(96, 213, 255, 0.13), transparent 30%), radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
-    }
+.ecms-oro-shell,
+.ecms-oro-shell-body,
+.ecms-oro-records,
+.ecms-oro-table-wrap {
+    min-width: 0;
+    min-height: 0;
+}
 
 .ecms-oro-shell {
-    position: relative !important;
-    z-index: 1 !important;
-    box-sizing: border-box !important;
-    width: min(1500px, calc(100% - 80px)) !important;
-    min-width: 1120px !important;
-    height: calc(100vh - 220px) !important;
-    max-height: calc(100vh - 220px) !important;
-    min-height: 500px !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border-radius: 22px !important;
-    background: linear-gradient(135deg, rgba(246,251,255,0.94), rgba(213,229,247,0.88)), rgba(232, 244, 255, 0.90) !important;
-    border: 1px solid rgba(255,255,255,0.86) !important;
-    box-shadow: 0 24px 70px rgba(0, 18, 60, 0.28) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
+    height: 100%;
 }
 
-/* Title */
-.ecms-oro-titlebar {
-    height: 58px !important;
-    min-height: 58px !important;
-    padding: 8px 14px !important;
-    border-radius: 16px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(232, 243, 255, 0.83)) !important;
-    border: 1px solid rgba(255,255,255,0.92) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 24px rgba(15, 58, 140, 0.12) !important;
-}
-
-.ecms-oro-title-wrap {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
-}
-
-.ecms-oro-title-icon {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    border-radius: 14px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #2f7dff, #7c3aed) !important;
-    color: #ffffff !important;
-    box-shadow: 0 10px 22px rgba(47, 125, 255, 0.28) !important;
-}
-
-    .ecms-oro-title-icon i {
-        color: #ffffff !important;
-        font-size: 18px !important;
-    }
-
-.ecms-oro-titlebar h3 {
-    margin: 0 !important;
-    color: var(--ecms-oro-ink) !important;
-    font-size: 21px !important;
-    line-height: 1.1 !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.01em !important;
-}
-
-.ecms-oro-titlebar p {
-    margin: 4px 0 0 !important;
-    color: #48618e !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
-
-.ecms-oro-pill {
-    height: 34px !important;
-    padding: 0 14px !important;
-    border-radius: 999px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
-    font-size: 12px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 9px 18px rgba(29, 78, 216, 0.22) !important;
-}
-
-/* Toolbar */
-.ecms-oro-toolbar-card {
-    min-height: 60px !important;
-    padding: 10px 14px !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232, 243, 255, 0.78)) !important;
-    border: 1px solid rgba(255,255,255,0.82) !important;
-    box-shadow: 0 14px 34px rgba(0, 26, 88, 0.12) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 16px !important;
-}
-
-.ecms-oro-toolbar-text {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
-}
-
-.ecms-oro-toolbar-icon {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    border-radius: 13px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
-    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25) !important;
-}
-
-.ecms-oro-toolbar-text h5 {
-    margin: 0 !important;
-    color: var(--ecms-oro-ink) !important;
-    font-size: 15px !important;
-    font-weight: 950 !important;
-}
-
-.ecms-oro-toolbar-text p {
-    margin: 3px 0 0 !important;
-    color: #48618e !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
+.ecms-oro-shell-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
 }
 
 .ecms-oro-add-btn {
-    height: 35px !important;
-    min-width: 160px !important;
-    border-radius: 10px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    font-size: 13px !important;
-    font-weight: 950 !important;
-    color: #ffffff !important;
-    border: 0 !important;
-    background: linear-gradient(135deg, #16803c, #31a65a) !important;
-    box-shadow: 0 9px 18px rgba(22, 128, 60, 0.20) !important;
+    min-height: 2.15rem;
+    padding-inline: .9rem;
+    white-space: nowrap;
 }
 
-    .ecms-oro-add-btn:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 12px 22px rgba(22, 128, 60, 0.28) !important;
-    }
-
-/* Table */
-.ecms-oro-table-card {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    padding: 0 !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
-    background: rgba(255, 255, 255, 0.70) !important;
-    border: 1px solid rgba(255,255,255,0.84) !important;
-    box-shadow: 0 12px 28px rgba(0, 26, 88, 0.10) !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-.ecms-oro-table-title {
-    height: 34px !important;
-    min-height: 34px !important;
-    border-radius: 14px !important;
-    margin: 10px 10px 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: linear-gradient(90deg, #214695, #3f7dff) !important;
-    box-shadow: 0 10px 24px rgba(31, 83, 180, 0.22) !important;
-    font-size: 14px !important;
-    font-weight: 950 !important;
+.ecms-oro-records {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .ecms-oro-table-wrap {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    padding: 10px !important;
-    overflow: hidden !important;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding-inline: .7rem;
+    padding-bottom: .65rem;
 }
 
-.ecms-oro-page .dt-top,
-.ecms-oro-page .dataTables_wrapper .dt-top {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    margin: 0 0 8px !important;
-}
-
-.ecms-oro-page .dataTables_length {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    color: var(--ecms-oro-ink) !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-}
-
-    .ecms-oro-page .dataTables_length select,
-    .ecms-oro-page .dataTables_filter input {
-        height: 34px !important;
-        border-radius: 8px !important;
-        border: 1px solid rgba(32, 99, 190, 0.28) !important;
-        background: rgba(255,255,255,0.90) !important;
-        color: var(--ecms-oro-ink) !important;
-        font-size: 12px !important;
-        font-weight: 700 !important;
-        box-shadow: inset 0 1px 2px rgba(0,0,0,0.04) !important;
+    .ecms-oro-table-wrap .dataTables_wrapper,
+    .ecms-oro-table-wrap .dt-container {
+        flex: 1 1 auto;
     }
-
-.ecms-oro-page .dataTables_filter input {
-    width: 145px !important;
-    padding: 0 11px !important;
-}
-
-.ecms-oro-page .dt-buttons {
-    display: none !important;
-}
-
-.ecms-oro-page .dataTables_scroll,
-.ecms-oro-page .dt-scroll {
-    border-radius: 12px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(32, 87, 177, 0.20) !important;
-    background: #ffffff !important;
-}
-
-.ecms-oro-page .dataTables_scrollHead,
-.ecms-oro-page .dt-scroll-head {
-    background: linear-gradient(90deg, #1f4e99, #346ed2) !important;
-}
 
 .ecms-oro-page .dataTables_scrollBody,
 .ecms-oro-page .dt-scroll-body {
-    height: calc(100vh - 520px) !important;
-    max-height: calc(100vh - 520px) !important;
-    min-height: 230px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    padding-bottom: 36px !important;
+    height: var(--ecms-oro-scroll-height) !important;
+    max-height: var(--ecms-oro-scroll-height) !important;
+    min-height: 13rem !important;
+    padding-bottom: 1.25rem !important;
+    box-sizing: border-box !important;
+    scroll-padding-bottom: 1.25rem;
+    overscroll-behavior: contain;
 }
 
-.ecms-oro-page table.dataTable,
-.ecms-oro-page #tbldata {
-    width: 100% !important;
-    min-width: 1080px !important;
-    margin: 0 !important;
-    table-layout: fixed !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
+    /*
+   Keep enough scroll space below the final record so the last row and its
+   action buttons can move fully above the DataTable footer.
+*/
+    .ecms-oro-page .dataTables_scrollBody table#tbldata,
+    .ecms-oro-page .dt-scroll-body table#tbldata {
+        margin-bottom: 1.25rem !important;
+    }
+
+    .ecms-oro-page table#tbldata,
+    .ecms-oro-page .dataTables_scrollHeadInner,
+    .ecms-oro-page .dataTables_scrollHeadInner table,
+    .ecms-oro-page .dataTables_scrollBody table,
+    .ecms-oro-page .dt-scroll-headInner,
+    .ecms-oro-page .dt-scroll-headInner table,
+    .ecms-oro-page .dt-scroll-body table {
+        width: 100% !important;
+    }
+
+        .ecms-oro-page table#tbldata,
+        .ecms-oro-page .dataTables_scrollHeadInner table,
+        .ecms-oro-page .dataTables_scrollBody table {
+            table-layout: fixed !important;
+        }
+
+/* ORO rows may contain several Arms / Service values. */
+.ecms-oro-page table.dataTable tbody td {
+    height: auto;
+    min-height: var(--ecms-dt-row-height);
+    vertical-align: top;
+    white-space: normal;
 }
 
-    .ecms-oro-page table.dataTable thead th,
-    .ecms-oro-page table.dataTable thead td {
-        height: 40px !important;
-        padding: 9px 10px !important;
-        color: #ffffff !important;
-        background: linear-gradient(90deg, #1f4e99, #346ed2) !important;
-        border-bottom: 1px solid rgba(255,255,255,0.42) !important;
-        border-right: 1px solid rgba(255,255,255,0.18) !important;
-        font-size: 13px !important;
-        font-weight: 950 !important;
-        vertical-align: middle !important;
-        white-space: nowrap !important;
-        text-align: center !important;
-    }
-
-    .ecms-oro-page table.dataTable tbody td {
-        padding: 10px 12px !important;
-        color: #071b42 !important;
-        font-size: 13px !important;
-        font-weight: 700 !important;
-        vertical-align: top !important;
-        border-bottom: 1px solid rgba(15, 56, 125, 0.10) !important;
-    }
-
-    .ecms-oro-page table.dataTable tbody tr:nth-child(odd) td {
-        background: rgba(245, 248, 252, 0.92) !important;
-    }
-
-    .ecms-oro-page table.dataTable tbody tr:nth-child(even) td {
-        background: rgba(255, 255, 255, 0.92) !important;
-    }
-
-    .ecms-oro-page table.dataTable tbody tr:hover td {
-        background: rgba(230, 242, 255, 0.96) !important;
-    }
-
-    .ecms-oro-page table.dataTable tbody td ul {
-        margin: 0 !important;
-        padding-left: 16px !important;
-        line-height: 1.35 !important;
-        max-height: 150px !important;
-        overflow-y: auto !important;
-    }
-
-    .ecms-oro-page table.dataTable tbody td li {
-        margin: 0 0 3px !important;
-    }
-
-    .ecms-oro-page table.dataTable tbody td span.dt-ellipsis {
-        display: inline-block !important;
-        max-width: 100% !important;
-        min-width: 0 !important;
-        height: auto !important;
-        padding: 0 !important;
-        border: 0 !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-        color: inherit !important;
-        font-size: inherit !important;
-        font-weight: inherit !important;
-        text-transform: none !important;
-        line-height: inherit !important;
-        box-shadow: none !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        white-space: nowrap !important;
-    }
-
-    .ecms-oro-page .col-action,
+    .ecms-oro-page table.dataTable tbody td.col-sno,
     .ecms-oro-page table.dataTable tbody td.col-action {
-        min-width: 120px !important;
-        white-space: nowrap !important;
-        text-align: center !important;
-        vertical-align: middle !important;
+        vertical-align: middle;
     }
+
+.ecms-oro-page .col-sno {
+    width: 4.5rem !important;
+}
+
+.ecms-oro-page .col-action {
+    width: 7.5rem !important;
+    white-space: nowrap !important;
+}
 
 .ecms-oro-page .cls-btnedit,
 .ecms-oro-page .cls-btnDelete {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    margin: 0 4px !important;
-    padding: 0 !important;
-    border-radius: 10px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 0 !important;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.14) !important;
+    margin-inline: .2rem;
 }
 
-    .ecms-oro-page .cls-btnedit i,
-    .ecms-oro-page .cls-btnDelete i {
-        font-size: 14px !important;
-        color: #071b42 !important;
+.ecms-oro-page table.dataTable tbody tr {
+    transition: background-color .16s ease;
+}
+
+    .ecms-oro-page table.dataTable tbody tr:hover {
+        background: rgba(220, 235, 255, .96);
     }
 
-    .ecms-oro-page .cls-btnDelete i {
-        color: #ffffff !important;
-    }
-
-.ecms-oro-page .dataTables_info {
-    padding: 8px 0 0 !important;
-    color: var(--ecms-oro-ink) !important;
-    font-weight: 800 !important;
-    font-size: 13px !important;
-}
-
-.ecms-oro-page .dataTables_paginate {
-    padding: 7px 0 0 !important;
-}
-
-    .ecms-oro-page .dataTables_paginate .paginate_button,
-    .ecms-oro-page .dataTables_paginate .paginate_button a,
-    .ecms-oro-page .pagination .page-link {
-        min-width: 32px !important;
-        height: 32px !important;
-        padding: 0 10px !important;
-        border-radius: 8px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #1d4ed8 !important;
-        background: rgba(255,255,255,0.94) !important;
-        border: 1px solid rgba(46, 104, 203, 0.18) !important;
-        font-size: 12px !important;
-        font-weight: 950 !important;
-    }
-
-        .ecms-oro-page .dataTables_paginate .paginate_button.current,
-        .ecms-oro-page .dataTables_paginate .paginate_button.current a,
-        .ecms-oro-page .pagination .active .page-link {
-            color: #ffffff !important;
-            background: linear-gradient(135deg, #1d4ed8, #4338ca) !important;
-        }
-
-/* Hide hidden id duplicate header/cell completely */
-.ecms-oro-page table.dataTable thead th:first-child:empty,
-.ecms-oro-page .dt-scroll-head table thead th:first-child:empty,
-.ecms-oro-page .dataTables_scrollHead table thead th:first-child:empty,
-.ecms-oro-page table.dataTable tbody td:first-child:empty {
-    width: 0 !important;
-    min-width: 0 !important;
-    max-width: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    overflow: hidden !important;
-}
-
-/* Modal */
-.ecms-oro-modal .modal-dialog {
-    max-width: 820px !important;
-}
-
-.ecms-oro-modal .modal-content {
-    border: 1px solid rgba(255,255,255,0.82) !important;
-    border-radius: 20px !important;
-    overflow: hidden !important;
-    background: linear-gradient(135deg, rgba(244,250,255,0.98), rgba(221,235,250,0.95)) !important;
-    box-shadow: 0 34px 90px rgba(0, 14, 46, 0.42) !important;
-}
-
-.ecms-oro-modal .modal-header {
-    min-height: 68px !important;
-    padding: 12px 58px 12px 16px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    position: relative !important;
+.ecms-oro-arms-list {
+    max-height: none !important;
+    margin: 0;
+    padding-left: 1.1rem;
     overflow: visible !important;
-    background: linear-gradient(135deg, #244a99, #4b82ff) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.20) !important;
+    line-height: 1.4;
+    text-align: left;
 }
 
-.ecms-oro-modal-title-wrap {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
+/* Use only the main DataTable scrollbar. Nested list scrollbars trap the
+   mouse wheel and make the final record appear unreachable. */
+.ecms-oro-page table.dataTable tbody tr:last-child td {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(185, 205, 236, .9);
 }
 
-.ecms-oro-modal-icon {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    border-radius: 13px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: rgba(255,255,255,0.18) !important;
-    border: 1px solid rgba(255,255,255,0.30) !important;
+.ecms-oro-arms-list li {
+    margin: 0 0 .18rem;
 }
 
-.ecms-oro-modal .modal-title {
-    margin: 0 !important;
-    color: #ffffff !important;
-    font-size: 18px !important;
-    line-height: 1.15 !important;
-    font-weight: 950 !important;
+.ecms-oro-message:empty {
+    display: none;
 }
 
-.ecms-oro-modal .modal-header small {
-    display: block !important;
-    margin-top: 4px !important;
-    color: rgba(255,255,255,0.86) !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
+/* Keep modal fields and Select2 visually aligned with the shared field-icon design. */
+#AddNewOROMapping .modal-dialog {
+    max-width: min(900px, calc(100vw - 1.5rem));
 }
 
-.ecms-oro-modal-close {
-    position: absolute !important;
-    top: 15px !important;
-    right: 14px !important;
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    max-width: 38px !important;
-    padding: 0 !important;
-    border-radius: 50% !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: rgba(255, 255, 255, 0.20) !important;
-    border: 1px solid rgba(255, 255, 255, 0.58) !important;
-    color: #ffffff !important;
-    opacity: 1 !important;
-    text-shadow: none !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 8px 18px rgba(0, 30, 80, 0.22) !important;
-    cursor: pointer !important;
-    z-index: 20 !important;
-    font-size: 0 !important;
-    line-height: 1 !important;
+#AddNewOROMapping .select2-container--default .select2-selection--multiple {
+    min-height: var(--ecms-control-height);
+    padding: .15rem .35rem;
 }
 
-    .ecms-oro-modal-close span,
-    .ecms-oro-modal-close i {
-        pointer-events: none !important;
-        color: #ffffff !important;
-        font-size: 15px !important;
-        line-height: 1 !important;
-        margin: 0 !important;
-        padding: 0 !important;
+    #AddNewOROMapping .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .25rem;
+        padding: 0;
     }
 
-    .ecms-oro-modal-close:hover,
-    .ecms-oro-modal-close:focus {
-        background: rgba(255, 255, 255, 0.32) !important;
-        color: #ffffff !important;
-        opacity: 1 !important;
-        outline: none !important;
-        box-shadow: 0 0 0 3px rgba(255,255,255,0.18), 0 10px 20px rgba(0,30,80,0.24) !important;
+    #AddNewOROMapping .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        margin: .15rem 0;
+        padding: .2rem .45rem;
+        border: 1px solid rgba(63, 124, 255, .24);
+        border-radius: var(--ecms-radius-pill);
+        background: rgba(226, 238, 255, .98);
+        color: var(--ecms-text);
+        font-size: .75rem;
+        font-weight: 800;
     }
 
-.ecms-oro-modal .modal-body {
-    padding: 16px !important;
+#AddNewOROMapping .select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: var(--ecms-primary-500);
+    box-shadow: 0 0 0 .2rem rgba(63, 124, 255, .16);
 }
 
-.ecms-oro-modal-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 14px !important;
-    align-items: start !important;
+#AddNewOROMapping .select2-container--open,
+#AddNewOROMapping .select2-dropdown {
+    z-index: 2075 !important;
 }
 
-.ecms-oro-modal-field {
-    min-width: 0 !important;
-}
-
-.ecms-oro-modal-field-wide {
-    grid-column: 1 / -1 !important;
-}
-
-.ecms-oro-modal-label {
-    min-height: 25px !important;
-    margin: 0 0 6px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    color: var(--ecms-oro-ink) !important;
-    font-size: 12px !important;
-    font-weight: 950 !important;
-}
-
-    .ecms-oro-modal-label > i:first-child {
-        width: 22px !important;
-        height: 22px !important;
-        min-width: 22px !important;
-        border-radius: 50% !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #1d4ed8, #4f7dff) !important;
-        font-size: 11px !important;
-        box-shadow: 0 6px 14px rgba(29, 78, 216, 0.22) !important;
-    }
-
-.ecms-oro-modal .form-control,
-.ecms-oro-modal .form-control1,
-.ecms-oro-modal .form-select {
-    width: 100% !important;
-    min-height: 38px !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(50, 103, 181, 0.25) !important;
-    background: rgba(255,255,255,0.94) !important;
-    color: var(--ecms-oro-ink) !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.04) !important;
-}
-
-    .ecms-oro-modal .form-control:focus,
-    .ecms-oro-modal .form-control1:focus,
-    .ecms-oro-modal .form-select:focus {
-        border-color: rgba(47, 125, 255, 0.75) !important;
-        box-shadow: 0 0 0 3px rgba(47, 125, 255, 0.13) !important;
-    }
-
-.ecms-oro-modal-actions {
-    grid-column: 1 / -1 !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-    gap: 10px !important;
-    margin-top: 4px !important;
-}
-
-    .ecms-oro-modal-actions .btn {
-        min-width: 88px !important;
-        height: 38px !important;
-        border-radius: 10px !important;
-        font-size: 13px !important;
-        font-weight: 950 !important;
-    }
-
-    .ecms-oro-modal-actions .btn-outline-primary {
-        color: #ffffff !important;
-        border: 0 !important;
-        background: linear-gradient(135deg, #2563eb, #4f7dff) !important;
-        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.22) !important;
-    }
-
-    .ecms-oro-modal-actions .btn-outline-danger {
-        color: #ffffff !important;
-        border: 0 !important;
-        background: linear-gradient(135deg, #dc2626, #ef4444) !important;
-        box-shadow: 0 10px 20px rgba(220, 38, 38, 0.20) !important;
-    }
-
-.ecms-oro-message {
-    grid-column: 1 / -1 !important;
-}
-
-/* Select2 styling */
-.ecms-oro-modal .select2-container {
-    width: 100% !important;
-    z-index: 1056 !important;
-}
-
-.ecms-oro-modal .select2-container--default .select2-selection--multiple {
-    min-height: 40px !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(50, 103, 181, 0.25) !important;
-    background: rgba(255,255,255,0.94) !important;
-    padding: 4px 6px !important;
-}
-
-.ecms-oro-modal .select2-container--default.select2-container--focus .select2-selection--multiple {
-    border-color: rgba(47, 125, 255, 0.75) !important;
-    box-shadow: 0 0 0 3px rgba(47, 125, 255, 0.13) !important;
-}
-
-.ecms-oro-modal .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
-    border: 0 !important;
-    border-radius: 999px !important;
-    color: #ffffff !important;
-    font-size: 12px !important;
-    font-weight: 850 !important;
-    padding: 2px 8px !important;
-}
-
-.ecms-oro-modal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-    color: #ffffff !important;
-    margin-right: 5px !important;
-}
-
-.select2-container--open {
-    z-index: 200000 !important;
-}
-
-.select2-dropdown {
-    border-radius: 12px !important;
-    border: 1px solid rgba(50, 103, 181, 0.25) !important;
-    box-shadow: 0 16px 38px rgba(0, 18, 60, 0.28) !important;
-    overflow: hidden !important;
-    z-index: 200000 !important;
-}
-
-/* jQuery autocomplete over modal */
+/* jQuery UI autocomplete must remain above this modal. */
 .ui-autocomplete {
-    z-index: 200000 !important;
-    max-height: 220px !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    border-radius: 12px !important;
-    box-shadow: 0 14px 32px rgba(0, 18, 60, 0.25) !important;
+    z-index: 2090 !important;
+    max-height: 15rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: var(--ecms-radius-sm);
+    box-shadow: var(--ecms-shadow-md);
 }
 
-/* Old theme overrides */
-body:has(.ecms-oro-page) .containerMain.mt-n10 {
-    margin-top: 0 !important;
+/* =====================================================
+   ORO modal stacking fix (page scoped)
+   No global theme file is changed.
+===================================================== */
+#AddNewOROMapping.modal {
+    z-index: 2055 !important;
 }
 
-body:has(.ecms-oro-page) .content-wrapper,
-body:has(.ecms-oro-page) main,
-body:has(.ecms-oro-page) .main-panel {
-    min-height: 0 !important;
+    #AddNewOROMapping.modal .modal-dialog {
+        position: relative;
+        z-index: 2056 !important;
+    }
+
+    #AddNewOROMapping.modal.show,
+    #AddNewOROMapping.modal.show .modal-dialog,
+    #AddNewOROMapping.modal.show .modal-content,
+    #AddNewOROMapping.modal.show .modal-header,
+    #AddNewOROMapping.modal.show .modal-body {
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+body.ecms-oro-modal-open > .modal-backdrop {
+    z-index: 2045 !important;
+    background-color: #020b1e !important;
 }
 
-/* Scrollbar */
-.ecms-oro-page *::-webkit-scrollbar,
-.ecms-oro-modal *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
+    body.ecms-oro-modal-open > .modal-backdrop.show {
+        opacity: .58 !important;
+    }
 
-.ecms-oro-page *::-webkit-scrollbar-thumb,
-.ecms-oro-modal *::-webkit-scrollbar-thumb {
-    background: rgba(58, 129, 255, 0.70);
-    border-radius: 999px;
-}
+@media (max-height: 800px) and (min-width: 992px) {
+    .ecms-oro-page {
+        --ecms-oro-scroll-height: clamp(13rem, calc(100vh - 29rem), 23rem);
+    }
 
-.ecms-oro-page *::-webkit-scrollbar-track,
-.ecms-oro-modal *::-webkit-scrollbar-track {
-    background: rgba(225, 238, 255, 0.75);
-    border-radius: 999px;
-}
+    .ecms-oro-shell-body {
+        gap: .45rem;
+        padding: .55rem;
+    }
 
-@media (max-width: 1300px) {
-    .ecms-oro-shell {
-        width: min(1420px, calc(100% - 36px)) !important;
-        min-width: 1000px !important;
+    .ecms-oro-page .ecms-page-title {
+        min-height: 3.1rem;
+        padding-block: .45rem;
+    }
+
+    #AddNewOROMapping .modal-body {
+        padding-block: .75rem;
     }
 }
 
-@media (max-height: 760px) {
+@media (max-width: 991.98px) {
+    body:has(.ecms-oro-page) {
+        overflow-y: auto;
+    }
+
+    .ecms-oro-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: calc(100vh - var(--ecms-footer-height) - 1rem);
+        margin-top: .4rem;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem);
+    }
+
     .ecms-oro-shell {
-        min-height: 470px !important;
+        height: auto;
+    }
+
+    .ecms-oro-records {
+        min-height: 31rem;
     }
 
     .ecms-oro-page .dataTables_scrollBody,
     .ecms-oro-page .dt-scroll-body {
-        height: calc(100vh - 500px) !important;
-        max-height: calc(100vh - 500px) !important;
-        min-height: 190px !important;
-        padding-bottom: 44px !important;
-    }
-
-    .ecms-oro-modal .modal-dialog {
-        margin-top: 12px !important;
-        margin-bottom: 12px !important;
-    }
-
-    .ecms-oro-modal .modal-content {
-        max-height: calc(100vh - 28px) !important;
-    }
-
-    .ecms-oro-modal .modal-body {
-        max-height: calc(100vh - 128px) !important;
-        overflow-y: auto !important;
+        height: 21rem !important;
+        max-height: 21rem !important;
     }
 }
 
-@media (max-width: 991px) {
-    body:has(.ecms-oro-page) {
-        overflow-y: auto !important;
-    }
-
-    .ecms-oro-page {
-        height: auto !important;
-        min-height: calc(100vh - 248px) !important;
-        overflow: visible !important;
-        padding: 12px 14px 52px !important;
-    }
-
-    .ecms-oro-shell {
-        width: 100% !important;
-        min-width: 0 !important;
-        height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-    }
-
-    .ecms-oro-toolbar-card {
-        flex-direction: column !important;
+@media (max-width: 575.98px) {
+    .ecms-oro-page .ecms-page-title {
         align-items: stretch !important;
     }
 
     .ecms-oro-add-btn {
-        width: 100% !important;
+        width: 100%;
+        justify-content: center;
     }
 
-    .ecms-oro-modal-grid {
-        grid-template-columns: 1fr !important;
+    .ecms-oro-table-wrap {
+        padding-inline: .4rem;
     }
 
-    .ecms-oro-modal-actions {
-        justify-content: flex-start !important;
-        flex-wrap: wrap !important;
+    .ecms-oro-modal-actions .btn,
+    .ecms-oro-modal-actions input[type="button"] {
+        flex: 1 1 8rem;
     }
-}
-
-
-/* =====================================================
-   FINAL FIX PATCH - ORO Mapping
-   Fixes:
-   1. DataTable double/blank header row from scroll body sizing header.
-   2. Last row hidden while vertical scrolling.
-   3. Modal red close/cross button like old UI.
-   4. Native dropdown arrow and disabled field visibility.
-===================================================== */
-
-/* Keep breadcrumb row below fixed header */
-html body:has(.ecms-oro-page) header.page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-oro-page) header.page-header.page-header-dark,
-html body:has(.ecms-oro-page) .page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-oro-page) .page-header.page-header-dark {
-    margin-top: 26px !important;
-}
-
-/* Main page should not create unwanted body scrollbar, DataTable body will scroll internally */
-html:has(.ecms-oro-page),
-body:has(.ecms-oro-page) {
-    overflow-y: hidden !important;
-}
-
-/* Give the card enough working height, but keep footer visible */
-.ecms-oro-page {
-    height: calc(100vh - 196px) !important;
-    min-height: calc(100vh - 196px) !important;
-    padding-bottom: 58px !important;
-}
-
-.ecms-oro-shell {
-    height: calc(100vh - 320px) !important;
-    max-height: calc(100vh - 320px) !important;
-    min-height: 510px !important;
-}
-
-.ecms-oro-table-card {
-    min-height: 0 !important;
-    overflow: hidden !important;
-}
-
-/* DataTables scroll body: reduce height so last row and pagination are not clipped */
-.ecms-oro-page .dataTables_scrollBody,
-.ecms-oro-page .dt-scroll-body {
-    height: clamp(250px, calc(100vh - 570px), 430px) !important;
-    max-height: clamp(250px, calc(100vh - 570px), 430px) !important;
-    min-height: 250px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    padding-bottom: 0 !important;
-}
-
-    /* CRITICAL: DataTables with scrollX/scrollY keeps a cloned sizing THEAD inside scrollBody.
-   Previous table header CSS was making that hidden cloned header visible as a second blank blue row. */
-    .ecms-oro-page .dataTables_scrollBody table thead,
-    .ecms-oro-page .dt-scroll-body table thead {
-        height: 0 !important;
-        max-height: 0 !important;
-        visibility: collapse !important;
-        overflow: hidden !important;
-    }
-
-        .ecms-oro-page .dataTables_scrollBody table thead tr,
-        .ecms-oro-page .dataTables_scrollBody table thead th,
-        .ecms-oro-page .dataTables_scrollBody table thead td,
-        .ecms-oro-page .dt-scroll-body table thead tr,
-        .ecms-oro-page .dt-scroll-body table thead th,
-        .ecms-oro-page .dt-scroll-body table thead td {
-            height: 0 !important;
-            max-height: 0 !important;
-            min-height: 0 !important;
-            line-height: 0 !important;
-            font-size: 0 !important;
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            border-top: 0 !important;
-            border-bottom: 0 !important;
-            overflow: hidden !important;
-            visibility: collapse !important;
-        }
-
-/* Header should appear only in scroll head */
-.ecms-oro-page .dataTables_scrollHead table thead,
-.ecms-oro-page .dt-scroll-head table thead {
-    visibility: visible !important;
-}
-
-    .ecms-oro-page .dataTables_scrollHead table thead tr,
-    .ecms-oro-page .dataTables_scrollHead table thead th,
-    .ecms-oro-page .dt-scroll-head table thead tr,
-    .ecms-oro-page .dt-scroll-head table thead th {
-        visibility: visible !important;
-    }
-
-/* Keep rows readable and allow long Arms/Service list without breaking DataTables scroll math */
-.ecms-oro-page table.dataTable tbody td {
-    vertical-align: top !important;
-}
-
-    .ecms-oro-page table.dataTable tbody td ul {
-        max-height: none !important;
-        overflow: visible !important;
-        margin-bottom: 0 !important;
-    }
-
-/* Let the internal body show the full final row */
-.ecms-oro-page .dataTables_scrollBody tbody tr:last-child td,
-.ecms-oro-page .dt-scroll-body tbody tr:last-child td {
-    border-bottom: 14px solid transparent !important;
-}
-
-/* Align pagination/info below the scroll area */
-.ecms-oro-page .dataTables_info {
-    padding-top: 8px !important;
-}
-
-.ecms-oro-page .dataTables_paginate {
-    padding-top: 4px !important;
-}
-
-/* Modal should not clip external close button */
-.ecms-oro-modal .modal-content,
-.ecms-oro-modal .modal-header {
-    overflow: visible !important;
-}
-
-/* Red cross button like the old modal screenshot */
-.ecms-oro-modal-close {
-    top: -18px !important;
-    right: -18px !important;
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    max-width: 42px !important;
-    border-radius: 50% !important;
-    background: linear-gradient(135deg, #e11d48, #f43f5e) !important;
-    border: 3px solid rgba(255,255,255,0.94) !important;
-    color: #ffffff !important;
-    box-shadow: 0 14px 32px rgba(95, 0, 22, 0.35) !important;
-    opacity: 1 !important;
-    z-index: 9999 !important;
-}
-
-    .ecms-oro-modal-close span,
-    .ecms-oro-modal-close i {
-        color: #ffffff !important;
-        font-size: 17px !important;
-        font-weight: 900 !important;
-    }
-
-    .ecms-oro-modal-close:hover,
-    .ecms-oro-modal-close:focus {
-        background: linear-gradient(135deg, #be123c, #e11d48) !important;
-        transform: scale(1.04) !important;
-    }
-
-/* Restore dropdown arrow and disabled-field look */
-.ecms-oro-modal select.form-select {
-    -webkit-appearance: auto !important;
-    -moz-appearance: auto !important;
-    appearance: auto !important;
-    padding-right: 34px !important;
-    background-color: rgba(255,255,255,0.96) !important;
-    background-image: var(--bs-form-select-bg-img), var(--bs-form-select-bg-icon, none) !important;
-    background-repeat: no-repeat !important;
-    background-position: right 0.75rem center !important;
-    background-size: 16px 12px !important;
-}
-
-    .ecms-oro-modal select.form-select:disabled,
-    .ecms-oro-modal select.form-select[disabled],
-    .ecms-oro-modal input.form-control:disabled,
-    .ecms-oro-modal input.form-control[disabled],
-    .ecms-oro-modal .form-control:disabled,
-    .ecms-oro-modal .form-control[disabled] {
-        color: #4b5563 !important;
-        background-color: #e9edf4 !important;
-        border-color: #cbd5e1 !important;
-        opacity: 1 !important;
-        cursor: not-allowed !important;
-    }
-
-/* Select2 multi select must not hide/overflow in modal */
-.ecms-oro-modal .select2-container--default .select2-selection--multiple {
-    min-height: 42px !important;
-    max-height: 96px !important;
-    overflow-y: auto !important;
-}
-
-.ecms-oro-modal .select2-container--default.select2-container--disabled .select2-selection--multiple {
-    background: #e9edf4 !important;
-    border-color: #cbd5e1 !important;
-    opacity: 1 !important;
-}
-
-/* Keep disabled Select2 text visible */
-.ecms-oro-modal .select2-container--default.select2-container--disabled .select2-selection__choice {
-    opacity: 0.85 !important;
-}
-
-/* On shorter screens reduce shell height but keep internal table scroll */
-@media (max-height: 760px) {
-    .ecms-oro-shell {
-        height: calc(100vh - 304px) !important;
-        max-height: calc(100vh - 304px) !important;
-        min-height: 470px !important;
-    }
-
-    .ecms-oro-page .dataTables_scrollBody,
-    .ecms-oro-page .dt-scroll-body {
-        height: clamp(220px, calc(100vh - 545px), 360px) !important;
-        max-height: clamp(220px, calc(100vh - 545px), 360px) !important;
-        min-height: 220px !important;
-    }
-}
-
-
-/* =====================================================
-   FINAL FIX PATCH V2 - ORO Mapping
-   Fixes still visible in browser:
-   1. Last row hidden while scrolling DataTable.
-   2. Close button placed INSIDE modal header right side.
-   3. Double dropdown arrow removed.
-===================================================== */
-
-/* More safe internal table height and bottom room */
-.ecms-oro-page .dataTables_scrollBody,
-.ecms-oro-page .dt-scroll-body {
-    height: clamp(260px, calc(100vh - 590px), 410px) !important;
-    max-height: clamp(260px, calc(100vh - 590px), 410px) !important;
-    min-height: 260px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    padding-bottom: 0 !important;
-    box-sizing: border-box !important;
-}
-
-/* Keep scrollable spare room after final DataTables row so final row is never hidden */
-.ecms-oro-page table.dataTable {
-    margin-bottom: 90px !important;
-}
-
-.ecms-oro-page tr.oro-scroll-spacer-row td {
-    height: 86px !important;
-    min-height: 86px !important;
-    padding: 0 !important;
-    line-height: 0 !important;
-    font-size: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-}
-
-/* The cloned sizing header inside DataTables scroll body must stay fully collapsed */
-.ecms-oro-page .dataTables_scrollBody table thead,
-.ecms-oro-page .dt-scroll-body table thead,
-.ecms-oro-page .dataTables_scrollBody table thead tr,
-.ecms-oro-page .dt-scroll-body table thead tr,
-.ecms-oro-page .dataTables_scrollBody table thead th,
-.ecms-oro-page .dt-scroll-body table thead th,
-.ecms-oro-page .dataTables_scrollBody table thead td,
-.ecms-oro-page .dt-scroll-body table thead td {
-    height: 0 !important;
-    min-height: 0 !important;
-    max-height: 0 !important;
-    line-height: 0 !important;
-    font-size: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 0 !important;
-    overflow: hidden !important;
-    visibility: collapse !important;
-}
-
-/* Modal header close button INSIDE right side */
-.ecms-oro-modal .modal-header {
-    overflow: hidden !important;
-    padding-right: 62px !important;
-}
-
-.ecms-oro-modal-close {
-    position: absolute !important;
-    top: 50% !important;
-    right: 14px !important;
-    transform: translateY(-50%) !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    max-width: 34px !important;
-    border-radius: 50% !important;
-    background: linear-gradient(135deg, #e11d48, #f43f5e) !important;
-    border: 2px solid rgba(255,255,255,0.88) !important;
-    color: #ffffff !important;
-    box-shadow: 0 8px 18px rgba(95, 0, 22, 0.28) !important;
-    opacity: 1 !important;
-    z-index: 50 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-    .ecms-oro-modal-close span,
-    .ecms-oro-modal-close i {
-        color: #ffffff !important;
-        font-size: 15px !important;
-        line-height: 1 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    .ecms-oro-modal-close:hover,
-    .ecms-oro-modal-close:focus {
-        transform: translateY(-50%) scale(1.04) !important;
-        background: linear-gradient(135deg, #be123c, #e11d48) !important;
-        opacity: 1 !important;
-    }
-
-/* Remove double dropdown arrow: hide native arrow and draw only one custom arrow */
-.ecms-oro-modal select.form-select,
-.ecms-oro-modal select.form-control,
-.ecms-oro-modal select {
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-    padding-right: 38px !important;
-    background-color: rgba(255,255,255,0.96) !important;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23061b44' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 5.8a1 1 0 0 1 1.4 0L8 9.2l3.4-3.4a1 1 0 1 1 1.4 1.4l-4.1 4.1a1 1 0 0 1-1.4 0L3.2 7.2a1 1 0 0 1 0-1.4z'/%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 12px center !important;
-    background-size: 14px 14px !important;
-}
-
-    /* IE/old Edge native arrow removal */
-    .ecms-oro-modal select::-ms-expand {
-        display: none !important;
-    }
-
-    /* Disabled field visible but still single-arrow */
-    .ecms-oro-modal select:disabled,
-    .ecms-oro-modal select[disabled],
-    .ecms-oro-modal input:disabled,
-    .ecms-oro-modal input[disabled] {
-        color: #4b5563 !important;
-        background-color: #e9edf4 !important;
-        border-color: #cbd5e1 !important;
-        opacity: 1 !important;
-        cursor: not-allowed !important;
-    }
-
-/* Select2 Arms field does not need native arrow styling */
-.ecms-oro-modal #ddlArmedIdList,
-.ecms-oro-modal .select2-hidden-accessible {
-    background-image: none !important;
-}
-
-@media (max-height: 760px) {
-    .ecms-oro-page .dataTables_scrollBody,
-    .ecms-oro-page .dt-scroll-body {
-        height: clamp(230px, calc(100vh - 565px), 350px) !important;
-        max-height: clamp(230px, calc(100vh - 565px), 350px) !important;
-        min-height: 230px !important;
-    }
-}
-
-
-/* =====================================================
-   FINAL FIX PATCH V3 - ORO Mapping
-   Fix visible issue:
-   - DataTable footer/info/pagination must stay visible.
-   - Last row must not hide behind the table container/footer.
-   - Modal close button must be INSIDE right side of header.
-   - Dropdown must show only ONE arrow.
-===================================================== */
-
-/* The shell uses fixed page height; the DataTable wrapper inside uses flex rows. */
-.ecms-oro-shell {
-    height: calc(100vh - 300px) !important;
-    max-height: calc(100vh - 300px) !important;
-    min-height: 540px !important;
-}
-
-.ecms-oro-table-card {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-}
-
-.ecms-oro-table-wrap {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    height: 100% !important;
-    overflow: hidden !important;
-    padding: 10px !important;
-}
-
-/* Bootstrap DataTables creates 3 wrapper rows:
-   Row 1 = length/search
-   Row 2 = scroll table
-   Row 3 = info/pagination
-   This keeps Row 3 visible always. */
-.ecms-oro-page #tbldata_wrapper,
-.ecms-oro-page .dataTables_wrapper {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-}
-
-    .ecms-oro-page #tbldata_wrapper > .row,
-    .ecms-oro-page .dataTables_wrapper > .row {
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
-
-        /* top length/search row */
-        .ecms-oro-page #tbldata_wrapper > .row:first-child,
-        .ecms-oro-page .dataTables_wrapper > .row:first-child {
-            flex: 0 0 42px !important;
-            min-height: 42px !important;
-            max-height: 42px !important;
-            align-items: center !important;
-        }
-
-        /* scroll table row */
-        .ecms-oro-page #tbldata_wrapper > .row:nth-child(2),
-        .ecms-oro-page .dataTables_wrapper > .row:nth-child(2) {
-            flex: 1 1 auto !important;
-            min-height: 0 !important;
-            overflow: hidden !important;
-        }
-
-            .ecms-oro-page #tbldata_wrapper > .row:nth-child(2) > [class*="col-"],
-            .ecms-oro-page .dataTables_wrapper > .row:nth-child(2) > [class*="col-"] {
-                height: 100% !important;
-                min-height: 0 !important;
-                overflow: hidden !important;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-            }
-
-        /* footer info/pagination row: keep visible, never clipped */
-        .ecms-oro-page #tbldata_wrapper > .row:last-child,
-        .ecms-oro-page .dataTables_wrapper > .row:last-child {
-            flex: 0 0 44px !important;
-            min-height: 44px !important;
-            max-height: 44px !important;
-            align-items: center !important;
-            overflow: visible !important;
-            padding-top: 6px !important;
-        }
-
-            .ecms-oro-page #tbldata_wrapper > .row:last-child > [class*="col-"],
-            .ecms-oro-page .dataTables_wrapper > .row:last-child > [class*="col-"] {
-                height: 38px !important;
-                display: flex !important;
-                align-items: center !important;
-            }
-
-                .ecms-oro-page #tbldata_wrapper > .row:last-child > [class*="col-"]:last-child,
-                .ecms-oro-page .dataTables_wrapper > .row:last-child > [class*="col-"]:last-child {
-                    justify-content: flex-end !important;
-                }
-
-    /* Direct DOM fallback if DataTables is not Bootstrap-row wrapped */
-    .ecms-oro-page #tbldata_wrapper > .dataTables_length,
-    .ecms-oro-page #tbldata_wrapper > .dataTables_filter {
-        flex: 0 0 42px !important;
-    }
-
-    .ecms-oro-page #tbldata_wrapper > .dataTables_scroll {
-        flex: 1 1 auto !important;
-        min-height: 0 !important;
-    }
-
-    .ecms-oro-page #tbldata_wrapper > .dataTables_info,
-    .ecms-oro-page #tbldata_wrapper > .dataTables_paginate {
-        flex: 0 0 38px !important;
-    }
-
-/* Scroll container inside the middle row */
-.ecms-oro-page .dataTables_scroll,
-.ecms-oro-page .dt-scroll {
-    height: 100% !important;
-    max-height: none !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-    border-radius: 12px !important;
-}
-
-.ecms-oro-page .dataTables_scrollHead,
-.ecms-oro-page .dt-scroll-head {
-    flex: 0 0 auto !important;
-    min-height: 0 !important;
-}
-
-.ecms-oro-page .dataTables_scrollBody,
-.ecms-oro-page .dt-scroll-body {
-    flex: 1 1 auto !important;
-    height: auto !important;
-    max-height: none !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    padding-bottom: 0 !important;
-    box-sizing: border-box !important;
-}
-
-/* Remove earlier spacer/margin tricks if present */
-.ecms-oro-page table.dataTable {
-    margin-bottom: 0 !important;
-}
-
-.ecms-oro-page tr.oro-scroll-spacer-row {
-    display: none !important;
-}
-
-/* Keep cloned DataTables sizing header invisible, only real scrollHead visible */
-.ecms-oro-page .dataTables_scrollBody table thead,
-.ecms-oro-page .dt-scroll-body table thead,
-.ecms-oro-page .dataTables_scrollBody table thead tr,
-.ecms-oro-page .dt-scroll-body table thead tr,
-.ecms-oro-page .dataTables_scrollBody table thead th,
-.ecms-oro-page .dt-scroll-body table thead th,
-.ecms-oro-page .dataTables_scrollBody table thead td,
-.ecms-oro-page .dt-scroll-body table thead td {
-    height: 0 !important;
-    min-height: 0 !important;
-    max-height: 0 !important;
-    line-height: 0 !important;
-    font-size: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 0 !important;
-    overflow: hidden !important;
-    visibility: collapse !important;
-}
-
-/* Footer text/pagination must be visible and readable */
-.ecms-oro-page .dataTables_info {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    color: #061b44 !important;
-    font-weight: 850 !important;
-    font-size: 13px !important;
-    line-height: 32px !important;
-    white-space: nowrap !important;
-}
-
-.ecms-oro-page .dataTables_paginate {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-/* Modal close button INSIDE right side of modal header */
-.ecms-oro-modal .modal-header {
-    overflow: hidden !important;
-    padding-right: 16px !important;
-}
-
-.ecms-oro-modal-close {
-    position: static !important;
-    top: auto !important;
-    right: auto !important;
-    transform: none !important;
-    margin-left: auto !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    max-width: 34px !important;
-    flex: 0 0 34px !important;
-    border-radius: 50% !important;
-    background: linear-gradient(135deg, #e11d48, #f43f5e) !important;
-    border: 2px solid rgba(255,255,255,0.88) !important;
-    color: #ffffff !important;
-    box-shadow: 0 8px 18px rgba(95, 0, 22, 0.28) !important;
-    opacity: 1 !important;
-    z-index: 50 !important;
-    padding: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-    .ecms-oro-modal-close span,
-    .ecms-oro-modal-close i {
-        color: #ffffff !important;
-        font-size: 15px !important;
-        line-height: 1 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    .ecms-oro-modal-close:hover,
-    .ecms-oro-modal-close:focus {
-        transform: none !important;
-        background: linear-gradient(135deg, #be123c, #e11d48) !important;
-        opacity: 1 !important;
-    }
-
-/* Dropdown arrow fix:
-   Use browser native arrow only. Remove Bootstrap/custom background arrow to stop double arrow. */
-.ecms-oro-modal select.form-select,
-.ecms-oro-modal select.form-control,
-.ecms-oro-modal select {
-    -webkit-appearance: auto !important;
-    -moz-appearance: auto !important;
-    appearance: auto !important;
-    padding-right: 12px !important;
-    background-color: rgba(255,255,255,0.96) !important;
-    background-image: none !important;
-    background-repeat: initial !important;
-    background-position: initial !important;
-    background-size: initial !important;
-}
-
-    .ecms-oro-modal select::-ms-expand {
-        display: block !important;
-    }
-
-    /* Disabled dropdown should remain visible */
-    .ecms-oro-modal select:disabled,
-    .ecms-oro-modal select[disabled],
-    .ecms-oro-modal input:disabled,
-    .ecms-oro-modal input[disabled] {
-        color: #4b5563 !important;
-        background-color: #e9edf4 !important;
-        border-color: #cbd5e1 !important;
-        opacity: 1 !important;
-        cursor: not-allowed !important;
-    }
-
-@media (max-height: 760px) {
-    .ecms-oro-shell {
-        height: calc(100vh - 286px) !important;
-        max-height: calc(100vh - 286px) !important;
-        min-height: 500px !important;
-    }
-
-    .ecms-oro-page #tbldata_wrapper > .row:first-child,
-    .ecms-oro-page .dataTables_wrapper > .row:first-child {
-        flex-basis: 40px !important;
-        min-height: 40px !important;
-        max-height: 40px !important;
-    }
-
-    .ecms-oro-page #tbldata_wrapper > .row:last-child,
-    .ecms-oro-page .dataTables_wrapper > .row:last-child {
-        flex-basis: 42px !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-    }
-}
-
-
-/* =====================================================
-   FINAL FIX PATCH V4 - ORO Mapping
-   Fix:
-   - Loader always visible.
-   - DataTable page numbering/pagination missing.
-   - Last row and footer visible together.
-===================================================== */
-
-/* Hide DataTables processing loader permanently on this page */
-.ecms-oro-page .dataTables_processing,
-.ecms-oro-page #tbldata_processing {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-/* Actual DOM from JS is:
-   dt-top -> table/scroll -> dt-bottom
-   So force exact grid rows. */
-.ecms-oro-page #tbldata_wrapper {
-    position: relative !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    display: grid !important;
-    grid-template-rows: 42px minmax(0, 1fr) 44px !important;
-    grid-template-columns: 100% !important;
-    gap: 0 !important;
-    overflow: hidden !important;
-    padding:16px;
-}
-
-    /* top row: length/search */
-    .ecms-oro-page #tbldata_wrapper > .dt-top {
-        grid-row: 1 !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-        height: 42px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 12px !important;
-        margin: 0 !important;
-        padding: 0 0 8px 0 !important;
-        overflow: visible !important;
-    }
-
-    /* table/scroll row */
-    .ecms-oro-page #tbldata_wrapper > .dataTables_scroll,
-    .ecms-oro-page #tbldata_wrapper > .dt-scroll {
-        grid-row: 2 !important;
-        min-height: 0 !important;
-        height: 100% !important;
-        max-height: 100% !important;
-        display: flex !important;
-        flex-direction: column !important;
-        overflow: hidden !important;
-    }
-
-    /* if no scrolling wrapper is generated */
-    .ecms-oro-page #tbldata_wrapper > table.dataTable {
-        grid-row: 2 !important;
-        min-height: 0 !important;
-        overflow: auto !important;
-    }
-
-    /* footer row: info left + page numbers right */
-    .ecms-oro-page #tbldata_wrapper > .dt-bottom {
-        grid-row: 3 !important;
-        min-height: 44px !important;
-        max-height: 44px !important;
-        height: 44px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 14px !important;
-        margin: 0 !important;
-        padding: 7px 0 0 0 !important;
-        overflow: visible !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        z-index: 20 !important;
-        background: transparent !important;
-    }
-
-        .ecms-oro-page #tbldata_wrapper > .dt-bottom .dataTables_info {
-            flex: 1 1 auto !important;
-            min-width: 240px !important;
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            color: #061b44 !important;
-            font-weight: 850 !important;
-            font-size: 13px !important;
-            line-height: 32px !important;
-            white-space: nowrap !important;
-            text-align: left !important;
-        }
-
-        .ecms-oro-page #tbldata_wrapper > .dt-bottom .dataTables_paginate {
-            flex: 0 0 auto !important;
-            min-width: max-content !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: flex-end !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-    /* Pagination buttons */
-    .ecms-oro-page #tbldata_wrapper .dataTables_paginate .paginate_button,
-    .ecms-oro-page #tbldata_wrapper .dataTables_paginate .paginate_button a,
-    .ecms-oro-page #tbldata_wrapper .pagination .page-link {
-        min-width: 34px !important;
-        height: 34px !important;
-        padding: 0 10px !important;
-        margin: 0 2px !important;
-        border-radius: 8px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #1d4ed8 !important;
-        background: rgba(255,255,255,0.96) !important;
-        border: 1px solid rgba(46, 104, 203, 0.22) !important;
-        font-size: 12px !important;
-        font-weight: 950 !important;
-        box-shadow: none !important;
-    }
-
-        .ecms-oro-page #tbldata_wrapper .dataTables_paginate .paginate_button.current,
-        .ecms-oro-page #tbldata_wrapper .dataTables_paginate .paginate_button.current a,
-        .ecms-oro-page #tbldata_wrapper .pagination .active .page-link {
-            color: #ffffff !important;
-            background: linear-gradient(135deg, #1d4ed8, #4338ca) !important;
-            border-color: transparent !important;
-        }
-
-    /* Middle scroll area must not consume footer space */
-    .ecms-oro-page #tbldata_wrapper .dataTables_scrollBody,
-    .ecms-oro-page #tbldata_wrapper .dt-scroll-body {
-        flex: 1 1 auto !important;
-        min-height: 0 !important;
-        height: auto !important;
-        max-height: none !important;
-        overflow-y: auto !important;
-        overflow-x: auto !important;
-        padding-bottom: 0 !important;
-    }
-
-        /* Keep cloned DataTables sizing header invisible */
-        .ecms-oro-page #tbldata_wrapper .dataTables_scrollBody table thead,
-        .ecms-oro-page #tbldata_wrapper .dt-scroll-body table thead,
-        .ecms-oro-page #tbldata_wrapper .dataTables_scrollBody table thead tr,
-        .ecms-oro-page #tbldata_wrapper .dt-scroll-body table thead tr,
-        .ecms-oro-page #tbldata_wrapper .dataTables_scrollBody table thead th,
-        .ecms-oro-page #tbldata_wrapper .dt-scroll-body table thead th,
-        .ecms-oro-page #tbldata_wrapper .dataTables_scrollBody table thead td,
-        .ecms-oro-page #tbldata_wrapper .dt-scroll-body table thead td {
-            height: 0 !important;
-            min-height: 0 !important;
-            max-height: 0 !important;
-            line-height: 0 !important;
-            font-size: 0 !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border: 0 !important;
-            overflow: hidden !important;
-            visibility: collapse !important;
-        }
-
-/* Shell height gives enough room for footer + pagination */
-.ecms-oro-shell {
-    height: calc(100vh - 220px) !important;
-    max-height: calc(100vh - 220px) !important;
-    min-height: 550px !important;
-}
-
-/* No fake spacer row */
-.ecms-oro-page tr.oro-scroll-spacer-row {
-    display: none !important;
-}
-
-.ecms-oro-page table.dataTable {
-    margin-bottom: 0 !important;
 }

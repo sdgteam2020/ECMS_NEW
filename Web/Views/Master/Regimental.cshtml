@@ -4,17 +4,17 @@
 }
 
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-<link asp-href-include="~/developercss/regimental.css" rel="stylesheet" />
+<link asp-href-include="~/DeveloperCSS/regimental.css" rel="stylesheet" asp-append-version="true" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
-                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
-                        <span>&gt;</span>
+                        <span class="page-header-icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
+                        <a href="/Master/DashboardMaster">Dashboard</a>
+                        <span aria-hidden="true">&gt;</span>
                         <span>Regt Centre Details</span>
                     </h1>
                 </div>
@@ -23,79 +23,85 @@
     </div>
 </header>
 
-<div class="containerMain ecms-regimental-page">
-    <div class="ecms-regimental-shell">
-        <div class="ecms-regimental-titlebar">
-            <div class="ecms-regimental-title-wrap">
-                <span class="ecms-regimental-title-icon"><i class="fa fa-flag"></i></span>
-                <div>
-                    <h3>Regt Centre Details</h3>
-                    <p>Create, update and manage regimental centre records</p>
-                </div>
-            </div>
-            <span class="ecms-regimental-pill"><i class="fa fa-database"></i> Master</span>
-        </div>
-
-        <div class="ecms-regimental-toolbar-card">
-            <div class="ecms-regimental-toolbar-text">
-                <span class="ecms-regimental-toolbar-icon"><i class="fa fa-list"></i></span>
-                <div>
-                    <h5>Regimental Centre Records</h5>
-                    <p>View all regimental centres and add new centre mapping</p>
-                </div>
-            </div>
-            <button type="button" id="btnAddRegimental" class="btn btn-outline-success font-weight-600 btn-sm ecms-regimental-add-btn">
-                <i class="fa fa-plus"></i>
-                Add Regt Centre
-            </button>
-        </div>
-
-        <div class="ecms-regimental-table-card">
-            <div class="ecms-regimental-table-title">
-                <span><i class="fa fa-table"></i> Regt Centre Records</span>
-            </div>
-
-            <div class="ecms-regimental-table-wrap">
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script asp-src-include="~/developerjs/mtables.js"></script>
-<script asp-src-include="~/developerjs/regimental.js"></script>
-<partial name="~/Views/Shared/_DataTableJS.cshtml" />
-
-<div class="modal fade ecms-regimental-modal" id="AddNewRegimental" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="ecms-regimental-modal-title-wrap">
-                    <span class="ecms-regimental-modal-icon"><i class="fa fa-flag"></i></span>
-                    <div>
-                        <h5 class="modal-title" id="exampleModalLabel">Enter Regimental Details</h5>
-                        <small>Fill regimental centre, arms/service and unit mapping details</small>
+<main class="containerMain ecms-page ecms-page-full ecms-regimental-page">
+    <section class="card ecms-card ecms-regimental-shell">
+        <div class="ecms-card-body ecms-regimental-shell-body">
+            <div class="ecms-page-title d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div class="d-flex align-items-center gap-2 ecms-min-0">
+                    <span class="ecms-title-icon" aria-hidden="true">
+                        <i class="fa fa-flag"></i>
+                    </span>
+                    <div class="ecms-min-0">
+                        <h3>Regt Centre Details</h3>
+                        <p class="ecms-title-subtitle">Create, update and manage regimental centre records</p>
                     </div>
                 </div>
-                <button type="button" class="close ecms-regimental-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="fa fa-times"></i></span>
+
+                <button type="button"
+                        id="btnAddRegimental"
+                        class="btn btn-success btn-sm d-inline-flex align-items-center gap-2 ecms-regimental-add-btn">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <span>Add Regt Centre</span>
                 </button>
             </div>
+
+            <section class="ecms-section ecms-regimental-records">
+                <div class="ecms-section-title">
+                    <i class="fa fa-table" aria-hidden="true"></i>
+                    <span>Regt Centre Records</span>
+                </div>
+
+                <div class="ecms-dt-wrap ecms-regimental-table-wrap">
+                    <table id="tbldata"
+                           class="table table-striped table-hover ecms-dt-table"
+                           role="grid"
+                           aria-label="Regimental centre records">
+                    </table>
+                </div>
+            </section>
+        </div>
+    </section>
+</main>
+
+<div class="modal fade" id="AddNewRegimental" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ecms-modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="ecms-modal-title-wrap">
+                    <span class="ecms-modal-title-icon" aria-hidden="true">
+                        <i class="fa fa-flag"></i>
+                    </span>
+                    <div>
+                        <h5 class="modal-title" id="exampleModalLabel">Add Regimental Details</h5>
+                        <p class="ecms-modal-subtitle" id="regimentalModalSubtitle">
+                            Fill regimental centre, arms/service and unit mapping details
+                        </p>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                </button>
+            </div>
+
             <div class="modal-body">
                 <form action="" id="SaveRegimental" name="SaveRegimental" method="post">
-                    <div class="ecms-regimental-modal-grid">
-                        <div class="ecms-regimental-modal-field">
-                            <label class="ecms-regimental-modal-label" for="txtName">
-                                <i class="fa fa-building"></i>
-                                Name of Regtl Center
-                                <i class="fas fa-asterisk mand1"></i>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="txtName">
+                                <span class="ecms-label-icon"><i class="fa fa-building" aria-hidden="true"></i></span>
+                                <span>Name of Regt Centre</span>
+                                <span class="mand1" aria-hidden="true">*</span>
                             </label>
-                            <input class="form-control1 js-uppercase"
-                                   placeholder="Enter Regimental"
+                            <input class="form-control form-control1 js-uppercase"
+                                   placeholder="Enter Regt Centre"
                                    id="txtName"
                                    name="txtName"
                                    maxlength="50"
+                                   autocomplete="off"
                                    data-val="true"
                                    data-val-regex="Regimental name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
                                    data-val-required="Regt Center is required."
@@ -103,17 +109,18 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtName" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-regimental-modal-field">
-                            <label class="ecms-regimental-modal-label" for="txtAbbreviation">
-                                <i class="fa fa-font"></i>
-                                Abbreviation
-                                <i class="fas fa-asterisk mand1"></i>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="txtAbbreviation">
+                                <span class="ecms-label-icon"><i class="fa fa-font" aria-hidden="true"></i></span>
+                                <span>Abbreviation</span>
+                                <span class="mand1" aria-hidden="true">*</span>
                             </label>
-                            <input class="form-control1 js-uppercase"
+                            <input class="form-control form-control1 js-uppercase"
                                    placeholder="Enter Abbreviation"
                                    id="txtAbbreviation"
                                    name="txtAbbreviation"
                                    maxlength="10"
+                                   autocomplete="off"
                                    data-val="true"
                                    data-val-regex="Abbreviation name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
                                    data-val-required="Abbreviation is required."
@@ -121,17 +128,18 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtAbbreviation" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-regimental-modal-field ecms-regimental-modal-field-wide">
-                            <label class="ecms-regimental-modal-label" for="txtLocation">
-                                <i class="fa fa-map-marker"></i>
-                                Location
-                                <i class="fas fa-asterisk mand1"></i>
+                        <div class="col-12">
+                            <label class="form-label ecms-label-with-icon" for="txtLocation">
+                                <span class="ecms-label-icon"><i class="fa fa-map-marker" aria-hidden="true"></i></span>
+                                <span>Location</span>
+                                <span class="mand1" aria-hidden="true">*</span>
                             </label>
-                            <textarea class="form-control1 textarea-auto-height"
+                            <textarea class="form-control form-control1 ecms-regimental-location"
                                       name="txtLocation"
                                       id="txtLocation"
                                       rows="2"
                                       maxlength="50"
+                                      placeholder="Enter Location"
                                       data-val-maxlength="Maximum length of Location is 50 character."
                                       data-val-maxlength-max="50"
                                       data-val="true"
@@ -140,42 +148,62 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtLocation" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-regimental-modal-field">
-                            <label class="ecms-regimental-modal-label" for="ddlArmType">
-                                <i class="fa fa-shield"></i>
-                                Name of Arms, Service & Corps
-                                <i class="fas fa-asterisk mand1"></i>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="ddlArmType">
+                                <span class="ecms-label-icon"><i class="fa fa-shield" aria-hidden="true"></i></span>
+                                <span>Name of Arms, Service &amp; Corps</span>
+                                <span class="mand1" aria-hidden="true">*</span>
                             </label>
-                            <select class="form-select" name="ddlArmType" id="ddlArmType" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Arms, Service & Corps is required." data-val-regex-pattern="^[\d]+$">
+                            <select class="form-select"
+                                    name="ddlArmType"
+                                    id="ddlArmType"
+                                    data-val="true"
+                                    data-val-regex="This special chars not allowed for security reasons."
+                                    data-val-required="Arms, Service & Corps is required."
+                                    data-val-regex-pattern="^[\d]+$">
                                 <option value="0">Select Arms</option>
                             </select>
                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlArmType" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-regimental-modal-field">
-                            <label class="ecms-regimental-modal-label" for="txtUnitName">
-                                <i class="fa fa-search"></i>
-                                SUS No
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="txtUnitName">
+                                <span class="ecms-label-icon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                <span>SUS No</span>
                             </label>
                             <input class="form-control alpha-num-only"
                                    placeholder="Type SUS No"
                                    id="txtUnitName"
                                    name="txtUnitName"
+                                   autocomplete="off"
                                    data-val="true"
                                    data-val-regex="This special chars not allowed for security reasons."
                                    data-val-regex-pattern="^[\w ]*$" />
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-regimental-modal-actions">
-                            <input type="button" class="btn btn-outline-primary" value="Save" id="btnSaveRegimental" />
-                            <button type="button" id="btnResetRegimental" class="btn btn-outline-danger">Reset</button>
+                        <div class="col-12">
+                            <div class="ecms-form-actions justify-content-end pt-1">
+                                <input type="button"
+                                       class="btn btn-primary px-4"
+                                       value="Save"
+                                       id="btnSaveRegimental" />
+                                <button type="button"
+                                        id="btnResetRegimental"
+                                        class="btn btn-danger px-4">
+                                    Reset
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="ecms-regimental-message" id="msg"></div>
+                        <div class="col-12 ecms-regimental-message" id="msg"></div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script asp-src-include="~/DeveloperJS/mtables.js"></script>
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />
+<script asp-src-include="~/DeveloperJS/regimental.js" asp-append-version="true"></script>

@@ -1,314 +1,299 @@
 /*
-Developer note:
-Each CSS rule below has an 'Effect' comment. These comments explain
-what UI area the rule controls so future developers can safely change
-forms, pages, DataTables, modals, header/footer and utilities from one place.
+ECMS DataTables common CSS
+Purpose:
+- One place for DataTable toolbar, header, body scroll, cell alignment and footer.
+- Page CSS must not contain DataTable width/header hacks.
 */
 
-/*
-=====================================================
-ECMS DATATABLES
-Fixes:
-- double/duplicate header in DataTables scroll body
-- hidden footer/info/pagination
-- last row hidden behind footer
-- horizontal and vertical scroll inside table only
-=====================================================
-*/
-
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
-.ecms-datatable-card,
-.ecms-table-card {
-    min-height: 0 !important;
-    border: var(--ecms-border-white) !important;
-    border-radius: var(--ecms-radius-lg) !important;
-    background: var(--ecms-page-surface) !important;
-    box-shadow: var(--ecms-shadow-md) !important;
-    overflow: hidden !important;
-    display: grid !important;
-    grid-template-rows: auto minmax(0, 1fr) auto !important;
+.dataTables_wrapper,
+.dt-container {
+    width: 100%;
+    min-height: 0;
+    color: var(--ecms-text);
 }
 
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
-.dataTables_wrapper {
-    width: 100% !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    color: var(--ecms-text) !important;
+.ecms-dt-wrap {
+    padding: .55rem .15rem 0 .15rem;
+    min-height: 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
+    .ecms-dt-wrap .dataTables_wrapper,
+    .ecms-dt-wrap .dt-container {
+        height: 100%;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        overflow: hidden;
+    }
+
+.dt-top,
+.ecms-dt-toolbar {
+    width: 100%;
+    margin: 0 0 .55rem 0;
+    padding: 0 .05rem;
+    align-items: center;
+}
+
 .dataTables_length,
-.dataTables_filter {
-    margin: 6px 0 8px 0 !important;
+.dt-length,
+.dataTables_filter,
+.dt-search {
+    min-height: 2.25rem;
+    display: flex;
+    align-items: center;
+    color: var(--ecms-text);
+    font-weight: 800;
 }
 
-/* Effect: Styles form labels consistently and keeps required labels bold/readable. */
-.dataTables_length label,
-.dataTables_filter label {
-    color: var(--ecms-text) !important;
-    font-weight: 800 !important;
+    .dataTables_length label,
+    .dt-length label,
+    .dataTables_filter label,
+    .dt-search label {
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+    }
+
+    .dataTables_length select,
+    .dt-length select {
+        width: auto;
+        min-width: 4.5rem;
+        min-height: 2.15rem;
+    }
+
+.dataTables_filter,
+.dt-search {
+    justify-content: flex-end;
 }
 
-/* Effect: Styles input, select and textarea controls with common ECMS sizing and borders. */
-.dataTables_length select {
-    width: auto !important;
-    min-width: 64px !important;
-    height: 34px !important;
-    padding: 5px 26px 5px 9px !important;
-}
+    .dataTables_filter input,
+    .dt-search input {
+        min-width: 12rem;
+        min-height: 2.15rem;
+    }
 
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
-.dataTables_filter input {
-    width: min(220px, 100%) !important;
-    height: 34px !important;
-    border-radius: var(--ecms-radius-xs) !important;
-}
-
-/* Real header */
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
-table.dataTable {
+table.dataTable,
+.ecms-dt-table {
     width: 100% !important;
     margin: 0 !important;
-    border-collapse: collapse !important;
+    border-collapse: separate !important;
     border-spacing: 0 !important;
 }
 
-/* Effect: Styles the visible DataTables header row. */
-table.dataTable thead th,
-table.dataTable thead td {
-    height: var(--ecms-dt-header-height) !important;
-    padding: 9px 12px !important;
-    border: 0 !important;
-    border-right: 1px solid rgba(255,255,255,.14) !important;
-    background: linear-gradient(90deg, #214f9a, #376ad0) !important;
-    color: #ffffff !important;
-    font-size: var(--ecms-font-size-md) !important;
-    font-weight: 900 !important;
-    white-space: nowrap !important;
-    vertical-align: middle !important;
-    text-align: center !important;
+.ecms-dt-wrap table.dataTable {
+    table-layout: auto !important;
 }
 
-/* Effect: Styles DataTables body rows, hover state and cell readability. */
-table.dataTable tbody td {
-    min-height: var(--ecms-dt-row-height) !important;
-    padding: 9px 12px !important;
-    border-top: 1px solid rgba(199,211,230,.80) !important;
-    color: #061b44 !important;
-    font-size: var(--ecms-font-size-md) !important;
-    font-weight: 700 !important;
-    vertical-align: middle !important;
-}
+    .ecms-dt-wrap table.dataTable th,
+    .ecms-dt-wrap table.dataTable td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
 
-/* Effect: Styles DataTables body rows, hover state and cell readability. */
-table.dataTable tbody tr:nth-child(odd) {
-    background: rgba(255,255,255,.96) !important;
-}
-
-/* Effect: Styles DataTables body rows, hover state and cell readability. */
-table.dataTable tbody tr:nth-child(even) {
-    background: rgba(238,242,247,.96) !important;
-}
-
-/* Effect: Styles DataTables body rows, hover state and cell readability. */
-table.dataTable tbody tr:hover {
-    background: rgba(224,238,255,.98) !important;
-}
-
-/* DataTables scroll mode */
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
-.dataTables_scroll {
+.ecms-dt-wrap .dataTables_scroll,
+.ecms-dt-wrap .dt-scroll {
     width: 100% !important;
-    min-height: 0 !important;
-    margin-bottom: 8px !important;
-    border: 1px solid rgba(185,205,236,.80) !important;
-    border-radius: var(--ecms-radius-sm) !important;
-    overflow: hidden !important;
-    background: rgba(255,255,255,.94) !important;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    border: 1px solid rgba(185,205,236,.80);
+    border-radius: var(--ecms-radius-sm);
+    background: rgba(255,255,255,.94);
+    overflow: hidden;
 }
 
-/* Effect: Styles the real fixed DataTables scroll header. */
-.dataTables_scrollHead {
-    overflow: hidden !important;
-    background: linear-gradient(90deg, #214f9a, #376ad0) !important;
-}
-
-/* Effect: Styles the real fixed DataTables scroll header. */
-.dataTables_scrollHeadInner,
-.dataTables_scrollHeadInner table {
+.ecms-dt-wrap .dataTables_scrollHead,
+.ecms-dt-wrap .dataTables_scrollBody,
+.ecms-dt-wrap .dt-scroll-head,
+.ecms-dt-wrap .dt-scroll-body,
+.ecms-dt-wrap .dataTables_scrollHeadInner,
+.ecms-dt-wrap .dataTables_scrollHeadInner table,
+.ecms-dt-wrap .dataTables_scrollBody table,
+.ecms-dt-wrap .dt-scroll-headInner,
+.ecms-dt-wrap .dt-scroll-headInner table,
+.ecms-dt-wrap .dt-scroll-body table {
     width: 100% !important;
 }
 
-/* Internal scroll only */
-/* Effect: Enables internal vertical/horizontal scrolling and prevents last-row hiding. */
-.dataTables_scrollBody {
-    max-height: var(--ecms-dt-max-height) !important;
-    min-height: 120px !important;
-    overflow-x: auto !important;
-    overflow-y: auto !important;
-    padding-bottom: 18px !important;
-    scrollbar-width: thin !important;
-    border-bottom: 1px solid rgba(185,205,236,.80) !important;
-}
-
-/* IMPORTANT: hide duplicate header cloned inside scroll body. */
-/* Effect: Hides the cloned DataTables header inside the scroll body to prevent double headers. */
-.dataTables_scrollBody thead,
-.dataTables_scrollBody thead tr,
-.dataTables_scrollBody thead th,
-.dataTables_scrollBody thead td {
-    height: 0 !important;
-    max-height: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    border-top: 0 !important;
-    border-bottom: 0 !important;
-    line-height: 0 !important;
-    overflow: hidden !important;
-    visibility: collapse !important;
-}
-
-/* Horizontal scroll bar should be visible when columns overflow. */
-/* Effect: Enables internal vertical/horizontal scrolling and prevents last-row hiding. */
-.dataTables_scrollBody table {
-    min-width: max-content !important;
-}
-
-/* No data row */
-/* Effect: Styles the 'No data available' row. */
-table.dataTable td.dataTables_empty {
-    height: 44px !important;
-    color: #061b44 !important;
-    font-weight: 800 !important;
-    text-align: center !important;
-}
-
-/* Footer must stay visible */
-/* Effect: Keeps DataTables entry information visible below the table. */
-.dataTables_info {
-    display: block !important;
-    visibility: visible !important;
-    color: var(--ecms-text) !important;
-    font-size: var(--ecms-font-size-base) !important;
-    font-weight: 700 !important;
-    padding: 8px 0 0 0 !important;
-}
-
-/* Effect: Styles DataTables pagination buttons and keeps footer navigation visible. */
-.dataTables_paginate {
-    display: flex !important;
-    visibility: visible !important;
-    justify-content: flex-end !important;
-    align-items: center !important;
-    gap: 4px !important;
-    padding: 8px 0 0 0 !important;
-}
-
-/* Effect: Styles DataTables pagination buttons and keeps footer navigation visible. */
-.dataTables_paginate .paginate_button,
-.dataTables_paginate .page-item .page-link {
-    min-width: 34px !important;
-    height: 34px !important;
-    padding: 6px 10px !important;
-    border: 1px solid rgba(184,203,234,.92) !important;
-    border-radius: 8px !important;
-    background: rgba(255,255,255,.96) !important;
-    color: #214f9a !important;
-    font-weight: 900 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-decoration: none !important;
-}
-
-/* Effect: Styles DataTables pagination buttons and keeps footer navigation visible. */
-.dataTables_paginate .paginate_button.current,
-.dataTables_paginate .paginate_button.active,
-.dataTables_paginate .page-item.active .page-link {
-    background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-500)) !important;
-    color: #ffffff !important;
-    border-color: transparent !important;
-}
-
-/* Effect: Styles DataTables pagination buttons and keeps footer navigation visible. */
-.dataTables_paginate .paginate_button.disabled,
-.dataTables_paginate .page-item.disabled .page-link {
-    opacity: .55 !important;
-    cursor: not-allowed !important;
-}
-
-/* DataTables generated Bootstrap rows must not be hidden. */
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
-.dataTables_wrapper > .row:last-child,
-.dataTables_wrapper .row:last-child {
-    display: flex !important;
-    visibility: visible !important;
-    min-height: var(--ecms-dt-footer-height) !important;
-    align-items: center !important;
-}
-
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
-.dataTables_wrapper > .row:last-child > div,
-.dataTables_wrapper .row:last-child > div {
-    visibility: visible !important;
-}
-
-/* Apply contained datatable height by adding this class to page/table card */
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
-.ecms-dt-contained .dataTables_wrapper {
+.ecms-dt-wrap .dataTables_scrollBody,
+.ecms-dt-wrap .dt-scroll-body {
     height: 100% !important;
-    display: grid !important;
-    grid-template-rows: auto minmax(0, 1fr) auto !important;
-}
-
-/* Effect: Provides common DataTables layout, wrapper and scroll behavior. */
-.ecms-dt-contained .dataTables_scroll {
-    min-height: 0 !important;
-}
-
-/* Effect: Enables internal vertical/horizontal scrolling and prevents last-row hiding. */
-.ecms-dt-contained .dataTables_scrollBody {
     max-height: none !important;
-    height: 100% !important;
+    min-height: 10rem;
+    overflow: auto !important;
+    scrollbar-width: thin;
 }
 
-/* Loader should not remain visible after draw. Use only when JS adds .is-loading */
-/* Effect: Styles DataTables loader/processing indicator and prevents permanent loaders. */
-.ecms-table-loader,
-.dataTables_processing {
-    border-radius: var(--ecms-radius-sm) !important;
-    background: rgba(255,255,255,.96) !important;
-    box-shadow: var(--ecms-shadow-sm) !important;
-    color: var(--ecms-primary-600) !important;
-    font-weight: 900 !important;
+.ecms-dt-wrap .dataTables_scrollHead table thead th,
+.ecms-dt-wrap .dt-scroll-head table thead th,
+.ecms-dt-wrap table.dataTable thead th {
+    height: 2.4rem;
+    padding: .55rem .75rem;
+    border: 0;
+    border-right: 1px solid rgba(255,255,255,.14);
+    background: linear-gradient(90deg, #214f9a, #376ad0);
+    color: var(--ecms-white);
+    font-size: .82rem;
+    font-weight: 950;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
 }
 
-/* Effect: Styles DataTables loader/processing indicator and prevents permanent loaders. */
-.dataTables_wrapper:not(.is-loading) .ecms-table-loader {
+/* Hard fix for the duplicated sizing header created inside DataTables scroll body. */
+.ecms-dt-wrap .dataTables_scrollBody table.dataTable > thead,
+.ecms-dt-wrap .dt-scroll-body table.dataTable > thead {
     display: none !important;
 }
 
-/* Effect: Applies the nested rules only for the specified responsive/print condition. */
-@media (max-height: 880px) {
-    :root {
-        --ecms-dt-max-height: 300px;
-        --ecms-dt-row-height: 42px;
-    }
+.ecms-dt-wrap table.dataTable tbody td {
+    height: var(--ecms-dt-row-height);
+    padding: .5rem .75rem;
+    text-align: center;
+    vertical-align: middle;
+    border-top: 1px solid rgba(199,211,230,.80);
+    color: var(--ecms-text);
+    font-size: .82rem;
+    font-weight: 700;
 }
 
-/* Effect: Applies the nested rules only for the specified responsive/print condition. */
-@media (max-width: 768px) {
-    .dataTables_filter {
-        text-align: left !important;
+.ecms-dt-wrap table.dataTable tbody tr:nth-child(odd) {
+    background: rgba(255,255,255,.96);
+}
+
+.ecms-dt-wrap table.dataTable tbody tr:nth-child(even) {
+    background: rgba(238,242,247,.96);
+}
+
+.ecms-dt-footer {
+    width: 100%;
+    margin: .55rem 0 0 0;
+    padding: .5rem .45rem;
+    background: linear-gradient(135deg, rgba(245,250,255,.99), rgba(224,238,255,.99));
+    border-top: 1px solid rgba(70,119,184,.24);
+    border-radius: 0 0 var(--ecms-radius-sm) var(--ecms-radius-sm);
+    align-items: center;
+    box-sizing: border-box;
+}
+
+    .ecms-dt-footer .dataTables_info,
+    .ecms-dt-footer .dt-info,
+    .ecms-dt-footer .dataTables_paginate,
+    .ecms-dt-footer .dt-paging,
+    .dataTables_info,
+    .dt-info,
+    .dataTables_paginate,
+    .dt-paging {
+        background: transparent !important;
     }
 
-    .dataTables_filter input {
-        width: 100% !important;
+    .ecms-dt-footer > [class*="col-"] {
+        padding-top: 0;
+        padding-bottom: 0;
+        display: flex;
+        align-items: center;
     }
 
-    .dataTables_paginate {
-        justify-content: center !important;
-        flex-wrap: wrap !important;
+    .ecms-dt-footer .dt-info-col {
+        justify-content: flex-start;
+    }
+
+    .ecms-dt-footer .dt-page-col {
+        justify-content: flex-end;
+    }
+
+.dataTables_info,
+.dt-info {
+    padding-top: 0;
+    margin: 0;
+    line-height: 2.1rem;
+    color: var(--ecms-text);
+    font-size: .84rem;
+    font-weight: 800;
+}
+
+.dataTables_paginate,
+.dt-paging {
+    padding-top: 0;
+    margin: 0;
+}
+
+    .dataTables_paginate .pagination,
+    .dt-paging .pagination,
+    .ecms-dt-footer .pagination {
+        margin: 0;
+        gap: .35rem;
+        justify-content: flex-end;
+    }
+
+.pagination .page-item {
+    border: 0;
+    background: transparent;
+}
+
+.dataTables_paginate .paginate_button,
+.dt-paging .dt-paging-button,
+.pagination .page-link {
+    min-width: 2.1rem;
+    height: 2.1rem;
+    padding: .35rem .55rem;
+    border: 1px solid rgba(184,203,234,.92);
+    border-radius: .5rem;
+    background: rgba(255,255,255,.96);
+    color: #214f9a;
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+    .dataTables_paginate .paginate_button.current,
+    .dt-paging .dt-paging-button.current,
+    .pagination .active .page-link {
+        border-color: transparent;
+        color: var(--ecms-white);
+        background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-500));
+    }
+
+.dt-ellipsis,
+.ecms-dt-ellipsis {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+@media (max-width: 767.98px) {
+    .dataTables_filter,
+    .dt-search {
+        justify-content: stretch;
+    }
+
+        .dataTables_filter input,
+        .dt-search input {
+            width: 100%;
+            min-width: 0;
+        }
+
+    .ecms-dt-footer .dt-info-col,
+    .ecms-dt-footer .dt-page-col {
+        justify-content: center;
+    }
+
+    .ecms-dt-footer {
+        text-align: center;
+        gap: .45rem;
+    }
+
+    .dataTables_paginate,
+    .dt-paging {
+        justify-content: center;
+        flex-wrap: wrap;
     }
 }

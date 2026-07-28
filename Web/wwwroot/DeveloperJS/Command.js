@@ -1,6 +1,18 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 let ComdId = 0;
 let Orderby = 0;
+
+function safeAdjustCommandDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -8,11 +20,11 @@ $(function () {
 
     BindData(function () {
     });
-    $("#btnReset").on("click",function () {
+    $("#btnReset").on("click", function () {
         Reset();
     });
-   
-    $("#btnsave").on("click",function () {
+
+    $("#btnsave").on("click", function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -28,14 +40,14 @@ $(function () {
                     Save();
                 }
             })
-           
+
         } else {
             $("#SaveForm")[0].reportValidity();
         }
 
-       
-       
-       // 
+
+
+        // 
 
     });
 
@@ -51,11 +63,11 @@ function BindData(callback) {
 
     const columns = getColumnsForCommand();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '300px',          // UI only: final height is controlled by CSS inside table card
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // UI only: use normal DataTables body scroll controlled by common CSS
+        deferScroll: false,
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
@@ -119,7 +131,9 @@ function BindData(callback) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'ecms-dt-toolbar dt-top'<'dt-length-col'l><'dt-buttons-col'B><'dt-filter-col'f>>" +
+            "rt" +
+            "<'ecms-dt-footer'<'dt-info-col'i><'dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -150,20 +164,20 @@ function BindData(callback) {
             let searchBox = $('div.dataTables_filter input');
             searchBox.attr('title', 'Search Comd/Abbreviation');
             // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            safeAdjustCommandDataTable(this.api());
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    safeAdjustCommandDataTable(table);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustCommandDataTable(this.api());
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -318,8 +332,7 @@ function Delete(ComdId) {
                         text: errormsg
                     });
                 }
-                else if (response == "5")
-                {
+                else if (response == "5") {
                     toastr.error('ComdId is used in child table.');
                 }
 
@@ -348,7 +361,7 @@ function Delete(ComdId) {
 }
 
 function OrderByChange(ComdId, OrderBy) {
-   
+
     var userdata =
     {
         "ComdId": ComdId,
@@ -392,7 +405,7 @@ function GetBinaryTree(ComdId) {
     var userdata =
     {
         "Id": ComdId,
-        
+
 
     };
     $.ajax({
@@ -415,34 +428,34 @@ function GetBinaryTree(ComdId) {
                     var MBde = response.MBde
                     var Unit = response.Unit
 
-              
+
 
                     listitem += ' <ul class="bullet-list-round">';
                     listitem += ' <li>';
-                   
-                   
 
-                 
+
+
+
                     for (var i = 0; i < MComd.length; i++) {
                         listitem += '<a href="#" class="bg-danger text-white">' + MComd[i].ComdName + '</a>';
                         listitem += ' <ul class="bullet-list-round">';
-                      
-                      
-                            for (var C = 0; C < MCorps.length; C++) {
 
-                                listitem += '<li><a href="#" class="bg-warning text-white">' + MCorps[C].CorpsName + '</a>';
-                                
-                                //////////////Div in Corps
-                                listitem += '<ul class="bullet-list-round">';
-                                for (var C1 = 0; C1 < MDiv.length; C1++) {
-                                  /*  if (C1 == 0)*/
-                                       
 
-                                    if (MCorps[C].CorpsId == MDiv[C1].CorpsId) {
-                                        listitem += '<li><a href="#" class="bg-primary text-white">' + MDiv[C1].DivName + '</a>';
+                        for (var C = 0; C < MCorps.length; C++) {
 
-                                        listitem += '<ul class="bullet-list-round">';
-                                      
+                            listitem += '<li><a href="#" class="bg-warning text-white">' + MCorps[C].CorpsName + '</a>';
+
+                            //////////////Div in Corps
+                            listitem += '<ul class="bullet-list-round">';
+                            for (var C1 = 0; C1 < MDiv.length; C1++) {
+                                /*  if (C1 == 0)*/
+
+
+                                if (MCorps[C].CorpsId == MDiv[C1].CorpsId) {
+                                    listitem += '<li><a href="#" class="bg-primary text-white">' + MDiv[C1].DivName + '</a>';
+
+                                    listitem += '<ul class="bullet-list-round">';
+
                                     //////////////Bde direvct in Div
 
                                     for (var db1 = 0; db1 < MBde.length; db1++) {
@@ -451,13 +464,13 @@ function GetBinaryTree(ComdId) {
                                         if (MCorps[C].CorpsId == MBde[db1].CorpsId && MDiv[C1].CorpsId == MBde[db1].CorpsId && MBde[db1].DivId == MDiv[C1].DivId) {
 
                                             listitem += '<li><a href="#" class="bg-info text-white">' + MBde[db1].BdeName + '</a>';
-                                             //////////////unit direvct in bde
-                                           
+                                            //////////////unit direvct in bde
+
                                             var unitcount = 0;
                                             for (var unit1 = 0; unit1 < Unit.length; unit1++) {
 
 
-                                                if (MCorps[C].CorpsId == Unit[unit1].CorpsId && MDiv[C1].DivId == Unit[unit1].DivId && MBde[db1].BdeId == Unit[unit1].BdeId ) {
+                                                if (MCorps[C].CorpsId == Unit[unit1].CorpsId && MDiv[C1].DivId == Unit[unit1].DivId && MBde[db1].BdeId == Unit[unit1].BdeId) {
                                                     if (parseInt(unitcount) == 0)
                                                         listitem += '<ul>';
 
@@ -473,64 +486,64 @@ function GetBinaryTree(ComdId) {
                                                     listitem += '</ul>';
 
                                             }
-                                           
 
-                                              //////////////end unit direvct in bde
+
+                                            //////////////end unit direvct in bde
                                             listitem += '</li>';
                                         }
 
 
 
                                     }  //////   end    Bde direvct in Div
-                                        listitem += '</ul>';
+                                    listitem += '</ul>';
 
-                                        listitem += '</li>';
-                                    }
-
-                                   
-                                    //listitem += '</ul>';
-                                   
-                                    /*if (parseInt(C1)+1 == MDiv.length)*/
-                                       
+                                    listitem += '</li>';
                                 }
-                                ////////////Bde direvct in Corps
-
-                                for (var C1 = 0; C1 < MBde.length; C1++) {
 
 
-                                    if (MCorps[C].CorpsId == MBde[C1].CorpsId && MBde[C1].DivId == 1) {
+                                //listitem += '</ul>';
 
-                                        listitem += '<li><a href="#" class="bg-info text-dark">' + MBde[C1].BdeName + '</a></li>';
+                                /*if (parseInt(C1)+1 == MDiv.length)*/
 
-                                    }
+                            }
+                            ////////////Bde direvct in Corps
 
-
-
-                                }  //////   end    Bde direvct in Corps
-
-                                ////////////Unit direvct in Corps
-
-                                for (var C1 = 0; C1 < Unit.length; C1++) {
+                            for (var C1 = 0; C1 < MBde.length; C1++) {
 
 
-                                    if (MCorps[C].CorpsId == Unit[C1].CorpsId && Unit[C1].DivId == 1 && Unit[C1].BdeId == 1) {
+                                if (MCorps[C].CorpsId == MBde[C1].CorpsId && MBde[C1].DivId == 1) {
 
-                                        listitem += '<li><a href="#" class="bg-success text-white">' + Unit[C1].UnitName + '</a></li>';
+                                    listitem += '<li><a href="#" class="bg-info text-dark">' + MBde[C1].BdeName + '</a></li>';
 
-                                    }
+                                }
 
 
 
-                                }  //////   end    Unit direvct in Corps
+                            }  //////   end    Bde direvct in Corps
+
+                            ////////////Unit direvct in Corps
+
+                            for (var C1 = 0; C1 < Unit.length; C1++) {
 
 
-                                listitem += '</ul>';
-                               
-                                listitem += '</li>';
+                                if (MCorps[C].CorpsId == Unit[C1].CorpsId && Unit[C1].DivId == 1 && Unit[C1].BdeId == 1) {
+
+                                    listitem += '<li><a href="#" class="bg-success text-white">' + Unit[C1].UnitName + '</a></li>';
+
+                                }
+
+
+
+                            }  //////   end    Unit direvct in Corps
+
+
+                            listitem += '</ul>';
+
+                            listitem += '</li>';
                         }
                         for (var C = 0; C < MDiv.length; C++) {
 
-                            if (MDiv[C].CorpsId==1)
+                            if (MDiv[C].CorpsId == 1)
                                 listitem += '<li><a href="#" class="bg-primary text-white">' + MDiv[C].DivName + '</a></li>';
 
 
@@ -549,11 +562,11 @@ function GetBinaryTree(ComdId) {
 
 
                         }
-                       
+
                         listitem += ' </ul>';
                     }
-                  
-                
+
+
                     listitem += ' </li>';
                     listitem += ' </ul>';
 
@@ -639,7 +652,7 @@ function getColumnsForCommand() {
                     return `<span class="badge bg-secondary">Last</span>`;
                 }
 
-                return `<button class="cls-btnorder btn btn-info btn-sm">
+                return `<button type="button" class="cls-btnorder btn ecms-action-btn btn-info btn-sm">
                 <i class="fas fa-arrow-down"></i>
             </button>`;
             }
@@ -655,8 +668,8 @@ function getColumnsForCommand() {
             width: "250px",
             render: function (data, type, row) {
                 //<button type='button' class='cls-btntreeview btn btn-primary  mr-1'>Hierarchy Chart</button>
-                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                let Action = `<button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn ecms-action-btn btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
                 return Action;
             }
         }

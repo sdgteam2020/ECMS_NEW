@@ -4,18 +4,18 @@
 }
 
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
-<link asp-href-include="~/developercss/oromapping.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/oromapping.css" rel="stylesheet" asp-append-version="true" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
-                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
-                        <span>&gt;</span>
+                        <span class="page-header-icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
+                        <a href="/Master/DashboardMaster">Dashboard</a>
+                        <span aria-hidden="true">&gt;</span>
                         <span>ORO Mapping Details</span>
                     </h1>
                 </div>
@@ -24,66 +24,78 @@
     </div>
 </header>
 
-<div class="containerMain ecms-oro-page">
-    <div class="ecms-oro-shell">
-        <div class="ecms-oro-titlebar">
-            <div class="ecms-oro-title-wrap">
-                <span class="ecms-oro-title-icon"><i class="fa fa-link"></i></span>
-                <div>
-                    <h3>ORO Mapping Details</h3>
-                    <p>Create, update and manage officer record office mapping details</p>
-                </div>
-            </div>
-            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm ecms-oro-add-btn">
-                <i class="fa fa-plus"></i>
-                Add ORO Mapping
-            </button>
-        </div>
-
-        <div class="ecms-oro-table-card">
-            <div class="ecms-oro-table-title">
-                <span><i class="fa fa-table"></i> ORO Mapping Records</span>
-            </div>
-
-            <div class="ecms-oro-table-wrap">
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script asp-src-include="~/developerjs/mtables.js"></script>
-<script asp-src-include="~/developerjs/OROMapping.js"></script>
-<script asp-src-include="~/select2/js/select2.min.js"></script>
-
-<partial name="~/Views/Shared/_DataTableJS.cshtml" />
-
-<div class="modal fade ecms-oro-modal" id="AddNewOROMapping" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="ecms-oro-modal-title-wrap">
-                    <span class="ecms-oro-modal-icon"><i class="fa fa-link"></i></span>
-                    <div>
-                        <h5 class="modal-title" id="exampleModalLabel">Enter Officer Record Office Mapping Details</h5>
-                        <small>Fill record office, arms/service, rank, SUS no and linked domain details</small>
+<main class="containerMain ecms-page ecms-page-full ecms-oro-page">
+    <section class="card ecms-card ecms-oro-shell">
+        <div class="ecms-card-body ecms-oro-shell-body">
+            <div class="ecms-page-title d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div class="d-flex align-items-center gap-2 ecms-min-0">
+                    <span class="ecms-title-icon" aria-hidden="true">
+                        <i class="fa fa-link"></i>
+                    </span>
+                    <div class="ecms-min-0">
+                        <h3>ORO Mapping Details</h3>
+                        <p class="ecms-title-subtitle">Create, update and manage officer record office mapping details</p>
                     </div>
                 </div>
 
-                <button type="button" class="close ecms-oro-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" title="Close">
-                    <span aria-hidden="true"><i class="fa fa-times"></i></span>
+                <button type="button"
+                        id="btnAdd"
+                        class="btn btn-success btn-sm d-inline-flex align-items-center gap-2 ecms-oro-add-btn">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <span>Add ORO Mapping</span>
+                </button>
+            </div>
+
+            <section class="ecms-section ecms-oro-records">
+                <div class="ecms-section-title">
+                    <i class="fa fa-table" aria-hidden="true"></i>
+                    <span>ORO Mapping Records</span>
+                </div>
+
+                <div class="ecms-dt-wrap ecms-oro-table-wrap">
+                    <table id="tbldata"
+                           class="table table-striped table-hover ecms-dt-table"
+                           role="grid"
+                           aria-label="ORO mapping records">
+                    </table>
+                </div>
+            </section>
+        </div>
+    </section>
+</main>
+
+<div class="modal fade ecms-oro-modal" id="AddNewOROMapping" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ecms-modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="ecms-modal-title-wrap">
+                    <span class="ecms-modal-title-icon" aria-hidden="true">
+                        <i class="fa fa-link"></i>
+                    </span>
+                    <div>
+                        <h5 class="modal-title" id="exampleModalLabel">Add Officer Record Office Mapping Details</h5>
+                        <p class="ecms-modal-subtitle" id="oroModalSubtitle">
+                            Fill record office, arms/service, rank, SUS no and linked domain details
+                        </p>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close">
                 </button>
             </div>
 
             <div class="modal-body">
                 <form action="" id="SaveOROMapping" name="SaveOROMapping" method="post">
-                    <div class="ecms-oro-modal-grid">
-                        <div class="ecms-oro-modal-field">
-                            <label class="ecms-oro-modal-label" for="ddlRO">
-                                <i class="fa fa-address-book"></i>
-                                Record Office
-                                <i class="fas fa-asterisk mand1"></i>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="ddlRO">
+                                <span class="ecms-label-icon"><i class="fa fa-address-book" aria-hidden="true"></i></span>
+                                <span>Record Office</span>
+                                <span class="mand1" aria-hidden="true">*</span>
                             </label>
                             <select class="form-select"
                                     name="ddlRO"
@@ -97,10 +109,10 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlRO" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-oro-modal-field">
-                            <label class="ecms-oro-modal-label" for="ddlRank">
-                                <i class="fa fa-star"></i>
-                                Select Rank
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="ddlRank">
+                                <span class="ecms-label-icon"><i class="fa fa-star" aria-hidden="true"></i></span>
+                                <span>Select Rank</span>
                             </label>
                             <select class="form-select"
                                     name="ddlRank"
@@ -113,14 +125,13 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlRank" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-oro-modal-field ecms-oro-modal-field-wide">
-                            <label class="ecms-oro-modal-label" for="ddlArmedIdList">
-                                <i class="fa fa-shield"></i>
-                                Select Arms
+                        <div class="col-12">
+                            <label class="form-label ecms-label-with-icon" for="ddlArmedIdList">
+                                <span class="ecms-label-icon"><i class="fa fa-shield" aria-hidden="true"></i></span>
+                                <span>Select Arms</span>
                             </label>
                             <select class="form-control"
                                     multiple
-                                    placeholder="Select Arms"
                                     name="ddlArmedIdList"
                                     id="ddlArmedIdList"
                                     data-val="true"
@@ -129,25 +140,26 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlArmedIdList" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-oro-modal-field">
-                            <label class="ecms-oro-modal-label" for="txtUnitName">
-                                <i class="fa fa-search"></i>
-                                SUS No
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="txtUnitName">
+                                <span class="ecms-label-icon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                <span>SUS No</span>
                             </label>
                             <input class="form-control alpha-num-only"
                                    placeholder="Type SUS No"
                                    id="txtUnitName"
                                    name="txtUnitName"
+                                   autocomplete="off"
                                    data-val="true"
                                    data-val-regex="This special chars not allowed for security reasons."
                                    data-val-regex-pattern="^[\w ]*$" />
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-oro-modal-field">
-                            <label class="ecms-oro-modal-label" for="ddlTDMId">
-                                <i class="fa fa-user"></i>
-                                Linked Domain ID & Pers Details
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="ddlTDMId">
+                                <span class="ecms-label-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
+                                <span>Linked Domain ID &amp; Pers Details</span>
                             </label>
                             <select class="form-select"
                                     name="ddlTDMId"
@@ -160,15 +172,20 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlTDMId" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-oro-modal-actions">
-                            <input type="button" class="btn btn-outline-primary" value="Save" id="btnOROMappingAdd" />
-                            <button type="button" id="btnOROMappingReset" class="btn btn-outline-danger">Reset</button>
+                        <div class="col-12 d-flex flex-wrap justify-content-end gap-2 ecms-oro-modal-actions">
+                            <input type="button" class="btn btn-primary" value="Save" id="btnOROMappingAdd" />
+                            <button type="button" id="btnOROMappingReset" class="btn btn-danger">Reset</button>
                         </div>
 
-                        <div class="ecms-oro-message" id="msg"></div>
+                        <div class="col-12 ecms-oro-message" id="msg"></div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/select2/js/select2.min.js"></script>
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />
+<script asp-src-include="~/developerjs/OROMapping.js" asp-append-version="true"></script>

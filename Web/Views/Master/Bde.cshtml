@@ -6,10 +6,10 @@
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/bde.css" rel="stylesheet" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
-            <div class="row align-items-center justify-content-between">
+            <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"><i class="fa fa-bars"></i></div>
@@ -23,99 +23,118 @@
     </div>
 </header>
 
-<div class="containerMain ecms-bde-page">
-    <div class="ecms-bde-shell">
-        <div class="ecms-bde-titlebar">
-            <div class="ecms-bde-title-wrap">
-                <span class="ecms-bde-title-icon"><i class="fa fa-building"></i></span>
-                <div>
-                    <h3>Bde Details</h3>
-                    <p>Create, update and manage brigade records</p>
-                </div>
-            </div>
-            <span class="ecms-bde-pill"><i class="fa fa-database"></i> Master</span>
-        </div>
+<div class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-bde-page">
+    <div class="card ecms-card ecms-bde-shell">
+        <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
 
-        <div class="ecms-bde-form-card">
-            <span id="SpnTxnId" class="d-none">0</span>
-            <span class="spnBdeCatId d-none">0</span>
-
-            <form action="" id="SaveForm" method="post" name="SaveForm">
-                <div class="ecms-bde-form-grid">
-                    <div class="ecms-bde-field">
-                        <label class="ecms-bde-label" for="ddlCommand">
-                            <i class="fa fa-university"></i>
-                            Comd / PSO
-                            <i class="fa fa-asterisk mand1"></i>
-                        </label>
-                        <select class="form-select full-width"
-                                name="ddlCommand"
-                                required
-                                id="ddlCommand">
-                            <option value="0">Select Comd / PSO</option>
-                        </select>
-                    </div>
-
-                    <div class="ecms-bde-field">
-                        <label class="ecms-bde-label" for="ddlCorps">
-                            <i class="fa fa-map-marker"></i>
-                            Corps / Dte / Area
-                            <i class="fa fa-asterisk mand1"></i>
-                        </label>
-                        <select class="form-select full-width"
-                                name="ddlCorps"
-                                required
-                                id="ddlCorps">
-                            <option value="0">Select Corps / Dte / Area</option>
-                        </select>
-                    </div>
-
-                    <div class="ecms-bde-field">
-                        <label class="ecms-bde-label" for="ddlDiv">
-                            <i class="fa fa-code-fork"></i>
-                            Div / Branch / SubArea
-                            <i class="fa fa-asterisk mand1"></i>
-                        </label>
-                        <select class="form-select full-width"
-                                name="ddlDiv"
-                                required
-                                id="ddlDiv">
-                            <option value="0">Select Div / Branch / SubArea</option>
-                        </select>
-                    </div>
-
-                    <div class="ecms-bde-field">
-                        <label class="ecms-bde-label" for="txtBdeName">
-                            <i class="fa fa-flag"></i>
-                            Bde
-                            <i class="fa fa-asterisk mand1"></i>
-                        </label>
-                        <input class="form-control Alphanumeric"
-                               placeholder="Enter Bde"
-                               id="txtBdeName"
-                               maxlength="20"
-                               required
-                               pattern="^[a-zA-Z0-9 ]*$"
-                               title="Only Alphabets and Numbers allowed" />
-                    </div>
-
-                    <div class="ecms-bde-actions" id="msg">
-                        <input type="button" class="btn btn-outline-primary ecms-bde-save" value="Save" id="btnsave" />
-                        <button type="button" id="btnReset" class="btn btn-outline-danger ecms-bde-reset">Reset</button>
+            <div class="ecms-page-title ecms-bde-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                <div class="d-flex align-items-center gap-2 ecms-min-0">
+                    <span class="ecms-title-icon">
+                        <i class="fa fa-building"></i>
+                    </span>
+                    <div class="ecms-min-0">
+                        <h3>Bde Details</h3>
+                        <p class="ecms-title-subtitle">Create, update and manage brigade records</p>
                     </div>
                 </div>
-            </form>
-        </div>
 
-        <div class="ecms-bde-table-card">
-            <div class="ecms-bde-table-title">
-                <span><i class="fa fa-list"></i> Bde Records</span>
+                <span class="badge bg-primary ecms-badge ecms-bde-pill">
+                    <i class="fa fa-database"></i>
+                    Master
+                </span>
             </div>
 
-            <div class="ecms-bde-table-wrap">
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
+            <div class="ecms-section ecms-form-section ecms-bde-form-section flex-shrink-0">
+                <span id="SpnTxnId" class="d-none">0</span>
+                <span class="spnBdeCatId d-none">0</span>
+
+                <form action="" id="SaveForm" method="post" name="SaveForm">
+                    <div class="row g-2 align-items-end">
+
+                        <div class="col-12 col-md-6 col-xl-2">
+                            <label class="form-label ecms-bde-label" for="ddlCommand">
+                                <i class="fa fa-university"></i>
+                                <span>Comd / PSO</span>
+                                <i class="fa fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select full-width"
+                                    name="ddlCommand"
+                                    required
+                                    id="ddlCommand">
+                                <option value="0">Select Comd / PSO</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <label class="form-label ecms-bde-label" for="ddlCorps">
+                                <i class="fa fa-map-marker"></i>
+                                <span>Corps / Dte / Area</span>
+                                <i class="fa fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select full-width"
+                                    name="ddlCorps"
+                                    required
+                                    id="ddlCorps">
+                                <option value="0">Select Corps / Dte / Area</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <label class="form-label ecms-bde-label" for="ddlDiv">
+                                <i class="fa fa-code-fork"></i>
+                                <span>Div / Branch / SubArea</span>
+                                <i class="fa fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select full-width"
+                                    name="ddlDiv"
+                                    required
+                                    id="ddlDiv">
+                                <option value="0">Select Div / Branch / SubArea</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-2">
+                            <label class="form-label ecms-bde-label" for="txtBdeName">
+                                <i class="fa fa-flag"></i>
+                                <span>Bde</span>
+                                <i class="fa fa-asterisk mand1"></i>
+                            </label>
+
+                            <input class="form-control Alphanumeric"
+                                   placeholder="Enter Bde"
+                                   id="txtBdeName"
+                                   maxlength="20"
+                                   required
+                                   pattern="^[a-zA-Z0-9 ]*$"
+                                   title="Only Alphabets and Numbers allowed" />
+                        </div>
+
+                        <div class="col-12 col-xl-2">
+                            <div class="ecms-form-actions ecms-bde-actions d-flex gap-2 justify-content-xl-end" id="msg">
+                                <input type="button" class="btn btn-primary" value="Save" id="btnsave" />
+                                <button type="button" id="btnReset" class="btn btn-danger">Reset</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
             </div>
+
+            <div class="ecms-section ecms-bde-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                <div class="ecms-section-title flex-shrink-0">
+                    <i class="fa fa-list"></i>
+                    <span>Bde Records</span>
+                </div>
+
+                <div class="ecms-bde-table-wrap flex-grow-1 ecms-min-0">
+                    <table class="table table-striped table-hover table-bordered dataTable ecms-bde-datatable" role="grid" id="tbldata">
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

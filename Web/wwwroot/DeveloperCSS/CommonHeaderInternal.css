@@ -1,68 +1,77 @@
 ﻿/* =====================================================
-   ECMS MODERN COMMON HEADER
+   ECMS Bootstrap-First Common Header
    Replace: wwwroot/developercss/commonheaderinternal.css
+
+   Design rule:
+   - Bootstrap handles layout and responsive columns.
+   - ModernCSS tokens handle colors, height, radius and shadow.
+   - This CSS only skins the header and adds small responsive sizing.
 ===================================================== */
 
+/* Effect: Header height variables used by fixed header and layout top spacing. */
 :root {
-    --ecms-header-blue-1: #004ea8;
-    --ecms-header-blue-2: #003b8f;
-    --ecms-header-blue-3: #002b69;
-    --ecms-header-text: #ffffff;
+    --ecms-header-logo-size: 88px;
+    --ecms-header-brand-logo-size: 72px;
+    --ecms-header-user-avatar-size: 62px;
+    --ecms-header-action-size: 46px;
 }
 
-/* ======= Base Header Style ======= */
+/* Effect: Fixed top ECMS header using common ModernCSS theme colors. */
 .eisac-header {
     position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1039;
+    inset: 0 0 auto 0;
+    z-index: var(--ecms-z-header, 1039);
     width: 100%;
     height: var(--ecms-header-height);
-    background: linear-gradient(90deg, #004eaa 0%, #003f98 38%, #003678 68%, #002a61 100%);
-    box-shadow: 0 8px 24px rgba(0, 20, 70, 0.28);
-    border-bottom: 1px solid rgba(255,255,255,0.14);
-    display: flex;
-    align-items: center;
+    margin: 0;
+    padding: 0;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient(90deg, var(--ecms-primary-800, #123f8c) 0%, var(--ecms-primary-900, #0b2d68) 62%, var(--ecms-primary-950, #061b44) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, .14);
+    box-shadow: 0 8px 24px rgba(0, 20, 70, .28);
+    overflow: visible;
 }
 
-/* ======= Layout Container ======= */
-.header-container.ecms-header-modern {
-    width: 100%;
+/* Effect: Bootstrap container inside fixed header. */
+.ecms-header-container {
     max-width: 1920px;
-    height: 100%;
-    padding: 0 24px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 140px minmax(520px, 1fr) 430px;
-    align-items: center;
-    gap: 18px;
+    margin-inline: auto;
 }
 
-/* ======= Logos ======= */
-.header-logo {
+/* Effect: Bootstrap row used by header; desktop stays single row. */
+.ecms-header-row {
+    min-height: var(--ecms-header-height);
+}
+
+/* Effect: Common alignment for each responsive header block. */
+.ecms-header-cell {
+    min-width: 0;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.logo-left-img {
-    width: 88px;
-    height: 88px;
-    object-fit: contain;
-    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
+/* Effect: First and last logo blocks. */
+.header-logo-link,
+.header-logo-left,
+.header-logo-right {
+    text-decoration: none !important;
 }
 
+/* Effect: Logo sizing comes from variables so future changes happen in one place. */
+.logo-left-img,
 .logo-right-img {
-    width: 86px;
-    height: 86px;
+    width: var(--ecms-header-logo-size);
+    height: var(--ecms-header-logo-size);
     object-fit: contain;
-    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .25));
 }
 
+/* Effect: Shared hover effect for header images. */
 .logo-img,
 .brand-logo-img,
 .ecms-user-avatar {
-    transition: transform 0.25s ease, filter 0.25s ease;
+    transition: transform .22s ease, filter .22s ease;
 }
 
     .logo-img:hover,
@@ -71,53 +80,59 @@
         transform: scale(1.04);
     }
 
-/* ======= Center Brand ======= */
+/* Effect: Desktop title/brand row using Bootstrap column with ECMS spacing. */
 .ecms-brand-area {
     min-width: 0;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 22px;
+    gap: clamp(12px, 1.2vw, 22px);
 }
 
+/* Effect: Center shield/group logo beside application title. */
 .brand-logo-img {
     flex: 0 0 auto;
-    width: 72px;
-    height: 72px;
+    width: var(--ecms-header-brand-logo-size);
+    height: var(--ecms-header-brand-logo-size);
     object-fit: contain;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.22));
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, .22));
 }
 
+/* Effect: Keeps title text from breaking layout on desktop. */
 .brand-text-wrap {
     min-width: 0;
     text-align: left;
 }
 
+/* Effect: Main application title, using common ECMS white text. */
 .title-text {
     margin: 0;
-    color: #ffffff !important;
-    font-family: "Segoe UI", "Roboto", "Open Sans", sans-serif;
+    color: var(--ecms-white, #fff) !important;
+    font-family: var(--ecms-font-family, "Segoe UI", Arial, sans-serif);
     font-size: clamp(24px, 2.15vw, 38px);
-    font-weight: 800;
-    line-height: 1.12;
-    letter-spacing: 0.3px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: .2px;
     text-transform: uppercase;
     white-space: nowrap;
-    -webkit-text-fill-color: #ffffff !important;
+    -webkit-text-fill-color: var(--ecms-white, #fff) !important;
     -webkit-text-stroke: 0 !important;
-    text-shadow: 0 3px 8px rgba(0,0,0,0.35);
+    text-shadow: 0 3px 8px rgba(0, 0, 0, .35);
 }
 
+/* Effect: Header subtitle below title. */
 .subtitle {
     margin: 8px 0 0;
-    color: rgba(255,255,255,0.92);
+    color: rgba(255, 255, 255, .92);
     font-size: clamp(14px, 1.1vw, 19px);
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.2;
-    letter-spacing: 0.2px;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.28);
+    letter-spacing: .2px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, .28);
 }
 
+/* Effect: Reset old title wrappers so ModernCSS controls the theme. */
 .title-chip,
 .title-eisac-header,
 .center {
@@ -128,21 +143,19 @@
     padding: 0 !important;
 }
 
-/* ======= Right Actions ======= */
-.ecms-header-actions {
-    display: flex;
-    align-items: center;
+/* Effect: User + notification Bootstrap row on desktop. */
+.ecms-header-user-cell {
     justify-content: flex-end;
-    gap: 18px;
+}
+
+.ecms-header-nav {
     min-width: 0;
-    height: 100%;
 }
 
 .ecms-action-list {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    gap: clamp(10px, 1vw, 16px);
     margin: 0;
+    padding: 0;
 }
 
 .ecms-user-toggle,
@@ -150,21 +163,23 @@
     text-decoration: none;
 }
 
+/* Effect: User profile pill in header. */
 .ecms-user-panel {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     padding: 8px 10px 8px 18px;
-    border-radius: 16px;
-    background: rgba(0, 20, 60, 0.12);
-    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--ecms-radius-md, 16px);
+    background: rgba(0, 20, 60, .12);
+    border: 1px solid rgba(255, 255, 255, .08);
 }
 
+/* Effect: Profile text area. */
 .ecms-user-text {
-    text-align: right;
-    color: #ffffff;
-    line-height: 1.28;
     min-width: 112px;
+    color: var(--ecms-white, #fff);
+    text-align: right;
+    line-height: 1.25;
 }
 
 .ProfileName,
@@ -174,63 +189,65 @@
 #ProfileRankName,
 #ProfileName,
 #aspntokenarmyno {
-    color: #ffffff !important;
-    font-family: "Segoe UI", "Roboto", sans-serif;
+    color: var(--ecms-white, #fff) !important;
+    font-family: var(--ecms-font-family, "Segoe UI", Arial, sans-serif);
 }
 
 .ecms-welcome {
     font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0.4px;
+    font-weight: 900;
+    letter-spacing: .4px;
 }
 
-.ecms-user-armyno {
+.ecms-user-armyno,
+.ecms-user-rank {
     margin-top: 3px;
     font-size: 13px;
     font-weight: 800;
 }
 
 .ecms-user-rank {
-    margin-top: 3px;
-    font-size: 13px;
-    font-weight: 700;
     white-space: nowrap;
 }
 
+/* Effect: Circular user avatar sizing through variable. */
 .ecms-user-avatar {
-    width: 62px;
-    height: 62px;
+    width: var(--ecms-header-user-avatar-size);
+    height: var(--ecms-header-user-avatar-size);
+    min-width: var(--ecms-header-user-avatar-size);
     border-radius: 50%;
     object-fit: cover;
-    background: #ffffff;
-    border: 4px solid rgba(255,255,255,0.95);
-    box-shadow: 0 7px 18px rgba(0,0,0,0.26);
+    background: var(--ecms-white, #fff);
+    border: 4px solid rgba(255, 255, 255, .95);
+    box-shadow: 0 7px 18px rgba(0, 0, 0, .26);
 }
 
 .ecms-notification-item {
     position: relative;
 }
 
+/* Effect: Notification bell button. */
 .notif-toggle {
     position: relative;
-    width: 46px;
-    height: 46px;
+    width: var(--ecms-header-action-size);
+    height: var(--ecms-header-action-size);
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff !important;
-    background: rgba(255,255,255,0.10);
-    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--ecms-white, #fff) !important;
+    background: rgba(255, 255, 255, .10);
+    border: 1px solid rgba(255, 255, 255, .12);
     text-decoration: none !important;
     box-shadow: none;
 }
 
     .notif-toggle i {
-        color: #ffffff;
+        color: var(--ecms-white, #fff);
         font-size: 22px;
     }
 
+/* Effect: Red notification count badge. */
 .btn__badge,
 .pulse-button {
     position: absolute;
@@ -239,26 +256,20 @@
     min-width: 20px;
     height: 20px;
     padding: 0 5px;
-    border-radius: 999px;
-    background: #ff3b3b !important;
-    color: #ffffff;
+    border-radius: var(--ecms-radius-pill, 999px);
+    background: var(--ecms-danger-500, #ff3b3b) !important;
+    color: var(--ecms-white, #fff);
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 900;
     line-height: 20px;
     text-align: center;
-    border: 2px solid #ffffff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.28);
+    border: 2px solid var(--ecms-white, #fff);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .28);
 }
 
-.ecms-header-separator {
-    width: 1px;
-    height: 72px;
-    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.32), transparent);
-}
-
-/* ======= Dropdown polishing ======= */
+/* Effect: Dropdowns from user and notification menus. */
 .dropdown-menu {
-    border-radius: 12px;
+    border-radius: var(--ecms-radius-md, 12px);
     overflow: hidden;
 }
 
@@ -270,74 +281,37 @@
 }
 
 .btn-disabled-custom {
-    opacity: 0.6;
+    opacity: .6;
     cursor: not-allowed;
-    color: #0d6efd !important;
+    color: var(--bs-primary, #0d6efd) !important;
 }
 
 .logout-item {
-    background-color: #0d6efd !important;
+    background-color: var(--bs-primary, #0d6efd) !important;
 }
 
-/* Keep content/nav below fixed header */
-body.nav-fixed #layouttask.nav-pills,
-body.nav-fixed .nav-pills {
-    margin-top: var(--ecms-header-height) !important;
-}
-
+/* Effect: Ensure content that depends on header-height starts below the fixed header. */
 .ecms-home-hero {
     margin-top: var(--ecms-header-height) !important;
 }
 
-/* ======= Responsive ======= */
+/* Effect: Large desktop tuning. */
 @media (max-width: 1500px) {
-    .header-container.ecms-header-modern {
-        grid-template-columns: 125px minmax(480px, 1fr) 390px;
-        gap: 14px;
-        padding: 0 18px;
-    }
-
-    .logo-left-img,
-    .logo-right-img {
-        width: 78px;
-        height: 78px;
-    }
-
-    .brand-logo-img {
-        width: 64px;
-        height: 64px;
-    }
-
-    .ecms-user-avatar {
-        width: 56px;
-        height: 56px;
+    :root {
+        --ecms-header-logo-size: 78px;
+        --ecms-header-brand-logo-size: 64px;
+        --ecms-header-user-avatar-size: 56px;
     }
 }
 
+/* Effect: Laptop/tablet landscape tuning. */
 @media (max-width: 1200px) {
     :root {
         --ecms-header-height: 112px;
-    }
-
-    .header-container.ecms-header-modern {
-        grid-template-columns: 96px minmax(360px, 1fr) 320px;
-        gap: 10px;
-        padding: 0 14px;
-    }
-
-    .logo-left-img,
-    .logo-right-img {
-        width: 66px;
-        height: 66px;
-    }
-
-    .brand-logo-img {
-        width: 54px;
-        height: 54px;
-    }
-
-    .ecms-brand-area {
-        gap: 14px;
+        --ecms-header-logo-size: 66px;
+        --ecms-header-brand-logo-size: 54px;
+        --ecms-header-user-avatar-size: 48px;
+        --ecms-header-action-size: 40px;
     }
 
     .ecms-user-panel {
@@ -345,8 +319,6 @@ body.nav-fixed .nav-pills {
     }
 
     .ecms-user-avatar {
-        width: 48px;
-        height: 48px;
         border-width: 3px;
     }
 
@@ -355,67 +327,88 @@ body.nav-fixed .nav-pills {
     .ecms-welcome {
         font-size: 11px;
     }
-
-    .notif-toggle {
-        width: 40px;
-        height: 40px;
-    }
-
-    .ecms-header-separator {
-        height: 58px;
-    }
 }
 
-@media (max-width: 992px) {
+/* Effect: Small screens become four stacked Bootstrap rows: logo, title, user/notification, last logo. */
+@media (max-width: 991.98px) {
     :root {
-        --ecms-header-height: auto;
+        --ecms-header-height: 300px;
+        --ecms-header-logo-size: 58px;
+        --ecms-header-brand-logo-size: 44px;
+        --ecms-header-user-avatar-size: 46px;
+        --ecms-header-action-size: 40px;
     }
 
     .eisac-header {
-        position: relative;
-        height: auto;
-        min-height: 92px;
-        padding: 10px 0;
+        height: var(--ecms-header-height);
+        padding: 8px 0;
+        overflow: visible;
     }
 
-    .header-container.ecms-header-modern {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 12px;
-        height: auto;
+    .ecms-header-row {
+        min-height: 100%;
+        align-content: center;
+        row-gap: 6px;
+    }
+
+    .ecms-header-cell {
+        width: 100%;
+        flex: 0 0 100%;
+    }
+
+    .ecms-header-logo-cell {
+        min-height: 60px;
+    }
+
+    .ecms-header-title-cell {
+        min-height: 86px;
     }
 
     .ecms-brand-area {
-        order: 1;
-        width: calc(100% - 180px);
+        flex-direction: row;
         justify-content: center;
+        text-align: center;
+        gap: 10px;
     }
 
-    .header-logo-left {
-        order: 0;
-    }
-
-    .ecms-header-actions {
-        order: 2;
-        width: 100%;
-        justify-content: center;
-        height: auto;
-    }
-
-    .header-logo-right {
-        display: none;
+    .brand-text-wrap {
+        text-align: center;
     }
 
     .title-text {
         white-space: normal;
         text-align: center;
-        font-size: 24px;
+        font-size: clamp(19px, 4.8vw, 27px);
+        line-height: 1.12;
     }
 
     .subtitle {
+        margin-top: 5px;
         text-align: center;
         font-size: 13px;
+    }
+
+    .ecms-header-user-cell {
+        min-height: 64px;
+        justify-content: center;
+    }
+
+    .ecms-action-list {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .ecms-user-panel {
+        padding: 6px 10px;
+    }
+
+    .ecms-user-text {
+        min-width: 96px;
+        text-align: right;
+    }
+
+    .ecms-header-last-logo-cell {
+        min-height: 58px;
     }
 
     body.nav-fixed #layouttask.nav-pills,
@@ -425,42 +418,83 @@ body.nav-fixed .nav-pills {
     }
 }
 
-@media (max-width: 576px) {
-    .logo-left-img {
-        width: 58px;
-        height: 58px;
+/* Effect: Extra-small screens keep four rows but compress title/profile to avoid overflow. */
+@media (max-width: 575.98px) {
+    :root {
+        --ecms-header-height: 320px;
+        --ecms-header-logo-size: 54px;
+        --ecms-header-brand-logo-size: 40px;
+        --ecms-header-user-avatar-size: 42px;
+        --ecms-header-action-size: 38px;
     }
 
-    .brand-logo-img {
-        width: 48px;
-        height: 48px;
+    .ecms-header-container {
+        padding-inline: 8px !important;
     }
 
     .ecms-brand-area {
-        width: 100%;
         flex-direction: column;
         gap: 4px;
     }
 
     .title-text {
-        font-size: 20px;
+        font-size: clamp(17px, 5.5vw, 22px);
+    }
+
+    .subtitle {
+        font-size: 12px;
     }
 
     .ecms-user-panel {
-        flex-direction: column;
-        gap: 6px;
-        padding: 8px;
+        gap: 8px;
+        padding: 6px 8px;
+        border-radius: 14px;
     }
 
     .ecms-user-text {
-        text-align: center;
+        min-width: 0;
+        max-width: 170px;
     }
 
-    .ecms-action-list {
-        gap: 10px;
+    .ecms-user-rank {
+        max-width: 170px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .ecms-header-separator {
-        display: none;
+    .ecms-welcome,
+    .ecms-user-armyno,
+    .ecms-user-rank {
+        font-size: 10.5px;
+    }
+
+    .dropdown-menu-right {
+        right: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+}
+
+/* =====================================================
+   FIX: Desktop vertical separator between notification and last logo
+   Effect: Restores the vertical line after notification icon and before right logo.
+   On small screens the header stacks into rows, so the vertical line is removed.
+===================================================== */
+@media (min-width: 992px) {
+    .ecms-header-last-logo-cell {
+        margin-left: 10px !important;
+        padding-left: 18px !important;
+        border-left: 1px solid rgba(255, 255, 255, .30) !important;
+        min-height: 76px !important;
+        align-self: center !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .ecms-header-last-logo-cell {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        border-left: 0 !important;
+        border-top: 0 !important;
     }
 }

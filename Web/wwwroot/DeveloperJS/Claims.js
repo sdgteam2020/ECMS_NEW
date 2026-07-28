@@ -1,7 +1,40 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var tableView; // Declare table variable outside the function to preserve the instance
+
+/*
+ * Keep the modal directly below <body>.
+ * This is a UI-only stacking fix: a modal inside a transformed layout container
+ * can appear below its backdrop and look faded/disabled.
+ */
+function PrepareClaimsModalRoot() {
+    var $modal = $("#DataTableDialog");
+
+    if ($modal.length && !$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+}
+
+/*
+ * Common CSS handles the cloned DataTable header and footer layout.
+ * JavaScript now only asks DataTables to recalculate column widths.
+ */
+function RefreshClaimsDataTable(tableSelector, delay) {
+    window.setTimeout(function () {
+        try {
+            $("#loading").addClass("d-none").hide();
+            $(".dataTables_processing, " + tableSelector + "_processing").hide();
+
+            if ($.fn.DataTable.isDataTable(tableSelector)) {
+                $(tableSelector).DataTable().columns.adjust();
+            }
+        } catch (error) {
+            console.warn("Claims DataTable refresh skipped:", error);
+        }
+    }, delay || 0);
+}
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+    PrepareClaimsModalRoot();
 
     //mMsater(0, "ddlRank", Rank, "");
     //mMsater(0, "ddlArmType", ArmyType, "");
@@ -61,8 +94,7 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-                setTimeout(function () { FixClaimsDataTableUI('#tbldatadialog'); }, 30);
-                setTimeout(function () { FixClaimsDataTableUI('#tbldata'); }, 30);
+                RefreshClaimsDataTable('#tbldata', 30);
 
 
             } catch (error) {
@@ -70,7 +102,7 @@ function BindData() {
                 $("#loading").addClass("d-none").hide();
                 $(".dataTables_processing").hide();
                 callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
-                setTimeout(function () { FixClaimsDataTableUI("#tbldata"); }, 30);
+                RefreshClaimsDataTable('#tbldata', 30);
             }
         },
         columns: [
@@ -98,7 +130,8 @@ function BindData() {
             {
                 title: "Claim",
                 data: "ClaimType",
-                name: "ClaimType"
+                name: "ClaimType",
+                className: "col-claim"
             },
             {
                 title: "User Claim Count",
@@ -138,7 +171,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Type / Value" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
+        dom: "<'dt-top ecms-dt-toolbar'lBf>rt<'dt-bottom ecms-dt-footer'ip>", // Common ECMS toolbar/footer classes
         buttons: [
             //{
             //    extend: 'copy',
@@ -167,11 +200,11 @@ function BindData() {
         initComplete: function () {
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
-            FixClaimsDataTableUI('#tbldata');
+            RefreshClaimsDataTable('#tbldata', 0);
 
             // Handle zoom/resize
             var resizeTimer;
-            $(window).on('resize', function () {
+            $(window).off('resize.claimsMain').on('resize.claimsMain', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
                     table.columns.adjust();
@@ -181,7 +214,7 @@ function BindData() {
         drawCallback: function (settings) {
             // Recalculate widths on each data load
             this.api().columns.adjust();
-            FixClaimsDataTableUI('#tbldata');
+            RefreshClaimsDataTable('#tbldata', 0);
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btneyetotalusers").on("click", ".cls-btneyetotalusers", function () {
@@ -195,6 +228,8 @@ function BindData() {
     });
 }
 function BindDialog(claimValue) {
+    PrepareClaimsModalRoot();
+
     // STEP 1: Move ALL DataTable code into shown.bs.modal
     $("#DataTableDialog").one('shown.bs.modal', function () {
 
@@ -257,7 +292,7 @@ function BindDialog(claimValue) {
                     $("#loading").addClass("d-none").hide();
                     $(".dataTables_processing").hide();
                     callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
-                    setTimeout(function () { FixClaimsDataTableUI("#tbldatadialog"); }, 30);
+                    RefreshClaimsDataTable('#tbldatadialog', 30);
                 }
             },
             columns: [
@@ -368,7 +403,7 @@ function BindDialog(claimValue) {
                 search: "", // Remove the default "Search:" label
                 searchPlaceholder: "Search IC No" // Add custom placeholder
             },
-            dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
+            dom: "<'dt-top ecms-dt-toolbar'lBf>rt<'dt-bottom ecms-dt-footer'ip>", // Common ECMS toolbar/footer classes
             buttons: [
                 //{
                 //    extend: 'copy',
@@ -397,11 +432,11 @@ function BindDialog(claimValue) {
             initComplete: function () {
                 // Force DataTables to calculate optimal widths
                 this.api().columns.adjust();
-                FixClaimsDataTableUI('#tbldatadialog');
+                RefreshClaimsDataTable('#tbldatadialog', 0);
 
                 // Handle zoom/resize
                 var resizeTimer;
-                $(window).on('resize', function () {
+                $(window).off('resize.claimsDialog').on('resize.claimsDialog', function () {
                     clearTimeout(resizeTimer);
                     resizeTimer = setTimeout(function () {
                         tableView.columns.adjust();
@@ -411,7 +446,7 @@ function BindDialog(claimValue) {
             drawCallback: function (settings) {
                 // Recalculate widths on each data load
                 this.api().columns.adjust();
-                FixClaimsDataTableUI('#tbldatadialog');
+                RefreshClaimsDataTable('#tbldatadialog', 0);
 
                 const tooltipTriggerList = [].slice.call(
                     document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -427,71 +462,20 @@ function BindDialog(claimValue) {
     });
 
     // STEP 2: Show modal (this triggers the above)
+    PrepareClaimsModalRoot();
     $("#DataTableDialog").modal("show");
 
 }
 
-function FixClaimsDataTableUI(tableSelector) {
-    try {
-        const $table = $(tableSelector);
-        const $wrapper = $(tableSelector + "_wrapper");
-
-        $("#loading").addClass("d-none").hide();
-        $(".dataTables_processing, " + tableSelector + "_processing").hide();
-
-        // Hide only the cloned sizing header inside the DataTables scroll body.
-        // This removes the duplicate/blank blue header row without removing the real header.
-        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").css({
-            display: "none",
-            height: "0",
-            maxHeight: "0",
-            minHeight: "0",
-            visibility: "collapse",
-            overflow: "hidden"
-        });
-
-        $wrapper.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
-            display: "none",
-            height: "0",
-            maxHeight: "0",
-            minHeight: "0",
-            lineHeight: "0",
-            fontSize: "0",
-            padding: "0",
-            margin: "0",
-            border: "0",
-            overflow: "hidden",
-            visibility: "collapse"
-        });
-
-        $wrapper.find(".dt-bottom, .dataTables_info, .dataTables_paginate, .pagination").css({
-            visibility: "visible",
-            opacity: "1"
-        });
-
-        const $bottom = $wrapper.children(".dt-bottom");
-        if ($bottom.length) {
-            $bottom.css({
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%"
-            });
+$('#DataTableDialog')
+    .off('.claimsUi')
+    .on('shown.bs.modal.claimsUi', function () {
+        RefreshClaimsDataTable('#tbldatadialog', 120);
+    })
+    .on('hidden.bs.modal.claimsUi', function () {
+        /* Remove a stale backdrop only when no other Bootstrap modal is open. */
+        if (!$('.modal.show').length) {
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open').css('padding-right', '');
         }
-
-        if ($.fn.DataTable.isDataTable(tableSelector)) {
-            setTimeout(function () {
-                $table.DataTable().columns.adjust();
-            }, 80);
-        }
-    } catch (e) {
-        console.warn("Claims DataTable UI fix skipped:", e);
-    }
-}
-
-
-$('#DataTableDialog').on('shown.bs.modal.claimsUi', function () {
-    setTimeout(function () {
-        FixClaimsDataTableUI('#tbldatadialog');
-    }, 120);
-});
+    });

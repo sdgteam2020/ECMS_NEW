@@ -2,13 +2,14 @@
     ViewData["Title"] = "Rank";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-<link asp-href-include="~/developercss/rank.css" rel="stylesheet" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/DeveloperCSS/rank.css" rel="stylesheet" />
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
-            <div class="row align-items-center justify-content-between">
+            <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"><i class="fa fa-bars"></i></div>
@@ -22,92 +23,109 @@
     </div>
 </header>
 
-<div class="containerMain ecms-rank-page">
-    <div class="ecms-rank-shell">
-        <div class="ecms-rank-titlebar">
-            <div class="ecms-rank-title-wrap">
-                <span class="ecms-rank-title-icon"><i class="fa fa-star"></i></span>
-                <div>
-                    <h3>Rank Details</h3>
-                    <p>Create, update, arrange and manage rank records</p>
-                </div>
-            </div>
-            <span class="ecms-rank-pill"><i class="fa fa-database"></i> Master</span>
-        </div>
+<div class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-rank-page">
+    <div class="card ecms-card ecms-rank-shell">
+        <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
 
-        <div class="ecms-rank-form-card">
-            <span id="SpnTxnId" class="d-none">0</span>
-
-            <form action="" id="SaveForm" method="post" name="SaveForm">
-                <div class="ecms-rank-form-grid">
-                    <div class="ecms-rank-field">
-                        <label class="ecms-rank-label" for="txtRank">
-                            <i class="fa fa-star"></i>
-                            Rank
-                            <i class="fas fa-asterisk mand1"></i>
-                        </label>
-                        <input class="form-control Alphanumeric ecms-rank-control"
-                               placeholder="Enter Rank"
-                               id="txtRank"
-                               maxlength="50"
-                               required
-                               pattern="^[a-zA-Z0-9 ]*$"
-                               title="Only Alphabets and Numbers allowed" />
-                    </div>
-
-                    <div class="ecms-rank-field">
-                        <label class="ecms-rank-label" for="txtAbbreviation">
-                            <i class="fa fa-font"></i>
-                            Abbreviation
-                            <i class="fas fa-asterisk mand1"></i>
-                        </label>
-                        <input class="form-control Alphanumeric ecms-rank-control"
-                               placeholder="Enter Abbreviation"
-                               id="txtAbbreviation"
-                               maxlength="30"
-                               required
-                               pattern="^[a-zA-Z0-9 ]*$"
-                               title="Only Alphabets and Numbers allowed" />
-                    </div>
-
-                    <div class="ecms-rank-field">
-                        <label class="ecms-rank-label" for="ddlRankType">
-                            <i class="fa fa-users"></i>
-                            Rank Type
-                            <i class="fas fa-asterisk mand1"></i>
-                        </label>
-                        <select class="form-select ecms-rank-control"
-                                name="ddlRankType"
-                                required
-                                id="ddlRankType">
-                            <option value="">Select Rank Type</option>
-                            <option value="1">Offrs</option>
-                            <option value="2">JCO/OR</option>
-                        </select>
-                    </div>
-
-                    <div class="ecms-rank-actions" id="msg">
-                        <input type="button" class="btn btn-outline-primary ecms-rank-save" value="Save" id="btnsave" />
-                        <input type="button" class="btn btn-outline-danger ecms-rank-reset" value="Reset" id="btnReset" />
+            <div class="ecms-page-title ecms-rank-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                <div class="d-flex align-items-center gap-2 ecms-min-0">
+                    <span class="ecms-title-icon">
+                        <i class="fa fa-star"></i>
+                    </span>
+                    <div class="ecms-min-0">
+                        <h3>Rank Details</h3>
+                        <p class="ecms-title-subtitle">Create, update, arrange and manage rank records</p>
                     </div>
                 </div>
-            </form>
-        </div>
 
-        <div class="ecms-rank-table-card">
-            <div class="ecms-rank-table-title">
-                <span><i class="fa fa-list"></i> Rank Records</span>
+                <span class="badge bg-primary ecms-badge ecms-rank-pill">
+                    <i class="fa fa-database"></i>
+                    Master
+                </span>
             </div>
 
-            <div class="ecms-rank-table-wrap">
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
+            <div class="ecms-section ecms-form-section ecms-rank-form-section flex-shrink-0">
+                <span id="SpnTxnId" class="d-none">0</span>
+
+                <form action="" id="SaveForm" method="post" name="SaveForm">
+                    <div class="row g-2 align-items-end">
+
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <label class="form-label ecms-rank-label" for="txtRank">
+                                <i class="fa fa-star"></i>
+                                <span>Rank</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <input class="form-control Alphanumeric ecms-rank-control"
+                                   placeholder="Enter Rank"
+                                   id="txtRank"
+                                   maxlength="50"
+                                   required
+                                   pattern="^[a-zA-Z0-9 ]*$"
+                                   title="Only Alphabets and Numbers allowed" />
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <label class="form-label ecms-rank-label" for="txtAbbreviation">
+                                <i class="fa fa-font"></i>
+                                <span>Abbreviation</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <input class="form-control Alphanumeric ecms-rank-control"
+                                   placeholder="Enter Abbreviation"
+                                   id="txtAbbreviation"
+                                   maxlength="30"
+                                   required
+                                   pattern="^[a-zA-Z0-9 ]*$"
+                                   title="Only Alphabets and Numbers allowed" />
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <label class="form-label ecms-rank-label" for="ddlRankType">
+                                <i class="fa fa-users"></i>
+                                <span>Rank Type</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select ecms-rank-control"
+                                    name="ddlRankType"
+                                    required
+                                    id="ddlRankType">
+                                <option value="">Select Rank Type</option>
+                                <option value="1">Offrs</option>
+                                <option value="2">JCO/OR</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="ecms-form-actions ecms-rank-actions d-flex gap-2 justify-content-xl-end" id="msg">
+                                <input type="button" class="btn btn-primary ecms-rank-save" value="Save" id="btnsave" />
+                                <input type="button" class="btn btn-danger ecms-rank-reset" value="Reset" id="btnReset" />
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
             </div>
+
+            <div class="ecms-section ecms-rank-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                <div class="ecms-section-title flex-shrink-0">
+                    <i class="fa fa-list"></i>
+                    <span>Rank Records</span>
+                </div>
+
+                <div class="ecms-rank-table-wrap ecms-dt-wrap flex-grow-1 ecms-min-0">
+                    <table class="table table-striped table-hover table-bordered dataTable ecms-rank-datatable ecms-dt-table" role="grid" id="tbldata">
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
 
-<script asp-src-include="~/developerjs/rank.js"></script>
-<script asp-src-include="~/developerjs/commandvalidation.js"></script>
-
+<script asp-src-include="~/DeveloperJS/rank.js"></script>
+<script asp-src-include="~/DeveloperJS/commandvalidation.js"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

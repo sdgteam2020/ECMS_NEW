@@ -1,1039 +1,504 @@
-﻿.swal2-html-container {
-    color: red !important;
+﻿/* ==============================================================
+   Account / Profile Management
+   PAGE-SPECIFIC UI ONLY
+
+   Important:
+   - No file inside ModernCSS/css is changed.
+   - Existing ECMS common classes provide the base theme.
+   - Every additional rule below is scoped to this page and its modals.
+================================================================ */
+
+.swal2-html-container {
+    color: var(--ecms-danger-500, #ef405c) !important;
 }
 
 .textarea-auto-height {
-    height: auto !important;
+    height: auto;
 }
 
-#tbldata {
-    table-layout: fixed !important;
+/* ---------- Page stage and fixed-height shell ---------- */
+.ecms-screen-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
 }
-
-/* =====================================================
-   PROFILE MANAGEMENT MODERN UI
-   UI-only CSS. IDs and functionality remain unchanged.
-===================================================== */
-
-body:has(.ecms-profilemanage-page) {
-    background: linear-gradient(90deg, rgba(2, 22, 58, 0.92), rgba(11, 63, 145, 0.78)), url('/assets/img/bg-masthead.jpg'), url('/assets/img/background.jpg') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-attachment: fixed !important;
-    overflow-x: hidden !important;
-}
-
-    body:has(.ecms-profilemanage-page) .content-wrapper,
-    body:has(.ecms-profilemanage-page) .main-panel,
-    body:has(.ecms-profilemanage-page) .page-body,
-    body:has(.ecms-profilemanage-page) main {
-        background: transparent !important;
-    }
 
 .ecms-profilemanage-page {
-    max-width: 1480px !important;
-    margin: 14px auto 78px auto !important;
-    padding: 0 14px !important;
-    color: #061b44 !important;
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1.5rem );
+    min-height: 540px;
+    margin: .65rem auto;
+    overflow: hidden;
 }
 
-    .ecms-profilemanage-page *,
-    .ecms-profile-modal * {
-        box-sizing: border-box !important;
+.ecms-profile-shell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: .7rem;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: .65rem;
+    box-sizing: border-box;
+}
+
+/* ---------- Page title ---------- */
+.ecms-profile-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.ecms-profile-title-content {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.ecms-profile-title-copy {
+    min-width: 0;
+}
+
+    .ecms-profile-title-copy h3 {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: 1.18rem;
+        font-weight: 950;
+        line-height: 1.15;
     }
-
-.ecms-profile-breadcrumb {
-    margin-top: 26px !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    padding: 0 42px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    background: linear-gradient(90deg, #62d3ec, #4b7cff) !important;
-    color: #ffffff !important;
-    font-weight: 900 !important;
-    font-size: 14px !important;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18) !important;
-    position: relative !important;
-    z-index: 2 !important;
-}
-
-    .ecms-profile-breadcrumb a,
-    .ecms-profile-breadcrumb span,
-    .ecms-profile-breadcrumb i {
-        color: #ffffff !important;
-        text-decoration: none !important;
-    }
-
-.ecms-profile-panel {
-    background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(224,238,255,0.92)) !important;
-    border: 1px solid rgba(255,255,255,0.80) !important;
-    border-radius: 22px !important;
-    box-shadow: 0 22px 60px rgba(0,0,0,0.32) !important;
-    padding: 12px !important;
-    max-height: calc(100vh - 238px) !important;
-    min-height: 520px !important;
-    overflow: hidden !important;
-}
-
-.ecms-profile-hero,
-.ecms-profile-section-title {
-    border-radius: 14px !important;
-    border: 1px solid rgba(255,255,255,0.82) !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(225,239,255,0.88)) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9) !important;
-    padding: 12px 16px !important;
-    margin-bottom: 10px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 16px !important;
-}
-
-.ecms-profile-title-left,
-.ecms-profile-section-left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
-}
-
-.ecms-profile-icon {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    border-radius: 13px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #6675ff, #2f6df6) !important;
-    box-shadow: 0 12px 28px rgba(47,109,246,0.30) !important;
-    font-size: 18px !important;
-}
-
-.ecms-profile-title h2,
-.ecms-profile-title h3 {
-    margin: 0 !important;
-    color: #061b44 !important;
-    font-size: 24px !important;
-    line-height: 1.05 !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.2px !important;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.75) !important;
-}
-
-.ecms-profile-title p,
-.ecms-profile-section-left p {
-    margin: 3px 0 0 0 !important;
-    color: #18346a !important;
-    font-weight: 800 !important;
-    font-size: 12px !important;
-}
-
-.ecms-profile-pill {
-    border: 0 !important;
-    border-radius: 12px !important;
-    padding: 9px 18px !important;
-    font-size: 13px !important;
-    font-weight: 950 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #4067f7, #557dff) !important;
-    box-shadow: 0 12px 25px rgba(47,109,246,0.28) !important;
-    white-space: nowrap !important;
-}
 
 .ecms-profile-add-btn {
-    border: 0 !important;
-    border-radius: 12px !important;
-    height: 42px !important;
-    padding: 0 20px !important;
-    font-size: 14px !important;
-    font-weight: 950 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #1f9d49, #36b55d) !important;
-    box-shadow: 0 12px 24px rgba(31,157,73,0.28) !important;
+    flex: 0 0 auto;
+    min-height: 2.35rem;
+    padding: .5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    box-shadow: 0 .7rem 1.4rem rgba(35, 138, 64, .22);
 }
 
-    .ecms-profile-add-btn:hover,
-    .ecms-profile-pill:hover {
-        transform: translateY(-1px) !important;
-        filter: brightness(1.04) !important;
-    }
-
-.ecms-profile-table-card {
-    border-radius: 16px !important;
-    border: 1px solid rgba(255,255,255,0.75) !important;
-    background: rgba(255,255,255,0.74) !important;
-    padding: 10px !important;
-    overflow: hidden !important;
+/* ---------- Main DataTable ---------- */
+.ecms-profile-table-section {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
 }
 
-.ecms-profile-table-heading {
-    height: 36px !important;
-    border-radius: 11px !important;
-    color: #ffffff !important;
-    background: linear-gradient(90deg, #284798, #4b7cff) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-weight: 950 !important;
-    font-size: 14px !important;
-    margin-bottom: 10px !important;
-    box-shadow: 0 8px 20px rgba(47,109,246,0.24) !important;
+.ecms-profile-table-wrap {
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: .45rem .55rem .35rem;
+    overflow: hidden;
 }
 
-/* DataTable modern layout and footer visible */
-.ecms-profilemanage-page .dataTables_wrapper {
-    width: 100% !important;
-    overflow: visible !important;
-}
-
-.ecms-profilemanage-page .dt-top,
-.ecms-profilemanage-page .dataTables_length,
-.ecms-profilemanage-page .dataTables_filter {
-    display: flex !important;
-    align-items: center !important;
+.ecms-profilemanage-page #tbldata_wrapper {
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 2.45rem minmax(0, 1fr) 2.75rem;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: hidden;
 }
 
 .ecms-profilemanage-page .dt-top {
-    justify-content: space-between !important;
-    gap: 12px !important;
-    margin-bottom: 8px !important;
+    grid-row: 1;
+    min-width: 0;
+    min-height: 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .65rem;
+    margin-top:2px;
+    padding-bottom: .4rem;
 }
 
-.ecms-profilemanage-page .dataTables_length label,
-.ecms-profilemanage-page .dataTables_filter label {
-    color: #061b44 !important;
-    font-weight: 800 !important;
-    margin: 0 !important;
-}
-
-.ecms-profilemanage-page .dataTables_length select {
-    height: 34px !important;
-    min-width: 68px !important;
-    border-radius: 7px !important;
-    border: 1px solid rgba(90,120,170,0.35) !important;
-    margin-right: 8px !important;
-}
-
-.ecms-profilemanage-page .dataTables_filter input {
-    height: 38px !important;
-    min-width: 190px !important;
-    border-radius: 8px !important;
-    border: 1px solid rgba(90,120,170,0.45) !important;
-    padding: 0 12px !important;
-    font-weight: 800 !important;
-    background: rgba(255,255,255,0.92) !important;
-}
-
-.ecms-profilemanage-page .dt-buttons {
-    display: none !important;
-}
-
-.ecms-profilemanage-page .dataTables_scroll {
-    border-radius: 12px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(36,75,160,0.20) !important;
-    background: #ffffff !important;
+.ecms-profilemanage-page .dataTables_scroll,
+.ecms-profilemanage-page .dt-scroll {
+    grid-row: 2;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0 !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .ecms-profilemanage-page .dataTables_scrollHead,
 .ecms-profilemanage-page .dt-scroll-head {
-    overflow: hidden !important;
-    border-radius: 12px 12px 0 0 !important;
-    margin-bottom: 0 !important;
+    flex: 0 0 auto;
 }
-
-.ecms-profilemanage-page table.dataTable,
-.ecms-profilemanage-page #tbldata {
-    width: 100% !important;
-    margin: 0 !important;
-    border-collapse: collapse !important;
-    table-layout: fixed !important;
-}
-
-    .ecms-profilemanage-page table.dataTable thead th,
-    .ecms-profilemanage-page table.dataTable thead td {
-        background: linear-gradient(90deg, #244891, #3f70d9) !important;
-        color: #ffffff !important;
-        font-size: 12px !important;
-        font-weight: 950 !important;
-        padding: 11px 10px !important;
-        border: 0 !important;
-        white-space: nowrap !important;
-        text-align: center !important;
-    }
-
-    .ecms-profilemanage-page table.dataTable tbody td {
-        padding: 12px 10px !important;
-        color: #061b44 !important;
-        font-weight: 850 !important;
-        font-size: 12px !important;
-        vertical-align: middle !important;
-        border-color: #dce6f5 !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-
-    .ecms-profilemanage-page table.dataTable tbody tr:nth-child(odd) {
-        background: #ffffff !important;
-    }
-
-    .ecms-profilemanage-page table.dataTable tbody tr:nth-child(even) {
-        background: #eef3fb !important;
-    }
-
-    .ecms-profilemanage-page table.dataTable tbody tr:hover {
-        background: #dcecff !important;
-    }
 
 .ecms-profilemanage-page .dataTables_scrollBody,
 .ecms-profilemanage-page .dt-scroll-body {
-    max-height: 38vh !important;
-    min-height: 250px !important;
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
     overflow: auto !important;
-    border-top: 0 !important;
-    padding-bottom: 8px !important;
 }
 
-    /* Hide DataTables cloned body header */
-    .ecms-profilemanage-page .dataTables_scrollBody > table > thead,
-    .ecms-profilemanage-page .dt-scroll-body > table > thead {
-        display: none !important;
-        visibility: collapse !important;
-        height: 0 !important;
-        min-height: 0 !important;
-        max-height: 0 !important;
-        line-height: 0 !important;
-        font-size: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border: 0 !important;
-        opacity: 0 !important;
-        overflow: hidden !important;
-        pointer-events: none !important;
-    }
-
-        .ecms-profilemanage-page .dataTables_scrollBody > table > thead > tr,
-        .ecms-profilemanage-page .dataTables_scrollBody > table > thead > tr > th,
-        .ecms-profilemanage-page .dataTables_scrollBody > table > thead > tr > td,
-        .ecms-profilemanage-page .dt-scroll-body > table > thead > tr,
-        .ecms-profilemanage-page .dt-scroll-body > table > thead > tr > th,
-        .ecms-profilemanage-page .dt-scroll-body > table > thead > tr > td {
-            display: none !important;
-            visibility: collapse !important;
-            height: 0 !important;
-            min-height: 0 !important;
-            max-height: 0 !important;
-            line-height: 0 !important;
-            font-size: 0 !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border: 0 !important;
-            opacity: 0 !important;
-            overflow: hidden !important;
-        }
-
-.ecms-profilemanage-page .dataTables_info,
-.ecms-profilemanage-page .dataTables_paginate {
-    visibility: visible !important;
-    opacity: 1 !important;
-    display: block !important;
-    margin-top: 10px !important;
+.ecms-profilemanage-page .dt-bottom {
+    grid-row: 3;
+    min-width: 0;
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding-top: .45rem;
 }
 
-.ecms-profilemanage-page .dataTables_info {
-    color: #061b44 !important;
-    font-weight: 850 !important;
-    font-size: 14px !important;
-    float: left !important;
+.ecms-profilemanage-page .dataTables_filter input {
+    min-width: 10.5rem;
 }
 
-.ecms-profilemanage-page .dataTables_paginate {
-    float: right !important;
-}
-
-    .ecms-profilemanage-page .paginate_button,
-    .ecms-profilemanage-page .dataTables_paginate .paginate_button {
-        border: 1px solid #d7e2f2 !important;
-        background: rgba(255,255,255,0.88) !important;
-        color: #244891 !important;
-        border-radius: 8px !important;
-        margin-left: 4px !important;
-        min-width: 34px !important;
-        height: 34px !important;
-        line-height: 22px !important;
-        font-weight: 900 !important;
-    }
-
-        .ecms-profilemanage-page .dataTables_paginate .paginate_button.current,
-        .ecms-profilemanage-page .dataTables_paginate .paginate_button.current:hover {
-            background: #2f45df !important;
-            color: #ffffff !important;
-            border-color: #2f45df !important;
-        }
-
-/* Badges and action buttons */
-.ecms-profilemanage-page .badge,
-.ecms-profile-modal .badge {
-    border-radius: 7px !important;
-    padding: 4px 8px !important;
-    font-size: 10px !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.2px !important;
+.ecms-profilemanage-page .badge {
+    min-width: 2.25rem;
+    padding: .28rem .48rem;
+    font-size: .62rem;
+    text-transform: uppercase;
 }
 
 .ecms-profilemanage-page .badge-success {
-    background: #49bf72 !important;
-    color: #ffffff !important;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient( 135deg, var(--ecms-success-500, #35ad56), var(--ecms-success-600, #238a40) );
 }
 
 .ecms-profilemanage-page .badge-danger {
-    background: #cf315c !important;
-    color: #ffffff !important;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient( 135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136) );
 }
 
-.ecms-profilemanage-page .btn-icon,
-.ecms-profilemanage-page .btn-round {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    border-radius: 10px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 0 !important;
+.ecms-profilemanage-page .dt-ellipsis {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.ecms-profilemanage-page .cls-btnedit,
+.ecms-profilemanage-page .cls-btnDelete {
+    margin: 0 .12rem;
+}
+
+/* Page-local fallback for cloned sizing headers generated by DataTables. */
+.ecms-profilemanage-page .dataTables_scrollBody table thead,
+.ecms-profilemanage-page .dt-scroll-body table thead {
+    display: none !important;
+    visibility: collapse !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
     padding: 0 !important;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
 }
 
-.ecms-profilemanage-page .btn-warning {
-    background: #ffc107 !important;
-    color: #061b44 !important;
+.ecms-profilemanage-page .dataTables_processing,
+.ecms-profilemanage-page .dt-processing,
+#tbldata_processing {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
-.ecms-profilemanage-page .btn-danger {
-    background: #df2238 !important;
-    color: #ffffff !important;
+/* ---------- Modal root / fade correction ---------- */
+.ecms-profile-modal {
+    z-index: 1080 !important;
 }
 
-/* Modal */
+.ecms-info-modal {
+    z-index: 1090 !important;
+}
+
+    .ecms-profile-modal.show,
+    .ecms-info-modal.show,
+    .ecms-profile-modal.show .modal-dialog,
+    .ecms-info-modal.show .modal-dialog,
+    .ecms-profile-modal.show .modal-content,
+    .ecms-info-modal.show .modal-content {
+        opacity: 1 !important;
+        visibility: visible !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+/* This stylesheet is loaded only by Profile Management. */
+body.modal-open .modal-backdrop,
+body.modal-open .modal-backdrop.show {
+    z-index: 1070 !important;
+    opacity: .72 !important;
+}
+
 .ecms-profile-modal .modal-dialog {
-    max-width: 960px !important;
+    width: min(920px, calc(100vw - 2rem));
+    max-width: min(920px, calc(100vw - 2rem));
 }
 
 .ecms-profile-modal .modal-content {
-    border: 1px solid rgba(255,255,255,0.70) !important;
-    border-radius: 18px !important;
-    overflow: hidden !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(224,238,255,0.96)) !important;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.42) !important;
-}
-
-.ecms-profile-modal .modal-header {
-    min-height: 68px !important;
-    padding: 14px 18px !important;
-    border: 0 !important;
-    background: linear-gradient(135deg, #3159bf, #557dff) !important;
-    color: #ffffff !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-}
-
-.ecms-profile-modal .modal-title {
-    color: #ffffff !important;
-    font-size: 20px !important;
-    font-weight: 950 !important;
-    margin: 0 !important;
-}
-
-.ecms-profile-modal .modal-subtitle {
-    color: rgba(255,255,255,0.90) !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-    margin-top: 2px !important;
-}
-
-.ecms-profile-modal .ecms-modal-title-wrap {
-    min-width: 0 !important;
-}
-
-.ecms-profile-modal .ecms-modal-icon {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    border-radius: 12px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: rgba(255,255,255,0.14) !important;
-    border: 1px solid rgba(255,255,255,0.28) !important;
-    color: #ffffff !important;
-    font-size: 18px !important;
-}
-
-.ecms-profile-modal .close,
-.ecms-profile-modal .ecms-modal-close {
-    position: static !important;
-    margin-left: auto !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    border: 2px solid rgba(255,255,255,0.78) !important;
-    background: #e93963 !important;
-    color: #ffffff !important;
-    opacity: 1 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 22px !important;
-    line-height: 1 !important;
-    padding: 0 !important;
-    text-shadow: none !important;
-    box-shadow: 0 8px 20px rgba(233,57,99,0.34) !important;
+    max-height: calc(100vh - 2rem);
 }
 
 .ecms-profile-modal .modal-body {
-    padding: 16px !important;
-    overflow-x: hidden !important;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
+.ecms-info-modal .modal-dialog {
+    width: min(520px, calc(100vw - 2rem));
+    max-width: min(520px, calc(100vw - 2rem));
+}
+
+/* ---------- Modal headings ---------- */
+.ecms-profile-modal .ecms-modal-heading,
+.ecms-info-modal .ecms-modal-heading {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+
+.ecms-profile-modal .ecms-modal-title-icon,
+.ecms-info-modal .ecms-modal-title-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: .7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: rgba(255, 255, 255, .14);
+}
+
+.ecms-profile-modal .ecms-modal-subtitle,
+.ecms-info-modal .ecms-modal-subtitle {
+    margin: .12rem 0 0;
+    color: rgba(255, 255, 255, .86);
+    font-size: .72rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+/* ---------- Profile form ---------- */
 .ecms-profile-form-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 12px !important;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .65rem;
+}
+
+.ecms-profile-span-2 {
+    grid-column: 1 / -1;
 }
 
 .ecms-profile-form-field,
 .ecms-profile-radio-field {
-    border-radius: 12px !important;
-    border: 1px solid rgba(130,160,205,0.28) !important;
-    background: rgba(255,255,255,0.72) !important;
-    padding: 12px !important;
-    min-width: 0 !important;
+    min-width: 0;
+    padding: .65rem;
+    border: 1px solid rgba(100, 132, 190, .2);
+    border-radius: .78rem;
+    background: rgba(255, 255, 255, .72);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .82);
+    box-sizing: border-box;
 }
 
-    .ecms-profile-form-field.full,
-    .ecms-profile-radio-field.full {
-        grid-column: 1 / -1 !important;
+.ecms-profile-form-label,
+.ecms-profile-radio-label {
+    min-width: 0;
+    margin: 0 0 .42rem;
+    display: flex;
+    align-items: center;
+    gap: .38rem;
+    color: var(--ecms-text, #061b44);
+    font-size: .78rem;
+    font-weight: 950;
+    line-height: 1.25;
+}
+
+.ecms-profile-radio-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.ecms-profile-field-icon {
+    width: 1.55rem;
+    height: 1.55rem;
+    min-width: 1.55rem;
+    border-radius: .5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff) );
+    font-size: .7rem;
+}
+
+.ecms-profile-info-trigger {
+    flex: 0 0 auto;
+    color: var(--ecms-primary-700, #1d57bb);
+    cursor: help;
+    font-size: .85rem;
+}
+
+    .ecms-profile-info-trigger:focus-visible {
+        outline: 2px solid rgba(47, 103, 230, .45);
+        outline-offset: 2px;
+        border-radius: 50%;
     }
 
-    .ecms-profile-form-field label,
-    .ecms-profile-radio-field .ecms-radio-label {
-        display: flex !important;
-        align-items: center !important;
-        gap: 7px !important;
-        color: #061b44 !important;
-        font-size: 13px !important;
-        line-height: 1.2 !important;
-        font-weight: 950 !important;
-        margin-bottom: 8px !important;
-    }
-
-    .ecms-profile-form-field .ecms-field-icon,
-    .ecms-profile-radio-field .ecms-field-icon {
-        width: 24px !important;
-        height: 24px !important;
-        min-width: 24px !important;
-        border-radius: 9px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #4a7cff, #345fd2) !important;
-        font-size: 12px !important;
-    }
-
-.ecms-profile-modal input:not([type="radio"]):not([type="button"]),
-.ecms-profile-modal select,
-.ecms-profile-modal textarea,
+.ecms-profile-modal .form-control,
 .ecms-profile-modal .form-control1,
 .ecms-profile-modal .form-control-Alphabets,
-.ecms-profile-modal .form-select {
-    width: 100% !important;
-    height: 42px !important;
-    border-radius: 9px !important;
-    border: 1px solid rgba(100,132,190,0.38) !important;
-    background: #ffffff !important;
-    color: #061b44 !important;
-    padding: 0 12px !important;
-    font-weight: 850 !important;
-    outline: 0 !important;
-    box-shadow: none !important;
+.ecms-profile-modal .form-select,
+.ecms-profile-modal textarea {
+    width: 100%;
+    max-width: 100%;
+    min-height: var(--ecms-control-height, 36px);
+    padding: .45rem .7rem;
+    box-sizing: border-box;
 }
 
 .ecms-profile-modal textarea {
-    min-height: 78px !important;
-    height: auto !important;
-    padding: 10px 12px !important;
-    resize: vertical !important;
+    min-height: 4.5rem;
+    resize: vertical;
 }
-
-    .ecms-profile-modal input:focus,
-    .ecms-profile-modal select:focus,
-    .ecms-profile-modal textarea:focus {
-        border-color: #4b7cff !important;
-        box-shadow: 0 0 0 3px rgba(75,124,255,0.16) !important;
-    }
 
 .ecms-profile-radio-options {
-    display: flex !important;
-    align-items: center !important;
-    gap: 22px !important;
-    min-height: 42px !important;
+    min-height: 1.9rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .9rem;
 }
 
-.ecms-profile-modal input[type="radio"].form-check-input,
-.ecms-profile-modal input[type="radio"] {
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    width: 16px !important;
-    height: 16px !important;
-    min-width: 16px !important;
-    min-height: 16px !important;
-    max-width: 16px !important;
-    max-height: 16px !important;
-    padding: 0 !important;
-    margin: 0 7px 0 0 !important;
-    border: 2px solid #b8c8e6 !important;
-    border-radius: 50% !important;
-    background: #ffffff !important;
-    box-shadow: none !important;
-    cursor: pointer !important;
-    display: inline-block !important;
-    vertical-align: middle !important;
-    position: relative !important;
-    flex: 0 0 16px !important;
-}
-
-    .ecms-profile-modal input[type="radio"].form-check-input:checked,
-    .ecms-profile-modal input[type="radio"]:checked {
-        border-color: #2563eb !important;
-        background: radial-gradient(circle at center, #2563eb 0 42%, transparent 45% 100%), #ffffff !important;
-        box-shadow: 0 0 0 3px rgba(37,99,235,0.16) !important;
+    .ecms-profile-radio-options .form-check,
+    .ecms-profile-radio-options .form-check-inline {
+        min-height: 1.25rem;
+        margin: 0;
+        padding-left: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
     }
 
-.ecms-profile-modal .form-check,
-.ecms-profile-modal .form-check-inline {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    min-height: 22px !important;
-    padding-left: 0 !important;
-    margin: 0 !important;
+.ecms-profile-modal input[type="radio"] {
+    position: static;
+    margin: 0;
+    flex: 0 0 1rem;
+    accent-color: var(--ecms-primary-600, #2f67e6);
 }
 
 .ecms-profile-modal .form-check-label {
-    cursor: pointer !important;
-    color: #061b44 !important;
-    font-weight: 900 !important;
-    line-height: 16px !important;
-    margin: 0 !important;
-    user-select: none !important;
-}
-
-.ecms-profile-modal .mand1 {
-    color: #e43c5f !important;
-    font-size: 8px !important;
-    margin-left: 4px !important;
+    margin: 0;
+    cursor: pointer;
 }
 
 .ecms-profile-actions {
-    grid-column: 1 / -1 !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-    gap: 10px !important;
-    margin-top: 4px !important;
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: .15rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .55rem;
 }
 
     .ecms-profile-actions .btn,
-    .ecms-profile-actions input[type="button"],
-    .ecms-profile-actions button {
-        width: auto !important;
-        min-width: 92px !important;
-        height: 40px !important;
-        border-radius: 10px !important;
-        padding: 0 18px !important;
-        font-weight: 950 !important;
-        border: 0 !important;
+    .ecms-profile-actions input[type="button"] {
+        width: auto;
+        min-width: 5.75rem;
+        max-width: 9rem;
+        min-height: 2.4rem;
+        padding: .45rem 1rem;
+        flex: 0 0 auto;
     }
 
-    .ecms-profile-actions #btnProfileAddButton {
-        background: linear-gradient(135deg, #416bf4, #557dff) !important;
-        color: #ffffff !important;
-        box-shadow: 0 10px 22px rgba(65,107,244,0.26) !important;
+.ecms-profile-modal #msg {
+    margin-top: .2rem;
+}
+
+.ecms-profile-info-body {
+    color: var(--ecms-text, #061b44);
+    font-size: .86rem;
+    font-weight: 700;
+    line-height: 1.55;
+}
+
+/* ---------- Responsive behavior ---------- */
+@media (max-width: 1199.98px) {
+    .ecms-profilemanage-page {
+        width: calc(100vw - 1.25rem);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-screen-stage {
+        overflow: visible;
     }
 
-    .ecms-profile-actions #btnProfileAddReset {
-        background: linear-gradient(135deg, #db2f3f, #e94b4b) !important;
-        color: #ffffff !important;
-        box-shadow: 0 10px 22px rgba(219,47,63,0.26) !important;
+    .ecms-profilemanage-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 40rem;
+        overflow: visible;
     }
 
-.ecms-info-modal .modal-content {
-    border-radius: 16px !important;
-    overflow: hidden !important;
-}
+    .ecms-profile-shell {
+        height: auto;
+        min-height: 40rem;
+    }
 
-.ecms-info-modal .modal-header {
-    background: linear-gradient(135deg, #244891, #4b7cff) !important;
-    color: #ffffff !important;
-}
+    .ecms-profile-title-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 
-.ecms-info-modal .modal-title {
-    color: #ffffff !important;
-    font-weight: 950 !important;
-}
+    .ecms-profile-add-btn {
+        width: 100%;
+    }
 
-/* Footer spacing */
-body:has(.ecms-profilemanage-page) footer,
-body:has(.ecms-profilemanage-page) .footer {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 50 !important;
-}
+    .ecms-profilemanage-page .dt-top,
+    .ecms-profilemanage-page .dt-bottom {
+        align-items: stretch;
+        flex-direction: column;
+    }
 
-@media (max-width: 1199px) {
-    .ecms-profile-panel {
-        max-height: none !important;
-        overflow: visible !important;
+    .ecms-profilemanage-page #tbldata_wrapper {
+        grid-template-rows: auto minmax(18rem, 1fr) auto;
     }
 
     .ecms-profile-form-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr;
     }
 
-    .ecms-profilemanage-page .dataTables_scrollBody,
-    .ecms-profilemanage-page .dt-scroll-body {
-        max-height: 420px !important;
+    .ecms-profile-span-2,
+    .ecms-profile-actions {
+        grid-column: auto;
     }
+
+    .ecms-profile-actions {
+        justify-content: stretch;
+    }
+
+        .ecms-profile-actions .btn,
+        .ecms-profile-actions input[type="button"] {
+            max-width: none;
+            flex: 1 1 0;
+        }
 }
-
-@media (max-width: 768px) {
-    .ecms-profilemanage-page {
-        margin-left: 8px !important;
-        margin-right: 8px !important;
-        padding: 0 !important;
-    }
-
-    .ecms-profile-hero,
-    .ecms-profile-section-title {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-    }
-
-    .ecms-profile-add-btn,
-    .ecms-profile-pill {
-        width: 100% !important;
-    }
-}
-
-
-/* =====================================================
-   FINAL FIX - ProfileManage page/table scroll only
-   Keep this block at the very end of profilemanage.css.
-   UI only: no business logic changed.
-===================================================== */
-
-/* No browser/page scrollbar for this page */
-html:has(.ecms-profilemanage-page),
-body:has(.ecms-profilemanage-page) {
-    height: 100% !important;
-    min-height: 100% !important;
-    overflow: hidden !important;
-}
-
-    /* Keep content inside viewport between breadcrumb and footer */
-    body:has(.ecms-profilemanage-page) .content-wrapper,
-    body:has(.ecms-profilemanage-page) .main-panel,
-    body:has(.ecms-profilemanage-page) .page-body,
-    body:has(.ecms-profilemanage-page) main,
-    body:has(.ecms-profilemanage-page) .containerMain {
-        overflow: hidden !important;
-    }
-
-/* Less outer height so footer never hides DataTable footer */
-.ecms-profilemanage-page {
-    height: calc(100vh - 240px) !important;
-    max-height: calc(100vh - 240px) !important;
-    margin-top: 12px !important;
-    margin-bottom: 0 !important;
-    overflow: hidden !important;
-}
-
-.ecms-profile-panel {
-    height: 100% !important;
-    max-height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-    padding: 10px !important;
-}
-
-/* Keep header/cards compact and table gets remaining space */
-.ecms-profile-hero,
-.ecms-profile-section-title {
-    flex: 0 0 auto !important;
-    min-height: 56px !important;
-    margin-bottom: 8px !important;
-    padding: 10px 14px !important;
-}
-
-.ecms-profile-icon {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-}
-
-.ecms-profile-title h2,
-.ecms-profile-title h3 {
-    font-size: 21px !important;
-}
-
-.ecms-profile-title p,
-.ecms-profile-section-left p {
-    font-size: 11px !important;
-}
-
-.ecms-profile-table-card {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 10px !important;
-}
-
-.ecms-profile-table-heading {
-    flex: 0 0 34px !important;
-    height: 34px !important;
-    margin-bottom: 8px !important;
-}
-
-/* DataTable wrapper layout: header controls + scroll table + footer all visible */
-.ecms-profilemanage-page #tbldata_wrapper {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-}
-
-    .ecms-profilemanage-page #tbldata_wrapper .dt-top {
-        flex: 0 0 auto !important;
-        margin-bottom: 6px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scroll {
-        flex: 1 1 auto !important;
-        min-height: 0 !important;
-        overflow: hidden !important;
-        display: flex !important;
-        flex-direction: column !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollHead {
-        flex: 0 0 auto !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollBody {
-        flex: 1 1 auto !important;
-        min-height: 145px !important;
-        max-height: 32vh !important;
-        overflow: auto !important;
-        padding-bottom: 18px !important;
-    }
-
-    /* Footer/info must stay outside the scroll body and visible */
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_info,
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_paginate {
-        flex: 0 0 auto !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        display: block !important;
-        margin-top: 8px !important;
-        margin-bottom: 0 !important;
-        position: relative !important;
-        z-index: 5 !important;
-    }
-
-    /* Do not compress columns; horizontal scrollbar must be inside DataTable */
-    .ecms-profilemanage-page #tbldata,
-    .ecms-profilemanage-page #tbldata_wrapper table.dataTable,
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollHead table,
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollBody table {
-        table-layout: auto !important;
-        width: 1550px !important;
-        min-width: 1550px !important;
-        max-width: none !important;
-    }
-
-    /* Column sizes to stop header text overlap/collapse */
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(1),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(1) {
-        min-width: 65px !important;
-        width: 65px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(2),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(2) {
-        min-width: 105px !important;
-        width: 105px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(3),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(3) {
-        min-width: 165px !important;
-        width: 165px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(4),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(4) {
-        min-width: 120px !important;
-        width: 120px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(5),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(5) {
-        min-width: 95px !important;
-        width: 95px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(6),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(6) {
-        min-width: 175px !important;
-        width: 175px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(7),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(7) {
-        min-width: 210px !important;
-        width: 210px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(8),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(8) {
-        min-width: 130px !important;
-        width: 130px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(9),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(9) {
-        min-width: 140px !important;
-        width: 140px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(10),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(10) {
-        min-width: 190px !important;
-        width: 190px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper th:nth-child(11),
-    .ecms-profilemanage-page #tbldata_wrapper td:nth-child(11) {
-        min-width: 110px !important;
-        width: 110px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper table.dataTable thead th,
-    .ecms-profilemanage-page #tbldata_wrapper table.dataTable thead td {
-        white-space: nowrap !important;
-        overflow: visible !important;
-        text-overflow: unset !important;
-        vertical-align: middle !important;
-        line-height: 1.15 !important;
-        padding: 10px 16px 10px 10px !important;
-        font-size: 12px !important;
-    }
-
-    /* Body cells may truncate, but headers should not collapse */
-    .ecms-profilemanage-page #tbldata_wrapper table.dataTable tbody td {
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-
-    /* Hide cloned body header only; real header remains in scrollHead */
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollBody table thead,
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollBody table thead tr,
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollBody table thead th,
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollBody table thead td {
-        display: none !important;
-        visibility: collapse !important;
-        height: 0 !important;
-        max-height: 0 !important;
-        line-height: 0 !important;
-        font-size: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border: 0 !important;
-        overflow: hidden !important;
-    }
-
-    /* Scrollbar visible only inside DataTable */
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollBody::-webkit-scrollbar {
-        width: 10px !important;
-        height: 10px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb {
-        background: #7fa7ff !important;
-        border-radius: 10px !important;
-    }
-
-    .ecms-profilemanage-page #tbldata_wrapper .dataTables_scrollBody::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.65) !important;
-        border-radius: 10px !important;
-    }
-
-    /* Prevent right action buttons from being clipped */
-    .ecms-profilemanage-page #tbldata_wrapper td.col-action,
-    .ecms-profilemanage-page #tbldata_wrapper th.col-action {
-        overflow: visible !important;
-    }
-
-/* Compact footer fixed at bottom */
-body:has(.ecms-profilemanage-page) footer,
-body:has(.ecms-profilemanage-page) .footer {
-    height: 34px !important;
-    min-height: 34px !important;
-    line-height: 34px !important;
-}
-
-
-/* =====================================================
-   FINAL FIX - ECMS background image restore
-   Same background image used on previous modern pages.
-   Keep this block at the very end of profilemanage.css.
-===================================================== */
-
-html:has(.ecms-profilemanage-page),
-body:has(.ecms-profilemanage-page) {
-    background: linear-gradient(90deg, rgba(5, 22, 62, 0.88), rgba(20, 70, 154, 0.74)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover fixed no-repeat !important;
-    overflow: hidden !important;
-}
-
-    body:has(.ecms-profilemanage-page)::before {
-        content: "" !important;
-        position: fixed !important;
-        inset: 0 !important;
-        background: linear-gradient(90deg, rgba(4, 18, 55, 0.50), rgba(19, 69, 158, 0.32)) !important;
-        pointer-events: none !important;
-        z-index: -1 !important;
-    }
-
-    body:has(.ecms-profilemanage-page) .content-wrapper,
-    body:has(.ecms-profilemanage-page) .main-panel,
-    body:has(.ecms-profilemanage-page) .page-body,
-    body:has(.ecms-profilemanage-page) main,
-    body:has(.ecms-profilemanage-page) .containerMain {
-        background: transparent !important;
-    }

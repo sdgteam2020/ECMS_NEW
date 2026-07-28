@@ -1,5 +1,17 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var UnitId;
+function safeAdjustUnitDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -106,11 +118,11 @@ function BindData() {
         $("#tbldata tbody").empty(); // Clear old tbody
     }
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '300px',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // UI only: normal DataTables scroll inside card
+        deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
@@ -121,7 +133,7 @@ function BindData() {
         autoWidth: false,  //Set autoWidth to true (let DataTables decide)
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
-        searching: false,
+        searching: true,
         order: [[0, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -229,7 +241,7 @@ function BindData() {
                 className: "noExport text-center col-action",
                 width: "120px",
                 render: function (data, type, row) {
-                    return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
+                    return "<span id='btnedit'><button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn ecms-action-btn btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
                 }
             }
         ],
@@ -257,7 +269,9 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "UNIT SUS No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
+            "rt" +
+            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -286,20 +300,20 @@ function BindData() {
         // ✅ ADD: initComplete for zoom handling
         initComplete: function () {
             // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            safeAdjustUnitDataTable(this.api());
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    safeAdjustUnitDataTable(table);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustUnitDataTable(this.api());
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')

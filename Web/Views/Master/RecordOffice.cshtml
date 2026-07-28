@@ -4,17 +4,17 @@
 }
 
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-<link asp-href-include="~/developercss/recordoffice.css" rel="stylesheet" />
+<link asp-href-include="~/developercss/recordoffice.css" rel="stylesheet" asp-append-version="true" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
-                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
-                        <span>&gt;</span>
+                        <span class="page-header-icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
+                        <a href="/Master/DashboardMaster">Dashboard</a>
+                        <span aria-hidden="true">&gt;</span>
                         <span>Record Office Details</span>
                     </h1>
                 </div>
@@ -23,83 +23,85 @@
     </div>
 </header>
 
-<div class="containerMain ecms-recordoffice-page">
-    <div class="ecms-recordoffice-shell">
-        <div class="ecms-recordoffice-titlebar">
-            <div class="ecms-recordoffice-title-wrap">
-                <span class="ecms-recordoffice-title-icon"><i class="fa fa-address-book"></i></span>
-                <div>
-                    <h3>Record Office Details</h3>
-                    <p>Create, update and manage record office, arms/service and linked domain details</p>
-                </div>
-            </div>
-            <span class="ecms-recordoffice-pill"><i class="fa fa-database"></i> Master</span>
-        </div>
-
-        <div class="ecms-recordoffice-toolbar-card">
-            <span id="ArmedIdForORO" class="d-none">@ViewBag.ArmedIdForORO</span>
-
-            <div class="ecms-recordoffice-toolbar-text">
-                <span class="ecms-recordoffice-toolbar-icon"><i class="fa fa-list"></i></span>
-                <div>
-                    <h5>Record Office Records</h5>
-                    <p>View all record offices and add record office mapping</p>
-                </div>
-            </div>
-
-            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm ecms-recordoffice-add-btn">
-                <i class="fa fa-plus"></i>
-                Add Record Office
-            </button>
-        </div>
-
-        <div class="ecms-recordoffice-table-card">
-            <div class="ecms-recordoffice-table-title">
-                <span><i class="fa fa-table"></i> Record Office Records</span>
-            </div>
-
-            <div class="ecms-recordoffice-table-wrap">
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script asp-src-include="~/developerjs/mtables.js"></script>
-<script asp-src-include="~/developerjs/RecordOffice.js"></script>
-<partial name="~/Views/Shared/_DataTableJS.cshtml" />
-
-<div class="modal fade ecms-recordoffice-modal" id="AddNewRecordOffice" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="ecms-recordoffice-modal-title-wrap">
-                    <span class="ecms-recordoffice-modal-icon"><i class="fa fa-address-book"></i></span>
-                    <div>
-                        <h5 class="modal-title" id="exampleModalLabel">Enter Record Office Details</h5>
-                        <small>Fill record office, arms/service, message and linked domain mapping details</small>
+<main class="containerMain ecms-page ecms-page-full ecms-recordoffice-page">
+    <section class="card ecms-card ecms-recordoffice-shell">
+        <div class="ecms-card-body ecms-recordoffice-shell-body">
+            <div class="ecms-page-title d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div class="d-flex align-items-center gap-2 ecms-min-0">
+                    <span class="ecms-title-icon" aria-hidden="true">
+                        <i class="fa fa-address-book"></i>
+                    </span>
+                    <div class="ecms-min-0">
+                        <h3>Record Office Details</h3>
+                        <p class="ecms-title-subtitle">Create, update and manage record office, arms/service and linked domain details</p>
                     </div>
                 </div>
-                <button type="button" class="close ecms-recordoffice-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="fa fa-times"></i></span>
+
+                <button type="button"
+                        id="btnAdd"
+                        class="btn btn-success btn-sm d-inline-flex align-items-center gap-2 ecms-recordoffice-add-btn">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <span>Add Record Office</span>
+                </button>
+            </div>
+
+            <section class="ecms-section ecms-recordoffice-records">
+                <div class="ecms-section-title">
+                    <i class="fa fa-table" aria-hidden="true"></i>
+                    <span>Record Office Records</span>
+                </div>
+
+                <div class="ecms-dt-wrap ecms-recordoffice-table-wrap">
+                    <table id="tbldata"
+                           class="table table-striped table-hover ecms-dt-table"
+                           role="grid"
+                           aria-label="Record office records">
+                    </table>
+                </div>
+            </section>
+        </div>
+    </section>
+</main>
+
+<div class="modal fade" id="AddNewRecordOffice" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ecms-modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="ecms-modal-title-wrap">
+                    <span class="ecms-modal-title-icon" aria-hidden="true">
+                        <i class="fa fa-address-book"></i>
+                    </span>
+                    <div>
+                        <h5 class="modal-title" id="exampleModalLabel">Add Record Office Details</h5>
+                        <p class="ecms-modal-subtitle" id="recordOfficeModalSubtitle">
+                            Fill record office, arms/service, message and linked domain mapping details
+                        </p>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close">
                 </button>
             </div>
 
             <div class="modal-body">
                 <form action="" id="SaveRecordOffice" name="SaveRecordOffice" method="post">
-                    <div class="ecms-recordoffice-modal-grid">
-                        <div class="ecms-recordoffice-modal-field">
-                            <label class="ecms-recordoffice-modal-label" for="txtName">
-                                <i class="fa fa-building"></i>
-                                Name of Record Office
-                                <i class="fas fa-asterisk mand1"></i>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="txtName">
+                                <span class="ecms-label-icon"><i class="fa fa-building" aria-hidden="true"></i></span>
+                                <span>Name of Record Office</span>
+                                <span class="mand1" aria-hidden="true">*</span>
                             </label>
-                            <input class="form-control1"
+                            <input class="form-control form-control1"
                                    placeholder="Enter Record Office"
                                    id="txtName"
                                    name="txtName"
                                    maxlength="50"
+                                   autocomplete="off"
                                    data-val="true"
                                    data-val-regex="Record Office name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
                                    data-val-required="Record Office is required."
@@ -107,17 +109,18 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtName" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-recordoffice-modal-field">
-                            <label class="ecms-recordoffice-modal-label" for="txtAbbreviation">
-                                <i class="fa fa-font"></i>
-                                Abbreviation
-                                <i class="fas fa-asterisk mand1"></i>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="txtAbbreviation">
+                                <span class="ecms-label-icon"><i class="fa fa-font" aria-hidden="true"></i></span>
+                                <span>Abbreviation</span>
+                                <span class="mand1" aria-hidden="true">*</span>
                             </label>
-                            <input class="form-control1"
+                            <input class="form-control form-control1"
                                    placeholder="Enter Abbreviation"
                                    id="txtAbbreviation"
                                    name="txtAbbreviation"
                                    maxlength="15"
+                                   autocomplete="off"
                                    data-val="true"
                                    data-val-regex="Record Office Abbreviation name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
                                    data-val-required="Abbreviation is required."
@@ -125,43 +128,51 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtAbbreviation" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-recordoffice-modal-field">
-                            <label class="ecms-recordoffice-modal-label" for="ddlArmType">
-                                <i class="fa fa-shield"></i>
-                                Name of Arms, Service & Corps
-                                <i class="fas fa-asterisk mand1"></i>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="ddlArmType">
+                                <span class="ecms-label-icon"><i class="fa fa-shield" aria-hidden="true"></i></span>
+                                <span>Name of Arms, Service &amp; Corps</span>
+                                <span class="mand1" aria-hidden="true">*</span>
                             </label>
-                            <select class="form-select" name="ddlArmType" id="ddlArmType" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Arms, Service & Corps is required." data-val-regex-pattern="^[\d]+$">
+                            <select class="form-select"
+                                    name="ddlArmType"
+                                    id="ddlArmType"
+                                    data-val="true"
+                                    data-val-regex="This special chars not allowed for security reasons."
+                                    data-val-required="Arms, Service & Corps is required."
+                                    data-val-regex-pattern="^[\d]+$">
                                 <option value="0">Select Arms</option>
                             </select>
                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlArmType" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-recordoffice-modal-field">
-                            <label class="ecms-recordoffice-modal-label" for="txtUnitName">
-                                <i class="fa fa-search"></i>
-                                SUS No
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-label-with-icon" for="txtUnitName">
+                                <span class="ecms-label-icon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                <span>SUS No</span>
                             </label>
                             <input class="form-control alpha-num-only"
                                    placeholder="Type SUS No"
                                    id="txtUnitName"
                                    name="txtUnitName"
+                                   autocomplete="off"
                                    data-val="true"
                                    data-val-regex="This special chars not allowed for security reasons."
                                    data-val-regex-pattern="^[\w ]*$" />
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-recordoffice-modal-field ecms-recordoffice-modal-field-wide">
-                            <label class="ecms-recordoffice-modal-label" for="txtMessage">
-                                <i class="fa fa-comment"></i>
-                                Message for RO
+                        <div class="col-12">
+                            <label class="form-label ecms-label-with-icon" for="txtMessage">
+                                <span class="ecms-label-icon"><i class="fa fa-comment" aria-hidden="true"></i></span>
+                                <span>Message for RO</span>
                             </label>
-                            <textarea class="form-control1 textarea-auto-height"
+                            <textarea class="form-control form-control1 ecms-recordoffice-message-control"
                                       name="txtMessage"
                                       id="txtMessage"
                                       rows="3"
                                       maxlength="150"
+                                      placeholder="Enter message for Record Office"
                                       data-val-maxlength="Maximum length of Message is 150 character."
                                       data-val-maxlength-max="150"
                                       data-val="true"
@@ -170,26 +181,44 @@
                             <span class="text-danger field-validation-valid" data-valmsg-for="txtMessage" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-recordoffice-modal-field ecms-recordoffice-modal-field-wide">
-                            <label class="ecms-recordoffice-modal-label" for="ddlTDMId">
-                                <i class="fa fa-link"></i>
-                                Linked Domain ID & Pers Details
+                        <div class="col-12">
+                            <label class="form-label ecms-label-with-icon" for="ddlTDMId">
+                                <span class="ecms-label-icon"><i class="fa fa-link" aria-hidden="true"></i></span>
+                                <span>Linked Domain ID &amp; Pers Details</span>
                             </label>
-                            <select class="form-select" name="ddlTDMId" id="ddlTDMId" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\d]+$">
+                            <select class="form-select"
+                                    name="ddlTDMId"
+                                    id="ddlTDMId"
+                                    data-val="true"
+                                    data-val-regex="This special chars not allowed for security reasons."
+                                    data-val-regex-pattern="^[\d]+$">
                                 <option value="0">Select Domain Id</option>
                             </select>
                             <span class="text-danger field-validation-valid" data-valmsg-for="ddlTDMId" data-valmsg-replace="true"></span>
                         </div>
 
-                        <div class="ecms-recordoffice-modal-actions">
-                            <input type="button" class="btn btn-outline-primary" value="Save" id="btnRecordOfficeAdd" />
-                            <button type="button" id="btnRecordOfficeReset" class="btn btn-outline-danger">Reset</button>
+                        <div class="col-12">
+                            <div class="ecms-form-actions justify-content-end pt-1">
+                                <input type="button"
+                                       class="btn btn-primary px-4"
+                                       value="Save"
+                                       id="btnRecordOfficeAdd" />
+                                <button type="button"
+                                        id="btnRecordOfficeReset"
+                                        class="btn btn-danger px-4">
+                                    Reset
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="ecms-recordoffice-message" id="msg"></div>
+                        <div class="col-12 ecms-recordoffice-message" id="msg"></div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />
+<script asp-src-include="~/developerjs/RecordOffice.js" asp-append-version="true"></script>

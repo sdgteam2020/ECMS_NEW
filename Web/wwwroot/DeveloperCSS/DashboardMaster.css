@@ -593,7 +593,6 @@ body:has(.ecms-dashboardmaster-page) .page-header.page-header-dark,
 body:has(.ecms-dashboardmaster-page) header.page-header.page-header-dark {
     position: relative !important;
     z-index: 30 !important;
-    margin-top: 26px !important;
     transform: none !important;
     overflow: visible !important;
 }

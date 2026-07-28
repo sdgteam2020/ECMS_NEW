@@ -1,218 +1,139 @@
 /*
-Developer note:
-Each CSS rule below has an 'Effect' comment. These comments explain
-what UI area the rule controls so future developers can safely change
-forms, pages, DataTables, modals, header/footer and utilities from one place.
+ECMS page components
+Bootstrap handles grid/responsive columns. These classes only provide ECMS theme skin.
+Recommended markup: .container-fluid.ecms-page > .card.ecms-card > Bootstrap rows/cols.
 */
 
-/*
-=====================================================
-ECMS PAGE / CARD SYSTEM
-Use these classes for all future pages:
-.ecms-page, .ecms-page-card, .ecms-section, .ecms-section-title
-=====================================================
-*/
-
-/* Effect: Defines the common ECMS page width, spacing and footer-safe margin. */
-.ecms-page,
-.containerMain.ecms-page {
-    width: min(1480px, calc(100vw - 42px)) !important;
-    max-width: none !important;
-    margin: 12px auto calc(var(--ecms-footer-height) + 10px) auto !important;
-    color: var(--ecms-text) !important;
+.ecms-page {
+    width: min(1480px, calc(100vw - 1.5rem));
+    margin: .75rem auto calc(var(--ecms-footer-height) + .75rem);
+    color: var(--ecms-text);
 }
 
-/* Effect: Expands the page shell to near full browser width. */
-.ecms-page.ecms-page-full {
-    width: calc(100vw - 28px) !important;
+.ecms-page-full {
+    width: calc(100vw - 1rem);
+    max-width: none;
 }
 
-/* Effect: Fits page content into available screen height without browser scrolling. */
-.ecms-page.ecms-fit-screen {
-    height: calc(100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 18px) !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
+.ecms-fit-screen {
+    min-height: 0;
 }
 
-/* Effect: Defines the common ECMS page width, spacing and footer-safe margin. */
-.ecms-page-card,
-.ecms-panel,
-.ecms-shell-card {
-    width: 100% !important;
-    border: var(--ecms-border-white) !important;
-    border-radius: var(--ecms-radius-lg) !important;
-    background: var(--ecms-page-surface) !important;
-    box-shadow: var(--ecms-shadow-md) !important;
-    overflow: hidden !important;
+.ecms-card {
+    border: var(--ecms-border-white);
+    border-radius: var(--ecms-radius-xl);
+    background: var(--ecms-page-surface);
+    box-shadow: var(--ecms-shadow-md);
+    overflow: hidden;
 }
 
-/* Effect: Defines the common ECMS page width, spacing and footer-safe margin. */
-.ecms-page-card {
-    padding: 12px !important;
+.ecms-card-body {
+    padding: .75rem;
 }
 
-/* Effect: Defines the common ECMS page width, spacing and footer-safe margin. */
-.ecms-page-card.ecms-grid-page {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: grid !important;
-    grid-template-rows: auto minmax(0, 1fr) !important;
-    gap: 10px !important;
+.ecms-page-title {
+    min-height: var(--ecms-title-height);
+    padding: .65rem .9rem;
+    border: var(--ecms-border-white);
+    border-radius: var(--ecms-radius-lg);
+    background: var(--ecms-card-surface);
+    box-shadow: var(--ecms-shadow-sm);
 }
 
-/* Effect: Defines the common ECMS page width, spacing and footer-safe margin. */
-.ecms-page-title,
-.ecms-card-title,
-.ecms-record-title {
-    min-height: 58px !important;
-    padding: 12px 16px !important;
-    border: 1px solid rgba(255,255,255,.70) !important;
-    border-radius: var(--ecms-radius-md) !important;
-    background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(236,246,255,.92)) !important;
-    box-shadow: var(--ecms-shadow-sm) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
+.ecms-title-icon {
+    width: 2.6rem;
+    height: 2.6rem;
+    min-width: 2.6rem;
+    border-radius: .85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, #6f7cff, var(--ecms-primary-500));
+    box-shadow: 0 .75rem 1.35rem rgba(63,124,255,.28);
 }
 
-/* Effect: Defines the common ECMS page width, spacing and footer-safe margin. */
 .ecms-page-title h1,
 .ecms-page-title h2,
 .ecms-page-title h3,
-.ecms-page-title h4,
-.ecms-card-title h1,
-.ecms-card-title h2,
-.ecms-card-title h3,
-.ecms-card-title h4,
-.ecms-record-title h1,
-.ecms-record-title h2,
-.ecms-record-title h3,
-.ecms-record-title h4 {
-    margin: 0 !important;
-    color: var(--ecms-text) !important;
-    font-weight: 900 !important;
-    line-height: 1.15 !important;
+.ecms-page-title h4 {
+    margin: 0;
+    color: var(--ecms-text);
+    font-weight: 950;
+    line-height: 1.1;
 }
 
-/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
-.ecms-title-icon {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    border-radius: 13px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #6f7cff, #3f7cff) !important;
-    color: #fff !important;
-    box-shadow: 0 12px 22px rgba(63,124,255,.28) !important;
-}
-
-/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
 .ecms-title-subtitle {
-    margin: 3px 0 0 0 !important;
-    color: var(--ecms-text-soft) !important;
-    font-size: var(--ecms-font-size-sm) !important;
-    font-weight: 800 !important;
+    margin: .15rem 0 0;
+    color: var(--ecms-text-soft);
+    font-size: .8rem;
+    font-weight: 800;
 }
 
-/* Effect: Styles this ECMS component/selector. Update here to change the same UI consistently. */
 .ecms-section {
-    border: var(--ecms-border) !important;
-    border-radius: var(--ecms-radius-md) !important;
-    background: var(--ecms-card-surface) !important;
-    box-shadow: var(--ecms-shadow-sm) !important;
-    overflow: hidden !important;
+    border: var(--ecms-border);
+    border-radius: var(--ecms-radius-lg);
+    background: var(--ecms-section-surface);
+    box-shadow: var(--ecms-shadow-sm);
+    overflow: hidden;
 }
 
-/* Effect: Styles blue section/table title strips consistently across pages. */
-.ecms-section-title,
-.ecms-table-title,
-.ecms-blue-strip,
-.seven h1 {
-    min-height: var(--ecms-section-title-height) !important;
-    padding: 8px 14px !important;
-    margin: 0 !important;
-    border-radius: var(--ecms-radius-md) var(--ecms-radius-md) 0 0 !important;
-    background: linear-gradient(90deg, #284ba0, #477fff) !important;
-    color: #ffffff !important;
-    font-size: 15px !important;
-    font-weight: 900 !important;
-    line-height: 1.1 !important;
-    text-align: center !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 7px !important;
+.ecms-section-title {
+    min-height: var(--ecms-section-title-height);
+    padding: .5rem .85rem;
+    margin: 0;
+    color: var(--ecms-white);
+    font-weight: 950;
+    text-align: center;
+    background: linear-gradient(90deg, #284ba0, var(--ecms-primary-500));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
 }
 
-/* Summary/tile cards used in dashboard and registration pages */
-/* Effect: Styles dashboard/count summary tiles and their internal labels/counts. */
-.ecms-summary-grid,
-.ecms-tile-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
-    gap: 10px !important;
+/* Use with Bootstrap .row and .col-* inside. */
+.ecms-form-section {
+    padding: .7rem .85rem;
 }
 
-/* Effect: Styles dashboard/count summary tiles and their internal labels/counts. */
-.ecms-summary-tile,
-.ecms-dashboard-tile,
-.ecms-count-card {
-    min-height: 72px !important;
-    padding: 10px !important;
-    border: var(--ecms-border) !important;
-    border-radius: var(--ecms-radius-md) !important;
-    background: linear-gradient(135deg, rgba(255,255,255,.97), rgba(235,245,255,.95)) !important;
-    box-shadow: var(--ecms-shadow-sm) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex-direction: column !important;
-    text-align: center !important;
+/* Summary tiles: use Bootstrap row-cols-* for responsiveness. */
+.ecms-tile {
+    min-height: 4.5rem;
+    padding: .75rem;
+    border: var(--ecms-border);
+    border-radius: var(--ecms-radius-lg);
+    background: var(--ecms-card-surface);
+    box-shadow: var(--ecms-shadow-sm);
+    text-align: center;
 }
 
-/* Effect: Styles dashboard/count summary tiles and their internal labels/counts. */
-.ecms-summary-tile .count,
-.ecms-dashboard-tile .count,
-.ecms-count-card .count {
-    color: var(--ecms-text) !important;
-    font-size: 22px !important;
-    font-weight: 900 !important;
-    line-height: 1 !important;
-}
+    .ecms-tile .count {
+        color: var(--ecms-text);
+        font-size: 1.4rem;
+        font-weight: 950;
+        line-height: 1;
+    }
 
-/* Effect: Styles dashboard/count summary tiles and their internal labels/counts. */
-.ecms-summary-tile .label,
-.ecms-dashboard-tile .label,
-.ecms-count-card .label {
-    color: var(--ecms-primary-600) !important;
-    font-size: 11px !important;
-    font-weight: 900 !important;
-    text-transform: uppercase !important;
-}
+    .ecms-tile .label {
+        color: var(--ecms-primary-600);
+        font-size: .7rem;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
 
-/* Footer-safe spacing for all modern pages */
-/* Effect: Styles the fixed bottom footer and keeps it above page content. */
-.ecms-footer-safe {
-    padding-bottom: calc(var(--ecms-footer-height) + 12px) !important;
-}
-
-/* Effect: Applies the nested rules only for the specified responsive/print condition. */
-@media (max-width: 992px) {
+@media (max-width: 768px) {
     .ecms-page,
-    .containerMain.ecms-page {
-        width: calc(100vw - 20px) !important;
+    .ecms-page-full {
+        width: calc(100vw - .75rem);
+        margin-top: .5rem;
     }
 
-    .ecms-page.ecms-fit-screen {
-        height: auto !important;
-        overflow: visible !important;
+    .ecms-card-body {
+        padding: .5rem;
     }
 
-    .ecms-page-card.ecms-grid-page {
-        display: block !important;
-        height: auto !important;
+    .ecms-page-title {
+        min-height: auto;
     }
 }

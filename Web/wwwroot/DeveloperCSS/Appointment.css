@@ -1,910 +1,558 @@
-﻿/* =====================================================
-   ECMS Appointment Modern UI
-   Only UI changed. Functionality IDs/classes are preserved.
-===================================================== */
+﻿/*
+=====================================================
+ECMS Appointment
+Bootstrap-first page CSS
 
-:root {
-    --ecms-appointment-blue-1: #153f8f;
-    --ecms-appointment-blue-2: #347dff;
-    --ecms-appointment-cyan: #55d7ff;
-    --ecms-appointment-green: #31c48d;
-    --ecms-appointment-red: #dc2626;
-    --ecms-appointment-yellow: #f5b800;
-    --ecms-appointment-ink: #061b44;
-    --ecms-appointment-muted: #536f9a;
-}
+Common design comes from ModernCSS:
+- ecms.02.pages.css
+- ecms.03.forms.css
+- ecms.04.buttons-badges.css
+- ecms.05.datatables.css
 
-/* Breadcrumb row: keep below fixed top header */
-html body:has(.ecms-appointment-page) header.page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-appointment-page) header.page-header.page-header-dark,
-html body:has(.ecms-appointment-page) .page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-appointment-page) .page-header.page-header-dark {
-    width: 100% !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    max-height: 42px !important;
-    padding: 0 !important;
-    margin-top: 26px !important;
-    margin-bottom: 0 !important;
-    overflow: visible !important;
-    position: relative !important;
-    z-index: 100 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    background: linear-gradient(90deg, rgba(75, 207, 239, 0.96), rgba(61, 126, 244, 0.96)) !important;
-    box-shadow: 0 12px 25px rgba(0, 38, 95, 0.22) !important;
-}
+This file keeps only Appointment-page placement and small exceptions.
+=====================================================
+*/
 
-    html body:has(.ecms-appointment-page) .page-header.page-header-dark .containerMain {
-        width: 100% !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        margin: 0 !important;
-        padding: 0 14px 0 66px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-    }
-
-    html body:has(.ecms-appointment-page) .page-header.page-header-dark .page-header-content,
-    html body:has(.ecms-appointment-page) .page-header.page-header-dark .page-header-content > .row,
-    html body:has(.ecms-appointment-page) .page-header.page-header-dark .page-header-content .col-auto {
-        width: auto !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        flex: 0 0 auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-    }
-
-    html body:has(.ecms-appointment-page) .page-header.page-header-dark .page-header-title {
-        width: auto !important;
-        max-width: calc(100vw - 90px) !important;
-        min-width: 0 !important;
-        height: 42px !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        flex-wrap: nowrap !important;
-        gap: 8px !important;
-        white-space: nowrap !important;
-        color: #ffffff !important;
-        font-size: 14px !important;
-        line-height: 42px !important;
-        font-weight: 900 !important;
-        text-shadow: 0 2px 7px rgba(0, 30, 80, 0.38) !important;
-    }
-
-        html body:has(.ecms-appointment-page) .page-header.page-header-dark .page-header-title .page-header-icon {
-            width: 26px !important;
-            height: 26px !important;
-            min-width: 26px !important;
-            margin-right: 4px !important;
-            border-radius: 50% !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            background: rgba(255, 255, 255, 0.22) !important;
-            border: 1px solid rgba(255, 255, 255, 0.42) !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 10px rgba(0,33,90,0.16) !important;
-        }
-
-            html body:has(.ecms-appointment-page) .page-header.page-header-dark .page-header-title .page-header-icon i,
-            html body:has(.ecms-appointment-page) .page-header.page-header-dark .page-header-title a,
-            html body:has(.ecms-appointment-page) .page-header.page-header-dark .page-header-title span {
-                color: #ffffff !important;
-                text-decoration: none !important;
-            }
-
-/* Page background */
-html:has(.ecms-appointment-page),
-body:has(.ecms-appointment-page) {
-    min-height: 100vh !important;
-    overflow-y: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.96), rgba(15, 70, 160, 0.92)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat fixed !important;
-}
-
+/* Page height inside fixed header/nav/breadcrumb/footer shell. */
 .ecms-appointment-page {
-    position: relative !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
-    max-width: none !important;
-    height: calc(100vh - 196px) !important;
-    min-height: calc(100vh - 196px) !important;
-    margin: 0 !important;
-    padding: 12px 26px 46px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.88), rgba(15, 70, 160, 0.79)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+    height: calc(100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem);
+    margin-top: .5rem;
+    margin-bottom: 0;
+    overflow: hidden;
 }
 
-    .ecms-appointment-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 24% 18%, rgba(96, 213, 255, 0.13), transparent 30%), radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
-    }
-
+/* Main card fills available area. */
 .ecms-appointment-shell {
-    position: relative !important;
-    z-index: 1 !important;
-    box-sizing: border-box !important;
-    width: min(1480px, calc(100% - 90px)) !important;
-    min-width: 1120px !important;
-    height: calc(100vh - 220px) !important;
-    max-height: calc(100vh - 220px) !important;
-    min-height: 500px !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border-radius: 22px !important;
-    background: linear-gradient(135deg, rgba(246,251,255,0.94), rgba(213,229,247,0.88)), rgba(232, 244, 255, 0.90) !important;
-    border: 1px solid rgba(255,255,255,0.86) !important;
-    box-shadow: 0 24px 70px rgba(0, 18, 60, 0.28) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
+    height: 100%;
+    min-height: 0;
 }
 
-/* Title */
-.ecms-appointment-titlebar {
-    height: 58px !important;
-    min-height: 58px !important;
-    padding: 8px 14px !important;
-    border-radius: 16px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(232, 243, 255, 0.83)) !important;
-    border: 1px solid rgba(255,255,255,0.92) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 24px rgba(15, 58, 140, 0.12) !important;
-}
-
-.ecms-appointment-title-wrap {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
-}
-
-.ecms-appointment-title-icon {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    border-radius: 14px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #2f7dff, #7c3aed) !important;
-    color: #ffffff !important;
-    box-shadow: 0 10px 22px rgba(47, 125, 255, 0.28) !important;
-}
-
-    .ecms-appointment-title-icon i {
-        color: #ffffff !important;
-        font-size: 18px !important;
+    .ecms-appointment-shell .ecms-card-body {
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
     }
 
-.ecms-appointment-titlebar h3 {
-    margin: 0 !important;
-    color: var(--ecms-appointment-ink) !important;
-    font-size: 21px !important;
-    line-height: 1.1 !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.01em !important;
+/* Compact title row; common appearance remains from .ecms-page-title. */
+.ecms-appointment-titlebar {
+    min-height: var(--ecms-title-height);
 }
 
-.ecms-appointment-titlebar p {
-    margin: 4px 0 0 !important;
-    color: #48618e !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
+    .ecms-appointment-titlebar h3 {
+        font-size: 1.25rem;
+    }
 
 .ecms-appointment-pill {
-    height: 34px !important;
-    padding: 0 14px !important;
-    border-radius: 999px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
-    font-size: 12px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 9px 18px rgba(29, 78, 216, 0.22) !important;
+    min-height: 2rem;
+    padding: .5rem .85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    text-transform: uppercase;
 }
 
-/* Form */
-.ecms-appointment-form-card {
-    padding: 11px 14px !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232, 243, 255, 0.78)) !important;
-    border: 1px solid rgba(255,255,255,0.82) !important;
-    box-shadow: 0 14px 34px rgba(0, 26, 88, 0.12) !important;
+/* Form uses Bootstrap grid for responsiveness. */
+.ecms-appointment-form-section {
+    overflow: visible;
 }
 
-.ecms-appointment-form-grid {
-    display: grid !important;
-    grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) minmax(210px, 0.8fr) auto !important;
-    gap: 12px !important;
-    align-items: end !important;
-}
+    .ecms-appointment-form-section form,
+    .ecms-appointment-form-section .row {
+        margin: 0;
+    }
 
-.ecms-appointment-field {
-    min-width: 0 !important;
-}
-
+/* Label icon only for this page. */
 .ecms-appointment-label {
-    display: flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    margin: 0 0 6px !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    line-height: 1.1 !important;
-    font-weight: 950 !important;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-bottom: .3rem;
+    white-space: nowrap;
 }
 
     .ecms-appointment-label > i:first-child {
-        width: 24px !important;
-        height: 24px !important;
-        min-width: 24px !important;
-        border-radius: 9px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, var(--ecms-appointment-blue-2), var(--ecms-appointment-blue-1)) !important;
-        font-size: 12px !important;
-        box-shadow: 0 6px 14px rgba(47, 125, 255, 0.18) !important;
+        width: 1.45rem;
+        height: 1.45rem;
+        min-width: 1.45rem;
+        border-radius: .55rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white);
+        background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-800));
+        font-size: .72rem;
+        box-shadow: 0 .35rem .85rem rgba(47,103,230,.18);
     }
 
-    .ecms-appointment-label .mand1,
-    .mand1 {
-        margin-left: 1px !important;
-        color: #ef4444 !important;
-        font-size: 8px !important;
-        vertical-align: super !important;
+    .ecms-appointment-label .mand1 {
+        margin-left: .05rem;
+        font-size: .55rem;
+        vertical-align: super;
     }
 
+/* Controls stay compact and equal height. */
 .ecms-appointment-control,
-.ecms-appointment-field .form-control,
-.ecms-appointment-field .form-select {
-    height: 38px !important;
-    width: 100% !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(70, 119, 184, 0.28) !important;
-    background-color: rgba(255,255,255,0.94) !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03) !important;
+.ecms-appointment-form-section .form-control,
+.ecms-appointment-form-section .form-control1 {
+    min-height: var(--ecms-control-height);
 }
 
-    .ecms-appointment-control:focus,
-    .ecms-appointment-field .form-control:focus,
-    .ecms-appointment-field .form-select:focus {
-        border-color: rgba(47, 125, 255, 0.75) !important;
-        box-shadow: 0 0 0 3px rgba(47, 125, 255, 0.16) !important;
+/* Radio pills. */
+.ecms-appointment-radio-box {
+    min-height: var(--ecms-control-height);
+    display: flex;
+    align-items: center;
+}
+
+.ecms-radio-pill,
+.ecms-appointment-radio {
+    min-height: 2rem;
+    margin: 0;
+    padding: .35rem .75rem;
+    border: 1px solid rgba(70,119,184,.20);
+    border-radius: 999px;
+    background: rgba(255,255,255,.82);
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+    .ecms-radio-pill .form-check-input,
+    .ecms-appointment-radio .form-check-input {
+        margin: 0;
+        opacity: 1;
+        position: static;
+        appearance: auto;
+        accent-color: var(--ecms-primary-600);
     }
 
+    .ecms-radio-pill .form-check-label,
+    .ecms-appointment-radio .form-check-label {
+        color: var(--ecms-ink);
+        font-size: .78rem;
+        font-weight: 850;
+    }
+
+/* Buttons align with input baseline on desktop. */
 .ecms-appointment-actions {
-    display: flex !important;
-    align-items: end !important;
-    justify-content: flex-end !important;
-    gap: 8px !important;
-    min-width: 172px !important;
-    flex-wrap: wrap !important;
+    margin: 0;
+    padding: 0;
 }
 
     .ecms-appointment-actions .btn,
     .ecms-appointment-actions input[type="button"] {
-        height: 38px !important;
-        min-width: 78px !important;
-        padding: 0 15px !important;
-        border-radius: 12px !important;
-        font-size: 13px !important;
-        font-weight: 950 !important;
+        min-width: 4.9rem;
+        min-height: var(--ecms-control-height);
     }
 
-.ecms-appointment-save,
-#btnsave {
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #2f7dff, #0f4ed7) !important;
-    box-shadow: 0 10px 20px rgba(47,125,255,0.22) !important;
+/* Table section consumes remaining card height. */
+.ecms-appointment-table-section {
+    min-height: 0;
+    overflow: hidden;
 }
 
-.ecms-appointment-reset,
-#btnReset {
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-    box-shadow: 0 10px 20px rgba(239,68,68,0.18) !important;
-}
-
-.ecms-appointment-actions .btn:hover,
-.ecms-appointment-actions input[type="button"]:hover {
-    transform: translateY(-1px) !important;
-    color: #ffffff !important;
-}
-
-/* Table area */
-.ecms-appointment-table-card {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    padding: 10px 12px 12px !important;
-    border-radius: 18px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232, 243, 255, 0.74)) !important;
-    border: 1px solid rgba(255,255,255,0.78) !important;
-    box-shadow: 0 14px 34px rgba(0, 26, 88, 0.14) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-}
-
-.ecms-appointment-table-title {
-    height: 34px !important;
-    min-height: 34px !important;
-    border-radius: 12px !important;
-    margin-bottom: 10px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #153f8f, #347dff) !important;
-    box-shadow: 0 10px 22px rgba(22, 84, 214, 0.18) !important;
-}
-
-    .ecms-appointment-table-title span {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-        color: #ffffff !important;
-        font-size: 15px !important;
-        font-weight: 950 !important;
-    }
-
-    .ecms-appointment-table-title i {
-        color: #ffffff !important;
+    .ecms-appointment-table-section > .ecms-section-title {
+        min-height: 2.15rem;
+        padding-block: .42rem;
     }
 
 .ecms-appointment-table-wrap {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
+    min-height: 0;
+    overflow: hidden;
 }
 
-#tbldata {
-    width: 100% !important;
-    table-layout: fixed !important;
-    border-collapse: collapse !important;
+    /* DataTable layout: toolbar / scroll table / footer. */
+    .ecms-appointment-table-wrap .dataTables_wrapper,
+    .ecms-appointment-table-wrap .dt-container {
+        height: 100%;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        overflow: hidden;
+    }
+
+/* Bootstrap toolbar generated from Appointment.js dom. */
+.ecms-appointment-page .ecms-dt-toolbar {
+    margin: 0 0 .45rem 0;
 }
 
-/* DataTables controls */
-.ecms-appointment-page .dt-top,
-.ecms-appointment-page .dataTables_wrapper .dt-top {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    margin-bottom: 8px !important;
-    flex-wrap: wrap !important;
+.ecms-appointment-page .dataTables_length,
+.ecms-appointment-page .dataTables_filter,
+.ecms-appointment-page .dt-length,
+.ecms-appointment-page .dt-search {
+    margin: 0;
 }
 
-.ecms-appointment-page .dataTables_length label,
-.ecms-appointment-page .dataTables_filter label,
-.ecms-appointment-page .dt-length label,
-.ecms-appointment-page .dt-search label {
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
+.ecms-appointment-page .dataTables_filter,
+.ecms-appointment-page .dt-search {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
-.ecms-appointment-page .dataTables_length select,
-.ecms-appointment-page .dataTables_filter input,
-.ecms-appointment-page .dt-length select,
-.ecms-appointment-page .dt-search input {
-    height: 34px !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(70,119,184,0.34) !important;
-    background: rgba(255,255,255,0.96) !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 750 !important;
+    .ecms-appointment-page .dataTables_filter label,
+    .ecms-appointment-page .dt-search label {
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .ecms-appointment-page .dataTables_filter input,
+    .ecms-appointment-page .dt-search input {
+        width: 14rem;
+        max-width: 100%;
+    }
+
+/* Let DataTables manage header/body scroll cloning. */
+.ecms-appointment-page .dataTables_scroll,
+.ecms-appointment-page .dt-scroll {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    margin: 0;
+    border-radius: var(--ecms-radius-lg);
+    overflow: hidden;
+    border: 1px solid rgba(51,103,185,.24);
+    background: rgba(255,255,255,.72);
 }
 
-.ecms-appointment-page .dataTables_filter input,
-.ecms-appointment-page .dt-search input {
-    min-width: 170px !important;
-    padding: 6px 12px !important;
-}
-
-.ecms-appointment-page #tbldata_wrapper.dt-container,
-.ecms-appointment-page .dt-container,
-.ecms-appointment-page .dataTables_wrapper {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-.ecms-appointment-page .dt-layout-row {
-    flex: 0 0 auto !important;
-}
-
-.ecms-appointment-page .dt-scroll,
-.ecms-appointment-page .dataTables_scroll {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    border-radius: 13px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(51,103,185,0.28) !important;
-    background: rgba(255,255,255,0.76) !important;
-}
-
+.ecms-appointment-page .dataTables_scrollHead,
 .ecms-appointment-page .dt-scroll-head,
-.ecms-appointment-page .dataTables_scrollHead {
-    flex: 0 0 auto !important;
+.ecms-appointment-page .dataTables_scrollHeadInner,
+.ecms-appointment-page .dataTables_scrollHeadInner table,
+.ecms-appointment-page .dataTables_scrollBody table,
+.ecms-appointment-page .dt-scroll-headInner,
+.ecms-appointment-page .dt-scroll-headInner table,
+.ecms-appointment-page .dt-scroll-body table {
+    width: 100% !important;
 }
 
-.ecms-appointment-page .dt-scroll-body,
-.ecms-appointment-page .dataTables_scrollBody {
-    flex: 1 1 auto !important;
-    height: auto !important;
+.ecms-appointment-page .dataTables_scrollBody,
+.ecms-appointment-page .dt-scroll-body {
+    height: 100% !important;
     max-height: none !important;
-    min-height: 185px !important;
+    min-height: 0;
     overflow-y: auto !important;
     overflow-x: auto !important;
-    padding-bottom: 28px !important;
-    box-sizing: border-box !important;
-    border-bottom: 1px solid rgba(51,103,185,0.28) !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(31, 124, 255, 0.65) rgba(255,255,255,0.18);
+    padding-bottom: 0;
 }
 
-    .ecms-appointment-page .dt-scroll-body::-webkit-scrollbar,
-    .ecms-appointment-page .dataTables_scrollBody::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+/* Footer stays at bottom and is always solid. */
+.ecms-appointment-page .ecms-dt-footer {
+    margin-top: .45rem;
+    padding: .5rem .35rem;
+    border-top: 1px solid rgba(70,119,184,.24);
+    background: linear-gradient(135deg, rgba(245,250,255,.99), rgba(224,238,255,.99));
+    border-radius: 0 0 var(--ecms-radius-lg) var(--ecms-radius-lg);
+    position: relative;
+    z-index: 3;
+}
+
+.ecms-appointment-page .dataTables_info,
+.ecms-appointment-page .dt-info {
+    padding-top: 0;
+    color: var(--ecms-ink);
+    font-weight: 850;
+}
+
+.ecms-appointment-page .dataTables_paginate,
+.ecms-appointment-page .dt-paging {
+    padding-top: 0;
+}
+
+/* Prevent Bootstrap/DataTables pagination double boxes. */
+.ecms-appointment-page .pagination {
+    margin: 0;
+    gap: .35rem;
+}
+
+    .ecms-appointment-page .pagination .page-item {
+        border: 0;
+        background: transparent;
     }
 
-    .ecms-appointment-page .dt-scroll-body::-webkit-scrollbar-thumb,
-    .ecms-appointment-page .dataTables_scrollBody::-webkit-scrollbar-thumb {
-        background: rgba(31, 124, 255, 0.65);
-        border-radius: 999px;
+    .ecms-appointment-page .pagination .page-link {
+        margin: 0;
     }
 
-    .ecms-appointment-page .dt-scroll-body table#tbldata,
-    .ecms-appointment-page .dt-scroll-body table.dataTable,
-    .ecms-appointment-page .dataTables_scrollBody table#tbldata,
-    .ecms-appointment-page .dataTables_scrollBody table.dataTable {
-        margin-bottom: 28px !important;
-    }
-
-        /* Hide duplicate cloned/sizing header inside scroll body */
-        .ecms-appointment-page .dt-scroll-body table#tbldata > thead,
-        .ecms-appointment-page .dt-scroll-body table#tbldata > thead *,
-        .ecms-appointment-page .dt-scroll-body table#tbldata > thead .dt-scroll-sizing,
-        .ecms-appointment-page .dt-scroll-body table#tbldata > thead .dt-column-header,
-        .ecms-appointment-page .dataTables_scrollBody table#tbldata > thead,
-        .ecms-appointment-page .dataTables_scrollBody table#tbldata > thead * {
-            height: 0 !important;
-            min-height: 0 !important;
-            max-height: 0 !important;
-            line-height: 0 !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border: 0 !important;
-            font-size: 0 !important;
-            color: transparent !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            overflow: hidden !important;
-            visibility: hidden !important;
-        }
-
-/* Real header */
-.ecms-appointment-page .dt-scroll-head table thead th,
-.ecms-appointment-page .dt-scroll-head table thead td,
-.ecms-appointment-page .dataTables_scrollHead table thead th,
-.ecms-appointment-page .dataTables_scrollHead table thead td,
-.ecms-appointment-page table.dataTable thead th,
-.ecms-appointment-page table.dataTable thead td {
-    height: 40px !important;
-    padding: 9px 12px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #153f8f, #2f70df) !important;
-    border-bottom: 0 !important;
-    border-right: 1px solid rgba(255,255,255,0.12) !important;
-    font-size: 13px !important;
-    line-height: 1.15 !important;
-    font-weight: 950 !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-    visibility: visible !important;
+/* Ellipsis cells generated from JS. */
+.ecms-appointment-page .dt-ellipsis,
+.ecms-appointment-page .nowrap {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
 }
 
-.ecms-appointment-page table.dataTable tbody td {
-    height: 38px !important;
-    padding: 6px 12px !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 750 !important;
-    vertical-align: middle !important;
-    border-color: rgba(77, 109, 156, 0.12) !important;
-    text-align: center !important;
-}
-
-.ecms-appointment-page table.dataTable tbody tr:nth-child(odd) {
-    background: rgba(255,255,255,0.92) !important;
-}
-
-.ecms-appointment-page table.dataTable tbody tr:nth-child(even) {
-    background: rgba(236,244,255,0.76) !important;
-}
-
-.ecms-appointment-page table.dataTable tbody tr:hover {
-    background: rgba(219,236,255,0.92) !important;
-}
-
-.ecms-appointment-page .dt-ellipsis {
-    display: inline-block !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    vertical-align: middle !important;
-}
-
+/* Status badges generated from JS. */
 .ecms-appointment-page .badge,
 .ecms-appointment-page .badge-pill {
-    border-radius: 999px !important;
-    padding: 4px 8px !important;
-    font-size: 10px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
+    min-height: 1.45rem;
+    min-width: 2.7rem;
+    padding: .35rem .65rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .65rem;
+    font-weight: 950;
+    border: 0;
+    color: var(--ecms-white);
+    text-transform: uppercase;
 }
 
-.ecms-appointment-page .dt-info,
-.ecms-appointment-page .dataTables_info {
-    flex: 0 0 auto !important;
-    padding-top: 7px !important;
-    margin: 0 !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
+.ecms-appointment-page .badge-success,
+.ecms-appointment-page .bg-success {
+    background: linear-gradient(135deg, #34d399, #059669) !important;
+    color: var(--ecms-white) !important;
 }
 
-.ecms-appointment-page .dt-paging,
-.ecms-appointment-page .dataTables_paginate {
-    flex: 0 0 auto !important;
-    padding-top: 5px !important;
-    padding-bottom: 0 !important;
-    margin: 0 !important;
+.ecms-appointment-page .badge-danger,
+.ecms-appointment-page .bg-danger {
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600)) !important;
+    color: var(--ecms-white) !important;
 }
 
-    .ecms-appointment-page .dt-paging .pagination {
-        margin: 0 !important;
-        justify-content: flex-end !important;
-    }
-
-    .ecms-appointment-page .dt-paging .page-link,
-    .ecms-appointment-page .dataTables_paginate .paginate_button {
-        min-width: 34px !important;
-        height: 32px !important;
-        margin: 0 2px !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(47,125,255,0.18) !important;
-        color: #1d4ed8 !important;
-        background: rgba(255,255,255,0.86) !important;
-        font-size: 12px !important;
-        font-weight: 900 !important;
-    }
-
-        .ecms-appointment-page .dt-paging .active .page-link,
-        .ecms-appointment-page .dt-paging .page-link:hover,
-        .ecms-appointment-page .dataTables_paginate .paginate_button.current,
-        .ecms-appointment-page .dataTables_paginate .paginate_button:hover {
-            color: #ffffff !important;
-            border-color: transparent !important;
-            background: linear-gradient(135deg, #2f7dff, #153f8f) !important;
-        }
-
-/* Action buttons generated by appointment.js */
-.ecms-appointment-page .btn-icon,
+/* Action buttons generated from Appointment.js. */
 .ecms-appointment-page .cls-btnedit,
-.ecms-appointment-page .cls-btnDelete,
-.ecms-appointment-page .cls-btnorder {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 11px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 4px !important;
-    box-shadow: 0 8px 16px rgba(0, 30, 80, 0.16) !important;
-}
-
-.ecms-appointment-page .cls-btnorder {
-    background: linear-gradient(135deg, #67e8f9, #38bdf8) !important;
-    color: #061b44 !important;
+.ecms-appointment-page .cls-btnDelete {
+    margin-inline: .25rem;
+    border: 0;
+    box-shadow: 0 .5rem 1rem rgba(0,30,80,.16);
 }
 
 .ecms-appointment-page .cls-btnedit {
-    background: linear-gradient(135deg, #facc15, #f59e0b) !important;
-    color: #061b44 !important;
+    background: linear-gradient(135deg, #facc15, #f59e0b);
+    color: #061b44;
 }
 
 .ecms-appointment-page .cls-btnDelete {
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600));
+    color: var(--ecms-white);
 }
 
-    .ecms-appointment-page .btn-icon i,
-    .ecms-appointment-page .cls-btnedit i,
-    .ecms-appointment-page .cls-btnDelete i,
-    .ecms-appointment-page .cls-btnorder i {
-        font-size: 14px !important;
-        line-height: 1 !important;
-    }
-
-/* SweetAlert compatibility */
-.swal2-popup {
-    border-radius: 18px !important;
-    background: linear-gradient(135deg, rgba(248,252,255,0.98), rgba(225,238,252,0.96)) !important;
-    box-shadow: 0 28px 90px rgba(0, 13, 42, 0.40) !important;
-}
-
-.swal2-title {
-    color: #061b44 !important;
-    font-weight: 950 !important;
-}
-
-.swal2-confirm {
-    border-radius: 11px !important;
-    background: linear-gradient(135deg, #2f7dff, #0f4ed7) !important;
-    font-weight: 900 !important;
-}
-
-.swal2-cancel {
-    border-radius: 11px !important;
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-    font-weight: 900 !important;
-}
-
-/* Small height screens */
-@media (max-height: 760px) {
+/* Tablet/mobile: page becomes naturally scrollable and form stacks through Bootstrap. */
+@media (max-width: 991.98px) {
     .ecms-appointment-page {
-        height: calc(100vh - 244px) !important;
-        min-height: calc(100vh - 244px) !important;
-        padding-bottom: 42px !important;
+        height: auto;
+        min-height: calc(100vh - var(--ecms-header-height) - var(--ecms-footer-height));
+        overflow: visible;
     }
 
-    .ecms-appointment-shell {
-        height: calc(100vh - 308px) !important;
-        max-height: calc(100vh - 308px) !important;
-        min-height: 470px !important;
+    .ecms-appointment-shell,
+    .ecms-appointment-shell .ecms-card-body {
+        height: auto;
+        overflow: visible;
     }
 
-    .ecms-appointment-titlebar {
-        height: 52px !important;
-        min-height: 52px !important;
+    .ecms-appointment-table-section {
+        min-height: 28rem;
     }
 
-        .ecms-appointment-titlebar h3 {
-            font-size: 19px !important;
-        }
-
-        .ecms-appointment-titlebar p {
-            font-size: 11px !important;
-        }
-
-    .ecms-appointment-form-card {
-        padding: 9px 12px !important;
-    }
-
-    .ecms-appointment-control,
-    .ecms-appointment-field .form-control,
-    .ecms-appointment-field .form-select,
-    .ecms-appointment-actions .btn,
-    .ecms-appointment-actions input[type="button"] {
-        height: 34px !important;
-    }
-
-    .ecms-appointment-table-title {
-        height: 30px !important;
-        min-height: 30px !important;
-        margin-bottom: 8px !important;
-    }
-
-    .ecms-appointment-page .dt-scroll-body,
-    .ecms-appointment-page .dataTables_scrollBody {
-        min-height: 160px !important;
-        padding-bottom: 30px !important;
-    }
-
-        .ecms-appointment-page .dt-scroll-body table#tbldata,
-        .ecms-appointment-page .dt-scroll-body table.dataTable,
-        .ecms-appointment-page .dataTables_scrollBody table#tbldata,
-        .ecms-appointment-page .dataTables_scrollBody table.dataTable {
-            margin-bottom: 30px !important;
-        }
-
-    .ecms-appointment-page table.dataTable tbody td {
-        height: 34px !important;
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
-    }
-}
-
-/* Responsive */
-@media (max-width: 1400px) {
-    .ecms-appointment-shell {
-        width: calc(100% - 60px) !important;
-        min-width: 0 !important;
-    }
-
-    .ecms-appointment-form-grid {
-        grid-template-columns: 1fr 1fr !important;
-    }
-
-    .ecms-appointment-actions {
-        grid-column: 1 / -1 !important;
-        justify-content: flex-end !important;
-    }
-}
-
-@media (max-width: 992px) {
-    html:has(.ecms-appointment-page),
-    body:has(.ecms-appointment-page) {
-        overflow-y: auto !important;
-    }
-
-    html body:has(.ecms-appointment-page) .page-header.page-header-dark .containerMain {
-        padding-left: 16px !important;
-        padding-right: 12px !important;
-    }
-
-    html body:has(.ecms-appointment-page) .page-header.page-header-dark .page-header-title {
-        font-size: 12px !important;
-        gap: 5px !important;
-        max-width: calc(100vw - 32px) !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-
-    .ecms-appointment-page {
-        height: auto !important;
-        min-height: calc(100vh - 248px) !important;
-        padding: 12px 12px 70px !important;
-        overflow: visible !important;
-    }
-
-    .ecms-appointment-shell {
-        width: 100% !important;
-        min-width: 0 !important;
-        height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-    }
-
-    .ecms-appointment-titlebar {
-        height: auto !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-    }
-
-    .ecms-appointment-form-grid {
-        grid-template-columns: 1fr !important;
+    .ecms-appointment-page .dataTables_filter input,
+    .ecms-appointment-page .dt-search input {
+        width: 100%;
     }
 
     .ecms-appointment-actions {
         justify-content: flex-start !important;
     }
+}
 
-    .ecms-appointment-table-card {
-        min-height: 420px !important;
+/* Phone: full-width buttons and tighter spacing. */
+@media (max-width: 575.98px) {
+    .ecms-appointment-page {
+        width: calc(100vw - .75rem);
+        margin-top: .4rem;
     }
 
-    .ecms-appointment-page .dt-scroll-body,
-    .ecms-appointment-page .dataTables_scrollBody {
-        height: 300px !important;
-        max-height: 300px !important;
+    .ecms-appointment-titlebar h3 {
+        font-size: 1.05rem;
+    }
+
+    .ecms-appointment-actions,
+    .ecms-appointment-actions .btn,
+    .ecms-appointment-actions input[type="button"] {
+        width: 100%;
+    }
+
+    .ecms-appointment-actions {
+        flex-direction: column;
     }
 }
 
 
-/* Appointment page specific form layout */
-.ecms-appointment-form-grid {
-    grid-template-columns: minmax(260px, 1.1fr) minmax(240px, 1fr) minmax(250px, 0.9fr) auto !important;
+/*
+=====================================================
+Appointment DataTable HEADER + SCROLL FINAL FIX
+Issue:
+- Header cells were compressing/stacking because DataTables scroll table
+  width was recalculated smaller than the real column total.
+Effect:
+- Header/body use same fixed minimum width.
+- Duplicate sizing header inside scroll body is hidden without breaking column widths.
+- Footer remains solid and pagination stays aligned.
+=====================================================
+*/
+
+/* DataTables wrapper areas: toolbar / scrollable table / footer. */
+.ecms-appointment-table-wrap .dataTables_wrapper,
+.ecms-appointment-table-wrap .dt-container {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) auto !important;
+    overflow: hidden !important;
 }
 
-.ecms-appointment-radio-box {
-    height: 38px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important;
-    padding: 0 12px !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(70, 119, 184, 0.28) !important;
-    background: rgba(255,255,255,0.94) !important;
+/* Let DataTables manage the scroll head/body, but force both to the same usable width. */
+.ecms-appointment-page .dataTables_scroll,
+.ecms-appointment-page .dt-scroll {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+    border-radius: var(--ecms-radius-lg) !important;
+    border: 1px solid rgba(51,103,185,.24) !important;
+    background: rgba(255,255,255,.72) !important;
 }
 
-    .ecms-appointment-radio-box .form-check {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        margin: 0 !important;
-        min-height: 0 !important;
-        padding-left: 0 !important;
+/* Critical: cloned header table and body table must share the same min-width. */
+.ecms-appointment-page .dataTables_scrollHead,
+.ecms-appointment-page .dataTables_scrollBody,
+.ecms-appointment-page .dt-scroll-head,
+.ecms-appointment-page .dt-scroll-body {
+    width: 100% !important;
+}
+
+    .ecms-appointment-page .dataTables_scrollHeadInner,
+    .ecms-appointment-page .dataTables_scrollHeadInner table,
+    .ecms-appointment-page .dataTables_scrollBody table,
+    .ecms-appointment-page .dt-scroll-headInner,
+    .ecms-appointment-page .dt-scroll-headInner table,
+    .ecms-appointment-page .dt-scroll-body table,
+    .ecms-appointment-page table#tbldata {
+        width: 100% !important;
+        min-width: 990px !important;
+        table-layout: fixed !important;
     }
 
-    .ecms-appointment-radio-box .form-check-input {
-        width: 16px !important;
-        height: 16px !important;
-        margin: 0 !important;
-        position: static !important;
-        float: none !important;
+    /* Keep real visible header as proper single-line header. */
+    .ecms-appointment-page .dataTables_scrollHead table thead,
+    .ecms-appointment-page .dt-scroll-head table thead {
+        display: table-header-group !important;
     }
 
-    .ecms-appointment-radio-box .form-check-label {
-        margin: 0 !important;
-        color: #061b44 !important;
-        font-size: 13px !important;
-        font-weight: 850 !important;
-        line-height: 1 !important;
+    .ecms-appointment-page .dataTables_scrollHead table tr,
+    .ecms-appointment-page .dt-scroll-head table tr {
+        display: table-row !important;
     }
 
-#Approved-error {
-    display: block !important;
-    margin-top: 5px !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
-
-.ecms-appointment-page table.dataTable tbody .badge,
-.ecms-appointment-page table.dataTable tbody .badge-pill {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 42px !important;
-    height: 20px !important;
-    padding: 0 9px !important;
-    border-radius: 999px !important;
-    font-size: 10px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-}
-
-.ecms-appointment-page table.dataTable tbody .badge-success {
-    background: linear-gradient(135deg, #35c97a, #1f9c58) !important;
-    color: #fff !important;
-}
-
-.ecms-appointment-page table.dataTable tbody .badge-danger {
-    background: linear-gradient(135deg, #ef4444, #be123c) !important;
-    color: #fff !important;
-}
-
-@media (max-width: 1400px) {
-    .ecms-appointment-form-grid {
-        grid-template-columns: 1fr 1fr !important;
+    .ecms-appointment-page .dataTables_scrollHead table th,
+    .ecms-appointment-page .dt-scroll-head table th,
+    .ecms-appointment-page table#tbldata thead th {
+        display: table-cell !important;
+        height: 38px !important;
+        padding: 8px 10px !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+        text-align: center !important;
+        color: var(--ecms-white) !important;
+        background: linear-gradient(135deg, var(--ecms-primary-800), var(--ecms-primary-600)) !important;
     }
+
+    /* Hide DataTables sizing header inside scroll body but keep its width calculation safe. */
+    .ecms-appointment-page .dataTables_scrollBody table#tbldata > thead,
+    .ecms-appointment-page .dt-scroll-body table#tbldata > thead {
+        visibility: collapse !important;
+        height: 0 !important;
+    }
+
+        .ecms-appointment-page .dataTables_scrollBody table#tbldata > thead th,
+        .ecms-appointment-page .dataTables_scrollBody table#tbldata > thead td,
+        .ecms-appointment-page .dt-scroll-body table#tbldata > thead th,
+        .ecms-appointment-page .dt-scroll-body table#tbldata > thead td {
+            height: 0 !important;
+            line-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            overflow: hidden !important;
+            color: transparent !important;
+            background: transparent !important;
+        }
+
+/* Body scroll area. */
+.ecms-appointment-page .dataTables_scrollBody,
+.ecms-appointment-page .dt-scroll-body {
+    height: 100% !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+}
+
+/* Body cells remain normal table cells; do not stack. */
+.ecms-appointment-page table#tbldata tbody {
+    display: table-row-group !important;
+}
+
+    .ecms-appointment-page table#tbldata tbody tr {
+        display: table-row !important;
+    }
+
+    .ecms-appointment-page table#tbldata tbody td {
+        display: table-cell !important;
+        height: 38px !important;
+        padding: 6px 10px !important;
+        vertical-align: middle !important;
+        white-space: nowrap !important;
+    }
+
+/* Footer must remain visible and non-transparent. */
+.ecms-appointment-page .ecms-dt-footer {
+    margin-top: .45rem !important;
+    padding: .5rem .35rem !important;
+    border-top: 1px solid rgba(70,119,184,.24) !important;
+    background: linear-gradient(135deg, rgba(245,250,255,.99), rgba(224,238,255,.99)) !important;
+    border-radius: 0 0 var(--ecms-radius-lg) var(--ecms-radius-lg) !important;
+    position: relative !important;
+    z-index: 4 !important;
+}
+
+/* Align footer text and pagination. */
+.ecms-appointment-page .dataTables_info,
+.ecms-appointment-page .dt-info,
+.ecms-appointment-page .dataTables_paginate,
+.ecms-appointment-page .dt-paging {
+    padding-top: 0 !important;
+    color: var(--ecms-ink) !important;
+    font-weight: 850 !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+.ecms-appointment-page .pagination {
+    margin: 0 !important;
+    gap: .35rem !important;
+}
+
+/* Column alignment. Hidden ApptId is not counted visually; these are visible columns. */
+.ecms-appointment-page table#tbldata th:nth-child(1),
+.ecms-appointment-page table#tbldata td:nth-child(1) {
+    text-align: center !important;
+}
+
+.ecms-appointment-page table#tbldata th:nth-child(4),
+.ecms-appointment-page table#tbldata td:nth-child(4),
+.ecms-appointment-page table#tbldata th:last-child,
+.ecms-appointment-page table#tbldata td:last-child {
+    text-align: center !important;
 }

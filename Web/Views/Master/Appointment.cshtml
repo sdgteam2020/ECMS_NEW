@@ -2,13 +2,14 @@
     ViewData["Title"] = "Appointment";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/appointment.css" rel="stylesheet" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
-            <div class="row align-items-center justify-content-between">
+            <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"><i class="fa fa-bars"></i></div>
@@ -22,99 +23,130 @@
     </div>
 </header>
 
-<div class="containerMain ecms-appointment-page">
-    <div class="ecms-appointment-shell">
-        <div class="ecms-appointment-titlebar">
-            <div class="ecms-appointment-title-wrap">
-                <span class="ecms-appointment-title-icon"><i class="fa fa-id-badge"></i></span>
-                <div>
-                    <h3>Appointment Details</h3>
-                    <p>Create, update and manage appointment records</p>
+<div class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-appointment-page">
+    <div class="card ecms-card ecms-appointment-shell">
+        <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
+
+            <div class="ecms-page-title ecms-appointment-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                <div class="d-flex align-items-center gap-2 ecms-min-0">
+                    <span class="ecms-title-icon">
+                        <i class="fa fa-id-badge"></i>
+                    </span>
+                    <div class="ecms-min-0">
+                        <h3>Appointment Details</h3>
+                        <p class="ecms-title-subtitle">Create, update and manage appointment records</p>
+                    </div>
                 </div>
+
+                <span class="badge bg-primary ecms-badge ecms-appointment-pill">
+                    <i class="fa fa-database"></i>
+                    Master
+                </span>
             </div>
-            <span class="ecms-appointment-pill"><i class="fa fa-database"></i> Master</span>
-        </div>
 
-        <div class="ecms-appointment-form-card">
-            <span id="SpnTxnId" class="d-none">0</span>
+            <div class="ecms-section ecms-form-section ecms-appointment-form-section flex-shrink-0">
+                <span id="SpnTxnId" class="d-none">0</span>
 
-            <form action="" id="SaveForm" method="post" name="SaveForm">
-                <div class="ecms-appointment-form-grid">
-                    <div class="ecms-appointment-field">
-                        <label class="ecms-appointment-label" for="txtAppointment">
-                            <i class="fa fa-id-card"></i>
-                            Enter Appointment
-                            <i class="fas fa-asterisk mand1"></i>
-                        </label>
-                        <input class="form-control1 ecms-appointment-control"
-                               placeholder="Enter Appointment"
-                               id="txtAppointment"
-                               name="txtAppointment"
-                               maxlength="50"
-                               data-val="true"
-                               data-val-regex="Appointment name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
-                               data-val-required="Appointment name is required."
-                               data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointment" data-valmsg-replace="true"></span>
-                    </div>
+                <form action="" id="SaveForm" method="post" name="SaveForm">
+                    <div class="row g-2 align-items-end">
 
-                    <div class="ecms-appointment-field">
-                        <label class="ecms-appointment-label" for="txtAbbreviation">
-                            <i class="fa fa-font"></i>
-                            Abbreviation
-                        </label>
-                        <input class="form-control1 ecms-appointment-control"
-                               placeholder="Enter Appointment"
-                               id="txtAbbreviation"
-                               name="txtAbbreviation"
-                               maxlength="20"
-                               data-val="true"
-                               data-val-regex="Abbreviation name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
-                               data-val-required="Abbreviation name is required."
-                               data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="txtAbbreviation" data-valmsg-replace="true"></span>
-                    </div>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <label class="form-label ecms-appointment-label" for="txtAppointment">
+                                <i class="fa fa-id-card"></i>
+                                <span>Enter Appointment</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
 
-                    <div class="ecms-appointment-field">
-                        <label class="ecms-appointment-label">
-                            <i class="fa fa-check-circle"></i>
-                            Approve
-                            <i class="fas fa-asterisk mand1"></i>
-                        </label>
-                        <div class="ecms-appointment-radio-box">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="IsApproved" id="IsApprovedYes" value="true" data-val-regex-pattern="^[\w]*$">
-                                <label class="form-check-label" for="IsApprovedYes">Yes</label>
+                            <input class="form-control form-control1 ecms-appointment-control"
+                                   placeholder="Enter Appointment"
+                                   id="txtAppointment"
+                                   name="txtAppointment"
+                                   maxlength="50"
+                                   data-val="true"
+                                   data-val-regex="Appointment name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
+                                   data-val-required="Appointment name is required."
+                                   data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$" />
+
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointment" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <label class="form-label ecms-appointment-label" for="txtAbbreviation">
+                                <i class="fa fa-font"></i>
+                                <span>Abbreviation</span>
+                            </label>
+
+                            <input class="form-control form-control1 ecms-appointment-control"
+                                   placeholder="Enter Appointment"
+                                   id="txtAbbreviation"
+                                   name="txtAbbreviation"
+                                   maxlength="20"
+                                   data-val="true"
+                                   data-val-regex="Abbreviation name must contain at least one alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
+                                   data-val-required="Abbreviation name is required."
+                                   data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Za-z])[A-Za-z0-9&\/()\-]+(?: [A-Za-z0-9&\/()\-]+)*$" />
+
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtAbbreviation" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <label class="form-label ecms-appointment-label">
+                                <i class="fa fa-check-circle"></i>
+                                <span>Approve</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-appointment-radio-box d-flex flex-wrap gap-2">
+                                <div class="form-check form-check-inline ecms-radio-pill ecms-appointment-radio">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="IsApproved"
+                                           id="IsApprovedYes"
+                                           value="true"
+                                           data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="IsApprovedYes">Yes</label>
+                                </div>
+
+                                <div class="form-check form-check-inline ecms-radio-pill ecms-appointment-radio">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="IsApproved"
+                                           id="IsApprovedNo"
+                                           value="false"
+                                           data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="IsApprovedNo">No</label>
+                                </div>
                             </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="IsApproved" id="IsApprovedNo" value="false" data-val-regex-pattern="^[\w]*$">
-                                <label class="form-check-label" for="IsApprovedNo">No</label>
+
+                            <span class="text-danger field-validation-valid" id="Approved-error"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-2">
+                            <div class="ecms-form-actions ecms-appointment-actions d-flex gap-2 justify-content-xl-end" id="msg">
+                                <input type="button" class="btn btn-primary ecms-appointment-save" value="Save" id="btnsave" />
+                                <button type="button" id="btnReset" class="btn btn-danger ecms-appointment-reset">Reset</button>
                             </div>
                         </div>
-                        <span class="text-danger field-validation-valid" id="Approved-error"></span>
-                    </div>
 
-                    <div class="ecms-appointment-actions" id="msg">
-                        <input type="button" class="btn btn-outline-primary ecms-appointment-save" value="Save" id="btnsave" />
-                        <button type="button" id="btnReset" class="btn btn-outline-danger ecms-appointment-reset">Reset</button>
                     </div>
+                </form>
+            </div>
+
+            <div class="ecms-section ecms-appointment-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                <div class="ecms-section-title flex-shrink-0">
+                    <i class="fa fa-list"></i>
+                    <span>Appointment Records</span>
                 </div>
-            </form>
-        </div>
 
-        <div class="ecms-appointment-table-card">
-            <div class="ecms-appointment-table-title">
-                <span><i class="fa fa-list"></i> Appointment Records</span>
+                <div class="ecms-appointment-table-wrap flex-grow-1 ecms-min-0">
+                    <table class="table table-striped table-hover table-bordered dataTable ecms-appointment-datatable" role="grid" id="tbldata" >
+                    </table>
+                </div>
             </div>
 
-            <div class="ecms-appointment-table-wrap">
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
-            </div>
         </div>
     </div>
 </div>
 
 <script asp-src-include="~/developerjs/Appointment.js"></script>
-
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

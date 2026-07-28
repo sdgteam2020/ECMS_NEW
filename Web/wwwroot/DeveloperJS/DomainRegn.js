@@ -9,6 +9,10 @@ let DomainRegId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    // Keep every page modal directly under <body> so the backdrop can never
+    // sit above the dialog because of a layout stacking context.
+    PrepareDomainRegnModalRoots();
+
     applyDataTableSearchValidation('#tbldata');
 
     BindData();
@@ -260,7 +264,6 @@ $(function () {
         if ($("#lblUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Users');
-            $("#DataTableDialog").modal('show');
 
             applyDataTableSearchValidation('#tbldatadialog');
 
@@ -273,7 +276,6 @@ $(function () {
         if ($("#lblMappedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Mapped Users');
-            $("#DataTableDialog").modal('show');
 
             applyDataTableSearchValidation('#tbldatadialog');
 
@@ -285,7 +287,6 @@ $(function () {
         if ($("#lblUnMappedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total UnMapped Users');
-            $("#DataTableDialog").modal('show');
 
             applyDataTableSearchValidation('#tbldatadialog');
 
@@ -297,7 +298,6 @@ $(function () {
         if ($("#lblActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Active Users');
-            $("#DataTableDialog").modal('show');
 
             applyDataTableSearchValidation('#tbldatadialog');
 
@@ -309,7 +309,6 @@ $(function () {
         if ($("#lblInActiveUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total InActive Users');
-            $("#DataTableDialog").modal('show');
             BindDialog("InActiveUser");
         }
     });
@@ -318,7 +317,6 @@ $(function () {
         if ($("#lblVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Verified Users');
-            $("#DataTableDialog").modal('show');
 
             applyDataTableSearchValidation('#tbldatadialog');
 
@@ -330,7 +328,6 @@ $(function () {
         if ($("#lblNotVerifiedUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
-            $("#DataTableDialog").modal('show');
 
             applyDataTableSearchValidation('#tbldatadialog');
 
@@ -342,7 +339,6 @@ $(function () {
         if ($("#lblIO").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
-            $("#DataTableDialog").modal('show');
 
             applyDataTableSearchValidation('#tbldatadialog');
 
@@ -357,7 +353,6 @@ $(function () {
         if ($("#lblApprover").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
             $("#lblModelTitle").html('Total Not Verified Users');
-            $("#DataTableDialog").modal('show');
 
             applyDataTableSearchValidation('#tbldatadialog');
 
@@ -386,256 +381,263 @@ $(function () {
 
 function BindDialog(Choice) {
     // STEP 1: Move ALL DataTable code into shown.bs.modal
-    $("#DataTableDialog").one('shown.bs.modal', function () {
-        if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
-            // Destroy the DataTable and clear the table content
-            $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
-            $("#tbldatadialog thead").empty(); // Clear old thead
-            $("#tbldatadialog tbody").empty(); // Clear old tbody
-            $("#tbldatadialog").empty(); // UI fix: remove old DataTables cloned header/body markup
-        }
-
-        tabledialog = $("#tbldatadialog").DataTable({
-            scrollY: '100%',          // ✅ vertical scroll
-            scrollX: true,            // ✅ horizontal scroll
-            scrollCollapse: false,
-            scroller: false,           // ✅ Enable virtual scrolling for better performance
-            deferScroll: false,        // ✅ Improve scrolling performance
-            fixedHeader: false,       // ❌ disable when using scrollY
-
-            processing: false,
-            serverSide: true,
-            filter: true,
-            stateSave: false,
-
-            autoWidth: false,  //Set autoWidth to true (let DataTables decide)
-            responsive: false, // Columns can hide on small screens
-            deferRender: true,// ✅ Handle zoom changes
-            order: [[1, 'desc']], // Default sorting on the first column
-            ajax: {
-                url: "/Account/GetDataForDataTable",
-                contentType: 'application/x-www-form-urlencoded',
-                type: "POST",
-                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-                data: function (d) {
-                    d.draw = d.draw;
-                    d.start = d.start;
-                    d.length = d.length;
-                    d.searchValue = d.search.value;
-                    d.sortColumn = d.columns[d.order[0].column].data;
-                    d.sortDirection = d.order[0].dir;
-                    d.Choice = Choice;
-                },
-            },
-            columns: [
-                // Serial number column
-                {
-                    title: "S No",
-                    data: null,
-                    name: "SerialNumber",
-                    orderable: false, // Disable sorting for this column
-                    className: "text-center col-sno",
-                    width: "60px",
-                    render: function (data, type, row, meta) {
-                        // Calculate serial number based on row index
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {
-                    title: "Reg Id",
-                    data: "Id",
-                    name: "Id",
-                    className: "nowrap",
-                    width: "120px",
-                },
-                {
-                    title: "Domain Id",
-                    data: "DomainId",
-                    name: "DomainId",
-                    className: "nowrap",
-                    width: "180px",
-                    render: function (data, type, row, meta) {
-                        if (!data) return '';
-                        return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
-                    }
-                },
-                {
-                    title: "IC No",
-                    data: "ArmyNo",
-                    name: "ArmyNo",
-                    className: "nowrap",
-                    width: "120px",
-                },
-                {
-                    title: "Role",
-                    data: "RoleNames",
-                    name: "RoleNames",
-                    orderable: false, // Disable sorting for this column
-                    className: "nowrap",
-                    width: "150px",
-                    render: function (data, type, row) {
-                        return data ? data.join(', ') : '';  // Convert array to string
-                    }
-                },
-                {
-                    title: "Requested Genr On (DT)",
-                    data: "UpdatedOn",
-                    name: "UpdatedOn",
-                    className: "text-wrap requested-generated-col",
-                    width: "150px",
-                    render: function (data, type, row) {
-                        return DateFormateddMMyyyyhhmmss(data);
-                    },
-                },
-                // Display user-friendly value for Mapped
-                {
-                    title: "Mapping",
-                    data: "Mapped",
-                    name: "Mapped",
-                    className: "nowrap",
-                    width: "100px",
-                    render: function (data, type, row) {
-                        // Convert boolean to "Yes" or "No"
-                        return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
-                    },
-                },
-                // Display user-friendly value for AdminFlag
-                {
-                    title: "Approval",
-                    data: "AdminFlag",
-                    name: "AdminFlag",
-                    className: "nowrap",
-                    width: "100px",
-                    render: function (data, type, row) {
-                        // Convert boolean to "Yes" or "No"
-                        return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
-                    },
-                },
-                // Display user-friendly value for Active
-                {
-                    title: "Active",
-                    data: "Active",
-                    name: "Active",
-                    className: "nowrap",
-                    width: "100px",
-                    render: function (data, type, row) {
-                        // Convert boolean to "Yes" or "No"
-                        return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
-                    },
-                },
-                // Display user-friendly value for IsIO
-                {
-                    title: "IO",
-                    data: "IsIO",
-                    name: "IsIO",
-                    className: "nowrap",
-                    width: "100px",
-                    render: function (data, type, row) {
-                        // Convert boolean to "Yes" or "No"
-                        return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
-                    },
-                },
-                // Display user-friendly value for IsCO
-                {
-                    title: "Approver",
-                    data: "IsCO",
-                    name: "IsCO",
-                    className: "nowrap",
-                    width: "100px",
-                    render: function (data, type, row) {
-                        // Convert boolean to "Yes" or "No"
-                        return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
-                    },
-                },
-                //{ data: "IsRO", name: "IsRO" },
-                //{ data: "IsORO", name: "IsORO" }
-            ],
-            /* ===== FORCE WIDTHS (IMPORTANT) ===== */
-            columnDefs: [
-                { targets: 0, width: "60px", },
-                { targets: 1, width: "120px" },
-                { targets: 2, width: "180px" },
-                { targets: 3, width: "120px" },
-                { targets: 4, width: "220px" },
-                { targets: 5, width: "100px" },
-                { targets: 6, width: "100px" },
-                { targets: 7, width: "100px" },
-                { targets: 8, width: "100px" },
-                { targets: 9, width: "100px" },
-                { targets: 10, width: "100px" },
-                {
-                    targets: '_all',  // Apply to all visible columns
-                    orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
-                },
-            ],
-            language: {
-                search: "", // Remove the default "Search:" label
-                searchPlaceholder: "Search Domain ID" // Add custom placeholder
-            },
-            dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
-            buttons: [
-                //{
-                //    extend: 'copy',
-                //    exportOptions: {
-                //        columns: "thead th:not(.noExport)"
-                //    }
-                //},
-                {
-                    extend: 'excel',
-                    exportOptions: {
-                        columns: "thead th:not(.noExport)"
-                    }
-                },
-                {
-                    extend: 'pdfHtml5',
-                    orientation: 'landscape',
-                    pageSize: 'LEGAL',
-                    title: 'E-IASC_' + $("#lblModelTitle").html(),
-                    exportOptions: {
-                        columns: "thead th:not(.noExport)"
-                    },
-                    customize: function (doc) {
-                        WaterMarkOnPdf(doc)
-                    }
-                }],
-            initComplete: function () {
-                // Add tooltip to the search input box
-                let searchBox = $('div.dataTables_filter input');
-                searchBox.attr('title', 'Search Domain ID');
-
-                // Force DataTables to calculate optimal widths
-                this.api().columns.adjust();
-                FixDomainRegnDataTableUI('#tbldatadialog');
-
-                // Handle zoom/resize
-                var resizeTimer;
-                $(window).on('resize', function () {
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(function () {
-                        tabledialog.columns.adjust();
-                    }, 100);
-                });
-
-            },
-            drawCallback: function (settings) {
-
-                // Recalculate widths on each data load
-                this.api().columns.adjust();
-                FixDomainRegnDataTableUI('#tbldatadialog');
-
-                const tooltipTriggerList = [].slice.call(
-                    document.querySelectorAll('[data-bs-toggle="tooltip"]')
-                );
-                if (window.bootstrap && bootstrap.Tooltip) {
-                    tooltipTriggerList.forEach(el => {
-                        try { new bootstrap.Tooltip(el); } catch (e) { }
-                    });
-                }
+    $("#DataTableDialog")
+        .off('shown.bs.modal.domainRegnBuild')
+        .one('shown.bs.modal.domainRegnBuild', function () {
+            if ($.fn.DataTable.isDataTable("#tbldatadialog")) {
+                // Destroy the DataTable and clear the table content
+                $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
+                $("#tbldatadialog thead").empty(); // Clear old thead
+                $("#tbldatadialog tbody").empty(); // Clear old tbody
+                $("#tbldatadialog").empty(); // UI fix: remove old DataTables cloned header/body markup
             }
+
+            tabledialog = $("#tbldatadialog").DataTable({
+                scrollY: '100%',          // ✅ vertical scroll
+                scrollX: true,            // ✅ horizontal scroll
+                scrollCollapse: false,
+                scroller: false,           // ✅ Enable virtual scrolling for better performance
+                deferScroll: false,        // ✅ Improve scrolling performance
+                fixedHeader: false,       // ❌ disable when using scrollY
+
+                processing: false,
+                serverSide: true,
+                filter: true,
+                stateSave: false,
+
+                autoWidth: false,  //Set autoWidth to true (let DataTables decide)
+                responsive: false, // Columns can hide on small screens
+                deferRender: true,// ✅ Handle zoom changes
+                order: [[1, 'desc']], // Default sorting on the first column
+                ajax: {
+                    url: "/Account/GetDataForDataTable",
+                    contentType: 'application/x-www-form-urlencoded',
+                    type: "POST",
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+                    data: function (d) {
+                        d.draw = d.draw;
+                        d.start = d.start;
+                        d.length = d.length;
+                        d.searchValue = d.search.value;
+                        d.sortColumn = d.columns[d.order[0].column].data;
+                        d.sortDirection = d.order[0].dir;
+                        d.Choice = Choice;
+                    },
+                },
+                columns: [
+                    // Serial number column
+                    {
+                        title: "S No",
+                        data: null,
+                        name: "SerialNumber",
+                        orderable: false, // Disable sorting for this column
+                        className: "text-center col-sno",
+                        width: "60px",
+                        render: function (data, type, row, meta) {
+                            // Calculate serial number based on row index
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        title: "Reg Id",
+                        data: "Id",
+                        name: "Id",
+                        className: "nowrap",
+                        width: "120px",
+                    },
+                    {
+                        title: "Domain Id",
+                        data: "DomainId",
+                        name: "DomainId",
+                        className: "nowrap",
+                        width: "180px",
+                        render: function (data, type, row, meta) {
+                            if (!data) return '';
+                            return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
+                        }
+                    },
+                    {
+                        title: "IC No",
+                        data: "ArmyNo",
+                        name: "ArmyNo",
+                        className: "nowrap",
+                        width: "120px",
+                    },
+                    {
+                        title: "Role",
+                        data: "RoleNames",
+                        name: "RoleNames",
+                        orderable: false, // Disable sorting for this column
+                        className: "nowrap",
+                        width: "150px",
+                        render: function (data, type, row) {
+                            return data ? data.join(', ') : '';  // Convert array to string
+                        }
+                    },
+                    {
+                        title: "Requested Genr On (DT)",
+                        data: "UpdatedOn",
+                        name: "UpdatedOn",
+                        className: "text-wrap requested-generated-col",
+                        width: "150px",
+                        render: function (data, type, row) {
+                            return DateFormateddMMyyyyhhmmss(data);
+                        },
+                    },
+                    // Display user-friendly value for Mapped
+                    {
+                        title: "Mapping",
+                        data: "Mapped",
+                        name: "Mapped",
+                        className: "nowrap",
+                        width: "100px",
+                        render: function (data, type, row) {
+                            // Convert boolean to "Yes" or "No"
+                            return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
+                        },
+                    },
+                    // Display user-friendly value for AdminFlag
+                    {
+                        title: "Approval",
+                        data: "AdminFlag",
+                        name: "AdminFlag",
+                        className: "nowrap",
+                        width: "100px",
+                        render: function (data, type, row) {
+                            // Convert boolean to "Yes" or "No"
+                            return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
+                        },
+                    },
+                    // Display user-friendly value for Active
+                    {
+                        title: "Active",
+                        data: "Active",
+                        name: "Active",
+                        className: "nowrap",
+                        width: "100px",
+                        render: function (data, type, row) {
+                            // Convert boolean to "Yes" or "No"
+                            return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
+                        },
+                    },
+                    // Display user-friendly value for IsIO
+                    {
+                        title: "IO",
+                        data: "IsIO",
+                        name: "IsIO",
+                        className: "nowrap",
+                        width: "100px",
+                        render: function (data, type, row) {
+                            // Convert boolean to "Yes" or "No"
+                            return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
+                        },
+                    },
+                    // Display user-friendly value for IsCO
+                    {
+                        title: "Approver",
+                        data: "IsCO",
+                        name: "IsCO",
+                        className: "nowrap",
+                        width: "100px",
+                        render: function (data, type, row) {
+                            // Convert boolean to "Yes" or "No"
+                            return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
+                        },
+                    },
+                    //{ data: "IsRO", name: "IsRO" },
+                    //{ data: "IsORO", name: "IsORO" }
+                ],
+                /* ===== FORCE WIDTHS (IMPORTANT) ===== */
+                columnDefs: [
+                    { targets: 0, width: "60px", },
+                    { targets: 1, width: "120px" },
+                    { targets: 2, width: "180px" },
+                    { targets: 3, width: "120px" },
+                    { targets: 4, width: "220px" },
+                    { targets: 5, width: "100px" },
+                    { targets: 6, width: "100px" },
+                    { targets: 7, width: "100px" },
+                    { targets: 8, width: "100px" },
+                    { targets: 9, width: "100px" },
+                    { targets: 10, width: "100px" },
+                    {
+                        targets: '_all',  // Apply to all visible columns
+                        orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+                    },
+                ],
+                language: {
+                    search: "", // Remove the default "Search:" label
+                    searchPlaceholder: "Search Domain ID" // Add custom placeholder
+                },
+                dom: "<'dt-top ecms-dt-toolbar'lBf>rt<'dt-bottom ecms-dt-footer'ip>", // Common ECMS toolbar/footer
+                buttons: [
+                    //{
+                    //    extend: 'copy',
+                    //    exportOptions: {
+                    //        columns: "thead th:not(.noExport)"
+                    //    }
+                    //},
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: "thead th:not(.noExport)"
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL',
+                        title: 'E-IASC_' + $("#lblModelTitle").html(),
+                        exportOptions: {
+                            columns: "thead th:not(.noExport)"
+                        },
+                        customize: function (doc) {
+                            WaterMarkOnPdf(doc)
+                        }
+                    }],
+                initComplete: function () {
+                    // Add tooltip to the search input box
+                    let searchBox = $('div.dataTables_filter input');
+                    searchBox.attr('title', 'Search Domain ID');
+
+                    // Force DataTables to calculate optimal widths
+                    this.api().columns.adjust();
+                    RefreshDomainRegnDataTable('#tbldatadialog');
+
+                    // Handle zoom/resize
+                    var resizeTimer;
+                    $(window)
+                        .off('resize.domainRegnDialog')
+                        .on('resize.domainRegnDialog', function () {
+                            clearTimeout(resizeTimer);
+                            resizeTimer = setTimeout(function () {
+                                if (tabledialog) {
+                                    tabledialog.columns.adjust();
+                                }
+                            }, 100);
+                        });
+
+                },
+                drawCallback: function (settings) {
+
+                    // Recalculate widths on each data load
+                    this.api().columns.adjust();
+                    RefreshDomainRegnDataTable('#tbldatadialog');
+
+                    const tooltipTriggerList = [].slice.call(
+                        document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                    );
+                    if (window.bootstrap && bootstrap.Tooltip) {
+                        tooltipTriggerList.forEach(el => {
+                            try { new bootstrap.Tooltip(el); } catch (e) { }
+                        });
+                    }
+                }
+            });
         });
-    });
 
     // STEP 2: Show modal (this triggers the above)
+    PrepareDomainRegnModalRoot("#DataTableDialog");
     $("#DataTableDialog").modal("show");
 }
 function Proceed() {
@@ -776,14 +778,14 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-                setTimeout(function () { FixDomainRegnDataTableUI('#tbldata'); }, 30);
-                setTimeout(function () { FixDomainRegnDataTableUI('#tbldatadialog'); }, 30);
+                setTimeout(function () { RefreshDomainRegnDataTable('#tbldata'); }, 30);
+                setTimeout(function () { RefreshDomainRegnDataTable('#tbldatadialog'); }, 30);
             } catch (error) {
                 console.error("Error fetching data:", error);
                 $("#loading").addClass("d-none").hide();
                 $(".dataTables_processing").hide();
                 callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
-                setTimeout(function () { FixDomainRegnDataTableUI("#tbldata"); }, 30);
+                setTimeout(function () { RefreshDomainRegnDataTable("#tbldata"); }, 30);
             }
         },
         columns: [
@@ -863,7 +865,7 @@ function BindData() {
                 width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
-                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                    return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
                 },
             },
             // Display user-friendly value for AdminFlag
@@ -875,7 +877,7 @@ function BindData() {
                 width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
-                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                    return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
                 },
             },
             // Display user-friendly value for Active
@@ -887,7 +889,7 @@ function BindData() {
                 width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
-                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                    return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
                 },
             },
             // Display user-friendly value for IsIO
@@ -899,7 +901,7 @@ function BindData() {
                 width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
-                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                    return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
                 },
             },
             // Display user-friendly value for IsCO
@@ -911,7 +913,7 @@ function BindData() {
                 width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
-                    return data ? "<span class='badge badge-pill badge-success'>Yes</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
+                    return data ? "<span class='badge ecms-status-yes'>Yes</span>" : "<span class='badge ecms-status-no'>No</span>";
                 },
             },
             // Additional column for Edit action
@@ -949,7 +951,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Domain ID" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
+        dom: "<'dt-top ecms-dt-toolbar'lBf>rt<'dt-bottom ecms-dt-footer'ip>", // Common ECMS toolbar/footer
         buttons: [
             //{
             //    extend: 'copy',
@@ -981,22 +983,26 @@ function BindData() {
             searchBox.attr('title', 'Search Comd/Abbreviation');
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
-            FixDomainRegnDataTableUI('#tbldata');
+            RefreshDomainRegnDataTable('#tbldata');
 
             // Handle zoom/resize
             var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    table.columns.adjust();
-                }, 100);
-            });
+            $(window)
+                .off('resize.domainRegnMain')
+                .on('resize.domainRegnMain', function () {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function () {
+                        if (table) {
+                            table.columns.adjust();
+                        }
+                    }, 100);
+                });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
             this.api().columns.adjust();
-            FixDomainRegnDataTableUI('#tbldata');
+            RefreshDomainRegnDataTable('#tbldata');
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -1332,184 +1338,101 @@ function AccountCount() {
     });
 }
 
+/* ==============================================================
+   PAGE-LOCAL UI HELPERS
+   No global ModernCSS file is changed by these helpers.
+================================================================ */
 
-function FixDomainRegnDataTableUI(tableSelector) {
-    try {
-        const $wrapper = $(tableSelector + "_wrapper");
-        $("#loading").addClass("d-none").hide();
-        $(".dataTables_processing, " + tableSelector + "_processing").hide();
+function PrepareDomainRegnModalRoot(modalSelector) {
+    const $modal = $(modalSelector);
 
-        // Hide cloned sizing header inside DataTables scroll body.
-        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").css({
-            display: "none",
-            height: "0",
-            maxHeight: "0",
-            minHeight: "0",
-            visibility: "collapse",
-            overflow: "hidden"
-        });
+    if (!$modal.length) {
+        return;
+    }
 
-        $wrapper.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
-            display: "none",
-            height: "0",
-            maxHeight: "0",
-            minHeight: "0",
-            lineHeight: "0",
-            fontSize: "0",
-            padding: "0",
-            margin: "0",
-            border: "0",
-            overflow: "hidden",
-            visibility: "collapse"
-        });
+    if (!$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+}
 
-        $wrapper.find(".dt-bottom, .dataTables_info, .dataTables_paginate, .pagination").css({
-            visibility: "visible",
-            opacity: "1"
-        });
+function PrepareDomainRegnModalRoots() {
+    PrepareDomainRegnModalRoot("#AddNewDomain");
+    PrepareDomainRegnModalRoot("#DataTableDialog");
+    PrepareDomainRegnModalRoot("#ClaimsShow");
+}
 
-        const $bottom = $wrapper.children(".dt-bottom");
-        if ($bottom.length) {
-            $bottom.css({
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%"
-            });
-        }
+function RefreshDomainRegnDataTable(tableSelector, delay) {
+    const wait = Number.isFinite(delay) ? delay : 0;
 
-        if ($.fn.DataTable.isDataTable(tableSelector)) {
-            setTimeout(function () {
+    window.setTimeout(function () {
+        try {
+            const $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            // The common ECMS DataTable CSS hides this cloned sizing header.
+            // aria-hidden is added here only for accessibility.
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable.isDataTable(tableSelector)) {
                 $(tableSelector).DataTable().columns.adjust();
-            }, 80);
+            }
+        } catch (error) {
+            console.warn("Domain Registration DataTable refresh skipped:", error);
         }
-    } catch (e) {
-        console.warn("DomainRegn DataTable UI fix skipped:", e);
-    }
+    }, wait);
 }
 
-$('#DataTableDialog').on('shown.bs.modal.domainRegnUi', function () {
-    setTimeout(function () {
-        FixDomainRegnDataTableUI('#tbldatadialog');
-    }, 120);
-});
+$(document)
+    .off("draw.dt.domainRegnUi")
+    .on("draw.dt.domainRegnUi", function (event, settings) {
+        const tableId = settings && settings.nTable ? settings.nTable.id : "";
 
-$('#AddNewDomain').on('shown.bs.modal.domainRegnUi', function () {
-    try {
-        $('#ddlRoles, #ddClaims').trigger('change.select2');
-    } catch (e) { }
-});
-
-
-/* UI-only final fixes: remove DataTables cloned body header, keep modal controls aligned */
-function DomainRegn_FinalTableCleanup(tableSelector) {
-    try {
-        var $wrapper = $(tableSelector + "_wrapper");
-
-        $("#loading").addClass("d-none").hide();
-        $(".dataTables_processing, .dt-processing, " + tableSelector + "_processing").hide();
-
-        // DataTables creates a cloned THEAD inside scroll body for width sizing.
-        // Hide only the cloned body THEAD; keep the real header in scrollHead visible.
-        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").each(function () {
-            $(this).attr("aria-hidden", "true").css({
-                "display": "none",
-                "visibility": "collapse",
-                "height": "0",
-                "min-height": "0",
-                "max-height": "0",
-                "line-height": "0",
-                "font-size": "0",
-                "padding": "0",
-                "margin": "0",
-                "border": "0",
-                "overflow": "hidden"
-            });
-        });
-
-        $wrapper.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
-            "display": "none",
-            "visibility": "collapse",
-            "height": "0",
-            "min-height": "0",
-            "max-height": "0",
-            "line-height": "0",
-            "font-size": "0",
-            "padding": "0",
-            "margin": "0",
-            "border": "0",
-            "overflow": "hidden"
-        });
-
-        $wrapper.find(".dataTables_info, .dataTables_paginate, .dt-info, .dt-paging, .pagination").css({
-            "visibility": "visible",
-            "opacity": "1"
-        });
-
-        if ($.fn.DataTable.isDataTable(tableSelector)) {
-            setTimeout(function () {
-                try { $(tableSelector).DataTable().columns.adjust(); } catch (e) { }
-            }, 50);
+        if (tableId === "tbldata") {
+            RefreshDomainRegnDataTable("#tbldata", 20);
+        } else if (tableId === "tbldatadialog") {
+            RefreshDomainRegnDataTable("#tbldatadialog", 20);
         }
-    } catch (e) {
-        console.warn("DomainRegn_FinalTableCleanup skipped:", e);
-    }
-}
+    });
 
-$(document).on("draw.dt", function (e, settings) {
-    try {
-        var id = settings && settings.nTable ? settings.nTable.id : "";
-        if (id === "tbldata") {
-            setTimeout(function () { DomainRegn_FinalTableCleanup("#tbldata"); }, 20);
+$("#DataTableDialog")
+    .off(".domainRegnUi")
+    .on("shown.bs.modal.domainRegnUi", function () {
+        RefreshDomainRegnDataTable("#tbldatadialog", 120);
+    })
+    .on("hidden.bs.modal.domainRegnUi", function () {
+        if (!$(".modal.show").length) {
+            $(".modal-backdrop").remove();
+            $("body").removeClass("modal-open").css("padding-right", "");
         }
-        if (id === "tbldatadialog") {
-            setTimeout(function () { DomainRegn_FinalTableCleanup("#tbldatadialog"); }, 20);
+    });
+
+$("#AddNewDomain")
+    .off(".domainRegnUi")
+    .on("shown.bs.modal.domainRegnUi", function () {
+        window.setTimeout(function () {
+            try {
+                $("#ddlRoles, #ddClaims").trigger("change.select2");
+            } catch (error) {
+                console.warn("Select2 refresh skipped:", error);
+            }
+        }, 60);
+    })
+    .on("hidden.bs.modal.domainRegnUi", function () {
+        if (!$(".modal.show").length) {
+            $(".modal-backdrop").remove();
+            $("body").removeClass("modal-open").css("padding-right", "");
         }
-    } catch (e) { }
-});
+    });
 
-$("#DataTableDialog").on("shown.bs.modal.domainRegnFinal shown.domainRegnFinal", function () {
-    setTimeout(function () { DomainRegn_FinalTableCleanup("#tbldatadialog"); }, 100);
-});
-
-$("#AddNewDomain").on("shown.bs.modal.domainRegnFinal shown.domainRegnFinal", function () {
-    $(".modal-backdrop").not(":last").remove();
-    setTimeout(function () {
-        try {
-            $("#ddlRoles, #ddClaims").select2({
-                width: "100%",
-                dropdownParent: $("#AddNewDomain"),
-                closeOnSelect: false
-            });
-            $("#ddlRoles, #ddClaims").trigger("change.select2");
-        } catch (e) { }
-    }, 80);
-});
-
-
-/* UI-only: keep radio checked state and Select2 clean after modal opens */
-$("#AddNewDomain").on("shown.bs.modal.domainRegnRadioFix", function () {
-    setTimeout(function () {
-        try {
-            $("#ddlRoles, #ddClaims").select2({
-                width: "100%",
-                dropdownParent: $("#AddNewDomain"),
-                closeOnSelect: false
-            });
-            $("#ddlRoles, #ddClaims").trigger("change.select2");
-        } catch (e) { }
-
-        // Force browser repaint for custom radio checked state.
-        $("#AddNewDomain input[type='radio']").each(function () {
-            this.offsetHeight;
-        });
-    }, 80);
-});
-
-$(document).on("change.domainRegnRadioFix", "#AddNewDomain input[type='radio']", function () {
-    var radioName = $(this).attr("name");
-    if (radioName) {
-        $("#AddNewDomain input[type='radio'][name='" + radioName + "']").removeClass("ecms-radio-checked");
-        $("#AddNewDomain input[type='radio'][name='" + radioName + "']:checked").addClass("ecms-radio-checked");
-    }
-});
+$("#ClaimsShow")
+    .off(".domainRegnUi")
+    .on("hidden.bs.modal.domainRegnUi", function () {
+        if (!$(".modal.show").length) {
+            $(".modal-backdrop").remove();
+            $("body").removeClass("modal-open").css("padding-right", "");
+        }
+    });

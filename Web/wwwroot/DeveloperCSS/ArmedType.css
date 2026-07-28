@@ -1,1037 +1,265 @@
-﻿/* =====================================================
-   ECMS Arms / Service & Corps Modern UI
-   Only UI changed. Functionality IDs/classes are preserved.
-===================================================== */
+﻿/*
+=====================================================
+ECMS Arms / Service & Corps page
+Purpose:
+- Keep only page-level layout and ArmedType form exceptions here.
+- DataTable structure/scroll/header/footer is handled globally in ecms.05.datatables.css.
+=====================================================
+*/
 
-:root {
-    --ecms-armedtype-blue-1: #153f8f;
-    --ecms-armedtype-blue-2: #347dff;
-    --ecms-armedtype-cyan: #55d7ff;
-    --ecms-armedtype-green: #31c48d;
-    --ecms-armedtype-red: #dc2626;
-    --ecms-armedtype-yellow: #f5b800;
-    --ecms-armedtype-ink: #061b44;
-    --ecms-armedtype-muted: #536f9a;
-}
-
-/* Breadcrumb row: keep below fixed top header */
-html body:has(.ecms-armedtype-page) header.page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-armedtype-page) header.page-header.page-header-dark,
-html body:has(.ecms-armedtype-page) .page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-armedtype-page) .page-header.page-header-dark {
-    width: 100% !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    max-height: 42px !important;
-    padding: 0 !important;
-    margin-top: 26px !important;
-    margin-bottom: 0 !important;
-    overflow: visible !important;
-    position: relative !important;
-    z-index: 100 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    background: linear-gradient(90deg, rgba(75, 207, 239, 0.96), rgba(61, 126, 244, 0.96)) !important;
-    box-shadow: 0 12px 25px rgba(0, 38, 95, 0.22) !important;
-}
-
-    html body:has(.ecms-armedtype-page) .page-header.page-header-dark .containerMain {
-        width: 100% !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        margin: 0 !important;
-        padding: 0 14px 0 66px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-    }
-
-    html body:has(.ecms-armedtype-page) .page-header.page-header-dark .page-header-content,
-    html body:has(.ecms-armedtype-page) .page-header.page-header-dark .page-header-content > .row,
-    html body:has(.ecms-armedtype-page) .page-header.page-header-dark .page-header-content .col-auto {
-        width: auto !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        flex: 0 0 auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-    }
-
-    html body:has(.ecms-armedtype-page) .page-header.page-header-dark .page-header-title {
-        width: auto !important;
-        max-width: calc(100vw - 90px) !important;
-        min-width: 0 !important;
-        height: 42px !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        flex-wrap: nowrap !important;
-        gap: 8px !important;
-        white-space: nowrap !important;
-        color: #ffffff !important;
-        font-size: 14px !important;
-        line-height: 42px !important;
-        font-weight: 900 !important;
-        text-shadow: 0 2px 7px rgba(0, 30, 80, 0.38) !important;
-    }
-
-        html body:has(.ecms-armedtype-page) .page-header.page-header-dark .page-header-title .page-header-icon {
-            width: 26px !important;
-            height: 26px !important;
-            min-width: 26px !important;
-            margin-right: 4px !important;
-            border-radius: 50% !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            background: rgba(255, 255, 255, 0.22) !important;
-            border: 1px solid rgba(255, 255, 255, 0.42) !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 10px rgba(0,33,90,0.16) !important;
-        }
-
-            html body:has(.ecms-armedtype-page) .page-header.page-header-dark .page-header-title .page-header-icon i,
-            html body:has(.ecms-armedtype-page) .page-header.page-header-dark .page-header-title a,
-            html body:has(.ecms-armedtype-page) .page-header.page-header-dark .page-header-title span {
-                color: #ffffff !important;
-                text-decoration: none !important;
-            }
-
-/* Page background */
-html:has(.ecms-armedtype-page),
-body:has(.ecms-armedtype-page) {
-    min-height: 100vh !important;
-    overflow-y: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.96), rgba(15, 70, 160, 0.92)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat fixed !important;
-}
-
+/* Page content height below common header/nav/breadcrumb/footer. */
 .ecms-armedtype-page {
-    position: relative !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
-    max-width: none !important;
-    height: calc(100vh - 196px) !important;
-    min-height: calc(100vh - 196px) !important;
-    margin: 0 !important;
-    padding: 12px 26px 46px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.88), rgba(15, 70, 160, 0.79)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+    height: calc(100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem);
+    margin-top: .5rem;
+    overflow: hidden;
 }
 
-    .ecms-armedtype-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 24% 18%, rgba(96, 213, 255, 0.13), transparent 30%), radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
-    }
-
-.ecms-armedtype-shell {
-    position: relative !important;
-    z-index: 1 !important;
-    box-sizing: border-box !important;
-    width: min(1480px, calc(100% - 90px)) !important;
-    min-width: 1120px !important;
-    height: calc(100vh - 220px) !important;
-    max-height: calc(100vh - 220px) !important;
-    min-height: 500px !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border-radius: 22px !important;
-    background: linear-gradient(135deg, rgba(246,251,255,0.94), rgba(213,229,247,0.88)), rgba(232, 244, 255, 0.90) !important;
-    border: 1px solid rgba(255,255,255,0.86) !important;
-    box-shadow: 0 24px 70px rgba(0, 18, 60, 0.28) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
+/* Main page card fills the available page area. */
+.ecms-armedtype-shell,
+.ecms-armedtype-shell .ecms-card-body {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
 }
 
-/* Title */
+/* Title row only needs small page-specific sizing. */
 .ecms-armedtype-titlebar {
-    height: 58px !important;
-    min-height: 58px !important;
-    padding: 8px 14px !important;
-    border-radius: 16px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(232, 243, 255, 0.83)) !important;
-    border: 1px solid rgba(255,255,255,0.92) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 24px rgba(15, 58, 140, 0.12) !important;
+    min-height: var(--ecms-title-height);
 }
 
-.ecms-armedtype-title-wrap {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
-}
-
-.ecms-armedtype-title-icon {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    border-radius: 14px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #2f7dff, #7c3aed) !important;
-    color: #ffffff !important;
-    box-shadow: 0 10px 22px rgba(47, 125, 255, 0.28) !important;
-}
-
-    .ecms-armedtype-title-icon i {
-        color: #ffffff !important;
-        font-size: 18px !important;
+    .ecms-armedtype-titlebar h3 {
+        font-size: 1.25rem;
     }
-
-.ecms-armedtype-titlebar h3 {
-    margin: 0 !important;
-    color: var(--ecms-armedtype-ink) !important;
-    font-size: 21px !important;
-    line-height: 1.1 !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.01em !important;
-}
-
-.ecms-armedtype-titlebar p {
-    margin: 4px 0 0 !important;
-    color: #48618e !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
 
 .ecms-armedtype-pill {
-    height: 34px !important;
-    padding: 0 14px !important;
-    border-radius: 999px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
-    font-size: 12px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 9px 18px rgba(29, 78, 216, 0.22) !important;
+    min-height: 2rem;
+    padding: .5rem .85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    text-transform: uppercase;
 }
 
-/* Form */
-.ecms-armedtype-form-card {
-    padding: 11px 14px !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232, 243, 255, 0.78)) !important;
-    border: 1px solid rgba(255,255,255,0.82) !important;
-    box-shadow: 0 14px 34px rgba(0, 26, 88, 0.12) !important;
+/* Form section uses Bootstrap grid in the cshtml. */
+.ecms-armedtype-form-section,
+.ecms-armedtype-form-section form,
+.ecms-armedtype-form-section .row {
+    margin: 0;
 }
 
-.ecms-armedtype-form-grid {
-    display: grid !important;
-    grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) minmax(210px, 0.8fr) auto !important;
-    gap: 12px !important;
-    align-items: end !important;
-}
-
-.ecms-armedtype-field {
-    min-width: 0 !important;
-}
-
+/* ArmedType label icon style; common input design comes from ecms.03.forms.css. */
 .ecms-armedtype-label {
-    display: flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    margin: 0 0 6px !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    line-height: 1.1 !important;
-    font-weight: 950 !important;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-bottom: .3rem;
+    white-space: nowrap;
 }
 
     .ecms-armedtype-label > i:first-child {
-        width: 24px !important;
-        height: 24px !important;
-        min-width: 24px !important;
-        border-radius: 9px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, var(--ecms-armedtype-blue-2), var(--ecms-armedtype-blue-1)) !important;
-        font-size: 12px !important;
-        box-shadow: 0 6px 14px rgba(47, 125, 255, 0.18) !important;
+        width: 1.45rem;
+        height: 1.45rem;
+        min-width: 1.45rem;
+        border-radius: .55rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white);
+        background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-800));
+        font-size: .72rem;
+        box-shadow: 0 .35rem .85rem rgba(47,103,230,.18);
     }
 
-    .ecms-armedtype-label .mand1,
-    .mand1 {
-        margin-left: 1px !important;
-        color: #ef4444 !important;
-        font-size: 8px !important;
-        vertical-align: super !important;
+    .ecms-armedtype-label .mand1 {
+        margin-left: .05rem;
+        font-size: .55rem;
+        vertical-align: super;
     }
 
+/* Keep all controls equal height. */
 .ecms-armedtype-control,
-.ecms-armedtype-field .form-control,
-.ecms-armedtype-field .form-select {
-    height: 38px !important;
-    width: 100% !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(70, 119, 184, 0.28) !important;
-    background-color: rgba(255,255,255,0.94) !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03) !important;
+.ecms-armedtype-form-section .form-control,
+.ecms-armedtype-form-section .form-select {
+    min-height: var(--ecms-control-height);
 }
 
-    .ecms-armedtype-control:focus,
-    .ecms-armedtype-field .form-control:focus,
-    .ecms-armedtype-field .form-select:focus {
-        border-color: rgba(47, 125, 255, 0.75) !important;
-        box-shadow: 0 0 0 3px rgba(47, 125, 255, 0.16) !important;
+/* Infantry radio group. */
+.ecms-armedtype-radio-box {
+    min-height: var(--ecms-control-height);
+    display: flex;
+    align-items: center;
+}
+
+.ecms-armedtype-radio {
+    min-height: 2rem;
+    margin: 0;
+    padding: .35rem .75rem;
+    border: 1px solid rgba(70,119,184,.20);
+    border-radius: 999px;
+    background: rgba(255,255,255,.82);
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+    .ecms-armedtype-radio .form-check-input {
+        margin: 0;
+        opacity: 1;
+        position: static;
+        appearance: auto;
+        accent-color: var(--ecms-primary-600);
     }
 
+    .ecms-armedtype-radio .form-check-label {
+        color: var(--ecms-ink);
+        font-size: .78rem;
+        font-weight: 850;
+    }
+
+/* Save/Reset alignment. */
 .ecms-armedtype-actions {
-    display: flex !important;
-    align-items: end !important;
-    justify-content: flex-end !important;
-    gap: 8px !important;
-    min-width: 172px !important;
-    flex-wrap: wrap !important;
+    margin: 0;
+    padding: 0;
 }
 
     .ecms-armedtype-actions .btn,
     .ecms-armedtype-actions input[type="button"] {
-        height: 38px !important;
-        min-width: 78px !important;
-        padding: 0 15px !important;
-        border-radius: 12px !important;
-        font-size: 13px !important;
-        font-weight: 950 !important;
+        min-width: 4.9rem;
+        min-height: var(--ecms-control-height);
     }
 
-.ecms-armedtype-save,
-#btnsave {
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #2f7dff, #0f4ed7) !important;
-    box-shadow: 0 10px 20px rgba(47,125,255,0.22) !important;
+/* Table area fills remaining card height; DataTable internals are common CSS. */
+.ecms-armedtype-table-section {
+    min-height: 0;
+    overflow: hidden;
 }
 
-.ecms-armedtype-reset,
-#btnReset {
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-    box-shadow: 0 10px 20px rgba(239,68,68,0.18) !important;
-}
-
-.ecms-armedtype-actions .btn:hover,
-.ecms-armedtype-actions input[type="button"]:hover {
-    transform: translateY(-1px) !important;
-    color: #ffffff !important;
-}
-
-/* Table area */
-.ecms-armedtype-table-card {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    padding: 10px 12px 12px !important;
-    border-radius: 18px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232, 243, 255, 0.74)) !important;
-    border: 1px solid rgba(255,255,255,0.78) !important;
-    box-shadow: 0 14px 34px rgba(0, 26, 88, 0.14) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-}
-
-.ecms-armedtype-table-title {
-    height: 34px !important;
-    min-height: 34px !important;
-    border-radius: 12px !important;
-    margin-bottom: 10px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #153f8f, #347dff) !important;
-    box-shadow: 0 10px 22px rgba(22, 84, 214, 0.18) !important;
-}
-
-    .ecms-armedtype-table-title span {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-        color: #ffffff !important;
-        font-size: 15px !important;
-        font-weight: 950 !important;
-    }
-
-    .ecms-armedtype-table-title i {
-        color: #ffffff !important;
+    .ecms-armedtype-table-section > .ecms-section-title {
+        min-height: 2.15rem;
+        padding-block: .42rem;
     }
 
 .ecms-armedtype-table-wrap {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
+    min-height: 0;
+    overflow: hidden;
 }
 
-#tbldata {
-    width: 100% !important;
-    table-layout: fixed !important;
-    border-collapse: collapse !important;
+/* Badges and action buttons created from ArmedType.js. */
+
+/* Bootstrap YES/NO badges generated from ArmedType.js. */
+.ecms-armedtype-page .ecms-status-badge {
+    min-width: 2.7rem;
+    min-height: 1.45rem;
+    padding: .32rem .65rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .65rem;
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+    border: 0;
 }
 
-/* DataTables controls */
-.ecms-armedtype-page .dt-top,
-.ecms-armedtype-page .dataTables_wrapper .dt-top {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    margin-bottom: 8px !important;
-    flex-wrap: wrap !important;
+/* YES badge uses Bootstrap green. */
+.ecms-armedtype-page .badge.bg-success.ecms-status-yes {
+    background-color: var(--bs-success, #198754) !important;
+    color: #fff !important;
 }
 
-.ecms-armedtype-page .dataTables_length label,
-.ecms-armedtype-page .dataTables_filter label,
-.ecms-armedtype-page .dt-length label,
-.ecms-armedtype-page .dt-search label {
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
+/* NO badge uses Bootstrap red. */
+.ecms-armedtype-page .badge.bg-danger.ecms-status-no {
+    background-color: var(--bs-danger, #dc3545) !important;
+    color: #fff !important;
 }
 
-.ecms-armedtype-page .dataTables_length select,
-.ecms-armedtype-page .dataTables_filter input,
-.ecms-armedtype-page .dt-length select,
-.ecms-armedtype-page .dt-search input {
-    height: 34px !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(70,119,184,0.34) !important;
-    background: rgba(255,255,255,0.96) !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 750 !important;
-}
-
-.ecms-armedtype-page .dataTables_filter input,
-.ecms-armedtype-page .dt-search input {
-    min-width: 170px !important;
-    padding: 6px 12px !important;
-}
-
-.ecms-armedtype-page #tbldata_wrapper.dt-container,
-.ecms-armedtype-page .dt-container,
-.ecms-armedtype-page .dataTables_wrapper {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-.ecms-armedtype-page .dt-layout-row {
-    flex: 0 0 auto !important;
-}
-
-.ecms-armedtype-page .dt-scroll,
-.ecms-armedtype-page .dataTables_scroll {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    border-radius: 13px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(51,103,185,0.28) !important;
-    background: rgba(255,255,255,0.76) !important;
-}
-
-.ecms-armedtype-page .dt-scroll-head,
-.ecms-armedtype-page .dataTables_scrollHead {
-    flex: 0 0 auto !important;
-}
-
-.ecms-armedtype-page .dt-scroll-body,
-.ecms-armedtype-page .dataTables_scrollBody {
-    flex: 1 1 auto !important;
-    height: auto !important;
-    max-height: none !important;
-    min-height: 185px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    padding-bottom: 28px !important;
-    box-sizing: border-box !important;
-    border-bottom: 1px solid rgba(51,103,185,0.28) !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(31, 124, 255, 0.65) rgba(255,255,255,0.18);
-}
-
-    .ecms-armedtype-page .dt-scroll-body::-webkit-scrollbar,
-    .ecms-armedtype-page .dataTables_scrollBody::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-
-    .ecms-armedtype-page .dt-scroll-body::-webkit-scrollbar-thumb,
-    .ecms-armedtype-page .dataTables_scrollBody::-webkit-scrollbar-thumb {
-        background: rgba(31, 124, 255, 0.65);
-        border-radius: 999px;
-    }
-
-    .ecms-armedtype-page .dt-scroll-body table#tbldata,
-    .ecms-armedtype-page .dt-scroll-body table.dataTable,
-    .ecms-armedtype-page .dataTables_scrollBody table#tbldata,
-    .ecms-armedtype-page .dataTables_scrollBody table.dataTable {
-        margin-bottom: 28px !important;
-    }
-
-        /* Hide duplicate cloned/sizing header inside scroll body */
-        .ecms-armedtype-page .dt-scroll-body table#tbldata > thead,
-        .ecms-armedtype-page .dt-scroll-body table#tbldata > thead *,
-        .ecms-armedtype-page .dt-scroll-body table#tbldata > thead .dt-scroll-sizing,
-        .ecms-armedtype-page .dt-scroll-body table#tbldata > thead .dt-column-header,
-        .ecms-armedtype-page .dataTables_scrollBody table#tbldata > thead,
-        .ecms-armedtype-page .dataTables_scrollBody table#tbldata > thead * {
-            height: 0 !important;
-            min-height: 0 !important;
-            max-height: 0 !important;
-            line-height: 0 !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border: 0 !important;
-            font-size: 0 !important;
-            color: transparent !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            overflow: hidden !important;
-            visibility: hidden !important;
-        }
-
-/* Real header */
-.ecms-armedtype-page .dt-scroll-head table thead th,
-.ecms-armedtype-page .dt-scroll-head table thead td,
-.ecms-armedtype-page .dataTables_scrollHead table thead th,
-.ecms-armedtype-page .dataTables_scrollHead table thead td,
-.ecms-armedtype-page table.dataTable thead th,
-.ecms-armedtype-page table.dataTable thead td {
-    height: 40px !important;
-    padding: 9px 12px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #153f8f, #2f70df) !important;
-    border-bottom: 0 !important;
-    border-right: 1px solid rgba(255,255,255,0.12) !important;
-    font-size: 13px !important;
-    line-height: 1.15 !important;
-    font-weight: 950 !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-    visibility: visible !important;
-}
-
-.ecms-armedtype-page table.dataTable tbody td {
-    height: 38px !important;
-    padding: 6px 12px !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 750 !important;
-    vertical-align: middle !important;
-    border-color: rgba(77, 109, 156, 0.12) !important;
-    text-align: center !important;
-}
-
-.ecms-armedtype-page table.dataTable tbody tr:nth-child(odd) {
-    background: rgba(255,255,255,0.92) !important;
-}
-
-.ecms-armedtype-page table.dataTable tbody tr:nth-child(even) {
-    background: rgba(236,244,255,0.76) !important;
-}
-
-.ecms-armedtype-page table.dataTable tbody tr:hover {
-    background: rgba(219,236,255,0.92) !important;
-}
-
-.ecms-armedtype-page .dt-ellipsis {
-    display: inline-block !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    vertical-align: middle !important;
-}
-
-.ecms-armedtype-page .badge,
-.ecms-armedtype-page .badge-pill {
-    border-radius: 999px !important;
-    padding: 4px 8px !important;
-    font-size: 10px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-}
-
-.ecms-armedtype-page .dt-info,
-.ecms-armedtype-page .dataTables_info {
-    flex: 0 0 auto !important;
-    padding-top: 7px !important;
-    margin: 0 !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-}
-
-.ecms-armedtype-page .dt-paging,
-.ecms-armedtype-page .dataTables_paginate {
-    flex: 0 0 auto !important;
-    padding-top: 5px !important;
-    padding-bottom: 0 !important;
-    margin: 0 !important;
-}
-
-    .ecms-armedtype-page .dt-paging .pagination {
-        margin: 0 !important;
-        justify-content: flex-end !important;
-    }
-
-    .ecms-armedtype-page .dt-paging .page-link,
-    .ecms-armedtype-page .dataTables_paginate .paginate_button {
-        min-width: 34px !important;
-        height: 32px !important;
-        margin: 0 2px !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(47,125,255,0.18) !important;
-        color: #1d4ed8 !important;
-        background: rgba(255,255,255,0.86) !important;
-        font-size: 12px !important;
-        font-weight: 900 !important;
-    }
-
-        .ecms-armedtype-page .dt-paging .active .page-link,
-        .ecms-armedtype-page .dt-paging .page-link:hover,
-        .ecms-armedtype-page .dataTables_paginate .paginate_button.current,
-        .ecms-armedtype-page .dataTables_paginate .paginate_button:hover {
-            color: #ffffff !important;
-            border-color: transparent !important;
-            background: linear-gradient(135deg, #2f7dff, #153f8f) !important;
-        }
-
-/* Action buttons generated by armedtype.js */
-.ecms-armedtype-page .btn-icon,
 .ecms-armedtype-page .cls-btnedit,
-.ecms-armedtype-page .cls-btnDelete,
-.ecms-armedtype-page .cls-btnorder {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 11px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 4px !important;
-    box-shadow: 0 8px 16px rgba(0, 30, 80, 0.16) !important;
-}
-
-.ecms-armedtype-page .cls-btnorder {
-    background: linear-gradient(135deg, #67e8f9, #38bdf8) !important;
-    color: #061b44 !important;
+.ecms-armedtype-page .cls-btnDelete {
+    margin-inline: .25rem;
+    border: 0;
+    box-shadow: 0 .5rem 1rem rgba(0,30,80,.16);
 }
 
 .ecms-armedtype-page .cls-btnedit {
-    background: linear-gradient(135deg, #facc15, #f59e0b) !important;
-    color: #061b44 !important;
+    background: linear-gradient(135deg, #facc15, #f59e0b);
+    color: #061b44;
 }
 
 .ecms-armedtype-page .cls-btnDelete {
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600));
+    color: var(--ecms-white);
 }
 
-    .ecms-armedtype-page .btn-icon i,
-    .ecms-armedtype-page .cls-btnedit i,
-    .ecms-armedtype-page .cls-btnDelete i,
-    .ecms-armedtype-page .cls-btnorder i {
-        font-size: 14px !important;
-        line-height: 1 !important;
+/* SweetAlert validation list. */
+.error-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    text-align: left;
+}
+
+    .error-list li {
+        margin-bottom: .35rem;
     }
 
-/* SweetAlert compatibility */
-.swal2-popup {
-    border-radius: 18px !important;
-    background: linear-gradient(135deg, rgba(248,252,255,0.98), rgba(225,238,252,0.96)) !important;
-    box-shadow: 0 28px 90px rgba(0, 13, 42, 0.40) !important;
-}
-
-.swal2-title {
-    color: #061b44 !important;
-    font-weight: 950 !important;
-}
-
-.swal2-confirm {
-    border-radius: 11px !important;
-    background: linear-gradient(135deg, #2f7dff, #0f4ed7) !important;
-    font-weight: 900 !important;
-}
-
-.swal2-cancel {
-    border-radius: 11px !important;
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-    font-weight: 900 !important;
-}
-
-/* Small height screens */
-@media (max-height: 760px) {
+/* Tablet and mobile: allow natural page scroll; Bootstrap stacks fields. */
+@media (max-width: 991.98px) {
     .ecms-armedtype-page {
-        height: calc(100vh - 244px) !important;
-        min-height: calc(100vh - 244px) !important;
-        padding-bottom: 42px !important;
+        height: auto;
+        min-height: calc(100vh - var(--ecms-header-height) - var(--ecms-footer-height));
+        overflow: visible;
     }
 
-    .ecms-armedtype-shell {
-        height: calc(100vh - 308px) !important;
-        max-height: calc(100vh - 308px) !important;
-        min-height: 470px !important;
+    .ecms-armedtype-shell,
+    .ecms-armedtype-shell .ecms-card-body {
+        height: auto;
+        overflow: visible;
     }
 
-    .ecms-armedtype-titlebar {
-        height: 52px !important;
-        min-height: 52px !important;
-    }
-
-        .ecms-armedtype-titlebar h3 {
-            font-size: 19px !important;
-        }
-
-        .ecms-armedtype-titlebar p {
-            font-size: 11px !important;
-        }
-
-    .ecms-armedtype-form-card {
-        padding: 9px 12px !important;
-    }
-
-    .ecms-armedtype-control,
-    .ecms-armedtype-field .form-control,
-    .ecms-armedtype-field .form-select,
-    .ecms-armedtype-actions .btn,
-    .ecms-armedtype-actions input[type="button"] {
-        height: 34px !important;
-    }
-
-    .ecms-armedtype-table-title {
-        height: 30px !important;
-        min-height: 30px !important;
-        margin-bottom: 8px !important;
-    }
-
-    .ecms-armedtype-page .dt-scroll-body,
-    .ecms-armedtype-page .dataTables_scrollBody {
-        min-height: 160px !important;
-        padding-bottom: 30px !important;
-    }
-
-        .ecms-armedtype-page .dt-scroll-body table#tbldata,
-        .ecms-armedtype-page .dt-scroll-body table.dataTable,
-        .ecms-armedtype-page .dataTables_scrollBody table#tbldata,
-        .ecms-armedtype-page .dataTables_scrollBody table.dataTable {
-            margin-bottom: 30px !important;
-        }
-
-    .ecms-armedtype-page table.dataTable tbody td {
-        height: 34px !important;
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
-    }
-}
-
-/* Responsive */
-@media (max-width: 1400px) {
-    .ecms-armedtype-shell {
-        width: calc(100% - 60px) !important;
-        min-width: 0 !important;
-    }
-
-    .ecms-armedtype-form-grid {
-        grid-template-columns: 1fr 1fr !important;
-    }
-
-    .ecms-armedtype-actions {
-        grid-column: 1 / -1 !important;
-        justify-content: flex-end !important;
-    }
-}
-
-@media (max-width: 992px) {
-    html:has(.ecms-armedtype-page),
-    body:has(.ecms-armedtype-page) {
-        overflow-y: auto !important;
-    }
-
-    html body:has(.ecms-armedtype-page) .page-header.page-header-dark .containerMain {
-        padding-left: 16px !important;
-        padding-right: 12px !important;
-    }
-
-    html body:has(.ecms-armedtype-page) .page-header.page-header-dark .page-header-title {
-        font-size: 12px !important;
-        gap: 5px !important;
-        max-width: calc(100vw - 32px) !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-
-    .ecms-armedtype-page {
-        height: auto !important;
-        min-height: calc(100vh - 248px) !important;
-        padding: 12px 12px 70px !important;
-        overflow: visible !important;
-    }
-
-    .ecms-armedtype-shell {
-        width: 100% !important;
-        min-width: 0 !important;
-        height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-    }
-
-    .ecms-armedtype-titlebar {
-        height: auto !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-    }
-
-    .ecms-armedtype-form-grid {
-        grid-template-columns: 1fr !important;
+    .ecms-armedtype-table-section {
+        min-height: 28rem;
     }
 
     .ecms-armedtype-actions {
         justify-content: flex-start !important;
     }
+}
 
-    .ecms-armedtype-table-card {
-        min-height: 420px !important;
+/* Phone: buttons become full width. */
+@media (max-width: 575.98px) {
+    .ecms-armedtype-page {
+        width: calc(100vw - .75rem);
+        margin-top: .4rem;
     }
 
-    .ecms-armedtype-page .dt-scroll-body,
-    .ecms-armedtype-page .dataTables_scrollBody {
-        height: 300px !important;
-        max-height: 300px !important;
-    }
-}
-
-
-/* Arms / Service & Corps page specific form layout */
-.ecms-armedtype-form-grid {
-    grid-template-columns: minmax(260px, 1.1fr) minmax(240px, 1fr) minmax(250px, 0.9fr) auto !important;
-}
-
-.ecms-armedtype-radio-box {
-    height: 38px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important;
-    padding: 0 12px !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(70, 119, 184, 0.28) !important;
-    background: rgba(255,255,255,0.94) !important;
-}
-
-    .ecms-armedtype-radio-box .form-check {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        margin: 0 !important;
-        min-height: 0 !important;
-        padding-left: 0 !important;
+    .ecms-armedtype-titlebar h3 {
+        font-size: 1.05rem;
     }
 
-    .ecms-armedtype-radio-box .form-check-input {
-        width: 16px !important;
-        height: 16px !important;
-        margin: 0 !important;
-        position: static !important;
-        float: none !important;
-    }
-
-    .ecms-armedtype-radio-box .form-check-label {
-        margin: 0 !important;
-        color: #061b44 !important;
-        font-size: 13px !important;
-        font-weight: 850 !important;
-        line-height: 1 !important;
-    }
-
-#Approved-error {
-    display: block !important;
-    margin-top: 5px !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
-
-.ecms-armedtype-page table.dataTable tbody .badge,
-.ecms-armedtype-page table.dataTable tbody .badge-pill {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 42px !important;
-    height: 20px !important;
-    padding: 0 9px !important;
-    border-radius: 999px !important;
-    font-size: 10px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-}
-
-.ecms-armedtype-page table.dataTable tbody .badge-success {
-    background: linear-gradient(135deg, #35c97a, #1f9c58) !important;
-    color: #fff !important;
-}
-
-.ecms-armedtype-page table.dataTable tbody .badge-danger {
-    background: linear-gradient(135deg, #ef4444, #be123c) !important;
-    color: #fff !important;
-}
-
-@media (max-width: 1400px) {
-    .ecms-armedtype-form-grid {
-        grid-template-columns: 1fr 1fr !important;
-    }
-}
-
-
-/* ArmedType page specific form layout */
-.ecms-armedtype-form-grid {
-    grid-template-columns: minmax(280px, 1fr) minmax(220px, 0.85fr) minmax(280px, 1fr) minmax(190px, 0.7fr) auto !important;
-}
-
-.ecms-armedtype-message {
-    grid-column: 1 / -1 !important;
-    min-height: 0 !important;
-}
-
-.ecms-armedtype-radio-box {
-    height: 38px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 18px !important;
-    padding: 0 14px !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(70, 119, 184, 0.28) !important;
-    background: rgba(255,255,255,0.94) !important;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03) !important;
-}
-
-    .ecms-armedtype-radio-box .form-check {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 7px !important;
-        margin: 0 !important;
-        min-height: 0 !important;
-        padding-left: 0 !important;
-    }
-
-    .ecms-armedtype-radio-box .form-check-input {
-        width: 16px !important;
-        height: 16px !important;
-        margin: 0 !important;
-        position: static !important;
-        float: none !important;
-        flex: 0 0 auto !important;
-    }
-
-    .ecms-armedtype-radio-box .form-check-label {
-        margin: 0 !important;
-        color: #061b44 !important;
-        font-size: 13px !important;
-        font-weight: 850 !important;
-        line-height: 1 !important;
-        white-space: nowrap !important;
-    }
-
-/* Keep plain Yes/No values readable inside the Infantry column */
-.ecms-armedtype-page table.dataTable tbody td:nth-child(4) span {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 42px !important;
-    height: 20px !important;
-    padding: 0 9px !important;
-    border-radius: 999px !important;
-    background: linear-gradient(135deg, #e8f1ff, #ffffff) !important;
-    border: 1px solid rgba(47,125,255,0.22) !important;
-    color: #061b44 !important;
-    font-size: 10px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-}
-
-.ecms-armedtype-page .dataTables_scrollHeadInner,
-.ecms-armedtype-page .dt-scroll-headInner {
-    width: 100% !important;
-}
-
-    .ecms-armedtype-page .dataTables_scrollHeadInner table,
-    .ecms-armedtype-page .dt-scroll-headInner table {
-        width: 100% !important;
-    }
-
-/* Remove accidental icon/text growth on hover */
-.ecms-armedtype-page .cls-btnedit:hover i,
-.ecms-armedtype-page .cls-btnDelete:hover i,
-.ecms-armedtype-page .btn-icon:hover i {
-    font-size: 14px !important;
-    transform: none !important;
-}
-
-/* Better compact display at current ECMS screen width */
-@media (max-width: 1500px) {
-    .ecms-armedtype-form-grid {
-        grid-template-columns: minmax(240px, 1fr) minmax(190px, 0.8fr) minmax(240px, 1fr) minmax(170px, 0.7fr) auto !important;
-        gap: 10px !important;
-    }
-
-    .ecms-armedtype-label {
-        font-size: 12px !important;
-    }
-
-    .ecms-armedtype-field .form-control,
-    .ecms-armedtype-field .form-select,
-    .ecms-armedtype-control,
-    .ecms-armedtype-radio-box,
+    .ecms-armedtype-actions,
     .ecms-armedtype-actions .btn,
     .ecms-armedtype-actions input[type="button"] {
-        height: 36px !important;
-    }
-}
-
-@media (max-width: 1400px) {
-    .ecms-armedtype-form-grid {
-        grid-template-columns: 1fr 1fr !important;
+        width: 100%;
     }
 
     .ecms-armedtype-actions {
-        grid-column: 1 / -1 !important;
-        justify-content: flex-end !important;
+        flex-direction: column;
     }
 }
 
-@media (max-width: 992px) {
-    .ecms-armedtype-form-grid {
-        grid-template-columns: 1fr !important;
-    }
 
-    .ecms-armedtype-actions {
-        justify-content: flex-start !important;
-    }
+/*
+ArmedType page table area correction:
+- The common DataTable CSS controls toolbar/footer.
+- This only reserves enough height for the common footer inside the ArmedType card.
+*/
+.ecms-armedtype-table-wrap.ecms-dt-wrap {
+    padding-top: .55rem;
+}
+
+/* Keep ArmedType action buttons aligned in cell center. */
+.ecms-armedtype-page .col-action,
+.ecms-armedtype-page table.dataTable tbody td:last-child {
+    text-align: center !important;
+    vertical-align: middle !important;
 }

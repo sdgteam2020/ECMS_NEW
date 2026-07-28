@@ -2,6 +2,18 @@
 var table; // Declare table variable outside the function to preserve the instance
 let Orderby = 0;
 let RankId = 0;
+function safeAdjustRankDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -13,8 +25,8 @@ $(function () {
     $("#btnReset").on("click", function () {
         Reset();
     });
-   
-    $("#btnsave").on("click",function () {
+
+    $("#btnsave").on("click", function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -30,7 +42,7 @@ $(function () {
                     Save();
                 }
             })
-           
+
         } else {
             $("#SaveForm")[0].reportValidity();
         }
@@ -45,7 +57,7 @@ $(function () {
                 var id = $(this).attr("Id");
                 lst.push(id);
             });
-          
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Delete",
@@ -77,20 +89,21 @@ function BindData() {
     }
     const columns = getColumnsForRank();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollY: '300px',          // DataTables vertical scroll
+        scrollX: true,            // Horizontal scroll when required
+        scrollCollapse: false,
+        scroller: false,         // Disable Scroller to avoid header/body width mismatch
+        deferScroll: false,    // Disable virtual scroll rendering
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
         serverSide: true,
         filter: true,
+        searching: true,
         stateSave: false,
 
-        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
-        responsive: false, // Columns can hide on small screens
+        autoWidth: true,       // Let DataTables calculate natural full width
+        responsive: false,     // Keep normal table columns
         deferRender: true,// ✅ Handle zoom changes
         order: [[4, 'asc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
@@ -123,24 +136,19 @@ function BindData() {
             }
         },
         columns: columns,
-        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
         columnDefs: [
-            { targets: 0, width: "0px" },
-            { targets: 1, width: "60px" },
-            { targets: 2, width: "200px" },
-            { targets: 3, width: "200px" },
-            { targets: 4, width: "200px" },
-            { targets: 5, width: "120px" },
             {
                 targets: '_all',
                 orderSequence: ["asc", "desc"]
-            },
+            }
         ],
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
+            "rt" +
+            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -172,28 +180,31 @@ function BindData() {
             searchBox.attr('title', 'Search Comd/Abbreviation');
 
             // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            safeAdjustRankDataTable(this.api());
+            setTimeout(function () { safeAdjustRankDataTable(table); }, 80);
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    safeAdjustRankDataTable(table);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustRankDataTable(this.api());
 
-            const tooltipTriggerList = [].slice.call(
-                document.querySelectorAll('[data-bs-toggle="tooltip"]')
-            );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+            if (window.bootstrap && bootstrap.Tooltip) {
+                const tooltipTriggerList = [].slice.call(
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                );
+                tooltipTriggerList.forEach(el => {
+                    new bootstrap.Tooltip(el);
+                });
+            }
 
             $("#tbldata tbody").off("click", ".cls-btnorder").on("click", ".cls-btnorder", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -316,7 +327,7 @@ function Reset() {
 function Delete(RankId) {
     var userdata =
     {
-        "RankId": RankId,   
+        "RankId": RankId,
 
     };
     $.ajax({
@@ -355,7 +366,7 @@ function Delete(RankId) {
 }
 
 function DeleteMultiple(ComdId) {
-   
+
     var userdata =
     {
         "ints": ComdId,
@@ -377,13 +388,13 @@ function DeleteMultiple(ComdId) {
                 else if (response == Success) {
                     //lol++;
                     //if (lol == Tot) {
-                     toastr.error('Deleted Selected');
+                    toastr.error('Deleted Selected');
                     BindData();
                 }
 
                 //}
             }
-           
+
         },
         error: function (result) {
             Swal.fire({
@@ -394,7 +405,7 @@ function DeleteMultiple(ComdId) {
 }
 
 function OrderByChange(RankId, OrderBy) {
-   
+
     var userdata =
     {
         "RankId": RankId,
@@ -440,7 +451,6 @@ function getColumnsForRank() {
             data: "RankId",
             name: "RankId",
             visible: false,
-            width: "0px",
         },
         // Serial number column
         {
@@ -449,7 +459,6 @@ function getColumnsForRank() {
             name: "SerialNumber",
             orderable: false, // Disable sorting for this column
             className: "text-center col-sno",
-            width: "60px",
             render: function (data, type, row, meta) {
                 // Calculate serial number based on row index
                 return meta.row + meta.settings._iDisplayStart + 1;
@@ -460,8 +469,7 @@ function getColumnsForRank() {
             data: "RankName",
             name: "RankName",
             className: "nowrap",
-            width: "200px",
-            orderable: true, 
+            orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
                 return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -472,8 +480,7 @@ function getColumnsForRank() {
             data: "RankAbbreviation",
             name: "RankAbbreviation",
             className: "nowrap",
-            width: "200px",
-            orderable: true, 
+            orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
                 return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -484,8 +491,7 @@ function getColumnsForRank() {
             data: "Orderby",
             name: "Orderby",
             className: "noExport nowrap",
-            width: "200px",
-            orderable: true, 
+            orderable: true,
             render: function (data, type, row, meta) {
                 const api = meta.settings.oInstance.api();
                 const pageInfo = api.page.info();
@@ -511,10 +517,9 @@ function getColumnsForRank() {
             name: "Action",
             orderable: false,
             className: "noExport text-center col-action",
-            width: "120px",
             render: function (data, type, row) {
-                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                let Action = `<button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn ecms-action-btn btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
                 return Action;
             }
         }

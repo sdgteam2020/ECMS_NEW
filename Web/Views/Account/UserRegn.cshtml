@@ -2,18 +2,19 @@
     ViewData["Title"] = "User Regn";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/userregn.css" rel="stylesheet" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10 ecms-userregn-breadcrumb">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
                         <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
-                        <span class="ecms-crumb-separator">&gt;</span>
+                        <span class="mx-1">&gt;</span>
                         <span>User Registration</span>
                     </h1>
                 </div>
@@ -22,80 +23,83 @@
     </div>
 </header>
 
-<div class="containerMain mt-0 ecms-userregn-page">
-    <div class="ecms-userregn-shell">
-        <div class="ecms-userregn-title-card">
-            <div class="ecms-title-left">
-                <span class="ecms-title-icon"><i class="fa fa-user-plus"></i></span>
-                <div>
-                    <h3>User Registration Details</h3>
-                    <p>Create, update, approve, activate and map user registration records</p>
+<div class="ecms-screen-stage ecms-bg">
+    <main class="ecms-page ecms-page-full ecms-fit-screen ecms-userregn-page">
+        <section class="ecms-card ecms-userregn-shell">
+            <div class="ecms-page-title ecms-user-title-row">
+                <div class="ecms-user-title-content">
+                    <span class="ecms-title-icon" aria-hidden="true"><i class="fa fa-user-plus"></i></span>
+                    <div class="ecms-user-title-copy">
+                        <h3>User Registration Details</h3>
+                        <p class="ecms-title-subtitle">Update, approve, activate and map user registration records</p>
+                    </div>
                 </div>
+                <span class="ecms-user-title-pill"><i class="fa fa-users-cog mr-1"></i>User Config</span>
             </div>
-            <span class="ecms-title-pill"><i class="fa fa-users-cog"></i> User Config</span>
-        </div>
 
-        <div class="ecms-userregn-sub-card">
-            <div class="ecms-title-left">
-                <span class="ecms-sub-icon"><i class="fa fa-chart-pie"></i></span>
-                <div>
-                    <h5>User Registration Summary</h5>
-                    <p>Click a card to view users by category</p>
+            <section class="ecms-user-stats" aria-label="User registration summary">
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnUser" name="btnUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-users"></i></span>
+                    <span class="ecms-stat-title">Total Users</span>
+                    <span class="ecms-stat-count" id="lblUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnMappedUser" name="btnMappedUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-link"></i></span>
+                    <span class="ecms-stat-title">Mapped</span>
+                    <span class="ecms-stat-count" id="lblMappedUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnUnMappedUser" name="btnUnMappedUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-unlink"></i></span>
+                    <span class="ecms-stat-title">Not Mapped</span>
+                    <span class="ecms-stat-count" id="lblUnMappedUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnActiveUser" name="btnActiveUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-check-circle"></i></span>
+                    <span class="ecms-stat-title">Active</span>
+                    <span class="ecms-stat-count" id="lblActiveUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnInActiveUser" name="btnActiveUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-times-circle"></i></span>
+                    <span class="ecms-stat-title">Inactive</span>
+                    <span class="ecms-stat-count" id="lblInActiveUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnVerified" name="btnVerified">
+                    <span class="ecms-stat-icon"><i class="fa fa-shield-alt"></i></span>
+                    <span class="ecms-stat-title">Verified</span>
+                    <span class="ecms-stat-count" id="lblVerifiedUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnNotVerifiedUser" name="btnNotVerifiedUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-exclamation-circle"></i></span>
+                    <span class="ecms-stat-title">Not Verified</span>
+                    <span class="ecms-stat-count" id="lblNotVerifiedUser">0</span>
+                </button>
+            </section>
+
+            <section class="ecms-section ecms-user-table-section">
+                <h2 class="ecms-section-title">
+                    <i class="fa fa-table" aria-hidden="true"></i>
+                    User Registration Records
+                </h2>
+
+                <div class="ecms-dt-wrap ecms-user-table-wrap">
+                    <table id="tbldata"
+                           class="table table-striped table-hover ecms-dt-table"
+                           role="grid"
+                           aria-label="User registration records"></table>
                 </div>
-            </div>
-        </div>
-
-        <div class="ecms-count-grid">
-            <button class="count-label ecms-count-card" id="btnUser" name="btnUser" type="button">
-                <span class="ecms-count-icon"><i class="fa fa-users"></i></span>
-                <span class="ecms-count-title">Total Users</span>
-                <span class="ecms-count-number" id="lblUser">0</span>
-            </button>
-            <button class="count-label ecms-count-card" id="btnMappedUser" name="btnMappedUser" type="button">
-                <span class="ecms-count-icon"><i class="fa fa-link"></i></span>
-                <span class="ecms-count-title">Mapped</span>
-                <span class="ecms-count-number" id="lblMappedUser">0</span>
-            </button>
-            <button class="count-label ecms-count-card" id="btnUnMappedUser" name="btnUnMappedUser" type="button">
-                <span class="ecms-count-icon"><i class="fa fa-unlink"></i></span>
-                <span class="ecms-count-title">Not Mapped</span>
-                <span class="ecms-count-number" id="lblUnMappedUser">0</span>
-            </button>
-            <button class="count-label ecms-count-card" id="btnActiveUser" name="btnActiveUser" type="button">
-                <span class="ecms-count-icon"><i class="fa fa-check-circle"></i></span>
-                <span class="ecms-count-title">Active</span>
-                <span class="ecms-count-number" id="lblActiveUser">0</span>
-            </button>
-            <button class="count-label ecms-count-card" id="btnInActiveUser" name="btnActiveUser" type="button">
-                <span class="ecms-count-icon"><i class="fa fa-times-circle"></i></span>
-                <span class="ecms-count-title">Inactive</span>
-                <span class="ecms-count-number" id="lblInActiveUser">0</span>
-            </button>
-            <button class="count-label ecms-count-card" id="btnVerified" name="btnVerified" type="button">
-                <span class="ecms-count-icon"><i class="fa fa-shield-alt"></i></span>
-                <span class="ecms-count-title">Verified</span>
-                <span class="ecms-count-number" id="lblVerifiedUser">0</span>
-            </button>
-            <button class="count-label ecms-count-card" id="btnNotVerifiedUser" name="btnNotVerifiedUser" type="button">
-                <span class="ecms-count-icon"><i class="fa fa-exclamation-circle"></i></span>
-                <span class="ecms-count-title">Not Verified</span>
-                <span class="ecms-count-number" id="lblNotVerifiedUser">0</span>
-            </button>
-        </div>
-
-        <div class="ecms-table-card">
-            <div class="ecms-section-bar"><i class="fa fa-table"></i> User Registration Records</div>
-            <table class="table table-striped table-hover border border-purple ecms-data-table" role="grid" id="tbldata"></table>
-        </div>
-    </div>
+            </section>
+        </section>
+    </main>
 </div>
 
-<script asp-src-include="~/developerjs/mtables.js"></script>
-<script asp-src-include="~/developerjs/userregn.js"></script>
-<partial name="~/Views/Shared/_DataTableJS.cshtml" />
-
-<div class="modal fade ecms-userregn-modal ecms-userregn-flag-modal" id="AddDomainFlag" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+<div class="modal fade ecms-userregn-modal ecms-userregn-flag-modal" id="AddDomainFlag" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ecms-modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header ecms-modal-header">
                 <div class="ecms-modal-title-wrap">
@@ -206,8 +210,8 @@
     </div>
 </div>
 
-<div class="modal fade ecms-userregn-modal ecms-userregn-mapping-modal" id="AddMapping" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+<div class="modal fade ecms-userregn-modal ecms-userregn-mapping-modal" id="AddMapping" tabindex="-1" aria-labelledby="exampleModalLabel_AddMapping" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ecms-modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header ecms-modal-header">
                 <div class="ecms-modal-title-wrap">
@@ -325,8 +329,8 @@
     </div>
 </div>
 
-<div class="modal fade ecms-userregn-dialog-modal" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
+<div class="modal fade ecms-userregn-dialog-modal" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel_DataTableDialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ecms-user-users-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header ecms-modal-header">
                 <div class="ecms-modal-title-wrap">
@@ -336,10 +340,14 @@
                 <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
             </div>
             <div class="modal-body">
-                <div class="ecms-dialog-table-wrap">
-                    <table class="table table-striped table-hover border border-purple ecms-data-table" role="grid" id="tbldatadialog"></table>
+                <div class="ecms-dt-wrap ecms-user-dialog-table-wrap">
+                    <table class="table table-striped table-hover ecms-dt-table" role="grid" aria-label="User registration records by selected category" id="tbldatadialog"></table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/developerjs/userregn.js"></script>
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />

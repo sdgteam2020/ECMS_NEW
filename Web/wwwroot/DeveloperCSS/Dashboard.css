@@ -1,448 +1,314 @@
-﻿/* =====================================================
-   ECMS Dashboard Modern UI
-   Scope: Home/Dashboard only
-   Header, footer, layout nav and breadcrumb are not changed
-===================================================== */
+﻿/*
+=====================================================
+ECMS Dashboard - Bootstrap First Final Fix
+Scope: Home/Dashboard only.
+Common design comes from ModernCSS. This file only fixes
+Dashboard card polish and dashboard-only scrolling.
+=====================================================
+*/
 
-:root {
-    --ecms-dash-navy: #061f4d;
-    --ecms-dash-blue: #1f74ff;
-    --ecms-dash-blue-dark: #0a4cc4;
-    --ecms-dash-sky: #43c7f4;
-    --ecms-dash-glass: rgba(232, 244, 255, 0.90);
-    --ecms-dash-card: rgba(255, 255, 255, 0.92);
-    --ecms-dash-border: rgba(255, 255, 255, 0.70);
-    --ecms-dash-text: #10254f;
-    --ecms-dash-muted: #60779f;
-}
-
-/* Basic link behavior kept same */
+/* Keep links/click handlers unchanged. */
 .clickable {
     display: block !important;
-    text-decoration: none !important;
     color: inherit !important;
+    text-decoration: none !important;
 }
 
-/* Page background below breadcrumb only */
-.ecms-dashboard-page {
-    min-height: calc(100vh - 239px);
-    padding: 16px 18px 58px !important;
-    background: linear-gradient(90deg, rgba(7, 37, 92, 0.88), rgba(15, 93, 180, 0.70)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
-    overflow-x: hidden !important;
-}
-
-    /* Neutralize old negative spacing */
-    .ecms-dashboard-page .containerMain,
-    .ecms-dashboard-shell {
-        width: min(1280px, 96vw) !important;
-        max-width: 1280px !important;
-        margin: 0 auto !important;
-        padding: 0 !important;
-    }
-
-        /* Bootstrap row wrapper on this page */
-        .ecms-dashboard-page > .containerMain > .row,
-        .ecms-dashboard-shell > .row {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            align-items: stretch !important;
-            justify-content: center !important;
-            gap: 22px !important;
-            margin: 0 !important;
-        }
-
-    /* Main dashboard section cards */
-    .ecms-dashboard-page .card.new_css {
-        display: flex !important;
-        flex-direction: column !important;
-        width: auto !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        vertical-align: top !important;
-        text-align: center !important;
-        border-radius: 22px !important;
-        border: 1px solid var(--ecms-dash-border) !important;
-        background: var(--ecms-dash-glass) !important;
-        box-shadow: 0 22px 55px rgba(0, 24, 80, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
-        backdrop-filter: blur(16px) !important;
-        overflow: hidden !important;
-    }
-
-        /* Smart content-based widths */
-        .ecms-dashboard-page .card.new_css:nth-of-type(1) {
-            flex: 0 1 430px !important;
-        }
-
-        .ecms-dashboard-page .card.new_css:nth-of-type(2) {
-            flex: 0 1 620px !important;
-        }
-
-        .ecms-dashboard-page .card.new_css:nth-of-type(3) {
-            flex: 0 1 260px !important;
-        }
-
-        /* Section title */
-        .ecms-dashboard-page .card.new_css .seven {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-            .ecms-dashboard-page .card.new_css .seven h1 {
-                margin: 0 !important;
-                padding: 13px 18px !important;
-                min-height: 46px !important;
-                line-height: 1.2 !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                color: #ffffff !important;
-                font-size: 16px !important;
-                font-weight: 900 !important;
-                letter-spacing: 0.1px !important;
-                background: linear-gradient(135deg, #123f8c 0%, #1f74ff 100%) !important;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.22) !important;
-                box-shadow: 0 10px 24px rgba(0, 65, 170, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
-            }
-
-        /* Card body area */
-        .ecms-dashboard-page .card.new_css > .row {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            justify-content: center !important;
-            align-items: stretch !important;
-            gap: 22px !important;
-            margin: 0 !important;
-            padding: 20px 18px 22px !important;
-        }
-
-        /* Override bootstrap columns only inside this page cards */
-        .ecms-dashboard-page .card.new_css .col-xl-2,
-        .ecms-dashboard-page .card.new_css .col-lg-3,
-        .ecms-dashboard-page .card.new_css .col-md-4,
-        .ecms-dashboard-page .card.new_css .col-sm-6 {
-            flex: 0 0 auto !important;
-            width: auto !important;
-            max-width: none !important;
-            padding: 0 !important;
-        }
-
-    /* Metric/action tiles */
-    .ecms-dashboard-page .counter {
-        width: 170px !important;
-        height: 170px !important;
-        min-width: 170px !important;
-        min-height: 170px !important;
-        margin: 0 auto !important;
-        padding: 18px 14px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        border-radius: 20px !important;
-        border: 1px solid rgba(31, 116, 255, 0.42) !important;
-        background: radial-gradient(circle at top left, rgba(255,255,255,0.95), rgba(244,249,255,0.86)), linear-gradient(145deg, rgba(255,255,255,0.94), rgba(222,235,252,0.78)) !important;
-        box-shadow: 0 18px 35px rgba(12, 54, 120, 0.16), inset 0 1px 0 rgba(255,255,255,0.95) !important;
-        color: var(--ecms-dash-blue) !important;
-        position: relative !important;
-        overflow: hidden !important;
-        z-index: 1 !important;
-        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
-    }
-
-        /* Remove old folded-card pseudo design safely */
-        .ecms-dashboard-page .counter::before,
-        .ecms-dashboard-page .counter::after {
-            content: none !important;
-            display: none !important;
-        }
-
-        /* Soft top shine */
-        .ecms-dashboard-page .counter .counter-icon {
-            width: 54px !important;
-            height: 54px !important;
-            min-height: 54px !important;
-            margin: 0 0 10px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            border-radius: 18px !important;
-            background: linear-gradient(135deg, #3f82ff 0%, #1f63f2 50%, #0647d9 100%) !important;
-            color: #ffffff !important;
-            font-size: 24px !important;
-            line-height: 1 !important;
-            box-shadow: 0 12px 24px rgba(31, 99, 242, 0.30), inset 0 1px 0 rgba(255,255,255,0.35) !important;
-            transition: transform 0.25s ease !important;
-        }
-
-            .ecms-dashboard-page .counter .counter-icon i {
-                color: #ffffff !important;
-                font-size: 24px !important;
-                line-height: 1 !important;
-            }
-
-        /* Number */
-        .ecms-dashboard-page .counter .counter-value {
-            display: block !important;
-            margin: 0 0 8px !important;
-            color: #0d58d8 !important;
-            font-size: 26px !important;
-            font-weight: 900 !important;
-            line-height: 1 !important;
-            text-shadow: none !important;
-        }
-
-        /* Counter titles */
-        .ecms-dashboard-page .counter h3,
-        .ecms-dashboard-page .counter-title {
-            margin: 0 !important;
-            padding: 0 4px !important;
-            color: #0b50d1 !important;
-            font-size: 13px !important;
-            font-weight: 900 !important;
-            line-height: 1.18 !important;
-            text-align: center !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.15px !important;
-        }
-
-        /* Tiles with no number should still feel balanced */
-        .ecms-dashboard-page .counter .counter-title {
-            margin-top: 8px !important;
-        }
-
-    /* Hover effect */
-    .ecms-dashboard-page .clickable:hover {
+    .clickable:hover {
+        color: inherit !important;
         text-decoration: none !important;
     }
 
-        .ecms-dashboard-page .clickable:hover .counter {
-            transform: translateY(-6px) !important;
-            border-color: rgba(31, 116, 255, 0.72) !important;
-            box-shadow: 0 24px 44px rgba(0, 52, 140, 0.24), inset 0 1px 0 rgba(255,255,255,0.98) !important;
-        }
-
-        .ecms-dashboard-page .clickable:hover .counter-icon {
-            transform: scale(1.08) !important;
-        }
-
-    /* Prevent old global colors from leaking */
-    .ecms-dashboard-page .counter.pink,
-    .ecms-dashboard-page .counter.green,
-    .ecms-dashboard-page .counter.orange,
-    .ecms-dashboard-page .counter.yellow,
-    .ecms-dashboard-page .counter.blue,
-    .ecms-dashboard-page .counter.purple {
-        color: var(--ecms-dash-blue) !important;
-        border-color: rgba(31, 116, 255, 0.42) !important;
-    }
-
-/* Compact screen usage on desktop */
-@media (min-width: 992px) {
-    .ecms-dashboard-page {
-        min-height: calc(100vh - 255px) !important;
-        padding-top: 16px !important;
-        padding-bottom: 54px !important;
-    }
-}
-
-/* Medium screens */
-@media (max-width: 1199px) {
-    .ecms-dashboard-page > .containerMain > .row,
-    .ecms-dashboard-shell > .row {
-        gap: 16px !important;
-    }
-
-    .ecms-dashboard-page .card.new_css:nth-of-type(1),
-    .ecms-dashboard-page .card.new_css:nth-of-type(2),
-    .ecms-dashboard-page .card.new_css:nth-of-type(3) {
-        flex: 1 1 100% !important;
-    }
-
-    .ecms-dashboard-page .counter {
-        width: 160px !important;
-        height: 160px !important;
-        min-width: 160px !important;
-        min-height: 160px !important;
-    }
-}
-
-/* Tablet/mobile */
-@media (max-width: 768px) {
-    .ecms-dashboard-page {
-        padding: 12px 12px 64px !important;
-        min-height: auto !important;
-    }
-
-        .ecms-dashboard-page .card.new_css {
-            border-radius: 18px !important;
-        }
-
-            .ecms-dashboard-page .card.new_css > .row {
-                gap: 14px !important;
-                padding: 16px 12px 18px !important;
-            }
-
-        .ecms-dashboard-page .counter {
-            width: 148px !important;
-            height: 148px !important;
-            min-width: 148px !important;
-            min-height: 148px !important;
-            padding: 14px 10px !important;
-        }
-
-            .ecms-dashboard-page .counter .counter-icon {
-                width: 48px !important;
-                height: 48px !important;
-                min-height: 48px !important;
-                font-size: 20px !important;
-            }
-
-            .ecms-dashboard-page .counter .counter-value {
-                font-size: 23px !important;
-            }
-
-            .ecms-dashboard-page .counter h3,
-            .ecms-dashboard-page .counter-title {
-                font-size: 12px !important;
-            }
-}
-
-@media (max-width: 420px) {
-    .ecms-dashboard-page .counter {
-        width: 100% !important;
-        max-width: 240px !important;
-    }
-}
-
-/* =====================================================
-   FINAL DASHBOARD FIX: NO PAGE SCROLL + CARD ICONS
-   Only Dashboard page UI. Header/footer/layout unchanged.
-===================================================== */
-
-/* Stop document scrollbar only when Dashboard page is present */
+/* Stop the right-side page scrollbar on Dashboard desktop view. */
 @media (min-width: 992px) {
     html:has(.ecms-dashboard-page),
     body:has(.ecms-dashboard-page) {
         height: 100% !important;
-        overflow-y: hidden !important;
-        overflow-x: hidden !important;
+        overflow: hidden !important;
+    }
+
+        body:has(.ecms-dashboard-page) .ecms-main-render-row,
+        body:has(.ecms-dashboard-page) #layoutSidenav_content,
+        body:has(.ecms-dashboard-page) #layoutSidenav_content main {
+            overflow: hidden !important;
+        }
+}
+
+/* Main dashboard background area below breadcrumb. */
+.ecms-dashboard-page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    background: var(--ecms-bg-overlay), var(--ecms-bg-image) center center / cover no-repeat !important;
+    overflow-x: hidden !important;
+}
+
+/* Desktop: fit dashboard exactly between breadcrumb and fixed footer. */
+@media (min-width: 992px) {
+    .ecms-dashboard-page {
+        height: calc(100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height)) !important;
+        min-height: 0 !important;
+        padding: 14px 16px 12px !important;
+        overflow: hidden !important;
     }
 }
 
-/* Use available space between breadcrumb and fixed footer */
-.ecms-dashboard-page {
-    height: calc(100vh - 255px) !important;
-    min-height: 0 !important;
-    padding: 12px 18px 42px !important;
-    box-sizing: border-box !important;
+/* Main content width. */
+.ecms-dashboard-shell {
+    width: min(1320px, 100%) !important;
+    max-width: 1320px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+}
+
+    /* Keep the three dashboard groups visually balanced. */
+    .ecms-dashboard-page > .container-xxl > .row,
+    .ecms-dashboard-shell > .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+/* Group card uses common .ecms-section, with dashboard-only sizing. */
+.ecms-dashboard-group-card {
+    min-height: 214px !important;
+    height: auto !important;
+    border-radius: var(--ecms-radius-lg) !important;
+    border: var(--ecms-border-white) !important;
+    background: linear-gradient(135deg, rgba(244, 249, 255, .96), rgba(219, 235, 253, .90)) !important;
+    box-shadow: var(--ecms-shadow-md) !important;
     overflow: hidden !important;
 }
 
-    .ecms-dashboard-page .containerMain,
-    .ecms-dashboard-page .ecms-dashboard-shell {
-        height: 100% !important;
-        max-width: 1320px !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: flex-start !important;
-    }
-
-/* Keep all three groups in one row and prevent vertical overflow */
-@media (min-width: 1200px) {
-    .ecms-dashboard-shell > .row {
-        flex-wrap: nowrap !important;
-        align-items: flex-start !important;
-        justify-content: center !important;
-        gap: 16px !important;
-        width: 100% !important;
-        margin: 0 !important;
-    }
-
-    .ecms-dashboard-page .card.new_css:nth-of-type(1) {
-        flex: 0 0 380px !important;
-        max-width: 380px !important;
-    }
-
-    .ecms-dashboard-page .card.new_css:nth-of-type(2) {
-        flex: 0 0 530px !important;
-        max-width: 530px !important;
-    }
-
-    .ecms-dashboard-page .card.new_css:nth-of-type(3) {
-        flex: 0 0 220px !important;
-        max-width: 220px !important;
-    }
-}
-
-/* Compact dashboard cards */
-.ecms-dashboard-page .card.new_css {
-    border-radius: 18px !important;
-}
-
-    .ecms-dashboard-page .card.new_css .seven h1 {
+    .ecms-dashboard-group-card .ecms-section-title {
         min-height: 38px !important;
-        padding: 9px 14px !important;
+        padding: 8px 12px !important;
+        border-radius: 0 !important;
         font-size: 14px !important;
+        line-height: 1.1 !important;
     }
 
-    .ecms-dashboard-page .card.new_css > .row {
-        gap: 14px !important;
-        padding: 14px 14px 16px !important;
+    .ecms-dashboard-group-card .card-body {
+        min-height: 174px !important;
+        padding: 16px 16px 18px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
-.ecms-dashboard-page .counter {
-    width: 142px !important;
-    height: 142px !important;
-    min-width: 142px !important;
-    min-height: 142px !important;
-    padding: 12px 9px !important;
-    border-radius: 16px !important;
-}
-
-    .ecms-dashboard-page .counter .counter-icon {
-        width: 44px !important;
-        height: 44px !important;
-        min-height: 44px !important;
-        border-radius: 14px !important;
-        margin-bottom: 8px !important;
-    }
-
-        .ecms-dashboard-page .counter .counter-icon i {
-            font-size: 20px !important;
-            color: #ffffff !important;
+        .ecms-dashboard-group-card .card-body > .row {
+            width: 100% !important;
+            align-items: stretch !important;
         }
 
-    .ecms-dashboard-page .counter .counter-value {
-        font-size: 21px !important;
-        margin-bottom: 5px !important;
-    }
-
-    .ecms-dashboard-page .counter h3,
-    .ecms-dashboard-page .counter-title {
-        font-size: 11.5px !important;
-        line-height: 1.12 !important;
-    }
-
-/* If content ever becomes taller, scroll only inside dashboard area, not full page */
-@media (max-height: 740px) and (min-width: 992px) {
-    .ecms-dashboard-page {
-        overflow-y: auto !important;
-        scrollbar-width: thin;
-    }
+/* Dashboard tiles reuse common .ecms-summary-tile but get compact dashboard dimensions. */
+.ecms-dashboard-tile {
+    min-height: 132px !important;
+    height: 100% !important;
+    max-width: 170px !important;
+    margin: 0 auto !important;
+    padding: 14px 10px 12px !important;
+    border-radius: var(--ecms-radius-md) !important;
+    border: 1px solid rgba(63, 124, 255, .42) !important;
+    background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(235,245,255,.95)) !important;
+    box-shadow: 0 14px 28px rgba(10, 43, 96, .14), inset 0 1px 0 rgba(255,255,255,.90) !important;
+    text-decoration: none !important;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
 }
 
-/* Small screen: allow normal scrolling */
-@media (max-width: 991px) {
-    html,
-    body {
+    .ecms-dashboard-tile .counter-icon {
+        width: 46px !important;
+        height: 46px !important;
+        min-width: 46px !important;
+        margin: 0 auto 8px auto !important;
+        border-radius: 15px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-500)) !important;
+        color: #ffffff !important;
+        box-shadow: 0 12px 24px rgba(47, 103, 230, .24) !important;
+    }
+
+        .ecms-dashboard-tile .counter-icon i {
+            color: #ffffff !important;
+            font-size: 20px !important;
+            line-height: 1 !important;
+        }
+
+    .ecms-dashboard-tile .counter-value {
+        display: block !important;
+        margin: 0 0 6px 0 !important;
+        color: var(--ecms-primary-600) !important;
+        font-size: 22px !important;
+        font-weight: 950 !important;
+        line-height: 1 !important;
+    }
+
+    .ecms-dashboard-tile h3,
+    .ecms-dashboard-tile .counter-title {
+        margin: 0 !important;
+        color: var(--ecms-primary-700) !important;
+        font-size: 11.5px !important;
+        font-weight: 950 !important;
+        line-height: 1.15 !important;
+        text-align: center !important;
+        text-transform: uppercase !important;
+        letter-spacing: .1px !important;
+    }
+
+.clickable:hover .ecms-dashboard-tile {
+    transform: translateY(-4px) !important;
+    border-color: rgba(63, 124, 255, .66) !important;
+    box-shadow: 0 20px 38px rgba(10, 43, 96, .22), inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+/* Large desktop: keep dashboard cards on one row and prevent over-height. */
+@media (min-width: 1200px) {
+    .ecms-dashboard-shell > .row {
+        align-items: flex-start !important;
+    }
+
+    .ecms-dashboard-group-card {
+        min-height: 214px !important;
+    }
+
+        .ecms-dashboard-group-card .card-body {
+            min-height: 174px !important;
+        }
+}
+
+/* Medium screens: allow natural page scroll and stack Bootstrap columns. */
+@media (max-width: 1199.98px) {
+    .ecms-dashboard-page {
+        height: auto !important;
+        min-height: calc(100vh - var(--ecms-footer-height)) !important;
+        padding: 12px 12px calc(var(--ecms-footer-height) + 18px) !important;
         overflow-y: auto !important;
     }
 
+    .ecms-dashboard-group-card {
+        min-height: 0 !important;
+    }
+
+        .ecms-dashboard-group-card .card-body {
+            min-height: 0 !important;
+            padding: 14px !important;
+        }
+}
+
+/* Small screens: one/two Bootstrap cards per row, no clipping. */
+@media (max-width: 575.98px) {
     .ecms-dashboard-page {
-        height: auto !important;
-        min-height: calc(100vh - 255px) !important;
-        overflow: visible !important;
-        padding-bottom: 64px !important;
+        padding: 10px 10px calc(var(--ecms-footer-height) + 20px) !important;
+    }
+
+    .ecms-dashboard-tile {
+        min-height: 124px !important;
+        max-width: 245px !important;
+        padding: 12px 8px !important;
+    }
+
+        .ecms-dashboard-tile .counter-icon {
+            width: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
+        }
+
+        .ecms-dashboard-tile .counter-value {
+            font-size: 20px !important;
+        }
+
+        .ecms-dashboard-tile h3,
+        .ecms-dashboard-tile .counter-title {
+            font-size: 11px !important;
+        }
+}
+
+
+/* =====================================================
+   FINAL FIX: Dashboard tile content alignment
+   Bootstrap handles layout columns; these rules only make
+   each tile content perfectly centered and consistent.
+===================================================== */
+
+/* Make every tile column stretch the same height inside Bootstrap rows. */
+.ecms-dashboard-page .card-body .row > [class*="col-"] {
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+/* Anchor must fill the Bootstrap column so the tile can center correctly. */
+.ecms-dashboard-page .clickable {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+/* Force all dashboard tile content into one vertical centered stack. */
+.ecms-dashboard-page .ecms-dashboard-tile,
+.ecms-dashboard-page .ecms-summary-tile.ecms-dashboard-tile {
+    width: 100% !important;
+    max-width: 170px !important;
+    min-height: 132px !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 6px !important;
+}
+
+    /* Reset any old icon positioning/floating and keep icon centered. */
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-icon {
+        position: static !important;
+        float: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto 4px auto !important;
+    }
+
+    /* Counter number always appears centered below icon. */
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-value {
+        width: 100% !important;
+        display: block !important;
+        float: none !important;
+        margin: 0 !important;
+        text-align: center !important;
+    }
+
+    /* Title text stays centered and does not push content sideways. */
+    .ecms-dashboard-page .ecms-dashboard-tile h3,
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-title {
+        width: 100% !important;
+        display: block !important;
+        float: none !important;
+        margin: 0 !important;
+        text-align: center !important;
+        word-break: normal !important;
+        overflow-wrap: break-word !important;
+    }
+
+    /* Cards without numbers need same visual balance. */
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-icon + .counter-title,
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-icon + h3 {
+        margin-top: 4px !important;
+    }
+
+/* Keep group card content centered in the available body height. */
+.ecms-dashboard-page .ecms-dashboard-group-card .card-body > .row {
+    align-items: stretch !important;
+    justify-content: center !important;
+}
+
+@media (max-width: 575.98px) {
+    .ecms-dashboard-page .ecms-dashboard-tile,
+    .ecms-dashboard-page .ecms-summary-tile.ecms-dashboard-tile {
+        max-width: 245px !important;
+        min-height: 124px !important;
     }
 }

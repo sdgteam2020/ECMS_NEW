@@ -38,18 +38,18 @@ function GetDashboardCount() {
                     $("#TotInaccurateData").html(response.TotInaccurateData);
                     $("#TotObservationRaised").html(response.TotObservationRaised);
 
-                   
-                     $('.counter-value').each(function () {
-                     $(this).prop('Counter', 0).animate({
-                         Counter: $(this).text()
-                     }, {
-                         duration: 200,
-                         easing: 'swing',
-                         step: function (now) {
-                             $(this).text(Math.ceil(now));
-                         }
-                     });
-                 });
+
+                    $('.counter-value').each(function () {
+                        $(this).prop('Counter', 0).animate({
+                            Counter: $(this).text()
+                        }, {
+                            duration: 200,
+                            easing: 'swing',
+                            step: function (now) {
+                                $(this).text(Math.ceil(now));
+                            }
+                        });
+                    });
                 }
             }
             else {

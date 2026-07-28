@@ -83,10 +83,10 @@
 
     </environment>
 
-    <link asp-href-include="~/developercss/layout.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/ModernCSS/css/ecms.theme.bundle.css" asp-append-version="true" />
+    <link asp-href-include="~/developercss/layout.css" rel="stylesheet" />
 </head>
-<body class="nav-fixed sidenav-toggled">
+<body class="nav-fixed sidenav-toggled ecms-main-layout-body ecms-fixed-shell">
     @Html.AntiForgeryToken()
     <div id="loading" class="loader">
         <div class="loader-container">
@@ -128,79 +128,99 @@
     <input class="form-control alpha-num-only mb-2 d-none form-space" id="txtspnIsToken" />
 
 
-    <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" />
-    <div id="layoutSidenav">
-        @*   <div id="layoutSidenav_nav">
-        <nav class="sidenav shadow-right sidenav-light" id="SideFirstMenu">
-        <div class="sidenav-menu">
-        <div class="nav accordion" id="accordionSidenav">
+    <div class="container-fluid p-0 m-0 ecms-app-shell ecms-main-layout">
 
-        </div>
-        </div>
-        </nav>
-        </div> *@
-        <div id="layoutSidenav_content">
-            <main>
-                <div class="main-panel">
-                    @if (RoleNameList.Contains(RoleName))
-                    {
-                        <nav class="nav nav-pills nav-justified" id="layouttask">
-                            <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
-                            <a class="nav-link Status" href="/Home/Request">
-                                Initiate Request
-                            </a>
-                            <a class="nav-link MyTask" href="/Home/Task">Task</a>
-                        </nav>
-                    }
-                    else
-                    {
-                        <nav class="nav-hide-for-admin" id="_layouttask">
-                            &nbsp
-                        </nav>
-                    }
-                    <div class="content-wrapper">
-                        <partial name="_Notification" />
-                        @RenderBody()
+        <!-- Row 1: Fixed Header -->
+        <header class="row g-0 m-0 ecms-app-header ecms-main-header-row fixed-top">
+            <div class="col-12 p-0 m-0">
+                <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" />
+            </div>
+        </header>
 
-                        <!-- partial -->
-                        <!-- main-panel ends -->
+        <!-- Row 2: RenderBody Area -->
+        <main class="row g-0 m-0 ecms-app-main ecms-main-render-row">
+            <div class="col-12 p-0 m-0 ecms-main-render-col">
+                <div id="layoutSidenav" class="ecms-main-layout-sidenav">
+                    @*   <div id="layoutSidenav_nav">
+                    <nav class="sidenav shadow-right sidenav-light" id="SideFirstMenu">
+                    <div class="sidenav-menu">
+                    <div class="nav accordion" id="accordionSidenav">
+
                     </div>
-                    <!-- page-body-wrapper ends -->
+                    </div>
+                    </nav>
+                    </div> *@
+                    <div id="layoutSidenav_content" class="ecms-main-layout-content">
+                        <div class="main-panel ecms-main-panel">
+                            @if (RoleNameList.Contains(RoleName))
+                            {
+                                <nav class="nav nav-pills nav-justified" id="layouttask">
+                                    <a class="nav-link Dashboard" aria-current="page" href="/Home/Dashboard">DashBoard</a>
+                                    <a class="nav-link Status" href="/Home/Request">
+                                        Initiate Request
+                                    </a>
+                                    <a class="nav-link MyTask" href="/Home/Task">Task</a>
+                                </nav>
+                            }
+                            else
+                            {
+                                <nav class="nav-hide-for-admin" id="_layouttask">
+                                    &nbsp;
+                                </nav>
+                            }
+
+                            <div class="content-wrapper ecms-main-content-wrapper">
+                                <partial name="_Notification" />
+                                @RenderBody()
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </main>
-        </div>
+            </div>
+        </main>
+
+        <!-- Row 3: Fixed Footer -->
+        <footer class="row g-0 m-0 ecms-app-footer ecms-main-footer-row fixed-bottom">
+            <div class="col-12 p-0 m-0">
+                <div class="ecms-footer-content">
+                    <div class="container-fluid p-0 m-0">
+                        <div class="row g-0 m-0">
+                            <div class="col-12 p-0 m-0">
+                                <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                                    <!-- Invisible placeholder for balancing the center -->
+                                    <div class="footer-placeholder"></div>
+
+                                    <!-- Center Section -->
+                                    <div class="flex-grow-1 text-center fw-bold">
+                                        @if (ViewBag.Footer != null)
+                                        {
+                                            @(ViewBag.Footer)
+                                        }
+                                    </div>
+
+                                    <!-- Right Section: Info Spans -->
+                                    <div class="text-end">
+                                        <span id="today" class="me-2"></span>
+                                        <span id="week" class="me-2"></span>
+                                        <span id="month" class="me-2"></span>
+                                        <span id="total"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
     </div>
+
     @if (IsSectionDefined("Modal"))
     {
         <div class="">
             @RenderSection("Modal", required: false)
         </div>
     }
-    <footer class="fixed-bottom">
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <!-- Invisible placeholder for balancing the center -->
-                    <div class="footer-placeholder"></div>
-
-                    <!-- Left Section: Centered Content -->
-                    <div class="flex-grow-1 text-center fw-bold">
-                        @if (ViewBag.Footer != null)
-                        {
-                            @(ViewBag.Footer)
-                        }
-                    </div>
-                    <!-- Right Section: Info Spans -->
-                    <div class="text-end">
-                        <span id="today" class="me-2"></span>
-                        <span id="week" class="me-2"></span>
-                        <span id="month" class="me-2"></span>
-                        <span id="total"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
 
     <script asp-src-include="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script asp-src-include="~/js/bootstrap.bundle.min.js"></script>
@@ -224,72 +244,206 @@
     <script asp-src-include="~/developerjs/_notifications.js"></script>
     <script asp-src-include="~/developerjs/encryptepayload.js"></script>
     <script asp-src-include="~/developerjs/datatablesearchvalidation.js"></script>
+    <script asp-src-include="~/developerjs/ecms-layout-shell.js" defer></script>
     @RenderSection("Scripts", false)
 
-
-</body>
-</html>
-
-<!-- Fwd Internal Record  -->
-<div class="modal fade" id="FwdInternalRecord" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_FwdInternalRecord">Forward Appl for Approval</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    @* Global layout modals moved inside body for valid Bootstrap markup. *@
+    <!-- Fwd Internal Record  -->
+    <div class="modal fade" id="FwdInternalRecord" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel_FwdInternalRecord">Forward Appl for Approval</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" id="SaveInternalRecordFwd" name="SaveInternalRecordFwd" method="post">
+                    <div class="modal-body">
+                        <div class="card mt-2">
+                            <div class="mt-2 ml-4">
+                                <div class="row HProfileDetails">
+                                    <span id="spnFwdToInternalUsersId" class="d-none">0</span>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 fw-bold">Select Offr<i class="fas fa-asterisk mand1"></i></label>
+                                        <div class="col-sm-8">
+                                            <select class="form-select" tabindex="-1" name="ddlfwdInternaloffrs" id="ddlfwdInternaloffrs" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offr is required.">
+                                                <option value="0">Select Offr</option>
+                                            </select>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlfwdInternaloffrs" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 fw-bold">Army No</label>
+                                        <div class="col-sm-8">
+                                            <label class="form-control spnInternalFArmyNo" readonly></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 fw-bold"> Rk & Offr Name</label>
+                                        <div class="col-sm-8">
+                                            <label class="form-control spnInternalFtoname" readonly></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 fw-bold">Domain ID</label>
+                                        <div class="col-sm-8">
+                                            <label class="form-control spnInternalFDomainName" readonly></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 fw-bold">App.</label>
+                                        <div class="col-sm-8">
+                                            <label class="form-control spnInternalFAppName" readonly></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2 RemarksInternalFwd d-none">
+                                        <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="ddlInternalRemarks" id="ddlInternalRemarks" data-val="true">
+                                            </select>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlInternalRemarks" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-2">
+                                        <label class="col-form-label col-sm-4 fw-bold">Other Obsn</label>
+                                        <div class="col-sm-8">
+                                            <textarea class="form-control1" id="txtFRemarksInternal" name="txtFRemarksInternal" rows="3" maxlength="100" data-val="true" data-val-regex="Only letters, numbers, space and full stop (.) are allowed." data-val-regex-pattern="^[a-zA-Z0-9. ]*$"></textarea>
+                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtFRemarksInternal" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="btnInternalFwdSubmit">Forward</button>
+                    </div>
+                </form>
             </div>
-            <form action="" id="SaveInternalRecordFwd" name="SaveInternalRecordFwd" method="post">
+        </div>
+    </div>
+
+    <!-- Fwd Record  -->
+    <div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel_FwdRecord">Forward Appl for  <label class="gsoiotitle"></label></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
+                    <div class="card" id="multiplefed">
+                        <div class="mt-2 ml-4">
+                            <h5 class="card-title fw-bold">Details of Applicant</h5>
+                            <div class="row ">
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 fw-bold">Army No</label>
+                                    <div class="col-sm-8">
+                                        <label class="form-control spnApplicantArmyNo" id="spnFarmyno" readonly></label>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 fw-bold">Name</label>
+                                    <div class="col-sm-8">
+                                        <label class="form-control spnFname" readonly></label>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-2">
+                                    <label class="col-form-label col-sm-4 fw-bold">Date & Time</label>
+                                    <div class="col-sm-8">
+                                        <label class="form-control" readonly>@DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss tt")</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card mt-2">
                         <div class="mt-2 ml-4">
+                            <h5 class="card-title fw-bold">Forward To <label class="gsoio"></label></h5>
+                            <span id="spnFwdToAspNetUsersId" class="d-none">0</span>
+                            <span id="spnFwdToUsersId" class="d-none">0</span>
+                            @*  <span id="spnFwssusno" class="d-none">0</span>
+                            <span id="spnFrom" class="d-none">0</span>
+                            <span id="spnForwardTo" class="d-none">0</span>*@
+                            <span id="spnCurrentspnTrnFwdId" class="d-none">0</span>
+                            <span id="spnCurrentspnRequestId" class="d-none">0</span>
+                            <span id="spnCurrentRegistrationApplyFor" class="d-none">0</span>
+                            <span id="spnCurrentApplyFor" class="d-none">0</span>
+                            <span id="spnServiceNo" class="d-none">0</span>
+                            <span id="spnStepCounter" class="d-none">0</span>
+                            <h5 class="card-title text-danger" id="ForwardDetails"></h5>
                             <div class="row HProfileDetails">
-                                <span id="spnFwdToInternalUsersId" class="d-none">0</span>
                                 <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-4 fw-bold">Select Offr<i class="fas fa-asterisk mand1"></i></label>
+                                    <label class="col-form-label col-sm-4 fw-bold">Select Offr</label>
                                     <div class="col-sm-8">
-                                        <select class="form-select" tabindex="-1" name="ddlfwdInternaloffrs" id="ddlfwdInternaloffrs" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Offr is required.">
+                                        <select class="form-select" tabindex="-1" name="fwdoffrs" required id="ddlfwdoffrs">
                                             <option value="0">Select Offr</option>
                                         </select>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="ddlfwdInternaloffrs" data-valmsg-replace="true"></span>
+                                        <span class="fw-bold text-danger d-none" id="ErrMess1"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group chkforserach">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsArmyNo">
+                                            <label class="form-check-label" for="intoffsArmyNo">
+                                                Army No
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline d-none">
+                                            <input class="form-check-input" type="radio" name="Intoffrs" id="intoffName">
+                                            <label class="form-check-label" for="intoffName">
+                                                Offr Name
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline ">
+                                            <input class="form-check-input" type="radio" name="Intoffrs" id="intoffDomainId">
+                                            <label class="form-check-label" for="intoffName">
+                                                Domain ID
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-2 serchfwd d-none">
+                                    <label class="col-form-label col-sm-4 fw-bold">Army No/Offr Name/Domain ID</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control Alphanumeric" placeholder="Enter Army No/Offrs Name/DomainId" id="txtFwdName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
                                     </div>
                                 </div>
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 fw-bold">Army No</label>
                                     <div class="col-sm-8">
-                                        <label class="form-control spnInternalFArmyNo" readonly></label>
+                                        <label class="form-control spnFArmyNo" readonly></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 fw-bold"> Rk & Offr Name</label>
                                     <div class="col-sm-8">
-                                        <label class="form-control spnInternalFtoname" readonly></label>
+                                        <label class="form-control spnFtoname" readonly></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 fw-bold">Domain ID</label>
                                     <div class="col-sm-8">
-                                        <label class="form-control spnInternalFDomainName" readonly></label>
+                                        <label class="form-control spnFDomainName" readonly></label>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 fw-bold">App.</label>
                                     <div class="col-sm-8">
-                                        <label class="form-control spnInternalFAppName" readonly></label>
+                                        <label class="form-control spnFAppName" readonly></label>
                                     </div>
                                 </div>
-                                <div class="form-group row mb-2 RemarksInternalFwd d-none">
+                                <div class="form-group row mb-2 Remarks d-none">
                                     <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="ddlInternalRemarks" id="ddlInternalRemarks" data-val="true">
+                                        <select class="form-select" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="Remarks" required id="ddlRemarks">
                                         </select>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="ddlInternalRemarks" data-valmsg-replace="true"></span>
                                     </div>
                                 </div>
                                 <div class="form-group row mb-2">
                                     <label class="col-form-label col-sm-4 fw-bold">Other Obsn</label>
                                     <div class="col-sm-8">
-                                        <textarea class="form-control1" id="txtFRemarksInternal" name="txtFRemarksInternal" rows="3" maxlength="100" data-val="true" data-val-regex="Only letters, numbers, space and full stop (.) are allowed." data-val-regex-pattern="^[a-zA-Z0-9. ]*$"></textarea>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtFRemarksInternal" data-valmsg-replace="true"></span>
+                                        <textarea class="form-control alpha-num-only" id="txtFRemarks" rows="3" maxlength="100"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -297,386 +451,251 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="btnInternalFwdSubmit">Forward</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Fwd Record  -->
-<div class="modal fade" id="FwdRecord" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_FwdRecord">Forward Appl for  <label class="gsoiotitle"></label></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="card" id="multiplefed">
-                    <div class="mt-2 ml-4">
-                        <h5 class="card-title fw-bold">Details of Applicant</h5>
-                        <div class="row ">
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Army No</label>
-                                <div class="col-sm-8">
-                                    <label class="form-control spnApplicantArmyNo" id="spnFarmyno" readonly></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Name</label>
-                                <div class="col-sm-8">
-                                    <label class="form-control spnFname" readonly></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Date & Time</label>
-                                <div class="col-sm-8">
-                                    <label class="form-control" readonly>@DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss tt")</label>
-                                </div>
-                            </div>
+                    <div class="col-sm-12 text-center">
+                        <div id="tokenmsgforfwd" class="d-grid gap-2 col-12 mx-auto">
                         </div>
                     </div>
-                </div>
-                <div class="card mt-2">
-                    <div class="mt-2 ml-4">
-                        <h5 class="card-title fw-bold">Forward To <label class="gsoio"></label></h5>
-                        <span id="spnFwdToAspNetUsersId" class="d-none">0</span>
-                        <span id="spnFwdToUsersId" class="d-none">0</span>
-                        @*  <span id="spnFwssusno" class="d-none">0</span>
-                        <span id="spnFrom" class="d-none">0</span>
-                        <span id="spnForwardTo" class="d-none">0</span>*@
-                        <span id="spnCurrentspnTrnFwdId" class="d-none">0</span>
-                        <span id="spnCurrentspnRequestId" class="d-none">0</span>
-                        <span id="spnCurrentRegistrationApplyFor" class="d-none">0</span>
-                        <span id="spnCurrentApplyFor" class="d-none">0</span>
-                        <span id="spnServiceNo" class="d-none">0</span>
-                        <span id="spnStepCounter" class="d-none">0</span>
-                        <h5 class="card-title text-danger" id="ForwardDetails"></h5>
-                        <div class="row HProfileDetails">
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Select Offr</label>
-                                <div class="col-sm-8">
-                                    <select class="form-select" tabindex="-1" name="fwdoffrs" required id="ddlfwdoffrs">
-                                        <option value="0">Select Offr</option>
-                                    </select>
-                                    <span class="fw-bold text-danger d-none" id="ErrMess1"></span>
-                                </div>
-                            </div>
-                            <div class="form-group chkforserach">
-                                <div class="col-sm-12 d-flex justify-content-center">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="Intoffrs" id="intoffsArmyNo">
-                                        <label class="form-check-label" for="intoffsArmyNo">
-                                            Army No
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline d-none">
-                                        <input class="form-check-input" type="radio" name="Intoffrs" id="intoffName">
-                                        <label class="form-check-label" for="intoffName">
-                                            Offr Name
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline ">
-                                        <input class="form-check-input" type="radio" name="Intoffrs" id="intoffDomainId">
-                                        <label class="form-check-label" for="intoffName">
-                                            Domain ID
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2 serchfwd d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Army No/Offr Name/Domain ID</label>
-                                <div class="col-sm-8">
-                                    <input class="form-control Alphanumeric" placeholder="Enter Army No/Offrs Name/DomainId" id="txtFwdName" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Army No</label>
-                                <div class="col-sm-8">
-                                    <label class="form-control spnFArmyNo" readonly></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold"> Rk & Offr Name</label>
-                                <div class="col-sm-8">
-                                    <label class="form-control spnFtoname" readonly></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Domain ID</label>
-                                <div class="col-sm-8">
-                                    <label class="form-control spnFDomainName" readonly></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">App.</label>
-                                <div class="col-sm-8">
-                                    <label class="form-control spnFAppName" readonly></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2 Remarks d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Select Remarks</label>
-                                <div class="col-sm-8">
-                                    <select class="form-select" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="Remarks" required id="ddlRemarks">
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Other Obsn</label>
-                                <div class="col-sm-8">
-                                    <textarea class="form-control alpha-num-only" id="txtFRemarks" rows="3" maxlength="100"></textarea>
-                                </div>
-                            </div>
+                    <div class="col-sm-12 text-center">
+                        <div id="msgforfwd" class="d-grid gap-2 col-12 mx-auto">
                         </div>
                     </div>
+                    <button type="button" class="btn btn-danger" id="btntokenTofwd">
+                        Refresh to Fetch Token Details
+                    </button>
+                    @* <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Not Approved</button> *@
+                    <button type="button" class="btn btn-success" id="btnForward">Approved</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <div class="col-sm-12 text-center">
-                    <div id="tokenmsgforfwd" class="d-grid gap-2 col-12 mx-auto">
-                    </div>
-                </div>
-                <div class="col-sm-12 text-center">
-                    <div id="msgforfwd" class="d-grid gap-2 col-12 mx-auto">
-                    </div>
-                </div>
-                <button type="button" class="btn btn-danger" id="btntokenTofwd">
-                    Refresh to Fetch Token Details
-                </button>
-                @* <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Not Approved</button> *@
-                <button type="button" class="btn btn-success" id="btnForward">Approved</button>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Basic Details   -->
-<div class="modal fade" id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_BasicDetails">Basic Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="row">
-                        <div id="BasicDetails_Data">
-                        </div>
-                        <div class="col-md-12 ">
-                            <div class="form-group row recectopt  mb-3">
-                                <label class="col-form-label col-12 text-center">Select Remarks</label>
-                                <div class="col-sm-12">
-                                    <select class="form-select" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="Remarks" required id="ddlRRemarks">
-                                    </select>
-                                </div>
+    <!-- Basic Details   -->
+    <div class="modal fade" id="BasicDetails" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel_BasicDetails">Basic Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="row">
+                            <div id="BasicDetails_Data">
                             </div>
                             <div class="col-md-12 ">
-                                <div class="form-group row recectopt mb-3">
-                                    <label class="col-form-label col-12 text-center">Remarks</label>
-                                    <div class="col-12">
-                                        <textarea class="form-control alpha-num-only text-uppercase" id="txtFrejectedRemarks" rows="2" maxlength="100"></textarea>
+                                <div class="form-group row recectopt  mb-3">
+                                    <label class="col-form-label col-12 text-center">Select Remarks</label>
+                                    <div class="col-sm-12">
+                                        <select class="form-select" multiple="" placeholder="Please select a Remarks" tabindex="-1" name="Remarks" required id="ddlRRemarks">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 ">
+                                    <div class="form-group row recectopt mb-3">
+                                        <label class="col-form-label col-12 text-center">Remarks</label>
+                                        <div class="col-12">
+                                            <textarea class="form-control alpha-num-only text-uppercase" id="txtFrejectedRemarks" rows="2" maxlength="100"></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="btnRejected">Rejected Appl</button>
-                <button type="button" class="btn btn-primary" id="btnShowForward">Next</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="btnRejected">Rejected Appl</button>
+                    <button type="button" class="btn btn-primary" id="btnShowForward">Next</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Basic Details for View Purpose  -->
-<div class="modal fade" id="BasicDetailViewPurpose" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_BasicDetailViewPurpose">Basic Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="row ">
-                        <div class="col-sm-12 mb-3">
-                            <div id="BasicDetailViewPurpose_Data">
+    <!-- Basic Details for View Purpose  -->
+    <div class="modal fade" id="BasicDetailViewPurpose" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel_BasicDetailViewPurpose">Basic Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="row ">
+                            <div class="col-sm-12 mb-3">
+                                <div id="BasicDetailViewPurpose_Data">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary d-print-none" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary d-print-none" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade right" id="HistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-lg modal-history" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
-                <h4 class="modal-title"><span id="HistoryModal_Header">I-Card History</span></h4>
-            </div>
-            <div class="modal-body" id="exampleModal1111">
-                <div id="HistoryModal_Title"><h5 class="text-center badge badge-success"><span id="HistoryModal_Title_Content">Step Wise I Card Request History</span></h5></div>
-                <div class="timeline timeline-xs" id="HistoryModal_Body">
+    <div class="modal fade right" id="HistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog modal-lg modal-history" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                    <h4 class="modal-title"><span id="HistoryModal_Header">I-Card History</span></h4>
+                </div>
+                <div class="modal-body" id="exampleModal1111">
+                    <div id="HistoryModal_Title"><h5 class="text-center badge badge-success"><span id="HistoryModal_Title_Content">Step Wise I Card Request History</span></h5></div>
+                    <div class="timeline timeline-xs" id="HistoryModal_Body">
+                    </div>
+
                 </div>
 
-            </div>
+            </div><!-- modal-content -->
+        </div><!-- modal-dialog -->
+    </div>
 
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
+    <div class="modal fade" id="unitoffrsModal" tabindex="-1" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel_unitoffrsModal">Search Army No</h5>
 
-<div class="modal fade" id="unitoffrsModal" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_unitoffrsModal">Search Army No</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <input type="hidden" id="armynosearchTypeId">
+                <input type="hidden" id="RequestId_unitoffrsModal">
+                <input type="hidden" id="MaxTrnFwdId_unitoffrsModal">
+                <div class="modal-body text-center">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-3 center">
+                            <img id="armynosearchAllpic" class="armynosearchAllpic">
+                        </div>
+                        <div class="col-xl-9 col-md-9 position-relative mt-2">
+                            <input type="text" id="txtarmynosearchAll" maxlength="10"
+                                   placeholder="Enter Army No" class="form-control inputField" autocomplete="off" />
 
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <input type="hidden" id="armynosearchTypeId">
-            <input type="hidden" id="RequestId_unitoffrsModal">
-            <input type="hidden" id="MaxTrnFwdId_unitoffrsModal">
-            <div class="modal-body text-center">
-                <div class="row">
-                    <div class="col-xl-3 col-md-3 center">
-                        <img id="armynosearchAllpic" class="armynosearchAllpic">
-                    </div>
-                    <div class="col-xl-9 col-md-9 position-relative mt-2">
-                        <input type="text" id="txtarmynosearchAll" maxlength="10"
-                               placeholder="Enter Army No" class="form-control inputField" autocomplete="off" />
+                            <div id="suggesstion-box"></div>
 
-                        <div id="suggesstion-box"></div>
-
-                        <label class="form-label mt-4" id="armynosearchAllName"></label>
+                            <label class="form-label mt-4" id="armynosearchAllName"></label>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
+                <div class="modal-footer">
 
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btnSercharmynoSmart">Ok</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btnSercharmynoSmart">Ok</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade right" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-xl " role="document">
-        <div class="modal-content ">
-            <div class="modal-header ">
-                <button type="button" class="close no-print" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
-                <h4 class="modal-title no-print" id="lblICardPrint">I-Card Print Preview</h4>
-            </div>
-            <div class="modal-body section-to-print-popup" id="section-to-print-popup">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="card mb-1 mt-1">
-                                    <h5 class="text-center badge badge-success no-print">I-Card Print Preview</h5>
-                                    <div class="mt-2 ml-2 mr-2">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="card">
-                                                    <div class="row p-4">
-                                                        <div class="col-sm-12">
-                                                            <div class="line-zero">
-                                                                <p class="f19 font-weight-600 text-start">
-                                                                    भारतीय सशस्त्र सेनाएँ पहचान कार्ड
-                                                                    <span class="float-right">(IAFZ-2015)</span>
-                                                                </p>
+    <div class="modal fade right" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog modal-xl " role="document">
+            <div class="modal-content ">
+                <div class="modal-header ">
+                    <button type="button" class="close no-print" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                    <h4 class="modal-title no-print" id="lblICardPrint">I-Card Print Preview</h4>
+                </div>
+                <div class="modal-body section-to-print-popup" id="section-to-print-popup">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card mb-1 mt-1">
+                                        <h5 class="text-center badge badge-success no-print">I-Card Print Preview</h5>
+                                        <div class="mt-2 ml-2 mr-2">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="card">
+                                                        <div class="row p-4">
+                                                            <div class="col-sm-12">
+                                                                <div class="line-zero">
+                                                                    <p class="f19 font-weight-600 text-start">
+                                                                        भारतीय सशस्त्र सेनाएँ पहचान कार्ड
+                                                                        <span class="float-right">(IAFZ-2015)</span>
+                                                                    </p>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-sm-12">
-                                                            <div class="d-flex f19 font-weight-800"> INDIAN ARMED FORCES INDENTITY CARD</div>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <img class="PhotoImagePath_ICardPrint" data-fallback="/Images/user4.png" height="200" width="200" />
-                                                        </div>
-                                                        <div class="col-sm-6">
+                                                            <div class="col-sm-12">
+                                                                <div class="d-flex f19 font-weight-800"> INDIAN ARMED FORCES INDENTITY CARD</div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <img class="PhotoImagePath_ICardPrint" data-fallback="/Images/user4.png" height="200" width="200" />
+                                                            </div>
+                                                            <div class="col-sm-6">
 
-                                                            <span class="fw-bold text-uppercase" id="FName_ICardPrint"></span><br />
-                                                            <span class="fw-bold text-uppercase" id="LName_ICardPrint"></span><br />
-                                                            <span class="fw-bold text-uppercase" id="RankName_ICardPrint"></span><br />
-                                                            <span class="fw-bold text-uppercase" id="ArmedName_ICardPrint"></span><br />
-                                                            <span class="fw-bold text-uppercase" id="ServiceNo_ICardPrint"></span><br />
-                                                            <span class="fw-bold identification-mark">IDENTIFICATION MARK</span><br />
-                                                            <span class="font-weight-500 text-uppercase" id="IdenMark1_ICardPrint"></span>
-                                                        </div>
-                                                        <div class="col-sm-12">
-                                                            <p class="font-weight-500 f16">रक्षा मंत्रालय, भारत सरकार MINISTRY OF DEFENCE, GOVERNMENT OF INDIA</p>
+                                                                <span class="fw-bold text-uppercase" id="FName_ICardPrint"></span><br />
+                                                                <span class="fw-bold text-uppercase" id="LName_ICardPrint"></span><br />
+                                                                <span class="fw-bold text-uppercase" id="RankName_ICardPrint"></span><br />
+                                                                <span class="fw-bold text-uppercase" id="ArmedName_ICardPrint"></span><br />
+                                                                <span class="fw-bold text-uppercase" id="ServiceNo_ICardPrint"></span><br />
+                                                                <span class="fw-bold identification-mark">IDENTIFICATION MARK</span><br />
+                                                                <span class="font-weight-500 text-uppercase" id="IdenMark1_ICardPrint"></span>
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <p class="font-weight-500 f16">रक्षा मंत्रालय, भारत सरकार MINISTRY OF DEFENCE, GOVERNMENT OF INDIA</p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="card mt-2 mb-2">
-                                                    <div class="row p-4">
-                                                        <div class="col-sm-2 justify-content-center">
-                                                            <div class="mt-4 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="60" width="50" /></div>
-                                                            <div class="mt-4 ml-3"><img class="PhotoImagePath_ICardPrint" data-fallback="/Images/Signature.png" height="60" width="50" /></div>
-                                                            <div class="mt-4 ml-3"><img src="~/images/asset/hologrambg.png" height="60" width="50" /></div>
-                                                        </div>
-                                                        <div class="col-sm-3">
-                                                            <div class="">
-                                                                <div class="f15 font-weight-700">DATE OF BIRTH</div>
-                                                                <span id="DOB_ICardPrint"></span>
+                                                <div class="col-sm-12">
+                                                    <div class="card mt-2 mb-2">
+                                                        <div class="row p-4">
+                                                            <div class="col-sm-2 justify-content-center">
+                                                                <div class="mt-4 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="60" width="50" /></div>
+                                                                <div class="mt-4 ml-3"><img class="PhotoImagePath_ICardPrint" data-fallback="/Images/Signature.png" height="60" width="50" /></div>
+                                                                <div class="mt-4 ml-3"><img src="~/images/asset/hologrambg.png" height="60" width="50" /></div>
                                                             </div>
-                                                            <div>
-                                                                <div class="f15 font-weight-700">HEIGHT</div>
-                                                                <span id="Height_ICardPrint"></span>
+                                                            <div class="col-sm-3">
+                                                                <div class="">
+                                                                    <div class="f15 font-weight-700">DATE OF BIRTH</div>
+                                                                    <span id="DOB_ICardPrint"></span>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="f15 font-weight-700">HEIGHT</div>
+                                                                    <span id="Height_ICardPrint"></span>
+                                                                </div>
+                                                                <div>
+                                                                    <span class="f15 font-weight-700">AADHAAR No</span><br />
+                                                                    <span id="AadhaarNo_ICardPrint"></span>
+                                                                </div>
+                                                                <div>
+                                                                    <span class="f15 font-weight-700 text-uppercase">BLOOD GROUP</span><br />
+                                                                    <span id="BloodGroup_ICardPrint"></span>
+                                                                </div>
+                                                                <div>
+                                                                    <span class="f15 font-weight-700 text-uppercase">PLACE & DATE OF ISSUE</span><br />
+                                                                    <span id="PlaceOfIssue_ICardPrint"></span><br />
+                                                                    <span id="DateOfIssue_ICardPrint"></span>
+                                                                </div>
+                                                                <div>
+                                                                    <span class="f15 font-weight-700 text-uppercase">ISSUE AUTH</span><br />
+                                                                    <span class="IssuingAuth_ICardPrint"></span>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <span class="f15 font-weight-700">AADHAAR No</span><br />
-                                                                <span id="AadhaarNo_ICardPrint"></span>
+                                                            <div class="col-sm-7">
+                                                                <div class="f13 font-weight-400 text-justify">
+                                                                    भारत सरकार की सम्पति। अहस्तान्तरणीय। गुम हो जाने पर निकटतम थाने और अपनी यूनिट को रिपोर्ट करें। सेवा की समाप्ति पर ओ.सी. यूनिट को लौटा दें।
+                                                                </div>
+                                                                <div class="f13 font-weight-400 text-justify">
+                                                                    PROPERTY OF GOVERNMENT OF INDIA NOT TRANSFERABLE. REPORT LOSS IMMEDIATELY TO NEAREST POLICE STATION AND YOUR UNIT. RETURN TO OC UNIT ON CESSATION OF SERVICE.
+                                                                </div>
+                                                                <div class="f13 font-weight-400 text-justify">
+                                                                    पाने वाला इसे सेना/नौसेना/वायु सेना मुख्यालय, नई दिल्ली 110011 को बिना टिकट लगाए, पत्र पेटी में डाल दे या पास के सैनिक यूनिट या थाने में जमा करा दे।
+                                                                </div>
+                                                                <div class="f13 font-weight-400 text-justify">
+                                                                    FINDERS TO DROP THIS LETTER BOX POSTAGE FREE TO ARMY/NAVAL/AIR HEAD QUARTERS, NEW DELHI 110011 OR HANDOVER TO THE NEAREST MILITARY UNIT OR POLICE STATION.
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <span class="f15 font-weight-700 text-uppercase">BLOOD GROUP</span><br />
-                                                                <span id="BloodGroup_ICardPrint"></span>
+                                                            <div class="col-sm-3 mt-2">
+                                                                <span class="font-weight-800 border border-dark p-2">1545485</span>
                                                             </div>
-                                                            <div>
-                                                                <span class="f15 font-weight-700 text-uppercase">PLACE & DATE OF ISSUE</span><br />
-                                                                <span id="PlaceOfIssue_ICardPrint"></span><br />
-                                                                <span id="DateOfIssue_ICardPrint"></span>
+                                                            <div class="col-sm-3 mt-2">
+                                                                <span class="font-weight-800 border border-dark p-2">SIGNATURE</span>
                                                             </div>
-                                                            <div>
-                                                                <span class="f15 font-weight-700 text-uppercase">ISSUE AUTH</span><br />
-                                                                <span class="IssuingAuth_ICardPrint"></span>
+                                                            <div class="col-sm-6 text-center mt-2 p-2 border border-dark signature-box">
+                                                                <span class="p-2"><img class="SignaturePath_ICardPrint" data-fallback="/Images/Signature.png" height="30" width="80" /></span>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-sm-7">
-                                                            <div class="f13 font-weight-400 text-justify">
-                                                                भारत सरकार की सम्पति। अहस्तान्तरणीय। गुम हो जाने पर निकटतम थाने और अपनी यूनिट को रिपोर्ट करें। सेवा की समाप्ति पर ओ.सी. यूनिट को लौटा दें।
-                                                            </div>
-                                                            <div class="f13 font-weight-400 text-justify">
-                                                                PROPERTY OF GOVERNMENT OF INDIA NOT TRANSFERABLE. REPORT LOSS IMMEDIATELY TO NEAREST POLICE STATION AND YOUR UNIT. RETURN TO OC UNIT ON CESSATION OF SERVICE.
-                                                            </div>
-                                                            <div class="f13 font-weight-400 text-justify">
-                                                                पाने वाला इसे सेना/नौसेना/वायु सेना मुख्यालय, नई दिल्ली 110011 को बिना टिकट लगाए, पत्र पेटी में डाल दे या पास के सैनिक यूनिट या थाने में जमा करा दे।
-                                                            </div>
-                                                            <div class="f13 font-weight-400 text-justify">
-                                                                FINDERS TO DROP THIS LETTER BOX POSTAGE FREE TO ARMY/NAVAL/AIR HEAD QUARTERS, NEW DELHI 110011 OR HANDOVER TO THE NEAREST MILITARY UNIT OR POLICE STATION.
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-3 mt-2">
-                                                            <span class="font-weight-800 border border-dark p-2">1545485</span>
-                                                        </div>
-                                                        <div class="col-sm-3 mt-2">
-                                                            <span class="font-weight-800 border border-dark p-2">SIGNATURE</span>
-                                                        </div>
-                                                        <div class="col-sm-6 text-center mt-2 p-2 border border-dark signature-box">
-                                                            <span class="p-2"><img class="SignaturePath_ICardPrint" data-fallback="/Images/Signature.png" height="30" width="80" /></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -686,56 +705,57 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-fotter text-center">
-                        &nbsp;
+                        <div class="card-fotter text-center">
+                            &nbsp;
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-12 mb-4 ">
-            </div>
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
+                <div class="col-sm-12 mb-4 ">
+                </div>
+            </div><!-- modal-content -->
+        </div><!-- modal-dialog -->
+    </div>
 
-<!-- Confirmation Dialog  -->
-<div class="modal fade" id="ConfirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_ConfirmationDialog">Confirmation</h5>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="row">
-                        <div class="col-sm-12 mb-3">
-                            <div id="ConfirmationDialog_Data" class="text-center text-success font-weight-bold">
+    <!-- Confirmation Dialog  -->
+    <div class="modal fade" id="ConfirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel_ConfirmationDialog">Confirmation</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div id="ConfirmationDialog_Data" class="text-center text-success font-weight-bold">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="btnSearchNew" class="btn btn-secondary" data-bs-dismiss="modal"></button>
-                <button type="button" id="btnBackDashboard" class="btn btn-secondary" data-bs-dismiss="modal"></button>
-                <button type="button" id="btnClosed" class="btn btn-secondary d-none d-print-none" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer">
+                    <button type="button" id="btnSearchNew" class="btn btn-secondary" data-bs-dismiss="modal"></button>
+                    <button type="button" id="btnBackDashboard" class="btn btn-secondary" data-bs-dismiss="modal"></button>
+                    <button type="button" id="btnClosed" class="btn btn-secondary d-none d-print-none" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Message Dialog  -->
-<div class="modal fade" id="MessageDialog" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" id="MessageDialogLabel"></h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div id="MessageDialogBody" class="modal-body">
-            </div>
-            <div class="modal-footer">
+    <!-- Message Dialog  -->
+    <div class="modal fade" id="MessageDialog" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="MessageDialogLabel"></h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="MessageDialogBody" class="modal-body">
+                </div>
+                <div class="modal-footer">
+                </div>
             </div>
         </div>
     </div>
-</div>
+</body>
+</html>

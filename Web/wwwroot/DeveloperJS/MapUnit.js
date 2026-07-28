@@ -1,5 +1,111 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
+function cleanupMapUnitModalState() {
+    var modalEl = document.getElementById('AddNewUnitmap');
+
+    document.querySelectorAll('.modal-backdrop').forEach(function (el) {
+        el.remove();
+    });
+
+    document.body.classList.remove('modal-open');
+    document.body.classList.remove('mapunit-modal-open');
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('padding-right');
+
+    if (modalEl) {
+        modalEl.classList.remove('show');
+        modalEl.style.display = 'none';
+        modalEl.style.removeProperty('padding-right');
+        modalEl.setAttribute('aria-hidden', 'true');
+        modalEl.removeAttribute('aria-modal');
+        modalEl.removeAttribute('role');
+    }
+}
+
+function showMapUnitModal() {
+    var modalEl = document.getElementById('AddNewUnitmap');
+
+    if (!modalEl) {
+        return;
+    }
+
+    document.querySelectorAll('.modal-backdrop').forEach(function (el) {
+        el.remove();
+    });
+
+    document.body.classList.add('mapunit-modal-open');
+    document.body.classList.add('modal-open');
+
+    if (window.bootstrap && bootstrap.Modal) {
+        bootstrap.Modal.getOrCreateInstance(modalEl, {
+            backdrop: false,
+            keyboard: true,
+            focus: true
+        }).show();
+    } else {
+        $('#AddNewUnitmap').modal({
+            backdrop: false,
+            keyboard: true,
+            show: true
+        });
+    }
+
+    setTimeout(function () {
+        document.querySelectorAll('.modal-backdrop').forEach(function (el) {
+            el.remove();
+        });
+
+        modalEl.classList.add('show');
+        modalEl.style.display = 'block';
+        modalEl.style.opacity = '1';
+        modalEl.style.pointerEvents = 'auto';
+        modalEl.removeAttribute('aria-hidden');
+        modalEl.setAttribute('aria-modal', 'true');
+        modalEl.setAttribute('role', 'dialog');
+    }, 10);
+}
+
+function hideMapUnitModal() {
+    var modalEl = document.getElementById('AddNewUnitmap');
+
+    if (window.bootstrap && bootstrap.Modal && modalEl) {
+        var instance = bootstrap.Modal.getInstance(modalEl);
+        if (instance) {
+            instance.hide();
+        }
+    } else {
+        $('#AddNewUnitmap').modal('hide');
+    }
+
+    setTimeout(function () {
+        cleanupMapUnitModalState();
+    }, 100);
+}
+
+function safeAdjustMapUnitDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
+    cleanupMapUnitModalState();
+
+    $(document).off("click", "#AddNewUnitmap .ecms-mapunit-close, #AddNewUnitmap [data-bs-dismiss='modal'], #AddNewUnitmap [data-dismiss='modal']")
+        .on("click", "#AddNewUnitmap .ecms-mapunit-close, #AddNewUnitmap [data-bs-dismiss='modal'], #AddNewUnitmap [data-dismiss='modal']", function (e) {
+            e.preventDefault();
+            hideMapUnitModal();
+        });
+
+    $("#AddNewUnitmap").off("hidden.bs.modal").on("hidden.bs.modal", function () {
+        cleanupMapUnitModalState();
+    });
+
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlCommand", 1, "");
@@ -26,7 +132,8 @@ $(function () {
                             response($.map(data, function (item) {
                                 $("#loading").addClass("d-none");
                                 return {
-                                    label: `${item.Sus_no}${item.Suffix}`, value: item.UnitId };
+                                    label: `${item.Sus_no}${item.Suffix}`, value: item.UnitId
+                                };
                             }))
                         }
                         else {
@@ -63,7 +170,7 @@ $(function () {
                 }
             });
         },
-        
+
     });
 
     document.getElementById('txtSusno').addEventListener('keyup', function (e) {
@@ -74,7 +181,7 @@ $(function () {
         }
     });
 
-    $('input[name="UnitTyperdi"]').on("click",function () {
+    $('input[name="UnitTyperdi"]').on("click", function () {
         var lst = '<option value="1">Please Select</option>';
         var val = $("input[type='radio'][name=UnitTyperdi]:checked").val();
         if (val == "1") {
@@ -131,9 +238,9 @@ $(function () {
 
         }
     });
-    $("#btnMapUnitAdd").on("click",function () {
+    $("#btnMapUnitAdd").on("click", function () {
         ResetMapUnit();
-        $("#AddNewUnitmap").modal('show');
+        showMapUnitModal();
     });
     $('#ddlCommand').on('change', function () {
         mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
@@ -148,7 +255,7 @@ $(function () {
     //$('#ddlBde').on('change', function () {
     //    //BindDataMapUnit();
     //});
-    $("#btnUnitMapReset").on("click",function () {
+    $("#btnUnitMapReset").on("click", function () {
         ResetMapUnit();
     });
 
@@ -181,12 +288,12 @@ $(function () {
             }
         }
         catch (error) {
-        console.error("Error updating row:", error);
+            console.error("Error updating row:", error);
         }
     });
 
 
-    $('#btnMapUnitMultiDelete').on("click",function () {
+    $('#btnMapUnitMultiDelete').on("click", function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
@@ -294,11 +401,11 @@ function BindDataMapUnit() {
     }
 
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '300px',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // UI only: normal DataTables scroll inside card
+        deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
@@ -310,7 +417,7 @@ function BindDataMapUnit() {
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
         order: [[0, 'desc']], // Default sorting on the first column
-        searching: false,
+        searching: true,
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -388,7 +495,7 @@ function BindDataMapUnit() {
                 data: "UnitType",
                 name: "UnitType",
                 className: "nowrap",
-                orderable: true, 
+                orderable: true,
                 width: "130px",
                 render: function (data, type, row, meta) {
                     let types = { 1: "Unit", 2: "Fmn HQ", 3: "Dte/Br" };
@@ -410,7 +517,7 @@ function BindDataMapUnit() {
                 title: "Div / Sub Area",
                 data: "DivName",
                 name: "DivName",
-                orderable: true, 
+                orderable: true,
                 width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
@@ -421,7 +528,7 @@ function BindDataMapUnit() {
                 title: "Corps / Area",
                 data: "CorpsName",
                 name: "CorpsName",
-                orderable: true, 
+                orderable: true,
                 width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
@@ -432,7 +539,7 @@ function BindDataMapUnit() {
                 title: "Comd",
                 data: "ComdName",
                 name: "ComdName",
-                orderable: true, 
+                orderable: true,
                 width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
@@ -443,7 +550,7 @@ function BindDataMapUnit() {
                 title: "Fmn /Branch",
                 data: "BranchName",
                 name: "BranchName",
-                orderable: true, 
+                orderable: true,
                 width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
@@ -454,7 +561,7 @@ function BindDataMapUnit() {
                 title: "DG / Sub Dte",
                 data: "SubDteName",
                 name: "SubDteName",
-                orderable: true, 
+                orderable: true,
                 width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
@@ -465,7 +572,7 @@ function BindDataMapUnit() {
                 title: "PSO /Dte",
                 data: "PSOName",
                 name: "PSOName",
-                orderable: true, 
+                orderable: true,
                 width: "150px",
                 render: function (data, type, row, meta) {
                     if (!data) return '';
@@ -477,7 +584,7 @@ function BindDataMapUnit() {
                 title: "Status",
                 data: "IsVerify",
                 name: "IsVerify",
-                orderable: true, 
+                orderable: true,
                 width: "120px",
                 render: function (data, type, row, meta) {
                     // Convert boolean to "Yes" or "No"
@@ -492,7 +599,7 @@ function BindDataMapUnit() {
                 width: "150px",
                 className: "noExport text-center col-action",
                 render: function (data, type, row, meta) {
-                    return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
+                    return "<span id='btnedit'><button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn ecms-action-btn btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
                 }
             }
         ],
@@ -519,7 +626,9 @@ function BindDataMapUnit() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "UNIT SUS No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
+            "rt" +
+            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -548,20 +657,20 @@ function BindDataMapUnit() {
         // ✅ ADD: initComplete for zoom handling
         initComplete: function () {
             // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            safeAdjustMapUnitDataTable(this.api());
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    safeAdjustMapUnitDataTable(table);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustMapUnitDataTable(this.api());
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -639,7 +748,7 @@ function BindDataMapUnit() {
                         $("#isverifyno").prop("checked", true);
                     }
 
-                    $("#AddNewUnitmap").modal('show');
+                    showMapUnitModal();
                     $("#btnMapUnitsave").val("Update");
 
                 }
@@ -670,7 +779,7 @@ function BindDataMapUnit() {
     table.column(0).visible(false);
 }
 
- function SaveUnitWithMapping() {
+function SaveUnitWithMapping() {
     const data = {
         UnitId: document.getElementById('spnUnitId').innerHTML,
         UnitMapId: document.getElementById('spnUnitMapId').innerHTML,
@@ -686,7 +795,7 @@ function BindDataMapUnit() {
         FmnBranchID: document.getElementById('ddlFmnBranch').value,
         SubDteId: document.getElementById('ddlDgSubDte').value,
     };
-     
+
     try {
         fetch('/Master/SaveUnitWithMapping', {
             method: 'POST',
@@ -708,7 +817,7 @@ function BindDataMapUnit() {
                     title: 'Unit',
                     html: result.Message,
                 });
-                $('#AddNewUnitmap').modal('hide'); // Hide modal
+                hideMapUnitModal(); // Hide modal
                 BindDataMapUnit();
                 ResetMapUnit();
             }
@@ -736,7 +845,7 @@ function BindDataMapUnit() {
                 });
             }
         });
-  
+
     } catch (error) {
         console.error('Error:', error);
         Swal.fire({
@@ -835,12 +944,12 @@ async function SaveUnitMap() {
             toastr.success('Unit has been saved');
             ResetMapUnit();
             BindDataMapUnit();
-            $('#AddNewUnitmap').modal('hide'); // Hide modal
+            hideMapUnitModal(); // Hide modal
         } else if (result === DataUpdate) {
             toastr.success('Unit has been Updated');
             ResetMapUnit();
             BindDataMapUnit();
-            $('#AddNewUnitmap').modal('hide'); // Hide modal
+            hideMapUnitModal(); // Hide modal
         } else if (result === DataExists) {
             toastr.error('Unit Name Exits!');
         } else if (result === InternalServerError) {

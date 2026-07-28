@@ -7,6 +7,8 @@ var UserProfileId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    PrepareUserRegnModalRoots();
+
     applyDataTableSearchValidation('#tbldata');
 
     BindData("");
@@ -243,17 +245,18 @@ function BindDialog(Choice) {
             $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
             $("#tbldatadialog thead").empty(); // Clear old thead
             $("#tbldatadialog tbody").empty(); // Clear old tbody
+            $("#tbldatadialog").empty(); // Remove old generated header/body markup
         }
 
         tabledialog = $("#tbldatadialog").DataTable({
-            scrollY: '65vh',          // ✅ vertical scroll
+            scrollY: '100%',          // ✅ vertical scroll
             scrollX: true,            // ✅ horizontal scroll
-            scrollCollapse: true,
-            scroller: true,           // ✅ Enable virtual scrolling for better performance
-            deferScroll: true,        // ✅ Improve scrolling performance
+            scrollCollapse: false,
+            scroller: false,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: false,        // ✅ Improve scrolling performance
             fixedHeader: false,       // ❌ disable when using scrollY
 
-            processing: true,
+            processing: false,
             serverSide: true,
             filter: true,
             stateSave: false,
@@ -422,7 +425,7 @@ function BindDialog(Choice) {
                 search: "", // Remove the default "Search:" label
                 searchPlaceholder: "Search Domain ID" // Add custom placeholder
             },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
             buttons: [
                 //{
                 //    extend: 'copy',
@@ -455,26 +458,34 @@ function BindDialog(Choice) {
 
                 // Force DataTables to calculate optimal widths
                 this.api().columns.adjust();
+                RefreshUserRegnDataTable("#tbldatadialog", 20);
 
                 // Handle zoom/resize
                 var resizeTimer;
                 $(window).on('resize', function () {
                     clearTimeout(resizeTimer);
                     resizeTimer = setTimeout(function () {
-                        tabledialog.columns.adjust().responsive.recalc();
+                        tabledialog.columns.adjust();
                     }, 100);
                 });
             },
             drawCallback: function (settings) {
                 // Recalculate widths on each data load
-                this.api().columns.adjust().responsive.recalc();
+                this.api().columns.adjust();
+                RefreshUserRegnDataTable("#tbldatadialog", 20);
 
                 const tooltipTriggerList = [].slice.call(
                     document.querySelectorAll('[data-bs-toggle="tooltip"]')
                 );
-                tooltipTriggerList.forEach(el => {
-                    new bootstrap.Tooltip(el);
-                });
+                if (window.bootstrap && bootstrap.Tooltip) {
+                    tooltipTriggerList.forEach(function (element) {
+                        try {
+                            bootstrap.Tooltip.getOrCreateInstance
+                                ? bootstrap.Tooltip.getOrCreateInstance(element)
+                                : new bootstrap.Tooltip(element);
+                        } catch (error) { }
+                    });
+                }
             }
         });
     });
@@ -489,16 +500,17 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old generated header/body markup
     }
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: false,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -530,8 +542,12 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                RefreshUserRegnDataTable("#tbldata", 30);
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                RefreshUserRegnDataTable("#tbldata", 30);
             }
         },
         columns: [
@@ -694,7 +710,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Domain ID" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
         buttons: [
             //{
             //    extend: 'copy',
@@ -723,26 +739,34 @@ function BindData() {
         initComplete: function () {
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
+            RefreshUserRegnDataTable("#tbldata", 20);
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    table.columns.adjust();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             this.api().columns.adjust();
+            RefreshUserRegnDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        bootstrap.Tooltip.getOrCreateInstance
+                            ? bootstrap.Tooltip.getOrCreateInstance(element)
+                            : new bootstrap.Tooltip(element);
+                    } catch (error) { }
+                });
+            }
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -1241,163 +1265,110 @@ function AccountCount() {
     });
 }
 
+/* ==============================================================
+   PAGE-LOCAL UI HELPERS
+   No global ModernCSS file is changed by these helpers.
+================================================================ */
 
-/* =====================================================
-   User Registration UI-only fixes
-   - Removes DataTables duplicate cloned header
-   - Keeps DataTable info/pagination visible
-   - Hides stuck processing/loader overlay
-   - Repaints custom radio selected state in modals
-===================================================== */
-function UserRegn_FinalTableCleanup(tableSelector) {
-    try {
-        var $wrapper = $(tableSelector + "_wrapper");
+function PrepareUserRegnModalRoot(modalSelector) {
+    const $modal = $(modalSelector);
 
-        $("#loading").addClass("d-none").hide();
-        $(".dataTables_processing, .dt-processing, " + tableSelector + "_processing").hide();
+    if (!$modal.length) {
+        return;
+    }
 
-        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").each(function () {
-            $(this).attr("aria-hidden", "true").css({
-                "display": "none",
-                "visibility": "collapse",
-                "height": "0",
-                "min-height": "0",
-                "max-height": "0",
-                "line-height": "0",
-                "font-size": "0",
-                "padding": "0",
-                "margin": "0",
-                "border": "0",
-                "overflow": "hidden",
-                "opacity": "0"
-            });
-        });
-
-        $wrapper.find(".dataTables_scrollBody table thead tr, .dataTables_scrollBody table thead th, .dataTables_scrollBody table thead td, .dt-scroll-body table thead tr, .dt-scroll-body table thead th, .dt-scroll-body table thead td").css({
-            "display": "none",
-            "visibility": "collapse",
-            "height": "0",
-            "min-height": "0",
-            "max-height": "0",
-            "line-height": "0",
-            "font-size": "0",
-            "padding": "0",
-            "margin": "0",
-            "border": "0",
-            "overflow": "hidden",
-            "opacity": "0"
-        });
-
-        $wrapper.find(".dataTables_info, .dataTables_paginate, .dt-info, .dt-paging, .pagination").css({
-            "visibility": "visible",
-            "opacity": "1"
-        });
-
-        if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
-            setTimeout(function () {
-                try { $(tableSelector).DataTable().columns.adjust(); } catch (e) { }
-            }, 50);
-        }
-    } catch (e) {
-        console.warn("UserRegn_FinalTableCleanup skipped:", e);
+    if (!$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
     }
 }
 
-$(document).on("draw.dt", function (e, settings) {
-    try {
-        var id = settings && settings.nTable ? settings.nTable.id : "";
-        if (id === "tbldata") {
-            setTimeout(function () { UserRegn_FinalTableCleanup("#tbldata"); }, 20);
-        }
-        if (id === "tbldatadialog") {
-            setTimeout(function () { UserRegn_FinalTableCleanup("#tbldatadialog"); }, 20);
-        }
-    } catch (e) { }
-});
-
-$(document).ajaxStop(function () {
-    $("#loading").addClass("d-none").hide();
-    $(".dataTables_processing, .dt-processing").hide();
-});
-
-$("#DataTableDialog").on("shown.bs.modal.userRegnFinal shown.userRegnFinal", function () {
-    setTimeout(function () { UserRegn_FinalTableCleanup("#tbldatadialog"); }, 120);
-});
-
-$("#AddDomainFlag, #AddMapping").on("shown.bs.modal.userRegnRadioFix shown.userRegnRadioFix", function () {
-    var $m = $(this);
-    setTimeout(function () {
-        $m.find("input[type='radio']").each(function () { this.offsetHeight; });
-    }, 50);
-});
-
-$(document).on("change.userRegnRadioFix", ".ecms-userregn-modal input[type='radio']", function () {
-    var $modal = $(this).closest(".modal");
-    var radioName = $(this).attr("name");
-    if (radioName) {
-        $modal.find("input[type='radio'][name='" + radioName + "']").removeClass("ecms-radio-checked");
-        $modal.find("input[type='radio'][name='" + radioName + "']:checked").addClass("ecms-radio-checked");
-    }
-});
-
-
-/* UI-only footer fix: calculate safe table body height so info/pagination never go under the card/footer */
-function UserRegn_KeepMainFooterVisible() {
-    try {
-        var shell = document.querySelector('.ecms-userregn-shell');
-        var tableCard = document.querySelector('.ecms-userregn-page .ecms-table-card');
-        var wrapper = document.querySelector('#tbldata_wrapper');
-        if (!shell || !tableCard || !wrapper) return;
-
-        var top = wrapper.querySelector('.dt-top, .dataTables_length');
-        var scrollHead = wrapper.querySelector('.dataTables_scrollHead, .dt-scroll-head');
-        var tableCardHeight = tableCard.getBoundingClientRect().height;
-        var topHeight = top ? top.getBoundingClientRect().height : 42;
-        var headHeight = scrollHead ? scrollHead.getBoundingClientRect().height : 42;
-        var footerReserve = 54;
-        var sectionReserve = 42;
-
-        var safeHeight = Math.floor(tableCardHeight - topHeight - headHeight - footerReserve - sectionReserve);
-        safeHeight = Math.max(150, Math.min(safeHeight, 300));
-
-        tableCard.style.setProperty('--userregn-main-scroll-height', safeHeight + 'px');
-
-        $('#tbldata_wrapper .dataTables_info, #tbldata_wrapper .dataTables_paginate, #tbldata_wrapper .dt-info, #tbldata_wrapper .dt-paging')
-            .css({ visibility: 'visible', opacity: '1' });
-
-        $('#tbldata_wrapper .dataTables_scrollBody, #tbldata_wrapper .dt-scroll-body').css({
-            height: safeHeight + 'px',
-            maxHeight: safeHeight + 'px',
-            overflow: 'auto'
-        });
-    } catch (e) {
-        console.warn('UserRegn_KeepMainFooterVisible skipped:', e);
-    }
+function PrepareUserRegnModalRoots() {
+    PrepareUserRegnModalRoot("#AddDomainFlag");
+    PrepareUserRegnModalRoot("#AddMapping");
+    PrepareUserRegnModalRoot("#DataTableDialog");
 }
 
-$(document).on('draw.dt', function (e, settings) {
-    try {
-        var id = settings && settings.nTable ? settings.nTable.id : '';
-        if (id === 'tbldata') {
-            setTimeout(UserRegn_KeepMainFooterVisible, 30);
-            setTimeout(UserRegn_KeepMainFooterVisible, 180);
-        }
-    } catch (e) { }
-});
+function RefreshUserRegnDataTable(tableSelector, delay) {
+    const wait = Number.isFinite(delay) ? delay : 0;
 
-$(window).on('resize.userRegnFooterFix', function () {
-    clearTimeout(window.__userRegnFooterFixTimer);
-    window.__userRegnFooterFixTimer = setTimeout(function () {
-        UserRegn_KeepMainFooterVisible();
+    window.setTimeout(function () {
         try {
-            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tbldata')) {
-                $('#tbldata').DataTable().columns.adjust();
-            }
-        } catch (e) { }
-    }, 120);
-});
+            const $wrapper = $(tableSelector + "_wrapper");
 
-$(function () {
-    setTimeout(UserRegn_KeepMainFooterVisible, 250);
-    setTimeout(UserRegn_KeepMainFooterVisible, 800);
-});
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            // The page/Common ECMS CSS hides this cloned sizing header.
+            // aria-hidden is added only for accessibility.
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                $(tableSelector).DataTable().columns.adjust();
+            }
+        } catch (error) {
+            console.warn("User Registration DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
+function CleanupUserRegnModalState() {
+    if ($(".modal.show").length) {
+        return;
+    }
+
+    $(".modal-backdrop").remove();
+    $("body")
+        .removeClass("modal-open")
+        .css({
+            "padding-right": "",
+            "overflow": ""
+        });
+}
+
+$(document)
+    .off("draw.dt.userRegnUi")
+    .on("draw.dt.userRegnUi", function (event, settings) {
+        const tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            RefreshUserRegnDataTable("#tbldata", 20);
+        } else if (tableId === "tbldatadialog") {
+            RefreshUserRegnDataTable("#tbldatadialog", 20);
+        }
+    });
+
+$("#DataTableDialog")
+    .off(".userRegnUi")
+    .on("shown.bs.modal.userRegnUi", function () {
+        RefreshUserRegnDataTable("#tbldatadialog", 120);
+    })
+    .on("hidden.bs.modal.userRegnUi", CleanupUserRegnModalState);
+
+$("#AddDomainFlag, #AddMapping")
+    .off(".userRegnUi")
+    .on("shown.bs.modal.userRegnUi", function () {
+        const $modal = $(this);
+
+        // Force a small repaint so native checked radio states stay visible.
+        window.setTimeout(function () {
+            $modal.find("input[type='radio']").each(function () {
+                void this.offsetHeight;
+            });
+        }, 50);
+    })
+    .on("hidden.bs.modal.userRegnUi", CleanupUserRegnModalState);
+
+$(window)
+    .off("resize.userRegnUi")
+    .on("resize.userRegnUi", function () {
+        window.clearTimeout(window.__userRegnResizeTimer);
+        window.__userRegnResizeTimer = window.setTimeout(function () {
+            RefreshUserRegnDataTable("#tbldata", 0);
+
+            if ($("#DataTableDialog").hasClass("show")) {
+                RefreshUserRegnDataTable("#tbldatadialog", 0);
+            }
+        }, 120);
+    });

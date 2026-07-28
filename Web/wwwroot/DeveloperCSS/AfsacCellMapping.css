@@ -1,816 +1,251 @@
-﻿
-/* =====================================================
-   AFSAC Cell Mapping - Modern UI
-   UI-only styling. IDs and JS hooks are preserved.
-===================================================== */
+﻿/*
+AFSAC Cell Mapping - current-page-only integration.
+The global ECMS theme and _Layout are not modified.
+This file contains only page sizing, DataTable placement and modal-layer helpers.
+*/
 
-html:has(.ecms-afsac-cell-page),
-body:has(.ecms-afsac-cell-page) {
-    overflow-y: hidden !important;
+.ecms-afsac-page {
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    min-height: 32rem;
 }
 
-    /* Keep breadcrumb row visible below the fixed application header */
-    body:has(.ecms-afsac-cell-page) header.page-header.page-header-dark.bg-gradient-primary-to-secondary,
-    body:has(.ecms-afsac-cell-page) .page-header.page-header-dark.bg-gradient-primary-to-secondary {
-        margin-top: 26px !important;
-        height: 42px !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-        padding: 0 !important;
-        overflow: visible !important;
-        display: flex !important;
-        align-items: center !important;
-        background: linear-gradient(90deg, rgba(86, 198, 231, 0.96), rgba(60, 120, 237, 0.96)) !important;
-        box-shadow: 0 12px 28px rgba(12, 41, 99, 0.20) !important;
+    .ecms-afsac-page > .ecms-card,
+    .ecms-afsac-page .ecms-card-body {
+        height: 100%;
+        min-height: 0;
     }
 
-.ecms-afsac-breadcrumb .containerMain,
-.ecms-afsac-breadcrumb .page-header-content,
-.ecms-afsac-breadcrumb .row {
-    height: 42px !important;
-    min-height: 42px !important;
-    align-items: center !important;
-}
-
-.ecms-afsac-breadcrumb .page-header-title {
-    color: #ffffff !important;
-    font-size: 13px !important;
-    font-weight: 900 !important;
-    margin: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.28) !important;
-}
-
-.ecms-afsac-breadcrumb .page-header-icon {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    border-radius: 50% !important;
-    background: rgba(255, 255, 255, 0.22) !important;
-    border: 1px solid rgba(255, 255, 255, 0.38) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin-right: 4px !important;
-}
-
-.ecms-afsac-breadcrumb a {
-    color: #ffffff !important;
-    text-decoration: none !important;
-}
-
-/* Main page */
-.ecms-afsac-cell-page {
-    position: relative !important;
-    z-index: 2 !important;
-    margin-top: 14px !important;
-    padding-bottom: 58px !important;
-    height: calc(100vh - 248px) !important;
-    min-height: calc(100vh - 248px) !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
-}
-
-.ecms-afsac-shell {
-    width: min(78vw, 1320px) !important;
-    height: calc(100vh - 292px) !important;
-    min-height: 510px !important;
-    max-height: calc(100vh - 292px) !important;
-    padding: 12px !important;
-    border-radius: 22px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(219,235,255,0.88)) !important;
-    border: 1px solid rgba(255,255,255,0.92) !important;
-    box-shadow: 0 28px 70px rgba(4, 27, 82, 0.34) !important;
-    backdrop-filter: blur(10px) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    overflow: hidden !important;
-}
-
-.ecms-afsac-title-card,
-.ecms-afsac-sub-card {
-    flex: 0 0 auto !important;
-    border-radius: 14px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232,242,255,0.88)) !important;
-    border: 1px solid rgba(255,255,255,0.90) !important;
-    padding: 10px 14px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9) !important;
-}
-
-.ecms-title-left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
-}
-
-.ecms-title-icon,
-.ecms-sub-icon {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    border-radius: 14px !important;
-    background: linear-gradient(135deg, #2f6bff, #6d5dfc) !important;
-    color: #ffffff !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 18px !important;
-    box-shadow: 0 12px 26px rgba(47, 107, 255, 0.28) !important;
-}
-
-.ecms-sub-icon {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    border-radius: 12px !important;
-    background: linear-gradient(135deg, #1d4ed8, #407bff) !important;
-    font-size: 16px !important;
-}
-
-.ecms-afsac-title-card h3,
-.ecms-afsac-sub-card h5 {
-    color: #061b44 !important;
-    margin: 0 !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.2px !important;
-    text-shadow: none !important;
-}
-
-.ecms-afsac-title-card h3 {
-    font-size: 22px !important;
-}
-
-.ecms-afsac-sub-card h5 {
-    font-size: 15px !important;
-}
-
-.ecms-afsac-title-card p,
-.ecms-afsac-sub-card p {
-    margin: 3px 0 0 0 !important;
-    color: #315082 !important;
-    font-size: 12px !important;
-    font-weight: 850 !important;
-}
-
-.ecms-title-pill {
-    padding: 8px 18px !important;
-    border-radius: 999px !important;
-    background: linear-gradient(135deg, #315bea, #407bff) !important;
-    color: #ffffff !important;
-    font-size: 12px !important;
-    font-weight: 950 !important;
-    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28) !important;
-}
-
-.ecms-btn-add {
-    border: 0 !important;
-    border-radius: 10px !important;
-    padding: 9px 18px !important;
-    background: linear-gradient(135deg, #15803d, #22a447) !important;
-    color: #ffffff !important;
-    font-weight: 950 !important;
-    font-size: 13px !important;
-    box-shadow: 0 12px 28px rgba(21, 128, 61, 0.28) !important;
-}
-
-    .ecms-btn-add:hover,
-    .ecms-btn-add:focus {
-        color: #ffffff !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 16px 34px rgba(21, 128, 61, 0.34) !important;
+    .ecms-afsac-page .ecms-card-body {
+        display: flex;
+        flex-direction: column;
+        gap: .65rem;
     }
 
-/* Table card */
-.ecms-afsac-table-card {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    overflow: hidden !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.62), rgba(219,235,255,0.66)) !important;
-    border: 1px solid rgba(255,255,255,0.82) !important;
-    padding: 10px !important;
-}
-
-.ecms-section-bar {
-    flex: 0 0 32px !important;
-    height: 32px !important;
-    border-radius: 10px !important;
-    background: linear-gradient(90deg, #214795, #407bff) !important;
-    color: #ffffff !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-weight: 950 !important;
-    font-size: 13px !important;
-    box-shadow: 0 10px 24px rgba(33, 71, 149, 0.20) !important;
-}
-
-.ecms-afsac-table-wrap {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    height: 100% !important;
-    overflow: hidden !important;
-}
-
-/* DataTables layout */
-.ecms-afsac-cell-page #tbldata_wrapper {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: grid !important;
-    grid-template-rows: 42px minmax(0, 1fr) 46px !important;
-    grid-template-columns: 100% !important;
-    overflow: hidden !important;
-}
-
-    .ecms-afsac-cell-page #tbldata_wrapper > .dt-top {
-        grid-row: 1 !important;
-        height: 42px !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 10px !important;
-        padding: 0 0 8px 0 !important;
-        margin: 0 !important;
+    .ecms-afsac-page .ecms-page-title {
+        flex: 0 0 auto;
     }
 
-    .ecms-afsac-cell-page #tbldata_wrapper > .dataTables_scroll,
-    .ecms-afsac-cell-page #tbldata_wrapper > .dt-scroll {
-        grid-row: 2 !important;
-        height: 100% !important;
-        min-height: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        overflow: hidden !important;
-        border-radius: 11px !important;
+    .ecms-afsac-page .ecms-afsac-records {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
     }
 
-    .ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollHead {
-        flex: 0 0 auto !important;
+    .ecms-afsac-page .ecms-dt-wrap {
+        flex: 1 1 auto;
+        min-height: 0;
     }
 
-    .ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollBody {
-        flex: 1 1 auto !important;
-        min-height: 0 !important;
-        height: auto !important;
-        max-height: none !important;
-        overflow-y: auto !important;
-        overflow-x: auto !important;
+    .ecms-afsac-page #tbldata_wrapper {
+        height: 100%;
+        min-height: 0;
     }
 
-    .ecms-afsac-cell-page #tbldata_wrapper > .dt-bottom {
-        grid-row: 3 !important;
-        height: 46px !important;
-        min-height: 46px !important;
-        max-height: 46px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 12px !important;
-        padding: 8px 0 0 0 !important;
-        margin: 0 !important;
-        overflow: visible !important;
-    }
-
-.ecms-afsac-cell-page .dataTables_length label,
-.ecms-afsac-cell-page .dataTables_filter label {
-    color: #061b44 !important;
-    font-weight: 850 !important;
-    font-size: 13px !important;
-    margin: 0 !important;
-}
-
-.ecms-afsac-cell-page .dataTables_length select,
-.ecms-afsac-cell-page .dataTables_filter input {
-    border: 1px solid rgba(71, 112, 191, 0.28) !important;
-    border-radius: 8px !important;
-    background: rgba(255, 255, 255, 0.96) !important;
-    color: #061b44 !important;
-    height: 34px !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-    box-shadow: none !important;
-}
-
-.ecms-afsac-cell-page .dataTables_filter input {
-    width: 150px !important;
-}
-
-.ecms-afsac-cell-page table.dataTable,
-.ecms-afsac-cell-page #tbldata {
-    width: 100% !important;
-    margin: 0 !important;
-    table-layout: fixed !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    background: transparent !important;
-}
-
-    .ecms-afsac-cell-page table.dataTable thead th {
-        background: linear-gradient(90deg, #214f9a, #356ed0) !important;
-        color: #ffffff !important;
-        border: 0 !important;
-        padding: 10px 12px !important;
-        font-size: 13px !important;
-        font-weight: 950 !important;
-        text-align: center !important;
-        vertical-align: middle !important;
-        white-space: nowrap !important;
-    }
-
-    .ecms-afsac-cell-page table.dataTable tbody td {
-        color: #061b44 !important;
-        font-size: 13px !important;
-        font-weight: 850 !important;
-        vertical-align: middle !important;
-        border-top: 1px solid rgba(23, 67, 130, 0.08) !important;
-        padding: 12px 14px !important;
-    }
-
-    .ecms-afsac-cell-page table.dataTable tbody tr:nth-child(odd) {
-        background: rgba(240, 246, 255, 0.88) !important;
-    }
-
-    .ecms-afsac-cell-page table.dataTable tbody tr:nth-child(even) {
-        background: rgba(255, 255, 255, 0.92) !important;
-    }
-
-    .ecms-afsac-cell-page table.dataTable tbody tr:hover {
-        background: rgba(224, 238, 255, 0.98) !important;
-    }
-
-.ecms-afsac-cell-page .dt-ellipsis {
-    display: inline-block !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    vertical-align: middle !important;
-}
-
-.ecms-afsac-cell-page .col-sno {
-    width: 70px !important;
-}
-
-.ecms-afsac-cell-page .col-action {
-    width: 160px !important;
-}
-
-.ecms-afsac-cell-page .btn-icon,
-.ecms-afsac-cell-page .btn-round {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    border-radius: 10px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 0 !important;
-    padding: 0 !important;
-    margin: 0 4px !important;
-    box-shadow: 0 10px 20px rgba(10, 33, 78, 0.16) !important;
-}
-
-.ecms-afsac-cell-page .btn-warning {
-    background: linear-gradient(135deg, #f8c400, #f0a400) !important;
-    color: #061b44 !important;
-}
-
-.ecms-afsac-cell-page .btn-danger,
-.ecms-afsac-cell-page .cls-btnDelete {
-    background: linear-gradient(135deg, #e11d48, #dc2626) !important;
-    color: #ffffff !important;
-}
-
-/* Hide cloned sizing header from DataTables scroll body */
-.ecms-afsac-cell-page .dataTables_scrollBody table thead,
-.ecms-afsac-cell-page .dataTables_scrollBody table thead tr,
-.ecms-afsac-cell-page .dataTables_scrollBody table thead th,
-.ecms-afsac-cell-page .dataTables_scrollBody table thead td {
-    height: 0 !important;
-    max-height: 0 !important;
-    min-height: 0 !important;
-    line-height: 0 !important;
-    font-size: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 0 !important;
-    overflow: hidden !important;
-    visibility: collapse !important;
-}
-
-.ecms-afsac-cell-page .dataTables_info {
-    color: #061b44 !important;
-    font-weight: 850 !important;
-    font-size: 13px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    line-height: 34px !important;
-    white-space: nowrap !important;
-}
-
-.ecms-afsac-cell-page .dataTables_paginate {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-    .ecms-afsac-cell-page .dataTables_paginate .paginate_button,
-    .ecms-afsac-cell-page .dataTables_paginate .paginate_button a,
-    .ecms-afsac-cell-page .pagination .page-link {
-        min-width: 34px !important;
-        height: 34px !important;
-        padding: 0 10px !important;
-        margin: 0 2px !important;
-        border-radius: 8px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #1d4ed8 !important;
-        background: rgba(255,255,255,0.96) !important;
-        border: 1px solid rgba(46, 104, 203, 0.22) !important;
-        font-size: 12px !important;
-        font-weight: 950 !important;
-    }
-
-        .ecms-afsac-cell-page .dataTables_paginate .paginate_button.current,
-        .ecms-afsac-cell-page .dataTables_paginate .paginate_button.current a,
-        .ecms-afsac-cell-page .pagination .active .page-link {
-            color: #ffffff !important;
-            background: linear-gradient(135deg, #1d4ed8, #4338ca) !important;
-            border-color: transparent !important;
+        /* DataTables placement only. Visual rules continue to come from the common theme. */
+        .ecms-afsac-page #tbldata_wrapper > .dt-top {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: .75rem;
         }
 
-.ecms-afsac-cell-page .dataTables_processing,
-.ecms-afsac-cell-page #tbldata_processing {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
+        .ecms-afsac-page #tbldata_wrapper > .dt-bottom {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: .75rem;
+            width: 100%;
+            margin-top: .5rem;
+            padding: .45rem .35rem 0;
+        }
 
-/* Modal */
-.ecms-afsac-modal .modal-dialog {
-    max-width: 720px !important;
-}
-
-.ecms-afsac-modal .modal-content {
-    border: 0 !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.94), rgba(224,238,255,0.96)) !important;
-    box-shadow: 0 30px 90px rgba(2, 20, 59, 0.42) !important;
-}
-
-.ecms-modal-header {
-    min-height: 62px !important;
-    padding: 12px 16px !important;
-    background: linear-gradient(135deg, #214f9a, #4a7cff) !important;
-    color: #ffffff !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    overflow: hidden !important;
-}
-
-.ecms-modal-title-wrap {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
-}
-
-.ecms-modal-icon {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    border-radius: 12px !important;
-    background: rgba(255,255,255,0.16) !important;
-    border: 1px solid rgba(255,255,255,0.28) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-}
-
-.ecms-afsac-modal .modal-title {
-    color: #ffffff !important;
-    font-weight: 950 !important;
-    font-size: 18px !important;
-    margin: 0 !important;
-}
-
-.ecms-modal-title-wrap p {
-    color: rgba(255,255,255,0.88) !important;
-    font-size: 11px !important;
-    font-weight: 850 !important;
-    margin: 2px 0 0 0 !important;
-}
-
-.ecms-modal-close {
-    position: static !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    border-radius: 50% !important;
-    background: linear-gradient(135deg, #e11d48, #f43f5e) !important;
-    border: 2px solid rgba(255,255,255,0.88) !important;
-    color: #ffffff !important;
-    opacity: 1 !important;
-    padding: 0 !important;
-    margin: 0 0 0 auto !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: 0 8px 18px rgba(95, 0, 22, 0.28) !important;
-}
-
-    .ecms-modal-close span {
-        color: #ffffff !important;
-        font-size: 19px !important;
-        line-height: 1 !important;
-        margin: 0 !important;
-        padding: 0 !important;
+    .ecms-afsac-page .dataTables_scroll,
+    .ecms-afsac-page .dt-scroll {
+        height: 100% !important;
+        min-height: 0 !important;
     }
 
-.ecms-afsac-modal .modal-body {
-    padding: 18px !important;
-}
-
-.ecms-modal-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 14px !important;
-}
-
-.ecms-form-field {
-    min-width: 0 !important;
-}
-
-.ecms-form-label {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 950 !important;
-    margin-bottom: 7px !important;
-}
-
-    .ecms-form-label span {
-        width: 24px !important;
-        height: 24px !important;
-        min-width: 24px !important;
-        border-radius: 50% !important;
-        background: linear-gradient(135deg, #2f6bff, #6d5dfc) !important;
-        color: #ffffff !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 11px !important;
+    .ecms-afsac-page .dataTables_scrollBody,
+    .ecms-afsac-page .dt-scroll-body {
+        height: 100% !important;
+        max-height: none !important;
+        min-height: 10rem !important;
+        overflow: auto !important;
     }
 
-.ecms-afsac-modal .form-control,
-.ecms-afsac-modal .form-select {
-    height: 42px !important;
-    border-radius: 9px !important;
-    border: 1px solid rgba(100, 132, 190, 0.32) !important;
-    background-color: rgba(255,255,255,0.96) !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    box-shadow: none !important;
+        .ecms-afsac-page .dataTables_scrollHead,
+        .ecms-afsac-page .dataTables_scrollHeadInner,
+        .ecms-afsac-page .dataTables_scrollHeadInner table,
+        .ecms-afsac-page .dataTables_scrollBody table {
+            width: 100% !important;
+        }
+
+            /* Hide only DataTables' cloned sizing header in the scroll body. */
+            .ecms-afsac-page .dataTables_scrollBody table.dataTable > thead,
+            .ecms-afsac-page .dt-scroll-body table.dataTable > thead {
+                display: none !important;
+            }
+
+    .ecms-afsac-page .dt-buttons {
+        display: none !important;
+    }
+
+    .ecms-afsac-page .col-sno {
+        width: 5rem;
+    }
+
+    .ecms-afsac-page .col-action {
+        width: 12rem;
+        white-space: nowrap;
+    }
+
+    .ecms-afsac-page table.dataTable tbody td:nth-child(2) {
+        text-align: left;
+    }
+
+/* Current modal helper elements. These classes exist only on this page. */
+#AddNewAfsacCellMapping .modal-dialog {
+    max-width: min(760px, calc(100vw - 1.5rem));
 }
 
-/* Single dropdown arrow only */
-.ecms-afsac-modal select.form-select,
-.ecms-afsac-modal select.form-control,
-.ecms-afsac-modal select {
-    -webkit-appearance: auto !important;
-    -moz-appearance: auto !important;
-    appearance: auto !important;
-    background-image: none !important;
-    padding-right: 12px !important;
+#AddNewAfsacCellMapping .ecms-afsac-modal-title-wrap {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
 }
 
-    .ecms-afsac-modal select:disabled,
-    .ecms-afsac-modal input:disabled {
-        color: #4b5563 !important;
-        background-color: #e9edf4 !important;
-        border-color: #cbd5e1 !important;
+#AddNewAfsacCellMapping .ecms-afsac-modal-title-icon {
+    width: 2.35rem;
+    height: 2.35rem;
+    min-width: 2.35rem;
+    border-radius: .75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white);
+    background: rgba(255, 255, 255, .16);
+    border: 1px solid rgba(255, 255, 255, .28);
+}
+
+#AddNewAfsacCellMapping .ecms-afsac-modal-subtitle {
+    margin: .15rem 0 0;
+    color: rgba(255, 255, 255, .86);
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+#AddNewAfsacCellMapping .ecms-afsac-field-label {
+    min-height: 1.65rem;
+    margin-bottom: .4rem;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+}
+
+#AddNewAfsacCellMapping .ecms-afsac-field-icon {
+    width: 1.45rem;
+    height: 1.45rem;
+    min-width: 1.45rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-500));
+    box-shadow: 0 .35rem .8rem rgba(47, 103, 230, .20);
+    font-size: .68rem;
+}
+
+#AddNewAfsacCellMapping .ecms-afsac-modal-actions {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .6rem;
+}
+
+    #AddNewAfsacCellMapping .ecms-afsac-modal-actions .btn {
+        min-width: 5.5rem;
+        height: 2.4rem;
+    }
+
+/*
+Current-page modal portal fix.
+JS adds this body class only while #AddNewAfsacCellMapping is open.
+*/
+body.afsac-cell-modal-open > .modal-backdrop,
+body.afsac-cell-modal-open > .afsac-cell-modal-backdrop {
+    z-index: 1050 !important;
+}
+
+#AddNewAfsacCellMapping {
+    z-index: 1065 !important;
+}
+
+    #AddNewAfsacCellMapping.show,
+    #AddNewAfsacCellMapping.show .modal-dialog,
+    #AddNewAfsacCellMapping.show .modal-content {
         opacity: 1 !important;
-        cursor: not-allowed !important;
+        visibility: visible !important;
+        filter: none !important;
+        pointer-events: auto !important;
     }
 
-.ecms-modal-actions {
-    margin-top: 16px !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-    gap: 10px !important;
-}
-
-.ecms-btn-save,
-.ecms-btn-reset {
-    border: 0 !important;
-    border-radius: 10px !important;
-    min-width: 86px !important;
-    height: 40px !important;
-    color: #ffffff !important;
-    font-size: 13px !important;
-    font-weight: 950 !important;
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16) !important;
-}
-
-.ecms-btn-save {
-    background: linear-gradient(135deg, #315bea, #407bff) !important;
-}
-
-.ecms-btn-reset {
-    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
-}
-
-/* jQuery UI autocomplete dropdown */
 .ui-autocomplete {
-    z-index: 20000 !important;
-    max-height: 260px !important;
-    overflow-y: auto !important;
-    border-radius: 10px !important;
-    box-shadow: 0 18px 40px rgba(4, 27, 82, 0.24) !important;
+    z-index: 1085 !important;
 }
 
-@media (max-width: 1200px) {
-    .ecms-afsac-shell {
-        width: 88vw !important;
+@media (max-width: 991.98px) {
+    .ecms-afsac-page {
+        height: auto;
+        min-height: calc(100vh - var(--ecms-header-height) - var(--ecms-footer-height));
     }
+
+        .ecms-afsac-page > .ecms-card,
+        .ecms-afsac-page .ecms-card-body {
+            height: auto;
+        }
+
+        .ecms-afsac-page .ecms-afsac-records {
+            min-height: 28rem;
+        }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-afsac-page #tbldata_wrapper > .dt-top,
+    .ecms-afsac-page #tbldata_wrapper > .dt-bottom {
+        align-items: stretch !important;
+        flex-direction: column;
+    }
+
+    .ecms-afsac-page .dataTables_filter,
+    .ecms-afsac-page .dataTables_paginate {
+        justify-content: flex-start;
+    }
+
+    #AddNewAfsacCellMapping .ecms-afsac-modal-actions {
+        justify-content: stretch;
+    }
+
+        #AddNewAfsacCellMapping .ecms-afsac-modal-actions .btn {
+            flex: 1 1 0;
+        }
+}
+
+/* Match the full-width shell used by the previously modernized master pages. */
+.ecms-afsac-page.ecms-page,
+.ecms-afsac-page.ecms-page-full {
+    width: calc(100vw - 1rem) !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 @media (max-width: 768px) {
-    .ecms-afsac-cell-page {
-        overflow-y: auto !important;
-        height: auto !important;
-        min-height: calc(100vh - 248px) !important;
+    .ecms-afsac-page.ecms-page,
+    .ecms-afsac-page.ecms-page-full {
+        width: calc(100vw - .75rem) !important;
     }
-
-    .ecms-afsac-shell {
-        width: 94vw !important;
-        height: auto !important;
-        max-height: none !important;
-        min-height: 560px !important;
-    }
-
-    .ecms-modal-grid {
-        grid-template-columns: 1fr !important;
-    }
-
-    .ecms-afsac-title-card,
-    .ecms-afsac-sub-card {
-        align-items: flex-start !important;
-        flex-direction: column !important;
-        gap: 10px !important;
-    }
-}
-
-
-/* =====================================================
-   FINAL FIX V2 - AFSAC Cell Mapping
-   1. Restore dark ECMS background theme.
-   2. Remove DataTable duplicate/blank cloned header row.
-===================================================== */
-
-/* Restore same background theme as previous fixed pages */
-html:has(.ecms-afsac-cell-page),
-body:has(.ecms-afsac-cell-page) {
-    min-height: 100vh !important;
-    overflow-y: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.96), rgba(15, 70, 160, 0.92)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat fixed !important;
-}
-
-    /* Remove white wrapper background from layout/content containers on this page */
-    body:has(.ecms-afsac-cell-page) .main-panel,
-    body:has(.ecms-afsac-cell-page) .content-wrapper,
-    body:has(.ecms-afsac-cell-page) .main-content,
-    body:has(.ecms-afsac-cell-page) .content,
-    body:has(.ecms-afsac-cell-page) .page-content,
-    body:has(.ecms-afsac-cell-page) .containerMain {
-        background-color: transparent !important;
-    }
-
-/* The page container itself must carry the soldier background, not a plain white block */
-.ecms-afsac-cell-page {
-    position: relative !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
-    max-width: none !important;
-    height: calc(100vh - 248px) !important;
-    min-height: calc(100vh - 248px) !important;
-    margin: 0 !important;
-    padding: 12px 26px 46px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.88), rgba(15, 70, 160, 0.79)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
-}
-
-    .ecms-afsac-cell-page::before {
-        content: "" !important;
-        position: absolute !important;
-        inset: 0 !important;
-        pointer-events: none !important;
-        background: radial-gradient(circle at 24% 18%, rgba(96, 213, 255, 0.13), transparent 30%), radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0)) !important;
-    }
-
-.ecms-afsac-shell {
-    position: relative !important;
-    z-index: 1 !important;
-    width: min(1320px, calc(100% - 80px)) !important;
-    min-width: 1040px !important;
-    margin: 0 auto !important;
-}
-
-/* HARD FIX: DataTables duplicate header is the cloned sizing thead inside scrollBody.
-   Keep only the visible header in .dataTables_scrollHead. */
-.ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollBody thead,
-.ecms-afsac-cell-page #tbldata_wrapper .dt-scroll-body thead,
-.ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollBody thead tr,
-.ecms-afsac-cell-page #tbldata_wrapper .dt-scroll-body thead tr,
-.ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollBody thead th,
-.ecms-afsac-cell-page #tbldata_wrapper .dt-scroll-body thead th,
-.ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollBody thead td,
-.ecms-afsac-cell-page #tbldata_wrapper .dt-scroll-body thead td {
-    display: none !important;
-    visibility: collapse !important;
-    height: 0 !important;
-    min-height: 0 !important;
-    max-height: 0 !important;
-    line-height: 0 !important;
-    font-size: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 0 !important;
-    overflow: hidden !important;
-}
-
-/* Remove the blue blank row caused by any cloned/generated sizing row */
-.ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollBody table.dataTable > thead {
-    display: none !important;
-}
-
-/* Real header should remain visible */
-.ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollHead table.dataTable > thead {
-    display: table-header-group !important;
-    visibility: visible !important;
-}
-
-    .ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollHead table.dataTable > thead > tr {
-        display: table-row !important;
-        visibility: visible !important;
-    }
-
-        .ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollHead table.dataTable > thead > tr > th {
-            display: table-cell !important;
-            visibility: visible !important;
-        }
-
-/* Ensure table body starts directly after the real header */
-.ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollBody {
-    border-top: 0 !important;
-}
-
-    .ecms-afsac-cell-page #tbldata_wrapper .dataTables_scrollBody table.dataTable {
-        margin-top: 0 !important;
-    }
-
-/* Keep footer/pagination visible */
-.ecms-afsac-cell-page #tbldata_wrapper > .dt-bottom {
-    position: relative !important;
-    z-index: 5 !important;
-    background: transparent !important;
-}
-
-/* Modal close button inside header right side */
-.ecms-afsac-modal .ecms-modal-header {
-    overflow: hidden !important;
-}
-
-.ecms-afsac-modal .ecms-modal-close {
-    position: static !important;
-    margin-left: auto !important;
-    transform: none !important;
-    top: auto !important;
-    right: auto !important;
 }

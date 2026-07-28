@@ -1,5 +1,17 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 let BdeId = 0;
+function safeAdjustBdeDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -11,20 +23,20 @@ $(function () {
 
 
     $('#ddlCommand').on('change', function () {
-       
+
         mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
     });
-        
+
     $('#ddlCorps').on('change', function () {
 
-        mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val() ,$('#ddlCorps').val(),0,0);///ComdId,CorpsId,DivId,BdeId
+        mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
     });
 
-    $("#btnReset").on("click",function () {
+    $("#btnReset").on("click", function () {
         Reset();
     });
 
-    $("#btnsave").on("click",function () {
+    $("#btnsave").on("click", function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -43,27 +55,27 @@ $(function () {
 
         } else {
             $("#SaveForm")[0].reportValidity();
-    }
+        }
 
 
 
         // 
 
     });
- 
-    $('#btnMultiDelete').on("click",function () {
+
+    $('#btnMultiDelete').on("click", function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
 
             memberTable.$('input[type="checkbox"]:checked').each(function () {
 
-                
+
                 var id = $(this).attr("Id");
                 lst.push(id);
 
             });
-          
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Delete",
@@ -74,7 +86,7 @@ $(function () {
                 confirmButtonText: 'Yes, Delete it!'
             }).then((result) => {
                 if (result.value) {
-                   
+
                     DeleteMultiple(lst);
 
                 }
@@ -96,11 +108,11 @@ function BindData() {
     }
     const columns = getColumnsForBde();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '300px',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // UI only: normal DataTables scroll inside card
+        deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
@@ -156,15 +168,17 @@ function BindData() {
             { targets: 4, width: "200px" },
             { targets: -1, width: "120px" },
             {
-                targets: '_all',  
-                orderSequence: ["asc", "desc"]  
+                targets: '_all',
+                orderSequence: ["asc", "desc"]
             },
         ],
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
+            "rt" +
+            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -196,21 +210,21 @@ function BindData() {
             searchBox.attr('title', 'Search Comd/Abbreviation');
 
             // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            safeAdjustBdeDataTable(this.api());
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    safeAdjustBdeDataTable(table);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustBdeDataTable(this.api());
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -281,7 +295,7 @@ function Save() {
     let jsonData = JSON.stringify(payload);
 
     let encrypted = encryptPayloadData(jsonData);
-   
+
     $.ajax({
         url: '/Master/SaveBde',
         type: 'POST',
@@ -384,7 +398,7 @@ function Delete(BdeId) {
 }
 
 function DeleteMultiple(BdeCatId) {
-   
+
     var userdata =
     {
         "ints": BdeCatId,
@@ -515,8 +529,8 @@ function getColumnsForBde() {
             className: "noExport text-center col-action",
             width: "120px",
             render: function (data, type, row) {
-                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                let Action = `<button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn ecms-action-btn btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
                 return Action;
             }
         }

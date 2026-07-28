@@ -3,6 +3,8 @@
 var table; // Declare table variable outside the function to preserve the instance
 let UserProfileId = 0;
 $(function () {
+    PrepareProfileManageModalRoots();
+
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlRank", Rank, "");
@@ -142,17 +144,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old DataTables generated sizing markup
     }
 
     table = $("#tbldata").DataTable({
-        scrollY: '32vh',          // ✅ vertical scroll
+        scrollY: '100%',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: false,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -184,10 +187,14 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-
+                RefreshProfileManageDataTable("#tbldata", 30);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing, .dt-processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                RefreshProfileManageDataTable("#tbldata", 30);
             }
         },
         columns: [
@@ -329,7 +336,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search IC No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
         buttons: [
             //{
             //    extend: 'copy',
@@ -358,26 +365,39 @@ function BindData() {
         initComplete: function () {
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
+            RefreshProfileManageDataTable("#tbldata", 20);
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust();
+                    RefreshProfileManageDataTable("#tbldata", 0);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
             this.api().columns.adjust();
+            RefreshProfileManageDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Profile Management tooltip skipped:", error);
+                    }
+                });
+            }
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -699,129 +719,116 @@ async function ChkSfx(ServiceNo) {
 
 }
 
-/* =====================================================
-   UI ONLY FIXES - Profile Management
-   Does not change save/update/delete/ajax logic.
-===================================================== */
-function ProfileManage_UIFixDataTable(tableSelector) {
-    try {
-        var $wrapper = $(tableSelector + "_wrapper");
+/* ==============================================================
+   PAGE-LOCAL UI HELPERS
+   No global ModernCSS file is changed by these helpers.
+================================================================ */
 
-        $("#loading").addClass("d-none").hide();
-        $(".dataTables_processing, .dt-processing, " + tableSelector + "_processing").hide();
+function PrepareProfileManageModalRoot(modalSelector) {
+    const $modal = $(modalSelector);
 
-        // Hide DataTables cloned THEAD inside scroll body.
-        // Real header remains visible in DataTables scrollHead.
-        $wrapper.find(".dataTables_scrollBody table thead, .dt-scroll-body table thead").each(function () {
-            $(this).attr("aria-hidden", "true").css({
-                display: "none",
-                visibility: "collapse",
-                height: "0",
-                minHeight: "0",
-                maxHeight: "0",
-                lineHeight: "0",
-                fontSize: "0",
-                padding: "0",
-                margin: "0",
-                border: "0",
-                overflow: "hidden",
-                opacity: "0"
+    if (!$modal.length) {
+        return;
+    }
+
+    // A modal nested inside a transformed/layout container can appear below
+    // its own backdrop. Moving only this page's modals to body fixes that.
+    if (!$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+}
+
+function PrepareProfileManageModalRoots() {
+    PrepareProfileManageModalRoot("#AddNewProfile");
+    PrepareProfileManageModalRoot("#hoverModal");
+}
+
+function RefreshProfileManageDataTable(tableSelector, delay) {
+    const wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            const $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            // The common/page ECMS CSS hides this cloned sizing header.
+            // aria-hidden is added only for accessibility.
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                $(tableSelector).DataTable().columns.adjust();
+            }
+        } catch (error) {
+            console.warn("Profile Management DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
+function CleanupProfileManageModalState() {
+    if ($(".modal.show").length) {
+        // Bootstrap can remove modal-open when the small information modal
+        // closes while the main profile modal is still visible.
+        $("body").addClass("modal-open");
+        return;
+    }
+
+    $(".modal-backdrop").remove();
+    $("body")
+        .removeClass("modal-open")
+        .css({
+            "padding-right": "",
+            "overflow": ""
+        });
+}
+
+$(document)
+    .off("draw.dt.profileManageUi")
+    .on("draw.dt.profileManageUi", function (event, settings) {
+        const tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            RefreshProfileManageDataTable("#tbldata", 20);
+        }
+    });
+
+$("#AddNewProfile")
+    .off(".profileManageUi")
+    .on("shown.bs.modal.profileManageUi", function () {
+        const $modal = $(this);
+
+        window.setTimeout(function () {
+            $modal.find("input[type='radio']").each(function () {
+                void this.offsetHeight;
             });
-        });
+        }, 50);
+    })
+    .on("hidden.bs.modal.profileManageUi", CleanupProfileManageModalState);
 
-        $wrapper.find(".dataTables_info, .dataTables_paginate, .dt-info, .dt-paging, .pagination").css({
-            visibility: "visible",
-            opacity: "1",
-            display: ""
-        });
+$("#hoverModal")
+    .off(".profileManageUi")
+    .on("shown.bs.modal.profileManageUi", function () {
+        $("body").addClass("modal-open");
+    })
+    .on("hidden.bs.modal.profileManageUi", CleanupProfileManageModalState);
 
-        if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
-            setTimeout(function () {
-                try { $(tableSelector).DataTable().columns.adjust(); } catch (e) { }
-            }, 40);
+$(document)
+    .off("keydown.profileManageInfo", "#TokenWaiverInfo")
+    .on("keydown.profileManageInfo", "#TokenWaiverInfo", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            $("#hoverModal").modal("show");
         }
-    } catch (e) {
-        console.warn("ProfileManage_UIFixDataTable skipped:", e);
-    }
-}
+    });
 
-$(document).on("draw.dt", function (e, settings) {
-    try {
-        var id = settings && settings.nTable ? settings.nTable.id : "";
-        if (id === "tbldata") {
-            setTimeout(function () { ProfileManage_UIFixDataTable("#tbldata"); }, 20);
-        }
-    } catch (e) { }
-});
-
-$(window).on("resize.profileManageUiFix", function () {
-    setTimeout(function () { ProfileManage_UIFixDataTable("#tbldata"); }, 80);
-});
-
-$("#AddNewProfile").on("shown.bs.modal.profileManageUiFix shown.profileManageUiFix", function () {
-    $(".modal-backdrop").not(":last").remove();
-
-    // repaint custom radio checked state
-    setTimeout(function () {
-        $("#AddNewProfile input[type='radio']").each(function () {
-            this.offsetHeight;
-        });
-    }, 80);
-});
-
-$(document).on("change.profileManageUiFix", "#AddNewProfile input[type='radio']", function () {
-    var radioName = $(this).attr("name");
-    if (radioName) {
-        $("#AddNewProfile input[type='radio'][name='" + radioName + "']").removeClass("ecms-radio-checked");
-        $("#AddNewProfile input[type='radio'][name='" + radioName + "']:checked").addClass("ecms-radio-checked");
-    }
-});
-
-$(document).ready(function () {
-    setTimeout(function () { ProfileManage_UIFixDataTable("#tbldata"); }, 300);
-});
-
-
-/* Final UI-only ProfileManage DataTable sizing fix */
-function ProfileManage_FinalScrollFix() {
-    try {
-        var $w = $("#tbldata_wrapper");
-        if (!$w.length) return;
-
-        $(".dataTables_processing, .dt-processing, #tbldata_processing, #loading").hide();
-
-        $w.find(".dataTables_scrollBody table thead").css({
-            display: "none",
-            visibility: "collapse",
-            height: 0,
-            lineHeight: 0,
-            fontSize: 0,
-            padding: 0,
-            margin: 0,
-            border: 0
-        });
-
-        $w.find(".dataTables_info, .dataTables_paginate").css({
-            visibility: "visible",
-            opacity: "1",
-            display: "block"
-        });
-
-        if ($.fn.DataTable.isDataTable("#tbldata")) {
-            $("#tbldata").DataTable().columns.adjust();
-        }
-    } catch (e) {
-        console.warn("ProfileManage_FinalScrollFix skipped:", e);
-    }
-}
-
-$(document).on("draw.dt", function (e, settings) {
-    if (settings && settings.nTable && settings.nTable.id === "tbldata") {
-        setTimeout(ProfileManage_FinalScrollFix, 30);
-        setTimeout(ProfileManage_FinalScrollFix, 250);
-    }
-});
-
-$(window).on("load.profileManageFinal resize.profileManageFinal", function () {
-    setTimeout(ProfileManage_FinalScrollFix, 150);
-});
+$(window)
+    .off("resize.profileManageUi")
+    .on("resize.profileManageUi", function () {
+        window.clearTimeout(window.__profileManageResizeTimer);
+        window.__profileManageResizeTimer = window.setTimeout(function () {
+            RefreshProfileManageDataTable("#tbldata", 0);
+        }, 120);
+    });

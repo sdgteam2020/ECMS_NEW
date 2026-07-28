@@ -4,144 +4,175 @@
     List<string> RoleNameList = new List<string>() { "user" };
     List<Claim> claims = ViewBag.UserClaims;
 }
-<link asp-href-include="~/developercss/dashboard.css" rel="stylesheet" />
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
-    <div class="containerMain">
-        <div class="page-header-content">
-            <div class="row align-items-center justify-content-between">
-                <div class="col-auto">
-                    <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > Dashboard
 
+<link asp-href-include="~/developercss/dashboard.css" rel="stylesheet" />
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
+    <div class="container-fluid px-3 px-md-4">
+        <div class="page-header-content">
+            <div class="row g-0 align-items-center">
+                <div class="col-12">
+                    <h1 class="page-header-title">
+                        <span class="page-header-icon">
+                            <i class="fa fa-bars"></i>
+                        </span>
+                        <a href="/Home/Index" class="me-2">Home</a>
+                        <span class="mx-1">&gt;</span>
+                        <span>Dashboard</span>
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="ecms-dashboard-page">
-    <div class="containerMain ecms-dashboard-shell">
+
+<section class="container-fluid ecms-page ecms-page-full ecms-dashboard-page">
+    <div class="container-xxl px-0 ecms-dashboard-shell">
         @if (RoleNameList.Contains(ViewBag.Role))
         {
-            <div class="row">
-                <div class="card new_css p-4">
+            <div class="row g-3 justify-content-center align-items-stretch">
 
-                    <div class="seven">
-                        <h1>
-                            Card Process
-                        </h1>
-                    </div>
-                    <div class="row align-items-start">
-                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                            <a href="/Home/SubDashboard" class="clickable">
-                                <div class="counter pink">
-                                    <div class="counter-icon">
-                                        <i class="fa fa-id-card"></i>
-                                    </div>
-                                    <span class="counter-value" id="TotReq">0</span>
-                                    <h3>I-Card Request</h3>
-                                </div>
-                            </a>
+                <div class="col-12 col-xl-4">
+                    <div class="card ecms-section ecms-dashboard-group-card h-100">
+                        <div class="ecms-section-title">
+                            <i class="fa fa-id-card"></i>
+                            <span>Card Process</span>
                         </div>
-                        @if (claims.Count > 0 && claims.Any(i => i.Value == "View Indl Incorrect Data"))
-                        {
-                            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                                <a href="/BasicDetail/InaccurateData?Id=Mg==" class="clickable">
-                                    <div class="counter pink">
-                                        <div class="counter-icon">
-                                            <i class="fa fa-file-text"></i>
+
+                        <div class="card-body">
+                            <div class="row g-3 justify-content-center">
+
+                                <div class="col-12 col-sm-6 d-flex">
+                                    <a href="/Home/SubDashboard" class="clickable w-100 h-100">
+                                        <div class="ecms-summary-tile ecms-dashboard-tile d-flex flex-column align-items-center justify-content-center text-center w-100 h-100">
+                                            <div class="counter-icon">
+                                                <i class="fa fa-id-card"></i>
+                                            </div>
+                                            <span class="counter-value" id="TotReq">0</span>
+                                            <h3>I-Card Request</h3>
                                         </div>
-                                        <span class="counter-value" id="TotObservationRaised">0</span>
-                                        <h3>Observation Raised List</h3>
+                                    </a>
+                                </div>
+
+                                @if (claims.Count > 0 && claims.Any(i => i.Value == "View Indl Incorrect Data"))
+                                {
+                                    <div class="col-12 col-sm-6 d-flex">
+                                        <a href="/BasicDetail/InaccurateData?Id=Mg==" class="clickable w-100 h-100">
+                                            <div class="ecms-summary-tile ecms-dashboard-tile d-flex flex-column align-items-center justify-content-center text-center w-100 h-100">
+                                                <div class="counter-icon">
+                                                    <i class="fa fa-file-text"></i>
+                                                </div>
+                                                <span class="counter-value" id="TotObservationRaised">0</span>
+                                                <h3>Observation Raised List</h3>
+                                            </div>
+                                        </a>
                                     </div>
-                                </a>
+                                }
+
+                                <div class="col-12 col-sm-6 d-flex">
+                                    <a href="/Home/ReportAndReturn" class="clickable w-100 h-100">
+                                        <div class="ecms-summary-tile ecms-dashboard-tile d-flex flex-column align-items-center justify-content-center text-center w-100 h-100">
+                                            <div class="counter-icon">
+                                                <i class="fa fa-exclamation-triangle"></i>
+                                            </div>
+                                            <h3 class="counter-title">
+                                                Reports &amp; Returns
+                                            </h3>
+                                        </div>
+                                    </a>
+                                </div>
+
                             </div>
-                        }
-                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                            <a href="/Home/ReportAndReturn" class="clickable">
-                                <div class="counter pink">
-                                    <div class="counter-icon">
-                                        <i class="fa fa-exclamation-triangle"></i>
-                                    </div>
-                                    <h3 class="counter-title">
-                                        Reports &amp; Returns
-                                    </h3>
-                                </div>
-                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="card new_css p-4">
-                    <div class="seven">
-                        <h1>
-                            AFSAC Card (Requisition and Printing Status)
-                        </h1>
-                    </div>
-                    <div class="row align-items-start">
-                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                            <a href="/BasicDetail/InaccurateData?Id=MQ==" class="clickable">
-                                <div class="counter pink">
-                                    <div class="counter-icon">
-                                        <i class="fa fa-retweet"></i>
-                                    </div>
-                                    <span class="counter-value" id="TotInaccurateData">0</span>
-                                    <h3>
-                                        Requisitions Pending Due to Incorrect Data
-                                    </h3>
-                                </div>
-                            </a>
+
+                <div class="col-12 col-xl-5">
+                    <div class="card ecms-section ecms-dashboard-group-card h-100">
+                        <div class="ecms-section-title">
+                            <i class="fa fa-print"></i>
+                            <span>AFSAC Card (Requisition and Printing Status)</span>
                         </div>
-                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                            <a href="/Home/Report" class="clickable">
-                                <div class="counter pink">
-                                    <div class="counter-icon">
-                                        <i class="fa fa-plus-square"></i>
-                                    </div>
-                                    <h3 class="counter-title">
-                                        Report & Returns (Cards)
-                                    </h3>
+
+                        <div class="card-body">
+                            <div class="row g-3 justify-content-center">
+
+                                <div class="col-12 col-sm-6 col-lg-4 d-flex">
+                                    <a href="/BasicDetail/InaccurateData?Id=MQ==" class="clickable w-100 h-100">
+                                        <div class="ecms-summary-tile ecms-dashboard-tile d-flex flex-column align-items-center justify-content-center text-center w-100 h-100">
+                                            <div class="counter-icon">
+                                                <i class="fa fa-retweet"></i>
+                                            </div>
+                                            <span class="counter-value" id="TotInaccurateData">0</span>
+                                            <h3>
+                                                Requisitions Pending Due to Incorrect Data
+                                            </h3>
+                                        </div>
+                                    </a>
                                 </div>
-                            </a>
-                        </div>
-                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                            <a href="/Home/ReportCard" class="clickable">
-                                <div class="counter pink">
-                                    <div class="counter-icon">
-                                        <i class="fa fa-users"></i>
-                                    </div>
-                                    <h3 class="counter-title">
-                                        New Report & Returns (Cards)
-                                    </h3>
+
+                                <div class="col-12 col-sm-6 col-lg-4 d-flex">
+                                    <a href="/Home/Report" class="clickable w-100 h-100">
+                                        <div class="ecms-summary-tile ecms-dashboard-tile d-flex flex-column align-items-center justify-content-center text-center w-100 h-100">
+                                            <div class="counter-icon">
+                                                <i class="fa fa-plus-square"></i>
+                                            </div>
+                                            <h3 class="counter-title">
+                                                Report &amp; Returns (Cards)
+                                            </h3>
+                                        </div>
+                                    </a>
                                 </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card new_css p-4">
-                    <div class="seven">
-                        <h1>
-                            User Management
-                        </h1>
-                    </div>
-                    <div class="row align-items-start">
-                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                            <a href="/Home/DashboardUserMgt" class="clickable">
-                                <div class="counter pink">
-                                    <div class="counter-icon">
-                                        <i class="fa fa-address-card"></i>
-                                    </div>
-                                    <h3 class="counter-title">
-                                        User Management
-                                    </h3>
+
+                                <div class="col-12 col-sm-6 col-lg-4 d-flex">
+                                    <a href="/Home/ReportCard" class="clickable w-100 h-100">
+                                        <div class="ecms-summary-tile ecms-dashboard-tile d-flex flex-column align-items-center justify-content-center text-center w-100 h-100">
+                                            <div class="counter-icon">
+                                                <i class="fa fa-users"></i>
+                                            </div>
+                                            <h3 class="counter-title">
+                                                New Report &amp; Returns (Cards)
+                                            </h3>
+                                        </div>
+                                    </a>
                                 </div>
-                            </a>
+
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="col-12 col-xl-3">
+                    <div class="card ecms-section ecms-dashboard-group-card h-100">
+                        <div class="ecms-section-title">
+                            <i class="fa fa-users"></i>
+                            <span>User Management</span>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row g-3 justify-content-center">
+
+                                <div class="col-12 col-sm-6 col-xl-12 d-flex">
+                                    <a href="/Home/DashboardUserMgt" class="clickable w-100 h-100">
+                                        <div class="ecms-summary-tile ecms-dashboard-tile d-flex flex-column align-items-center justify-content-center text-center w-100 h-100">
+                                            <div class="counter-icon">
+                                                <i class="fa fa-address-card"></i>
+                                            </div>
+                                            <h3 class="counter-title">
+                                                User Management
+                                            </h3>
+                                        </div>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         }
     </div>
-</div>
+</section>
+
 <script asp-src-include="~/developerjs/dashboard.js"></script>

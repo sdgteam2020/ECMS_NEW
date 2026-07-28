@@ -1,1338 +1,289 @@
-﻿/* =====================================================
-   ECMS Command / PSO Modern UI
-   Only UI changed. IDs/classes used by Command.js are preserved.
-===================================================== */
+﻿/*
+=====================================================
+ECMS Command / PSO
+Bootstrap-first page CSS
 
-:root {
-    --ecms-command-blue-1: #153f8f;
-    --ecms-command-blue-2: #347dff;
-    --ecms-command-cyan: #55d7ff;
-    --ecms-command-green: #31c48d;
-    --ecms-command-red: #dc2626;
-    --ecms-command-yellow: #f5b800;
-    --ecms-command-ink: #061b44;
-    --ecms-command-muted: #536f9a;
-}
+Common design comes from:
+- ModernCSS/css/ecms.02.pages.css
+- ModernCSS/css/ecms.03.forms.css
+- ModernCSS/css/ecms.04.buttons-badges.css
+- ModernCSS/css/ecms.05.datatables.css
+- ModernCSS/css/ecms.06.modals.css
 
-/* Keep page from going under header/breadcrumb because old mt-n10 pulls content up */
-body .containerMain.mt-n10.ecms-command-page,
-body .ecms-command-page.mt-n10,
-html body .containerMain.ecms-command-page.mt-n10 {
-    margin-top: 0 !important;
-}
+This file keeps only Command-page placement and small exceptions.
+=====================================================
+*/
 
-/* Compact breadcrumb row, same modern style used in other pages */
-body:has(.ecms-command-page) .page-header.page-header-dark.bg-gradient-primary-to-secondary,
-body:has(.ecms-command-page) .page-header.page-header-dark {
-    width: 100% !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    max-height: 42px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: visible !important;
-    position: relative !important;
-    z-index: 30 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    background: linear-gradient(90deg, rgba(75, 207, 239, 0.96), rgba(61, 126, 244, 0.96)) !important;
-    box-shadow: 0 12px 25px rgba(0, 38, 95, 0.22) !important;
-}
-
-    body:has(.ecms-command-page) .page-header.page-header-dark .containerMain {
-        width: 100% !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        margin: 0 !important;
-        padding: 0 14px 0 66px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-    }
-
-    body:has(.ecms-command-page) .page-header.page-header-dark .page-header-content,
-    body:has(.ecms-command-page) .page-header.page-header-dark .page-header-content > .row,
-    body:has(.ecms-command-page) .page-header.page-header-dark .page-header-content .col-auto {
-        width: auto !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        flex: 0 0 auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-    }
-
-    body:has(.ecms-command-page) .page-header.page-header-dark .page-header-title {
-        width: auto !important;
-        max-width: calc(100vw - 90px) !important;
-        min-width: 0 !important;
-        height: 42px !important;
-        min-height: 42px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        flex-wrap: nowrap !important;
-        gap: 8px !important;
-        white-space: nowrap !important;
-        color: #ffffff !important;
-        font-size: 14px !important;
-        line-height: 42px !important;
-        font-weight: 900 !important;
-        text-shadow: 0 2px 7px rgba(0, 30, 80, 0.38) !important;
-    }
-
-        body:has(.ecms-command-page) .page-header.page-header-dark .page-header-title .page-header-icon {
-            width: 26px !important;
-            height: 26px !important;
-            min-width: 26px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            border-radius: 50% !important;
-            background: rgba(255, 255, 255, 0.22) !important;
-            border: 1px solid rgba(255, 255, 255, 0.42) !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 10px rgba(0,33,90,0.16) !important;
-            margin-right: 4px !important;
-        }
-
-            body:has(.ecms-command-page) .page-header.page-header-dark .page-header-title .page-header-icon i,
-            body:has(.ecms-command-page) .page-header.page-header-dark .page-header-title a,
-            body:has(.ecms-command-page) .page-header.page-header-dark .page-header-title span {
-                color: #ffffff !important;
-                text-decoration: none !important;
-            }
-
-/* Page background */
-html:has(.ecms-command-page),
-body:has(.ecms-command-page) {
-    overflow-y: hidden !important;
-}
-
+/* Page height inside fixed header/nav/breadcrumb/footer shell. */
 .ecms-command-page {
-    position: relative !important;
-    width: 100% !important;
-    max-width: none !important;
-    height: calc(100vh - 196px) !important;
-    min-height: calc(100vh - 196px) !important;
-    margin: 0 !important;
-    padding: 12px 26px 44px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.88), rgba(15, 70, 160, 0.79)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+    height: calc(100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem);
+    margin-top: .5rem;
+    margin-bottom: 0;
+    overflow: hidden;
 }
 
-    .ecms-command-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 24% 18%, rgba(96, 213, 255, 0.13), transparent 30%), radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.00));
-    }
-
+/* Main card fills the available page height. */
 .ecms-command-shell {
-    position: relative !important;
-    z-index: 1 !important;
-    width: min(1480px, calc(100% - 90px)) !important;
-    min-width: 1080px !important;
-    height: 100% !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border-radius: 22px !important;
-    background: linear-gradient(135deg, rgba(246,251,255,0.94), rgba(213,229,247,0.88)), rgba(232, 244, 255, 0.90) !important;
-    border: 1px solid rgba(255,255,255,0.86) !important;
-    box-shadow: 0 24px 70px rgba(0, 18, 60, 0.28) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
+    height: 100%;
+    min-height: 0;
 }
 
-/* Title */
-.ecms-command-titlebar {
-    height: 58px !important;
-    min-height: 58px !important;
-    padding: 8px 14px !important;
-    border-radius: 16px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(232, 243, 255, 0.83)) !important;
-    border: 1px solid rgba(255,255,255,0.92) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 24px rgba(15, 58, 140, 0.12) !important;
-}
-
-.ecms-command-title-wrap {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
-}
-
-.ecms-command-title-icon {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    border-radius: 14px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #2f7dff, #7c3aed) !important;
-    color: #ffffff !important;
-    box-shadow: 0 10px 22px rgba(47, 125, 255, 0.28) !important;
-}
-
-    .ecms-command-title-icon i {
-        font-size: 18px !important;
-        color: #ffffff !important;
+    /* Keep title/form/table inside one vertical Bootstrap flex flow. */
+    .ecms-command-shell .ecms-card-body {
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
     }
 
-.ecms-command-titlebar h3 {
-    margin: 0 !important;
-    color: var(--ecms-command-ink) !important;
-    font-size: 21px !important;
-    line-height: 1.1 !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.01em !important;
+/* Compact title row; common look remains from .ecms-page-title. */
+.ecms-command-titlebar {
+    min-height: var(--ecms-title-height);
 }
 
-.ecms-command-titlebar p {
-    margin: 4px 0 0 !important;
-    color: #48618e !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
+    .ecms-command-titlebar h3 {
+        font-size: 1.25rem;
+    }
 
 .ecms-command-pill {
-    height: 34px !important;
-    padding: 0 14px !important;
-    border-radius: 999px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
-    font-size: 12px !important;
-    font-weight: 950 !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 9px 18px rgba(29, 78, 216, 0.22) !important;
+    min-height: 2rem;
+    padding: .5rem .85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    text-transform: uppercase;
 }
 
-/* Form */
-.ecms-command-form-card {
-    padding: 11px 14px !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232, 243, 255, 0.78)) !important;
-    border: 1px solid rgba(255,255,255,0.82) !important;
-    box-shadow: 0 14px 34px rgba(0, 26, 88, 0.12) !important;
+/* Form stays natural height and responsive through Bootstrap cols. */
+.ecms-command-form-section {
+    overflow: visible;
 }
 
-.ecms-command-form-grid {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto !important;
-    gap: 12px !important;
-    align-items: end !important;
-}
+    .ecms-command-form-section form,
+    .ecms-command-form-section .row {
+        margin: 0;
+    }
 
-.ecms-command-field {
-    min-width: 0 !important;
-}
-
+/* Label icon only for this page. */
 .ecms-command-label {
-    display: flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    margin: 0 0 6px !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    line-height: 1.1 !important;
-    font-weight: 950 !important;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-bottom: .3rem;
+    white-space: nowrap;
 }
 
     .ecms-command-label > i:first-child {
-        width: 24px !important;
-        height: 24px !important;
-        min-width: 24px !important;
-        border-radius: 9px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, var(--ecms-command-blue-2), var(--ecms-command-blue-1)) !important;
-        font-size: 12px !important;
-        box-shadow: 0 6px 14px rgba(47, 125, 255, 0.18) !important;
+        width: 1.45rem;
+        height: 1.45rem;
+        min-width: 1.45rem;
+        border-radius: .55rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white);
+        background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-800));
+        font-size: .72rem;
+        box-shadow: 0 .35rem .85rem rgba(47,103,230,.18);
     }
 
-    .ecms-command-label .mand1,
-    .mand1 {
-        margin-left: 1px !important;
-        color: #ef4444 !important;
-        font-size: 8px !important;
-        vertical-align: super !important;
+    .ecms-command-label .mand1 {
+        margin-left: .05rem;
+        font-size: .55rem;
+        vertical-align: super;
     }
 
-.ecms-command-field .form-control {
-    height: 38px !important;
-    width: 100% !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(70, 119, 184, 0.28) !important;
-    background: rgba(255,255,255,0.94) !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03) !important;
-}
-
-    .ecms-command-field .form-control:focus {
-        border-color: rgba(47, 125, 255, 0.75) !important;
-        box-shadow: 0 0 0 3px rgba(47, 125, 255, 0.16) !important;
-    }
-
+/* Buttons align with input baseline on desktop. */
 .ecms-command-actions {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    min-width: 172px !important;
-    flex-wrap: wrap !important;
+    margin: 0;
+    padding: 0;
 }
 
     .ecms-command-actions .btn {
-        height: 38px !important;
-        min-width: 78px !important;
-        padding: 0 15px !important;
-        border-radius: 12px !important;
-        font-size: 13px !important;
-        font-weight: 950 !important;
+        min-width: 4.9rem;
+        min-height: var(--ecms-control-height);
     }
 
-.ecms-command-save,
-#btnsave {
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #2f7dff, #0f4ed7) !important;
-    box-shadow: 0 10px 20px rgba(47,125,255,0.22) !important;
+/* Table section takes remaining height. */
+.ecms-command-table-section {
+    min-height: 0;
+    overflow: hidden;
 }
 
-.ecms-command-reset,
-#btnReset {
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-    box-shadow: 0 10px 20px rgba(239,68,68,0.18) !important;
-}
-
-.ecms-command-actions .btn:hover {
-    transform: translateY(-1px) !important;
-    color: #ffffff !important;
-}
-
-/* Table card */
-.ecms-command-table-card {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    padding: 10px 12px 12px !important;
-    border-radius: 18px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(232, 243, 255, 0.74)) !important;
-    border: 1px solid rgba(255,255,255,0.78) !important;
-    box-shadow: 0 14px 34px rgba(0, 26, 88, 0.14) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-}
-
-.ecms-command-table-title {
-    height: 34px !important;
-    min-height: 34px !important;
-    border-radius: 12px !important;
-    margin-bottom: 10px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #153f8f, #347dff) !important;
-    box-shadow: 0 10px 22px rgba(22, 84, 214, 0.18) !important;
-}
-
-    .ecms-command-table-title span {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-        color: #ffffff !important;
-        font-size: 15px !important;
-        font-weight: 950 !important;
-    }
-
-    .ecms-command-table-title i {
-        color: #ffffff !important;
+    .ecms-command-table-section > .ecms-section-title {
+        min-height: 2.15rem;
+        padding-block: .42rem;
     }
 
 .ecms-command-table-wrap {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
+    min-height: 0;
+    overflow: hidden;
 }
 
-/* DataTables modern styling */
-#tbldata {
-    width: 100% !important;
-    table-layout: fixed !important;
-    border-collapse: collapse !important;
-}
-
-.ecms-command-page .dt-top,
-.ecms-command-page .dataTables_wrapper .dt-top {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    margin-bottom: 8px !important;
-    flex-wrap: wrap !important;
-}
-
-.ecms-command-page .dataTables_length label,
-.ecms-command-page .dataTables_filter label {
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-}
-
-.ecms-command-page .dataTables_length select,
-.ecms-command-page .dataTables_filter input {
-    height: 34px !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(70,119,184,0.34) !important;
-    background: rgba(255,255,255,0.96) !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 750 !important;
-}
-
-.ecms-command-page .dataTables_filter input {
-    min-width: 170px !important;
-    padding: 6px 12px !important;
-}
-
-.ecms-command-page .dt-buttons {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-}
-
-    .ecms-command-page .dt-buttons .dt-button,
-    .ecms-command-page button.dt-button,
-    .ecms-command-page div.dt-button,
-    .ecms-command-page a.dt-button {
-        border: 0 !important;
-        border-radius: 10px !important;
-        padding: 7px 12px !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #31c48d, #0f8f55) !important;
-        font-size: 12px !important;
-        font-weight: 900 !important;
-        box-shadow: 0 8px 16px rgba(15,143,85,0.16) !important;
+    /* DataTable grid: toolbar / scroll table / footer. */
+    .ecms-command-table-wrap .dataTables_wrapper,
+    .ecms-command-table-wrap .dt-container {
+        height: 100%;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        overflow: hidden;
     }
 
-.ecms-command-page .dataTables_scroll {
-    border-radius: 13px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(51,103,185,0.28) !important;
-    background: rgba(255,255,255,0.76) !important;
+/* Bootstrap toolbar alignment generated from command.js dom. */
+.ecms-command-page .ecms-dt-toolbar {
+    margin: 0 0 .45rem 0;
 }
 
-.ecms-command-page .dataTables_scrollHead,
-.ecms-command-page .dataTables_scrollHeadInner {
-    background: linear-gradient(135deg, #153f8f, #2f70df) !important;
+.ecms-command-page .dataTables_length,
+.ecms-command-page .dataTables_filter,
+.ecms-command-page .dt-length,
+.ecms-command-page .dt-search {
+    margin: 0;
 }
 
-.ecms-command-page table.dataTable thead th,
-.ecms-command-page table.dataTable thead td {
-    height: 42px !important;
-    padding: 10px 12px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #153f8f, #2f70df) !important;
-    border-bottom: 0 !important;
-    border-right: 1px solid rgba(255,255,255,0.12) !important;
-    font-size: 13px !important;
-    line-height: 1.15 !important;
-    font-weight: 950 !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-}
-
-.ecms-command-page table.dataTable tbody td {
-    height: 42px !important;
-    padding: 8px 12px !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 750 !important;
-    vertical-align: middle !important;
-    border-color: rgba(77, 109, 156, 0.12) !important;
-    text-align: center !important;
-}
-
-.ecms-command-page table.dataTable tbody tr:nth-child(odd) {
-    background: rgba(255,255,255,0.92) !important;
-}
-
-.ecms-command-page table.dataTable tbody tr:nth-child(even) {
-    background: rgba(236,244,255,0.76) !important;
-}
-
-.ecms-command-page table.dataTable tbody tr:hover {
-    background: rgba(219,236,255,0.92) !important;
-}
-
-.ecms-command-page .dataTables_scrollBody {
-    height: calc(100vh - 530px) !important;
-    max-height: calc(100vh - 530px) !important;
-    min-height: 220px !important;
-    overflow: auto !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(31, 124, 255, 0.55) rgba(255,255,255,0.18);
-}
-
-    .ecms-command-page .dataTables_scrollBody::-webkit-scrollbar {
-        width: 7px;
-        height: 7px;
+    .ecms-command-page .dataTables_filter label,
+    .ecms-command-page .dt-search label {
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
     }
 
-    .ecms-command-page .dataTables_scrollBody::-webkit-scrollbar-thumb {
-        background: rgba(31, 124, 255, 0.55);
-        border-radius: 999px;
+    .ecms-command-page .dataTables_filter input,
+    .ecms-command-page .dt-search input {
+        width: 14rem;
+        max-width: 100%;
     }
 
-.ecms-command-page .dataTables_info {
-    padding-top: 8px !important;
-    color: #061b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
+/* DataTables scroll body must fill remaining table card height. */
+.ecms-command-page .dataTables_scroll,
+.ecms-command-page .dt-scroll {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    margin: 0;
 }
 
-.ecms-command-page .dataTables_paginate {
-    padding-top: 6px !important;
+.ecms-command-page .dataTables_scrollBody,
+.ecms-command-page .dt-scroll-body {
+    height: 100% !important;
+    max-height: none !important;
+    min-height: 0;
+    padding-bottom: 0;
 }
 
-    .ecms-command-page .dataTables_paginate .paginate_button {
-        min-width: 34px !important;
-        height: 32px !important;
-        margin: 0 2px !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(47,125,255,0.18) !important;
-        color: #1d4ed8 !important;
-        background: rgba(255,255,255,0.86) !important;
-        font-size: 12px !important;
-        font-weight: 900 !important;
-        line-height: 16px !important;
+/* Footer stays at bottom: info left, paging right. */
+.ecms-command-page .ecms-dt-footer {
+    margin-top: .45rem;
+}
+
+.ecms-command-page .dataTables_info,
+.ecms-command-page .dt-info {
+    padding-top: 0;
+}
+
+.ecms-command-page .dataTables_paginate,
+.ecms-command-page .dt-paging {
+    padding-top: 0;
+}
+
+/* Prevent DataTables Bootstrap pagination double-box look. */
+.ecms-command-page .pagination {
+    margin: 0;
+    gap: .35rem;
+}
+
+    .ecms-command-page .pagination .page-item {
+        border: 0;
+        background: transparent;
     }
 
-        .ecms-command-page .dataTables_paginate .paginate_button.current,
-        .ecms-command-page .dataTables_paginate .paginate_button:hover {
-            color: #ffffff !important;
-            border-color: transparent !important;
-            background: linear-gradient(135deg, #2f7dff, #153f8f) !important;
-        }
+    .ecms-command-page .pagination .page-link {
+        margin: 0;
+    }
 
-/* DataTable cell utility */
-.ecms-command-page .dt-ellipsis {
-    display: inline-block !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    vertical-align: middle !important;
-}
-
-/* Action buttons generated by Command.js */
-.ecms-command-page .btn-icon,
+/* Command action buttons generated from JS. */
 .ecms-command-page .cls-btnedit,
 .ecms-command-page .cls-btnDelete,
 .ecms-command-page .cls-btnorder {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 11px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 4px !important;
-    box-shadow: 0 8px 16px rgba(0, 30, 80, 0.16) !important;
+    margin-inline: .25rem;
+    border: 0;
+    box-shadow: 0 .5rem 1rem rgba(0,30,80,.16);
 }
 
 .ecms-command-page .cls-btnedit {
-    background: linear-gradient(135deg, #facc15, #f59e0b) !important;
-    color: #061b44 !important;
+    background: linear-gradient(135deg, #facc15, #f59e0b);
+    color: #061b44;
 }
 
 .ecms-command-page .cls-btnDelete {
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600));
+    color: var(--ecms-white);
 }
 
 .ecms-command-page .cls-btnorder {
-    background: linear-gradient(135deg, #55d7ff, #0ea5e9) !important;
-    color: #061b44 !important;
+    background: linear-gradient(135deg, var(--ecms-cyan-500), #0ea5e9);
+    color: #061b44;
 }
 
-    .ecms-command-page .btn-icon i,
-    .ecms-command-page .cls-btnedit i,
-    .ecms-command-page .cls-btnDelete i,
-    .ecms-command-page .cls-btnorder i {
-        font-size: 14px !important;
-        line-height: 1 !important;
-    }
-
-/* Modal */
-.ecms-command-modal .modal-content {
-    border: 1px solid rgba(255,255,255,0.88) !important;
-    border-radius: 18px !important;
-    overflow: hidden !important;
-    background: linear-gradient(135deg, rgba(248,252,255,0.98), rgba(225,238,252,0.96)) !important;
-    box-shadow: 0 28px 90px rgba(0, 13, 42, 0.40) !important;
+/* Tree modal readability. */
+.ecms-command-modal #tree,
+.ecms-command-modal .tree {
+    min-width: 100%;
+    padding: .9rem;
 }
 
-.ecms-command-modal .modal-header {
-    height: 54px !important;
-    padding: 0 14px !important;
-    background: linear-gradient(135deg, #153f8f, #347dff) !important;
-    border-bottom: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+.ecms-command-modal .bullet-list-round,
+.ecms-command-modal .bullet-list-round ul {
+    text-align: left;
 }
 
-.ecms-command-modal-title {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-}
-
-    .ecms-command-modal-title span {
-        width: 34px !important;
-        height: 34px !important;
-        border-radius: 12px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        background: rgba(255,255,255,0.20) !important;
-        color: #ffffff !important;
-    }
-
-.ecms-command-modal .modal-title {
-    margin: 0 !important;
-    color: #ffffff !important;
-    font-size: 17px !important;
-    font-weight: 950 !important;
-}
-
-.ecms-command-modal-close,
-.ecms-command-modal .close {
-    width: 34px !important;
-    height: 34px !important;
-    border-radius: 50% !important;
-    border: 1px solid rgba(255,255,255,0.55) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: rgba(255,255,255,0.18) !important;
-    color: #ffffff !important;
-    opacity: 1 !important;
-}
-
-    .ecms-command-modal-close span,
-    .ecms-command-modal .close span {
-        color: #ffffff !important;
-        font-size: 24px !important;
-        line-height: 1 !important;
-    }
-
-.ecms-command-modal .modal-body {
-    max-height: calc(100vh - 190px) !important;
-    overflow: auto !important;
-}
-
-/* Hierarchy tree better fitting */
-.ecms-command-modal .tree,
-.ecms-command-modal #tree {
-    min-width: 100% !important;
-    padding: 14px !important;
-}
-
-/* SweetAlert / toastr compatibility look */
-.swal2-popup {
-    border-radius: 18px !important;
-    background: linear-gradient(135deg, rgba(248,252,255,0.98), rgba(225,238,252,0.96)) !important;
-    box-shadow: 0 28px 90px rgba(0, 13, 42, 0.40) !important;
-}
-
-.swal2-title {
-    color: #061b44 !important;
-    font-weight: 950 !important;
-}
-
-.swal2-confirm {
-    border-radius: 11px !important;
-    background: linear-gradient(135deg, #2f7dff, #0f4ed7) !important;
-    font-weight: 900 !important;
-}
-
-.swal2-cancel {
-    border-radius: 11px !important;
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-    font-weight: 900 !important;
-}
-
-/* Small height adjustments */
-@media (max-height: 760px) {
-    .ecms-command-titlebar {
-        height: 52px !important;
-        min-height: 52px !important;
-    }
-
-        .ecms-command-titlebar h3 {
-            font-size: 19px !important;
-        }
-
-        .ecms-command-titlebar p {
-            font-size: 11px !important;
-        }
-
-    .ecms-command-form-card {
-        padding: 9px 12px !important;
-    }
-
-    .ecms-command-table-title {
-        height: 30px !important;
-        min-height: 30px !important;
-        margin-bottom: 8px !important;
-    }
-
-    .ecms-command-field .form-control,
-    .ecms-command-actions .btn {
-        height: 34px !important;
-    }
-
-    .ecms-command-page .dataTables_scrollBody {
-        height: calc(100vh - 505px) !important;
-        max-height: calc(100vh - 505px) !important;
-        min-height: 190px !important;
-    }
-
-    .ecms-command-page table.dataTable tbody td {
-        height: 38px !important;
-    }
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
-    .ecms-command-shell {
-        width: calc(100% - 60px) !important;
-        min-width: 0 !important;
-    }
-
-    .ecms-command-form-grid {
-        grid-template-columns: 1fr 1fr !important;
-    }
-
-    .ecms-command-actions {
-        grid-column: 1 / -1 !important;
-        justify-content: flex-end !important;
-    }
-}
-
-@media (max-width: 992px) {
-    html:has(.ecms-command-page),
-    body:has(.ecms-command-page) {
-        overflow-y: auto !important;
-    }
-
-        body:has(.ecms-command-page) .page-header.page-header-dark .containerMain {
-            padding-left: 16px !important;
-            padding-right: 12px !important;
-        }
-
-        body:has(.ecms-command-page) .page-header.page-header-dark .page-header-title {
-            font-size: 12px !important;
-            gap: 5px !important;
-            max-width: calc(100vw - 32px) !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-        }
-
+/* Tablet/mobile: allow page scroll and stack controls naturally. */
+@media (max-width: 991.98px) {
     .ecms-command-page {
-        height: auto !important;
-        min-height: calc(100vh - 255px) !important;
-        padding: 12px 12px 70px !important;
-        overflow: visible !important;
+        height: auto;
+        min-height: calc(100vh - var(--ecms-header-height) - var(--ecms-footer-height));
+        overflow: visible;
     }
 
-    .ecms-command-shell {
-        width: 100% !important;
-        min-width: 0 !important;
-        height: auto !important;
-        overflow: visible !important;
+    .ecms-command-shell,
+    .ecms-command-shell .ecms-card-body {
+        height: auto;
+        overflow: visible;
     }
 
-    .ecms-command-titlebar {
-        height: auto !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
+    .ecms-command-table-section {
+        min-height: 28rem;
     }
 
-    .ecms-command-form-grid {
-        grid-template-columns: 1fr !important;
+    .ecms-command-page .dataTables_filter input,
+    .ecms-command-page .dt-search input {
+        width: 100%;
     }
 
     .ecms-command-actions {
         justify-content: flex-start !important;
     }
-
-    .ecms-command-table-card {
-        min-height: 420px !important;
-    }
-
-    .ecms-command-page .dataTables_scrollBody {
-        height: 300px !important;
-        max-height: 300px !important;
-    }
 }
 
-
-/* =====================================================
-   FIX: DataTable duplicate empty header row + proper body scroll
-   DataTables creates a cloned/sizing THEAD inside .dataTables_scrollBody.
-   Old CSS was forcing that cloned header to 42px height, so it appeared
-   as an extra empty blue row. Keep it for column sizing but collapse it.
-===================================================== */
-
-/* collapse duplicate cloned header inside scroll body */
-.ecms-command-page .dataTables_scrollBody thead,
-.ecms-command-page .dataTables_scrollBody thead tr {
-    height: 0 !important;
-    max-height: 0 !important;
-    min-height: 0 !important;
-    line-height: 0 !important;
-    visibility: collapse !important;
-}
-
-    .ecms-command-page .dataTables_scrollBody thead th,
-    .ecms-command-page .dataTables_scrollBody thead td {
-        height: 0 !important;
-        max-height: 0 !important;
-        min-height: 0 !important;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        border-top: 0 !important;
-        border-bottom: 0 !important;
-        line-height: 0 !important;
-        font-size: 0 !important;
-        color: transparent !important;
-        background: transparent !important;
-        overflow: hidden !important;
-    }
-
-/* keep the real header visible only in scrollHead */
-.ecms-command-page .dataTables_scrollHead thead th,
-.ecms-command-page .dataTables_scrollHead thead td {
-    height: 42px !important;
-    padding: 10px 12px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #153f8f, #2f70df) !important;
-    font-size: 13px !important;
-    line-height: 1.15 !important;
-    font-weight: 950 !important;
-    visibility: visible !important;
-}
-
-/* make the table area fit inside the card and scroll remaining rows */
-.ecms-command-page .dataTables_wrapper {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-.ecms-command-page .dataTables_scroll {
-    flex: 0 0 auto !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-.ecms-command-page .dataTables_scrollHead {
-    flex: 0 0 auto !important;
-}
-
-.ecms-command-page .dataTables_scrollBody {
-    flex: 0 0 auto !important;
-    height: clamp(215px, calc(100vh - 700px), 340px) !important;
-    max-height: clamp(215px, calc(100vh - 700px), 340px) !important;
-    min-height: 215px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    border-bottom: 1px solid rgba(51,103,185,0.28) !important;
-}
-
-/* make paging/info stay visible below the scrollable body */
-.ecms-command-page .dataTables_info,
-.ecms-command-page .dataTables_paginate {
-    flex: 0 0 auto !important;
-}
-
-/* avoid clipping the last visible row */
-.ecms-command-page .dataTables_scrollBody table.dataTable {
-    margin-bottom: 0 !important;
-}
-
-.ecms-command-page table.dataTable tbody td {
-    height: 40px !important;
-}
-
-/* small height screen adjustment */
-@media (max-height: 760px) {
-    .ecms-command-page .dataTables_scrollBody {
-        height: clamp(180px, calc(100vh - 610px), 250px) !important;
-        max-height: clamp(180px, calc(100vh - 610px), 250px) !important;
-        min-height: 180px !important;
-    }
-
-    .ecms-command-page table.dataTable tbody td {
-        height: 36px !important;
-    }
-}
-
-
-/* =====================================================
-   FIX 2: DataTables v2 duplicate header row + scroll
-   Your rendered HTML uses DT2 classes: .dt-scroll-body / .dt-scroll-head.
-   This collapses the sizing header inside body and keeps only top header.
-===================================================== */
-
-/* DataTables v2: hide duplicate cloned/sizing header inside body */
-.ecms-command-page .dt-scroll-body table#tbldata > thead,
-.ecms-command-page .dt-scroll-body table#tbldata > thead > tr,
-.ecms-command-page .dt-scroll-body table#tbldata > thead > tr > th,
-.ecms-command-page .dt-scroll-body table#tbldata > thead > tr > td,
-.ecms-command-page .dt-scroll-body table#tbldata > thead .dt-scroll-sizing,
-.ecms-command-page .dt-scroll-body table#tbldata > thead .dt-column-header,
-.ecms-command-page .dt-scroll-body table#tbldata > thead .dt-column-title,
-.ecms-command-page .dt-scroll-body table#tbldata > thead .dt-column-order {
-    height: 0 !important;
-    min-height: 0 !important;
-    max-height: 0 !important;
-    line-height: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    border-top: 0 !important;
-    border-bottom: 0 !important;
-    font-size: 0 !important;
-    color: transparent !important;
-    background: transparent !important;
-    overflow: hidden !important;
-    visibility: hidden !important;
-}
-
-    /* remove the blue background from that hidden sizing header */
-    .ecms-command-page .dt-scroll-body table#tbldata > thead th,
-    .ecms-command-page .dt-scroll-body table#tbldata > thead td {
-        background: transparent !important;
-        box-shadow: none !important;
-    }
-
-/* keep only the actual header visible */
-.ecms-command-page .dt-scroll-head thead th,
-.ecms-command-page .dt-scroll-head thead td {
-    height: 40px !important;
-    padding: 9px 12px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #153f8f, #2f70df) !important;
-    font-size: 13px !important;
-    line-height: 1.15 !important;
-    font-weight: 950 !important;
-    visibility: visible !important;
-}
-
-/* DataTables v2 wrapper layout */
-.ecms-command-page #tbldata_wrapper.dt-container,
-.ecms-command-page .dt-container {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-.ecms-command-page .dt-top {
-    flex: 0 0 auto !important;
-}
-
-.ecms-command-page .dt-scroll {
-    flex: 0 0 auto !important;
-    min-height: 0 !important;
-    border-radius: 13px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(51,103,185,0.28) !important;
-    background: rgba(255,255,255,0.76) !important;
-}
-
-/* Give scrollbar inside DataTable body. Override inline max-height:65vh. */
-.ecms-command-page .dt-scroll-body {
-    height: 270px !important;
-    max-height: 270px !important;
-    min-height: 220px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    border-bottom: 1px solid rgba(51,103,185,0.28) !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(31, 124, 255, 0.65) rgba(255,255,255,0.18);
-}
-
-    .ecms-command-page .dt-scroll-body::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-
-    .ecms-command-page .dt-scroll-body::-webkit-scrollbar-thumb {
-        background: rgba(31, 124, 255, 0.65);
-        border-radius: 999px;
-    }
-
-    .ecms-command-page .dt-scroll-body::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.18);
-    }
-
-/* prevent bottom rows from hiding behind card/footer */
-.ecms-command-page .dt-info,
-.ecms-command-page .dt-paging {
-    flex: 0 0 auto !important;
-    padding-top: 7px !important;
-}
-
-    /* DataTables v2 paging buttons */
-    .ecms-command-page .dt-paging .pagination {
-        margin: 0 !important;
-        justify-content: flex-end !important;
-    }
-
-    .ecms-command-page .dt-paging .page-link {
-        min-width: 34px !important;
-        height: 32px !important;
-        margin: 0 2px !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(47,125,255,0.18) !important;
-        color: #1d4ed8 !important;
-        background: rgba(255,255,255,0.86) !important;
-        font-size: 12px !important;
-        font-weight: 900 !important;
-    }
-
-        .ecms-command-page .dt-paging .active .page-link,
-        .ecms-command-page .dt-paging .page-link:hover {
-            color: #ffffff !important;
-            border-color: transparent !important;
-            background: linear-gradient(135deg, #2f7dff, #153f8f) !important;
-        }
-
-@media (max-height: 760px) {
-    .ecms-command-page .dt-scroll-body {
-        height: 220px !important;
-        max-height: 220px !important;
-        min-height: 180px !important;
-    }
-}
-
-
-/* =====================================================
-   FIX 3: Breadcrumb visibility + footer gap
-   - Removed mt-n10 from CSHTML.
-   - Keep breadcrumb as its own visible 42px row.
-   - Extend page background to footer area so white gap does not appear.
-===================================================== */
-
-/* page should start AFTER breadcrumb, never overlap it */
-body .containerMain.ecms-command-page {
-    margin-top: 0 !important;
-    clear: both !important;
-}
-
-/* breadcrumb row must remain visible above page background */
-body:has(.ecms-command-page) header.page-header.page-header-dark,
-body:has(.ecms-command-page) .page-header.page-header-dark {
-    position: relative !important;
-    z-index: 100 !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    max-height: 42px !important;
-    overflow: visible !important;
-    flex: 0 0 42px !important;
-    margin-bottom: 0 !important;
-}
-
-    body:has(.ecms-command-page) header.page-header.page-header-dark .page-header-content,
-    body:has(.ecms-command-page) header.page-header.page-header-dark .row,
-    body:has(.ecms-command-page) header.page-header.page-header-dark .col-auto,
-    body:has(.ecms-command-page) header.page-header.page-header-dark .page-header-title {
-        height: 42px !important;
-        min-height: 42px !important;
-        max-height: 42px !important;
-        overflow: visible !important;
-    }
-
-/* give body same dark background so no white band appears above footer */
-html:has(.ecms-command-page),
-body:has(.ecms-command-page) {
-    min-height: 100vh !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.96), rgba(15, 70, 160, 0.92)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat fixed !important;
-}
-
-/* fill available area down to footer */
-.ecms-command-page {
-    box-sizing: border-box !important;
-    height: calc(100vh - 222px) !important;
-    min-height: calc(100vh - 222px) !important;
-    padding: 12px 26px 72px !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-}
-
-/* keep the card inside the filled background and not behind the footer */
-.ecms-command-shell {
-    box-sizing: border-box !important;
-    height: min(100%, 610px) !important;
-    max-height: calc(100vh - 300px) !important;
-}
-
-/* table scroll should show remaining rows without expanding whole page */
-.ecms-command-page .dt-scroll-body {
-    height: clamp(220px, calc(100vh - 632px), 330px) !important;
-    max-height: clamp(220px, calc(100vh - 632px), 330px) !important;
-    min-height: 220px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-}
-
-    /* make the duplicate DT2 sizing header fully non-visual */
-    .ecms-command-page .dt-scroll-body table#tbldata > thead,
-    .ecms-command-page .dt-scroll-body table#tbldata > thead *,
-    .ecms-command-page .dt-scroll-body table#tbldata > thead .dt-scroll-sizing,
-    .ecms-command-page .dt-scroll-body table#tbldata > thead .dt-column-header {
-        height: 0 !important;
-        min-height: 0 !important;
-        max-height: 0 !important;
-        line-height: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border: 0 !important;
-        font-size: 0 !important;
-        color: transparent !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        overflow: hidden !important;
-        visibility: hidden !important;
-    }
-
-/* only the real DataTable head gets blue styling */
-.ecms-command-page .dt-scroll-head table thead th,
-.ecms-command-page .dt-scroll-head table thead td {
-    background: linear-gradient(135deg, #153f8f, #2f70df) !important;
-    color: #ffffff !important;
-    visibility: visible !important;
-}
-
-/* lower-height screens */
-@media (max-height: 760px) {
+/* Phone: full-width action buttons and tighter spacing. */
+@media (max-width: 575.98px) {
     .ecms-command-page {
-        height: calc(100vh - 218px) !important;
-        min-height: calc(100vh - 218px) !important;
-        padding-bottom: 64px !important;
+        width: calc(100vw - .75rem);
+        margin-top: .4rem;
     }
 
-    .ecms-command-shell {
-        max-height: calc(100vh - 285px) !important;
+    .ecms-command-titlebar h3 {
+        font-size: 1.05rem;
     }
 
-    .ecms-command-page .dt-scroll-body {
-        height: clamp(190px, calc(100vh - 590px), 260px) !important;
-        max-height: clamp(190px, calc(100vh - 590px), 260px) !important;
-        min-height: 190px !important;
-    }
-}
-
-
-/* =====================================================
-   FIX 4: Breadcrumb row top position
-   In your browser, margin-top:26px fixed the breadcrumb position.
-   This override is placed last so earlier margin:0 rules cannot override it.
-===================================================== */
-html body:has(.ecms-command-page) header.page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-command-page) header.page-header.page-header-dark,
-html body:has(.ecms-command-page) .page-header.page-header-dark.bg-gradient-primary-to-secondary,
-html body:has(.ecms-command-page) .page-header.page-header-dark {
-    margin-top: 26px !important;
-    margin-bottom: 0 !important;
-    position: relative !important;
-    z-index: 100 !important;
-}
-
-/* reduce available page height by the same 26px so footer gap/overlap does not return */
-html body .containerMain.ecms-command-page,
-html body .ecms-command-page {
-    height: calc(100vh - 196px) !important;
-    min-height: calc(100vh - 196px) !important;
-    padding-top: 12px !important;
-    padding-bottom: 46px !important;
-}
-
-/* keep command panel fitted after breadcrumb margin correction */
-html body .ecms-command-shell {
-    max-height: calc(100vh - 326px) !important;
-}
-
-/* keep DataTable body usable after height adjustment */
-html body .ecms-command-page .dt-scroll-body {
-    height: clamp(200px, calc(100vh - 650px), 300px) !important;
-    max-height: clamp(200px, calc(100vh - 650px), 300px) !important;
-    min-height: 200px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-}
-
-@media (max-height: 760px) {
-    html body .containerMain.ecms-command-page,
-    html body .ecms-command-page {
-        height: calc(100vh - 244px) !important;
-        min-height: calc(100vh - 244px) !important;
-        padding-bottom: 42px !important;
+    .ecms-command-actions,
+    .ecms-command-actions .btn {
+        width: 100%;
     }
 
-    html body .ecms-command-shell {
-        max-height: calc(100vh - 315px) !important;
-    }
-
-    html body .ecms-command-page .dt-scroll-body {
-        height: clamp(175px, calc(100vh - 610px), 240px) !important;
-        max-height: clamp(175px, calc(100vh - 610px), 240px) !important;
-        min-height: 175px !important;
-    }
-}
-
-
-/* =====================================================
-   FIX 5: DataTable last row hidden while scrolling
-   Cause: dt-scroll-body was taller than the visible table-card area and
-   the parent card had overflow:hidden, so bottom rows were clipped.
-   This gives the table card a real flex layout and leaves safe space
-   for info/pagination/footer.
-===================================================== */
-
-/* let the page panel use available height cleanly */
-html body .ecms-command-shell {
-    height: calc(100vh - 220px) !important;
-    max-height: calc(100vh - 220px) !important;
-    min-height: 500px !important;
-}
-
-/* table card should take remaining panel height */
-html body .ecms-command-table-card {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-}
-
-/* wrapper must be flex column so table body height is not clipped */
-html body .ecms-command-page #tbldata_wrapper.dt-container,
-html body .ecms-command-page .dt-container {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-html body .ecms-command-page .dt-layout-row {
-    flex: 0 0 auto !important;
-}
-
-/* the scroll block gets available middle height */
-html body .ecms-command-page .dt-scroll {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* header remains fixed */
-html body .ecms-command-page .dt-scroll-head {
-    flex: 0 0 auto !important;
-}
-
-/* body scroll gets calculated visible height and bottom padding so last row is never clipped */
-html body .ecms-command-page .dt-scroll-body {
-    flex: 1 1 auto !important;
-    height: auto !important;
-    max-height: none !important;
-    min-height: 185px !important;
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    padding-bottom: 22px !important;
-    box-sizing: border-box !important;
-}
-
-    /* keep the inner table clear of the rounded card bottom */
-    html body .ecms-command-page .dt-scroll-body table#tbldata,
-    html body .ecms-command-page .dt-scroll-body table.dataTable {
-        margin-bottom: 22px !important;
-    }
-
-/* info and paging must stay below the scrollable body, not inside it */
-html body .ecms-command-page .dt-info,
-html body .ecms-command-page .dataTables_info {
-    flex: 0 0 auto !important;
-    padding-top: 7px !important;
-    margin: 0 !important;
-}
-
-html body .ecms-command-page .dt-paging,
-html body .ecms-command-page .dataTables_paginate {
-    flex: 0 0 auto !important;
-    padding-top: 5px !important;
-    padding-bottom: 0 !important;
-    margin: 0 !important;
-}
-
-/* make rows slightly compact so the final rows fit better */
-html body .ecms-command-page table.dataTable tbody td {
-    height: 38px !important;
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
-}
-
-/* when fewer vertical pixels are available */
-@media (max-height: 760px) {
-    html body .ecms-command-shell {
-        height: calc(100vh - 308px) !important;
-        max-height: calc(100vh - 308px) !important;
-        min-height: 470px !important;
-    }
-
-    html body .ecms-command-page .dt-scroll-body {
-        min-height: 160px !important;
-        padding-bottom: 26px !important;
-    }
-
-        html body .ecms-command-page .dt-scroll-body table#tbldata,
-        html body .ecms-command-page .dt-scroll-body table.dataTable {
-            margin-bottom: 26px !important;
-        }
-
-    html body .ecms-command-page table.dataTable tbody td {
-        height: 34px !important;
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
+    .ecms-command-actions {
+        flex-direction: column;
     }
 }
