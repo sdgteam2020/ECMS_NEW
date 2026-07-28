@@ -250,8 +250,7 @@ namespace DataAccessLayer
 
                 if (data.Flag == "R")
                 {
-                    query4 = @"UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] =@XmlFiles ,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn WHERE [RequestId]= @RequestId
-                               UPDATE BasicDetails set IsLock=@IsLock where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
+                    query4 = @"UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] =@XmlFiles ,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn WHERE [RequestId]= @RequestId";
                     var parameters4 = new DynamicParameters();
                     parameters4.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
                     parameters4.Add("@Updatedby", data.Updatedby, DbType.Int32, ParameterDirection.Input);
@@ -268,7 +267,7 @@ namespace DataAccessLayer
                     parameters2.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
                     await db.ExecuteAsync(query2, parameters2, transaction: transaction);
                 }
-                if (StepId == 1 || StepId == 7 || StepId == 8 || StepId == 9 || StepId == 10)
+                if ((StepId == 1 || StepId == 7 || StepId == 8 || StepId == 9 || StepId == 10) || data.Flag == "R")
                 {
                     query2 = @"Update BasicDetails set IsLock=@IsLock where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
                     var parameters5 = new DynamicParameters();
