@@ -4641,7 +4641,7 @@ namespace Web.Controllers
                         };
 
                         // Save entity and trigger related business logic
-                        dTOResponse = await _lostCardBL.SaveLostCardRequest(model);
+                        dTOResponse = await _lostCardBL.SaveLostCardRequest(model, LostReportBy);
                     }
                     else
                     {
