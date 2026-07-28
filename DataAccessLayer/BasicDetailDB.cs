@@ -3630,7 +3630,7 @@ FROM
                                            }).FirstOrDefaultAsync();
                         if (destroyed != null)
                         {
-                            cardStatus.CardMovement.Append(destroyed);
+                            cardStatus.CardMovement.Add(destroyed);
                         }
                     }
                 }
@@ -4857,40 +4857,36 @@ FROM
                                                               Remark = dispatchC.ToRemark ?? string.Empty
                                                           }).FirstOrDefaultAsync();
                     }
-
-                    if (cardStep == (byte)CardStepEnum.CardDistributed)
-                    {
-                        distributed = await (from dist in _context.TrnDistributeCards.AsNoTracking()
-                                             join user in _context.Users.AsNoTracking()
-                                                on dist.Updatedby equals user.Id
-                                             join profile in _context.UserProfile.AsNoTracking()
-                                                on dist.UpdatedbyUserId equals profile.UserId
-                                             join rank in _context.MRank.AsNoTracking()
-                                                on profile.RankId equals rank.RankId
-                                             where dist.RequestId == requestId
-                                             select new DTOCardMovementHistoryResponse
-                                             {
-                                                 StepName = "I-Card Distributed",
-                                                 ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
-                                                 ReportedOn = dist.DistributedOn.GetValueOrDefault(),
-                                                 Remark = dist.Remark ?? string.Empty
-                                             }).FirstOrDefaultAsync();
-                        hotlisted = await (from hotlist in _context.TrnHotlistCards.AsNoTracking()
-                                           join user in _context.Users.AsNoTracking()
-                                              on hotlist.Updatedby equals user.Id
-                                           join profile in _context.UserProfile.AsNoTracking()
-                                              on hotlist.UpdatedbyUserId equals profile.UserId
-                                           join rank in _context.MRank.AsNoTracking()
-                                              on profile.RankId equals rank.RankId
-                                           where hotlist.RequestId == requestId
-                                           select new DTOCardMovementHistoryResponse
-                                           {
-                                               StepName = "I-Card Holtist",
-                                               ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
-                                               ReportedOn = hotlist.UpdatedOn.GetValueOrDefault(),
-                                               Remark = hotlist.Remark ?? string.Empty
-                                           }).FirstOrDefaultAsync();
-                    }
+                    distributed = await (from dist in _context.TrnDistributeCards.AsNoTracking()
+                                         join user in _context.Users.AsNoTracking()
+                                            on dist.Updatedby equals user.Id
+                                         join profile in _context.UserProfile.AsNoTracking()
+                                            on dist.UpdatedbyUserId equals profile.UserId
+                                         join rank in _context.MRank.AsNoTracking()
+                                            on profile.RankId equals rank.RankId
+                                         where dist.RequestId == requestId
+                                         select new DTOCardMovementHistoryResponse
+                                         {
+                                             StepName = "I-Card Distributed",
+                                             ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
+                                             ReportedOn = dist.DistributedOn.GetValueOrDefault(),
+                                             Remark = dist.Remark ?? string.Empty
+                                         }).FirstOrDefaultAsync();
+                    hotlisted = await (from hotlist in _context.TrnHotlistCards.AsNoTracking()
+                                       join user in _context.Users.AsNoTracking()
+                                          on hotlist.Updatedby equals user.Id
+                                       join profile in _context.UserProfile.AsNoTracking()
+                                          on hotlist.UpdatedbyUserId equals profile.UserId
+                                       join rank in _context.MRank.AsNoTracking()
+                                          on profile.RankId equals rank.RankId
+                                       where hotlist.RequestId == requestId
+                                       select new DTOCardMovementHistoryResponse
+                                       {
+                                           StepName = "I-Card Holtist",
+                                           ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
+                                           ReportedOn = hotlist.UpdatedOn.GetValueOrDefault(),
+                                           Remark = hotlist.Remark ?? string.Empty
+                                       }).FirstOrDefaultAsync();
                     destroyed = await (from dest in _context.TrnDestructionCards.AsNoTracking()
                                        join user in _context.Users.AsNoTracking()
                                           on dest.Updatedby equals user.Id
