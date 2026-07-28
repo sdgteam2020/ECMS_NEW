@@ -10,7 +10,7 @@ namespace BusinessLogicsLayer.DestructionCard
         Task<bool> FindAnyRequestId(int RequestId);
         Task<DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>> GetAllDestruction(DTODataTablesRequestForCommanCheckAll dTO);
         Task<List<DTODestructionCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data);
-        public Task<DTOGenericResponse<string>> CheckBeforeDestructionCardReport(int RequestId);
-        public Task<DTOCheckApplicationCloseRequestIdResponse> CheckRequestIdInClosed(int RequestId, int DestructedCardId);
+        public Task<DTOCheckBeforeDestructionCardReportResponse> CheckBeforeDestructionCardReport(int RequestId);
+        public Task<DTOGenericResponse<DTOCommonResponse?>> SaveDestructionCardRequest(TrnDestructionCard Data, DTOCheckBeforeDestructionCardReportResponse checkCardBeforeDistruction);
     }
 }

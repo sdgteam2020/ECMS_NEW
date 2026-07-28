@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Data;
 using System.Reflection.Metadata;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DataAccessLayer
 {
@@ -309,7 +312,7 @@ namespace DataAccessLayer
                 };
             }
         }
-        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data, ICardHistoryResponseAll? cardHistoryResponses)
+        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data)
         {
             var dTOResponse = new DTOGenericResponse<DTOCommonResponse?>();
             string LostRemarksId = "65";
@@ -357,7 +360,7 @@ namespace DataAccessLayer
                     await db.ExecuteAsync(insertHotlistCard, parameters2, transaction: transaction);
                 }
 
-                if (Data.StatusId ==1)
+                if (Data.StatusId == (byte)RequestStatusEnum.Running)
                 {
                     string name = (cardHistoryResponses.BasicDetail.FName + " " + cardHistoryResponses.BasicDetail.LName).Trim();
                     short RankId = cardHistoryResponses.BasicDetail.RankId;
@@ -419,6 +422,36 @@ namespace DataAccessLayer
                             // Execute the update query asynchronously with transaction.
                             await db.ExecuteAsync(query3, query3_parameters, transaction: transaction);
                         }
+                    }
+                }
+
+                if (Data.StatusId == (byte)RequestStatusEnum.Complete)
+                {
+                    
+                    string SelectCompleteHistory = @"select CompleteReq.CompletedId,CompleteReq.CardRequestHistoryJson from CompletedICardRequests CompleteReq
+	                                                Where CompleteReq.RequestId = @RequestId";
+
+                    // Parameters for SQL query, adding the list of Request IDs
+                    var parameters5 = new DynamicParameters();
+                    parameters5.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                    CompletedICardRequest completedICard = await db.QuerySingleAsync<CompletedICardRequest>(SelectCompleteHistory, parameters5, transaction: transaction);
+
+                    string? historyJson = completedICard?.CardRequestHistoryJson;
+
+                    if (!string.IsNullOrWhiteSpace(historyJson))
+                    {
+                        ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();
+                        cardHistoryResponseAll = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                        cardHistoryResponseAll.CardMovement.Add(LostReportBy);
+
+                        var cardRequestHistoryJson = JsonConvert.SerializeObject(cardHistoryResponseAll);
+
+                        string UpdateCompleteHistory = @"Update CompletedICardRequests Set CardRequestHistoryJson = @CardRequestHistoryJson Where CompletedId = @CompletedId";
+                        var parameters6 = new DynamicParameters();
+                        parameters6.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.AnsiString, ParameterDirection.Input, size: -1);
+                        parameters6.Add("@CompletedId", completedICard?.CompletedId, DbType.Int32, ParameterDirection.Input);
+
+                        await db.ExecuteAsync(UpdateCompleteHistory, parameters6, transaction: transaction);
                     }
                 }
 

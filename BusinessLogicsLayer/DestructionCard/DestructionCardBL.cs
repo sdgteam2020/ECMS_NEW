@@ -25,13 +25,13 @@ namespace BusinessLogicsLayer.DestructionCard
         {
             return await _iDestructionCardDB.GetDetailsByRequestIds(Data);
         }
-        public async Task<DTOGenericResponse<string>> CheckBeforeDestructionCardReport(int RequestId)
+        public async Task<DTOCheckBeforeDestructionCardReportResponse> CheckBeforeDestructionCardReport(int RequestId)
         {
             return await _iDestructionCardDB.CheckBeforeDestructionCardReport(RequestId);
         }
-        public async Task<DTOCheckApplicationCloseRequestIdResponse> CheckRequestIdInClosed(int RequestId, int DestructedCardId)
+        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveDestructionCardRequest(TrnDestructionCard Data, DTOCheckBeforeDestructionCardReportResponse checkCardBeforeDistruction) 
         {
-            return await _iDestructionCardDB.CheckRequestIdInClosed(RequestId, DestructedCardId);
+            return await _iDestructionCardDB.SaveDestructionCardRequest(Data, checkCardBeforeDistruction);
         }
     }
 }

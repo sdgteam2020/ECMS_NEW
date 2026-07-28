@@ -96,30 +96,18 @@ namespace DataAccessLayer
                 // Default sort column and order
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "tdc.UpdatedOn";
 
-                if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
-                {
-                    sortColumn = "ISNULL(basic_2.ServiceNo , bd.ServiceNo )";
-                }
-
                 var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
-                string selectFields = @"appl.Name ApplyFor,
-                                        req.RequestId,tdc.DistributeCardId,
-                                        ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ranks.RankAbbreviation RankName,
-                                        bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,
-                                        Muni.Abbreviation UnitAbbreviation,
-                                        tdc.UpdatedOn,tdc.Remark,
-                                        tdc.DistributedOn";
+                string selectFields = @"appl.Name ApplyFor,req.RequestId,tdc.DistributeCardId,basic_2.ServiceNo,ranks.RankAbbreviation RankName,basic_2.FName,basic_2.LName,Muni.Abbreviation UnitAbbreviation,tdc.UpdatedOn,tdc.Remark,tdc.DistributedOn";
                 string fromJoinClause = @"from TrnDistributeCards tdc
                                         inner join TrnICardRequest req on req.RequestId = tdc.RequestId
                                         inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                        LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId AND bd.UnitId = @UnitMapId
-                                        LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId = @UnitMapId
-                                        inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
-                                        inner join MapUnit uni on uni.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
+                                        inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId AND basic_2.UnitId = @UnitMapId
+                                        inner join MRank ranks on ranks.RankId = basic_2.RankId
+                                        inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
                                         inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                        inner join MApplyFor appl on appl.ApplyForId = ISNULL(basic_2.ApplyForId,bd.ApplyForId)";
-                string whereClause = @"Where  @SearchTerm IS NULL OR bd.ServiceNo LIKE @SearchTerm OR basic_2.ServiceNo LIKE @SearchTerm";
+                                        inner join MApplyFor appl on appl.ApplyForId = basic_2.ApplyForId";
+                string whereClause = @"Where  @SearchTerm IS NULL OR basic_2.ServiceNo LIKE @SearchTerm";
 
                 var multiQuery = $@"
                         WITH RecordCTE AS (
@@ -154,15 +142,6 @@ namespace DataAccessLayer
                     else
                     {
                         selectedIds = null;
-                    }
-
-                    if (records != null)
-                    {
-                        foreach (var item in records)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
                     }
 
                     // Prepare the response data
@@ -274,6 +253,7 @@ namespace DataAccessLayer
                 short RankId = cardRequestHistory.BasicDetail.RankId;
                 byte ApplyForId = cardRequestHistory.BasicDetail.ApplyForId;
                 string ServiceNo = cardRequestHistory.BasicDetail.ServiceNo;
+                int? DestructedCardId = null;
 
                 // SQL query to insert the distribution card and update relevant records
                 var insertQuery = @$"
@@ -290,8 +270,8 @@ namespace DataAccessLayer
                                      {(cardRequestHistory?.PostingOut?.Count > 0 ? "update TrnPostingOut set TrnFwdId = null where RequestId = @RequestId;" : "")}
                                      
                                      Delete from TrnFwds where RequestId = @RequestId;
-                                     Insert into CompletedICardRequests(RequestId,CardRequestHistoryJson,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn,Name,RankId,ServiceNo,ApplyForId)
-                                     values(@RequestId,@CardRequestHistoryJson,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn,@Name,@RankId,@ServiceNo,@ApplyForId);
+                                     Insert into CompletedICardRequests(RequestId,CardRequestHistoryJson,UpdatedbyUserId,IsActive,Updatedby,UpdatedOn,Name,ServiceNo,ApplyForId,RankId,DestructedCardId)
+                                     values(@RequestId,@CardRequestHistoryJson,@UpdatedbyUserId,@IsActive,@Updatedby,@UpdatedOn,@Name,@ServiceNo,@ApplyForId,@RankId,@DestructedCardId);
                                      
                                      DECLARE @CompletedId INT = SCOPE_IDENTITY();
                                      
@@ -312,6 +292,7 @@ namespace DataAccessLayer
                 parameters.Add("@RankId", RankId, DbType.Int16, ParameterDirection.Input);
                 parameters.Add("@ServiceNo", ServiceNo, DbType.String, ParameterDirection.Input,10);
                 parameters.Add("@ApplyForId", ApplyForId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@DestructedCardId", DestructedCardId, DbType.Int32, ParameterDirection.Input);
 
                 // Execute the query and get the DistributeCardId of the newly created record
                 DTOSaveDistributeCardResponse? dTOSave = await db.QuerySingleAsync<DTOSaveDistributeCardResponse>(insertQuery, parameters, transaction: transaction);

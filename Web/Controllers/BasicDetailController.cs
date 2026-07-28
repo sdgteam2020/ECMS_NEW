@@ -1,6 +1,7 @@
 ﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.CompletedICard;
 using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.DestructionCard;
 using BusinessLogicsLayer.DispatchCard;
@@ -21,6 +22,7 @@ using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Dapper;
 using DataAccessLayer;
 using DataAccessLayer.Healpers;
 using DataTransferObject.Constants;
@@ -29,6 +31,7 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
 using Humanizer;
@@ -48,7 +51,6 @@ using System.Xml.Serialization;
 using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Web.Controllers
 {
@@ -98,6 +100,7 @@ namespace Web.Controllers
         private readonly IOROMappingBL oROMappingBL;// For ORO Mapping
         private readonly IRegimentalBL regimentalBL;// For Regimental Database
         private readonly IRecordOfficeBL recordOfficeBL; // For Record Office
+        private readonly ICompletedICardRequestBL _completedICardRequestBL; // For Completed I-Card Request
         public const string SessionKeySalt = "_Salt";
 
         /// <summary>
@@ -113,7 +116,7 @@ namespace Web.Controllers
             , IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
            , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,
            IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL, IImageEncryptAndDecrypt imageEncryptAndDecrypt, IEncryptionSettingBL encryptionSettingBL,
-           IOROMappingBL oROMappingBL, IRegimentalBL regimentalBL, IRecordOfficeBL recordOfficeBL)
+           IOROMappingBL oROMappingBL, IRegimentalBL regimentalBL, IRecordOfficeBL recordOfficeBL, ICompletedICardRequestBL _completedICardRequestBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -152,6 +155,7 @@ namespace Web.Controllers
             this.oROMappingBL = oROMappingBL;
             this.regimentalBL = regimentalBL;
             this.recordOfficeBL = recordOfficeBL;
+            this._completedICardRequestBL = _completedICardRequestBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -4324,6 +4328,33 @@ namespace Web.Controllers
 
                         // Save the record and return success response
                         var result = await _hotlistCardBL.AddWithReturn(model);
+
+                        CompletedICardRequest? completedICardRequest = await _completedICardRequestBL.GetByRequestId(model.RequestId);
+                        if (completedICardRequest != null)
+                        {
+                            string? historyJson = completedICardRequest?.CardRequestHistoryJson;
+                            if (!string.IsNullOrWhiteSpace(historyJson))
+                            {
+                                DTOCardMovementHistoryResponse hotlistBy = new DTOCardMovementHistoryResponse
+                                {
+                                    StepName = "I-Card Holtist",
+                                    ReportedBy = $"({dtoSession?.DoaminId}) {dtoSession?.RankName} {dtoSession?.Name}",
+                                    Remark = model.Remark ?? string.Empty,
+                                    ReportedOn = model.UpdatedOn ?? DateTime.Now
+                                };
+
+                                ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();
+                                cardHistoryResponseAll = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                                cardHistoryResponseAll.CardMovement.Add(hotlistBy);
+
+                                var cardRequestHistoryJson = JsonConvert.SerializeObject(cardHistoryResponseAll);
+
+                                completedICardRequest.CardRequestHistoryJson = cardRequestHistoryJson;
+                                await _completedICardRequestBL.Update(completedICardRequest);
+                            }
+
+                        }
+
                         dTOFaulty.Result = true;
                         dTOFaulty.Message = "Record created!";
                         dTOFaulty.Value.CurrentTime = result.UpdatedOn.GetValueOrDefault(); // Return saved record timestamp
@@ -4566,9 +4597,6 @@ namespace Web.Controllers
 
                     if (checkCardBeforeLost.Result)
                     {
-                        // Fetch card history to record distribution details
-                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
-                        cardHistoryResponses.CardMovement = await basicDetailBL.GetCardMovementHistory(model.RequestId);
                         #region Upload Supporting Document
                         string fileName = string.Empty;
                         if (model.File != null)
@@ -4604,8 +4632,16 @@ namespace Web.Controllers
                         model.AppointmentName = checkCardBeforeLost.AppointmentName;
                         model.HotlistCardId = checkCardBeforeLost.HotlistCardId;
 
+                        DTOCardMovementHistoryResponse LostReportBy = new DTOCardMovementHistoryResponse
+                        {
+                            StepName = "I-Card Lost",
+                            ReportedBy = $"({dtoSession?.DoaminId}) {dtoSession?.RankName} {dtoSession?.Name}",
+                            Remark = model.Remark ?? string.Empty,
+                            ReportedOn = model.UpdatedOn ?? DateTime.Now
+                        };
+
                         // Save entity and trigger related business logic
-                        dTOResponse = await _lostCardBL.SaveLostCardRequest(model, cardHistoryResponses);
+                        dTOResponse = await _lostCardBL.SaveLostCardRequest(model);
                     }
                     else
                     {
@@ -4811,6 +4847,17 @@ namespace Web.Controllers
                     {
                         // Fetch card history to record distribution details
                         ICardHistoryResponseAll cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
+
+                        DTOCardMovementHistoryResponse Distribute = new DTOCardMovementHistoryResponse
+                        {
+                            StepName = "I-Card Distributed",
+                            ReportedBy = $"({dtoSession?.DoaminId}) {dtoSession?.RankName} {dtoSession?.Name}",
+                            Remark = model.Remark ?? string.Empty,
+                            ReportedOn = model.DistributedOn ?? DateTime.Now
+                        };
+                        cardHistoryResponses.CardMovement = await basicDetailBL.GetCardMovementHistory(model.RequestId);
+                        cardHistoryResponses.CardMovement.Add(Distribute);
+
                         // Save the distribution record and get the response
                         dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
                     }
@@ -6012,7 +6059,7 @@ namespace Web.Controllers
         public async Task<IActionResult> SaveDestructionCardRequest(DTOTrnDestructionCardSaveRequest dTOTrnDestruction)
         {
             // Initialize the response object for front-end
-            var dTOFaulty = new DTOGenericResponse<DTOCommonResponse>
+            var dTODestruction = new DTOGenericResponse<DTOCommonResponse>
             {
                 Value = new DTOCommonResponse()
             };
@@ -6026,22 +6073,41 @@ namespace Web.Controllers
                         .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
                         .ToList();
 
-                    dTOFaulty.Result = false;
-                    dTOFaulty.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
-                    return Json(dTOFaulty);
+                    dTODestruction.Result = false;
+                    dTODestruction.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTODestruction);
                 }
 
                 var checkCardBeforeDistruction = await _destructionCardBL.CheckBeforeDestructionCardReport(dTOTrnDestruction.RequestId);
 
                 if (!checkCardBeforeDistruction.Result)
                 {
-                    dTOFaulty.Result = false;
-                    dTOFaulty.Message = checkCardBeforeDistruction.Message;
-                    return Json(dTOFaulty);
+                    dTODestruction.Result = false;
+                    dTODestruction.Message = checkCardBeforeDistruction.Message;
+                    return Json(dTODestruction);
                 }
 
-                // Initialize session DTO
-                DtoSession? dtoSession = null;
+                if (checkCardBeforeDistruction.StatusId == (byte)RequestStatusEnum.Complete)
+                {
+                    if (checkCardBeforeDistruction.CompletedId == null)
+                    {
+                        dTODestruction.Result = false;
+                        dTODestruction.Message = "Application completion ID not found.";
+                        return Json(dTODestruction);
+                    }
+                }
+                else if (checkCardBeforeDistruction.StatusId == (byte)RequestStatusEnum.Closed)
+                {
+                    if (checkCardBeforeDistruction.ApplCloseId == null)
+                    {
+                        dTODestruction.Result = false;
+                        dTODestruction.Message = "Application closure ID not found.";
+                        return Json(dTODestruction);
+                    }
+                }
+
+                    // Initialize session DTO
+                    DtoSession? dtoSession = null;
 
                 // Retrieve session token if available
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
@@ -6052,9 +6118,9 @@ namespace Web.Controllers
                 var userIdClaim = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (!int.TryParse(userIdClaim, out int updatedBy))
                 {
-                    dTOFaulty.Result = false;
-                    dTOFaulty.Message = "Invalid user session.";
-                    return Json(dTOFaulty);
+                    dTODestruction.Result = false;
+                    dTODestruction.Message = "Invalid user session.";
+                    return Json(dTODestruction);
                 }
 
 
@@ -6071,40 +6137,29 @@ namespace Web.Controllers
                 };
 
                 // Add the new destruction card and return success response
-                var result = await _destructionCardBL.AddWithReturn(model);
-               
-                if (result == null)
+                var result = await _destructionCardBL.SaveDestructionCardRequest(model, checkCardBeforeDistruction);
+
+                if (result.Result == true)
                 {
-                    dTOFaulty.Result = false;
-                    dTOFaulty.Message = "Failed to save record.";
-                    return Json(dTOFaulty);
+                    return Json(result);
                 }
-                if(checkCardBeforeDistruction.StatusId == 3)
+                else
                 {
-                    var checkRequestIdInClosed = await _destructionCardBL.CheckRequestIdInClosed(result.RequestId, result.DestructedCardId);
-                    if (checkRequestIdInClosed.RequestId == 0 && checkRequestIdInClosed.DestructedCardId == 0)
-                    {
-                        dTOFaulty.Result = false;
-                        dTOFaulty.Message = "Request is already closed.";
-                        return Json(dTOFaulty);
-                    }
+                    dTODestruction.Result = false;
+                    dTODestruction.Message = "Failed to save record.";
+                    return Json(dTODestruction);
                 }
-               
-                dTOFaulty.Result = true;
-                dTOFaulty.Message = "Record created!";
-                dTOFaulty.Value.CurrentTime = result.UpdatedOn.GetValueOrDefault();
-                dTOFaulty.Value.Id = result.DestructedCardId.ToString();
             }
             catch (Exception ex)
             {
                 // Log exception and return generic error response
                 _logger.LogError(1001, ex, "BasicDetail->SaveDestructionCardRequest");
-                dTOFaulty.Result = false;
-                dTOFaulty.Message = "Internal Server Error!";
+                dTODestruction.Result = false;
+                dTODestruction.Message = "Internal Server Error!";
             }
 
             // Return JSON response to the client
-            return Json(dTOFaulty);
+            return Json(dTODestruction);
         }
 
         #endregion DestructionCard
@@ -7512,7 +7567,6 @@ namespace Web.Controllers
             {
                 // Retrieve the basic detail record for the given RequestId
                 ICardHistoryResponseAll responseAll = await basicDetailBL.GetCompletedHistoryByRequestId(RequestId);
-                responseAll.CardMovement = await basicDetailBL.GetCardMovementHistory(RequestId);
 
                 string PhotoImagePath = responseAll.BasicDetail.PhotoImagePath;
                 string SignatureImagePath = responseAll.BasicDetail.SignatureImagePath;

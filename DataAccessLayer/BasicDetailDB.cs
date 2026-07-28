@@ -2869,7 +2869,7 @@ FROM
                                     ISNULL(fwd.TrnFwdId,0) IsTrnFwdId,C.StepId StepCounter,C.Id StepId,ty.TypeId,ty.name ICardType,trnicrd.RequestId ,ISNULL(fwd.FwdStatusId,0) IsFwdStatusId,
                                     Afor.Name ApplyFor,Afor.ApplyForId,ran.RankAbbreviation RankName,mreg.Abbreviation RegimentalName";
                     fromJoinClause = @"FROM TrnFwds fwd
-                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId and AND trnicrd.StatusId=@RunningStatusId
+                                        inner join TrnICardRequest trnicrd on trnicrd.RequestId = fwd.RequestId AND trnicrd.StatusId=@RunningStatusId
                                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) 
@@ -2885,7 +2885,7 @@ FROM
                                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
                                         inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId AND (@applyfor = 0 OR Afor.ApplyForId = @applyfor) ";
 
-                    whereClause = @"WHERE fwd.ToAspNetUsersId = @UserId and fwd.TypeId=@AFSCCellTypeId and fwd.IsComplete=1 ";
+                    whereClause = @"WHERE fwd.ToAspNetUsersId = @UserId AND fwd.TypeId=@AFSCCellTypeId AND fwd.IsComplete=1 ";
                     searchFilter = @"AND ((@SearchTerm IS NULL) OR (B.ServiceNo LIKE @SearchTerm OR trnicrd.RequestId LIKE @SearchTerm))";
                 }
                 else // For For Show
@@ -3601,12 +3601,41 @@ FROM
             {
                 var card = await _context.CompletedICardRequests.FirstOrDefaultAsync(req => req.RequestId == RequestId);
 
-                string? historyJson = card?.CardRequestHistoryJson;
 
-                if (!string.IsNullOrWhiteSpace(historyJson))
+                if (card != null)
                 {
-                    return JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                    string? historyJson = card?.CardRequestHistoryJson;
+
+                    if (!string.IsNullOrWhiteSpace(historyJson))
+                    {
+                        cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                    }
+                    if (card?.DestructedCardId != null)
+                    {
+                        var destroyed = new DTOCardMovementHistoryResponse();
+                        destroyed = await (from dest in _context.TrnDestructionCards.AsNoTracking()
+                                           join user in _context.Users.AsNoTracking()
+                                              on dest.Updatedby equals user.Id
+                                           join profile in _context.UserProfile.AsNoTracking()
+                                              on dest.UpdatedbyUserId equals profile.UserId
+                                           join rank in _context.MRank.AsNoTracking()
+                                              on profile.RankId equals rank.RankId
+                                           where dest.DestructedCardId == card.DestructedCardId
+                                           select new DTOCardMovementHistoryResponse
+                                           {
+                                               StepName = "I-Card Destruction",
+                                               ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
+                                               ReportedOn = dest.DestructedOn.GetValueOrDefault(),
+                                               Remark = dest.Remark ?? string.Empty
+                                           }).FirstOrDefaultAsync();
+                        if (destroyed != null)
+                        {
+                            cardStatus.CardMovement.Append(destroyed);
+                        }
+                    }
                 }
+                return cardStatus;
+
             }
             catch (Exception ex)
             {
@@ -3973,7 +4002,7 @@ FROM
                             _4thLevelApproved =
                             (
                                 SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
-                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId
+                                INNER JOIN TrnICardRequest trncard ON trncard.RequestId = fwd.RequestId AND trncard.StatusId = 1
                                 INNER JOIN BasicDetails bd ON bd.BasicDetailId = trncard.BasicDetailId AND bd.ApplyForId = @ApplyForId
                                 WHERE fwd.ToAspNetUsersId = @UserId AND fwd.IsComplete = 1 AND fwd.TypeId = 4
                             ),

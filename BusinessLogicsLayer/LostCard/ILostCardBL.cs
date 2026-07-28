@@ -12,6 +12,6 @@ namespace BusinessLogicsLayer.LostCard
         Task<DTODataTablesWithSelectedIdsResponse<DTOLostCardGetResponse>> GetAllLost(DTODataTablesRequestForCommanCheckAll dTO);
         Task<List<DTOLostCardExportResponse>> GetDetailsByRequestIds(DTOHotlistCardsExportRequest Data);
         public Task<DTOCheckBeforeLostReportResponse> CheckBeforeLostReport(int requestId, int TDMId);
-        public Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data, ICardHistoryResponseAll? cardHistoryResponses);
+        public Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data, DTOCardMovementHistoryResponse LostReportBy);
     }
 }
