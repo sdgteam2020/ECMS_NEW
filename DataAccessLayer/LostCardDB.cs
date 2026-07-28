@@ -5,6 +5,7 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,7 @@ namespace DataAccessLayer
         private readonly DapperContext _contextDP;
         private readonly IDataProtector protector;
         private readonly ILogger<LostCardDB> _logger;
+        private readonly IBasicDetailDB _iBasicDetailDB;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LostCardDB"/> class.
@@ -35,11 +37,12 @@ namespace DataAccessLayer
         /// <param name="dataProtectionProvider">The <see cref="IDataProtectionProvider"/> to create data protectors.</param>
         /// <param name="logger">The <see cref="ILogger{LostCardDB}"/> for logging.</param>
         /// <param name="dataProtectionPurposeStrings">The purpose strings for data protection.</param>
-        public LostCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<LostCardDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        public LostCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<LostCardDB> logger, IBasicDetailDB BasicDetail, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
             _logger = logger;
+            _iBasicDetailDB = BasicDetail;
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
@@ -312,7 +315,7 @@ namespace DataAccessLayer
                 };
             }
         }
-        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data)
+        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data, DTOCardMovementHistoryResponse LostReportBy)
         {
             var dTOResponse = new DTOGenericResponse<DTOCommonResponse?>();
             string LostRemarksId = "65";
@@ -362,6 +365,10 @@ namespace DataAccessLayer
 
                 if (Data.StatusId == (byte)RequestStatusEnum.Running)
                 {
+                    ICardHistoryResponseAll? cardHistoryResponses = await _iBasicDetailDB.ICardHistory(Data.RequestId);
+                    cardHistoryResponses.CardMovement = await _iBasicDetailDB.GetCardMovementHistory(Data.RequestId);
+                    cardHistoryResponses.CardMovement.Add(LostReportBy);
+
                     string name = (cardHistoryResponses.BasicDetail.FName + " " + cardHistoryResponses.BasicDetail.LName).Trim();
                     short RankId = cardHistoryResponses.BasicDetail.RankId;
                     byte ApplyForId = cardHistoryResponses.BasicDetail.ApplyForId;
