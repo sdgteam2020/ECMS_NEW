@@ -271,5 +271,80 @@ namespace DataAccessLayer
                 return response;
             }
         }
+
+        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveDestructionCardRequest(TrnDestructionCard Data, DTOCheckBeforeDestructionCardReportResponse checkCardBeforeDistruction)
+        {
+            var dTOResponse = new DTOGenericResponse<DTOCommonResponse?>();
+
+            // Initialize transaction for multiple database operations
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+
+            try
+            {
+                var insertDestructionCard = @$" INSERT INTO TrnDestructionCards (RequestId, RemarksIds, DestructedOn, Remark, UpdatedbyUserId, IsActive, Updatedby, UpdatedOn)
+                                                OUTPUT INSERTED.DestructedCardId 
+                                                VALUES (@RequestId, @RemarksIds, @DestructedOn, @Remark, @UpdatedbyUserId, @IsActive, @Updatedby, @UpdatedOn);";
+                var parameters = new DynamicParameters();
+                parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@RemarksIds", Data.RemarksIds, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@DestructedOn", Data.DestructedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@Remark", Data.Remark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@UpdatedbyUserId", Data.UpdatedbyUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+
+
+
+                // Insert the new posting record and get its ID
+                var DestructionCardId = await db.QuerySingleAsync<int>(insertDestructionCard, parameters, transaction: transaction);
+
+
+                if (checkCardBeforeDistruction.StatusId == (byte)RequestStatusEnum.Complete)
+                {
+                    string UpdateCompleteHistory = @"Update CompletedICardRequests Set DestructedCardId = @DestructionCardId Where CompletedId = @CompletedId";
+                    var parameters1 = new DynamicParameters();
+                    parameters1.Add("@CompletedId", checkCardBeforeDistruction.CompletedId, DbType.Int32, ParameterDirection.Input);
+                    parameters1.Add("@DestructionCardId", DestructionCardId, DbType.Int32, ParameterDirection.Input);
+                    await db.ExecuteAsync(UpdateCompleteHistory, parameters1, transaction: transaction);
+                }
+
+                if (checkCardBeforeDistruction.StatusId == (byte)RequestStatusEnum.Closed)
+                {
+                    string UpdateCompleteHistory = @"Update TrnApplClose Set DestructedCardId = @DestructionCardId Where Id = @ApplCloseId";
+                    var parameters1 = new DynamicParameters();
+                    parameters1.Add("@ApplCloseId", checkCardBeforeDistruction.ApplCloseId, DbType.Int32, ParameterDirection.Input);
+                    parameters1.Add("@DestructionCardId", DestructionCardId, DbType.Int32, ParameterDirection.Input);
+                    await db.ExecuteAsync(UpdateCompleteHistory, parameters1, transaction: transaction);
+                }
+
+
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
+                dTOResponse.Result = true;
+                dTOResponse.Message = "Destruction card request saved successfully.";
+                dTOResponse.Value = new DTOCommonResponse
+                {
+                    Id = DestructionCardId.ToString(),
+                    CurrentTime = Data.UpdatedOn.GetValueOrDefault()
+                };
+                return dTOResponse;
+            }
+            catch (Exception ex)
+            {
+                // Rollback the transaction if any operation fails
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "DestructionCardDB->SaveDestructionCardRequest");
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error";
+                dTOResponse.Value = new DTOCommonResponse();
+                return dTOResponse;
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
+            }
+        }
     }
 }
