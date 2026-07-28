@@ -522,8 +522,16 @@ namespace Web.Controllers
                     if (closeResponse.Result == true)
                     {
                         // Fetch card history to record distribution details
-                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(applClose.RequestId);
+                        ICardHistoryResponseAll? cardHistoryResponses = await basicDetailBL.ICardHistory(applClose.RequestId);                    
+                        DTOCardMovementHistoryResponse close = new DTOCardMovementHistoryResponse
+                        {
+                            StepName = "I-Card Closed",
+                            ReportedBy = $"({dtoSession?.DoaminId}) {dtoSession?.RankName} {dtoSession?.Name}",
+                            Remark = applClose.Remarks ?? string.Empty,
+                            ReportedOn = applClose.UpdatedOn ?? DateTime.Now
+                        };
                         cardHistoryResponses.CardMovement = await basicDetailBL.GetCardMovementHistory(applClose.RequestId);
+                        cardHistoryResponses.CardMovement.Add(close);
                         // Save the distribution close record and get the response
                         bool reuslt = await _iApplCloseBL.ApplCloseWithUpdateStatus(applClose, cardHistoryResponses);
                         if (reuslt == true)

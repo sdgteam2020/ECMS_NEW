@@ -373,6 +373,7 @@ namespace DataAccessLayer
                     short RankId = cardHistoryResponses.BasicDetail.RankId;
                     byte ApplyForId = cardHistoryResponses.BasicDetail.ApplyForId;
                     string serviceNo = (cardHistoryResponses.BasicDetail.ServiceNo ?? string.Empty).Trim();
+                    int? DestructedCardId = null;
                     List<int> AspnetuserId = new List<int>();
                     if (cardHistoryResponses != null)
                     {
@@ -396,8 +397,8 @@ namespace DataAccessLayer
                     await db.ExecuteAsync(query, parameters4, transaction: transaction);
 
 
-                    var insertApplClose = @$" INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankId,ServiceNo,ApplyForId)
-                                         VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId, @CardRequestHistoryJson, @Name, @RankId, @ServiceNo,@ApplyForId);                                    
+                    var insertApplClose = @$" INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankId,ServiceNo,ApplyForId,DestructedCardId)
+                                         VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId, @CardRequestHistoryJson, @Name, @RankId, @ServiceNo,@ApplyForId,@DestructedCardId);                                    
                                          DECLARE @Id INT = SCOPE_IDENTITY();                                
                                          Select @Id;";
 
@@ -415,7 +416,8 @@ namespace DataAccessLayer
                     parameters3.Add("@RankId", RankId, DbType.Int16, ParameterDirection.Input);
                     parameters3.Add("@ServiceNo", serviceNo, DbType.String, ParameterDirection.Input, 10);
                     parameters3.Add("@ApplyForId", ApplyForId, DbType.Byte, ParameterDirection.Input);
-                    
+                    parameters3.Add("@DestructedCardId", DestructedCardId, DbType.Int32, ParameterDirection.Input);
+
                     int closeId = await db.ExecuteScalarAsync<int>(insertApplClose, parameters3, transaction: transaction);
                     if (AspnetuserId != null && AspnetuserId.Count > 0)
                     {

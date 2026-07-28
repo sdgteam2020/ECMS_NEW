@@ -102,6 +102,7 @@ namespace DataAccessLayer
                 short RankId = cardHistoryResponses.BasicDetail.RankId;
                 byte ApplyForId = cardHistoryResponses.BasicDetail.ApplyForId;
                 string serviceNo = (cardHistoryResponses.BasicDetail.ServiceNo ?? string.Empty).Trim();
+                int? DestructedCardId = null;
                 List<int> AspnetuserId = new List<int>();
                 if (cardHistoryResponses != null)
                 {
@@ -117,8 +118,8 @@ namespace DataAccessLayer
                 var cardRequestHistoryJson = JsonConvert.SerializeObject(cardHistoryResponses);
 
                 // SQL query to insert a new record into the TrnApplClose table.
-                var insertSql = @$"INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankId,ServiceNo,ApplyForId) 
-                                VALUES(@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId, @CardRequestHistoryJson, @Name, @RankId, @ServiceNo,@ApplyForId);
+                var insertSql = @$"INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankId,ServiceNo,ApplyForId,DestructedCardId) 
+                                VALUES(@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId, @CardRequestHistoryJson, @Name, @RankId, @ServiceNo,@ApplyForId,@DestructedCardId);
                                 {(cardHistoryResponses?.FaultyCard?.Count > 0 ? "update TrnFaultyCard set TrnFwdId = null where RequestId = @RequestId;" : "")}
                                 {(cardHistoryResponses?.PostingOut?.Count > 0 ? "update TrnPostingOut set TrnFwdId = null where RequestId = @RequestId;" : "")}                                    
                                 Delete from TrnFwds where RequestId = @RequestId;
@@ -140,6 +141,7 @@ namespace DataAccessLayer
                 parameters.Add("@RankId", RankId, DbType.Int16, ParameterDirection.Input);
                 parameters.Add("@ServiceNo", serviceNo, DbType.String, ParameterDirection.Input, 10);
                 parameters.Add("@ApplyForId", ApplyForId, DbType.Byte, ParameterDirection.Input);
+                parameters.Add("@DestructedCardId", DestructedCardId, DbType.Int32, ParameterDirection.Input);
 
                 // Execute the insert query asynchronously with transaction.
                 Data.Id =  await db.ExecuteScalarAsync<int>(insertSql, parameters, transaction: transaction);
