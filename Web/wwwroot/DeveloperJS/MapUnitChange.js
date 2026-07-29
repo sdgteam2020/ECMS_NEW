@@ -1,6 +1,54 @@
 ﻿//const { debug } = require("util");
 
 var table; // Declare table variable outside the function to preserve the instance
+function prepareMapUnitChangeModalRoots() {
+    ["UnitMoveHistoryModal", "MessageDialog"].forEach(function (modalId) {
+        var modalElement = document.getElementById(modalId);
+
+        if (modalElement && modalElement.parentElement !== document.body) {
+            document.body.appendChild(modalElement);
+        }
+    });
+}
+
+function cleanupMapUnitChangeModalState() {
+    if (document.querySelector(".modal.show")) {
+        document.body.classList.add("modal-open");
+        return;
+    }
+
+    document.querySelectorAll(".modal-backdrop").forEach(function (element) {
+        element.remove();
+    });
+
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
+}
+
+function refreshMapUnitChangeDataTable(tableSelector, delay) {
+    var wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            var $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                safeAdjustMapUnitChangeDataTable($(tableSelector).DataTable());
+            }
+        } catch (error) {
+            console.warn("Unit Move Request DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
 function safeAdjustMapUnitChangeDataTable(api) {
     if (!api) {
         return;
@@ -14,6 +62,17 @@ function safeAdjustMapUnitChangeDataTable(api) {
 }
 
 $(function () {
+    prepareMapUnitChangeModalRoots();
+
+    $("#UnitMoveHistoryModal, #MessageDialog")
+        .off(".mapUnitChangeUi")
+        .on("shown.bs.modal.mapUnitChangeUi", function () {
+            document.body.classList.add("modal-open");
+        })
+        .on("hidden.bs.modal.mapUnitChangeUi", function () {
+            cleanupMapUnitChangeModalState();
+        });
+
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     applyDataTableSearchValidation('#tbldata');
@@ -30,16 +89,17 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old DataTables sizing markup
     }
     table = $("#tbldata").DataTable({
-        scrollY: '300px',          // CSS stretches the scroll body inside the table card
+        scrollY: '100%',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: false,
         scroller: false,          // UI only: normal DataTables scroll inside card
         deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -72,10 +132,14 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-
+                refreshMapUnitChangeDataTable("#tbldata", 30);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing, .dt-processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                refreshMapUnitChangeDataTable("#tbldata", 30);
             }
         },
         columns: [
@@ -198,7 +262,7 @@ function BindData() {
                 width: "100px",
                 orderable: true,
                 render: function (data, type, row) {
-                    return data == false ? "<span class='badge bg-warning'>Pendding</span>" : row.RequestStatus == true ? "<span class='badge bg-success'>Accepted</span>" : "<span class='badge badge-pill badge-danger'>Rejected</span>";
+                    return data == false ? "<span class='badge bg-warning'>Pending</span>" : row.RequestStatus == true ? "<span class='badge bg-success'>Accepted</span>" : "<span class='badge badge-pill badge-danger'>Rejected</span>";
                 }
             },
 
@@ -247,9 +311,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search SUS No" // Add custom placeholder
         },
-        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
-            "rt" +
-            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -275,31 +337,43 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
-        // 👇 Show modal only after table (header + data) is fully rendered
         initComplete: function () {
-            // Force DataTables to calculate optimal widths
-            safeAdjustMapUnitChangeDataTable(this.api());
+            let searchBox = $("#tbldata_wrapper div.dataTables_filter input");
+            searchBox.attr("title", "Search SUS No or unit move request details");
 
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    safeAdjustMapUnitChangeDataTable(table);
-                }, 100);
-            });
+            safeAdjustMapUnitChangeDataTable(this.api());
+            refreshMapUnitChangeDataTable("#tbldata", 20);
+
+            $(window)
+                .off("resize.mapUnitChangeDataTable")
+                .on("resize.mapUnitChangeDataTable", function () {
+                    window.clearTimeout(window.__mapUnitChangeResizeTimer);
+                    window.__mapUnitChangeResizeTimer = window.setTimeout(function () {
+                        refreshMapUnitChangeDataTable("#tbldata", 0);
+                    }, 120);
+                });
         },
         drawCallback: function (settings) {
-
-            // Recalculate widths on each data load
             safeAdjustMapUnitChangeDataTable(this.api());
+            refreshMapUnitChangeDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Unit Move Request tooltip skipped:", error);
+                    }
+                });
+            }
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -327,3 +401,18 @@ function BindData() {
     //    table.column(9).visible(false);
     //}
 }
+
+/* ==============================================================
+   PAGE-LOCAL UI EVENTS
+   No global ModernCSS file is changed.
+================================================================ */
+
+$(document)
+    .off("draw.dt.mapUnitChangeUi")
+    .on("draw.dt.mapUnitChangeUi", function (event, settings) {
+        var tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            refreshMapUnitChangeDataTable("#tbldata", 20);
+        }
+    });

@@ -12,9 +12,9 @@
             <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
                         <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
-                        <span>&gt;</span>
+                        <span class="mx-1">&gt;</span>
                         <span>Corps / Dte / Area Details</span>
                     </h1>
                 </div>
@@ -23,89 +23,91 @@
     </div>
 </header>
 
-<div class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-corps-page">
-    <div class="card ecms-card ecms-corps-shell">
-        <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
+<div class="ecms-screen-stage ecms-bg">
+    <main class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-corps-page">
+        <div class="card ecms-card ecms-corps-shell">
+            <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
 
-            <div class="ecms-page-title ecms-corps-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
-                <div class="d-flex align-items-center gap-2 ecms-min-0">
-                    <span class="ecms-title-icon">
-                        <i class="fa fa-sitemap"></i>
+                <div class="ecms-page-title ecms-corps-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                    <div class="d-flex align-items-center gap-2 ecms-min-0">
+                        <span class="ecms-title-icon">
+                            <i class="fa fa-sitemap"></i>
+                        </span>
+                        <div class="ecms-min-0">
+                            <h3>Corps / Dte / Area Details</h3>
+                            <p class="ecms-title-subtitle">Create, update and manage corps / directorate / area records</p>
+                        </div>
+                    </div>
+
+                    <span class="badge bg-primary ecms-badge ecms-corps-pill">
+                        <i class="fa fa-database"></i>
+                        Master
                     </span>
-                    <div class="ecms-min-0">
-                        <h3>Corps / Dte / Area Details</h3>
-                        <p class="ecms-title-subtitle">Create, update and manage corps / directorate / area records</p>
-                    </div>
                 </div>
 
-                <span class="badge bg-primary ecms-badge ecms-corps-pill">
-                    <i class="fa fa-database"></i>
-                    Master
-                </span>
-            </div>
+                <div class="ecms-section ecms-form-section ecms-corps-form-section flex-shrink-0">
+                    <form action="" id="SaveForm" method="post" name="SaveForm">
+                        <div class="row g-2 align-items-end">
 
-            <div class="ecms-section ecms-form-section ecms-corps-form-section flex-shrink-0">
-                <form action="" id="SaveForm" method="post" name="SaveForm">
-                    <div class="row g-2 align-items-end">
+                            <div class="col-12 col-md-6 col-xl-5">
+                                <label class="form-label ecms-corps-label" for="ddlCommand">
+                                    <i class="fa fa-university"></i>
+                                    <span>Select Comd / PSO</span>
+                                    <i class="fa fa-asterisk mand1"></i>
+                                </label>
 
-                        <div class="col-12 col-md-6 col-xl-5">
-                            <label class="form-label ecms-corps-label" for="ddlCommand">
-                                <i class="fa fa-university"></i>
-                                <span>Select Comd / PSO</span>
-                                <i class="fa fa-asterisk mand1"></i>
-                            </label>
-
-                            <select class="form-select full-width"
-                                    tabindex="-1"
-                                    name="ddlCommand"
-                                    required
-                                    id="ddlCommand">
-                                <option value="0">Select Comd</option>
-                            </select>
-                        </div>
-
-                        <div class="col-12 col-md-6 col-xl-5">
-                            <label class="form-label ecms-corps-label" for="txtCoprsName">
-                                <i class="fa fa-map-marker"></i>
-                                <span>Enter Corps / Dte / Area</span>
-                                <i class="fa fa-asterisk mand1"></i>
-                            </label>
-
-                            <input class="form-control Alphanumeric"
-                                   placeholder="Enter Corps / Dte / Area"
-                                   id="txtCoprsName"
-                                   maxlength="20"
-                                   required
-                                   pattern="^[a-zA-Z0-9 ]*$"
-                                   title="Only Alphabets and Numbers allowed" />
-                        </div>
-
-                        <div class="col-12 col-xl-2">
-                            <div class="ecms-form-actions ecms-corps-actions d-flex gap-2 justify-content-xl-end">
-                                <input type="button" class="btn btn-primary" value="Save" id="btnsave" />
-                                <button type="button" id="btnReset" class="btn btn-danger">Reset</button>
-                                <div id="msg" class="ecms-corps-msg"></div>
+                                <select class="form-select full-width"
+                                        tabindex="-1"
+                                        name="ddlCommand"
+                                        required
+                                        id="ddlCommand">
+                                    <option value="0">Select Comd</option>
+                                </select>
                             </div>
+
+                            <div class="col-12 col-md-6 col-xl-5">
+                                <label class="form-label ecms-corps-label" for="txtCoprsName">
+                                    <i class="fa fa-map-marker"></i>
+                                    <span>Enter Corps / Dte / Area</span>
+                                    <i class="fa fa-asterisk mand1"></i>
+                                </label>
+
+                                <input class="form-control Alphanumeric"
+                                       placeholder="Enter Corps / Dte / Area"
+                                       id="txtCoprsName"
+                                       maxlength="20"
+                                       required
+                                       pattern="^[a-zA-Z0-9 ]*$"
+                                       title="Only Alphabets and Numbers allowed" />
+                            </div>
+
+                            <div class="col-12 col-xl-2">
+                                <div class="ecms-form-actions ecms-corps-actions d-flex gap-2 justify-content-xl-end">
+                                    <input type="button" class="btn btn-primary ecms-btn-primary" value="Save" id="btnsave" />
+                                    <button type="button" id="btnReset" class="btn btn-danger ecms-btn-danger">Reset</button>
+                                    <div id="msg" class="ecms-corps-msg"></div>
+                                </div>
+                            </div>
+
                         </div>
+                    </form>
+                </div>
 
+                <div class="ecms-section ecms-corps-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                    <div class="ecms-section-title flex-shrink-0">
+                        <i class="fa fa-list"></i>
+                        <span>Corps / Dte / Area Records</span>
                     </div>
-                </form>
-            </div>
 
-            <div class="ecms-section ecms-corps-table-section d-flex flex-column flex-grow-1 ecms-min-0">
-                <div class="ecms-section-title flex-shrink-0">
-                    <i class="fa fa-list"></i>
-                    <span>Corps / Dte / Area Records</span>
+                    <div class="ecms-dt-wrap ecms-corps-table-wrap flex-grow-1 ecms-min-0">
+                        <table class="table table-striped table-hover ecms-dt-table ecms-corps-datatable" role="grid" id="tbldata" aria-label="Corps, directorate and area records">
+                        </table>
+                    </div>
                 </div>
 
-                <div class="ecms-corps-table-wrap flex-grow-1 ecms-min-0">
-                    <table class="table table-striped table-hover table-bordered dataTable ecms-corps-datatable" role="grid" id="tbldata">
-                    </table>
-                </div>
             </div>
-
         </div>
-    </div>
+    </main>
 </div>
 
 <script asp-src-include="~/developerjs/mtables.js"></script>

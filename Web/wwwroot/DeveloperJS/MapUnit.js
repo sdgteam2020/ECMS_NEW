@@ -1,84 +1,113 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
-function cleanupMapUnitModalState() {
-    var modalEl = document.getElementById('AddNewUnitmap');
 
-    document.querySelectorAll('.modal-backdrop').forEach(function (el) {
-        el.remove();
+function prepareMapUnitModalRoot() {
+    var modalEl = document.getElementById("AddNewUnitmap");
+
+    if (!modalEl) {
+        return null;
+    }
+
+    // A modal nested inside a transformed layout container can appear below
+    // its own backdrop. Move only this page's modal directly under body.
+    if (modalEl.parentElement !== document.body) {
+        document.body.appendChild(modalEl);
+    }
+
+    return modalEl;
+}
+
+function cleanupMapUnitModalState() {
+    var modalEl = document.getElementById("AddNewUnitmap");
+    var anyVisibleModal = document.querySelector(".modal.show");
+
+    if (anyVisibleModal) {
+        document.body.classList.add("modal-open");
+        return;
+    }
+
+    document.querySelectorAll(".modal-backdrop").forEach(function (element) {
+        element.remove();
     });
 
-    document.body.classList.remove('modal-open');
-    document.body.classList.remove('mapunit-modal-open');
-    document.body.style.removeProperty('overflow');
-    document.body.style.removeProperty('padding-right');
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
 
     if (modalEl) {
-        modalEl.classList.remove('show');
-        modalEl.style.display = 'none';
-        modalEl.style.removeProperty('padding-right');
-        modalEl.setAttribute('aria-hidden', 'true');
-        modalEl.removeAttribute('aria-modal');
-        modalEl.removeAttribute('role');
+        modalEl.style.removeProperty("display");
+        modalEl.style.removeProperty("padding-right");
     }
 }
 
 function showMapUnitModal() {
-    var modalEl = document.getElementById('AddNewUnitmap');
+    var modalEl = prepareMapUnitModalRoot();
 
     if (!modalEl) {
         return;
     }
 
-    document.querySelectorAll('.modal-backdrop').forEach(function (el) {
-        el.remove();
-    });
-
-    document.body.classList.add('mapunit-modal-open');
-    document.body.classList.add('modal-open');
-
     if (window.bootstrap && bootstrap.Modal) {
         bootstrap.Modal.getOrCreateInstance(modalEl, {
-            backdrop: false,
+            backdrop: "static",
             keyboard: true,
             focus: true
         }).show();
-    } else {
-        $('#AddNewUnitmap').modal({
-            backdrop: false,
+        return;
+    }
+
+    if ($.fn.modal) {
+        $("#AddNewUnitmap").modal({
+            backdrop: "static",
             keyboard: true,
             show: true
         });
     }
-
-    setTimeout(function () {
-        document.querySelectorAll('.modal-backdrop').forEach(function (el) {
-            el.remove();
-        });
-
-        modalEl.classList.add('show');
-        modalEl.style.display = 'block';
-        modalEl.style.opacity = '1';
-        modalEl.style.pointerEvents = 'auto';
-        modalEl.removeAttribute('aria-hidden');
-        modalEl.setAttribute('aria-modal', 'true');
-        modalEl.setAttribute('role', 'dialog');
-    }, 10);
 }
 
 function hideMapUnitModal() {
-    var modalEl = document.getElementById('AddNewUnitmap');
+    var modalEl = document.getElementById("AddNewUnitmap");
 
-    if (window.bootstrap && bootstrap.Modal && modalEl) {
-        var instance = bootstrap.Modal.getInstance(modalEl);
-        if (instance) {
-            instance.hide();
-        }
-    } else {
-        $('#AddNewUnitmap').modal('hide');
+    if (!modalEl) {
+        return;
     }
 
-    setTimeout(function () {
-        cleanupMapUnitModalState();
-    }, 100);
+    if (window.bootstrap && bootstrap.Modal) {
+        var instance = bootstrap.Modal.getInstance(modalEl);
+
+        if (instance) {
+            instance.hide();
+        } else {
+            bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+        }
+        return;
+    }
+
+    if ($.fn.modal) {
+        $("#AddNewUnitmap").modal("hide");
+    }
+}
+
+function refreshMapUnitDataTable(tableSelector, delay) {
+    var wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            var $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                safeAdjustMapUnitDataTable($(tableSelector).DataTable());
+            }
+        } catch (error) {
+            console.warn("Map Unit DataTable refresh skipped:", error);
+        }
+    }, wait);
 }
 
 function safeAdjustMapUnitDataTable(api) {
@@ -94,17 +123,23 @@ function safeAdjustMapUnitDataTable(api) {
 }
 
 $(function () {
-    cleanupMapUnitModalState();
+    prepareMapUnitModalRoot();
 
-    $(document).off("click", "#AddNewUnitmap .ecms-mapunit-close, #AddNewUnitmap [data-bs-dismiss='modal'], #AddNewUnitmap [data-dismiss='modal']")
-        .on("click", "#AddNewUnitmap .ecms-mapunit-close, #AddNewUnitmap [data-bs-dismiss='modal'], #AddNewUnitmap [data-dismiss='modal']", function (e) {
-            e.preventDefault();
+    $(document)
+        .off("click.mapUnitUi", "#AddNewUnitmap .ecms-mapunit-close")
+        .on("click.mapUnitUi", "#AddNewUnitmap .ecms-mapunit-close", function (event) {
+            event.preventDefault();
             hideMapUnitModal();
         });
 
-    $("#AddNewUnitmap").off("hidden.bs.modal").on("hidden.bs.modal", function () {
-        cleanupMapUnitModalState();
-    });
+    $("#AddNewUnitmap")
+        .off(".mapUnitUi")
+        .on("shown.bs.modal.mapUnitUi", function () {
+            document.body.classList.add("modal-open");
+        })
+        .on("hidden.bs.modal.mapUnitUi", function () {
+            cleanupMapUnitModalState();
+        });
 
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -398,17 +433,18 @@ function BindDataMapUnit() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old DataTables sizing markup
     }
 
     table = $("#tbldata").DataTable({
-        scrollY: '300px',          // CSS stretches the scroll body inside the table card
+        scrollY: '100%',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: false,
         scroller: false,          // UI only: normal DataTables scroll inside card
         deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -441,8 +477,13 @@ function BindDataMapUnit() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                refreshMapUnitDataTable("#tbldata", 30);
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing, .dt-processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                refreshMapUnitDataTable("#tbldata", 30);
             }
         },
         columns: [
@@ -626,9 +667,7 @@ function BindDataMapUnit() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "UNIT SUS No" // Add custom placeholder
         },
-        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
-            "rt" +
-            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -654,30 +693,40 @@ function BindDataMapUnit() {
                     WaterMarkOnPdf(doc)
                 }
             }],
-        // ✅ ADD: initComplete for zoom handling
         initComplete: function () {
-            // Force DataTables to calculate optimal widths
             safeAdjustMapUnitDataTable(this.api());
+            refreshMapUnitDataTable("#tbldata", 20);
 
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    safeAdjustMapUnitDataTable(table);
-                }, 100);
-            });
+            $(window)
+                .off("resize.mapUnitDataTable")
+                .on("resize.mapUnitDataTable", function () {
+                    window.clearTimeout(window.__mapUnitResizeTimer);
+                    window.__mapUnitResizeTimer = window.setTimeout(function () {
+                        refreshMapUnitDataTable("#tbldata", 0);
+                    }, 120);
+                });
         },
         drawCallback: function (settings) {
-            // Recalculate widths on each data load
             safeAdjustMapUnitDataTable(this.api());
+            refreshMapUnitDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Map Unit tooltip skipped:", error);
+                    }
+                });
+            }
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -1094,3 +1143,18 @@ function DeleteMapUnitMultiple(Id) {
         }
     });
 }
+
+/* ==============================================================
+   PAGE-LOCAL UI EVENTS
+   No global ModernCSS file is changed.
+================================================================ */
+
+$(document)
+    .off("draw.dt.mapUnitUi")
+    .on("draw.dt.mapUnitUi", function (event, settings) {
+        var tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            refreshMapUnitDataTable("#tbldata", 20);
+        }
+    });

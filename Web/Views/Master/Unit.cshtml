@@ -12,9 +12,9 @@
             <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
                         <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
-                        <span>&gt;</span>
+                        <span class="mx-1">&gt;</span>
                         <span>Unit Details</span>
                     </h1>
                 </div>
@@ -23,170 +23,172 @@
     </div>
 </header>
 
-<div class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-unit-page">
-    <div class="card ecms-card ecms-unit-shell">
-        <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
+<div class="ecms-screen-stage ecms-bg">
+    <main class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-unit-page">
+        <div class="card ecms-card ecms-unit-shell">
+            <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
 
-            <div class="ecms-page-title ecms-unit-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
-                <div class="d-flex align-items-center gap-2 ecms-min-0">
-                    <span class="ecms-title-icon">
-                        <i class="fa fa-building"></i>
+                <div class="ecms-page-title ecms-unit-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                    <div class="d-flex align-items-center gap-2 ecms-min-0">
+                        <span class="ecms-title-icon">
+                            <i class="fa fa-building"></i>
+                        </span>
+                        <div class="ecms-min-0">
+                            <h3>Unit Details</h3>
+                            <p class="ecms-title-subtitle">Create, update and manage unit records</p>
+                        </div>
+                    </div>
+
+                    <span class="badge bg-primary ecms-badge ecms-unit-pill">
+                        <i class="fa fa-database"></i>
+                        Master
                     </span>
-                    <div class="ecms-min-0">
-                        <h3>Unit Details</h3>
-                        <p class="ecms-title-subtitle">Create, update and manage unit records</p>
-                    </div>
                 </div>
 
-                <span class="badge bg-primary ecms-badge ecms-unit-pill">
-                    <i class="fa fa-database"></i>
-                    Master
-                </span>
-            </div>
+                <div class="ecms-section ecms-form-section ecms-unit-form-section flex-shrink-0">
+                    <form action="" id="SaveForm" method="post" name="SaveForm">
+                        <div class="row g-2 align-items-end">
 
-            <div class="ecms-section ecms-form-section ecms-unit-form-section flex-shrink-0">
-                <form action="" id="SaveForm" method="post" name="SaveForm">
-                    <div class="row g-2 align-items-end">
+                            <div class="col-12 col-lg-4 col-xl-3">
+                                <label class="form-label ecms-unit-label" for="txtUnitDesc">
+                                    <i class="fa fa-home"></i>
+                                    <span>Unit Name</span>
+                                    <i class="fas fa-asterisk mand1"></i>
+                                </label>
 
-                        <div class="col-12 col-lg-4 col-xl-3">
-                            <label class="form-label ecms-unit-label" for="txtUnitDesc">
-                                <i class="fa fa-home"></i>
-                                <span>Unit Name</span>
-                                <i class="fas fa-asterisk mand1"></i>
-                            </label>
+                                <textarea class="form-control form-control1 textarea-auto-height js-uppercase ecms-unit-control"
+                                          placeholder="Enter Unit"
+                                          id="txtUnitDesc"
+                                          name="txtUnitDesc"
+                                          rows="1"
+                                          maxlength="100"
+                                          data-val="true"
+                                          data-val-regex="Unit name must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
+                                          data-val-required="Unit Name is required."
+                                          data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$"></textarea>
 
-                            <textarea class="form-control form-control1 textarea-auto-height js-uppercase ecms-unit-control"
-                                      placeholder="Enter Unit"
-                                      id="txtUnitDesc"
-                                      name="txtUnitDesc"
-                                      rows="1"
-                                      maxlength="100"
-                                      data-val="true"
-                                      data-val-regex="Unit name must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
-                                      data-val-required="Unit Name is required."
-                                      data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$"></textarea>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitDesc" data-valmsg-replace="true"></span>
+                            </div>
 
-                            <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitDesc" data-valmsg-replace="true"></span>
-                        </div>
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+                                <label class="form-label ecms-unit-label" for="txtAbbreviation">
+                                    <i class="fa fa-font"></i>
+                                    <span>Unit Abbreviation</span>
+                                    <i class="fas fa-asterisk mand1"></i>
+                                </label>
 
-                        <div class="col-12 col-md-6 col-lg-4 col-xl-2">
-                            <label class="form-label ecms-unit-label" for="txtAbbreviation">
-                                <i class="fa fa-font"></i>
-                                <span>Unit Abbreviation</span>
-                                <i class="fas fa-asterisk mand1"></i>
-                            </label>
+                                <input class="form-control form-control1 js-uppercase ecms-unit-control"
+                                       placeholder="Abbreviation as Per Unit Name to be Displayed on I-Card"
+                                       id="txtAbbreviation"
+                                       name="txtAbbreviation"
+                                       maxlength="10"
+                                       data-val="true"
+                                       data-val-regex="Unit Abbreviation must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
+                                       data-val-required="Unit Abbreviation is required."
+                                       data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$" />
 
-                            <input class="form-control form-control1 js-uppercase ecms-unit-control"
-                                   placeholder="Abbreviation as Per Unit Name to be Displayed on I-Card"
-                                   id="txtAbbreviation"
-                                   name="txtAbbreviation"
-                                   maxlength="10"
-                                   data-val="true"
-                                   data-val-regex="Unit Abbreviation must contain at least one capital alphabet. Only A-Z, 0-9, & - / ( ) and single space allowed."
-                                   data-val-required="Unit Abbreviation is required."
-                                   data-val-regex-pattern="^(?![0-9 ]+$)(?=.*[A-Z])[A-Z0-9&\/()\-]+(?: [A-Z0-9&\/()\-]+)*$" />
+                                <span class="text-danger field-validation-valid" data-valmsg-for="txtAbbreviation" data-valmsg-replace="true"></span>
+                            </div>
 
-                            <span class="text-danger field-validation-valid" data-valmsg-for="txtAbbreviation" data-valmsg-replace="true"></span>
-                        </div>
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+                                <label class="form-label ecms-unit-label">
+                                    <i class="fa fa-check-circle"></i>
+                                    <span>Verify</span>
+                                    <i class="fas fa-asterisk mand1"></i>
+                                </label>
 
-                        <div class="col-12 col-md-6 col-lg-4 col-xl-2">
-                            <label class="form-label ecms-unit-label">
-                                <i class="fa fa-check-circle"></i>
-                                <span>Verify</span>
-                                <i class="fas fa-asterisk mand1"></i>
-                            </label>
+                                <div class="ecms-unit-radio-box d-flex flex-wrap gap-2">
+                                    <div class="form-check form-check-inline ecms-radio-pill ecms-unit-radio">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="IsVerify"
+                                               value="true"
+                                               id="isverifyyes"
+                                               data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="isverifyyes">Yes</label>
+                                    </div>
 
-                            <div class="ecms-unit-radio-box d-flex flex-wrap gap-2">
-                                <div class="form-check form-check-inline ecms-radio-pill ecms-unit-radio">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="IsVerify"
-                                           value="true"
-                                           id="isverifyyes"
-                                           data-val-regex-pattern="^[\w]*$">
-                                    <label class="form-check-label" for="isverifyyes">Yes</label>
+                                    <div class="form-check form-check-inline ecms-radio-pill ecms-unit-radio">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="IsVerify"
+                                               value="false"
+                                               id="isverifyno"
+                                               data-val-regex-pattern="^[\w]*$">
+                                        <label class="form-check-label" for="isverifyno">No</label>
+                                    </div>
                                 </div>
 
-                                <div class="form-check form-check-inline ecms-radio-pill ecms-unit-radio">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="IsVerify"
-                                           value="false"
-                                           id="isverifyno"
-                                           data-val-regex-pattern="^[\w]*$">
-                                    <label class="form-check-label" for="isverifyno">No</label>
+                                <span class="text-danger field-validation-valid" id="IsVerify-error"></span>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+                                <label class="form-label ecms-unit-label" for="txtSusno">
+                                    <i class="fa fa-hashtag"></i>
+                                    <span>Unit SUS No</span>
+                                    <i class="fas fa-asterisk mand1"></i>
+                                </label>
+
+                                <input class="form-control form-control1 isNumerictxt ecms-unit-control"
+                                       placeholder="Enter SUS No"
+                                       id="txtSusno"
+                                       name="txtSusno"
+                                       minlength="7"
+                                       maxlength="7"
+                                       data-val="true"
+                                       data-val-regex="Enter valid 7 digit SUS No. 0000000 is not allowed."
+                                       data-val-required="SUS No is required."
+                                       data-val-regex-pattern="^(?!0{7}$)\d{7}$" />
+
+                                <span class="text-danger field-validation-valid" data-valmsg-for="txtSusno" data-valmsg-replace="true"></span>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-1">
+                                <label class="form-label ecms-unit-label" for="txtSuffix">
+                                    <i class="fa fa-tag"></i>
+                                    <span>Suffix</span>
+                                    <i class="fas fa-asterisk mand1"></i>
+                                </label>
+
+                                <input class="form-control form-control-Alphabets js-uppercase ecms-unit-control"
+                                       placeholder="Enter Suffix"
+                                       id="txtSuffix"
+                                       name="txtSuffix"
+                                       maxlength="1"
+                                       data-val="true"
+                                       data-val-regex="Only capital letters Y, H, A, L, W, X, F, M, P, K, N allowed."
+                                       data-val-required="Suffix is required."
+                                       data-val-regex-pattern="^(?=.*[A-Z])[YHALWXFMPKN]$" />
+
+                                <span class="text-danger field-validation-valid" data-valmsg-for="txtSuffix" data-valmsg-replace="true"></span>
+                            </div>
+
+                            <div class="col-12 col-lg-8 col-xl-2">
+                                <div class="ecms-form-actions ecms-unit-actions d-flex gap-2 justify-content-xl-end">
+                                    <input type="button" class="btn btn-primary ecms-btn-primary ecms-unit-save" value="Save" id="btnsave" />
+                                    <button type="button" id="btnReset" class="btn btn-danger ecms-btn-danger ecms-unit-reset">Reset</button>
                                 </div>
                             </div>
 
-                            <span class="text-danger field-validation-valid" id="IsVerify-error"></span>
                         </div>
+                    </form>
+                </div>
 
-                        <div class="col-12 col-md-6 col-lg-4 col-xl-2">
-                            <label class="form-label ecms-unit-label" for="txtSusno">
-                                <i class="fa fa-hashtag"></i>
-                                <span>Unit SUS No</span>
-                                <i class="fas fa-asterisk mand1"></i>
-                            </label>
-
-                            <input class="form-control form-control1 isNumerictxt ecms-unit-control"
-                                   placeholder="Enter SUS No"
-                                   id="txtSusno"
-                                   name="txtSusno"
-                                   minlength="7"
-                                   maxlength="7"
-                                   data-val="true"
-                                   data-val-regex="Enter valid 7 digit SUS No. 0000000 is not allowed."
-                                   data-val-required="SUS No is required."
-                                   data-val-regex-pattern="^(?!0{7}$)\d{7}$" />
-
-                            <span class="text-danger field-validation-valid" data-valmsg-for="txtSusno" data-valmsg-replace="true"></span>
-                        </div>
-
-                        <div class="col-12 col-md-6 col-lg-4 col-xl-1">
-                            <label class="form-label ecms-unit-label" for="txtSuffix">
-                                <i class="fa fa-tag"></i>
-                                <span>Suffix</span>
-                                <i class="fas fa-asterisk mand1"></i>
-                            </label>
-
-                            <input class="form-control form-control-Alphabets js-uppercase ecms-unit-control"
-                                   placeholder="Enter Suffix"
-                                   id="txtSuffix"
-                                   name="txtSuffix"
-                                   maxlength="1"
-                                   data-val="true"
-                                   data-val-regex="Only capital letters Y, H, A, L, W, X, F, M, P, K, N allowed."
-                                   data-val-required="Suffix is required."
-                                   data-val-regex-pattern="^(?=.*[A-Z])[YHALWXFMPKN]$" />
-
-                            <span class="text-danger field-validation-valid" data-valmsg-for="txtSuffix" data-valmsg-replace="true"></span>
-                        </div>
-
-                        <div class="col-12 col-lg-8 col-xl-2">
-                            <div class="ecms-form-actions ecms-unit-actions d-flex gap-2 justify-content-xl-end">
-                                <input type="button" class="btn btn-primary ecms-unit-save" value="Save" id="btnsave" />
-                                <button type="button" id="btnReset" class="btn btn-danger ecms-unit-reset">Reset</button>
-                            </div>
-                        </div>
-
+                <div class="ecms-section ecms-unit-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                    <div class="ecms-section-title flex-shrink-0">
+                        <i class="fa fa-list"></i>
+                        <span>Unit Records</span>
                     </div>
-                </form>
-            </div>
 
-            <div class="ecms-section ecms-unit-table-section d-flex flex-column flex-grow-1 ecms-min-0">
-                <div class="ecms-section-title flex-shrink-0">
-                    <i class="fa fa-list"></i>
-                    <span>Unit Records</span>
+                    <div class="ecms-dt-wrap ecms-unit-table-wrap flex-grow-1 ecms-min-0">
+                        <table class="table table-striped table-hover ecms-dt-table ecms-unit-datatable" role="grid" id="tbldata" aria-label="Unit records">
+                        </table>
+                    </div>
                 </div>
 
-                <div class="ecms-unit-table-wrap flex-grow-1 ecms-min-0">
-                    <table class="table table-striped table-hover table-bordered dataTable ecms-unit-datatable" role="grid" id="tbldata">
-                    </table>
-                </div>
             </div>
-
         </div>
-    </div>
+    </main>
 </div>
 
 <script asp-src-include="~/developerjs/Unit.js"></script>

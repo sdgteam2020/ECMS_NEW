@@ -12,7 +12,7 @@
             <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
                         <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
                         <span>&gt;</span>
                         <span>Unit Details</span>
@@ -23,50 +23,52 @@
     </div>
 </header>
 
-<div class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-mapunit-page">
-    <div class="card ecms-card ecms-mapunit-shell">
-        <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
+<div class="ecms-screen-stage ecms-bg">
+    <main class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-mapunit-page">
+        <div class="card ecms-card ecms-mapunit-shell">
+            <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
 
-            <div class="ecms-page-title ecms-mapunit-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
-                <div class="d-flex align-items-center gap-2 ecms-min-0">
-                    <span class="ecms-title-icon">
-                        <i class="fa fa-sitemap"></i>
-                    </span>
-                    <div class="ecms-min-0">
-                        <h3>Mapped Unit Details</h3>
-                        <p class="ecms-title-subtitle">View, add, update and verify unit mapping records</p>
+                <div class="ecms-page-title ecms-mapunit-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                    <div class="d-flex align-items-center gap-2 ecms-min-0">
+                        <span class="ecms-title-icon">
+                            <i class="fa fa-sitemap"></i>
+                        </span>
+                        <div class="ecms-min-0">
+                            <h3>Mapped Unit Details</h3>
+                            <p class="ecms-title-subtitle">View, add, update and verify unit mapping records</p>
+                        </div>
+                    </div>
+
+                    <button type="button" id="btnMapUnitAdd" class="btn btn-success ecms-mapunit-add-btn">
+                        <i class="fa fa-plus"></i>
+                        <span>Add Unit</span>
+                    </button>
+                </div>
+
+                <div class="ecms-section ecms-mapunit-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                    <div class="ecms-section-title flex-shrink-0">
+                        <i class="fa fa-list"></i>
+                        <span>Unit Mapping Records</span>
+                    </div>
+
+                    <div class="ecms-dt-wrap ecms-mapunit-table-wrap flex-grow-1 ecms-min-0">
+                        <table class="table table-striped table-hover table-bordered dataTable ecms-mapunit-datatable" width="100%" role="grid" id="tbldata">
+                        </table>
                     </div>
                 </div>
 
-                <button type="button" id="btnMapUnitAdd" class="btn btn-success ecms-mapunit-add-btn">
-                    <i class="fa fa-plus"></i>
-                    <span>Add Unit</span>
-                </button>
             </div>
-
-            <div class="ecms-section ecms-mapunit-table-section d-flex flex-column flex-grow-1 ecms-min-0">
-                <div class="ecms-section-title flex-shrink-0">
-                    <i class="fa fa-list"></i>
-                    <span>Unit Mapping Records</span>
-                </div>
-
-                <div class="ecms-mapunit-table-wrap flex-grow-1 ecms-min-0">
-                    <table class="table table-striped table-hover table-bordered dataTable ecms-mapunit-datatable" width="100%" role="grid" id="tbldata">
-                    </table>
-                </div>
-            </div>
-
         </div>
-    </div>
+    </main>
 </div>
 
-<div class="modal ecms-mapunit-modal" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false" data-backdrop="false" data-bs-keyboard="true" data-keyboard="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="dialog">
+<div class="modal fade ecms-mapunit-modal" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-backdrop="static" data-bs-keyboard="true" data-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ecms-modal-lg" role="document">
         <div class="modal-content">
 
             <div class="modal-header ecms-mapunit-modal-header">
-                <div class="d-flex align-items-center gap-2 ecms-min-0">
-                    <span class="ecms-title-icon ecms-mapunit-modal-icon">
+                <div class="ecms-mapunit-modal-heading ecms-min-0">
+                    <span class="ecms-mapunit-modal-icon" aria-hidden="true">
                         <i class="fa fa-plus-circle"></i>
                     </span>
                     <div class="ecms-min-0">
@@ -75,7 +77,7 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn-close ecms-mapunit-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close ecms-mapunit-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" title="Close"></button>
             </div>
 
             <div class="modal-body ecms-mapunit-modal-body">

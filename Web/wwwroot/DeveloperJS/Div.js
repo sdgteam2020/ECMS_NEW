@@ -1,5 +1,28 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var DivId;
+function refreshDivDataTable(tableSelector, delay) {
+    var wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            var $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                safeAdjustDivDataTable($(tableSelector).DataTable());
+            }
+        } catch (error) {
+            console.warn("Div / Branch / SubArea DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
 function safeAdjustDivDataTable(api) {
     if (!api) {
         return;
@@ -99,17 +122,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old DataTables sizing markup
     }
     const columns = getColumnsForDiv();
     table = $("#tbldata").DataTable({
-        scrollY: '300px',          // CSS stretches the scroll body inside the table card
+        scrollY: '100%',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: false,
         scroller: false,          // UI only: normal DataTables scroll inside card
         deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -141,10 +165,14 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-
+                refreshDivDataTable("#tbldata", 30);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing, .dt-processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                refreshDivDataTable("#tbldata", 30);
             }
         },
         columns: columns,
@@ -170,9 +198,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
-            "rt" +
-            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -199,32 +225,42 @@ function BindData() {
                 }
             }],
         initComplete: function () {
-            // Add tooltip to the search input box
-            let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search Comd/Abbreviation');
+            let searchBox = $("#tbldata_wrapper div.dataTables_filter input");
+            searchBox.attr("title", "Search Comd, Corps, Division, Branch or Sub Area");
 
-            // Force DataTables to calculate optimal widths
             safeAdjustDivDataTable(this.api());
+            refreshDivDataTable("#tbldata", 20);
 
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    safeAdjustDivDataTable(table);
-                }, 100);
-            });
+            $(window)
+                .off("resize.divDataTable")
+                .on("resize.divDataTable", function () {
+                    window.clearTimeout(window.__divResizeTimer);
+                    window.__divResizeTimer = window.setTimeout(function () {
+                        refreshDivDataTable("#tbldata", 0);
+                    }, 120);
+                });
         },
         drawCallback: function (settings) {
-            // Recalculate widths on each data load
             safeAdjustDivDataTable(this.api());
+            refreshDivDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Div / Branch / SubArea tooltip skipped:", error);
+                    }
+                });
+            }
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -508,3 +544,18 @@ function getColumnsForDiv() {
     ];
     return columns;
 }
+
+/* ==============================================================
+   PAGE-LOCAL UI EVENTS
+   No global ModernCSS file is changed.
+================================================================ */
+
+$(document)
+    .off("draw.dt.divUi")
+    .on("draw.dt.divUi", function (event, settings) {
+        var tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            refreshDivDataTable("#tbldata", 20);
+        }
+    });

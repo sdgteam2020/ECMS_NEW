@@ -12,19 +12,19 @@
             <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
                         @if (ViewBag.RoleName == "admin")
                         {
                             <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
-                            <span>&gt;</span>
+                            <span class="mx-1">&gt;</span>
                             <span>Unit Move Request</span>
                         }
                         else
                         {
                             <a href="/Home/Index" class="mr-2">Home</a>
-                            <span>&gt;</span>
+                            <span class="mx-1">&gt;</span>
                             <a href="/Home/Task" class="mr-2">Task</a>
-                            <span>&gt;</span>
+                            <span class="mx-1">&gt;</span>
                             <span>Unit Move Request</span>
                         }
                     </h1>
@@ -34,55 +34,57 @@
     </div>
 </header>
 
-<div class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-mapunitchange-page">
-    <div class="card ecms-card ecms-mapunitchange-shell">
-        <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
+<div class="ecms-screen-stage ecms-bg">
+    <main class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-mapunitchange-page">
+        <div class="card ecms-card ecms-mapunitchange-shell">
+            <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
 
-            <span class="d-none" id="spnRoleName">@ViewBag.RoleName</span>
+                <span class="d-none" id="spnRoleName">@ViewBag.RoleName</span>
 
-            <div class="ecms-page-title ecms-mapunitchange-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
-                <div class="d-flex align-items-center gap-2 ecms-min-0">
-                    <span class="ecms-title-icon">
-                        <i class="fa fa-exchange"></i>
-                    </span>
-                    <div class="ecms-min-0">
-                        <h3>Details of Unit Move</h3>
-                        <p class="ecms-title-subtitle">Track unit move requests, remarks, status and approval actions</p>
+                <div class="ecms-page-title ecms-mapunitchange-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                    <div class="d-flex align-items-center gap-2 ecms-min-0">
+                        <span class="ecms-title-icon">
+                            <i class="fa fa-exchange"></i>
+                        </span>
+                        <div class="ecms-min-0">
+                            <h3>Details of Unit Move</h3>
+                            <p class="ecms-title-subtitle">Track unit move requests, remarks, status and approval actions</p>
+                        </div>
+                    </div>
+
+                    <div class="ecms-mapunitchange-actions d-flex align-items-center gap-2 flex-wrap">
+                        @if (ViewBag.RoleName == "admin")
+                        {
+                            <span class="badge bg-light text-primary ecms-badge ecms-admin-pill">
+                                <i class="fa fa-user-shield"></i>
+                                Admin View
+                            </span>
+                        }
+                        else
+                        {
+                            <button type="button" id="btnAdd" class="btn btn-success ecms-btn-success ecms-add-btn">
+                                <i class="fa fa-plus"></i>
+                                <span>Add</span>
+                            </button>
+                        }
                     </div>
                 </div>
 
-                <div class="ecms-mapunitchange-actions d-flex align-items-center gap-2 flex-wrap">
-                    @if (ViewBag.RoleName == "admin")
-                    {
-                        <span class="badge bg-light text-primary ecms-badge ecms-admin-pill">
-                            <i class="fa fa-user-shield"></i>
-                            Admin View
-                        </span>
-                    }
-                    else
-                    {
-                        <button type="button" id="btnAdd" class="btn btn-success ecms-add-btn">
-                            <i class="fa fa-plus"></i>
-                            <span>Add</span>
-                        </button>
-                    }
+                <div class="ecms-section ecms-mapunitchange-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                    <div class="ecms-section-title flex-shrink-0">
+                        <i class="fa fa-list"></i>
+                        <span>Unit Move Request Records</span>
+                    </div>
+
+                    <div class="ecms-dt-wrap ecms-mapunitchange-table-wrap flex-grow-1 ecms-min-0">
+                        <table class="table table-striped table-hover ecms-dt-table ecms-mapunitchange-datatable" role="grid" id="tbldata" aria-label="Unit move request records">
+                        </table>
+                    </div>
                 </div>
+
             </div>
-
-            <div class="ecms-section ecms-mapunitchange-table-section d-flex flex-column flex-grow-1 ecms-min-0">
-                <div class="ecms-section-title flex-shrink-0">
-                    <i class="fa fa-list"></i>
-                    <span>Unit Move Request Records</span>
-                </div>
-
-                <div class="ecms-mapunitchange-table-wrap flex-grow-1 ecms-min-0">
-                    <table class="table table-striped table-hover table-bordered dataTable ecms-mapunitchange-datatable" role="grid" id="tbldata">
-                    </table>
-                </div>
-            </div>
-
         </div>
-    </div>
+    </main>
 </div>
 
 <script asp-src-include="~/developerjs/MapUnitChange.js"></script>

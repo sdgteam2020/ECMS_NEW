@@ -2,6 +2,81 @@
 let ComdId = 0;
 let Orderby = 0;
 
+function prepareCommandModalRoot() {
+    var modalElement = document.getElementById("treeview");
+
+    if (!modalElement) {
+        return null;
+    }
+
+    // Keep this page's modal outside transformed/layout containers so the
+    // Bootstrap backdrop always remains behind the dialog.
+    if (modalElement.parentElement !== document.body) {
+        document.body.appendChild(modalElement);
+    }
+
+    return modalElement;
+}
+
+function showCommandHierarchyModal() {
+    var modalElement = prepareCommandModalRoot();
+
+    if (!modalElement) {
+        return;
+    }
+
+    if (window.bootstrap && bootstrap.Modal) {
+        bootstrap.Modal.getOrCreateInstance(modalElement, {
+            backdrop: true,
+            keyboard: true,
+            focus: true
+        }).show();
+        return;
+    }
+
+    if ($.fn.modal) {
+        $("#treeview").modal("show");
+    }
+}
+
+function cleanupCommandModalState() {
+    if (document.querySelector(".modal.show")) {
+        document.body.classList.add("modal-open");
+        return;
+    }
+
+    document.querySelectorAll(".modal-backdrop").forEach(function (element) {
+        element.remove();
+    });
+
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
+}
+
+function refreshCommandDataTable(tableSelector, delay) {
+    var wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            var $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                safeAdjustCommandDataTable($(tableSelector).DataTable());
+            }
+        } catch (error) {
+            console.warn("Command / PSO DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
 function safeAdjustCommandDataTable(api) {
     if (!api) {
         return;
@@ -14,6 +89,17 @@ function safeAdjustCommandDataTable(api) {
     }
 }
 $(function () {
+    prepareCommandModalRoot();
+
+    $("#treeview")
+        .off(".commandUi")
+        .on("shown.bs.modal.commandUi", function () {
+            document.body.classList.add("modal-open");
+        })
+        .on("hidden.bs.modal.commandUi", function () {
+            cleanupCommandModalState();
+        });
+
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     applyDataTableSearchValidation('#tbldata');
@@ -59,18 +145,19 @@ function BindData(callback) {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old DataTables sizing markup
     }
 
     const columns = getColumnsForCommand();
     table = $("#tbldata").DataTable({
-        scrollY: '300px',          // UI only: final height is controlled by CSS inside table card
+        scrollY: '100%',          // UI only: final height is controlled by CSS inside table card
         scrollX: true,            // ✅ horizontal scroll
         scrollCollapse: false,
         scroller: false,          // UI only: use normal DataTables body scroll controlled by common CSS
         deferScroll: false,
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -102,10 +189,14 @@ function BindData(callback) {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-
+                refreshCommandDataTable("#tbldata", 30);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing, .dt-processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                refreshCommandDataTable("#tbldata", 30);
             }
         },
         columns: columns,
@@ -131,9 +222,7 @@ function BindData(callback) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'ecms-dt-toolbar dt-top'<'dt-length-col'l><'dt-buttons-col'B><'dt-filter-col'f>>" +
-            "rt" +
-            "<'ecms-dt-footer'<'dt-info-col'i><'dt-page-col'p>>",
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -160,31 +249,42 @@ function BindData(callback) {
                 }
             }],
         initComplete: function () {
-            // Add tooltip to the search input box
-            let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search Comd/Abbreviation');
-            // Force DataTables to calculate optimal widths
-            safeAdjustCommandDataTable(this.api());
+            let searchBox = $("#tbldata_wrapper div.dataTables_filter input");
+            searchBox.attr("title", "Search Comd/Abbreviation");
 
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    safeAdjustCommandDataTable(table);
-                }, 100);
-            });
+            safeAdjustCommandDataTable(this.api());
+            refreshCommandDataTable("#tbldata", 20);
+
+            $(window)
+                .off("resize.commandDataTable")
+                .on("resize.commandDataTable", function () {
+                    window.clearTimeout(window.__commandResizeTimer);
+                    window.__commandResizeTimer = window.setTimeout(function () {
+                        refreshCommandDataTable("#tbldata", 0);
+                    }, 120);
+                });
         },
         drawCallback: function (settings) {
-            // Recalculate widths on each data load
             safeAdjustCommandDataTable(this.api());
+            refreshCommandDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Command / PSO tooltip skipped:", error);
+                    }
+                });
+            }
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -202,7 +302,7 @@ function BindData(callback) {
             $("#tbldata tbody").off("click", ".cls-btntreeview").on("click", ".cls-btntreeview", function () {
                 var rowData = table.row($(this).closest("tr")).data();
                 if (rowData.ComdId != null) {
-                    $("#treeview").modal('show');
+                    showCommandHierarchyModal();
                     GetBinaryTree(rowData.ComdId)
                 }
                 else {
@@ -676,3 +776,18 @@ function getColumnsForCommand() {
     ];
     return columns;
 }
+
+/* ==============================================================
+   PAGE-LOCAL UI EVENTS
+   No global ModernCSS file is changed.
+================================================================ */
+
+$(document)
+    .off("draw.dt.commandUi")
+    .on("draw.dt.commandUi", function (event, settings) {
+        var tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            refreshCommandDataTable("#tbldata", 20);
+        }
+    });

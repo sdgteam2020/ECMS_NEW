@@ -12,9 +12,9 @@
             <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
                         <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
-                        <span>&gt;</span>
+                        <span class="mx-1">&gt;</span>
                         <span>Bde Details</span>
                     </h1>
                 </div>
@@ -23,120 +23,122 @@
     </div>
 </header>
 
-<div class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-bde-page">
-    <div class="card ecms-card ecms-bde-shell">
-        <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
+<div class="ecms-screen-stage ecms-bg">
+    <main class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-bde-page">
+        <div class="card ecms-card ecms-bde-shell">
+            <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
 
-            <div class="ecms-page-title ecms-bde-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
-                <div class="d-flex align-items-center gap-2 ecms-min-0">
-                    <span class="ecms-title-icon">
-                        <i class="fa fa-building"></i>
+                <div class="ecms-page-title ecms-bde-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                    <div class="d-flex align-items-center gap-2 ecms-min-0">
+                        <span class="ecms-title-icon">
+                            <i class="fa fa-building"></i>
+                        </span>
+                        <div class="ecms-min-0">
+                            <h3>Bde Details</h3>
+                            <p class="ecms-title-subtitle">Create, update and manage brigade records</p>
+                        </div>
+                    </div>
+
+                    <span class="badge bg-primary ecms-badge ecms-bde-pill">
+                        <i class="fa fa-database"></i>
+                        Master
                     </span>
-                    <div class="ecms-min-0">
-                        <h3>Bde Details</h3>
-                        <p class="ecms-title-subtitle">Create, update and manage brigade records</p>
-                    </div>
                 </div>
 
-                <span class="badge bg-primary ecms-badge ecms-bde-pill">
-                    <i class="fa fa-database"></i>
-                    Master
-                </span>
-            </div>
+                <div class="ecms-section ecms-form-section ecms-bde-form-section flex-shrink-0">
+                    <span id="SpnTxnId" class="d-none">0</span>
+                    <span class="spnBdeCatId d-none">0</span>
 
-            <div class="ecms-section ecms-form-section ecms-bde-form-section flex-shrink-0">
-                <span id="SpnTxnId" class="d-none">0</span>
-                <span class="spnBdeCatId d-none">0</span>
+                    <form action="" id="SaveForm" method="post" name="SaveForm">
+                        <div class="row g-2 align-items-end">
 
-                <form action="" id="SaveForm" method="post" name="SaveForm">
-                    <div class="row g-2 align-items-end">
+                            <div class="col-12 col-md-6 col-xl-2">
+                                <label class="form-label ecms-bde-label" for="ddlCommand">
+                                    <i class="fa fa-university"></i>
+                                    <span>Comd / PSO</span>
+                                    <i class="fa fa-asterisk mand1"></i>
+                                </label>
 
-                        <div class="col-12 col-md-6 col-xl-2">
-                            <label class="form-label ecms-bde-label" for="ddlCommand">
-                                <i class="fa fa-university"></i>
-                                <span>Comd / PSO</span>
-                                <i class="fa fa-asterisk mand1"></i>
-                            </label>
-
-                            <select class="form-select full-width"
-                                    name="ddlCommand"
-                                    required
-                                    id="ddlCommand">
-                                <option value="0">Select Comd / PSO</option>
-                            </select>
-                        </div>
-
-                        <div class="col-12 col-md-6 col-xl-3">
-                            <label class="form-label ecms-bde-label" for="ddlCorps">
-                                <i class="fa fa-map-marker"></i>
-                                <span>Corps / Dte / Area</span>
-                                <i class="fa fa-asterisk mand1"></i>
-                            </label>
-
-                            <select class="form-select full-width"
-                                    name="ddlCorps"
-                                    required
-                                    id="ddlCorps">
-                                <option value="0">Select Corps / Dte / Area</option>
-                            </select>
-                        </div>
-
-                        <div class="col-12 col-md-6 col-xl-3">
-                            <label class="form-label ecms-bde-label" for="ddlDiv">
-                                <i class="fa fa-code-fork"></i>
-                                <span>Div / Branch / SubArea</span>
-                                <i class="fa fa-asterisk mand1"></i>
-                            </label>
-
-                            <select class="form-select full-width"
-                                    name="ddlDiv"
-                                    required
-                                    id="ddlDiv">
-                                <option value="0">Select Div / Branch / SubArea</option>
-                            </select>
-                        </div>
-
-                        <div class="col-12 col-md-6 col-xl-2">
-                            <label class="form-label ecms-bde-label" for="txtBdeName">
-                                <i class="fa fa-flag"></i>
-                                <span>Bde</span>
-                                <i class="fa fa-asterisk mand1"></i>
-                            </label>
-
-                            <input class="form-control Alphanumeric"
-                                   placeholder="Enter Bde"
-                                   id="txtBdeName"
-                                   maxlength="20"
-                                   required
-                                   pattern="^[a-zA-Z0-9 ]*$"
-                                   title="Only Alphabets and Numbers allowed" />
-                        </div>
-
-                        <div class="col-12 col-xl-2">
-                            <div class="ecms-form-actions ecms-bde-actions d-flex gap-2 justify-content-xl-end" id="msg">
-                                <input type="button" class="btn btn-primary" value="Save" id="btnsave" />
-                                <button type="button" id="btnReset" class="btn btn-danger">Reset</button>
+                                <select class="form-select full-width"
+                                        name="ddlCommand"
+                                        required
+                                        id="ddlCommand">
+                                    <option value="0">Select Comd / PSO</option>
+                                </select>
                             </div>
+
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <label class="form-label ecms-bde-label" for="ddlCorps">
+                                    <i class="fa fa-map-marker"></i>
+                                    <span>Corps / Dte / Area</span>
+                                    <i class="fa fa-asterisk mand1"></i>
+                                </label>
+
+                                <select class="form-select full-width"
+                                        name="ddlCorps"
+                                        required
+                                        id="ddlCorps">
+                                    <option value="0">Select Corps / Dte / Area</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <label class="form-label ecms-bde-label" for="ddlDiv">
+                                    <i class="fa fa-code-fork"></i>
+                                    <span>Div / Branch / SubArea</span>
+                                    <i class="fa fa-asterisk mand1"></i>
+                                </label>
+
+                                <select class="form-select full-width"
+                                        name="ddlDiv"
+                                        required
+                                        id="ddlDiv">
+                                    <option value="0">Select Div / Branch / SubArea</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xl-2">
+                                <label class="form-label ecms-bde-label" for="txtBdeName">
+                                    <i class="fa fa-flag"></i>
+                                    <span>Bde</span>
+                                    <i class="fa fa-asterisk mand1"></i>
+                                </label>
+
+                                <input class="form-control Alphanumeric"
+                                       placeholder="Enter Bde"
+                                       id="txtBdeName"
+                                       maxlength="20"
+                                       required
+                                       pattern="^[a-zA-Z0-9 ]*$"
+                                       title="Only Alphabets and Numbers allowed" />
+                            </div>
+
+                            <div class="col-12 col-xl-2">
+                                <div class="ecms-form-actions ecms-bde-actions d-flex gap-2 justify-content-xl-end" id="msg">
+                                    <input type="button" class="btn btn-primary ecms-btn-primary" value="Save" id="btnsave" />
+                                    <button type="button" id="btnReset" class="btn btn-danger ecms-btn-danger">Reset</button>
+                                </div>
+                            </div>
+
                         </div>
+                    </form>
+                </div>
 
+                <div class="ecms-section ecms-bde-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                    <div class="ecms-section-title flex-shrink-0">
+                        <i class="fa fa-list"></i>
+                        <span>Bde Records</span>
                     </div>
-                </form>
-            </div>
 
-            <div class="ecms-section ecms-bde-table-section d-flex flex-column flex-grow-1 ecms-min-0">
-                <div class="ecms-section-title flex-shrink-0">
-                    <i class="fa fa-list"></i>
-                    <span>Bde Records</span>
+                    <div class="ecms-dt-wrap ecms-bde-table-wrap flex-grow-1 ecms-min-0">
+                        <table class="table table-striped table-hover ecms-dt-table ecms-bde-datatable" role="grid" id="tbldata" aria-label="Brigade records">
+                        </table>
+                    </div>
                 </div>
 
-                <div class="ecms-bde-table-wrap flex-grow-1 ecms-min-0">
-                    <table class="table table-striped table-hover table-bordered dataTable ecms-bde-datatable" role="grid" id="tbldata">
-                    </table>
-                </div>
             </div>
-
         </div>
-    </div>
+    </main>
 </div>
 
 <script asp-src-include="~/developerjs/mtables.js"></script>
