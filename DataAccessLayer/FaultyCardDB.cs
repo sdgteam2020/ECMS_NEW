@@ -347,7 +347,7 @@ namespace DataAccessLayer
                     // SQL query to update the step counter (StepId = 4 for acceptance)
                     query2 = @" UPDATE TrnStepCounter set StepId = 4 where RequestId=@RequestId 
                                 UPDATE TrnFwds set IsComplete = 0 where TrnFwdId=@TrnFwdId 
-                                UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null, CardExportedByAspNetUserId=null, CardExportedByUserId=null, CardPrintedByAspNetUserId=null, CardPrintedByUserId=null where RequestId=@RequestId ";
+                                UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardPrintedOn=null, CardExportedOn=null, CardExportedByAspNetUserId=null, CardExportedByUserId=null, CardPrintedByAspNetUserId=null, CardPrintedByUserId=null where RequestId=@RequestId ";
                     await db.ExecuteAsync(query2, new { dTO.RequestId, dTO.TrnFwdId }, transaction: transaction);
 
                 }
@@ -412,7 +412,7 @@ namespace DataAccessLayer
                     // SQL queries to reset the XmlFiles and update the step counter for rejection
                     query3 = @" UPDATE AFSAC2.dbo.XmlFilesFwdLog SET XmlFiles=@XmlFiles WHERE RequestId=@RequestId
                                 UPDATE TrnStepCounter set StepId = 9 where RequestId=@RequestId
-                                UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardExportedOn=null, CardExportedByAspNetUserId=null, CardExportedByUserId=null, CardPrintedByAspNetUserId=null, CardPrintedByUserId=null where RequestId=@RequestId
+                                UPDATE TrnICardRequest set CardSerialNo=null ,ChipNo=null ,CardPrintedOn=null, CardExportedOn=null, CardExportedByAspNetUserId=null, CardExportedByUserId=null, CardPrintedByAspNetUserId=null, CardPrintedByUserId=null where RequestId=@RequestId
                                 Update BasicDetails set IsLock = 0 where BasicDetailId=@BasicDetailId";
                     await db.ExecuteAsync(query3, new { dTO.RequestId, XmlFiles, dTO.BasicDetailId }, transaction: transaction);
                 }

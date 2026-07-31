@@ -350,21 +350,20 @@ namespace DataAccessLayer
                             );
                         }
                     }
+                }
 
-
-                    // 4. Delete child records first from old DB
-                    await db.ExecuteAsync(
-                        new CommandDefinition(@"
+                // 4. Delete child records first from old DB
+                await db.ExecuteAsync(
+                    new CommandDefinition(@"
                             DELETE FROM dbo.TrnUpload WHERE BasicDetailId IN @Ids;
                             DELETE FROM dbo.TrnIdentityInfo WHERE BasicDetailId IN @Ids;
                             DELETE FROM dbo.TrnAddress WHERE BasicDetailId IN @Ids;
                             DELETE FROM dbo.BasicDetails WHERE BasicDetailId IN @Ids;
                         ",
-                        new { Ids = ids },
-                        transaction,
-                        cancellationToken: cancellationToken)
-                    );
-                }
+                    new { Ids = ids },
+                    transaction,
+                    cancellationToken: cancellationToken)
+                );
 
                 transaction.Commit();
                 transaction2.Commit();
