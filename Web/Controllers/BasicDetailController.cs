@@ -101,6 +101,7 @@ namespace Web.Controllers
         private readonly IRegimentalBL regimentalBL;// For Regimental Database
         private readonly IRecordOfficeBL recordOfficeBL; // For Record Office
         private readonly ICompletedICardRequestBL _completedICardRequestBL; // For Completed I-Card Request
+        private readonly IHttpContextAccessor _httpContextAccessor;//Interface for accessing HTTP context details
         public const string SessionKeySalt = "_Salt";
 
         /// <summary>
@@ -116,7 +117,7 @@ namespace Web.Controllers
             , IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
            , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,
            IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL, IImageEncryptAndDecrypt imageEncryptAndDecrypt, IEncryptionSettingBL encryptionSettingBL,
-           IOROMappingBL oROMappingBL, IRegimentalBL regimentalBL, IRecordOfficeBL recordOfficeBL, ICompletedICardRequestBL _completedICardRequestBL)
+           IOROMappingBL oROMappingBL, IRegimentalBL regimentalBL, IRecordOfficeBL recordOfficeBL, ICompletedICardRequestBL _completedICardRequestBL, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -156,6 +157,7 @@ namespace Web.Controllers
             this.regimentalBL = regimentalBL;
             this.recordOfficeBL = recordOfficeBL;
             this._completedICardRequestBL = _completedICardRequestBL;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -7620,7 +7622,69 @@ namespace Web.Controllers
             }
 
         }
+        [HttpPost]
+        public async Task<IActionResult> GetCompletedHistoryPdf(string Request)
+        {
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            // Initialize the generic response object
+            DTOGenericResponse<byte[]> response = new DTOGenericResponse<byte[]>();
+            string ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
+            try
+            {
+                // Retrieve the basic detail record for the given RequestId
+                ICardHistoryResponseAll responseAll = await basicDetailBL.GetCompletedHistoryByRequestId(RequestId);
 
+                string PhotoImagePath = responseAll.BasicDetail.PhotoImagePath;
+                string SignatureImagePath = responseAll.BasicDetail.SignatureImagePath;
+
+                if (!string.IsNullOrWhiteSpace(PhotoImagePath) && !string.IsNullOrWhiteSpace(SignatureImagePath))
+                {
+                    // Define the root physical folder where images are stored
+                    string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                    // Build the full path for the photo image
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", PhotoImagePath);
+
+                    // Decrypt the photo image and assign it to the VM
+                    responseAll.BasicDetail.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                    // Build the full path for the signature image
+                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", SignatureImagePath);
+
+                    // Decrypt the signature image and assign it to the VM
+                    responseAll.BasicDetail.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+                    if (!string.IsNullOrWhiteSpace(responseAll.BasicDetail.PhotoInBase64) && !string.IsNullOrWhiteSpace(responseAll.BasicDetail.SignatureInBase64))
+                    {
+                        var now = DateTime.Now;
+                        string timestamp = $"{now:yyyy}{now:MMMM}{now:dd}{now:hh}{now:mm}{now:ss}";
+                        string pdfName = $"{responseAll.BasicDetail.ServiceNo}_{RequestId}_{timestamp}.pdf";
+                        response = await _completedICardRequestBL.GetCompletedHistoryPdf(responseAll, ipAddress);
+                        return File(response.Value, "application/pdf", pdfName);
+                    }
+                    else {
+                        return StatusCode(500, "Photo and Signature not found.");
+                    }
+                }
+                else
+                {
+                    return StatusCode(500, "Photo and Signature not found.");
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetCompletedHistory");
+                return StatusCode(500, "Photo and Signature not found.");
+            }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetCompletedHistory");
+                return StatusCode(500, "Internal Error.");
+            }
+
+        }
 
         #endregion
 

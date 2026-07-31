@@ -3487,26 +3487,15 @@ FROM
         {
             string query = string.Empty;
             
-            query = @"Select trnicrd.RequestId as ApplId,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,bd.NameAsPerRecord as NameAsPerRecord_1,basic_2.NameAsPerRecord as NameAsPerRecord_2,
-                        bd.DOB as DOB_1,basic_2.DOB as DOB_2,ISNULL(bd.DateOfCommissioning, basic_2.DateOfCommissioning) AS DateOfCommissioning,
-                        ran.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,
-                        munit.UnitName,Afor.Name ApplyFor,ty.name ICardType,
-                        trnadd.State as State_1,trnadd_2.State as State_2,
-                        trnadd.District as District_1,trnadd_2.District as District_2,
-                        trnadd.PS as PS_1,trnadd_2.PS as PS_2,
-                        trnadd.PO as PO_1,trnadd_2.PO as PO_2,
-                        trnadd.Tehsil as Tehsil_1,trnadd_2.Tehsil as Tehsil_2,
-                        trnadd.Village as Village_1,trnadd_2.Village as Village_2,
-                        trnadd.PinCode as PinCode_1,trnadd_2.PinCode as PinCode_2
+            query = @"Select trnicrd.RequestId as ApplId,bd.ServiceNo,bd.NameAsPerRecord,bd.DOB,bd.DateOfCommissioning,ran.RankAbbreviation,bd.FName,bd.LName,munit.UnitName,Afor.Name ApplyFor,ty.name ICardType,
+                        trnadd.State, trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode
                         from TrnICardRequest trnicrd
-                        LEFT JOIN BasicDetails bd on bd.BasicDetailId=trnicrd.BasicDetailId
-                        LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=trnicrd.BasicDetailId
-                        LEFT JOIN TrnAddress trnadd on trnadd.BasicDetailId = bd.BasicDetailId 
-                        LEFT JOIN AFSAC2.dbo.TrnAddress trnadd_2 on trnadd_2.BasicDetailId = basic_2.BasicDetailId
-                        inner join MApplyFor Afor on Afor.ApplyForId = ISNULL(basic_2.ApplyForId,bd.ApplyForId)
-                        inner join MRank ran on ran.RankId = ISNULL(basic_2.RankId,bd.RankId)
-                        inner join MapUnit mapunit on mapunit.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
-                        inner join MUnit munit on munit.UnitId=mapunit.UnitId 
+                        inner join BasicDetails bd on bd.BasicDetailId=trnicrd.BasicDetailId
+                        inner join TrnAddress trnadd on trnadd.BasicDetailId = bd.BasicDetailId 
+                        inner join MApplyFor Afor on Afor.ApplyForId = bd.ApplyForId
+                        inner join MRank ran on ran.RankId = bd.RankId
+                        inner join MapUnit mapunit on mapunit.UnitMapId = bd.UnitId
+                        inner join MUnit munit on munit.UnitId = mapunit.UnitId 
                         inner join MICardType ty on ty.TypeId = trnicrd.TypeId 
                         where trnicrd.RequestId in @Ids";
 
@@ -3523,23 +3512,23 @@ FROM
                                          Sno = sno++,
                                          ApplId = e.ApplId,
                                          ServiceNo = e.ServiceNo,
-                                         NameAsPerRecord = e.NameAsPerRecord_2 ?? e.NameAsPerRecord_1 ?? string.Empty,
-                                         DOB = DateOnly.FromDateTime((e.DOB_2 ?? e.DOB_1) ?? default(DateTime)),
+                                         NameAsPerRecord = e.NameAsPerRecord,
+                                         DOB = DateOnly.FromDateTime(e.DOB),
                                          DateOfCommissioning = DateOnly.FromDateTime(e.DateOfCommissioning),
                                          RankAbbreviation = e.RankAbbreviation,
-                                         FName = e.FName_2 ?? e.FName_1 ?? string.Empty,
-                                         LName = e.LName_2 ?? e.LName_1,
+                                         FName = e.FName,
+                                         LName = e.LName,
                                          UnitName = e.UnitName,
                                          ApplyFor = e.ApplyFor,
                                          ICardType = e.ICardType,
-                                         State = e.State_2 ?? e.State_1 ?? string.Empty,
-                                         District = e.District_2 ?? e.District_1 ?? string.Empty,
-                                         PS = e.PS_2 ?? e.PS_1,
-                                         PO = e.PO_2 ?? e.PO_1,
-                                         Tehsil = e.Tehsil_2 ?? e.Tehsil_1,
-                                         Village = e.Village_2 ?? e.Village_1,
-                                         PinCode = e.PinCode_2 ?? e.PinCode_1 ?? 0,
-                                         PermanentAddress = "Village - " + (e.Village_2 ?? e.Village_1 ?? "") + ", Post Office - " + (e.PO_2 ?? e.PO_1 ?? "") + ", Tehsil - " + (e.Tehsil_2 ?? e.Tehsil_1 ?? "") + ", District - " + (e.District_2 ?? e.District_1 ?? "") + ", State - " + (e.State_2 ?? e.State_1 ?? "") + ", Pin Code - " + (e.PinCode_2 ?? e.PinCode_1 ?? 0),
+                                         State = e.State ?? string.Empty,
+                                         District = e.District ?? string.Empty,
+                                         PS = e.PS ?? string.Empty,
+                                         PO = e.PO ?? string.Empty,
+                                         Tehsil = e.Tehsil ?? string.Empty,
+                                         Village = e.Village ?? string.Empty,
+                                         PinCode = e.PinCode,
+                                         PermanentAddress = "Village - " + e.Village + ", Post Office - " + e.PO + ", Tehsil - " + e.Tehsil  + ", District - " + e.District + ", State - " + e.State + ", Pin Code - " + e.PinCode,
                                      }).ToImmutableList();
                     CsvService csvService = new CsvService();
                     string csvData = csvService.GenerateCsv(allrecord);
@@ -3801,13 +3790,13 @@ FROM
                             begin
                             select profrom.ArmyNo FromArmyNo,usersfrom.DomainId FromDomain,profrom.Name FromProfile,ranlfrom.RankAbbreviation FromRank,
                             Getdate() FromDate,trnste.StepId from BasicDetails basi
-                            inner join TrnDomainMapping mapfrom on mapfrom.AspNetUsersId=basi.Updatedby 
+                            inner join TrnICardRequest req on  req.BasicDetailId = basi.BasicDetailId and req.StatusId=1
+                            inner join TrnStepCounter trnste on trnste.RequestId=req.RequestId
+                            inner join TrnDomainMapping mapfrom on mapfrom.Id=req.TrnDomainMappingId 
                             inner join AspNetUsers usersfrom on usersfrom.Id=mapfrom.AspNetUsersId 
                             left join UserProfile profrom on profrom.UserId=mapfrom.UserId 
                             inner join MRank ranlfrom on ranlfrom.RankId=profrom.RankId 
-                            inner join TrnICardRequest req on  req.BasicDetailId=basi.BasicDetailId and req.StatusId=1
-                            inner join TrnStepCounter trnste on trnste.RequestId=req.RequestId
-                            where trnste.RequestId=@RequestId
+                            where req.RequestId=@RequestId
                             end
                             else
                             begin
