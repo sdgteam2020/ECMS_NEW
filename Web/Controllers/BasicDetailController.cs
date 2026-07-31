@@ -44,6 +44,7 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
 using System.IO.Compression;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
@@ -101,6 +102,8 @@ namespace Web.Controllers
         private readonly IRegimentalBL regimentalBL;// For Regimental Database
         private readonly IRecordOfficeBL recordOfficeBL; // For Record Office
         private readonly ICompletedICardRequestBL _completedICardRequestBL; // For Completed I-Card Request
+        private readonly IHttpContextAccessor _httpContextAccessor;//Interface for accessing HTTP context details
+        private readonly IApplCloseBL applCloseBL; // For Application Close
         public const string SessionKeySalt = "_Salt";
 
         /// <summary>
@@ -116,7 +119,7 @@ namespace Web.Controllers
             , IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
            , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,
            IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL, IImageEncryptAndDecrypt imageEncryptAndDecrypt, IEncryptionSettingBL encryptionSettingBL,
-           IOROMappingBL oROMappingBL, IRegimentalBL regimentalBL, IRecordOfficeBL recordOfficeBL, ICompletedICardRequestBL _completedICardRequestBL)
+           IOROMappingBL oROMappingBL, IRegimentalBL regimentalBL, IRecordOfficeBL recordOfficeBL, ICompletedICardRequestBL _completedICardRequestBL, IHttpContextAccessor httpContextAccessor, IApplCloseBL applCloseBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -156,6 +159,8 @@ namespace Web.Controllers
             this.regimentalBL = regimentalBL;
             this.recordOfficeBL = recordOfficeBL;
             this._completedICardRequestBL = _completedICardRequestBL;
+            _httpContextAccessor = httpContextAccessor;
+            this.applCloseBL = applCloseBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -7901,6 +7906,87 @@ namespace Web.Controllers
             {
                 // Log any exception with an error code and context
                 _logger.LogError(1001, ex, "BasicDetail->GetClosedHistoryByRequestId");
+                response.Result = false;
+                response.Message = "Internal Error.";
+                response.Value = null;
+                return Json(response);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateClosedHistoryPDF(string RequestId)
+        {
+            string photoPath = string.Empty;
+            string signaturePath = string.Empty;
+            int decryptedRequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(RequestId, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            // Initialize the generic response object            
+            DTOGenericResponse<byte[]> response = new DTOGenericResponse<byte[]>();
+            try
+            {
+                   string ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
+                // Fetch the basic detail data for the given request ID
+                ICardHistoryResponseAll? cardHistoryResponseAll = await basicDetailBL.GetClosedHistoryByRequestId(decryptedRequestId);
+
+                if (cardHistoryResponseAll != null)
+                {
+                    photoPath = cardHistoryResponseAll.BasicDetail.PhotoImagePath;
+                    signaturePath = cardHistoryResponseAll.BasicDetail.SignatureImagePath;
+                    if (!string.IsNullOrEmpty(photoPath) || !string.IsNullOrEmpty(signaturePath))
+                    {
+                        // Set the physical path to the storage folder for images
+                        string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                        // Construct full path for the photo and decrypt it to Base64
+                        string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", photoPath);
+                        cardHistoryResponseAll.BasicDetail.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                        // Construct full path for the signature and decrypt it to Base64
+                        string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", signaturePath);
+                        cardHistoryResponseAll.BasicDetail.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+                        if (!string.IsNullOrWhiteSpace(cardHistoryResponseAll.BasicDetail.PhotoInBase64) && !string.IsNullOrWhiteSpace(cardHistoryResponseAll.BasicDetail.SignatureInBase64))
+                        {
+                            var now = DateTime.Now;
+                            string timestamp = $"{now:yyyy}{now:MMMM}{now:dd}{now:hh}{now:mm}{now:ss}";
+                            string pdfName = $"{cardHistoryResponseAll.BasicDetail.ServiceNo}_{RequestId}_{timestamp}.pdf";
+                            response = await applCloseBL.GenerateClosedHistoryPDF(cardHistoryResponseAll, ipAddress);
+                            return File(response.Value, "application/pdf", pdfName);
+                        }
+                        else
+                        {
+                            return StatusCode(500, "Photo and Signature not found.");
+                        }
+                    }
+                    else
+                    {
+                        response.Result = false;
+                        response.Message = "Photo or Signature path is missing.";
+                        response.Value = null;
+                        return Json(response);
+                    }
+                }
+                else
+                {
+                    // Return null if no basic detail found for the request ID                
+                    response.Result = false;
+                    response.Message = "RequestId not found.";
+                    response.Value = null;
+                    return Json(response);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GenerateClosedHistoryPDF");
+                response.Result = false;
+                response.Message = "Photo and Signature not found.";
+                response.Value = null;
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GenerateClosedHistoryPDF");
                 response.Result = false;
                 response.Message = "Internal Error.";
                 response.Value = null;

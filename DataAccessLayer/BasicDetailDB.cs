@@ -5510,8 +5510,65 @@ FROM
             try
             {
                 var card = await _context.TrnApplClose.FirstOrDefaultAsync(req => req.RequestId == RequestId);
-                if (!string.IsNullOrEmpty(card?.CardRequestHistoryJson))
-                    cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(card.CardRequestHistoryJson);
+                if (card != null)
+                {
+                    string? historyJson = card?.CardRequestHistoryJson;
+
+                    if (!string.IsNullOrWhiteSpace(historyJson))
+                    {
+                        cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                    }
+                    if (card?.DestructedCardId != null)
+                    {
+                        var destroyed = new DTOCardMovementHistoryResponse();
+                        destroyed = await (from dest in _context.TrnDestructionCards.AsNoTracking()
+                                           join user in _context.Users.AsNoTracking()
+                                              on dest.Updatedby equals user.Id
+                                           join profile in _context.UserProfile.AsNoTracking()
+                                              on dest.UpdatedbyUserId equals profile.UserId
+                                           join rank in _context.MRank.AsNoTracking()
+                                              on profile.RankId equals rank.RankId
+                                           where dest.DestructedCardId == card.DestructedCardId
+                                           select new DTOCardMovementHistoryResponse
+                                           {
+                                               StepName = "I-Card Destruction",
+                                               ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
+                                               ReportedOn = dest.DestructedOn.GetValueOrDefault(),
+                                               Remark = dest.Remark ?? string.Empty
+                                           }).FirstOrDefaultAsync();
+                        if (destroyed != null)
+                        {
+                            cardStatus.CardMovement.Add(destroyed);
+                        }
+                    }
+                    if(card?.Id != null)
+                    {
+                        var close = new DTOCardMovementHistoryResponse();
+                        close = await (from closeCard in _context.TrnApplClose.AsNoTracking()
+                                      join user in _context.Users.AsNoTracking()
+                                         on closeCard.Updatedby equals user.Id
+                                      join profile in _context.UserProfile.AsNoTracking()
+                                         on closeCard.Updatedby equals profile.UserId
+                                      join rank in _context.MRank.AsNoTracking()
+                                         on profile.RankId equals rank.RankId
+                                      where closeCard.Id == card.Id
+                                      select new DTOCardMovementHistoryResponse
+                                      {
+                                          StepName = "I-Card Closed",
+                                          ReportedBy = $"({user.DomainId}) {rank.RankAbbreviation} {profile.Name}",
+                                          ReportedOn = closeCard.UpdatedOn.GetValueOrDefault(),
+                                          Remark = closeCard.Remarks ?? string.Empty
+                                      }).FirstOrDefaultAsync();
+                        if (close != null)
+                        {
+                            cardStatus.CardMovement.Add(close);
+                            
+                        }
+                    }
+
+                }
+                //if (!string.IsNullOrEmpty(card?.CardRequestHistoryJson))
+                //    cardStatus = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(card.CardRequestHistoryJson);
             }
             catch (Exception ex)
             {

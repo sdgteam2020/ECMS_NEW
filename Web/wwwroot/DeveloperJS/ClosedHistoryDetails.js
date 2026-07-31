@@ -171,6 +171,12 @@ function BindData(UserType, ApplyForId) {
                     GetClosedHistoryByRequestId(rowData.RequestId);
                 }
             });
+            $("#tbldatatabledata_ClosedHistory tbody").off("click", ".cls-btndownloadpdf").on("click", ".cls-btndownloadpdf", function () {
+                var rowData = table_ClosedHistory.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    DownloadPdf(rowData.RequestId);
+                }
+            });
         }
     });
     table_ClosedHistory.button('.buttons-copy').nodes().hide();
@@ -293,6 +299,10 @@ function getColumnsForClosedHistory(UserType, ApplyForId) {
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
+                        // Add a download button next to the history button
+                            + `<button class="cls-btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Closed Details">
+                                <img src="/Images/digitalsign.png" width="40" />
+                                </button>`;
                     }
                 },                                                    
             ];
@@ -409,6 +419,10 @@ function getColumnsForClosedHistory(UserType, ApplyForId) {
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
+                            // Add a download button next to the history button
+                            + `<button class="cls-btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Closed Details">
+                                <img src="/Images/digitalsign.png" width="40" />
+                                </button>`;
                     }
                 },
                
@@ -1065,4 +1079,36 @@ function createPostingOutHtml(posting) {
             ${posting.UnitName ?? ""}
         </div>
     `;
+}
+
+function DownloadPdf(RequestId) {
+    try {
+        const encryptedRequest = encryptPayloadData(RequestId);
+        //alert(RequestId);
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/BasicDetail/GenerateClosedHistoryPDF';
+        form.target = '_blank';
+        form.style.display = 'none';
+
+        const requestInput = document.createElement('input');
+        requestInput.type = 'hidden';
+        requestInput.name = 'RequestId';
+        requestInput.value = encryptedRequest;
+        form.appendChild(requestInput);
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '__RequestVerificationToken';
+        tokenInput.value = globalThis.RequestVerificationToken;
+        form.appendChild(tokenInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    } catch (e) {
+        Swal.fire({
+            text: errormsg002
+        });
+    }
 }
