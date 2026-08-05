@@ -1,357 +1,349 @@
-﻿/* =====================================================
-   ECMS User Management Dashboard Modern UI
-   Only page UI changes. Header/footer/layout untouched.
-===================================================== */
+﻿/* ================================================================
+   ECMS User Management Dashboard
+   Page-specific layout only. Shared theme files remain unchanged.
 
-:root {
-    --ecms-user-blue-1: #102f73;
-    --ecms-user-blue-2: #2f7dff;
-    --ecms-user-cyan: #55d7ff;
-    --ecms-user-ink: #071b44;
-    --ecms-user-muted: #5d739c;
-    --ecms-user-panel: rgba(232, 244, 255, 0.88);
-    --ecms-user-white: rgba(255,255,255,0.95);
-}
-
-html:has(.ecms-user-mgt-page),
-body:has(.ecms-user-mgt-page) {
-    overflow-y: hidden !important;
-}
+   Shared classes used here:
+   .ecms-page, .ecms-card, .ecms-card-body, .ecms-page-title,
+   .ecms-title-icon and .ecms-tile.
+================================================================ */
 
 .ecms-user-mgt-page {
     position: relative;
-    min-height: calc(100vh - 255px);
-    height: calc(100vh - 255px);
-    padding: 12px 18px 46px;
-    overflow: hidden;
-    background: linear-gradient(90deg, rgba(5, 22, 62, 0.86), rgba(20, 70, 154, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;
+    min-height: calc( 100dvh - var(--ecms-header-height, 95px) - var(--ecms-nav-strip-height, 44px) - var(--ecms-breadcrumb-strip-height, 35px) - var(--ecms-footer-height, 34px) );
+    padding: 0.75rem;
+    isolation: isolate;
 }
 
     .ecms-user-mgt-page::before {
         content: "";
         position: absolute;
         inset: 0;
+        z-index: -1;
         pointer-events: none;
-        background: radial-gradient(circle at 18% 20%, rgba(89, 200, 255, 0.14), transparent 26%), radial-gradient(circle at 84% 72%, rgba(59, 130, 246, 0.18), transparent 30%);
+        background: radial-gradient(circle at 18% 18%, rgba(109, 160, 255, 0.15), transparent 30%), radial-gradient(circle at 84% 72%, rgba(67, 199, 244, 0.12), transparent 32%);
     }
 
+/* Keep the page width aligned with the supplied desktop design. */
 .ecms-user-mgt-container {
-    position: relative;
-    z-index: 1;
-    width: min(1420px, 98vw) !important;
+    width: min(1420px, calc(100vw - 1.5rem)) !important;
     max-width: 1420px !important;
     margin: 0 auto !important;
 }
 
 .ecms-user-mgt-shell {
-    width: 100% !important;
-    min-height: 0 !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border: 1px solid rgba(255,255,255,0.70) !important;
-    border-radius: 22px !important;
-    background: var(--ecms-user-panel) !important;
-    box-shadow: 0 22px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
-    overflow: visible !important;
+    width: 100%;
+    overflow: visible;
 }
+
+    .ecms-user-mgt-shell > .ecms-card-body {
+        padding: 0.75rem;
+    }
 
 .ecms-user-mgt-heading {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 14px 12px;
-    margin-bottom: 16px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,255,255,0.36));
-    border: 1px solid rgba(255,255,255,0.62);
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
 }
 
 .ecms-user-mgt-heading-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    background: linear-gradient(135deg, #1f7cff, #004bd6);
-    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.32);
-    font-size: 21px;
+    flex: 0 0 2.6rem;
+}
+
+.ecms-user-mgt-heading-copy {
+    min-width: 0;
 }
 
 .ecms-user-mgt-heading h2 {
-    margin: 0;
-    color: var(--ecms-user-ink);
-    font-size: 21px;
-    font-weight: 900;
-    line-height: 1.1;
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
 }
 
-.ecms-user-mgt-heading p {
-    margin: 4px 0 0;
-    color: var(--ecms-user-muted);
-    font-size: 13px;
-    font-weight: 800;
+.ecms-user-mgt-heading .ecms-title-subtitle {
+    line-height: 1.35;
 }
 
+/* Supports either five cards or the optional sixth Record Office card. */
 .ecms-user-mgt-grid {
-    display: flex;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 205px));
     justify-content: center;
-    flex-wrap: nowrap;
-    gap: 26px;
-    padding: 16px 16px 18px;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 0.55rem 0.35rem 0.7rem;
 }
 
 .ecms-user-mgt-item {
-    flex: 0 0 170px;
-    width: 170px;
-    max-width: 170px;
+    width: 100%;
+    min-width: 0;
 }
 
 .ecms-user-mgt-page .clickable {
     width: 100% !important;
-    height: auto !important;
+    height: 100% !important;
     display: block !important;
     margin: 0 !important;
+    color: inherit !important;
     text-decoration: none !important;
+    border-radius: var(--ecms-radius-lg, 1rem);
 }
 
-.ecms-user-mgt-page .counter,
+/* Local semantic accents; surfaces, borders, radii and text remain theme-driven. */
 .ecms-user-mgt-page .ecms-user-counter {
+    --ecms-user-card-accent-start: var(--ecms-primary-500, #3f7cff);
+    --ecms-user-card-accent-end: var(--ecms-primary-700, #1d57bb);
+    --ecms-user-card-accent-rgb: 63, 124, 255;
+    position: relative !important;
     width: 100% !important;
-    height: 170px !important;
-    min-height: 170px !important;
-    padding: 18px 12px 14px !important;
-    border-radius: 18px !important;
+    height: 100% !important;
+    min-height: 184px !important;
+    margin: 0 !important;
+    padding: 1.25rem 1rem 1rem !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    gap: 7px !important;
+    gap: 0.55rem !important;
     overflow: hidden !important;
-    background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(244, 249, 255,0.92)) !important;
-    border: 1px solid rgba(65, 136, 255, 0.50) !important;
-    box-shadow: 0 18px 38px rgba(0, 32, 85, 0.16), inset 0 1px 0 rgba(255,255,255,0.92) !important;
-    color: #0b2360 !important;
-    text-align: center !important;
     cursor: pointer;
-    transition: all 0.22s ease !important;
+    transform: translateY(0);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-    .ecms-user-mgt-page .counter:hover,
-    .ecms-user-mgt-page .ecms-user-counter:hover {
-        transform: translateY(-3px) !important;
-        border-color: rgba(31, 124, 255, 0.82) !important;
-        box-shadow: 0 24px 48px rgba(0, 45, 120, 0.24), 0 0 0 5px rgba(31, 124, 255, 0.10), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    .ecms-user-mgt-page .ecms-user-counter::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--ecms-user-card-accent-start), var(--ecms-user-card-accent-end));
     }
 
-        .ecms-user-mgt-page .counter-icon,
-        .ecms-user-mgt-page .counter:hover .counter-icon {
-            width: 48px !important;
-            height: 48px !important;
-            min-width: 48px !important;
-            min-height: 48px !important;
-            max-width: 48px !important;
-            max-height: 48px !important;
-            margin: 0 0 4px 0 !important;
-            padding: 0 !important;
-            border-radius: 15px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            color: #ffffff !important;
-            background: linear-gradient(135deg, #357cff, #1f4fd8) !important;
-            box-shadow: 0 14px 28px rgba(31, 99, 242, 0.32) !important;
-            flex: 0 0 48px !important;
-            transform: none !important;
-        }
+    .ecms-user-mgt-page .ecms-user-counter::after {
+        content: "";
+        position: absolute;
+        top: -4.5rem;
+        right: -4rem;
+        width: 7rem;
+        height: 7rem;
+        border-radius: 50%;
+        background: rgba(var(--ecms-user-card-accent-rgb), 0.1);
+        pointer-events: none;
+    }
 
-            .ecms-user-mgt-page .counter-icon i,
-            .ecms-user-mgt-page .counter:hover .counter-icon i {
-                color: #ffffff !important;
-                font-size: 22px !important;
-                line-height: 1 !important;
-                transform: none !important;
-            }
-
-.ecms-user-mgt-page #btnPostingIn .counter-icon {
-    background: linear-gradient(135deg, #14b8a6, #0f766e) !important;
+.ecms-user-mgt-page .clickable:hover .ecms-user-counter {
+    transform: translateY(-4px) !important;
+    border-color: rgba(var(--ecms-user-card-accent-rgb), 0.58) !important;
+    box-shadow: var(--ecms-shadow-md, 0 1rem 2.25rem rgba(10, 43, 96, 0.18)), 0 0 0 4px rgba(var(--ecms-user-card-accent-rgb), 0.08) !important;
 }
 
-.ecms-user-mgt-page #btnPostingOut .counter-icon {
-    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+.ecms-user-mgt-page .clickable:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.95) !important;
+    outline-offset: 3px;
 }
 
-.ecms-user-mgt-page #btnLoginLogs .counter-icon {
-    background: linear-gradient(135deg, #8b5cf6, #5b21b6) !important;
+    .ecms-user-mgt-page .clickable:focus-visible .ecms-user-counter {
+        border-color: var(--ecms-user-card-accent-start) !important;
+        box-shadow: 0 0 0 4px rgba(var(--ecms-user-card-accent-rgb), 0.18), var(--ecms-shadow-md, 0 1rem 2.25rem rgba(10, 43, 96, 0.18)) !important;
+    }
+
+/* Reset only legacy counter rules that conflict with the shared ECMS tile. */
+.ecms-user-mgt-page .counter-icon,
+.ecms-user-mgt-page .clickable:hover .counter-icon {
+    position: relative !important;
+    z-index: 1;
+    width: 3.2rem !important;
+    height: 3.2rem !important;
+    min-width: 3.2rem !important;
+    min-height: 3.2rem !important;
+    max-width: 3.2rem !important;
+    max-height: 3.2rem !important;
+    margin: 0 0 0.1rem !important;
+    padding: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.72) !important;
+    border-radius: 0.9rem !important;
+    background: linear-gradient(135deg, var(--ecms-user-card-accent-start), var(--ecms-user-card-accent-end)) !important;
+    box-shadow: 0 0.8rem 1.5rem rgba(var(--ecms-user-card-accent-rgb), 0.25) !important;
+    color: var(--ecms-white, #fff) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 3.2rem !important;
+    transform: none !important;
 }
 
-.ecms-user-mgt-page #btnUpdateProfile .counter-icon,
-.ecms-user-mgt-page #btnUpdateRecordOffice .counter-icon {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
-}
+    .ecms-user-mgt-page .counter-icon i,
+    .ecms-user-mgt-page .clickable:hover .counter-icon i {
+        margin: 0 !important;
+        color: var(--ecms-white, #fff) !important;
+        font-size: 1.35rem !important;
+        line-height: 1 !important;
+        transform: none !important;
+    }
 
 .ecms-user-mgt-page .counter-value,
-.ecms-user-mgt-page .counter:hover .counter-value {
-    display: block !important;
-    color: #071b44 !important;
-    font-size: 26px !important;
-    font-weight: 900 !important;
-    line-height: 1 !important;
-    margin: 2px 0 5px 0 !important;
+.ecms-user-mgt-page .clickable:hover .counter-value {
+    position: relative;
+    z-index: 1;
+    min-height: 2rem;
+    margin: 0 !important;
     padding: 0 !important;
+    color: var(--ecms-text, #061b44) !important;
+    font-size: 2rem !important;
+    font-weight: 950 !important;
+    line-height: 1 !important;
+    letter-spacing: -0.03em;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
     flex: 0 0 auto !important;
 }
 
-.ecms-user-mgt-page .counter h3,
-.ecms-user-mgt-page .counter-title,
-.ecms-user-mgt-page .counter:hover h3 {
+.ecms-user-mgt-page .ecms-user-counter h3,
+.ecms-user-mgt-page .ecms-user-counter .counter-title,
+.ecms-user-mgt-page .clickable:hover .ecms-user-counter h3 {
+    position: relative;
+    z-index: 1;
     width: 100% !important;
-    min-height: 30px !important;
+    min-height: 2.1rem !important;
     margin: 0 !important;
-    padding: 0 2px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #075de3 !important;
-    font-size: 11.5px !important;
-    font-weight: 900 !important;
-    line-height: 1.12 !important;
-    letter-spacing: 0 !important;
+    padding: 0 1.25rem !important;
+    color: var(--ecms-primary-700, #1d57bb) !important;
+    font-size: 0.78rem !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.025em !important;
     text-align: center !important;
     text-transform: uppercase !important;
     word-break: normal !important;
-    overflow-wrap: normal !important;
-}
-
-.ecms-user-mgt-page .no-count {
+    overflow-wrap: anywhere !important;
+    display: flex !important;
+    align-items: center !important;
     justify-content: center !important;
-    padding-top: 18px !important;
 }
 
-    .ecms-user-mgt-page .no-count h3 {
-        min-height: 34px !important;
-        margin-top: 4px !important;
-    }
+.ecms-user-mgt-page .ecms-action-spacer {
+    width: 100% !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    flex: 0 0 2rem !important;
+}
 
-.ecms-card-open {
+.ecms-user-mgt-card-arrow {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 1;
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 50%;
+    background: rgba(var(--ecms-user-card-accent-rgb), 0.09);
+    color: var(--ecms-user-card-accent-end);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: 2px;
-    min-width: 72px;
-    height: 28px;
-    padding: 5px 14px;
-    border-radius: 999px;
-    color: #ffffff;
-    background: linear-gradient(135deg, #238dff, #064bd8);
-    box-shadow: 0 10px 20px rgba(0, 82, 220, 0.22);
-    font-size: 11px;
-    font-weight: 900;
-    line-height: 1;
+    font-size: 0.9rem;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.ecms-user-mgt-page .clickable:focus .counter,
-.ecms-user-mgt-page .clickable:active .counter {
-    outline: none !important;
-    box-shadow: 0 0 0 5px rgba(31, 124, 255, 0.18), 0 18px 38px rgba(0, 32, 85, 0.16) !important;
+.ecms-user-mgt-page .clickable:hover .ecms-user-mgt-card-arrow {
+    transform: translateX(2px);
+    background: rgba(var(--ecms-user-card-accent-rgb), 0.16);
 }
 
-@media (max-width: 1400px) {
+.ecms-user-mgt-page #btnPostingIn {
+    --ecms-user-card-accent-start: var(--ecms-success-500, #35ad56);
+    --ecms-user-card-accent-end: var(--ecms-success-600, #238a40);
+    --ecms-user-card-accent-rgb: 53, 173, 86;
+}
+
+.ecms-user-mgt-page #btnPostingOut {
+    --ecms-user-card-accent-start: var(--ecms-warning-500, #ffc107);
+    --ecms-user-card-accent-end: #df9500;
+    --ecms-user-card-accent-rgb: 255, 193, 7;
+}
+
+.ecms-user-mgt-page #btnLoginLogs {
+    --ecms-user-card-accent-start: var(--ecms-primary-700, #1d57bb);
+    --ecms-user-card-accent-end: var(--ecms-primary-900, #0b2d68);
+    --ecms-user-card-accent-rgb: 29, 87, 187;
+}
+
+.ecms-user-mgt-page #btnUpdateProfile {
+    --ecms-user-card-accent-start: var(--ecms-cyan-500, #43c7f4);
+    --ecms-user-card-accent-end: var(--ecms-primary-600, #2f67e6);
+    --ecms-user-card-accent-rgb: 67, 199, 244;
+}
+
+.ecms-user-mgt-page #btnUpdateRecordOffice {
+    --ecms-user-card-accent-start: var(--ecms-primary-800, #123f8c);
+    --ecms-user-card-accent-end: var(--ecms-primary-950, #061b44);
+    --ecms-user-card-accent-rgb: 18, 63, 140;
+}
+
+@media (max-width: 1199.98px) {
     .ecms-user-mgt-grid {
-        gap: 22px;
-    }
-
-    .ecms-user-mgt-item {
-        flex-basis: 160px;
-        width: 160px;
-        max-width: 160px;
-    }
-
-    .ecms-user-mgt-page .counter,
-    .ecms-user-mgt-page .ecms-user-counter {
-        height: 164px !important;
-        min-height: 164px !important;
+        grid-template-columns: repeat(auto-fit, minmax(175px, 205px));
     }
 }
 
-@media (max-width: 1199px) {
-    html:has(.ecms-user-mgt-page),
-    body:has(.ecms-user-mgt-page) {
-        overflow-y: auto !important;
-    }
-
+@media (max-width: 767.98px) {
     .ecms-user-mgt-page {
-        height: auto !important;
-        min-height: calc(100vh - 255px) !important;
-        overflow: visible !important;
+        padding: 0.5rem 0.4rem calc(var(--ecms-footer-height, 34px) + 0.75rem);
     }
 
-    .ecms-user-mgt-grid {
-        flex-wrap: wrap;
-        gap: 18px;
+    .ecms-user-mgt-container {
+        width: calc(100vw - 0.75rem) !important;
     }
-}
 
-@media (max-width: 768px) {
-    .ecms-user-mgt-page {
-        padding: 10px 10px 56px;
+    .ecms-user-mgt-shell > .ecms-card-body {
+        padding: 0.55rem;
     }
 
     .ecms-user-mgt-heading {
         align-items: flex-start;
+        margin-bottom: 0.65rem;
     }
 
     .ecms-user-mgt-grid {
-        gap: 14px;
-        padding: 10px 4px 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+        padding: 0.25rem 0;
     }
 
-    .ecms-user-mgt-item {
-        flex: 1 1 150px;
-        width: auto;
-        max-width: none;
+    .ecms-user-mgt-page .ecms-user-counter {
+        min-height: 168px !important;
+        padding: 1rem 0.65rem 0.8rem !important;
     }
 
-    .ecms-user-mgt-page .counter {
-        height: 160px !important;
-        min-height: 160px !important;
+        .ecms-user-mgt-page .ecms-user-counter h3,
+        .ecms-user-mgt-page .ecms-user-counter .counter-title {
+            padding-inline: 0.85rem !important;
+            font-size: 0.72rem !important;
+        }
+}
+
+@media (max-width: 419.98px) {
+    .ecms-user-mgt-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-user-mgt-page .ecms-user-counter {
+        min-height: 154px !important;
     }
 }
 
-
-/* =====================================================
-   FINAL FIX: Remove Open pill and make action cards same
-   visual spacing as counted cards. Only UI change.
-===================================================== */
-
-.ecms-user-mgt-page .no-count {
-    justify-content: flex-start !important;
-    padding: 18px 12px 14px !important;
-}
-
-    .ecms-user-mgt-page .no-count .counter-icon,
-    .ecms-user-mgt-page .no-count:hover .counter-icon {
-        margin: 0 0 4px 0 !important;
+@media (prefers-reduced-motion: reduce) {
+    .ecms-user-mgt-page .ecms-user-counter,
+    .ecms-user-mgt-page .ecms-user-mgt-card-arrow {
+        transition: none !important;
     }
 
-.ecms-user-mgt-page .ecms-action-spacer {
-    display: block !important;
-    width: 100% !important;
-    height: 26px !important;
-    min-height: 26px !important;
-    margin: 2px 0 5px 0 !important;
-    padding: 0 !important;
-    flex: 0 0 auto !important;
-}
-
-.ecms-user-mgt-page .no-count h3,
-.ecms-user-mgt-page .no-count .counter-title {
-    min-height: 30px !important;
-    margin: 0 !important;
-}
-
-.ecms-user-mgt-page .ecms-card-open {
-    display: none !important;
+    .ecms-user-mgt-page .clickable:hover .ecms-user-counter,
+    .ecms-user-mgt-page .clickable:hover .ecms-user-mgt-card-arrow {
+        transform: none !important;
+    }
 }

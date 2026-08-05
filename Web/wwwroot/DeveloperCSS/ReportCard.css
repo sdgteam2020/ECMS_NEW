@@ -14,7 +14,8 @@
 }
 
 html:has(.ecms-card-movement-page),
-body:has(.ecms-card-movement-page) {
+body:has(.ecms-card-movement-page),
+body.ecms-report-card-page {
     overflow-y: hidden !important;
 }
 
@@ -418,157 +419,124 @@ body:has(.ecms-card-movement-page) {
     display: block;
 }
 
-/* Modal + DataTable */
-.ecms-card-movement-modal .modal-dialog {
-    max-width: min(1320px, 96vw) !important;
+/* =====================================================
+   Common-theme integration
+   Shared card, title, section, form, modal and DataTable skins
+   come from ecms.theme.bundle.css. These rules only preserve
+   this page's original dimensions and movement-card layout.
+===================================================== */
+
+/* Neutralize only common .ecms-page spacing for this nested page container. */
+.ecms-card-movement-container.ecms-page {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 }
 
-.ecms-card-movement-modal .modal-content {
-    border: 1px solid rgba(255,255,255,0.72) !important;
-    border-radius: 18px !important;
-    overflow: hidden;
-    box-shadow: 0 30px 70px rgba(0, 20, 60, 0.42) !important;
+/* Keep the original dashboard surface while still using .ecms-card. */
+.ecms-card-movement-shell.ecms-card {
+    display: flex;
+    flex-direction: column;
 }
 
-.ecms-card-movement-modal .modal-header {
-    position: relative !important;
-    min-height: 58px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 14px 58px 14px 18px !important;
-    color: #ffffff;
-    background: linear-gradient(135deg, #123f8c, #2f7dff) !important;
-    border-bottom: 0 !important;
+/* Common title structure with the original ReportCard dimensions. */
+.ecms-card-movement-head.ecms-page-title {
+    flex: 0 0 auto;
 }
 
-.ecms-card-movement-modal .modal-title {
-    color: #ffffff !important;
-    font-size: 18px !important;
-    font-weight: 900 !important;
-    margin: 0 !important;
+.ecms-card-movement-head .ecms-title-subtitle,
+.ecms-card-movement-head p {
+    margin: 4px 0 0;
 }
 
-.ecms-card-movement-modal .modal-header .close,
-.ecms-card-movement-modal .modal-header button.close,
-.ecms-card-movement-modal .modal-header .ecms-modal-close {
-    position: absolute !important;
-    top: 11px !important;
-    right: 14px !important;
-    z-index: 20 !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    min-height: 34px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 1px solid rgba(255,255,255,0.35) !important;
-    border-radius: 50% !important;
-    color: #ffffff !important;
-    background: rgba(255,255,255,0.18) !important;
+/* The common section/form classes provide the skin; this page owns spacing. */
+.ecms-card-filter-panel.ecms-section,
+.ecms-card-filter-panel.ecms-form-section,
+.ecms-card-section.ecms-section,
+.ecms-card-section-body.ecms-form-section {
+    box-sizing: border-box;
+}
+
+/* Common .ecms-tile is used, but ReportCard keeps its compact tile dimensions. */
+.ecms-card-movement-page .ecms-movement-card.ecms-tile {
+    min-height: 150px !important;
+}
+
+/* =====================================================
+   CardReport modal stacking guard
+   The modal is moved directly under <body> by ReportCard.js.
+   High scoped z-index values prevent any legacy theme/backdrop
+   rule from fading or blocking the dialog.
+===================================================== */
+
+body.ecms-report-card-modal-open > .modal-backdrop,
+body.ecms-report-card-modal-open .modal-backdrop.show {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147482990 !important;
+}
+
+#CardReport,
+#CardReport.modal,
+#CardReport.modal.show {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483000 !important;
     opacity: 1 !important;
-    text-shadow: none !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25) !important;
-    cursor: pointer !important;
+    filter: none !important;
+    isolation: isolate;
+    pointer-events: auto !important;
 }
 
-    .ecms-card-movement-modal .modal-header .close span,
-    .ecms-card-movement-modal .modal-header button.close span {
-        display: block !important;
-        color: #ffffff !important;
-        font-size: 28px !important;
-        font-weight: 700 !important;
-        line-height: 28px !important;
-        margin-top: -2px !important;
+    #CardReport .modal-dialog {
+        position: relative !important;
+        z-index: 2 !important;
+        width: min(1320px, calc(100vw - 1.5rem));
+        max-width: min(1320px, calc(100vw - 1.5rem)) !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
     }
 
-    .ecms-card-movement-modal .modal-header .close:hover,
-    .ecms-card-movement-modal .modal-header button.close:hover {
-        background: rgba(239, 68, 68, 0.92) !important;
-        border-color: rgba(255,255,255,0.50) !important;
+    #CardReport .modal-content,
+    #CardReport .modal-header,
+    #CardReport .modal-body {
+        position: relative;
+        z-index: 3;
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
     }
 
-.ecms-card-movement-modal .modal-body {
-    padding: 14px !important;
-    background: #f5f9ff !important;
-}
-
-    .ecms-card-movement-modal .modal-body .row {
-        margin-left: 0 !important;
-        margin-right: 0 !important;
+    #CardReport .modal-content {
+        max-height: calc(100dvh - 2rem);
     }
 
-.ecms-card-movement-modal .dataTables_wrapper {
-    width: 100% !important;
-}
+    #CardReport .modal-body {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    #CardReport .ecms-card-report-table {
+        height: min(65dvh, 620px);
+        min-height: 18rem;
+    }
 
 #CardReport_tbldatadialog {
     width: 100% !important;
-    table-layout: fixed !important;
-    font-size: 12px !important;
 }
 
-    #CardReport_tbldatadialog th,
-    #CardReport_tbldatadialog td {
-        white-space: nowrap !important;
-        vertical-align: middle !important;
-    }
-
-    #CardReport_tbldatadialog thead th {
-        color: #ffffff !important;
-        background: #153f8f !important;
-        border-color: rgba(255,255,255,0.2) !important;
-        font-weight: 900 !important;
-    }
-
-    #CardReport_tbldatadialog tbody td {
-        color: #10254f !important;
-        font-weight: 700 !important;
-    }
-
-.dt-top,
-.dataTables_wrapper .dt-top {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    margin-bottom: 10px !important;
+#CardReport #msg:empty {
+    display: none;
 }
 
-.dataTables_wrapper .dataTables_filter input,
-.dataTables_wrapper .dataTables_length select {
-    height: 34px !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(93, 125, 175, 0.34) !important;
-    padding: 6px 10px !important;
-}
-
-.dt-button,
-.dataTables_wrapper .dt-button {
-    border: 0 !important;
-    border-radius: 10px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #238dff, #064bd8) !important;
-    font-weight: 900 !important;
-    padding: 7px 14px !important;
-}
-
-.ui-datepicker-calendar {
-    display: none !important;
-}
-
-.modal .modal-body .table-responsive {
-    max-height: 500px;
-}
 
 /* Responsive */
 @media (max-width: 1200px) {
     html:has(.ecms-card-movement-page),
-    body:has(.ecms-card-movement-page) {
+    body:has(.ecms-card-movement-page),
+    body.ecms-report-card-page {
         overflow-y: auto !important;
     }
 

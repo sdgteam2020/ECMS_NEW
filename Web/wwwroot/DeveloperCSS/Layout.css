@@ -81,11 +81,11 @@ body {
 }
 
 /* Keep page content scrollable inside the middle row. */
-.ecms-main-content-wrapper,
+/*.ecms-main-content-wrapper,
 .content-wrapper {
     min-height: 100%;
     overflow-x: hidden;
-}
+}*/
 
 /* Admin hidden nav placeholder should not create extra vertical gap. */
 #_layouttask.nav-hide-for-admin,

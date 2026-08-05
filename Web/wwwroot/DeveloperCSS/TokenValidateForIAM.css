@@ -3,8 +3,8 @@
 ===================================================== */
 
 :root {
-    --ecms-token-header-height: 120px;
-    --ecms-token-footer-height: 42px;
+    --ecms-token-header-height: 95px;
+    --ecms-token-footer-height: 35px;
     --ecms-token-blue: #216DFF;
     --ecms-token-blue-dark: #063FBF;
     --ecms-token-navy: #071B44;
@@ -36,8 +36,8 @@ body {
     min-height: calc(100vh - var(--ecms-token-footer-height));
     padding-top: var(--ecms-token-header-height);
     padding-bottom: var(--ecms-token-footer-height);
-    background: radial-gradient(circle at 84% 42%, rgba(62, 147, 255, 0.24), transparent 26%), linear-gradient(90deg, rgba(3, 28, 69, 0.84), rgba(3, 42, 103, 0.82)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;
-    overflow: hidden;
+/*    background: radial-gradient(circle at 84% 42%, rgba(62, 147, 255, 0.24), transparent 26%), linear-gradient(90deg, rgba(3, 28, 69, 0.84), rgba(3, 42, 103, 0.82)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;*/
+/*    overflow: hidden;*/
 }
 
     .ecms-token-page::before {

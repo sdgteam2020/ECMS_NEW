@@ -1,389 +1,366 @@
-﻿/* =====================================================
-   ECMS Registered Users Modern UI
-   Only page UI changes. Header/footer/layout untouched.
-===================================================== */
+﻿/* =====================================================================
+   ECMS Registered Users
+   Page-specific layout only. Shared theme files remain unchanged.
+===================================================================== */
 
-:root {
-    --ecms-reg-blue-1: #102f73;
-    --ecms-reg-blue-2: #2f7dff;
-    --ecms-reg-cyan: #55d7ff;
-    --ecms-reg-ink: #071b44;
-    --ecms-reg-muted: #5b729a;
-    --ecms-reg-panel: rgba(232, 244, 255, 0.88);
-    --ecms-reg-white: rgba(255,255,255,0.94);
+.ecms-register-user-page {
+    position: relative;
+    height: calc( 100dvh - var(--ecms-header-height, 95px) - var(--ecms-footer-height, 34px) - var(--ecms-nav-strip-height, var(--ecms-nav-height, 44px)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height, 35px)) );
+    min-height: 0;
+    padding: 0.5rem 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-/* Keep original helper classes */
-.count-label {
-    background-color: #044C92;
-    text-align: center;
-    padding: 0.5rem !important;
-    margin-right: 0.25rem !important;
-    border: hidden;
-    font-weight: 700 !important;
-    color: #fff !important;
-    width: 120px;
-    height: 60px;
+.ecms-register-user-container {
+    width: calc(100vw - 1rem) !important;
+    max-width: none !important;
+    height: 100%;
+    min-height: 0;
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+.ecms-register-shell {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ecms-register-heading {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 0.65rem;
+    border: var(--ecms-border-white) !important;
+}
+
+.ecms-register-heading-icon {
+    flex: 0 0 2.6rem;
+}
+
+.ecms-register-heading-copy {
+    min-width: 0;
+}
+
+.ecms-register-heading h2 {
+    margin: 0;
+    font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+}
+
+.ecms-register-heading p {
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .card-body-min-height {
     min-height: 150px;
 }
 
-/* Page background */
-html:has(.ecms-register-user-page),
-body:has(.ecms-register-user-page) {
-    overflow-y: hidden !important;
+.ecms-register-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0 !important;
+    background: transparent !important;
+    display: flex;
+    overflow: hidden;
 }
 
-.ecms-register-user-page {
-    position: relative !important;
-    width: 100% !important;
-    max-width: none !important;
-    min-height: calc(100vh - 255px) !important;
-    height: calc(100vh - 255px) !important;
-    margin: 0 !important;
-    padding: 14px 18px 48px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(5, 22, 62, 0.86), rgba(20, 70, 154, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
+.ecms-register-directory {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-    .ecms-register-user-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 18% 20%, rgba(85, 215, 255, 0.16), transparent 28%), radial-gradient(circle at 82% 76%, rgba(59, 130, 246, 0.17), transparent 30%);
+.ecms-register-toolbar {
+    min-height: 2.9rem;
+    padding: 0.45rem 0.65rem;
+    border-bottom: var(--ecms-border);
+    background: var(--ecms-card-surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.ecms-register-toolbar-label {
+    min-width: 0;
+    margin: 0;
+    color: var(--ecms-text-soft);
+    font-size: 0.82rem;
+    font-weight: 900;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.ecms-register-toolbar-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 1.75rem;
+    border-radius: var(--ecms-radius-sm);
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, var(--ecms-primary-700), var(--ecms-primary-500));
+    box-shadow: 0 0.45rem 0.9rem rgba(47, 103, 230, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ecms-register-table-actions {
+    min-height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+    .ecms-register-table-actions:empty {
+        display: none;
     }
 
-/* Main shell */
-.ecms-register-shell {
-    position: relative !important;
-    z-index: 1 !important;
-    width: min(1320px, 96vw) !important;
-    max-width: 1320px !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: calc(100vh - 290px) !important;
-    margin: 10px auto 0 !important;
-    padding: 12px !important;
-    border: 1px solid rgba(255,255,255,0.72) !important;
-    border-radius: 22px !important;
-    background: var(--ecms-reg-panel) !important;
-    box-shadow: 0 24px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
-    overflow: hidden !important;
-}
+    .ecms-register-table-actions .dt-buttons {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+    }
 
-/* Header block inside card */
-.ecms-register-heading {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    min-height: 62px !important;
-    margin: 0 0 10px !important;
-    padding: 10px 14px !important;
-    border: 1px solid rgba(255,255,255,0.66) !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.74), rgba(255,255,255,0.38)) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.72) !important;
-}
-
-.ecms-register-heading-icon {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    border-radius: 15px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #1f7cff, #004bd6) !important;
-    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.32) !important;
-    font-size: 20px !important;
-}
-
-.ecms-register-heading h3 {
-    margin: 0 !important;
-    color: var(--ecms-reg-ink) !important;
-    font-size: 22px !important;
-    font-weight: 900 !important;
-    line-height: 1.1 !important;
-}
-
-.ecms-register-heading p {
-    margin: 4px 0 0 !important;
-    color: var(--ecms-reg-muted) !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
-
-/* Body */
-.ecms-register-body {
-    padding: 0 !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.55), rgba(224, 238, 255, 0.52)) !important;
-    overflow: hidden !important;
-}
+    .ecms-register-table-actions .dt-button.btn {
+        min-height: 2rem;
+        margin: 0 !important;
+        padding: 0.4rem 0.75rem !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        line-height: 1;
+    }
 
 .ecms-register-table-wrap {
-    width: 100% !important;
-    padding: 0 !important;
-    overflow: hidden !important;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    padding: 0.55rem 0.55rem 0.45rem;
+    background: rgba(255, 255, 255, 0.94);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
-
-/* DataTables top / button area */
-.ecms-register-user-page .dt-container,
-.ecms-register-user-page .dataTables_wrapper {
-    width: 100% !important;
-    color: var(--ecms-reg-ink) !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
-}
-
-    .ecms-register-user-page .dt-top,
-    .ecms-register-user-page .dataTables_wrapper .row:first-child {
+    /* Keep the footer at the bottom of the full-height card while the table
+   keeps its natural row height. The empty area remains inside the table panel. */
+    .ecms-register-table-wrap .dataTables_wrapper,
+    .ecms-register-table-wrap .dt-container {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        flex: 1 1 auto;
         display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-        padding: 10px 12px !important;
-        margin: 0 0 8px !important;
-        border-radius: 14px !important;
-        background: rgba(255,255,255,0.62) !important;
-        border: 1px solid rgba(255,255,255,0.68) !important;
+        flex-direction: column;
+        overflow: hidden !important;
     }
 
-    .ecms-register-user-page .dt-buttons,
-    .ecms-register-user-page .dataTables_wrapper .dt-buttons {
-        display: inline-flex !important;
-        gap: 6px !important;
-        flex-wrap: wrap !important;
-    }
+        .ecms-register-table-wrap .dataTables_wrapper > table,
+        .ecms-register-table-wrap .dt-container > table {
+            flex: 0 0 auto;
+        }
 
-.ecms-register-user-page .dt-button,
-.ecms-register-user-page .buttons-excel,
-.ecms-register-user-page .buttons-pdf {
-    border: 0 !important;
-    border-radius: 10px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #238dff, #064bd8) !important;
-    font-weight: 900 !important;
-    font-size: 12px !important;
-    padding: 7px 14px !important;
-    box-shadow: 0 10px 22px rgba(0, 72, 190, 0.22) !important;
+.ecms-register-user-page .ecms-dt-footer {
+    flex: 0 0 auto;
+    margin-top: auto !important;
 }
 
-    .ecms-register-user-page .dt-button:hover,
-    .ecms-register-user-page .buttons-excel:hover,
-    .ecms-register-user-page .buttons-pdf:hover {
-        transform: translateY(-1px);
-        background: linear-gradient(135deg, #4aa0ff, #0758f0) !important;
-    }
-
-/* Table styling */
-.ecms-register-user-page .dt-scroll,
-.ecms-register-user-page .dataTables_scroll {
-    border-radius: 14px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(64, 120, 207, 0.28) !important;
-    background: rgba(255,255,255,0.75) !important;
-}
-
-.ecms-register-user-page .dt-scroll-head,
-.ecms-register-user-page .dataTables_scrollHead {
-    background: linear-gradient(135deg, #153f93, #347cff) !important;
-}
-
-.ecms-register-user-page table#tbldata,
-.ecms-register-user-page table.ecms-register-table {
+.ecms-register-user-page table#tbldata {
     width: 100% !important;
-    margin: 0 !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    border: 0 !important;
-    color: #10254f !important;
 }
 
     .ecms-register-user-page table#tbldata thead th,
-    .ecms-register-user-page .dt-scroll-head thead th,
-    .ecms-register-user-page .dataTables_scrollHead thead th {
-        height: 42px !important;
-        padding: 9px 12px !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #153f93, #347cff) !important;
-        border-color: rgba(255,255,255,0.18) !important;
-        border-bottom: 1px solid rgba(255,255,255,0.45) !important;
-        font-size: 13px !important;
-        font-weight: 900 !important;
-        text-align: left !important;
-        white-space: nowrap !important;
-        vertical-align: middle !important;
+    .ecms-register-user-page .dataTables_scrollHead table thead th,
+    .ecms-register-user-page .dt-scroll-head table thead th {
+        text-align: left;
+    }
+
+        .ecms-register-user-page table#tbldata thead th:first-child,
+        .ecms-register-user-page table#tbldata tbody td:first-child,
+        .ecms-register-user-page .dataTables_scrollHead table thead th:first-child,
+        .ecms-register-user-page .dt-scroll-head table thead th:first-child {
+            width: 5.5rem !important;
+            min-width: 5.5rem !important;
+            text-align: center !important;
+        }
+
+    .ecms-register-user-page table#tbldata tbody td:not(:first-child) {
+        text-align: left;
     }
 
     .ecms-register-user-page table#tbldata tbody td {
-        height: 40px !important;
-        padding: 8px 12px !important;
-        color: #10254f !important;
-        border-color: rgba(39, 91, 170, 0.14) !important;
-        font-size: 13px !important;
-        font-weight: 700 !important;
-        vertical-align: middle !important;
-        background: rgba(255,255,255,0.62) !important;
-    }
-
-    .ecms-register-user-page table#tbldata tbody tr:nth-child(even) td {
-        background: rgba(240, 247, 255, 0.78) !important;
+        max-width: 24rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .ecms-register-user-page table#tbldata tbody tr:hover td {
-        background: rgba(223, 238, 255, 0.94) !important;
+        background: rgba(224, 238, 255, 0.98) !important;
     }
 
-/* DataTables 2 duplicate scroll body header fix */
-.ecms-register-user-page .dt-scroll-body table#tbldata > thead,
-.ecms-register-user-page .dataTables_scrollBody table#tbldata > thead {
-    height: 0 !important;
-    max-height: 0 !important;
-    visibility: collapse !important;
-}
-
-    .ecms-register-user-page .dt-scroll-body table#tbldata > thead tr,
-    .ecms-register-user-page .dataTables_scrollBody table#tbldata > thead tr,
-    .ecms-register-user-page .dt-scroll-body table#tbldata > thead th,
-    .ecms-register-user-page .dataTables_scrollBody table#tbldata > thead th {
-        height: 0 !important;
-        max-height: 0 !important;
-        line-height: 0 !important;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        border-top: 0 !important;
-        border-bottom: 0 !important;
-        font-size: 0 !important;
-        color: transparent !important;
-        background: transparent !important;
-        overflow: hidden !important;
-    }
-
-    .ecms-register-user-page .dt-scroll-body table#tbldata > thead .dt-scroll-sizing,
-    .ecms-register-user-page .dataTables_scrollBody table#tbldata > thead .dt-scroll-sizing {
-        height: 0 !important;
-        max-height: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-    }
-
-/* Info and pagination */
-.ecms-register-user-page .dt-info,
-.ecms-register-user-page .dataTables_info {
-    padding: 10px 0 0 !important;
-    color: #071b44 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-}
-
-.ecms-register-user-page .dt-paging,
-.ecms-register-user-page .dataTables_paginate {
-    display: flex !important;
-    justify-content: flex-end !important;
-    padding: 6px 0 0 !important;
-}
-
-.ecms-register-user-page .pagination {
-    gap: 5px !important;
-    margin: 0 !important;
-}
-
-.ecms-register-user-page .page-link {
-    min-width: 34px !important;
-    height: 30px !important;
-    padding: 5px 9px !important;
-    border: 1px solid rgba(72, 122, 200, 0.22) !important;
-    border-radius: 8px !important;
-    color: #174faf !important;
-    background: rgba(255,255,255,0.92) !important;
-    font-size: 12px !important;
-    font-weight: 900 !important;
-}
-
-.ecms-register-user-page .page-item.active .page-link,
-.ecms-register-user-page .dt-paging-button.active .page-link {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #1f7cff, #004bd6) !important;
-    border-color: transparent !important;
-    box-shadow: 0 8px 18px rgba(0, 80, 210, 0.25) !important;
-}
-
-/* Badges generated by JS */
 .ecms-register-user-page .badge,
 .ecms-register-user-page .badge-pill {
-    padding: 6px 9px !important;
-    border-radius: 999px !important;
-    font-size: 11px !important;
-    font-weight: 900 !important;
+    max-width: 100%;
+    padding: 0.35rem 0.55rem !important;
+    font-size: 0.7rem !important;
+    line-height: 1.15;
+    white-space: normal;
 }
 
-.ecms-register-user-page .badge-danger {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+.ecms-register-user-page .dataTables_info,
+.ecms-register-user-page .dt-info {
+    white-space: normal;
 }
 
-/* Scrollbar */
-.ecms-register-user-page .dt-scroll-body,
-.ecms-register-user-page .dataTables_scrollBody {
-    max-height: calc(100vh - 405px) !important;
-    scrollbar-width: thin !important;
-    scrollbar-color: rgba(31, 124, 255, 0.62) rgba(255,255,255,0.24) !important;
+.ecms-register-user-page .dataTables_paginate,
+.ecms-register-user-page .dt-paging {
+    display: flex;
+    justify-content: flex-end;
 }
 
-    .ecms-register-user-page .dt-scroll-body::-webkit-scrollbar,
-    .ecms-register-user-page .dataTables_scrollBody::-webkit-scrollbar {
-        height: 8px !important;
-        width: 7px !important;
-    }
+.ecms-register-visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
 
-    .ecms-register-user-page .dt-scroll-body::-webkit-scrollbar-thumb,
-    .ecms-register-user-page .dataTables_scrollBody::-webkit-scrollbar-thumb {
-        background: rgba(31, 124, 255, 0.62) !important;
-        border-radius: 999px !important;
-    }
-
-@media (max-width: 1199px) {
+/* Prevent the shared fixed-shell viewport from showing a redundant page scrollbar. */
+@media (min-width: 1200px) and (min-height: 721px) {
     html:has(.ecms-register-user-page),
     body:has(.ecms-register-user-page) {
-        overflow-y: auto !important;
+        height: 100% !important;
+        overflow: hidden !important;
     }
 
+        body:has(.ecms-register-user-page) .ecms-app-main {
+            overflow-x: hidden !important;
+            overflow-y: hidden !important;
+        }
+}
+
+@media (max-width: 1199.98px), (max-height: 720.98px) {
     .ecms-register-user-page {
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .ecms-register-user-container,
+    .ecms-register-shell {
+        height: auto;
+    }
+
+    .ecms-register-body,
+    .ecms-register-directory,
+    .ecms-register-table-wrap,
+    .ecms-register-table-wrap .dataTables_wrapper,
+    .ecms-register-table-wrap .dt-container {
         height: auto !important;
-        min-height: calc(100vh - 255px) !important;
         overflow: visible !important;
-        padding: 12px 10px 56px !important;
+    }
+
+    .ecms-register-user-page .ecms-dt-footer {
+        margin-top: 0.55rem !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-register-user-page {
+        padding: 0.5rem 0;
+    }
+
+    .ecms-register-user-container {
+        width: calc(100vw - 0.75rem) !important;
     }
 
     .ecms-register-shell {
-        width: 98vw !important;
-        max-height: none !important;
+        padding: 0.55rem;
     }
-}
 
-@media (max-width: 768px) {
     .ecms-register-heading {
-        align-items: flex-start !important;
-        padding: 10px !important;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
     }
 
-        .ecms-register-heading h3 {
-            font-size: 18px !important;
+        .ecms-register-heading h2 {
+            font-size: 1.05rem;
         }
 
         .ecms-register-heading p {
-            font-size: 11px !important;
+            font-size: 0.73rem;
         }
 
-    .ecms-register-user-page .dt-top,
-    .ecms-register-user-page .dataTables_wrapper .row:first-child {
-        align-items: stretch !important;
-        flex-direction: column !important;
+    .ecms-register-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ecms-register-table-actions,
+    .ecms-register-table-actions .dt-buttons {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+        .ecms-register-table-actions .dt-button.btn {
+            flex: 1 1 8rem;
+        }
+
+    .ecms-register-table-wrap {
+        padding-inline: 0.35rem;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .ecms-register-user-page table#tbldata {
+        min-width: 46rem !important;
+    }
+
+    .ecms-register-user-page .ecms-dt-footer {
+        gap: 0.45rem;
+        text-align: center;
+    }
+
+        .ecms-register-user-page .ecms-dt-footer > [class*="col-"] {
+            justify-content: center;
+        }
+
+    .ecms-register-user-page .dataTables_paginate,
+    .ecms-register-user-page .dt-paging {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ecms-register-table-actions .dt-button.btn {
+        transition: none !important;
     }
 }

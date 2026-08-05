@@ -1,111 +1,54 @@
 ﻿/* =====================================================
-   ECMS Reports & Returns Modern UI
-   Only page UI changes. Header/footer/layout untouched.
+   REPORTS & RETURNS - PAGE-SPECIFIC LAYOUT
+   Global ECMS files provide the page, card, form, button,
+   modal and DataTable appearance.
 ===================================================== */
 
-:root {
-    --ecms-report-blue-1: #102f73;
-    --ecms-report-blue-2: #2f7dff;
-    --ecms-report-cyan: #55d7ff;
-    --ecms-report-green: #31c48d;
-    --ecms-report-red: #ef4444;
-    --ecms-report-orange: #f59e0b;
-    --ecms-report-ink: #071b44;
-    --ecms-report-muted: #5b729a;
-    --ecms-report-panel: rgba(232, 244, 255, 0.88);
-    --ecms-report-white: rgba(255,255,255,0.94);
-}
-
-html:has(.ecms-report-page),
-body:has(.ecms-report-page) {
-    overflow-y: hidden !important;
-}
-
-.ecms-report-page {
-    position: relative;
-    min-height: calc(100vh - 255px);
-    height: calc(100vh - 255px);
-    padding: 12px 18px 46px;
-    overflow: hidden;
-    background: linear-gradient(90deg, rgba(5, 22, 62, 0.86), rgba(20, 70, 154, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;
-}
-
-    .ecms-report-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 20% 18%, rgba(89, 200, 255, 0.16), transparent 26%), radial-gradient(circle at 84% 72%, rgba(59, 130, 246, 0.18), transparent 30%);
-    }
-
-.ecms-report-container {
-    position: relative;
-    z-index: 1;
-    width: min(1500px, 98vw) !important;
-    max-width: 1500px !important;
-    margin: 0 auto !important;
-}
-
-.ecms-report-shell {
-    width: 100% !important;
-    height: calc(100vh - 276px) !important;
-    max-height: calc(100vh - 276px) !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border: 1px solid rgba(255,255,255,0.70) !important;
-    border-radius: 22px !important;
-    background: var(--ecms-report-panel) !important;
-    box-shadow: 0 22px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
+html.ecms-report-scroll-lock,
+body.ecms-report-scroll-lock {
     overflow: hidden !important;
 }
 
+.ecms-report-page {
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    height: calc( 100dvh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    min-height: 27rem;
+    margin: .75rem auto !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.ecms-report-shell {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+.ecms-report-card-body {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+}
+
 .ecms-report-heading {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 14px 12px;
-    margin-bottom: 10px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,255,255,0.36));
-    border: 1px solid rgba(255,255,255,0.62);
+    gap: .75rem;
 }
 
-.ecms-report-heading-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    background: linear-gradient(135deg, #1f7cff, #004bd6);
-    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.32);
-    font-size: 21px;
-}
+    .ecms-report-heading h2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
-.ecms-report-heading h2 {
-    margin: 0;
-    color: var(--ecms-report-ink);
-    font-size: 21px;
-    font-weight: 900;
-    line-height: 1.1;
-}
-
-.ecms-report-heading p {
-    margin: 4px 0 0;
-    color: var(--ecms-report-muted);
-    font-size: 11px;
-    font-weight: 800;
-}
-
-/* Filter panel */
+/* Optional hierarchy filters. */
 .ecms-filter-panel {
-    padding: 12px 14px;
-    margin-bottom: 12px;
-    border-radius: 18px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(242, 248, 255, 0.70));
-    border: 1px solid rgba(255,255,255,0.72);
-    box-shadow: 0 12px 28px rgba(0, 26, 88, 0.13);
+    flex: 0 0 auto;
+    margin: 0;
 }
 
     .ecms-filter-panel .SearchTab {
@@ -115,432 +58,288 @@ body:has(.ecms-report-page) {
 
 .ecms-unit-type-row {
     align-items: center;
-    margin: 0 0 8px !important;
-}
-
-.ecms-filter-panel label,
-.ecms-filter-panel .col-form-label {
-    color: #10254f !important;
-    font-size: 12.5px !important;
-    font-weight: 900 !important;
-    margin-bottom: 4px !important;
+    margin: 0 0 .45rem !important;
 }
 
 .ecms-radio-group {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: .5rem;
 }
 
     .ecms-radio-group .form-check {
-        margin: 0 !important;
-        padding: 7px 12px 7px 34px !important;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.74);
-        border: 1px solid rgba(75, 125, 205, 0.22);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.82);
+        margin: 0;
+        padding: .4rem .75rem .4rem 2rem;
+        border: var(--ecms-border);
+        border-radius: var(--ecms-radius-pill);
+        background: rgba(255, 255, 255, .78);
     }
 
-.ecms-report-page input[type="radio"],
-.ecms-report-page .form-check-input {
-    width: 16px !important;
-    height: 16px !important;
-    accent-color: #1f74ff !important;
-    cursor: pointer;
-}
-
-.ecms-report-page .form-check-label {
-    color: #153263 !important;
-    font-size: 12.5px !important;
-    font-weight: 900 !important;
-    cursor: pointer;
-}
-
 .ecms-filter-grid {
-    row-gap: 8px;
+    row-gap: .5rem;
 }
 
     .ecms-filter-grid > [class*="col-"] {
-        padding-left: 6px !important;
-        padding-right: 6px !important;
-    }
-
-.ecms-report-page .form-select,
-.ecms-report-page .form-control {
-    height: 38px !important;
-    min-height: 38px !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(93, 125, 175, 0.34) !important;
-    background-color: rgba(255,255,255,0.92) !important;
-    color: #10254f !important;
-    font-size: 12.5px !important;
-    font-weight: 800 !important;
-    box-shadow: 0 8px 18px rgba(0, 30, 80, 0.06), inset 0 1px 0 rgba(255,255,255,0.88) !important;
-}
-
-    .ecms-report-page .form-select:focus,
-    .ecms-report-page .form-control:focus {
-        border-color: #227dff !important;
-        box-shadow: 0 0 0 4px rgba(31, 124, 255, 0.16) !important;
+        padding-left: .35rem;
+        padding-right: .35rem;
     }
 
 .ecms-filter-action {
     display: flex;
-    align-items: end;
-    gap: 8px;
+    align-items: flex-end;
 }
 
 #btnSearch {
-    height: 38px !important;
-    min-width: 118px !important;
-    margin-top: 0 !important;
-    border: 0 !important;
-    border-radius: 12px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #238dff, #064bd8) !important;
-    box-shadow: 0 12px 24px rgba(0, 82, 220, 0.28) !important;
-    font-size: 13px !important;
-    font-weight: 900 !important;
+    min-width: 7.5rem;
+    min-height: var(--ecms-control-height);
 }
 
-    #btnSearch:hover {
-        transform: translateY(-1px);
-        background: linear-gradient(135deg, #4aa0ff, #0758f0) !important;
+/* The dashboard scrolls internally on desktop. */
+.ecms-report-root {
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    padding: 0 .3rem .5rem;
+    overflow-x: hidden;
+}
+
+    .ecms-report-root .RecordCount {
+        min-height: 100%;
     }
 
-/* Report scroll area */
-.ecms-report-root {
-    height: calc(100% - 78px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0 6px 10px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(31, 124, 255, 0.60) rgba(255,255,255,0.25);
-}
-
-.ecms-filter-panel + .ecms-report-root {
-    height: calc(100% - 190px);
-}
-
-.ecms-report-root::-webkit-scrollbar {
-    width: 7px;
-}
-
-.ecms-report-root::-webkit-scrollbar-thumb {
-    background: rgba(31, 124, 255, 0.62);
-    border-radius: 999px;
-}
-
-.ecms-report-root::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.24);
-    border-radius: 999px;
-}
-
-/* Dynamic section headings generated by JS */
+/* Dynamic headings generated by reportandreturn.js. */
 .ecms-report-page .seven {
-    width: 100% !important;
-    margin: 8px 0 10px !important;
+    width: 100%;
+    margin: .15rem 0 .65rem;
 }
 
+    .ecms-report-page .seven .ecms-section-title,
     .ecms-report-page .seven h1 {
-        height: 34px !important;
-        line-height: 34px !important;
-        margin: 0 !important;
-        padding: 0 14px !important;
-        border-radius: 11px !important;
-        color: #ffffff !important;
-        text-align: center !important;
-        font-size: 15px !important;
-        font-weight: 900 !important;
-        background: linear-gradient(135deg, #153f93, #347cff) !important;
-        box-shadow: 0 10px 20px rgba(17, 69, 168, 0.22), inset 0 1px 0 rgba(255,255,255,0.28) !important;
+        min-height: var(--ecms-section-title-height);
+        margin: 0;
+        font-size: .95rem;
     }
 
 .ecms-report-page hr {
-    margin: 12px 0 !important;
-    border: 0 !important;
-    height: 1px !important;
-    background: linear-gradient(90deg, transparent, rgba(27, 78, 150, 0.28), transparent) !important;
-    opacity: 1 !important;
+    height: 0;
+    margin: .7rem 0;
+    border: 0;
+    border-top: 1px solid rgba(70, 119, 184, .24);
+    opacity: 1;
 }
 
-/* Dynamic card rows generated in reportandreturn.js */
-.ecms-report-root .row.align-items-stretch,
+/* Dynamic tile rows and sizing. */
 .ecms-report-root .row {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    align-items: stretch !important;
-    gap: 12px !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    padding: 0 0 4px !important;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: .75rem;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 0 .25rem;
 }
 
 .ecms-report-page .c-dashboardInfo {
-    flex: 0 0 108px !important;
-    width: 108px !important;
-    max-width: 108px !important;
-    min-width: 108px !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    flex: 0 0 7.5rem;
+    width: 7.5rem;
+    max-width: 7.5rem;
+    min-width: 7.5rem;
+    margin: 0;
+    padding: 0;
 }
 
-    .ecms-report-page .c-dashboardInfo a {
-        display: block !important;
-        color: inherit !important;
-        text-decoration: none !important;
-        height: 100% !important;
+    .ecms-report-page .c-dashboardInfo > a {
+        display: block;
+        height: 100%;
+        color: inherit;
+        text-decoration: none;
     }
 
     .ecms-report-page .c-dashboardInfo .wrap {
-        position: relative !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        gap: 2px !important;
-        height: 142px !important;
-        min-height: 142px !important;
-        padding: 42px 8px 10px !important;
-        border-radius: 14px !important;
-        background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(244, 249, 255,0.90)) !important;
-        border: 1px solid rgba(65, 136, 255, 0.34) !important;
-        box-shadow: 0 13px 28px rgba(0, 32, 85, 0.14), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+        position: relative;
+        height: 8.8rem;
+        min-height: 8.8rem;
+        padding: 2.65rem .55rem .6rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .15rem;
         cursor: pointer;
-        overflow: hidden !important;
-        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        overflow: hidden;
+        transition: transform .18s ease, box-shadow .18s ease;
     }
 
         .ecms-report-page .c-dashboardInfo .wrap:hover {
-            transform: translateY(-3px);
-            border-color: rgba(31, 124, 255, 0.72) !important;
-            box-shadow: 0 18px 36px rgba(0, 45, 120, 0.20), 0 0 0 4px rgba(31, 124, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.94) !important;
-        }
-
-        .ecms-report-page .c-dashboardInfo .wrap:after {
-            height: 6px !important;
-            border-radius: 14px 14px 0 0 !important;
+            transform: translateY(-2px);
+            box-shadow: var(--ecms-shadow-md);
         }
 
         .ecms-report-page .c-dashboardInfo .wrap::before {
             content: "\f15c";
-            font-family: FontAwesome;
             position: absolute;
-            top: 10px;
+            top: .65rem;
             left: 50%;
+            width: 1.55rem;
+            height: 1.55rem;
             transform: translateX(-50%);
-            width: 24px;
-            height: 24px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            color: #ffffff;
-            background: linear-gradient(135deg, #3182ff, #1f63f2);
-            box-shadow: 0 8px 16px rgba(31, 99, 242, 0.25);
-            font-size: 11px;
+            border-radius: .55rem;
+            color: var(--ecms-white);
+            background: linear-gradient(135deg, var(--ecms-primary-500), var(--ecms-primary-700));
+            box-shadow: var(--ecms-shadow-sm);
+            font-family: FontAwesome;
+            font-size: .7rem;
         }
 
     .ecms-report-page .c-dashboardInfo:nth-of-type(3n + 1) .wrap::before {
         content: "\f0e0";
-        background: linear-gradient(135deg, #31c48d, #0f8c61);
+        background: linear-gradient(135deg, var(--ecms-success-500), var(--ecms-success-600));
     }
 
     .ecms-report-page .c-dashboardInfo:nth-of-type(3n + 2) .wrap::before {
         content: "\f05a";
-        background: linear-gradient(135deg, #2f7dff, #174faf);
     }
 
     .ecms-report-page .c-dashboardInfo:nth-of-type(3n + 3) .wrap::before {
         content: "\f00c";
-        background: linear-gradient(135deg, #f59e0b, #d97706);
+        background: linear-gradient(135deg, var(--ecms-warning-500), #d97706);
     }
 
 .ecms-report-page .c-dashboardInfo__title,
 .ecms-report-page .c-dashboardInfo__subInfo {
-    width: 100% !important;
-    color: #10254f !important;
-    font-size: 9.8px !important;
-    font-weight: 900 !important;
-    line-height: 1.12 !important;
-    letter-spacing: 0 !important;
-    text-align: center !important;
-    margin: 0 !important;
-    display: block !important;
-    word-break: break-word !important;
-    overflow-wrap: anywhere !important;
+    width: 100%;
+    margin: 0;
+    color: var(--ecms-text);
+    font-size: .66rem;
+    font-weight: 900;
+    line-height: 1.12;
+    text-align: center;
+    text-transform: none;
+    word-break: normal;
+    overflow-wrap: anywhere;
 }
 
 .ecms-report-page .c-dashboardInfo__title {
-    min-height: 22px !important;
+    min-height: 1.5rem;
 }
 
     .ecms-report-page .c-dashboardInfo__title + .c-dashboardInfo__title {
-        margin-top: 2px !important;
-        color: #355683 !important;
-        min-height: 20px !important;
+        min-height: 1.25rem;
+        margin-top: .1rem;
+        color: var(--ecms-text-soft);
     }
 
 .ecms-report-page .c-dashboardInfo__count {
-    width: 100% !important;
-    color: #071b44 !important;
-    font-size: 18px !important;
-    font-weight: 900 !important;
-    line-height: 1.05 !important;
-    margin-top: auto !important;
-    padding-top: 4px !important;
-    text-align: center !important;
-}
-
-.ecms-report-page .c-dashboardInfo span {
-    display: block;
-}
-
-/* Bigger count with approved/rejected/pending values like 0/0/0 */
-.ecms-report-page .c-dashboardInfo__count:not(:empty) {
+    width: 100%;
+    margin-top: auto;
+    padding-top: .25rem;
+    color: var(--ecms-text);
+    font-size: 1.05rem;
+    font-weight: 950;
+    line-height: 1;
+    text-align: center;
     white-space: nowrap;
 }
 
-/* Record office sections */
-#RecordOfficeCountPendding,
-#RecordOfficeCountApprove {
-    padding: 0 !important;
+.ecms-report-page .c-dashboardInfo__subInfo {
+    display: none;
 }
 
-/* Modal + DataTable */
-.ecms-report-modal .modal-dialog {
-    max-width: min(1320px, 96vw) !important;
+#RecordOfficeCountPendding,
+#RecordOfficeCountApprove {
+    padding: 0;
+}
+
+/* Keep this modal above the layout and its backdrop. */
+.ecms-report-modal {
+    z-index: 1080 !important;
+}
+
+body > .modal-backdrop {
+    z-index: 1070 !important;
+}
+
+.ecms-report-modal.show .modal-dialog,
+.ecms-report-modal.show .modal-content {
+    opacity: 1 !important;
+    filter: none !important;
+    pointer-events: auto !important;
 }
 
 .ecms-report-modal .modal-content {
-    border: 1px solid rgba(255,255,255,0.72) !important;
-    border-radius: 18px !important;
-    overflow: hidden;
-    box-shadow: 0 30px 70px rgba(0, 20, 60, 0.42) !important;
+    max-height: calc(100vh - 2rem);
+    max-height: calc(100dvh - 2rem);
 }
 
-.ecms-report-modal .modal-header {
-    min-height: 56px;
-    display: flex;
+.ecms-report-modal .modal-header .fa-history {
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    display: inline-flex;
     align-items: center;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    color: #ffffff;
-    background: linear-gradient(135deg, #123f8c, #2f7dff) !important;
-    border-bottom: 0 !important;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, .32);
+    border-radius: .65rem;
+    background: rgba(255, 255, 255, .14);
 }
 
 .ecms-report-modal .modal-title {
-    color: #ffffff !important;
-    font-size: 18px !important;
-    font-weight: 900 !important;
-    margin: 0 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
-
-.ecms-report-modal .close {
-    width: 34px;
-    height: 34px;
-    border: 0;
-    border-radius: 50%;
-    color: #ffffff;
-    background: rgba(255,255,255,0.14);
-    font-size: 24px;
-    line-height: 1;
-}
-
-.ecms-report-modal .modal-header .close,
-.ecms-report-modal .modal-header button.close,
-.ecms-report-modal .modal-header .ecms-modal-close {
-    position: absolute !important;
-    top: 11px !important;
-    right: 14px !important;
-    z-index: 20 !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    min-height: 34px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 1px solid rgba(255,255,255,0.35) !important;
-    border-radius: 50% !important;
-    color: #ffffff !important;
-    background: rgba(255,255,255,0.18) !important;
-    opacity: 1 !important;
-    text-shadow: none !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25) !important;
-    cursor: pointer !important;
-}
-
 
 .ecms-report-modal .modal-body {
-    padding: 14px !important;
-    background: #f5f9ff !important;
+    min-height: 0;
+    overflow: hidden;
 }
 
-#tbldatadialog {
-    width: 100% !important;
-    table-layout: fixed !important;
-    font-size: 12px !important;
+.ecms-report-history-table {
+    height: min(62vh, 34rem);
+    height: min(62dvh, 34rem);
+    min-height: 18rem;
 }
 
-    #tbldatadialog thead th {
-        color: #ffffff !important;
-        background: #153f8f !important;
-        border-color: rgba(255,255,255,0.2) !important;
-        font-weight: 900 !important;
-    }
-
-    #tbldatadialog tbody td {
-        color: #10254f !important;
-        font-weight: 700 !important;
-        vertical-align: middle !important;
-    }
-
-.dt-top,
-.dataTables_wrapper .dt-top {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    margin-bottom: 10px !important;
+.ecms-report-modal #tbldatadialog_wrapper .dt-buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .4rem;
 }
 
-.dataTables_wrapper .dataTables_filter input,
-.dataTables_wrapper .dataTables_length select {
-    height: 34px !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(93, 125, 175, 0.34) !important;
-    padding: 6px 10px !important;
+.ecms-report-modal #tbldatadialog_wrapper .dt-search {
+    margin-left: auto;
 }
 
-.dt-button,
-.dataTables_wrapper .dt-button {
-    border: 0 !important;
-    border-radius: 10px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #238dff, #064bd8) !important;
-    font-weight: 900 !important;
-    padding: 7px 14px !important;
+.ecms-report-modal .dt-ellipsis {
+    max-width: 12rem;
 }
 
-/* Existing print behavior retained */
 @media print {
     @page {
-        margin: 5mm 5mm 8mm 5mm;
+        margin: 5mm 5mm 8mm;
+    }
+
+    html.ecms-report-scroll-lock,
+    body.ecms-report-scroll-lock {
+        overflow: visible !important;
     }
 
     .ecms-report-page,
     .ecms-report-shell,
+    .ecms-report-card-body,
     .ecms-report-root {
+        width: 100% !important;
         height: auto !important;
+        min-height: 0 !important;
         max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
         overflow: visible !important;
-        background: #ffffff !important;
+        background: var(--ecms-white) !important;
         box-shadow: none !important;
     }
 
@@ -548,241 +347,76 @@ body:has(.ecms-report-page) {
     .ecms-filter-panel {
         display: none !important;
     }
+
+    .ecms-report-page .c-dashboardInfo {
+        break-inside: avoid;
+    }
 }
 
-@media (max-width: 1199px) {
-    html:has(.ecms-report-page),
-    body:has(.ecms-report-page) {
+@media (max-width: 1199.98px) {
+    html.ecms-report-scroll-lock,
+    body.ecms-report-scroll-lock {
+        overflow-x: hidden !important;
         overflow-y: auto !important;
     }
 
-    .ecms-report-page,
-    .ecms-report-shell {
-        height: auto !important;
-        max-height: none !important;
-        min-height: calc(100vh - 255px) !important;
-        overflow: visible !important;
+    .ecms-report-page {
+        height: auto;
+        min-height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) );
+        margin: .5rem auto calc(var(--ecms-footer-height) + .75rem) !important;
+        padding-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        overflow: visible;
+    }
+
+    .ecms-report-shell,
+    .ecms-report-card-body {
+        height: auto;
+        min-height: 27rem;
     }
 
     .ecms-report-root {
-        height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-    }
-
-    .ecms-report-page .c-dashboardInfo {
-        flex: 0 0 128px !important;
-        width: 128px !important;
-        max-width: 128px !important;
+        height: auto;
+        overflow: visible;
     }
 }
 
-@media (max-width: 768px) {
-    .ecms-report-page {
-        padding: 10px 10px 54px;
-    }
-
-    .ecms-report-shell {
-        padding: 10px !important;
-        border-radius: 18px !important;
-    }
-
+@media (max-width: 767.98px) {
     .ecms-report-heading {
         align-items: flex-start;
-        padding: 10px;
     }
 
         .ecms-report-heading h2 {
-            font-size: 18px;
+            font-size: 1.15rem;
+            white-space: normal;
         }
 
     .ecms-filter-grid > [class*="col-"] {
-        margin-bottom: 8px;
+        margin-bottom: .35rem;
     }
 
     .ecms-report-root .row {
-        justify-content: center !important;
+        justify-content: center;
     }
 
     .ecms-report-page .c-dashboardInfo {
-        flex: 0 0 135px !important;
-        width: 135px !important;
-        max-width: 135px !important;
-    }
-}
-
-.ecms-report-page .c-dashboardInfo__subInfo {
-    display: none !important;
-}
-
-.ecms-report-page .c-dashboardInfo .wrap > .d-none + .c-dashboardInfo__count,
-.ecms-report-page .c-dashboardInfo .wrap > .c-dashboardInfo__count:first-child {
-    padding-top: 0 !important;
-}
-
-@media (max-width: 1400px) {
-    .ecms-report-page .c-dashboardInfo {
-        flex-basis: 102px !important;
-        width: 102px !important;
-        max-width: 102px !important;
-        min-width: 102px !important;
+        flex-basis: 8rem;
+        width: 8rem;
+        max-width: 8rem;
+        min-width: 8rem;
     }
 
-        .ecms-report-page .c-dashboardInfo .wrap {
-            height: 138px !important;
-            min-height: 138px !important;
-            padding-left: 7px !important;
-            padding-right: 7px !important;
-        }
-}
-
-
-/* =====================================================
-   FINAL FIX: Reports & Returns Modal Header
-   Fix close icon visibility + title alignment only
-   No functionality / ID change
-===================================================== */
-
-.ecms-report-modal .modal-header {
-    position: relative !important;
-    min-height: 58px !important;
-    padding: 0 58px 0 18px !important;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 10px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #173f96 0%, #2f7dff 100%) !important;
-    border-bottom: 0 !important;
-    overflow: visible !important;
-}
-
-    .ecms-report-modal .modal-header::before {
-        content: "\f0ea";
-        font-family: FontAwesome;
-        width: 34px !important;
-        height: 34px !important;
-        min-width: 34px !important;
-        border-radius: 11px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #ffffff !important;
-        background: rgba(255, 255, 255, 0.18) !important;
-        border: 1px solid rgba(255, 255, 255, 0.30) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.22) !important;
-        font-size: 15px !important;
+    .ecms-report-modal .modal-dialog {
+        margin: .5rem;
     }
 
-.ecms-report-modal .modal-title,
-.ecms-report-modal #lblRepotReturnHistory {
-    flex: 1 1 auto !important;
-    width: auto !important;
-    max-width: calc(100% - 58px) !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: #ffffff !important;
-    font-size: 18px !important;
-    font-weight: 900 !important;
-    line-height: 1.2 !important;
-    text-align: left !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-}
-
-/* Bootstrap 4 style close button used in this page */
-.ecms-report-modal .modal-header .close,
-.ecms-report-modal .modal-header button.close {
-    position: absolute !important;
-    top: 12px !important;
-    right: 14px !important;
-    z-index: 50 !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    min-height: 34px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 1px solid rgba(255,255,255,0.42) !important;
-    border-radius: 50% !important;
-    color: #ffffff !important;
-    background: rgba(255,255,255,0.20) !important;
-    opacity: 1 !important;
-    text-shadow: none !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 8px 18px rgba(0,0,0,0.18) !important;
-    cursor: pointer !important;
-}
-
-    .ecms-report-modal .modal-header .close span,
-    .ecms-report-modal .modal-header button.close span {
-        display: block !important;
-        width: 100% !important;
-        height: 100% !important;
-        color: #ffffff !important;
-        font-size: 27px !important;
-        font-weight: 700 !important;
-        line-height: 29px !important;
-        text-align: center !important;
-        margin: 0 !important;
-        padding: 0 !important;
+    .ecms-report-history-table {
+        height: 65vh;
+        height: 65dvh;
+        min-height: 16rem;
     }
 
-    .ecms-report-modal .modal-header .close:hover,
-    .ecms-report-modal .modal-header button.close:hover {
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-        border-color: rgba(255,255,255,0.62) !important;
-        transform: translateY(-1px) !important;
-    }
-
-    .ecms-report-modal .modal-header .close:focus,
-    .ecms-report-modal .modal-header button.close:focus {
-        outline: none !important;
-        box-shadow: 0 0 0 4px rgba(255,255,255,0.18), 0 8px 18px rgba(0,0,0,0.18) !important;
-    }
-
-/* Keep DataTable tools clean inside modal */
-.ecms-report-modal .modal-body {
-    padding: 14px !important;
-}
-
-    .ecms-report-modal .modal-body .dt-top,
-    .ecms-report-modal .modal-body .dataTables_wrapper .dt-top {
-        align-items: center !important;
-        margin-bottom: 10px !important;
-    }
-
-@media (max-width: 768px) {
-    .ecms-report-modal .modal-header {
-        min-height: 54px !important;
-        padding-left: 14px !important;
-        padding-right: 54px !important;
-    }
-
-        .ecms-report-modal .modal-header::before {
-            width: 30px !important;
-            height: 30px !important;
-            min-width: 30px !important;
-            font-size: 13px !important;
-        }
-
-    .ecms-report-modal .modal-title,
-    .ecms-report-modal #lblRepotReturnHistory {
-        font-size: 15px !important;
-    }
-
-    .ecms-report-modal .modal-header .close,
-    .ecms-report-modal .modal-header button.close {
-        top: 10px !important;
-        right: 12px !important;
-        width: 32px !important;
-        height: 32px !important;
-        min-width: 32px !important;
-        min-height: 32px !important;
+    .ecms-report-modal #tbldatadialog_wrapper .dt-search {
+        width: 100%;
+        margin-left: 0;
     }
 }

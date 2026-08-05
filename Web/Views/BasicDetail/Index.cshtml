@@ -8,7 +8,7 @@
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
                         @if (Convert.ToString(ViewBag.Id) == "0")
                         {
                             <div>
@@ -169,30 +169,50 @@
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10 ecms-basic-index-page">
-    <div class="card mb-3 ecms-basic-index-shell">
-        <div class="card-header ecms-basic-index-card-header">
-            <span class="d-none" id="spnStepCounter">@ViewBag.StepCounter</span>
-            <span class="d-none" id="spnJCOOR">@ViewBag.jcoor</span>
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3 class="ecms-basic-index-heading">
-                        <span class="ecms-basic-index-heading-icon"><i class="fa fa-list-alt"></i></span>
-                        <span>@ViewBag.Title</span>
-                        <small class="text-muted"></small>
-                    </h3>
+<div class="ecms-bg">
+    <main class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-basic-index-page">
+        <section class="ecms-card ecms-basic-index-shell">
+            <div class="ecms-card-body d-flex flex-column h-100 ecms-min-0">
+                <span class="d-none" id="spnStepCounter">@ViewBag.StepCounter</span>
+                <span class="d-none" id="spnJCOOR">@ViewBag.jcoor</span>
+
+                <div class="ecms-page-title d-flex align-items-center justify-content-between gap-3 ecms-basic-index-titlebar">
+                    <div class="d-flex align-items-center gap-2 ecms-min-0">
+                        <span class="ecms-title-icon" aria-hidden="true">
+                            <i class="fa fa-list-alt"></i>
+                        </span>
+
+                        <div class="ecms-min-0">
+                            <h3>@ViewBag.Title</h3>
+                            <p class="ecms-title-subtitle">
+                                Review and manage I-Card applications, history, preview, editing and forwarding
+                            </p>
+                        </div>
+                    </div>
+
+                    <span class="badge bg-primary d-inline-flex align-items-center gap-2 ecms-basic-index-pill">
+                        <i class="fa fa-id-card"></i>
+                        Application List
+                    </span>
                 </div>
+
+                <section class="ecms-section d-flex flex-column flex-grow-1 ecms-min-0 ecms-basic-index-table-section">
+                    <div class="ecms-section-title flex-shrink-0">
+                        <i class="fa fa-table" aria-hidden="true"></i>
+                        <span>Application Records</span>
+                    </div>
+
+                    <div class="ecms-dt-wrap ecms-basic-index-table-wrap flex-grow-1 ecms-min-0">
+                        <table class="table table-striped table-hover dataTable ecms-dt-table"
+                               role="grid"
+                               id="tbldatatabledata_Fwd"
+                               aria-label="I-Card application records">
+                        </table>
+                    </div>
+                </section>
             </div>
-        </div>
-        <div class="card-body card-body-min-height ecms-basic-index-body">
-            <div class="row">
-                <div class="col-xl-12 ecms-basic-index-table-col">
-                    <table class="table table-striped table-hover border border-purple ecms-basic-index-table" role="grid" id="tbldatatabledata_Fwd">
-                    </table>
-                </div>
-            </div>
-        </div><!-- Row End -->
-    </div>
+        </section>
+    </main>
 </div>
 
 @section Scripts {

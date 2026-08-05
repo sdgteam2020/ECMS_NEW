@@ -5,12 +5,13 @@ $(function () {
 
     applyDataTableSearchValidation('#tbldata');
 
+    preparePostingTypeModals();
     BindData();
     $("#btnAdd").on("click", function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
-        $("#unitoffrsModal").modal("show");
+        showPostingTypeModal("#unitoffrsModal");
         $("#armynosearchTypeId").val(ApplicantPostingOut);
     });
     $("#btnDispatchDetailsAddButton").on("click", function () {
@@ -84,6 +85,58 @@ $(function () {
     });
 });
 
+
+/* UI-only helper: keep this page's modals outside fixed/stacking containers. */
+function preparePostingTypeModals() {
+    $("#AddDispatchDetails, #MessageDialog, #unitoffrsModal").each(function () {
+        if (!$(this).parent().is("body")) {
+            $(this).appendTo(document.body);
+        }
+    });
+
+    $(document)
+        .off("shown.bs.modal.postingType")
+        .on("shown.bs.modal.postingType", "#AddDispatchDetails, #MessageDialog, #unitoffrsModal", function () {
+            $(this).css({ zIndex: 1055, opacity: 1, pointerEvents: "auto" });
+            $(".modal-backdrop").last().css("z-index", 1040);
+        })
+        .off("hidden.bs.modal.postingType")
+        .on("hidden.bs.modal.postingType", "#AddDispatchDetails, #MessageDialog, #unitoffrsModal", function () {
+            if ($(".modal.show").length === 0) {
+                $(".modal-backdrop").remove();
+                $("body").removeClass("modal-open").css("padding-right", "");
+            }
+        });
+}
+
+/* UI-only helper: opens the original Bootstrap modal after moving it to body. */
+function showPostingTypeModal(selector) {
+    const $modal = $(selector);
+    if (!$modal.length) {
+        return;
+    }
+
+    if (!$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+
+    $modal.modal("show");
+}
+
+/* UI-only helper: safely adjusts columns whether Responsive is loaded or not. */
+function adjustPostingTypeTable(api) {
+    const currentTable = api || table;
+    if (!currentTable || typeof currentTable.columns !== "function") {
+        return;
+    }
+
+    currentTable.columns.adjust();
+
+    if (currentTable.responsive && typeof currentTable.responsive.recalc === "function") {
+        currentTable.responsive.recalc();
+    }
+}
+
 function BindData() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
         // Destroy the DataTable and clear the table content
@@ -93,9 +146,9 @@ function BindData() {
     }
 
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',           // Fill the available common-theme table viewport
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
+        scrollCollapse: false,
         scroller: true,           // ✅ Enable virtual scrolling for better performance
         deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
@@ -203,7 +256,7 @@ function BindData() {
                 orderable: false,
                 render: function (data, type, row) {
                     let FromUnit = `${row.FromUnitName}</br>${row.FromDomainId}`;
-                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${row.FromUnitName} ${row.FromDomainId}">${FromUnit}</To>`;
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${row.FromUnitName} ${row.FromDomainId}">${FromUnit}</span>`;
 
                 }
             },
@@ -216,7 +269,7 @@ function BindData() {
                 orderable: false,
                 render: function (data, type, row) {
                     let ToUnit = `${row.ToUnitName}</br>${row.ToDomainId}`;
-                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${row.ToUnitName} ${row.ToDomainId}">${ToUnit}</To>`;
+                    return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${row.ToUnitName} ${row.ToDomainId}">${ToUnit}</span>`;
                 }
             },
             {
@@ -249,8 +302,7 @@ function BindData() {
                                         </span>`;
                         }
                     }
-                    else
-                    {
+                    else {
                         returnStr = `<span id="btneye">
                                         <button type="button" class="cls-btneyedispatchdetails btn btn-icon btn-round btn-warning mr-1">
                                             <i class="fas fa-eye"></i>
@@ -272,7 +324,9 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'row g-2 align-items-center dt-top ecms-dt-toolbar'<'col-auto'l><'col-auto'B><'col ml-auto ms-auto'f>>" +
+            "rt" +
+            "<'row ecms-dt-footer'<'col-md-6 dt-info-col'i><'col-md-6 dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -282,12 +336,14 @@ function BindData() {
             //},
             {
                 extend: 'excel',
+                className: 'btn btn-primary btn-sm',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 }
             },
             {
                 extend: 'pdfHtml5',
+                className: 'btn btn-primary btn-sm',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
                 title: 'E-IASC_PostingOut',
@@ -308,13 +364,13 @@ function BindData() {
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    adjustPostingTypeTable();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            adjustPostingTypeTable(this.api());
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -332,7 +388,7 @@ function BindData() {
                 $('#MessageDialog .modal-dialog').removeClass('modal-sm');
                 $("#MessageDialogLabel").html('Dispatch Details');
                 $("#MessageDialogBody").html(htmlBody);
-                $("#MessageDialog").modal('show');
+                showPostingTypeModal("#MessageDialog");
             });
             $("#tbldata tbody").off("click", ".cls-btnAddDispatchDetails").on("click", ".cls-btnAddDispatchDetails", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -340,7 +396,7 @@ function BindData() {
                     Reset();
                     //ResetErrorMessage();
                     spnPostingOutId = rowData.Id;
-                    $("#AddDispatchDetails").modal('show');
+                    showPostingTypeModal("#AddDispatchDetails");
                 }
             });
         }
@@ -374,7 +430,7 @@ function Proceed() {
     })
 }
 
-function GetHtmlLabel(label,value) {
+function GetHtmlLabel(label, value) {
     return `<div class="row mb-2 align-items-center">
                 <div class="col-md-4 fw-semibold text-muted">${label}</div>
                 <div class="col-md-8">

@@ -24,11 +24,11 @@
 </header>
 
 <div class="ecms-card-movement-page">
-    <div class="containerMain ecms-card-movement-container">
-        <div class="ecms-card-movement-shell">
+    <div class="containerMain ecms-page ecms-page-full ecms-fit-screen ecms-card-movement-container">
+        <div class="ecms-card ecms-card-movement-shell">
 
-            <div class="ecms-card-movement-head d-print-none">
-                <div class="ecms-card-movement-head-icon">
+            <div class="ecms-page-title ecms-card-movement-head d-flex align-items-center gap-3 d-print-none">
+                <div class="ecms-title-icon ecms-card-movement-head-icon">
                     <i class="fa fa-id-card"></i>
                 </div>
                 <div>
@@ -39,7 +39,7 @@
 
             @if (claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports" || i.Value == "Fmn Level Reports"))
             {
-                <div class="ecms-card-filter-panel section_to_report_toPrint d-print-none" id="section_to_report_toPrint">
+                <div class="ecms-section ecms-form-section ecms-card-filter-panel section_to_report_toPrint d-print-none" id="section_to_report_toPrint">
                     <div class="row pt-1 SearchTab">
                         <div class="form-group row mb-2 ecms-unit-type-row">
                             <span id="spnclaimId" class="d-none">@(claims.Any(i => i.Value == "Army Level Reports") ? "Army Level Reports" : "Fmn Level Reports")</span>
@@ -118,16 +118,16 @@
             {
                 <div class="ecms-card-movement-scroll">
 
-                    <section class="ecms-card-section">
+                    <section class="ecms-section ecms-card-section">
                         <div class="seven ecms-section-title">
                             <h1>Offrs</h1>
                         </div>
 
-                        <div class="ecms-card-section-body">
+                        <div class="ecms-form-section ecms-card-section-body">
                             <div class="ecms-movement-grid">
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-export" id="btnExport_Officer">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-export" id="btnExport_Officer">
                                             <div class="ecms-card-icon"><i class="fa fa-upload"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotExported_Officer">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Exported by AFSAC</h4>
@@ -137,7 +137,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-print" id="btnPrinted_Officer">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-print" id="btnPrinted_Officer">
                                             <div class="ecms-card-icon"><i class="fa fa-print"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotPrinted_Officer">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Printed</h4>
@@ -147,7 +147,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-dispatch" id="btnDispatchToORO">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-dispatch" id="btnDispatchToORO">
                                             <div class="ecms-card-icon"><i class="fa fa-truck"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToORO">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch to Officer Record Office</h4>
@@ -157,7 +157,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-office" id="btnCardInORO">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-office" id="btnCardInORO">
                                             <div class="ecms-card-icon"><i class="fa fa-building"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInORO">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Officer Record Office</h4>
@@ -167,7 +167,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-unit" id="btnDispatchToUnit_Officer">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-unit" id="btnDispatchToUnit_Officer">
                                             <div class="ecms-card-icon"><i class="fa fa-share-square"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToUnit_Officer">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch to Unit</h4>
@@ -177,7 +177,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-home" id="btnCardInUnit_Officer">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-home" id="btnCardInUnit_Officer">
                                             <div class="ecms-card-icon"><i class="fa fa-home"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInUnit_Officer">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Unit</h4>
@@ -187,7 +187,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-done" id="btnDistributed_Officer">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-done" id="btnDistributed_Officer">
                                             <div class="ecms-card-icon"><i class="fa fa-check-circle"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDistributed_Officer">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Distributed</h4>
@@ -198,16 +198,16 @@
                         </div>
                     </section>
 
-                    <section class="ecms-card-section">
+                    <section class="ecms-section ecms-card-section">
                         <div class="seven ecms-section-title">
                             <h1>JCO / OR</h1>
                         </div>
 
-                        <div class="ecms-card-section-body">
+                        <div class="ecms-form-section ecms-card-section-body">
                             <div class="ecms-movement-grid">
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-export" id="btnExport_OR">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-export" id="btnExport_OR">
                                             <div class="ecms-card-icon"><i class="fa fa-upload"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotExported_OR">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Exported by AFSAC</h4>
@@ -217,7 +217,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-print" id="btnPrinted_OR">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-print" id="btnPrinted_OR">
                                             <div class="ecms-card-icon"><i class="fa fa-print"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotPrinted_OR">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Printed</h4>
@@ -227,7 +227,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-dispatch" id="btnDispatchToRegt">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-dispatch" id="btnDispatchToRegt">
                                             <div class="ecms-card-icon"><i class="fa fa-truck"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToRegt">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch to Regiment</h4>
@@ -237,7 +237,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-office" id="btnCardInRegt">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-office" id="btnCardInRegt">
                                             <div class="ecms-card-icon"><i class="fa fa-building"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInRegt">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Regiment</h4>
@@ -247,7 +247,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-unit" id="btnDispatchToUnit_OR">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-unit" id="btnDispatchToUnit_OR">
                                             <div class="ecms-card-icon"><i class="fa fa-share-square"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToUnit_OR">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch to Unit</h4>
@@ -257,7 +257,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-home" id="btnCardInUnit_OR">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-home" id="btnCardInUnit_OR">
                                             <div class="ecms-card-icon"><i class="fa fa-home"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInUnit_OR">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Unit</h4>
@@ -267,7 +267,7 @@
 
                                 <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap ecms-movement-card ecms-card-done" id="btnDistributed_OR">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-done" id="btnDistributed_OR">
                                             <div class="ecms-card-icon"><i class="fa fa-check-circle"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDistributed_OR">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Distributed</h4>
@@ -284,18 +284,17 @@
     </div>
 </div>
 
-<div class="modal fade ecms-card-movement-modal" id="CardReport" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
+<div class="modal fade ecms-card-movement-modal" id="CardReport" tabindex="-1" aria-labelledby="CardReport_lblModelTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl ecms-modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"><span id="CardReport_lblModelTitle"></span></h4>
-                <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close ecms-modal-close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
 
             <div class="modal-body">
-                <div class="row">
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="CardReport_tbldatadialog">
-                    </table>
+                <div class="ecms-dt-wrap ecms-card-report-table">
+                    <table class="table table-striped table-hover dataTable ecms-dt-table" role="grid" id="CardReport_tbldatadialog"></table>
                 </div>
                 <div class="col-sm-12" id="msg">
                 </div>

@@ -1,427 +1,415 @@
-﻿/* =====================================================
-   ECMS Login Log Modern UI
-   Only page UI changes. Header/footer/layout untouched.
-===================================================== */
-
-:root {
-    --ecms-log-blue-1: #102f73;
-    --ecms-log-blue-2: #2f7dff;
-    --ecms-log-cyan: #55d7ff;
-    --ecms-log-ink: #071b44;
-    --ecms-log-muted: #5b729a;
-    --ecms-log-panel: rgba(232, 244, 255, 0.88);
-    --ecms-log-white: rgba(255,255,255,0.94);
-    --ecms-log-green: #31c48d;
-    --ecms-log-orange: #f59e0b;
-    --ecms-log-red: #ef4444;
-}
-
-html:has(.ecms-loginlog-page),
-body:has(.ecms-loginlog-page) {
-    overflow-y: hidden !important;
-}
+﻿/* =====================================================================
+   ECMS Login Log
+   Page-specific layout and timeline refinements only.
+   Shared ModernCSS theme files remain unchanged.
+===================================================================== */
 
 .ecms-loginlog-page {
     position: relative;
-    min-height: calc(100vh - 255px);
-    height: calc(100vh - 255px);
-    padding: 12px 18px 46px;
+    height: calc( 100dvh - var(--ecms-header-height, 95px) - var(--ecms-footer-height, 34px) - var(--ecms-nav-strip-height, var(--ecms-nav-height, 44px)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height, 35px)) );
+    min-height: 0;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0.5rem 0;
+    box-sizing: border-box;
     overflow: hidden;
-    background: linear-gradient(90deg, rgba(5, 22, 62, 0.86), rgba(20, 70, 154, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;
 }
 
-    .ecms-loginlog-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 22% 18%, rgba(89, 200, 255, 0.16), transparent 28%), radial-gradient(circle at 82% 74%, rgba(59, 130, 246, 0.18), transparent 30%);
-    }
-
 .ecms-loginlog-container {
-    position: relative;
-    z-index: 1;
-    width: min(1500px, 98vw) !important;
-    max-width: 1500px !important;
+    width: calc(100vw - 1rem) !important;
+    max-width: none !important;
+    height: 100%;
+    min-height: 0;
     margin: 0 auto !important;
+    padding: 0 !important;
 }
 
 .ecms-loginlog-shell {
-    width: 100% !important;
-    height: calc(100vh - 278px) !important;
-    max-height: calc(100vh - 278px) !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border: 1px solid rgba(255,255,255,0.70) !important;
-    border-radius: 22px !important;
-    background: var(--ecms-log-panel) !important;
-    box-shadow: 0 22px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
-    overflow: hidden !important;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0 !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .ecms-loginlog-heading {
-    padding: 10px 14px 12px !important;
-    margin-bottom: 10px !important;
-    border: 0 !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.76), rgba(255,255,255,0.38)) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.82) !important;
-}
-
-.ecms-loginlog-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.ecms-loginlog-heading-icon,
-.ecms-filter-icon,
-.ecms-modal-title-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    background: linear-gradient(135deg, #1f7cff, #004bd6);
-    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.30);
+    flex: 0 0 auto;
+    gap: 0.75rem;
+    margin: 0 0 0.55rem;
 }
 
 .ecms-loginlog-heading-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 16px;
-    font-size: 20px;
+    flex: 0 0 2.6rem;
+}
+
+.ecms-loginlog-heading-copy {
+    min-width: 0;
 }
 
 .ecms-loginlog-heading h3 {
-    margin: 0 !important;
-    color: var(--ecms-log-ink) !important;
-    font-size: 22px !important;
-    font-weight: 900 !important;
-    line-height: 1.1 !important;
+    margin: 0;
+    font-size: clamp(1.1rem, 1.45vw, 1.35rem);
 }
 
-.ecms-loginlog-heading p {
-    margin: 4px 0 0 !important;
-    color: var(--ecms-log-muted) !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
+.ecms-loginlog-heading .ecms-title-subtitle {
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .ecms-loginlog-body {
-    height: calc(100% - 78px) !important;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
     padding: 0 !important;
-    overflow: hidden !important;
+    background: transparent !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    overflow: hidden;
 }
 
 .ecms-loginlog-toolbar {
+    min-height: 3.35rem;
+    flex: 0 0 auto;
+    padding: 0.55rem 0.75rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
-    padding: 12px 14px !important;
-    margin-bottom: 10px !important;
-    border-radius: 16px !important;
-    background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(242, 248, 255, 0.70)) !important;
-    border: 1px solid rgba(255,255,255,0.72) !important;
-    box-shadow: 0 12px 28px rgba(0, 26, 88, 0.12) !important;
+    gap: 0.85rem;
 }
 
-.ecms-loginlog-toolbar-left {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    color: #10254f;
-    font-size: 13px;
+.ecms-loginlog-toolbar-left,
+.ecms-loginlog-modal-toolbar-title {
+    min-width: 0;
+    color: var(--ecms-text-soft);
+    font-size: 0.82rem;
     font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ecms-filter-icon,
+.ecms-modal-title-icon {
+    color: var(--ecms-white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .ecms-filter-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 11px;
-    font-size: 14px;
+    width: 1.9rem;
+    height: 1.9rem;
+    flex: 0 0 1.9rem;
+    border-radius: var(--ecms-radius-sm);
+    background: linear-gradient(135deg, var(--ecms-primary-700), var(--ecms-primary-500));
+    box-shadow: 0 0.45rem 0.9rem rgba(47, 103, 230, 0.22);
 }
 
 .ecms-date-filter {
-    align-items: center !important;
-    gap: 8px !important;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
 }
 
-    .ecms-date-filter label {
-        color: #10254f !important;
-        font-size: 12.5px !important;
-        font-weight: 900 !important;
-        margin: 0 !important;
+.ecms-date-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+    .ecms-date-field label {
+        margin: 0;
+        color: var(--ecms-text-soft);
+        font-size: 0.78rem;
+        font-weight: 900;
+        white-space: nowrap;
     }
 
-    .ecms-date-filter .form-control,
-    .ecms-loginlog-page .dataTables_filter input,
-    .ecms-loginlog-page .dataTables_length select {
-        height: 36px !important;
-        min-height: 36px !important;
-        border-radius: 11px !important;
-        border: 1px solid rgba(93, 125, 175, 0.36) !important;
-        background: rgba(255,255,255,0.94) !important;
-        color: #10254f !important;
-        font-size: 12.5px !important;
-        font-weight: 800 !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.88), 0 8px 18px rgba(0, 30, 80, 0.06) !important;
+    .ecms-date-field .form-control {
+        width: 9.5rem;
+        cursor: pointer;
     }
 
-    .ecms-date-filter .form-control {
-        width: 160px !important;
-    }
+.ecms-loginlog-table-section {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
 
-        .ecms-date-filter .form-control:focus,
-        .ecms-loginlog-page .dataTables_filter input:focus {
-            border-color: #227dff !important;
-            box-shadow: 0 0 0 4px rgba(31, 124, 255, 0.16) !important;
-        }
+    .ecms-loginlog-table-section .ecms-section-title {
+        flex: 0 0 auto;
+    }
 
 .ecms-loginlog-table-wrap {
-    height: calc(100% - 72px) !important;
-    overflow: hidden !important;
-    border-radius: 14px !important;
-    background: rgba(255,255,255,0.40) !important;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    padding: 0.55rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.ecms-loginlog-page #tbldatatabledata,
-.ecms-loginlog-page .dataTable {
+    .ecms-loginlog-table-wrap > table#tbldatatabledata,
+    .ecms-loginlog-table-wrap .dataTables_wrapper,
+    .ecms-loginlog-table-wrap .dt-container {
+        width: 100% !important;
+    }
+
+    .ecms-loginlog-table-wrap .dataTables_wrapper,
+    .ecms-loginlog-table-wrap .dt-container {
+        height: 100% !important;
+        min-height: 0 !important;
+        flex: 1 1 auto;
+        display: flex !important;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+        /* DataTables 1.x Bootstrap layout */
+        .ecms-loginlog-table-wrap .dataTables_wrapper > .row:first-child {
+            flex: 0 0 auto;
+            margin: 0 0 0.45rem;
+            align-items: center;
+        }
+
+        .ecms-loginlog-table-wrap .dataTables_wrapper > .row:nth-child(2) {
+            flex: 1 1 auto;
+            min-height: 0;
+            margin: 0;
+            overflow: auto;
+        }
+
+            .ecms-loginlog-table-wrap .dataTables_wrapper > .row:nth-child(2) > [class*="col-"] {
+                padding: 0;
+            }
+
+        .ecms-loginlog-table-wrap .dataTables_wrapper > .row:last-child {
+            flex: 0 0 auto;
+            margin: auto 0 0;
+            padding: 0.5rem 0.45rem;
+            border-top: 1px solid rgba(70, 119, 184, 0.24);
+            border-radius: 0 0 var(--ecms-radius-sm) var(--ecms-radius-sm);
+            background: linear-gradient(135deg, rgba(245,250,255,.99), rgba(224,238,255,.99));
+            align-items: center;
+        }
+
+        /* DataTables 2.x layout */
+        .ecms-loginlog-table-wrap .dt-container > .dt-layout-row {
+            flex: 0 0 auto;
+        }
+
+            .ecms-loginlog-table-wrap .dt-container > .dt-layout-row.dt-layout-table {
+                flex: 1 1 auto;
+                min-height: 0;
+                overflow: auto;
+            }
+
+            .ecms-loginlog-table-wrap .dt-container > .dt-layout-row:last-child {
+                margin-top: auto;
+            }
+
+.ecms-loginlog-page table#tbldatatabledata {
     width: 100% !important;
-    margin: 0 !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    font-size: 12.5px !important;
 }
 
-    .ecms-loginlog-page #tbldatatabledata thead th {
-        height: 42px !important;
-        padding: 10px 12px !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #153f8f, #2f72dc) !important;
-        border-color: rgba(255,255,255,0.18) !important;
-        font-size: 12.5px !important;
-        font-weight: 900 !important;
-        vertical-align: middle !important;
-        white-space: nowrap !important;
+    .ecms-loginlog-page table#tbldatatabledata thead th:not(:last-child),
+    .ecms-loginlog-page table#tbldatatabledata tbody td:not(:last-child) {
+        text-align: left !important;
     }
 
-    .ecms-loginlog-page #tbldatatabledata tbody td {
-        padding: 10px 12px !important;
-        color: #10254f !important;
-        font-size: 12.5px !important;
-        font-weight: 750 !important;
-        vertical-align: middle !important;
-        border-color: rgba(13, 61, 130, 0.12) !important;
+    .ecms-loginlog-page table#tbldatatabledata thead th:last-child,
+    .ecms-loginlog-page table#tbldatatabledata tbody td:last-child {
+        width: 11rem !important;
+        min-width: 11rem !important;
+        text-align: center !important;
     }
 
-    .ecms-loginlog-page #tbldatatabledata tbody tr:nth-child(even) td {
-        background: rgba(255,255,255,0.52) !important;
+    .ecms-loginlog-page table#tbldatatabledata tbody td {
+        max-width: 24rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
-    .ecms-loginlog-page #tbldatatabledata tbody tr:nth-child(odd) td {
-        background: rgba(246, 251, 255,0.62) !important;
-    }
-
-    .ecms-loginlog-page #tbldatatabledata tbody tr:hover td {
-        background: rgba(221, 239, 255,0.86) !important;
+    .ecms-loginlog-page table#tbldatatabledata tbody tr:hover td {
+        background: rgba(224, 238, 255, 0.98) !important;
     }
 
 .ecms-loginlog-page .cls-btnhistory {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    min-height: 34px !important;
+    width: 2.15rem !important;
+    height: 2.15rem !important;
+    min-width: 2.15rem !important;
+    min-height: 2.15rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
     border: 0 !important;
-    border-radius: 12px !important;
+    border-radius: var(--ecms-radius-sm) !important;
+    color: var(--ecms-white) !important;
+    background: linear-gradient(135deg, var(--ecms-warning-500), #df9500) !important;
+    box-shadow: 0 0.55rem 1rem rgba(223, 149, 0, 0.24) !important;
     display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #f59e0b, #e07800) !important;
-    box-shadow: 0 10px 18px rgba(245, 158, 11, 0.28) !important;
+    align-items: center;
+    justify-content: center;
 }
 
     .ecms-loginlog-page .cls-btnhistory:hover {
         transform: translateY(-1px);
-        background: linear-gradient(135deg, #ffb02e, #f07800) !important;
     }
 
     .ecms-loginlog-page .cls-btnhistory i {
-        color: #ffffff !important;
-        font-size: 14px !important;
+        color: inherit !important;
     }
 
-.ecms-loginlog-page .dataTables_wrapper,
-.ecms-loginlog-page .dt-container {
-    height: 100% !important;
-}
-
-.ecms-loginlog-page .dt-layout-row,
-.ecms-loginlog-page .dataTables_info,
-.ecms-loginlog-page .dataTables_paginate {
-    color: #071b44 !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
-
-    .ecms-loginlog-page .dataTables_paginate .paginate_button,
-    .ecms-loginlog-page .dt-paging-button,
-    .ecms-loginlog-page .page-link {
-        min-width: 32px !important;
-        height: 30px !important;
-        border-radius: 9px !important;
-        border: 1px solid rgba(93, 125, 175, 0.24) !important;
-        background: rgba(255,255,255,0.82) !important;
-        color: #154caa !important;
-        font-weight: 900 !important;
-    }
-
-        .ecms-loginlog-page .dataTables_paginate .paginate_button.current,
-        .ecms-loginlog-page .dt-paging-button.current,
-        .ecms-loginlog-page .page-item.active .page-link {
-            color: #ffffff !important;
-            background: linear-gradient(135deg, #1f7cff, #004bd6) !important;
-        }
-
-/* DataTables 2 duplicate header fix for scroll tables */
-.ecms-loginlog-page .dt-scroll-body thead,
-.ecms-loginlog-page .dataTables_scrollBody thead {
-    visibility: collapse !important;
-    height: 0 !important;
-}
-
-    .ecms-loginlog-page .dt-scroll-body thead th,
-    .ecms-loginlog-page .dataTables_scrollBody thead th {
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        height: 0 !important;
-        line-height: 0 !important;
-        border: 0 !important;
-    }
-
-/* Modal */
+/* Modal dimensions and internal scrolling; common theme provides the skin. */
 .ecms-loginlog-modal .modal-dialog {
-    max-width: min(1120px, 96vw) !important;
+    width: min(1180px, calc(100vw - 1rem));
+    max-width: min(1180px, calc(100vw - 1rem)) !important;
+    margin: 0.75rem auto;
 }
 
 .ecms-loginlog-modal .modal-content {
-    border: 1px solid rgba(255,255,255,0.72) !important;
-    border-radius: 18px !important;
-    overflow: hidden !important;
-    box-shadow: 0 30px 70px rgba(0, 20, 60, 0.46) !important;
+    height: min(84dvh, 780px);
+    min-height: 26rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .ecms-loginlog-modal .modal-header {
-    position: relative !important;
-    min-height: 58px !important;
-    padding: 14px 58px 14px 18px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #123f8c, #2f7dff) !important;
-    border-bottom: 0 !important;
-    display: flex !important;
-    align-items: center !important;
+    flex: 0 0 auto;
 }
 
 .ecms-loginlog-modal .modal-title {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    margin: 0 !important;
-    color: #ffffff !important;
-    font-size: 17px !important;
-    font-weight: 900 !important;
-    line-height: 1.25 !important;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    line-height: 1.25;
 }
 
 .ecms-modal-title-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 11px;
-    font-size: 14px;
-    background: rgba(255,255,255,0.18) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22) !important;
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 2rem;
+    border-radius: var(--ecms-radius-sm);
+    background: rgba(255,255,255,0.18);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.24);
 }
 
 .ecms-loginlog-modal .loginlodetails {
-    color: #e9f6ff !important;
-    font-weight: 800 !important;
+    color: #e9f6ff;
+    font-weight: 850;
 }
-
-.ecms-loginlog-modal .btn-close {
-    position: absolute !important;
-    top: 12px !important;
-    right: 14px !important;
-    z-index: 20 !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    min-height: 34px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 1px solid rgba(255,255,255,0.35) !important;
-    border-radius: 50% !important;
-    background-color: rgba(255,255,255,0.18) !important;
-    opacity: 1 !important;
-    filter: invert(1) grayscale(100%) brightness(200%) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25) !important;
-}
-
-    .ecms-loginlog-modal .btn-close:hover {
-        background-color: rgba(239, 68, 68, 0.92) !important;
-        filter: invert(1) grayscale(100%) brightness(220%) !important;
-    }
 
 .ecms-loginlog-modal .modal-body {
-    padding: 14px 16px !important;
-    background: linear-gradient(180deg, #f5f9ff, #eaf3ff) !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    overflow: hidden;
 }
 
-.ecms-loginlog-export-row {
-    margin: 0 0 10px !important;
+.ecms-loginlog-modal-toolbar {
+    min-height: 2.85rem;
+    flex: 0 0 auto;
+    padding: 0.45rem 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
 }
 
-.ecms-loginlog-modal #tbldata_wrapper,
-.ecms-loginlog-modal .dt-container {
-    width: 100% !important;
+.ecms-loginlog-export-actions {
+    min-height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
-.ecms-loginlog-modal .dt-button,
-.ecms-loginlog-modal .dataTables_wrapper .dt-button {
+    .ecms-loginlog-export-actions:empty {
+        display: none;
+    }
+
+    .ecms-loginlog-export-actions .dt-buttons {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .ecms-loginlog-export-actions .dt-button,
+    .ecms-loginlog-export-actions button.dt-button {
+        min-height: 2rem;
+        margin: 0 !important;
+        padding: 0.4rem 0.75rem !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+/* Keep the existing export source in the DOM without consuming modal space. */
+.ecms-loginlog-export-source {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
     border: 0 !important;
-    border-radius: 10px !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #238dff, #064bd8) !important;
-    font-weight: 900 !important;
-    padding: 7px 14px !important;
 }
 
-/* Timeline modernization without changing JS generated classes */
+.ecms-timeline-row {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 0.25rem 0.4rem 1rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
 .ecms-loginlog-modal .timeline {
-    padding: 8px 0 18px !important;
+    width: min(100%, 1040px);
+    min-height: 100%;
+    margin: 0 auto;
+    padding: 0.4rem 0 1rem !important;
 }
 
-    .ecms-loginlog-modal .timeline:before {
-        border-right-color: rgba(47, 125, 255, 0.20) !important;
+    .ecms-loginlog-modal .timeline::before {
+        border-right-color: rgba(47, 103, 230, 0.24) !important;
     }
 
     .ecms-loginlog-modal .timeline .timeline-label .label {
-        background: linear-gradient(135deg, #1f7cff, #004bd6) !important;
-        box-shadow: 0 8px 18px rgba(31, 124, 255, 0.20) !important;
+        color: var(--ecms-white) !important;
+        background: linear-gradient(135deg, var(--ecms-primary-700), var(--ecms-primary-500)) !important;
+        box-shadow: 0 0.5rem 1rem rgba(47, 103, 230, 0.22) !important;
     }
 
     .ecms-loginlog-modal .timeline .timeline-item > .timeline-point {
-        color: #1f7cff !important;
-        background: #1f7cff !important;
+        color: var(--ecms-primary-500) !important;
+        background: var(--ecms-primary-500) !important;
         border-color: #dff1ff !important;
-        box-shadow: 0 0 0 5px #f5f9ff, 0 8px 20px rgba(31, 124, 255, 0.25) !important;
+        box-shadow: 0 0 0 5px #f5f9ff, 0 0.5rem 1rem rgba(47, 103, 230, 0.24) !important;
     }
 
     .ecms-loginlog-modal .timeline .widget {
-        border-radius: 14px !important;
-        background: rgba(255,255,255,0.92) !important;
-        border: 1px solid rgba(47, 125, 255, 0.18) !important;
-        box-shadow: 0 12px 28px rgba(0, 30, 90, 0.12) !important;
+        border: var(--ecms-border) !important;
+        border-radius: var(--ecms-radius-lg) !important;
+        background: var(--ecms-card-surface) !important;
+        box-shadow: var(--ecms-shadow-sm) !important;
         overflow: hidden !important;
     }
 
@@ -431,96 +419,185 @@ body:has(.ecms-loginlog-page) {
     }
 
     .ecms-loginlog-modal .timeline .badge-danger {
-        background: linear-gradient(135deg, #ef4444, #c91818) !important;
-        color: #ffffff !important;
+        color: var(--ecms-white) !important;
+        background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600)) !important;
     }
 
     .ecms-loginlog-modal .timeline .badge-orange {
-        background: linear-gradient(135deg, #f59e0b, #d97706) !important;
-        color: #ffffff !important;
+        color: var(--ecms-white) !important;
+        background: linear-gradient(135deg, var(--ecms-warning-500), #d97706) !important;
     }
 
     .ecms-loginlog-modal .timeline .badge-purple {
+        color: var(--ecms-white) !important;
         background: linear-gradient(135deg, #5b6ee1, #6d28d9) !important;
-        color: #ffffff !important;
     }
 
     .ecms-loginlog-modal .timeline .text-blue {
-        color: #10254f !important;
+        color: var(--ecms-text-soft) !important;
         font-weight: 800 !important;
     }
 
     .ecms-loginlog-modal .timeline .time-right {
-        color: #5b729a !important;
-        font-size: 11px !important;
+        color: var(--ecms-text-muted) !important;
+        font-size: 0.72rem !important;
         font-weight: 800 !important;
     }
 
-/* jQuery datepicker theme for this page */
+/* Modal stacking guard: the JS also moves this modal directly under body. */
+body.ecms-loginlog-modal-open > .modal-backdrop {
+    z-index: 1050 !important;
+}
+
+body.ecms-loginlog-modal-open > #modalLoginLog {
+    z-index: 1060 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    pointer-events: auto !important;
+}
+
+#modalLoginLog.show .modal-dialog,
+#modalLoginLog.show .modal-content {
+    opacity: 1 !important;
+    filter: none !important;
+    pointer-events: auto !important;
+}
+
+/* jQuery UI date picker */
 .ui-datepicker {
-    z-index: 9999 !important;
-    border-radius: 14px !important;
-    border: 1px solid rgba(47, 125, 255, 0.28) !important;
-    box-shadow: 0 18px 38px rgba(0, 30, 90, 0.22) !important;
+    z-index: 1085 !important;
+    border: var(--ecms-border) !important;
+    border-radius: var(--ecms-radius-lg) !important;
+    box-shadow: var(--ecms-shadow-md) !important;
     overflow: hidden !important;
 }
 
     .ui-datepicker .ui-datepicker-header {
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #123f8c, #2f7dff) !important;
+        color: var(--ecms-white) !important;
+        background: linear-gradient(135deg, var(--ecms-primary-800), var(--ecms-primary-600)) !important;
         border: 0 !important;
     }
 
     .ui-datepicker td a,
     .ui-datepicker td span {
-        border-radius: 8px !important;
+        border-radius: var(--ecms-radius-sm) !important;
     }
 
-@media (max-width: 1199px) {
+/* Keep the common fixed shell from creating a second page scrollbar. */
+@media (min-width: 1200px) and (min-height: 721px) {
     html:has(.ecms-loginlog-page),
     body:has(.ecms-loginlog-page) {
-        overflow-y: auto !important;
+        height: 100% !important;
+        overflow: hidden !important;
     }
 
-    .ecms-loginlog-page,
-    .ecms-loginlog-shell {
-        height: auto !important;
-        max-height: none !important;
-        min-height: calc(100vh - 255px) !important;
-        overflow: visible !important;
+        body:has(.ecms-loginlog-page) .ecms-app-main {
+            overflow-x: hidden !important;
+            overflow-y: hidden !important;
+        }
+}
+
+@media (max-width: 1199.98px), (max-height: 720.98px) {
+    .ecms-loginlog-page {
+        height: auto;
+        min-height: auto;
+        overflow: visible;
     }
 
-    .ecms-loginlog-table-wrap {
+    .ecms-loginlog-container,
+    .ecms-loginlog-shell,
+    .ecms-loginlog-body,
+    .ecms-loginlog-table-section,
+    .ecms-loginlog-table-wrap,
+    .ecms-loginlog-table-wrap .dataTables_wrapper,
+    .ecms-loginlog-table-wrap .dt-container {
         height: auto !important;
-        overflow: visible !important;
+        min-height: 0 !important;
+        overflow: visible;
+    }
+
+    .ecms-loginlog-table-section {
+        min-height: 26rem;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767.98px) {
     .ecms-loginlog-page {
-        padding: 10px 10px 54px;
+        padding: 0.4rem 0;
+    }
+
+    .ecms-loginlog-container {
+        width: calc(100vw - 0.75rem) !important;
     }
 
     .ecms-loginlog-shell {
-        padding: 10px !important;
-        border-radius: 18px !important;
+        padding: 0.55rem;
     }
 
-    .ecms-loginlog-toolbar {
-        align-items: flex-start;
+    .ecms-loginlog-heading {
+        align-items: flex-start !important;
+    }
+
+    .ecms-loginlog-toolbar,
+    .ecms-loginlog-modal-toolbar {
+        align-items: stretch;
         flex-direction: column;
     }
 
     .ecms-date-filter {
         width: 100%;
-        flex-wrap: wrap;
+        align-items: stretch;
+        flex-direction: column;
     }
 
-        .ecms-date-filter .form-control {
-            width: 100% !important;
+    .ecms-date-field {
+        width: 100%;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+        .ecms-date-field .form-control {
+            width: 100%;
         }
 
-    .ecms-loginlog-heading h3 {
-        font-size: 18px !important;
+    .ecms-loginlog-table-wrap {
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
     }
+
+    .ecms-loginlog-page table#tbldatatabledata {
+        min-width: 48rem !important;
+    }
+
+    .ecms-loginlog-modal .modal-dialog {
+        width: calc(100vw - 0.5rem);
+        max-width: calc(100vw - 0.5rem) !important;
+        margin: 0.25rem auto;
+    }
+
+    .ecms-loginlog-modal .modal-content {
+        height: calc(100dvh - 0.5rem);
+        min-height: 0;
+    }
+
+    .ecms-loginlog-modal .modal-title {
+        font-size: 0.9rem;
+    }
+
+    .ecms-loginlog-export-actions,
+    .ecms-loginlog-export-actions .dt-buttons,
+    .ecms-loginlog-export-actions .dt-button {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ecms-loginlog-page .cls-btnhistory {
+        transition: none !important;
+    }
+
+        .ecms-loginlog-page .cls-btnhistory:hover {
+            transform: none !important;
+        }
 }

@@ -45,19 +45,19 @@
                         <div class="page-header-icon"><i class="fa fa-bars"></i></div>
                         @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingOut")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> > <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> > Posting Out Offrs</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt; <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> &gt; <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> &gt; Posting Out Offrs</div>
                         }
                         else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingOut")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> > <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> > Posting Out JCOs/OR</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt; <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> &gt; <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> &gt; Posting Out JCOs/OR</div>
                         }
                         else if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingIn")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> > <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> > Posting In Offrs</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt; <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> &gt; <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> &gt; Posting In Offrs</div>
                         }
                         else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingIn")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> > <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> > Posting In JCOs/OR</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt; <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> &gt; <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> &gt; Posting In JCOs/OR</div>
                         }
                     </h1>
                 </div>
@@ -66,46 +66,52 @@
     </div>
 </header>
 
-<div class="containerMain ecms-posting-type-page">
+<main class="containerMain ecms-page ecms-page-full ecms-fit-screen ecms-posting-type-page">
     <div class="ecms-posting-container">
-        <div class="card mb-3 ecms-posting-shell">
-            <div class="card-header ecms-posting-heading">
-                <div class="ecms-posting-heading-icon">
+        <div class="card ecms-card ecms-card-body ecms-posting-shell">
+            <div class="ecms-page-title ecms-posting-heading d-flex align-items-center">
+                <div class="ecms-title-icon ecms-posting-heading-icon" aria-hidden="true">
                     <i class="@postingIcon"></i>
                 </div>
-                <div>
+                <div class="ecms-posting-heading-copy">
                     <h3>@pageTitle</h3>
-                    <small>@pageSubTitle</small>
+                    <p class="ecms-title-subtitle">@pageSubTitle</p>
                 </div>
             </div>
 
             <div class="card-body card-body-min-height ecms-posting-body">
-                <div class="ecms-posting-toolbar">
-                    <h6 class="ecms-total-records mb-0">
+                <div class="ecms-section ecms-form-section ecms-posting-summary">
+                    <div class="ecms-total-records">
                         <span>Total Records</span>
-                        <label id="lblTotal">0</label>
-                    </h6>
+                        <span class="badge ecms-badge ecms-posting-total-badge" id="lblTotal">0</span>
+                    </div>
                     <div class="ecms-toolbar-actions">
-                        @* <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm mr-2"><i class="fa fa-plus mr-1 font-weight-700"></i>Add</button> *@
+                        @* <button type="button" id="btnAdd" class="btn btn-success btn-sm"><i class="fa fa-plus mr-1"></i>Add</button> *@
                     </div>
                 </div>
 
-                <div class="ecms-posting-table-wrap">
-                    <table class="table table-striped table-hover border border-purple ecms-posting-table" role="grid" id="tbldata"></table>
-                </div>
+                <section class="ecms-section ecms-posting-table-section" aria-labelledby="postingRecordsHeading">
+                    <h4 class="ecms-section-title" id="postingRecordsHeading">
+                        <i class="fa fa-table" aria-hidden="true"></i>
+                        Posting Records
+                    </h4>
+                    <div class="ecms-dt-wrap ecms-posting-table-wrap">
+                        <table class="table table-striped table-hover ecms-dt-table ecms-posting-table" role="grid" id="tbldata"></table>
+                    </div>
+                </section>
             </div>
         </div>
     </div>
-</div>
+</main>
 
-<div class="modal fade ecms-posting-modal" id="AddDispatchDetails" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+<div class="modal fade ecms-posting-modal" id="AddDispatchDetails" tabindex="-1" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm ecms-modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">
                     <i class="fa fa-truck mr-2"></i>Add Dispatch Details
                 </h5>
-                <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <button type="button" class="close ecms-modal-close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
             </div>
             <div class="modal-body">
                 <form action="" id="SaveDispatchDetails" name="SaveDispatchDetails" method="post">
@@ -123,7 +129,7 @@
                             </div>
                         </div>
                         <div class="col-sm-12 text-right ecms-modal-actions">
-                            <input type="button" class="btn btn-outline-primary" value="Save" id="btnDispatchDetailsAddButton" />
+                            <input type="button" class="btn btn-primary" value="Save" id="btnDispatchDetailsAddButton" />
                         </div>
                     </div>
                 </form>

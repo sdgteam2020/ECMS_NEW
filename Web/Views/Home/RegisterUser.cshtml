@@ -13,9 +13,9 @@
                 <div class="col-auto">
                     <h1 class="page-header-title">
                         <div class="page-header-icon"><i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >
-                        <a href="/Home/Dashboard" class="mr-2">Dashboard</a> >
-                        <a href="/Home/DashboardUserMgt" class="mr-2">User Mgt</a> >
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                        <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt;
+                        <a href="/Home/DashboardUserMgt" class="mr-2">User Mgt</a> &gt;
                         Registered User
                     </h1>
                 </div>
@@ -24,39 +24,65 @@
     </div>
 </header>
 
-<div class="containerMain ecms-register-user-page">
-    <div class="card mb-3 ecms-register-shell">
-        <div class="card-header ecms-register-heading">
-            <div class="ecms-register-heading-icon">
-                <i class="fa fa-users"></i>
-            </div>
-            <div>
-                <h3>Details of Registered Users</h3>
-                <p>Registered domain users and mapped appointment details</p>
-            </div>
-        </div>
+<main class="ecms-register-user-page" aria-labelledby="registeredUsersTitle">
+    <div class="containerMain ecms-page ecms-register-user-container">
+        <section class="card ecms-card ecms-register-shell" aria-describedby="registeredUsersDescription">
+            <div class="card-header ecms-page-title ecms-register-heading">
+                <div class="ecms-title-icon ecms-register-heading-icon" aria-hidden="true">
+                    <i class="fa fa-users"></i>
+                </div>
 
-        <div class="card-body card-body-min-height ecms-register-body">
-            <div class="ecms-register-table-wrap">
-                <table class="table border border-purple table-striped no-footer table-hover ecms-register-table" role="grid" id="tbldata">
-                    <thead>
-                        <tr>
-                            <th class="nowrap">S No</th>
-                            <th class="nowrap">Domain ID</th>
-                            <th class="nowrap">Army No</th>
-                            <th class="nowrap">Rank</th>
-                            <th class="nowrap">Name</th>
-                            <th class="nowrap">Appt</th>
-                        </tr>
-                    </thead>
-                    <tbody id="DetailBody">
-                    </tbody>
-                </table>
+                <div class="ecms-register-heading-copy">
+                    <h2 id="registeredUsersTitle">Details of Registered Users</h2>
+                    <p id="registeredUsersDescription" class="ecms-title-subtitle">
+                        Registered domain users and mapped appointment details
+                    </p>
+                </div>
             </div>
-        </div>
+
+            <div class="card-body ecms-card-body card-body-min-height ecms-register-body ecms-min-0">
+                <section class="ecms-section ecms-register-directory" aria-labelledby="registeredUsersDirectoryTitle">
+                    <div class="ecms-register-toolbar">
+                        <h3 id="registeredUsersDirectoryTitle" class="ecms-register-toolbar-label">
+                            <span class="ecms-register-toolbar-icon" aria-hidden="true">
+                                <i class="fa fa-table"></i>
+                            </span>
+                            <span>User Directory</span>
+                        </h3>
+
+                        <div id="registerUserTableActions"
+                             class="ecms-register-table-actions"
+                             aria-label="Export registered users">
+                        </div>
+                    </div>
+
+                    <div class="ecms-dt-wrap ecms-register-table-wrap ecms-min-0">
+                        <table class="table table-striped table-hover no-footer ecms-dt-table ecms-register-table"
+                               id="tbldata"
+                               role="grid"
+                               aria-label="Registered users">
+                            <caption class="ecms-register-visually-hidden">
+                                Registered domain users with Army number, rank, name and appointment.
+                            </caption>
+                            <thead>
+                                <tr>
+                                    <th class="nowrap ecms-register-serial-column">S No</th>
+                                    <th class="nowrap">Domain ID</th>
+                                    <th class="nowrap">Army No</th>
+                                    <th class="nowrap">Rank</th>
+                                    <th class="nowrap">Name</th>
+                                    <th class="nowrap">Appt</th>
+                                </tr>
+                            </thead>
+                            <tbody id="DetailBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </section>
     </div>
-</div>
-
-<script asp-src-include="~/developerjs/RegisterUser.js"></script>
+</main>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
+<script asp-src-include="~/developerjs/RegisterUser.js"></script>
