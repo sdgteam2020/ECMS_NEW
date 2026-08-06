@@ -14,6 +14,21 @@ $(function () {
             $('#tbldatatabledata_Completed').DataTable().columns.adjust();
         }
     });
+    $("#BasicDetailCompletedHistory")
+        .off("click", ".cls-btndownloadpdf")
+        .on("click", ".cls-btndownloadpdf", function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const requestId = parseInt($(this).attr("data-request-id"));
+
+            if (!isNaN(requestId) && requestId > 0) {
+                GetCompletedHistoryPdf(requestId);
+            } else {
+                alert("Invalid request.");
+            }
+        });
 });
 function BindData(UserType, ApplyForId) {
     if ($.fn.DataTable.isDataTable("#tbldatatabledata_Completed")) {
@@ -154,7 +169,7 @@ function BindData(UserType, ApplyForId) {
                 orderable: false,
                 render: function (data, type, row) {
                     return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>
-                            <button class="cls-btndownloadpdf btn btn-danger" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><i class="fas fa-file-pdf"></i></button>`
+                            <button class="cls-btndownloadpdfsignature" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>`
                 }
             }
         ],
@@ -230,16 +245,64 @@ function BindData(UserType, ApplyForId) {
                 var rowData = table_Fwd.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     GetCompletedHistoryByRequestId(rowData.RequestId);
+                    SetCompletedHistoryHeader(rowData.RequestId);
                 }
             });
-            $("#tbldatatabledata_Completed tbody").off("click", ".cls-btndownloadpdf").on("click", ".cls-btndownloadpdf", function () {
+            $("#tbldatatabledata_Completed tbody").off("click", ".cls-btndownloadpdfsignature").on("click", ".cls-btndownloadpdfsignature", function () {
                 var rowData = table_Fwd.row($(this).closest("tr")).data();
                 if (rowData != null) {
-                    GetCompletedHistoryPdf(rowData.RequestId);
+                    DownloadPdf(rowData.RequestId);
                 }
             });
         }
     });
+}
+function DownloadPdf(RequestId) {
+    try {
+        const encryptedRequest = encryptPayloadData(RequestId);
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/Log/CreatePdf';
+        form.target = '_blank';
+        form.style.display = 'none';
+
+        const requestInput = document.createElement('input');
+        requestInput.type = 'hidden';
+        requestInput.name = 'Request';
+        requestInput.value = encryptedRequest;
+        form.appendChild(requestInput);
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '__RequestVerificationToken';
+        tokenInput.value = globalThis.RequestVerificationToken;
+        form.appendChild(tokenInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    } catch (e) {
+        Swal.fire({
+            text: errormsg002
+        });
+    }
+}
+function SetCompletedHistoryHeader(requestId) {
+
+    let PdfbuttonHtml = `
+        <button type="button"
+                class="cls-btndownloadpdf btn btn-danger"
+                data-request-id="${requestId}"
+                data-toggle="tooltip"
+                data-placement="top"
+                title="Download Details">
+            <i class="fas fa-file-pdf"></i>
+        </button>`;
+
+    let header = `I Card History ${PdfbuttonHtml}`;
+
+    $("#exampleModalLabel_BasicDetailCompletedHistory").html(header);
 }
 
 function GetCompletedHistoryByRequestId(RequestId) {

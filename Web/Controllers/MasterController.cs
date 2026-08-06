@@ -246,22 +246,12 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> OrderByChange(MComd dTO)
         {
-            try
-            {
-                // Call the unitOfWork method to update the order of the command
-                await unitOfWork.Comds.OrderByChange(dTO);
-                
-                // Return success response if the order change is successful
-                return Json(KeyConstants.Success);
-            }
-            catch (Exception ex)
-            {
-                // Log any errors that occur during the process
-                _logger.LogError(1001, ex, "Master->OrderByChange");
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
 
-                // Return error response in case of an exception
-                return Json(KeyConstants.InternalServerError);
-            }
+            // Call the unitOfWork method to update the order of the command
+            response = await unitOfWork.Comds.OrderByChange(dTO);
+
+            return Json(response);
         }
 
 
@@ -3293,18 +3283,9 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RankOrderByChange(MRank dTO)
         {
-            try
-            {
-                await unitOfWork.Rank.OrderByChange(dTO);
-                return Json(KeyConstants.Success);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(1001, ex, "Master->RankOrderByChange");
-                return Json(KeyConstants.InternalServerError);
-            }
-
-
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            response = await unitOfWork.Rank.OrderByChange(dTO);
+            return Json(response);
         }
 
 

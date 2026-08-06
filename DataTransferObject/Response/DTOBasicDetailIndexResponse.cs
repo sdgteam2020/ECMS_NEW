@@ -32,6 +32,7 @@ namespace DataTransferObject.Response
         public string? Remark { get; set; }
         public int IsPosting { get; set; }
         public bool IsLock { get; set; }
+        public byte StatusId { get; set; }
 
     }
 }

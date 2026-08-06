@@ -13,6 +13,7 @@ using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -2202,90 +2203,89 @@ FROM
             }
         }
 
-        public async Task<DTOBasicDetailForParitalViewResponse?> GetBasicDetailForParitalViewByRequestId(int RequestId)
+        public async Task<DTOGenericResponse<DTOBasicDetailForParitalViewResponse>> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
+            DTOGenericResponse<DTOBasicDetailForParitalViewResponse> response = new DTOGenericResponse<DTOBasicDetailForParitalViewResponse>();
+            response.Result = false;
+            response.Value = new DTOBasicDetailForParitalViewResponse();
+
+            const string statusQuery = @"SELECT StatusId FROM TrnICardRequest WHERE RequestId = @RequestId;";
+
+            // StatusId = 1: Running request, fetch from current AFSAC database
+            const string runningRequestQuery = @"SELECT bd.PaperIcardNo,bd.NameAsPerRecord,bd.FName,bd.LName,bd.ServiceNo,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,
+                                                trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,trninfo.IdenMark1,trninfo.Height,trninfo.AadhaarNo,bld.BloodGroup,
+                                                ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,uplod.PhotoImagePath,uplod.SignatureImagePath,bd.ServiceNo,icardreq.CardSerialNo,icardreq.ChipNo
+                                                from TrnICardRequest icardreq
+                                                INNER JOIN BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId
+                                                INNER JOIN MIssuingAuthority issaut on issaut.IssuingAuthorityId = bd.IssuingAuthorityId
+                                                INNER JOIN MRank ranks on ranks.RankId = bd.RankId
+                                                INNER JOIN MArmedType arm on arm.ArmedId = bd.ArmedId
+                                                INNER JOIN TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
+                                                INNER JOIN TrnAddress trnadd on trnadd.BasicDetailId=bd.BasicDetailId
+                                                INNER JOIN TrnIdentityInfo trninfo on trninfo.BasicDetailId=bd.BasicDetailId
+                                                INNER JOIN MBloodGroup bld on bld.BloodGroupId = trninfo.BloodGroupId
+                                                where icardreq.RequestId=@RequestId";
+            // StatusId = 2 or 3: Completed/closed request, fetch from AFSAC2
+            const string completedOrClosedQuery = @"SELECT bd.PaperIcardNo,bd.NameAsPerRecord,bd.FName,bd.LName,bd.ServiceNo,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,
+                                                    trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,trninfo.IdenMark1,trninfo.Height,trninfo.AadhaarNo,bld.BloodGroup,
+                                                    ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,uplod.PhotoImagePath,uplod.SignatureImagePath,bd.ServiceNo,icardreq.CardSerialNo,icardreq.ChipNo
+                                                    from TrnICardRequest icardreq
+                                                    INNER JOIN AFSAC2.dbo.BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId
+                                                    INNER JOIN MIssuingAuthority issaut on issaut.IssuingAuthorityId = bd.IssuingAuthorityId
+                                                    INNER JOIN MRank ranks on ranks.RankId = bd.RankId
+                                                    INNER JOIN MArmedType arm on arm.ArmedId = bd.ArmedId
+                                                    INNER JOIN AFSAC2.dbo.TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
+                                                    INNER JOIN AFSAC2.dbo.TrnAddress trnadd on trnadd.BasicDetailId=bd.BasicDetailId
+                                                    INNER JOIN AFSAC2.dbo.TrnIdentityInfo trninfo on trninfo.BasicDetailId=bd.BasicDetailId
+                                                    INNER JOIN MBloodGroup bld on bld.BloodGroupId = trninfo.BloodGroupId
+                                                    where icardreq.RequestId=@RequestId";
             try
             {
-
-                string query = @"SELECT ISNULL(bd.PaperIcardNo, basic_2.PaperIcardNo) AS PaperIcardNo,bd.NameAsPerRecord as NameAsPerRecord_1,basic_2.NameAsPerRecord as NameAsPerRecord_2,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,
-                                    bd.DOB as DOB_1,basic_2.DOB as DOB_2,bd.DateOfIssue as DateOfIssue_1,basic_2.DateOfIssue as DateOfIssue_2,
-                                    ISNULL(bd.DateOfCommissioning, basic_2.DateOfCommissioning) AS DateOfCommissioning,bd.PlaceOfIssue as PlaceOfIssue_1,basic_2.PlaceOfIssue as PlaceOfIssue_2,
-                                    issaut.Name IssuingAuthorityName,
-                                    trnadd.State as State_1,trnadd_2.State as State_2,
-                                    trnadd.District as District_1,trnadd_2.District as District_2,
-                                    trnadd.PS as PS_1,trnadd_2.PS as PS_2,
-                                    trnadd.PO as PO_1,trnadd_2.PO as PO_2,
-                                    trnadd.Tehsil as Tehsil_1,trnadd_2.Tehsil as Tehsil_2,
-                                    trnadd.Village as Village_1,trnadd_2.Village as Village_2,
-                                    trnadd.PinCode as PinCode_1,trnadd_2.PinCode as PinCode_2,
-                                    ISNULL(trninfo.IdenMark1, trninfo_2.IdenMark1) AS IdenMark1,ISNULL(trninfo.Height, trninfo_2.Height) AS Height,trninfo.AadhaarNo AS AadhaarNo_1,trninfo_2.AadhaarNo AS AadhaarNo_2,
-                                    bld.BloodGroup,regi.Abbreviation RegimentalName,Muni.UnitName,
-                                    ranks.RankAbbreviation RankName,arm.Abbreviation ArmedName,
-                                    icardreq.RequestId,icardreq.UpdatedOn RequestDate,appl.Name ApplyFor,
-                                    ISNULL(uplod.PhotoImagePath, uplod_2.PhotoImagePath) AS PhotoImagePath,
-                                    ISNULL(uplod.SignatureImagePath, uplod_2.SignatureImagePath) AS SignatureImagePath,
-                                    CASE
-                                    WHEN LEFT(ISNULL(bd.ServiceNo, basic_2.ServiceNo), 2) LIKE '[A-Za-z][A-Za-z]' THEN
-                                    CONCAT(SUBSTRING(ISNULL(bd.ServiceNo, basic_2.ServiceNo), 1, 2), ' ', SUBSTRING(ISNULL(bd.ServiceNo, basic_2.ServiceNo), 3, LEN(ISNULL(bd.ServiceNo, basic_2.ServiceNo)) - 2))
-                                    ELSE
-                                    ISNULL(bd.ServiceNo, basic_2.ServiceNo)
-                                    END AS ModifiedServiceNo,icardreq.CardSerialNo,icardreq.ChipNo
-                                    from TrnICardRequest icardreq
-                                    LEFT JOIN BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId
-                                    LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=icardreq.BasicDetailId
-                                    inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId = ISNULL(basic_2.IssuingAuthorityId,bd.IssuingAuthorityId)
-                                    inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
-                                    inner join MArmedType arm on arm.ArmedId = ISNULL(basic_2.ArmedId,bd.ArmedId)
-                                    inner join MapUnit uni on uni.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
-                                    inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                    inner join MApplyFor appl on appl.ApplyForId = ISNULL(basic_2.ApplyForId,bd.ApplyForId)
-                                    LEFT JOIN TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
-                                    LEFT JOIN AFSAC2.dbo.TrnUpload uplod_2 on uplod_2.BasicDetailId = basic_2.BasicDetailId
-                                    LEFT JOIN TrnAddress trnadd on trnadd.BasicDetailId=bd.BasicDetailId
-                                    LEFT JOIN AFSAC2.dbo.TrnAddress trnadd_2 on trnadd_2.BasicDetailId=basic_2.BasicDetailId
-                                    LEFT JOIN TrnIdentityInfo trninfo on trninfo.BasicDetailId=bd.BasicDetailId
-                                    LEFT JOIN AFSAC2.dbo.TrnIdentityInfo trninfo_2 on trninfo_2.BasicDetailId=basic_2.BasicDetailId
-                                    inner join MBloodGroup bld on bld.BloodGroupId=ISNULL(trninfo_2.BloodGroupId,trninfo.BloodGroupId)
-                                    left join MRegimental regi on regi.RegId = ISNULL(basic_2.RegimentalId,bd.RegimentalId)
-                                    where icardreq.RequestId=@RequestId";
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var ret = await connection.QueryAsync<DTOBasicDetailForParitalViewResponse>(query, new { RequestId });
-
-                    if (ret != null)
+                    int? statusId = await connection.QueryFirstOrDefaultAsync<int?>(statusQuery, new { RequestId });
+                    if (!statusId.HasValue)
                     {
-                        foreach (var item in ret)
-                        {
-                            item.NameAsPerRecord = item.NameAsPerRecord_2 ?? item.NameAsPerRecord_1 ?? string.Empty;
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                            item.PlaceOfIssue = item.PlaceOfIssue_2 ?? item.PlaceOfIssue_1 ?? string.Empty;
-                            item.DOB = (item.DOB_2 ?? item.DOB_1) ?? default(DateTime);
-                            item.AadhaarNo = item.AadhaarNo_2 ?? item.AadhaarNo_1 ?? string.Empty;
-                            item.DateOfIssue = item.DateOfIssue_2 ?? item.DateOfIssue_1;
-                            item.State = item.State_2 ?? item.State_1 ?? string.Empty;
-                            item.District = item.District_2 ?? item.District_1 ?? string.Empty;
-                            item.PS = item.PS_2 ?? item.PS_1;
-                            item.PO = item.PO_2 ?? item.PO_1;
-                            item.Tehsil = item.Tehsil_2 ?? item.Tehsil_1;
-                            item.Village = item.Village_2 ?? item.Village_1;
-                            item.PinCode = item.PinCode_2 ?? item.PinCode_1;
-                        }
-                        return ret.FirstOrDefault();
+                        response.Message = "The requested record could not be found.";
+                        return response;
+                    }
+                    string selectedQuery;
+
+                    switch (statusId.Value)
+                    {
+                        case 1:
+                            selectedQuery = runningRequestQuery;
+                            break;
+
+                        case 2:
+                        case 3:
+                            selectedQuery = completedOrClosedQuery;
+                            break;
+
+                        default:
+                            response.Message = "Invalid Request Status.";
+                            return response;
+                    }
+                    DTOBasicDetailForParitalViewResponse? basicDetail = await connection.QueryFirstOrDefaultAsync<DTOBasicDetailForParitalViewResponse>(selectedQuery, new { RequestId });
+                    if (basicDetail != null)
+                    {
+                        response.Message = "Success";
+                        response.Result = true;
+                        response.Value = basicDetail;
                     }
                     else
                     {
-                        return null;
+                        response.Message = "The requested information is currently unavailable. Please try again after some time.";
                     }
-                    
-
                 }
             }
+
             catch (Exception ex)
             {
                 _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailForParitalViewByRequestId");
-                return null;
+                response.Message = "Internal Server Error.";
             }
+            return response;
         }
 
 
@@ -2467,7 +2467,7 @@ FROM
 
             if (dTO.stepcount == (int)ApplSubmittedStatusEnum.DraftedSavedApplication)//////For Draft
             {
-                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,{isPostingColumn}";
+                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,trnicrd.StatusId,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.TrnFwdId,0) AS IsTrnFwdId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,{isPostingColumn}";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                             inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId = @stepcount AND trnicrd.StatusId = @RunningStatusId                        
                             INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
@@ -2490,7 +2490,7 @@ FROM
             }
             else if (dTO.stepcount == (int)ApplSubmittedStatusEnum.Complete)//////For Completed   
             {
-                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,{isPostingColumn}";
+                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,trnicrd.StatusId,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,{isPostingColumn}";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND trnicrd.StatusId = @CompleteStatusId                        
                         INNER JOIN AFSAC2.dbo.BasicDetails B ON B.BasicDetailId = trnicrd.BasicDetailId
@@ -2513,7 +2513,7 @@ FROM
             }
             else if (dTO.stepcount == (int)ApplSubmittedStatusEnum.Submitted)//////For Submitted
             {
-                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,{isPostingColumn}";
+                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,trnicrd.StatusId,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,B.ServiceNo,C.StepId AS StepCounter,C.Id AS StepId,ty.Name AS ICardType,trnicrd.RequestId,Afor.Name AS ApplyFor,Afor.ApplyForId ,ran.RankAbbreviation AS RankName,{isPostingColumn}";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                         INNER join TrnStepCounter C on trnicrd.RequestId = C.RequestId and C.StepId > @DraftedSavedApplication                        
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId
@@ -2535,7 +2535,7 @@ FROM
             }
             else if (dTO.stepcount == (int)ApplSubmittedStatusEnum.Rejected)//Reject From IO,RO and AFSAC Cell
             {
-                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,{isPostingColumn}";
+                selectColumns = $@"trnicrd.RegistrationId AS RegistrationApplyFor,trnicrd.StatusId,munit.UnitName,B.IsLock,B.UnitId,B.BasicDetailId,B.FName,B.LName,C.StepId AS StepCounter,C.Id AS StepId,ty.TypeId,ty.name AS ICardType,trnicrd.RequestId, ISNULL(fwd.FwdStatusId,0) AS IsFwdStatusId ,Afor.Name AS ApplyFor,Afor.ApplyForId,ran.RankAbbreviation AS RankName,{isPostingColumn}";
                 fromJoin = @"FROM TrnICardRequest trnicrd
                         inner join TrnStepCounter C on trnicrd.RequestId = C.RequestId AND C.StepId IN @RejectedSteps AND trnicrd.StatusId = @RunningStatusId                       
                         INNER JOIN BasicDetails B ON trnicrd.BasicDetailId = B.BasicDetailId 
@@ -2620,6 +2620,7 @@ FROM
                         IsPosting = e.IsPosting,
                         UnitName = e.UnitName,
                         IsLock=e.IsLock,
+                        StatusId = e.StatusId,
                         UnitId = e.UnitId
                     }).ToList();
                     var responseData = new DTODataTablesResponse<DTOBasicDetailIndexResponse>
@@ -3088,65 +3089,74 @@ FROM
         /// <exception cref="Exception">Throws an exception if there is an error while executing the database query.</exception>
         public async Task<DTOBasicDetailByRequestIdResponse?> GetBasicDetailByRequestId(int RequestId)
         {
-            string query = @"select bd.NameAsPerRecord as NameAsPerRecord_1,basic_2.NameAsPerRecord as NameAsPerRecord_2,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(bd.ApplyForId, basic_2.ApplyForId) AS ApplyForId,bd.DOB as DOB_1,basic_2.DOB as DOB_2,bd.DateOfIssue as DateOfIssue_1,basic_2.DateOfIssue as DateOfIssue_2,ISNULL(bd.DateOfCommissioning, basic_2.DateOfCommissioning) AS DateOfCommissioning,bd.PlaceOfIssue as PlaceOfIssue_1,basic_2.PlaceOfIssue as PlaceOfIssue_2,issaut.Name IssuingAuthorityName,
-                            ISNULL(trnadd.AddressId, trnadd_2.AddressId) AS AddressId,
-                            trnadd.State as State_1,trnadd_2.State as State_2,
-                            trnadd.District as District_1,trnadd_2.District as District_2,
-                            trnadd.PS as PS_1,trnadd_2.PS as PS_2,
-                            trnadd.PO as PO_1,trnadd_2.PO as PO_2,
-                            trnadd.Tehsil as Tehsil_1,trnadd_2.Tehsil as Tehsil_2,
-                            trnadd.Village as Village_1,trnadd_2.Village as Village_2,
-                            trnadd.PinCode as PinCode_1,trnadd_2.PinCode as PinCode_2,
-                            trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,
-                            ISNULL(uplod.UploadId, uplod_2.UploadId) AS UploadId,ISNULL(uplod.PhotoImagePath, uplod_2.PhotoImagePath) AS PhotoImagePath,ISNULL(uplod.SignatureImagePath, uplod_2.SignatureImagePath) AS SignatureImagePath,
-                            ISNULL(trninfo.InfoId, trninfo_2.InfoId) AS InfoId,ISNULL(trninfo.IdenMark1, trninfo_2.IdenMark1) AS IdenMark1,ISNULL(trninfo.IdenMark2, trninfo_2.IdenMark2) AS IdenMark2,ISNULL(trninfo.Height, trninfo_2.Height) AS Height,ISNULL(trninfo.BloodGroupId, trninfo_2.BloodGroupId) AS BloodGroupId,trninfo.AadhaarNo AS AadhaarNo_1,trninfo_2.AadhaarNo AS AadhaarNo_2,
-                            bld.BloodGroup,regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId,
-                            ran.RankId,ran.RankAbbreviation RankName,ISNULL(bd.ArmedId, basic_2.ArmedId) AS ArmedId,arm.Abbreviation ArmedName
-                            from TrnICardRequest icardreq
-                            LEFT JOIN BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId AND icardreq.StatusId in (1,2,3)
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=icardreq.BasicDetailId AND icardreq.StatusId in (1,2,3)
-                            inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=ISNULL(basic_2.IssuingAuthorityId,bd.IssuingAuthorityId)
-                            inner join MRank ran on ran.RankId = ISNULL(basic_2.RankId,bd.RankId)
-                            inner join MArmedType arm on arm.ArmedId = ISNULL(basic_2.ArmedId,bd.ArmedId)
-                            inner join MapUnit uni on uni.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
-                            inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                            LEFT JOIN TrnAddress trnadd on trnadd.BasicDetailId=bd.BasicDetailId
-                            LEFT JOIN AFSAC2.dbo.TrnAddress trnadd_2 on trnadd_2.BasicDetailId=basic_2.BasicDetailId
-                            LEFT JOIN TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
-                            LEFT JOIN AFSAC2.dbo.TrnUpload uplod_2 on uplod_2.BasicDetailId = basic_2.BasicDetailId
-                            LEFT JOIN TrnIdentityInfo trninfo on trninfo.BasicDetailId=bd.BasicDetailId
-                            LEFT JOIN AFSAC2.dbo.TrnIdentityInfo trninfo_2 on trninfo_2.BasicDetailId=basic_2.BasicDetailId
-                            inner join MBloodGroup bld on bld.BloodGroupId = ISNULL(trninfo.BloodGroupId,trninfo_2.BloodGroupId)
-                            left join MRegimental regi on regi.RegId=ISNULL(basic_2.RegimentalId,bd.RegimentalId)
-                            where icardreq.RequestId=@RequestId";
+            const string statusQuery = @"SELECT StatusId FROM TrnICardRequest WHERE RequestId = @RequestId;";
+
+            // StatusId = 1: Running request, fetch from current AFSAC database
+            const string runningRequestQuery = @"select bd.NameAsPerRecord,bd.FName,bd.LName,bd.ServiceNo,bd.ApplyForId,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,
+                                            trnadd.AddressId,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,
+                                            uplod.UploadId,uplod.PhotoImagePath,uplod.SignatureImagePath,trninfo.InfoId,trninfo.IdenMark1,trninfo.IdenMark2,trninfo.Height,trninfo.BloodGroupId,trninfo.AadhaarNo,
+                                            bld.BloodGroup,regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId,
+                                            ran.RankId,ran.RankAbbreviation RankName,bd.ArmedId,arm.Abbreviation ArmedName
+                                            from TrnICardRequest icardreq
+                                            INNER JOIN BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId AND icardreq.StatusId = 1
+                                            INNER JOIN MIssuingAuthority issaut on issaut.IssuingAuthorityId = bd.IssuingAuthorityId
+                                            INNER JOIN MRank ran on ran.RankId = bd.RankId
+                                            INNER JOIN MArmedType arm on arm.ArmedId = bd.ArmedId
+                                            INNER JOIN MapUnit uni on uni.UnitMapId = bd.UnitId
+                                            INNER JOIN MUnit Muni on Muni.UnitId=uni.UnitId
+                                            INNER JOIN TrnAddress trnadd on trnadd.BasicDetailId=bd.BasicDetailId
+                                            INNER JOIN TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
+                                            INNER JOIN TrnIdentityInfo trninfo on trninfo.BasicDetailId=bd.BasicDetailId
+                                            INNER JOIN MBloodGroup bld on bld.BloodGroupId = trninfo.BloodGroupId
+                                            left join MRegimental regi on regi.RegId = bd.RegimentalId
+                                            where icardreq.RequestId=@RequestId";
+            // StatusId = 2 or 3: Completed/closed request, fetch from AFSAC2
+            const string completedOrClosedQuery = @"select bd.NameAsPerRecord,bd.FName,bd.LName,bd.ServiceNo,bd.ApplyForId,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,
+                                                trnadd.AddressId,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode,
+                                                uplod.UploadId,uplod.PhotoImagePath,uplod.SignatureImagePath,trninfo.InfoId,trninfo.IdenMark1,trninfo.IdenMark2,trninfo.Height,trninfo.BloodGroupId,trninfo.AadhaarNo,
+                                                bld.BloodGroup,regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId,
+                                                ran.RankId,ran.RankAbbreviation RankName,bd.ArmedId,arm.Abbreviation ArmedName
+                                                from TrnICardRequest icardreq
+                                                INNER JOIN AFSAC2.dbo.BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId AND icardreq.StatusId IN (2,3)
+                                                INNER JOIN MIssuingAuthority issaut on issaut.IssuingAuthorityId = bd.IssuingAuthorityId
+                                                INNER JOIN MRank ran on ran.RankId = bd.RankId
+                                                INNER JOIN MArmedType arm on arm.ArmedId = bd.ArmedId
+                                                INNER JOIN MapUnit uni on uni.UnitMapId = bd.UnitId
+                                                INNER JOIN MUnit Muni on Muni.UnitId=uni.UnitId
+                                                INNER JOIN AFSAC2.dbo.TrnAddress trnadd on trnadd.BasicDetailId=bd.BasicDetailId
+                                                INNER JOIN AFSAC2.dbo.TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
+                                                INNER JOIN AFSAC2.dbo.TrnIdentityInfo trninfo on trninfo.BasicDetailId=bd.BasicDetailId
+                                                INNER JOIN MBloodGroup bld on bld.BloodGroupId = trninfo.BloodGroupId
+                                                left join MRegimental regi on regi.RegId = bd.RegimentalId
+                                                where icardreq.RequestId=@RequestId";
             try
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    var BasicDetailList = (await connection.QueryAsync<DTOBasicDetailByRequestIdResponse>(query, new { RequestId }));
-
-                    if (BasicDetailList != null)
+                    int? statusId = await connection.QueryFirstOrDefaultAsync<int?>(statusQuery,new{RequestId = RequestId });
+                    if (!statusId.HasValue)
                     {
-                        foreach (var item in BasicDetailList)
-                        {
-                            item.NameAsPerRecord = item.NameAsPerRecord_2 ?? item.NameAsPerRecord_1 ?? string.Empty;
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                            item.PlaceOfIssue = item.PlaceOfIssue_2 ?? item.PlaceOfIssue_1 ?? string.Empty;
-                            item.DOB = (item.DOB_2 ?? item.DOB_1) ?? default(DateTime);
-                            item.AadhaarNo = item.AadhaarNo_2 ?? item.AadhaarNo_1 ?? string.Empty;
-                            item.DateOfIssue = item.DateOfIssue_2 ?? item.DateOfIssue_1 ?? default(DateTime);
-                            item.State = item.State_2 ?? item.State_1 ?? string.Empty;
-                            item.District = item.District_2 ?? item.District_1 ?? string.Empty;
-                            item.PS = item.PS_2 ?? item.PS_1;
-                            item.PO = item.PO_2 ?? item.PO_1;
-                            item.Tehsil = item.Tehsil_2 ?? item.Tehsil_1;
-                            item.Village = item.Village_2 ?? item.Village_1;
-                            item.PinCode = item.PinCode_2 ?? item.PinCode_1;
-                        }
+                        return null;
                     }
+                    string selectedQuery;
 
-                    return BasicDetailList.FirstOrDefault();
+                    switch (statusId.Value)
+                    {
+                        case 1:
+                            selectedQuery = runningRequestQuery;
+                            break;
+
+                        case 2:
+                        case 3:
+                            selectedQuery = completedOrClosedQuery;
+                            break;
+
+                        default:
+                            return null;
+                    }
+                    DTOBasicDetailByRequestIdResponse? basicDetail =  await connection.QueryFirstOrDefaultAsync<DTOBasicDetailByRequestIdResponse>(selectedQuery,new{RequestId = RequestId });
+
+                    return basicDetail;
                 }
             }
 
@@ -3155,6 +3165,87 @@ FROM
                 _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailByRequestId");
                 return null;
             }
+        }
+
+        public async Task<DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>> GetICardPrintPreviewByRequestId(int RequestId)
+        {
+            DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse> response = new DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>();
+            response.Result = false;
+            response.Value = new DTOGetICardPrintPreviewByRequestIdResponse();
+
+            const string statusQuery = @"SELECT StatusId FROM TrnICardRequest WHERE RequestId = @RequestId;";
+
+            // StatusId = 1: Running request, fetch from current AFSAC database
+            const string runningRequestQuery = @"select bd.FName,bd.LName,bd.ServiceNo,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,uplod.PhotoImagePath,uplod.SignatureImagePath,
+                                                    trninfo.IdenMark1,trninfo.Height,trninfo.AadhaarNo,bld.BloodGroup,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName
+                                                    from TrnICardRequest icardreq
+                                                    INNER JOIN BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId AND icardreq.StatusId = 1
+                                                    INNER JOIN MIssuingAuthority issaut on issaut.IssuingAuthorityId = bd.IssuingAuthorityId
+                                                    INNER JOIN MRank ran on ran.RankId = bd.RankId
+                                                    INNER JOIN MArmedType arm on arm.ArmedId = bd.ArmedId
+                                                    INNER JOIN TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
+                                                    INNER JOIN TrnIdentityInfo trninfo on trninfo.BasicDetailId=bd.BasicDetailId
+                                                    INNER JOIN MBloodGroup bld on bld.BloodGroupId = trninfo.BloodGroupId
+                                                    where icardreq.RequestId=@RequestId";
+            // StatusId = 2 or 3: Completed/closed request, fetch from AFSAC2
+            const string completedOrClosedQuery = @"select bd.FName,bd.LName,bd.ServiceNo,bd.DOB,bd.DateOfIssue,bd.DateOfCommissioning,bd.PlaceOfIssue,issaut.Name IssuingAuthorityName,uplod.PhotoImagePath,uplod.SignatureImagePath,
+                                                    trninfo.IdenMark1,trninfo.Height,trninfo.AadhaarNo,bld.BloodGroup,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName
+                                                    from TrnICardRequest icardreq
+                                                    INNER JOIN AFSAC2.dbo.BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId AND icardreq.StatusId IN (2,3)
+                                                    INNER JOIN MIssuingAuthority issaut on issaut.IssuingAuthorityId = bd.IssuingAuthorityId
+                                                    INNER JOIN MRank ran on ran.RankId = bd.RankId
+                                                    INNER JOIN MArmedType arm on arm.ArmedId = bd.ArmedId
+                                                    INNER JOIN AFSAC2.dbo.TrnUpload uplod on uplod.BasicDetailId = bd.BasicDetailId
+                                                    INNER JOIN AFSAC2.dbo.TrnIdentityInfo trninfo on trninfo.BasicDetailId=bd.BasicDetailId
+                                                    INNER JOIN MBloodGroup bld on bld.BloodGroupId = trninfo.BloodGroupId
+                                                    where icardreq.RequestId=@RequestId";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    int? statusId = await connection.QueryFirstOrDefaultAsync<int?>(statusQuery, new { RequestId });
+                    if (!statusId.HasValue)
+                    {
+                        response.Message = "The requested record could not be found.";
+                        return response;
+                    }
+                    string selectedQuery;
+
+                    switch (statusId.Value)
+                    {
+                        case 1:
+                            selectedQuery = runningRequestQuery;
+                            break;
+
+                        case 2:
+                        case 3:
+                            selectedQuery = completedOrClosedQuery;
+                            break;
+
+                        default:
+                            response.Message = "Invalid Request Status.";
+                            return response;
+                    }
+                    DTOGetICardPrintPreviewByRequestIdResponse? basicDetail = await connection.QueryFirstOrDefaultAsync<DTOGetICardPrintPreviewByRequestIdResponse>(selectedQuery, new { RequestId });
+                    if (basicDetail != null)
+                    {
+                        response.Message = "Success";
+                        response.Result = true;
+                        response.Value = basicDetail;
+                    }
+                    else
+                    {
+                        response.Message = "The requested information is currently unavailable. Please try again after some time.";
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetICardPrintPreviewByRequestId");
+                response.Message = "Internal Server Error.";
+            }
+            return response;
         }
 
 
@@ -3240,7 +3331,7 @@ FROM
         /// <exception cref="Exception">
         /// Throws an exception if an error occurs during the database query execution, including issues in executing transactions or retrieving data.
         /// </exception>
-        public async Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition)
+        public async Task<List<DTODataExportsResponse>> GetDataForExportAndUpdateRequestAndStep(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
             int[] Ids = Data.Ids;
@@ -3933,7 +4024,7 @@ FROM
 
                         ToRejected =
                         (
-                            SELECT COUNT(fwd.RequestId) FROM TrnFwds fwd
+                            SELECT COUNT(DISTINCT fwd.RequestId) FROM TrnFwds fwd
                             INNER JOIN TrnICardRequest req ON req.RequestId = fwd.RequestId AND req.StatusId = 1
                             INNER JOIN TrnStepCounter trnstepcout ON trnstepcout.RequestId = req.RequestId AND trnstepcout.StepId IN (7,8,9,10)
                             INNER JOIN BasicDetails bd ON bd.BasicDetailId = req.BasicDetailId AND bd.ApplyForId = @ApplyForId

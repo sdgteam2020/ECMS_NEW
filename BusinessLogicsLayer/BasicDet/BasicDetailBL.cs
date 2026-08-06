@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.SqlServer.Management.Smo;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace BusinessLogicsLayer.BasicDet
 {
@@ -114,7 +115,7 @@ namespace BusinessLogicsLayer.BasicDet
         {
             return await _iBasicDetailDB.SearchAllServiceNo(dto);
         }
-        public async Task<DTOBasicDetailForParitalViewResponse?> GetBasicDetailForParitalViewByRequestId(int RequestId)
+        public async Task<DTOGenericResponse<DTOBasicDetailForParitalViewResponse>> GetBasicDetailForParitalViewByRequestId(int RequestId)
         {
             return await _iBasicDetailDB.GetBasicDetailForParitalViewByRequestId(RequestId);
         }
@@ -122,6 +123,10 @@ namespace BusinessLogicsLayer.BasicDet
         public async Task<DTOBasicDetailByRequestIdResponse?> GetBasicDetailByRequestId(int RequestId)
         {
             return await _iBasicDetailDB.GetBasicDetailByRequestId(RequestId);
+        }
+        public async Task<DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>> GetICardPrintPreviewByRequestId(int RequestId)
+        {
+            return await _iBasicDetailDB.GetICardPrintPreviewByRequestId(RequestId);
         }
         public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId)
         {
@@ -207,10 +212,10 @@ namespace BusinessLogicsLayer.BasicDet
             return _iBasicDetailDB.GetNotificationRequestId(UserId, Type, applyForId);
         }
 
-        public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition)
+        public Task<List<DTODataExportsResponse>> GetDataForExportAndUpdateRequestAndStep(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition)
         {
 
-            var data = _iBasicDetailDB.GetBesicdetailsByRequestId(Data, dTOApplFwdCondition);
+            var data = _iBasicDetailDB.GetDataForExportAndUpdateRequestAndStep(Data, dTOApplFwdCondition);
 
             return data;
         }
@@ -726,6 +731,30 @@ namespace BusinessLogicsLayer.BasicDet
         public async Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId)
         {
             return await _iBasicDetailDB.GetClosedHistoryByRequestId(RequestId);
+        }
+        public string MaskAadhaar(string? aadhaarNumber)
+        {
+            if (string.IsNullOrWhiteSpace(aadhaarNumber))
+            {
+                return string.Empty;
+            }
+
+            string digits = Regex.Replace(aadhaarNumber, @"\D", string.Empty);
+            if (digits.Length <= 4)
+            {
+                return digits;
+            }
+
+            return new string('X', digits.Length - 4) + digits[^4..];
+        }
+        public string FormatServiceNo(string? serviceNo)
+        {
+            if (string.IsNullOrWhiteSpace(serviceNo))
+            {
+                return string.Empty;
+            }
+
+            return Regex.Replace(serviceNo.Trim(),@"^([A-Za-z]+)(?=\d)","$1 ");
         }
     }
 }

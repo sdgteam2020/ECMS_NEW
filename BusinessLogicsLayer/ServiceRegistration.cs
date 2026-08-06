@@ -39,6 +39,7 @@ using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.TrnMappingUnMappingLog;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
+using BusinessLogicsLayer.Rank;
 using DataAccessLayer;
 using DataAccessLayer.BaseInterfaces;
 using DataTransferObject.Domain.Model;
@@ -50,164 +51,164 @@ namespace BusinessLogicsLayer
     {
         public static void AddInfrastructure(this IServiceCollection services)
         {
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IUserBL, UserBL>();
-            services.AddTransient<IUserDB, UserDB>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUserBL, UserBL>();
+            services.AddScoped<IUserDB, UserDB>();
 
-            services.AddTransient<IComd, Comd>();
-            services.AddTransient<IComdDB, ComdDB>();
+            services.AddScoped<IComdBL, ComdBL>();
+            services.AddScoped<IComdDB, ComdDB>();
 
-            services.AddTransient<ICorpsBL, CorpsBL>();
-            services.AddTransient<ICorpsDB, CorpsDB>();
+            services.AddScoped<ICorpsBL, CorpsBL>();
+            services.AddScoped<ICorpsDB, CorpsDB>();
 
-            services.AddTransient<IBdeBL, BdeBL>();
-            services.AddTransient<IBdeDB, BdeDB>();
+            services.AddScoped<IBdeBL, BdeBL>();
+            services.AddScoped<IBdeDB, BdeDB>();
 
-            services.AddTransient<IDivBL, DivBL>();
-            services.AddTransient<IDivDB, DivDB>();
+            services.AddScoped<IDivBL, DivBL>();
+            services.AddScoped<IDivDB, DivDB>();
 
-            services.AddTransient<IUnitBL, UnitBL>();
-            services.AddTransient<IUnitDB, UnitDB>();
+            services.AddScoped<IUnitBL, UnitBL>();
+            services.AddScoped<IUnitDB, UnitDB>();
 
-            services.AddTransient<IMapUnitBL, MapUnitBL>();
-            services.AddTransient<IMapUnitDB, MapUnitDB>();
+            services.AddScoped<IMapUnitBL, MapUnitBL>();
+            services.AddScoped<IMapUnitDB, MapUnitDB>();
 
-            services.AddTransient<IFormationBL, FormationBL>();
-            services.AddTransient<IFormationDB, FormationDB>();
+            services.AddScoped<IFormationBL, FormationBL>();
+            services.AddScoped<IFormationDB, FormationDB>();
 
-            services.AddTransient<IApptBL, ApptBL>();
-            services.AddTransient<IApptDB, ApptDB>();
+            services.AddScoped<IApptBL, ApptBL>();
+            services.AddScoped<IApptDB, ApptDB>();
 
-            services.AddTransient<IArmedBL, ArmedBL>();
-            services.AddTransient<IArmedDB, ArmedDB>();
+            services.AddScoped<IArmedBL, ArmedBL>();
+            services.AddScoped<IArmedDB, ArmedDB>();
 
-            services.AddTransient<IRegimentalBL, RegimentalBL>();
-            services.AddTransient<IRegimentalDB, RegimentalDB>();
+            services.AddScoped<IRegimentalBL, RegimentalBL>();
+            services.AddScoped<IRegimentalDB, RegimentalDB>();
 
-            services.AddTransient<IRecordOfficeBL, RecordOfficeBL>();
-            services.AddTransient<IRecordOfficeDB, RecordOfficeDB>();
+            services.AddScoped<IRecordOfficeBL, RecordOfficeBL>();
+            services.AddScoped<IRecordOfficeDB, RecordOfficeDB>();
 
-            services.AddTransient<IRankBL, RankBL>();
-            services.AddTransient<IRankDB, RankDB>();
+            services.AddScoped<IRankBL, RankBL>();
+            services.AddScoped<IRankDB, RankDB>();
 
-            services.AddTransient<IRegistrationBL, RegistrationBL>();
-            services.AddTransient<IRegistrationDB, RegistrationDB>();
+            services.AddScoped<IRegistrationBL, RegistrationBL>();
+            services.AddScoped<IRegistrationDB, RegistrationDB>();
 
-            services.AddTransient<IBasicDetailBL, BasicDetailBL>();
-            services.AddTransient<IBasicDetailDB, BasicDetailDB>();
+            services.AddScoped<IBasicDetailBL, BasicDetailBL>();
+            services.AddScoped<IBasicDetailDB, BasicDetailDB>();
 
-            services.AddTransient<IBasicUploadBL, BasicUploadBL>();
-            services.AddTransient<IBasicinfoBL, BasicinfoBL>();
-            services.AddTransient<IBasicAddressBL, BasicAddressBL>();
+            services.AddScoped<IBasicUploadBL, BasicUploadBL>();
+            services.AddScoped<IBasicinfoBL, BasicinfoBL>();
+            services.AddScoped<IBasicAddressBL, BasicAddressBL>();
 
 
            
-            services.AddTransient<IBasicDetailTempBL,BasicDetailTempBL>();
-            services.AddTransient<IBasicDetailTempDB, BasicDetailTempDB>();
+            services.AddScoped<IBasicDetailTempBL,BasicDetailTempBL>();
+            services.AddScoped<IBasicDetailTempDB, BasicDetailTempDB>();
 
-            services.AddTransient<IUserProfileBL, UserProfileBL>();
-            services.AddTransient<IUserProfileDB, UserProfileDB>();
-
-
-            services.AddTransient<IPostingBL, PostingBL>();
-            services.AddTransient<IPostingDB, PostingDB>();
-
-            services.AddTransient<IApplCloseBL, ApplCloseBL>();
-            services.AddTransient<IApplCloseDB, ApplCloseDB>();
+            services.AddScoped<IUserProfileBL, UserProfileBL>();
+            services.AddScoped<IUserProfileDB, UserProfileDB>();
 
 
-            services.AddTransient<IStepCounterBL, StepCounterBL>();
-            services.AddTransient<IStepCounterDB, StepCounterDB>();
+            services.AddScoped<IPostingBL, PostingBL>();
+            services.AddScoped<IPostingDB, PostingDB>();
 
-            services.AddTransient<ITrnFwnBL, TrnFwnBL>();
-            services.AddTransient<ITrnFwnDB, TrnFwnDB>();
-
-            services.AddTransient<ITrnICardRequestBL, TrnICardRequestBL>();
-            services.AddTransient<ITrnICardRequestDB, TrnICardRequestDB>();
-
-            services.AddTransient<ITrnLoginLogBL, TrnLoginLogBL>();
-            services.AddTransient<ITrnLoginLogDB, TrnLoginLogDB>();
-
-            services.AddTransient<ITrnMappingUnMappingLogBL, TrnMappingUnMappingLogBL>();
-            services.AddTransient<ITrnMappingUnMappingLogDB, TrnMappingUnMappingLogDB>();
-
-            services.AddTransient<IapiDataBl, ApiDataBl>();
-            services.AddTransient<IAPIDataDB, APIDataDB>();
-
-            services.AddTransient<IDomainMapBL, DomainMapBL>();
-            services.AddTransient<IDomainMapDB, DomainMapDB>();
+            services.AddScoped<IApplCloseBL, ApplCloseBL>();
+            services.AddScoped<IApplCloseDB, ApplCloseDB>();
 
 
-            services.AddTransient<IChangeHierarchyMasterBL, ChangeHierarchyMasterBL>();
-            services.AddTransient<IChangeHierarchyMasterDB, ChangeHierarchyMasterDB>();
+            services.AddScoped<IStepCounterBL, StepCounterBL>();
+            services.AddScoped<IStepCounterDB, StepCounterDB>();
+
+            services.AddScoped<ITrnFwnBL, TrnFwnBL>();
+            services.AddScoped<ITrnFwnDB, TrnFwnDB>();
+
+            services.AddScoped<ITrnICardRequestBL, TrnICardRequestBL>();
+            services.AddScoped<ITrnICardRequestDB, TrnICardRequestDB>();
+
+            services.AddScoped<ITrnLoginLogBL, TrnLoginLogBL>();
+            services.AddScoped<ITrnLoginLogDB, TrnLoginLogDB>();
+
+            services.AddScoped<ITrnMappingUnMappingLogBL, TrnMappingUnMappingLogBL>();
+            services.AddScoped<ITrnMappingUnMappingLogDB, TrnMappingUnMappingLogDB>();
+
+            services.AddScoped<IapiDataBl, ApiDataBl>();
+            services.AddScoped<IAPIDataDB, APIDataDB>();
+
+            services.AddScoped<IDomainMapBL, DomainMapBL>();
+            services.AddScoped<IDomainMapDB, DomainMapDB>();
+
+
+            services.AddScoped<IChangeHierarchyMasterBL, ChangeHierarchyMasterBL>();
+            services.AddScoped<IChangeHierarchyMasterDB, ChangeHierarchyMasterDB>();
 
 
 
-            services.AddTransient<IArmedCatBL, ArmedCatBL>();
+            services.AddScoped<IArmedCatBL, ArmedCatBL>();
 
             //////Api Calll/////////////
-            services.AddTransient<IaPiBl, Apibl>();
+            services.AddScoped<IaPiBl, Apibl>();
 
-            services.AddTransient<INotificationBL, NotificationBL>();
-            services.AddTransient<INotificationDB, NotificationDB>();
+            services.AddScoped<INotificationBL, NotificationBL>();
+            services.AddScoped<INotificationDB, NotificationDB>();
 
-            services.AddTransient<IAccountBL, AccountBL>();
-            services.AddTransient<IAccountDB, AccountDB>();
+            services.AddScoped<IAccountBL, AccountBL>();
+            services.AddScoped<IAccountDB, AccountDB>();
 
-            services.AddTransient<IMasterBL, MasterBL>();
-            services.AddTransient<IMasterDB, MasterDB>();
+            services.AddScoped<IMasterBL, MasterBL>();
+            services.AddScoped<IMasterDB, MasterDB>();
 
-            services.AddTransient<IOROMappingBL, OROMappingBL>();
-            services.AddTransient<IOROMappingDB, OROMappingDB>();
+            services.AddScoped<IOROMappingBL, OROMappingBL>();
+            services.AddScoped<IOROMappingDB, OROMappingDB>();
 
-            services.AddTransient<IHomeBL, HomeBL>();
-            services.AddTransient<IHomeDB, HomeDB>();
+            services.AddScoped<IHomeBL, HomeBL>();
+            services.AddScoped<IHomeDB, HomeDB>();
 
-            services.AddTransient<IReportReturnDB, ReportReturnDB>();
-            services.AddTransient<IReportReturnBL, ReportReturnBL>();
+            services.AddScoped<IReportReturnDB, ReportReturnDB>();
+            services.AddScoped<IReportReturnBL, ReportReturnBL>();
 
-            services.AddTransient<IIssuingAuthorityDB, IssuingAuthorityDB>();
-            services.AddTransient<IIssuingAuthorityBL, IssuingAuthorityBL>();
+            services.AddScoped<IIssuingAuthorityDB, IssuingAuthorityDB>();
+            services.AddScoped<IIssuingAuthorityBL, IssuingAuthorityBL>();
 
-            services.AddTransient<IBloodGroupBL, BloodGroupBL>();
+            services.AddScoped<IBloodGroupBL, BloodGroupBL>();
 
-            services.AddTransient<IAfsacCellMappingDB, AfsacCellMappingDB>();
-            services.AddTransient<IAfsacCellMappingBL, AfsacCellMappingBL>();
+            services.AddScoped<IAfsacCellMappingDB, AfsacCellMappingDB>();
+            services.AddScoped<IAfsacCellMappingBL, AfsacCellMappingBL>();
 
-            services.AddTransient<IICardHoldDB, ICardHoldDB>();
-            services.AddTransient<IICardHoldBL, ICardHoldBL>();
+            services.AddScoped<IICardHoldDB, ICardHoldDB>();
+            services.AddScoped<IICardHoldBL, ICardHoldBL>();
 
-            services.AddTransient<IIAMSettingBL,IAMSettingBL>();
-            services.AddTransient<IcsvImportBl, CsvImportBl>();
+            services.AddScoped<IIAMSettingBL,IAMSettingBL>();
+            services.AddScoped<IcsvImportBl, CsvImportBl>();
 
-            services.AddTransient<ICategoryBL, CategoryBL>();
+            services.AddScoped<ICategoryBL, CategoryBL>();
 
-            services.AddTransient<IFaultyCardBL, FaultyCardBL>();
-            services.AddTransient<IFaultyCardDB, FaultyCardDB>();
+            services.AddScoped<IFaultyCardBL, FaultyCardBL>();
+            services.AddScoped<IFaultyCardDB, FaultyCardDB>();
 
-            services.AddTransient<IHotlistCardBL, HotlistCardBL>();
-            services.AddTransient<IHotlistCardDB, HotlistCardDB>();
+            services.AddScoped<IHotlistCardBL, HotlistCardBL>();
+            services.AddScoped<IHotlistCardDB, HotlistCardDB>();
 
-            services.AddTransient<IMapUnitChangeBL, MapUnitChangeBL>();
-            services.AddTransient<IMapUnitChangeDB, MapUnitChangeDB>();
+            services.AddScoped<IMapUnitChangeBL, MapUnitChangeBL>();
+            services.AddScoped<IMapUnitChangeDB, MapUnitChangeDB>();
 
-            services.AddTransient<ILostCardDB, LostCardDB>();
-            services.AddTransient<ILostCardBL, LostCardBL>();
+            services.AddScoped<ILostCardDB, LostCardDB>();
+            services.AddScoped<ILostCardBL, LostCardBL>();
 
-            services.AddTransient<IDistributeCardDB, DistributeCardDB>();
-            services.AddTransient<IDistributeCardBL, DistributeCardBL>();
+            services.AddScoped<IDistributeCardDB, DistributeCardDB>();
+            services.AddScoped<IDistributeCardBL, DistributeCardBL>();
 
-            services.AddTransient<IDestructionCardBL, DestructionCardBL>();
-            services.AddTransient<IDestructionCardDB, DestructionCardDB>();
+            services.AddScoped<IDestructionCardBL, DestructionCardBL>();
+            services.AddScoped<IDestructionCardDB, DestructionCardDB>();
 
-            services.AddTransient<IDispatchModeBL, DispatchModeBL>();
+            services.AddScoped<IDispatchModeBL, DispatchModeBL>();
 
-            services.AddTransient<IDispatchCardBL, DispatchCardBL>();
+            services.AddScoped<IDispatchCardBL, DispatchCardBL>();
 
-            services.AddTransient<IDispatchCardMappingBL, DispatchCardMappingBL>();
-            services.AddTransient<IDispatchCardMappingDB, DispatchCardMappingDB>();
+            services.AddScoped<IDispatchCardMappingBL, DispatchCardMappingBL>();
+            services.AddScoped<IDispatchCardMappingDB, DispatchCardMappingDB>();
 
-            services.AddTransient<IEncryptionSettingBL, EncryptionSettingBL>();
+            services.AddScoped<IEncryptionSettingBL, EncryptionSettingBL>();
 
             services.AddScoped<ICompletedICardRequestBL, CompletedICardRequestBL>();
             services.AddScoped<ICompletedICardRequestDB, CompletedICardRequestDB>();

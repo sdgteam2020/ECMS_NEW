@@ -20,6 +20,7 @@ using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.TrnICardHold;
 using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
+using BusinessLogicsLayer.Rank;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Dapper;
@@ -1427,7 +1428,7 @@ namespace Web.Controllers
                 DTOPreventBasicDetailEditResponse? dTOPreventBasicDetail = await basicDetailBL.GetPreventBasicDetailEdit(decryptedIntId);
                 if (dTOPreventBasicDetail != null)
                 {
-                    if (dTOPreventBasicDetail.IsLock == false && dTOPreventBasicDetail.StatusId == 1 && dTOPreventBasicDetail.AspNetUsersId == CurrentAspNetUsersId)
+                    if (dTOPreventBasicDetail.IsLock == false && dTOPreventBasicDetail.StatusId == (byte)RequestStatusEnum.Running && dTOPreventBasicDetail.AspNetUsersId == CurrentAspNetUsersId)
                     {
                         BasicDetailCrtAndUpdVM? basicDetailUpdVM = await basicDetailBL.GetBesicDetailForEditById(decryptedIntId);
 
@@ -1563,7 +1564,7 @@ namespace Web.Controllers
                             TempData["error"] = "Editing is not allowed at this time.";
                             TempData.Keep("error");
                         }
-                        else if (dTOPreventBasicDetail.StatusId != 1)
+                        else if (dTOPreventBasicDetail.StatusId != (byte)RequestStatusEnum.Running)
                         {
                             TempData["error"] = "Application is not running.";
                             TempData.Keep("error");
@@ -1761,7 +1762,7 @@ namespace Web.Controllers
                             DTOPreventBasicDetailEditResponse? dTOPreventBasicDetail = await basicDetailBL.GetPreventBasicDetailEdit(model.BasicDetailId);
                             if (dTOPreventBasicDetail != null)
                             {
-                                if (dTOPreventBasicDetail.IsLock == false && dTOPreventBasicDetail.StatusId == 1 && dTOPreventBasicDetail.AspNetUsersId == CurrentAspNetUsersId)
+                                if (dTOPreventBasicDetail.IsLock == false && dTOPreventBasicDetail.StatusId == (byte)RequestStatusEnum.Running && dTOPreventBasicDetail.AspNetUsersId == CurrentAspNetUsersId)
                                 {
                                     // Populate dropdown options for the view
                                     ViewBag.OptionsRankId = model.RankId;
@@ -1987,7 +1988,7 @@ namespace Web.Controllers
                                         TempData["error"] = "Editing is not allowed at this time.";
                                         TempData.Keep("error");
                                     }
-                                    else if (dTOPreventBasicDetail.StatusId != 1)
+                                    else if (dTOPreventBasicDetail.StatusId != (byte)RequestStatusEnum.Running)
                                     {
                                         TempData["error"] = "Application is not running.";
                                         TempData.Keep("error");
@@ -3244,7 +3245,7 @@ namespace Web.Controllers
                 Data.CardExportedByAspNetUserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 // Fetch basic details for requested data export
-                List<DTODataExportsResponse> retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data, dTOApplFwdCondition);
+                List<DTODataExportsResponse> retdata = await basicDetailBL.GetDataForExportAndUpdateRequestAndStep(Data, dTOApplFwdCondition);
                 if (retdata.Count() > 0)
                 {
 
@@ -3840,33 +3841,57 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetBasicDetailForParitalViewByRequestId(string Request)
         {
-            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
-            // Step 1: Fetch basic details from business layer
-            DTOBasicDetailForParitalViewResponse? data = await basicDetailBL.GetBasicDetailForParitalViewByRequestId(RequestId);
-            if (data != null)
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
             {
+                ViewBag.Message = "Session data is unavailable or has expired.";
+                return PartialView("_BasicDetail_ParitalView", model: null);
+            }
+
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request,sessionData.Salt);
+
+            if (RequestId <= 0)
+            {
+                ViewBag.Message = "Invalid input.";
+                return PartialView("_BasicDetail_ParitalView", model: null);
+            }
+
+            DTOGenericResponse<DTOBasicDetailForParitalViewResponse> response = new DTOGenericResponse<DTOBasicDetailForParitalViewResponse>();
+            response.Result = false;
+            response.Value = new DTOBasicDetailForParitalViewResponse();
+
+            // Step 1: Fetch basic details from business layer
+            response = await basicDetailBL.GetBasicDetailForParitalViewByRequestId(RequestId);
+            
+            if (response.Result == true)
+            {
+                response.Value.AadhaarNo = basicDetailBL.MaskAadhaar(response.Value.AadhaarNo);
+                response.Value.ServiceNo = basicDetailBL.FormatServiceNo(response.Value.ServiceNo);
+
                 // Step 2: Construct physical paths for photo and signature images
                 string sourceFolderPathPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
-                string sourcePathPhoto = Path.Combine(sourceFolderPathPhy, "Photo", data.PhotoImagePath);
-                string sourcePathSignature = Path.Combine(sourceFolderPathPhy, "Signature", data.SignatureImagePath);
+                string sourcePathPhoto = Path.Combine(sourceFolderPathPhy, "Photo", response.Value.PhotoImagePath);
+                string sourcePathSignature = Path.Combine(sourceFolderPathPhy, "Signature", response.Value.SignatureImagePath);
 
                 // Step 3: Decrypt and convert photo image to Base64 if it exists
                 if (System.IO.File.Exists(sourcePathPhoto))
                 {
-                    data.PhotoImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    response.Value.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
                 }
 
                 // Step 4: Decrypt and convert signature image to Base64 if it exists
                 if (System.IO.File.Exists(sourcePathSignature))
                 {
-                    data.SignatureImagePath = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                    response.Value.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
                 }
 
                 // Step 5: Return the partial view with populated data
-                return PartialView("_BasicDetail_ParitalView", data);
+                return PartialView("_BasicDetail_ParitalView", response.Value);
             }
             else
             {
+                ViewBag.Message = response.Message;
                 return PartialView("_BasicDetail_ParitalView", null);
             }
         }
@@ -5325,65 +5350,65 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetICardPrintPreviewByRequestId(string Request)
         {
-            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
-            // Initialize the generic response object
-            DTOGenericResponse<DTOBasicDetailByRequestIdResponse?> response = new DTOGenericResponse<DTOBasicDetailByRequestIdResponse?>();
+            DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse> response = new DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>();
+            response.Result = false;
+            response.Value = new DTOGetICardPrintPreviewByRequestIdResponse();
+
+            DtoSession? sessionData = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+
+            if (sessionData == null || string.IsNullOrWhiteSpace(sessionData.Salt))
+            {
+                response.Message = "Session data is unavailable or has expired.";
+                return Json(response);
+            }
+
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, sessionData.Salt);
+
+            if (RequestId <= 0)
+            {
+                response.Message = "Invalid input.";
+                return Json(response);
+            }
             try
             {
                 // Retrieve the basic detail record for the given RequestId
-                DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(RequestId);
+                response = await basicDetailBL.GetICardPrintPreviewByRequestId(RequestId);
 
-                if (basicDetailCrtAndUpdVM != null)
+                if (response.Result == true)
                 {
+                    response.Value.AadhaarNo = basicDetailBL.MaskAadhaar(response.Value.AadhaarNo);
                     // Define the root physical folder where images are stored
                     string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
                     // Build the full path for the photo image
-                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", response.Value.PhotoImagePath);
+                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", response.Value.SignatureImagePath);
 
-                    // Decrypt the photo image and assign it to the VM
-                    basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-
-                    // Build the full path for the signature image
-                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
-
-                    // Decrypt the signature image and assign it to the VM
-                    basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
-
-                    // Return the VM as JSON
-                    response.Result = true;
-                    response.Message ="Success";
-                    response.Value= basicDetailCrtAndUpdVM;
-                    return Json(response);
-                }
-                else
-                {
-                    // Return null if no record was found for the given RequestId
-                    response.Result = false;
-                    response.Message = "RequestId not found.";
-                    response.Value = null;
-                    return Json(response);
+                    if (System.IO.File.Exists(sourcePathPhoto))
+                    {
+                        // Decrypt the photo image and assign it to the VM
+                        response.Value.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    }
+                    if (System.IO.File.Exists(sourcePathSignature))
+                    {
+                        // Decrypt the signature image and assign it to the VM
+                        response.Value.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                    }
                 }
             }
             catch (FileNotFoundException ex)
             {
                 // Log any exception with an error code and context
                 _logger.LogError(1001, ex, "BasicDetail->GetICardPrintPreviewByRequestId");
-                response.Result = false;
                 response.Message = "Photo and Signature not found.";
-                response.Value = null;
-                return Json(response);
             }
             catch (Exception ex)
             {
                 // Log any exception with an error code and context
                 _logger.LogError(1001, ex, "BasicDetail->GetICardPrintPreviewByRequestId");
-                response.Result = false;
                 response.Message = "Internal Error.";
-                response.Value = null;
-                return Json(response);
             }
-
+            return Json(response);
         }
 
 

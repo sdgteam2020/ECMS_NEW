@@ -32,7 +32,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<int?> MaxBasicDetailId(string ServiceNo);
         public Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto);
-        public Task<DTOBasicDetailForParitalViewResponse?> GetBasicDetailForParitalViewByRequestId(int RequestId);
+        public Task<DTOGenericResponse<DTOBasicDetailForParitalViewResponse>> GetBasicDetailForParitalViewByRequestId(int RequestId);
         public Task<ICardHistoryResponseAll> ICardHistory(int RequestId);
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
         public Task<List<ICardHistoryResponse>?> ICardHistoryByRequestId(int RequestId);
@@ -40,7 +40,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOGenericResponse<DTOICardTaskCountResponse>> GetTaskCountICardRequest(DTOGetTaskCountICardRequest dTOGetTaskCount);
         public Task<DTONotificationResult> GetNotification(int UserId);
         public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId);
-        public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
+        public Task<List<DTODataExportsResponse>> GetDataForExportAndUpdateRequestAndStep(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         Task<DTOUploadChipAndSerialResponse> CardPrintingCSVUpload(List<DTOCardPriningRequest> requests);
@@ -59,5 +59,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTODataTablesResponse<DTOClosedHistoryResponse>> GetAllClosedHistory(DTODataTableRequestForAppClosedHistory dTO);
         public Task<DTOGetMappingDetailsForClosedHistoryResponse> GetMappingDetailsForClosedHistory(DTODataTableRequestForAppClosedHistory dTO);
         public Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId);
+        public Task<DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>> GetICardPrintPreviewByRequestId(int RequestId);
     }
 }

@@ -5,18 +5,22 @@ using DataTransferObject.Constants;
 using DataTransferObject.Domain.Master;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace BusinessLogicsLayer.BdeCate
+namespace BusinessLogicsLayer.Rank
 {
     public class RankBL : GenericRepositoryDL<MRank>, IRankBL
     {
-
-
+        protected new readonly ApplicationDbContext _context;// For Entity Framework operations
+        private readonly ILogger<RankBL> _logger;
         private readonly IRankDB _iRankDB;
 
-        public RankBL(ApplicationDbContext context, IRankDB iRankDB) : base(context)
+        public RankBL(ApplicationDbContext context, IRankDB iRankDB, ILogger<RankBL> logger) : base(context)
         {
+            _context = context;
             _iRankDB = iRankDB;
+            _logger = logger;
         }
 
         public Task<IEnumerable<MRank>> GetAllByorder()
@@ -40,32 +44,84 @@ namespace BusinessLogicsLayer.BdeCate
             return _iRankDB.GetByName(Dto);
         }
 
-        public async Task<int> OrderByChange(MRank Dto)
+        public async Task<DTOGenericResponse<string>> OrderByChange(MRank dto)
         {
-            ////Current Order
-            short i = Dto.Orderby;
-            increment:
-            i++;
-            short ComdIdnext = await _iRankDB.GetRankIdbyOrderby(i);
-            if (ComdIdnext == 0)
+            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            response.Result = false;
+            response.Value = string.Empty;
+            if (dto == null || dto.RankId <= 0)
             {
-                goto increment;
+                response.Message = "Invalid Rank data.";
+                return response;
             }
-            else
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                /////Subtraction order no Next Comd
-                var datanext = await GetByGen<short>(ComdIdnext);
-                datanext.Orderby = Dto.Orderby;
-                await Update(datanext);
+                MRank? currentRank = await GetByGen<short>(dto.RankId);
 
-                ////////Change Order No For Click
-                MRank data = new MRank();
-                data = await GetByGen<short>(Dto.RankId);
-                data.Orderby = i;
-                await Update(data);
-                /////////////////////////
+                if (currentRank == null)
+                {
+                    await transaction.RollbackAsync();
+                    response.Message = "Rank Not found.";
+                    return response;
+                }
+
+
+                short currentOrder = currentRank.Orderby;
+                int nextOrder = currentOrder;
+
+                MRank? nextRank = null;
+
+                while (nextOrder < short.MaxValue)
+                {
+                    nextOrder++;
+
+                    short nextRankId = await _iRankDB.GetRankIdbyOrderby((short)nextOrder);
+
+                    if (nextRankId <= 0)
+                        continue;
+
+                    nextRank = await GetByGen<short>(nextRankId);
+
+                    if (nextRank != null)
+                        break;
+                }
+
+                // No rank exists after the selected rank
+                if (nextRank == null)
+                {
+                    await transaction.RollbackAsync();
+                    response.Message = "No rank exists after the selected rank.";
+                    return response;
+                }
+
+
+                // Swap both Orderby values
+                nextRank.Orderby = currentOrder;
+                currentRank.Orderby = (short)nextOrder;
+
+                // Mark both records as modified
+                _context.Entry(nextRank).State = EntityState.Modified;
+                _context.Entry(currentRank).State = EntityState.Modified;
+
+                // Save both updates together
+                await SaveAsync();
+
+                // Commit only after both records are successfully updated
+                await transaction.CommitAsync();
+
+                response.Message = "Rank order update sccessful";
+                response.Result = true;
+                return response;
             }
-            return KeyConstants.Success;
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(1001, ex, "RankBL->OrderByChange");
+                response.Message = "Internal Server Error.";
+                return response;
+            }
+
         }
         public async Task<DTORankIdCheckInFKTableResponse?> RankIdCheckInFKTable(short RankId)
         {

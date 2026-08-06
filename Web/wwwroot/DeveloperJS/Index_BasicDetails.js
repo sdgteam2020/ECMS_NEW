@@ -220,19 +220,24 @@ function BindData(StepCounter, JCOOR) {
                                 <button class="btn btn-icon btn-round btn-primary mr-1 cls-fwdrecord"><i class="fa fa-step-forward"></i></button>`;
                     }
                     // Case 2: Processed + Download
-                    else if (row.StepCounter >= 2 && row.StepCounter <= 6)
+                    else if (row.StepCounter >= 2 && row.StepCounter <= 15)
                     {
-                        html += `<span class="badge rounded-pill bg-light text-primary mt-3">Processed</span>
-                                <button class="cls-btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details">
+                        if (row.StatusId == 1) {
+                            html += `<span class="badge rounded-pill bg-light text-primary mt-3">Processed</span>`;
+                        }
+                        else if (row.StatusId == 2) {
+                            html += `<span class="badge rounded-pill bg-light text-success mt-3">Completed</span>`;
+                        }
+                        else if (row.StatusId == 3) {
+                            html += `<span class="badge rounded-pill bg-light text-danger mt-3">Closed</span>`;
+                        }
+                        html += `<button class="cls-btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details">
                                 <img src="/Images/digitalsign.png" width="40" />
                                 </button>`;
                     }
-                    else
-                    {
-                        // Case 3: Rejected only
-                        if (row.IsFwdStatusId == 3) {
-                            html += `<span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left">Rejected</span>`;
-                        }
+                    // Case 3: Rejected only
+                    if (row.IsFwdStatusId == 3) {
+                        html += `<span class="badge rounded-pill bg-light text-danger mt-3" data-toggle="tooltip" data-placement="left">Rejected</span>`;
                     }
                     return html; // Return the full HTML string
                 }

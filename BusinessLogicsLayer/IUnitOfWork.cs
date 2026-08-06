@@ -11,6 +11,7 @@ using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
+using BusinessLogicsLayer.Rank;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
@@ -19,7 +20,7 @@ namespace BusinessLogicsLayer
     public interface IUnitOfWork
     {
         IUserBL Users { get; }
-        IComd Comds { get; }
+        IComdBL Comds { get; }
         ICorpsBL Corps { get; }
         IBdeBL Bde { get; }
         IDivBL Div { get; }

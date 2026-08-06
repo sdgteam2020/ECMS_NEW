@@ -51,7 +51,7 @@ namespace DataAccessLayer
         /// <returns>Returns the RankId associated with the given OrderBy, or a default value if not found.</returns>
         public async Task<short> GetRankIdbyOrderby(short OrderBy)
         {
-            var ret= await _context.MRank.Where(P => P.Orderby == OrderBy).Select(c=>c.RankId).SingleOrDefaultAsync(); 
+            var ret= await _context.MRank.Where(P => P.Orderby == OrderBy).Select(c=>c.RankId).FirstOrDefaultAsync(); 
             return ret;
         }
 

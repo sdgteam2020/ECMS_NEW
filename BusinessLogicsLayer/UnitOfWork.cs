@@ -15,6 +15,7 @@ using BusinessLogicsLayer.OROMapp;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Unit;
 using BusinessLogicsLayer.User;
+using BusinessLogicsLayer.Rank;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 
@@ -22,7 +23,7 @@ namespace BusinessLogicsLayer
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public UnitOfWork(IUserBL _user, IComd _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL, IAfsacCellMappingBL _afsacCellMappingBL,ICategoryBL categoryBL,IDispatchModeBL dispatchModeBL) 
+        public UnitOfWork(IUserBL _user, IComdBL _comds, ICorpsBL _corpsBL, IBdeBL _bdeCat, IDivBL divBL, IUnitBL unit, IMapUnitBL MapUnitBL, IFormationBL FormationBL, IApptBL apptBL, IArmedBL armedBL, IRankBL rankBL, IRegimentalBL regimentalBL,IRecordOfficeBL recordOfficeBL,IArmedCatBL armedCatBL,IMasterBL masterBL,IOROMappingBL oroMappingBL,IIssuingAuthorityBL issuingAuthorityBL, IBloodGroupBL bloodGroupBL, IAfsacCellMappingBL _afsacCellMappingBL,ICategoryBL categoryBL,IDispatchModeBL dispatchModeBL) 
         {
             Users = _user;
             Comds = _comds;
@@ -48,7 +49,7 @@ namespace BusinessLogicsLayer
 
         }
         public IUserBL Users { get; }
-        public IComd Comds { get; }
+        public IComdBL Comds { get; }
         public ICorpsBL Corps { get; }
         public IDivBL Div { get; }
         public IBdeBL Bde { get; }

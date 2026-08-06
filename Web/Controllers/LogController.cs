@@ -294,11 +294,6 @@ namespace Web.Controllers
 
             try
             {
-                var CERT_SERIAL_1 = Environment.GetEnvironmentVariable("CERT_SERIAL_1") ?? string.Empty;
-                var CERT_SERIAL_2 = Environment.GetEnvironmentVariable("CERT_SERIAL_2") ?? string.Empty;
-                var ARMY_NO_1 = Environment.GetEnvironmentVariable("ARMY_NO_1") ?? string.Empty;
-                var ARMY_NO_2 = Environment.GetEnvironmentVariable("ARMY_NO_2") ?? string.Empty;
-
                 string ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
 
                 var levelDictionary = new Dictionary<int, string>
@@ -321,17 +316,18 @@ namespace Web.Controllers
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(sanitizedXml);
 
-                var digitalSignList = ProcessDigitalSignatures(xmlDoc, CERT_SERIAL_1, CERT_SERIAL_2, ARMY_NO_1, ARMY_NO_2);
 
-                DTOBasicDetailByRequestIdResponse? db = await BasicDetailBL.GetBasicDetailByRequestId(requestId);
-                if (db == null)
-                    return NotFound();
+                var digitalSignList = ProcessDigitalSignatures(xmlDoc);
+                DTOGenericResponse<DTOBasicDetailForParitalViewResponse> response = await BasicDetailBL.GetBasicDetailForParitalViewByRequestId(requestId);
 
-                var digitalSignPlusLogList = ProcessForwardingDetails(xmlDoc, levelDictionary, digitalSignList, db);
+                if (response.Result == false)
+                    return NotFound("The requested information is currently unavailable. Please try again after some time.");
 
-                byte[] pdfBytes = await GeneratePdfDocument(db, digitalSignPlusLogList, ipAddress, timestamp, requestId);
+                var digitalSignPlusLogList = ProcessForwardingDetails(xmlDoc, levelDictionary, digitalSignList, response.Value.ServiceNo);
 
-                string pdfName = $"{db.ServiceNo}_{requestId}_{timestamp}.pdf";
+                byte[] pdfBytes = await GeneratePdfDocument(response.Value, digitalSignPlusLogList, ipAddress, timestamp, requestId);
+
+                string pdfName = $"{response.Value.ServiceNo}_{requestId}_{timestamp}.pdf";
 
                 return File(pdfBytes, "application/pdf", pdfName);
             }
@@ -385,56 +381,97 @@ namespace Web.Controllers
             }
         }
 
-        private List<DTOFwdLastRecForDigitalSign> ProcessDigitalSignatures(XmlDocument xmlDoc,string certSerial1, string certSerial2, string armyNo1, string armyNo2)
+        private List<DTOFwdLastRecForDigitalSign> ProcessDigitalSignatures(XmlDocument xmlDoc)
         {
+
             var digitalSignList = new List<DTOFwdLastRecForDigitalSign>();
             var certificateNodes = xmlDoc.GetElementsByTagName("X509Certificate");
-
-            // Precompute Uppercase serials for comparison
-            var serial1 = certSerial1.ToUpper();
-            var serial2 = certSerial2.ToUpper();
-
-            foreach (XmlNode node in certificateNodes)
+            bool WithExpTo = false;
+            if (WithExpTo == false)
             {
-                try
+                foreach (XmlNode node in certificateNodes)
                 {
-                    byte[] certBytes = Convert.FromBase64String(node.InnerText);
-                    using var certificate = new X509Certificate2(certBytes);
-
-                    // Optimized subject parsing
-                    var subjectDict = new Dictionary<string, string>();
-                    var subjectParts = certificate.Subject.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (var part in subjectParts)
+                    try
                     {
-                        var kv = part.Split('=', 2, StringSplitOptions.TrimEntries);
-                        if (kv.Length == 2)
-                            subjectDict[kv[0]] = kv[1];
+                        byte[] certBytes = Convert.FromBase64String(node.InnerText);
+                        using var certificate = new X509Certificate2(certBytes);
+
+                        // Optimized subject parsing
+                        var subjectDict = new Dictionary<string, string>();
+                        var subjectParts = certificate.Subject.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (var part in subjectParts)
+                        {
+                            var kv = part.Split('=', 2, StringSplitOptions.TrimEntries);
+                            if (kv.Length == 2)
+                                subjectDict[kv[0]] = kv[1];
+                        }
+                        digitalSignList.Add(new DTOFwdLastRecForDigitalSign
+                        {
+                            FromProfile = subjectDict.GetValueOrDefault("CN", ""),
+                            FromArmyNo = subjectDict.GetValueOrDefault("SERIALNUMBER", "").ToUpper()
+                        });
                     }
-
-                    var serialNumber = subjectDict.GetValueOrDefault("SERIALNUMBER", "").ToUpper();
-                    string armyNo = serialNumber switch
+                    catch (Exception ex)
                     {
-                        string s when s == serial1 => armyNo1.ToUpper(),
-                        string s when s == serial2 => armyNo2.ToUpper(),
-                        _ => serialNumber
-                    };
-
-                    digitalSignList.Add(new DTOFwdLastRecForDigitalSign
-                    {
-                        FromProfile = subjectDict.GetValueOrDefault("CN", ""),
-                        FromArmyNo = armyNo
-                    });
+                        _logger.LogWarning(ex, "Failed to process digital signature");
+                    }
                 }
-                catch (Exception ex)
+            }
+            else
+            {
+                var CERT_SERIAL_1 = Environment.GetEnvironmentVariable("CERT_SERIAL_1") ?? string.Empty;
+                var CERT_SERIAL_2 = Environment.GetEnvironmentVariable("CERT_SERIAL_2") ?? string.Empty;
+                var ARMY_NO_1 = Environment.GetEnvironmentVariable("ARMY_NO_1") ?? string.Empty;
+                var ARMY_NO_2 = Environment.GetEnvironmentVariable("ARMY_NO_2") ?? string.Empty;
+
+                // Precompute Uppercase serials for comparison
+                var serial1 = CERT_SERIAL_1.ToUpper();
+                var serial2 = CERT_SERIAL_2.ToUpper();
+
+                foreach (XmlNode node in certificateNodes)
                 {
-                    _logger.LogWarning(ex, "Failed to process digital signature");
+                    try
+                    {
+                        byte[] certBytes = Convert.FromBase64String(node.InnerText);
+                        using var certificate = new X509Certificate2(certBytes);
+
+                        // Optimized subject parsing
+                        var subjectDict = new Dictionary<string, string>();
+                        var subjectParts = certificate.Subject.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (var part in subjectParts)
+                        {
+                            var kv = part.Split('=', 2, StringSplitOptions.TrimEntries);
+                            if (kv.Length == 2)
+                                subjectDict[kv[0]] = kv[1];
+                        }
+
+                        var serialNumber = subjectDict.GetValueOrDefault("SERIALNUMBER", "").ToUpper();
+                        string armyNo = serialNumber switch
+                        {
+                            string s when s == serial1 => ARMY_NO_1.ToUpper(),
+                            string s when s == serial2 => ARMY_NO_2.ToUpper(),
+                            _ => serialNumber
+                        };
+
+                        digitalSignList.Add(new DTOFwdLastRecForDigitalSign
+                        {
+                            FromProfile = subjectDict.GetValueOrDefault("CN", ""),
+                            FromArmyNo = armyNo
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to process digital signature");
+                    }
                 }
             }
 
+
             return digitalSignList;
         }
-        private List<DTODigitalSignPlusLog> ProcessForwardingDetails(XmlDocument xmlDoc,Dictionary<int, string> levelDictionary, List<DTOFwdLastRecForDigitalSign> digitalSignList, DTOBasicDetailByRequestIdResponse db)
+        private List<DTODigitalSignPlusLog> ProcessForwardingDetails(XmlDocument xmlDoc,Dictionary<int, string> levelDictionary, List<DTOFwdLastRecForDigitalSign> digitalSignList, string ServiceNo)
         {
             var result = new List<DTODigitalSignPlusLog>();
             XmlNodeList forwardDetails = xmlDoc.GetElementsByTagName("RecForDigitalSign");
@@ -467,7 +504,7 @@ namespace Web.Controllers
 
                 if (stepId == 2 && digitalSignature == null)
                 {
-                    digitalSignature = digitalSignList.FirstOrDefault(x =>x.FromArmyNo.Contains(db.ServiceNo, StringComparison.OrdinalIgnoreCase));
+                    digitalSignature = digitalSignList.FirstOrDefault(x =>x.FromArmyNo.Contains(ServiceNo, StringComparison.OrdinalIgnoreCase));
                 }
 
                 if (digitalSignature != null)
@@ -484,7 +521,7 @@ namespace Web.Controllers
         }
 
         private async Task<byte[]> GeneratePdfDocument(
-             DTOBasicDetailByRequestIdResponse db,
+             DTOBasicDetailForParitalViewResponse db,
              List<DTODigitalSignPlusLog> digitalSignPlusLogList,
              string ipAddress,
              string timestamp,
@@ -527,7 +564,7 @@ namespace Web.Controllers
                 .SetFontSize(15));
         }
 
-        private void AddPersonalDetailsTable(Document document, DTOBasicDetailByRequestIdResponse db, iTextImage photoImage, iTextImage signatureImage)
+        private void AddPersonalDetailsTable(Document document, DTOBasicDetailForParitalViewResponse db, iTextImage? photoImage, iTextImage? signatureImage)
         {
             PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
             Table table = new Table(4);
@@ -538,17 +575,17 @@ namespace Web.Controllers
 
             // Add personal details
             AddTableRow(table, "NAME", $"{db.RankName} {db.FName} {db.LName}".Trim(), boldFont);
-            AddTableRow(table, "Rank", db.RankName, boldFont);
-            AddTableRow(table, "Arm / Service", db.ArmedName, boldFont);
+            AddTableRow(table, "Rank", db.RankName ?? string.Empty, boldFont);
+            AddTableRow(table, "Arm / Service", db.ArmedName ?? string.Empty, boldFont);
             AddTableRow(table, "Army No", db.ServiceNo, boldFont);
             AddTableRow(table, "IdenMark1", db.IdenMark1, boldFont);
             AddTableRow(table, "Date of Birth", db.DOB.ToString("dd-MMM-yyyy"), boldFont);
             AddTableRow(table, "Height (Cm)", db.Height.ToString(), boldFont);
             AddTableRow(table, "AADHAAR No", Regex.Replace(db.AadhaarNo, @"\d(?=\d{4})", "X"), boldFont);
-            AddTableRow(table, "BloodGroup", db.BloodGroup, boldFont);
-            AddTableRow(table, "Place of Issue", db.PlaceOfIssue, boldFont);
+            AddTableRow(table, "BloodGroup", db.BloodGroup ?? string.Empty, boldFont);
+            AddTableRow(table, "Place of Issue", db.PlaceOfIssue ?? string.Empty, boldFont);
             AddTableRow(table, "Date of Issue",
-                db.DateOfIssue == DateTime.MinValue ? "" : db.DateOfIssue.ToString("dd-MMM-yyyy"),
+                db.DateOfIssue is DateTime dateOfIssue && dateOfIssue != DateTime.MinValue ? dateOfIssue.ToString("dd-MMM-yyyy") : "",
                 boldFont);
             AddTableRow(table, "Issuing Authority", db.IssuingAuthorityName, boldFont);
             AddTableRow(table, "Date of Commissioning/ Enrollment",
@@ -573,9 +610,16 @@ namespace Web.Controllers
             table.AddCell(new Paragraph(value));
         }
 
-        private async Task<iTextImage> GetDecryptedImage(string imagePath, string folder, float width)
+        private async Task<iTextImage?> GetDecryptedImage(string imagePath, string folder, float width)
         {
             string sourcePath = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", folder, imagePath);
+
+            // Return null when the image file does not exist
+            if (!System.IO.File.Exists(sourcePath))
+            {
+                return null;
+            }
+
             string base64Image = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePath);
 
             if (string.IsNullOrEmpty(base64Image))

@@ -248,6 +248,7 @@ function BindData() {
         }
     });
 }
+
 function Save() {
     $.ajax({
         url: '/Master/SaveRank',
@@ -399,7 +400,6 @@ function OrderByChange(RankId, OrderBy) {
     {
         "RankId": RankId,
         "Orderby": OrderBy,
-
     };
     $.ajax({
         url: '/Master/RankOrderByChange',
@@ -407,28 +407,42 @@ function OrderByChange(RankId, OrderBy) {
         data: userdata,
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (response) {
-            if (response != "null") {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
+        beforeSend: function () {
+            Swal.fire({
+                title: 'Please wait',
+                text: 'Order change is in process...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: function () {
+                    Swal.showLoading();
                 }
-                else if (response == Success) {
-                    //lol++;
-                    //if (lol == Tot) {
-                    toastr.success('Order Changed Success');
-                    BindData();
-                }
-
-                //}
-            }
-
+            });
         },
-        error: function (result) {
+        success: function (response) {
+            if (response.Result === true) {
+                Swal.close();
+
+                toastr.success('Order changed successfully.');
+
+                BindData();
+            }
+            else {
+                Swal.fire({
+                    text: errormsg002
+                });
+            }
+        },
+        error: function () {
             Swal.fire({
                 text: errormsg002
             });
+        },
+        complete: function () {
+            // Close loader if it is still open
+            if (Swal.isLoading()) {
+                Swal.close();
+            }
         }
     });
 }

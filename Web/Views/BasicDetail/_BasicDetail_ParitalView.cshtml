@@ -38,7 +38,7 @@
                         <div class="form-group row mb-0">
                             <label class="col-form-label labelprofile col-5 text-left">Army No</label>
                             <div class="col-7">
-                                <label class="form-control-plaintext text-uppercase" id="lblpvArmyNo">@Model.ModifiedServiceNo</label>
+                                <label class="form-control-plaintext text-uppercase" id="lblpvArmyNo">@Model.ServiceNo</label>
                             </div>
                         </div>
                         @if (!string.IsNullOrEmpty(Model.CardSerialNo))
@@ -113,13 +113,13 @@
                     <div class="col-sm-4">
                         <div class="form-group row mb-0 ">
                             <div class="col-12 text-center">
-                                <img src=@Model.PhotoImagePath width="200" id="basicphotosVP" class="border border-primary p-2" data-fallback="/Images/user4.png" />
+                                <img src=@Model.PhotoInBase64 width="200" id="basicphotosVP" class="border border-primary p-2" data-fallback="/Images/user4.png" />
                                 <h6 class="mb-1 text-font2 font-weight500 text-center PersName"></h6>
                             </div>
                         </div>
                         <div class="form-group row mb-0 ">
                             <div class="col-12 text-center">
-                                <img src=@Model.SignatureImagePath width="200" height="100" id="BasicsingVP" class="border border-primary p-2" data-fallback="/Images/Signature.png" />
+                                <img src=@Model.SignatureInBase64 width="200" height="100" id="BasicsingVP" class="border border-primary p-2" data-fallback="/Images/Signature.png" />
                             </div>
                         </div>
                     </div>
@@ -145,9 +145,18 @@
 }
 else
 {
-    <div class="text-center text-danger">
-        <h1>Invalid input</h1>
-    </div>
+    @if (ViewData["Message"] is string message && !string.IsNullOrWhiteSpace(message))
+    {
+        <div class="text-center text-danger">
+            @message
+        </div>
+    }
+    else
+    {
+        <div class="text-center text-danger">
+            <h1>Invalid input</h1>
+        </div>
+    }
 }
 
 

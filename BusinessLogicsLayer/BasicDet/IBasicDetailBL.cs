@@ -31,7 +31,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<List<DTOICardTypeRequest>> GetAllICardType();
         public Task<int?> MaxBasicDetailId(string ServiceNo);
         public Task<List<DTOSmartSearch>?> SearchAllServiceNo(DTOSearchArmyNoRequest dto);
-        public Task<DTOBasicDetailForParitalViewResponse?> GetBasicDetailForParitalViewByRequestId(int RequestId);
+        public Task<DTOGenericResponse<DTOBasicDetailForParitalViewResponse>> GetBasicDetailForParitalViewByRequestId(int RequestId);
         public Task<DTOBasicDetailByRequestIdResponse?> GetBasicDetailByRequestId(int RequestId);
         public Task<BasicDetailCrtAndUpdVM?> GetBesicDetailForEditById(int BasicDetailId);
         public Task<ICardHistoryResponseAll> ICardHistory(int RequestId);
@@ -41,7 +41,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTOGenericResponse<DTOICardTaskCountResponse>> GetTaskCountICardRequest(DTOGetTaskCountICardRequest dTOGetTaskCount);
         public Task<DTONotificationResult> GetNotification(int UserId);
         public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type,int applyForId);
-        public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
+        public Task<List<DTODataExportsResponse>> GetDataForExportAndUpdateRequestAndStep(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request, int CardPrintedByAspNetUserId, int CardPrintedByUserId);
@@ -61,5 +61,8 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTOGetMappingDetailsForClosedHistoryResponse> GetMappingDetailsForClosedHistory(DTODataTableRequestForAppClosedHistory dTO);
         public Task<ICardHistoryResponseAll> GetCompletedHistoryByRequestId(int RequestId);
         public Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId);
+        public Task<DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>> GetICardPrintPreviewByRequestId(int RequestId);
+        public string MaskAadhaar(string? aadhaarNumber);
+        public string FormatServiceNo(string? serviceNo);
     }
 }
