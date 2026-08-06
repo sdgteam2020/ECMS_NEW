@@ -12,200 +12,195 @@
         lblForDispatch = "Ready For Distribution";
     }
 }
-<link asp-href-include="~/developercss/dispatchcard.css" rel="stylesheet" />
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/dispatchcard.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Task" class="mr-2">Task</a> > Dispatch Card
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                        <a href="/Home/Task" class="mr-2">Task</a> &gt;
+                        Dispatch Card
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
+
+<div class="containerMain mt-n10 ecms-dispatch-page">
+    <div class="ecms-dispatch-shell">
+        <div class="ecms-dispatch-header">
+            <div class="ecms-dispatch-title-wrap">
+                <span class="ecms-dispatch-title-icon"><i class="fa fa-truck"></i></span>
+                <div>
+                    <h3>Details of Lot Wise Cards Dispatch</h3>
+                    <p>Track lot dispatch, receipt and card movement status</p>
+                </div>
+            </div>
+
             <span class="d-none" id="spnCValue">@claimValue</span>
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Details of Lot Wise Cards Dispatch
-                        <small class="text-muted"></small>
-                    </h3>
-                </div>
-            </div>
+
+            <button type="button" id="btnDispatchStatus" class="btn btn-outline-success font-weight-600 btn-sm ecms-ready-btn">
+                <i class="fa fa-check-circle mr-1"></i> @lblForDispatch
+            </button>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="col-xl-12">
-                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                    <h6 class="mb-3 mb-md-0">
-                    </h6>
-                    <div>
-                        <button type="button" id="btnDispatchStatus" class="btn btn-outline-success font-weight-600 btn-sm mr-1">@lblForDispatch</button>
+
+        <div class="ecms-dispatch-table-panel">
+            <table class="table table-striped table-hover border border-purple ecms-dispatch-table" role="grid" id="tbldata"></table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade ecms-dispatch-modal" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="ecms-modal-title-wrap">
+                    <span class="ecms-modal-title-icon"><i class="fa fa-list-alt"></i></span>
+                    <h5 class="modal-title" id="exampleModalLabel_DataTableDialog">
+                        <span id="lblModelTitle"></span>
+                    </h5>
+                </div>
+                <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="ecms-modal-toolbar">
+                    <div id="AdvSearch" class="ecms-advanced-search d-none">
+                        @if (claimValue == 1)
+                        {
+                            <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
+                                <option value="" selected>Select Field</option>
+                                <option value="regimentalname">Regt</option>
+                                <option value="recordofficename">ORO</option>
+                            </select>
+                            <div id="searchInputContainer" class="mr-2 search-input-container">
+                                <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
+                            </div>
+                            <button id="btnSearch" class="btn btn-sm btn-outline-primary"><i class="fa fa-search mr-1"></i> Search</button>
+                            <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1"><i class="fa fa-eraser mr-1"></i> Clear</button>
+                            <button id="btnProceedToDispatch" class="btn btn-sm btn-outline-success"><i class="fa fa-share mr-1"></i> Proceed to Dispatch</button>
+                        }
+                        else if (claimValue == 2)
+                        {
+                            <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
+                                <option value="susno" selected>SUS No</option>
+                            </select>
+                            <span class="d-none" id="spnUnitMapId"></span>
+                            <div id="searchInputContainer" class="mr-2 search-input-container">
+                                <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Type SUS No" />
+                            </div>
+                            <button id="btnSearch" class="btn btn-sm btn-outline-primary"><i class="fa fa-search mr-1"></i> Search</button>
+                            <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1"><i class="fa fa-eraser mr-1"></i> Clear</button>
+                            <button id="btnProceedToDispatch" class="btn btn-sm btn-outline-success"><i class="fa fa-share mr-1"></i> Proceed to Dispatch</button>
+                        }
+                        else if (claimValue == 3)
+                        {
+                            <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
+                                <option value="susno" selected>SUS No</option>
+                            </select>
+                            <span class="d-none" id="spnUnitMapId"></span>
+                            <div id="searchInputContainer" class="mr-2 search-input-container">
+                                <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Type SUS No" />
+                            </div>
+                            <button id="btnSearch" class="btn btn-sm btn-outline-primary"><i class="fa fa-search mr-1"></i> Search</button>
+                            <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1"><i class="fa fa-eraser mr-1"></i> Clear</button>
+                            <button id="btnProceedToDispatch" class="btn btn-sm btn-outline-success"><i class="fa fa-share mr-1"></i> Proceed to Dispatch</button>
+                        }
+                        else
+                        {
+                            <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
+                                <option value="" selected>Select Field</option>
+                                <option value="serviceno">Service No</option>
+                            </select>
+                            <div id="searchInputContainer" class="mr-2 search-input-container">
+                                <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
+                            </div>
+                            <button id="btnSearch" class="btn btn-sm btn-outline-primary"><i class="fa fa-search mr-1"></i> Search</button>
+                            <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1"><i class="fa fa-eraser mr-1"></i> Clear</button>
+                        }
                     </div>
                 </div>
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
+
+                <div class="ecms-modal-table-wrap">
+                    <table class="table table-striped table-hover border border-purple ecms-dispatch-table" role="grid" id="tbldatadialog"></table>
+                </div>
+
+                <div class="col-sm-12" id="msg"></div>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel" >
+
+<div class="modal fade ecms-dispatch-modal" id="DataTableDialogForLot" tabindex="-1" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_DataTableDialog"><span id="lblModelTitle"></span></h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="mb-2 d-flex justify-content-between">
-                        <div id="AdvSearch" class="mb-2 d-flex d-none">
-                            @if (claimValue == 1)
-                            {
-                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
-                                    <option value="" selected>Select Field</option>
-                                    <option value="regimentalname">Regt</option>
-                                    <option value="recordofficename">ORO</option>
-                                </select>
-                                <div id="searchInputContainer" class="mr-2 search-input-container">
-                                    <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
-                                </div>
-                                <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
-                                <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
-                                <button id="btnProceedToDispatch" class="btn btn-sm btn-outline-success">Proceed to Dispatch</button>
-                            }
-                            else if (claimValue == 2)
-                            {
-                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
-                                    <option value="susno" selected>SUS No</option>
-                                </select>
-                                <span class="d-none" id="spnUnitMapId"></span>
-                                <div id="searchInputContainer" class="mr-2 search-input-container">
-                                    <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Type SUS No" />
-                                </div>
-                                <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
-                                <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
-                                <button id="btnProceedToDispatch" class="btn btn-sm btn-outline-success">Proceed to Dispatch</button>
-                            }
-                            else if (claimValue == 3)
-                            {
-                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
-                                    <option value="susno" selected>SUS No</option>
-                                </select>
-                                <span class="d-none" id="spnUnitMapId"></span>
-                                <div id="searchInputContainer" class="mr-2 search-input-container">
-                                    <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Type SUS No" />
-                                </div>
-                                <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
-                                <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
-                                <button id="btnProceedToDispatch" class="btn btn-sm btn-outline-success">Proceed to Dispatch</button>
-                            }
-                            else
-                            {
-                                <select id="searchField" class="form-control-AllowedKey form-control-sm mr-2 search-field">
-                                    <option value="" selected>Select Field</option>
-                                    <option value="serviceno">Service No</option>
-                                </select>
-                                <div id="searchInputContainer" class="mr-2 search-input-container">
-                                    <input type="text" id="searchText" class="form-control-AllowedKey form-control-sm" placeholder="Search..." />
-                                </div>
-                                <button id="btnSearch" class="btn btn-sm btn-outline-primary">Search</button>
-                                <button id="btnClear" class="btn btn-sm btn-outline-secondary ml-2 mr-1">Clear</button>
-                            }
-
-                        </div>
-                        
-
-                    </div>
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatadialog">
-                    </table>
+                <div class="ecms-modal-title-wrap">
+                    <span class="ecms-modal-title-icon"><i class="fa fa-tags"></i></span>
+                    <h5 class="modal-title" id="exampleModalLabel_DataTableDialogForLot">
+                        <span id="lblModelTitleLot"></span>
+                    </h5>
                 </div>
-                <div class="col-sm-12" id="msg">
-                </div>
+                <button type="button" class="close ecms-modal-close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
             </div>
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
-<!-- Dispatch Details of Lot Wise -->
-<div class="modal fade" id="DataTableDialogForLot" tabindex="-1" aria-labelledby="exampleModalLabel" >
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_DataTableDialogForLot"><span id="lblModelTitleLot"></span></h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div>
-                        <div id="LotDetails" class="alert alert-info small lot-details-scroll">
 
-                        </div>
-                        <div class="mb-2 d-flex justify-content-end">
-                           &nbsp;
-                        </div>
-                    </div>
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatadialogLot">
-                    </table>
+            <div class="modal-body">
+                <div id="LotDetails" class="alert alert-info small lot-details-scroll"></div>
+
+                <div class="ecms-modal-table-wrap">
+                    <table class="table table-striped table-hover border border-purple ecms-dispatch-table" role="grid" id="tbldatadialogLot"></table>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Dispatch In Dialog  -->
-<div class="modal fade" id="DispatchInDialog" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade ecms-dispatch-modal" id="DispatchInDialog" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content ecms-dispatch-in-modal">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel_DispatchInDialog">Dispatch In</h5>
+                <div class="ecms-modal-title-wrap">
+                    <span class="ecms-modal-title-icon"><i class="fa fa-inbox"></i></span>
+                    <h5 class="modal-title" id="exampleModalLabel_DispatchInDialog">Dispatch In</h5>
+                </div>
             </div>
+
             <form action="" id="SaveDispatchCardIn" method="post" name="SaveDispatchCardIn">
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-12 mb-3">
-                            <div class="row">
-                                <span class="d-none" id="spnDispatchCardId">0</span>
-                                <div class="col-sm-12 mx-auto">
-                                    <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Remark<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <textarea class="form-control1 textarea-auto-height" name="txtToRemark" id="txtToRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtToRemark" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-1">
-                                        <div class="col-sm-12">
-                                            <div class="form-check">
-                                                <input type="checkbox" id="TermsConditions" class="form-check-input" />
-                                                <label class="thicker-bold">
-                                                    I Hereby acknowledge that I have received the complete lot of I-Cards as specified by the AFSAC Cell/ Regiment / ORO. I confirm that I have carefully checked the contents and the quantity of the I-Cards.
-                                                </label>
-                                                <span class="text-danger field-validation-valid" data-valmsg-for="TermsConditions" data-valmsg-replace="true"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <span class="d-none" id="spnDispatchCardId">0</span>
+
+                    <div class="form-group mb-3">
+                        <label class="labelprofile">Remark<i class="fas fa-asterisk mand1"></i></label>
+                        <textarea class="form-control1 textarea-auto-height" name="txtToRemark" id="txtToRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="txtToRemark" data-valmsg-replace="true"></span>
                     </div>
+
+                    <div class="ecms-terms-box">
+                        <input type="checkbox" id="TermsConditions" class="form-check-input" />
+                        <label class="thicker-bold" for="TermsConditions">
+                            I Hereby acknowledge that I have received the complete lot of I-Cards as specified by the AFSAC Cell/ Regiment / ORO. I confirm that I have carefully checked the contents and the quantity of the I-Cards.
+                        </label>
+                    </div>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="TermsConditions" data-valmsg-replace="true"></span>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" id="btnSubmit" class="btn btn-primary">Proceed</button>
-                    <button type="button" id="btnClosed" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="btnSubmit" class="btn btn-primary"><i class="fa fa-check mr-1"></i> Proceed</button>
+                    <button type="button" id="btnClosed" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times mr-1"></i> Close</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/DispatchCard.js"></script>
 <script asp-src-include="~/developerjs/CheckedFunction.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>

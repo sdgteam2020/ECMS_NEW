@@ -1,6 +1,140 @@
-﻿.card-body-min-height {
-    min-height: 150px;
+﻿/* =====================================================
+   APP CLOSE LIST - PAGE-SPECIFIC LAYOUT
+   Visual styling comes from the global ECMS theme.
+   This file only handles this page's height and layout.
+===================================================== */
+
+/* The desktop page uses an internal DataTable scrollbar. */
+html.ecms-appclose-scroll-lock,
+body.ecms-appclose-scroll-lock {
+    overflow: hidden !important;
 }
-.full-width {
-    width: 100% !important;
+
+.ecms-appclose-page {
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    height: calc( 100dvh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    min-height: 26rem;
+    margin: .75rem auto !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.ecms-appclose-card {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+.ecms-appclose-card-body {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+}
+
+.ecms-appclose-title {
+    flex: 0 0 auto;
+}
+
+    .ecms-appclose-title h2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+.ecms-appclose-count {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.ecms-appclose-section {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+    .ecms-appclose-section > .ecms-section-title {
+        flex: 0 0 auto;
+    }
+
+    .ecms-appclose-section > .ecms-dt-wrap {
+        flex: 1 1 auto;
+        height: 100%;
+        min-height: 0;
+    }
+
+/* Toolbar positioning only; control styling is provided globally. */
+.ecms-appclose-page #tbldata_wrapper .dt-buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.ecms-appclose-page #tbldata_wrapper .dt-search {
+    margin-left: auto;
+}
+
+/* Keep long textual values compact without changing common table styling. */
+.ecms-appclose-page .dt-ellipsis {
+    max-width: 12rem;
+}
+
+.ecms-appclose-page #tbldata_wrapper .col-sno {
+    text-align: center;
+}
+
+@media (max-width: 767.98px) {
+    html.ecms-appclose-scroll-lock,
+    body.ecms-appclose-scroll-lock {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    .ecms-appclose-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) );
+        margin: .5rem auto calc(var(--ecms-footer-height) + .75rem) !important;
+        padding-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        overflow: visible;
+    }
+
+    .ecms-appclose-card {
+        height: auto;
+        min-height: 26rem;
+    }
+
+    .ecms-appclose-title {
+        align-items: flex-start !important;
+    }
+
+        .ecms-appclose-title h2 {
+            font-size: 1.15rem;
+            white-space: normal;
+        }
+
+    .ecms-appclose-count {
+        padding: .4rem .65rem !important;
+        font-size: .72rem;
+    }
+
+    .ecms-appclose-section > .ecms-dt-wrap {
+        min-height: 20rem;
+    }
+
+    .ecms-appclose-page #tbldata_wrapper .dt-top {
+        align-items: stretch !important;
+    }
+
+    .ecms-appclose-page #tbldata_wrapper .dt-buttons {
+        justify-content: center;
+    }
+
+    .ecms-appclose-page #tbldata_wrapper .dt-search {
+        width: 100%;
+        margin-left: 0;
+    }
 }

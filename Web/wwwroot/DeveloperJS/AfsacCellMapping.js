@@ -1,109 +1,276 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 let AfsacCellMappingId = 0;
 let UnitMapId = 0;
+
+/*
+Current-page-only modal portal.
+No global theme or _Layout JavaScript is required.
+*/
+const AFSAC_CELL_MODAL_SELECTOR = "#AddNewAfsacCellMapping";
+
+function CleanupAfsacCellMappingModalLayer() {
+    document.querySelectorAll(".modal-backdrop.afsac-cell-modal-backdrop").forEach(function (backdrop) {
+        backdrop.remove();
+    });
+
+    if (!document.querySelector(".modal.show")) {
+        document.body.classList.remove("afsac-cell-modal-open", "modal-open");
+        document.body.style.removeProperty("padding-right");
+    }
+}
+
+function SyncAfsacCellMappingModalLayer() {
+    document.body.classList.add("afsac-cell-modal-open");
+
+    window.setTimeout(function () {
+        const backdrops = document.querySelectorAll("body > .modal-backdrop");
+        const backdrop = backdrops.length ? backdrops[backdrops.length - 1] : null;
+
+        if (backdrop) {
+            backdrop.classList.add("afsac-cell-modal-backdrop");
+        }
+    }, 0);
+}
+
+function PrepareAfsacCellMappingModal() {
+    const modalElement = document.querySelector(AFSAC_CELL_MODAL_SELECTOR);
+
+    if (!modalElement) {
+        return null;
+    }
+
+    /* Escape any parent stacking context created by the layout/content wrapper. */
+    if (modalElement.parentElement !== document.body) {
+        document.body.appendChild(modalElement);
+    }
+
+    if (modalElement.dataset.afsacLayerEventsBound !== "true") {
+        /* Bootstrap 5 dispatches native events. */
+        modalElement.addEventListener("show.bs.modal", SyncAfsacCellMappingModalLayer);
+        modalElement.addEventListener("shown.bs.modal", SyncAfsacCellMappingModalLayer);
+        modalElement.addEventListener("hidden.bs.modal", CleanupAfsacCellMappingModalLayer);
+
+        /* Bootstrap 4 dispatches the same names through jQuery. */
+        if (window.jQuery) {
+            $(modalElement)
+                .off("show.bs.modal.afsacLayer shown.bs.modal.afsacLayer hidden.bs.modal.afsacLayer")
+                .on("show.bs.modal.afsacLayer shown.bs.modal.afsacLayer", SyncAfsacCellMappingModalLayer)
+                .on("hidden.bs.modal.afsacLayer", CleanupAfsacCellMappingModalLayer);
+        }
+
+        modalElement.dataset.afsacLayerEventsBound = "true";
+    }
+
+    return modalElement;
+}
+
+function OpenAfsacCellMappingModal() {
+    const modalElement = PrepareAfsacCellMappingModal();
+
+    if (!modalElement) {
+        console.error("AFSAC modal element was not found.");
+        return;
+    }
+
+    SyncAfsacCellMappingModalLayer();
+
+    /* Use the project's original Bootstrap/jQuery modal API first. */
+    if (window.jQuery && $.fn && typeof $.fn.modal === "function") {
+        try {
+            $(modalElement).modal("show");
+            window.setTimeout(SyncAfsacCellMappingModalLayer, 0);
+            return;
+        } catch (error) {
+            console.warn("Bootstrap jQuery modal open failed; trying Bootstrap 5.", error);
+        }
+    }
+
+    /* Bootstrap 5 fallback. */
+    if (window.bootstrap && bootstrap.Modal) {
+        try {
+            bootstrap.Modal.getOrCreateInstance(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            }).show();
+            window.setTimeout(SyncAfsacCellMappingModalLayer, 0);
+            return;
+        } catch (error) {
+            console.warn("Bootstrap 5 modal open failed; using page fallback.", error);
+        }
+    }
+
+    /* Page-only fallback when the Bootstrap modal plug-in is unavailable. */
+    modalElement.style.display = "block";
+    modalElement.classList.add("show");
+    modalElement.removeAttribute("aria-hidden");
+    modalElement.setAttribute("aria-modal", "true");
+    modalElement.setAttribute("role", "dialog");
+    document.body.classList.add("modal-open", "afsac-cell-modal-open");
+
+    if (!document.querySelector("body > .afsac-cell-modal-backdrop")) {
+        const backdrop = document.createElement("div");
+        backdrop.className = "modal-backdrop fade show afsac-cell-modal-backdrop";
+        document.body.appendChild(backdrop);
+    }
+}
+
+function CloseAfsacCellMappingModal() {
+    const modalElement = document.querySelector(AFSAC_CELL_MODAL_SELECTOR);
+
+    if (!modalElement) {
+        return;
+    }
+
+    if (window.jQuery && $.fn && typeof $.fn.modal === "function") {
+        $(modalElement).modal("hide");
+        return;
+    }
+
+    if (window.bootstrap && bootstrap.Modal) {
+        const instance = bootstrap.Modal.getInstance(modalElement);
+        if (instance) {
+            instance.hide();
+            return;
+        }
+    }
+
+    modalElement.classList.remove("show");
+    modalElement.style.display = "none";
+    modalElement.setAttribute("aria-hidden", "true");
+    modalElement.removeAttribute("aria-modal");
+    CleanupAfsacCellMappingModalLayer();
+}
+
 $(function () {
+    PrepareAfsacCellMappingModal();
+
+    /* Bind page buttons before DataTable initialization.
+       The modal remains usable even if DataTables encounters a page-specific error. */
+    $(document)
+        .off("click.ecmsAfsacAdd", "#btnAdd")
+        .on("click.ecmsAfsacAdd", "#btnAdd", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            Reset();
+            ResetErrorMessage();
+            $("#btnAfsacCellMappingAdd").val("Save");
+            $("#afsacCellModalLabel").text("Enter Afsac Cell Mapping Details");
+            OpenAfsacCellMappingModal();
+        })
+        .off("click.afsacModalClose", AFSAC_CELL_MODAL_SELECTOR + " .close")
+        .on("click.afsacModalClose", AFSAC_CELL_MODAL_SELECTOR + " .close", function (event) {
+            event.preventDefault();
+            CloseAfsacCellMappingModal();
+        });
+
+    $("#btnAfsacCellMappingAdd")
+        .off("click.ecmsAfsacSave")
+        .on("click.ecmsAfsacSave", function () {
+            Proceed();
+        });
+
+    $("#btnAfsacCellMappingReset")
+        .off("click.ecmsAfsacReset")
+        .on("click.ecmsAfsacReset", function () {
+            Reset();
+            ResetErrorMessage();
+        });
+
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
-    applyDataTableSearchValidation('#tbldata');
+    if (typeof applyDataTableSearchValidation === "function") {
+        applyDataTableSearchValidation("#tbldata");
+    }
 
-    BindData();
-    $("#btnAdd").on("click", function () {
-        Reset();
-        ResetErrorMessage();
-        $("#btnAfsacCellMappingAdd").val("Save");
-        $("#AddNewAfsacCellMapping").modal('show');
-    });
-    $("#btnAfsacCellMappingAdd").on("click", function () {
-        Proceed();
-    });
-    $("#btnAfsacCellMappingReset").on("click", function () {
-        Reset();
-        ResetErrorMessage();
-    });
+    if ($.fn && typeof $.fn.autocomplete === "function") {
+        $("#txtUnitName").autocomplete({
+            source: function (request, response) {
+                if (request.term.length > 2) {
+                    UnitMapId = 0;
+                    var param = { "UnitName": request.term };
+                    $.ajax({
+                        url: '/Master/GetALLByUnitName',
+                        contentType: 'application/x-www-form-urlencoded',
+                        data: param,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+                        success: function (data) {
+                            if (data.length != 0) {
+                                response($.map(data, function (item) {
+                                    $("#loading").addClass("d-none");
+                                    return { label: item.Sus_no + item.Suffix + ' ' + item.UnitName, value: item.UnitMapId };
 
-    $("#txtUnitName").autocomplete({
-        source: function (request, response) {
-            if (request.term.length > 2) {
-                UnitMapId = 0;
-                var param = { "UnitName": request.term };
-                $.ajax({
-                    url: '/Master/GetALLByUnitName',
-                    contentType: 'application/x-www-form-urlencoded',
-                    data: param,
-                    type: 'POST',
-                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-                    success: function (data) {
-                        if (data.length != 0) {
-                            response($.map(data, function (item) {
-                                $("#loading").addClass("d-none");
-                                return { label: item.Sus_no + item.Suffix + ' ' + item.UnitName, value: item.UnitMapId };
-
-                            }))
-                        }
-                        else {
-                            $("#txtUnitName").val("");
-                            UnitMapId = 0;
-                            $("#ddlTDMId").find("option").not(":first").remove();
-                            $("#ddlTDMId").val("0");
-                            alert("Unit not found.")
-                        }
-                    },
-                    error: function (response) {
-                        alert(response.responseText);
-                    },
-                    failure: function (response) {
-                        alert(response.responseText);
-                    }
-                });
-            }
-        },
-        select: function (e, i) {
-            e.preventDefault();
-            $("#txtUnitName").val(i.item.label);
-            UnitMapId = i.item.value;
-            var param1 = { "UnitMapId": i.item.value };
-            $.ajax({
-                url: '/Master/GetDDMappedForRecord',
-                contentType: 'application/x-www-form-urlencoded',
-                data: param1,
-                type: 'POST',
-                headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-
-                success: function (response) {
-                    if (response != "null" && response != null) {
-                        if (response == InternalServerError) {
-                            Swal.fire({
-                                text: errormsg
-                            });
-                        }
-
-                        else {
-
-                            var listItemddl = "";
-
-                            listItemddl += '<option value="0">Please Select</option>';
-
-                            for (var i = 0; i < response.length; i++) {
-                                listItemddl += '<option value="' + response[i].TDMId + '">' + response[i].DomainId + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + ' ' + response[i].ArmyNo + '</option>';
+                                }))
                             }
-                            $("#ddlTDMId").html(listItemddl);
+                            else {
+                                $("#txtUnitName").val("");
+                                UnitMapId = 0;
+                                $("#ddlTDMId").find("option").not(":first").remove();
+                                $("#ddlTDMId").val("0");
+                                alert("Unit not found.")
+                            }
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
                         }
-                    }
-                    else {
-                        //Swal.fire({
-                        //    text: "No data found Offrs"
-                        //});
-                    }
-                },
-                error: function (result) {
-                    Swal.fire({
-                        text: errormsg002
                     });
                 }
-            });
-        },
-        
-    });
+            },
+            select: function (e, i) {
+                e.preventDefault();
+                $("#txtUnitName").val(i.item.label);
+                UnitMapId = i.item.value;
+                var param1 = { "UnitMapId": i.item.value };
+                $.ajax({
+                    url: '/Master/GetDDMappedForRecord',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: param1,
+                    type: 'POST',
+                    headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+
+                    success: function (response) {
+                        if (response != "null" && response != null) {
+                            if (response == InternalServerError) {
+                                Swal.fire({
+                                    text: errormsg
+                                });
+                            }
+
+                            else {
+
+                                var listItemddl = "";
+
+                                listItemddl += '<option value="0">Please Select</option>';
+
+                                for (var i = 0; i < response.length; i++) {
+                                    listItemddl += '<option value="' + response[i].TDMId + '">' + response[i].DomainId + ' ' + response[i].RankAbbreviation + ' ' + response[i].Name + ' ' + response[i].ArmyNo + '</option>';
+                                }
+                                $("#ddlTDMId").html(listItemddl);
+                            }
+                        }
+                        else {
+                            //Swal.fire({
+                            //    text: "No data found Offrs"
+                            //});
+                        }
+                    },
+                    error: function (result) {
+                        Swal.fire({
+                            text: errormsg002
+                        });
+                    }
+                });
+            },
+
+        });
+    }
+
+    /* Keep this last so a DataTable problem cannot prevent modal/button handlers. */
+    BindData();
 });
 
 function Proceed() {
@@ -144,17 +311,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // UI fix: remove old DataTables cloned header/body markup
     }
     const columns = getColumnsForAfsacCell();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // scroll is contained by .ecms-dt-wrap from the common theme
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // keep disabled for predictable common-theme sizing
+        deferScroll: false,
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -191,6 +359,9 @@ function BindData() {
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
             }
         },
         columns: columns,
@@ -214,7 +385,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -253,21 +424,23 @@ function BindData() {
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    table.columns.adjust();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            this.api().columns.adjust();
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(el => {
+                    try { new bootstrap.Tooltip(el); } catch (e) { }
+                });
+            }
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -292,7 +465,8 @@ function BindData() {
                     }
 
                     $("#btnAfsacCellMappingAdd").val("Update");
-                    $("#AddNewAfsacCellMapping").modal('show');
+                    $("#afsacCellModalLabel").text("Update Afsac Cell Mapping Details");
+                    OpenAfsacCellMappingModal();
                 }
                 else {
                     //Invalid Data
@@ -348,7 +522,7 @@ function Save() {
 
             if (result.Result == true) {
                 toastr.success(result.Message);
-                $("#AddNewAfsacCellMapping").modal('hide');
+                CloseAfsacCellMappingModal();
                 BindData();
                 Reset();
                 ResetErrorMessage();
@@ -524,14 +698,13 @@ function getColumnsForAfsacCell() {
         {
             title: "Action",
             data: null,
-            className: "noExport",
             name: "Action",
             orderable: false,
             className: "noExport text-center col-action",
             width: "200px",
             render: function (data, type, row) {
-                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-warning mr-1' title='Edit' aria-label='Edit'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn btn-icon btn-danger mr-1' title='Delete' aria-label='Delete'><i class='fas fa-trash-alt'></i></button>`;
                 return Action;
             }
         }

@@ -16,6 +16,691 @@
 .row .labelprofile {
     font-weight: 700;
 }
+
 .text-red {
     color: red;
 }
+
+/* =====================================================
+   ECMS BasicDetail Final UI Fix
+   Fixes:
+   1. Hidden/disappearing initiate form
+   2. Full-width page/form layout
+   3. No browser/page scrollbar
+   4. Internal form scrolling only when required
+   UI only - no functionality changed.
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body.ecms-basicdetail-body,
+body:has(.ecms-basicdetail-page) {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    padding-bottom: 0 !important;
+    background: linear-gradient(90deg, rgba(4, 20, 58, 0.94), rgba(16, 72, 164, 0.80)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover fixed no-repeat !important;
+}
+
+    /* Prevent layout containers from creating page scrollbar */
+    body.ecms-basicdetail-body .content-wrapper,
+    body.ecms-basicdetail-body .main-panel,
+    body.ecms-basicdetail-body main,
+    body:has(.ecms-basicdetail-page) .content-wrapper,
+    body:has(.ecms-basicdetail-page) .main-panel,
+    body:has(.ecms-basicdetail-page) main {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+/* Main full-width shell */
+.ecms-basicdetail-shell {
+    width: calc(100vw - 30px) !important;
+    max-width: none !important;
+    height: calc(100vh - 278px) !important;
+    max-height: calc(100vh - 278px) !important;
+    min-height: 0 !important;
+    margin: 12px auto 48px auto !important;
+    padding: 10px !important;
+    border: 1px solid rgba(255, 255, 255, .85) !important;
+    border-radius: 18px !important;
+    background: linear-gradient(135deg, rgba(248, 252, 255, .97), rgba(217, 233, 251, .95)) !important;
+    box-shadow: 0 24px 54px rgba(0, 0, 0, .26) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Do not let Bootstrap/card defaults collapse or hide children */
+.ecms-basicdetail-form,
+.ecms-basicdetail-page {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.ecms-basicdetail-page {
+    padding: 0 !important;
+}
+
+    /* Critical fix: grid keeps summary and Initiate Request visible */
+    .ecms-basicdetail-page > .row {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        display: grid !important;
+        grid-template-rows: auto minmax(0, 1fr) !important;
+        grid-template-columns: 100% !important;
+        gap: 10px !important;
+        overflow: hidden !important;
+        flex-wrap: nowrap !important;
+    }
+
+    .ecms-basicdetail-page #spnhdns,
+    .ecms-basicdetail-page .d-none {
+        display: none !important;
+    }
+
+.ecms-summary-wrap,
+.ecms-form-wrap {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: none !important;
+}
+
+.ecms-summary-wrap {
+    overflow: visible !important;
+}
+
+.ecms-form-wrap {
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+/* Cards */
+.ecms-summary-card,
+.ecms-initiate-card {
+    width: 100% !important;
+    border: 1px solid rgba(255, 255, 255, .86) !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, .94), rgba(232, 242, 254, .90)) !important;
+    box-shadow: 0 10px 26px rgba(10, 39, 92, .14) !important;
+    overflow: hidden !important;
+}
+
+.ecms-summary-card {
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+}
+
+.ecms-initiate-card {
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+}
+
+/* Blue section title bars */
+.ecms-basicdetail-page .seven,
+.ecms-basicdetail-page .seven h1 {
+    margin: 0 !important;
+}
+
+    .ecms-basicdetail-page .seven h1 {
+        min-height: 34px !important;
+        height: 34px !important;
+        padding: 7px 14px !important;
+        border-radius: 12px 12px 0 0 !important;
+        background: linear-gradient(90deg, #284ba0, #3f7cff) !important;
+        color: #fff !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
+        line-height: 1.1 !important;
+        letter-spacing: .2px !important;
+        text-align: center !important;
+        text-transform: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+/* Summary compact layout */
+.ecms-summary-card > .mt-2.ml-4 {
+    margin: 0 !important;
+    padding: 10px 14px !important;
+}
+
+    .ecms-summary-card > .mt-2.ml-4 > .row {
+        margin: 0 !important;
+        row-gap: 7px !important;
+    }
+
+.ecms-summary-card .form-group {
+    min-height: 42px !important;
+    margin-bottom: 0 !important;
+    padding: 6px 10px !important;
+    border: 1px solid rgba(181, 202, 231, .76) !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(239,246,255,.94)) !important;
+    align-items: center !important;
+}
+
+.ecms-summary-card .labelprofile,
+.ecms-basicdetail-page .labelprofile,
+.ecms-basicdetail-page .form-label {
+    color: #061b44 !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    line-height: 1.25 !important;
+}
+
+.ecms-summary-card label[id] {
+    color: #123067 !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+}
+
+/* Critical fix: this is the ONLY vertical scroll area */
+.ecms-initiate-card > .mt-2.ml-4 {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 14px 18px 76px 18px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin !important;
+}
+
+    /* Full-width 3-column initiate form */
+    .ecms-initiate-card > .mt-2.ml-4 > .row {
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        display: grid !important;
+        grid-template-columns: 220px minmax(430px, 1fr) minmax(430px, 1fr) !important;
+        gap: 12px 20px !important;
+        align-items: start !important;
+    }
+
+.ecms-upload-column,
+.ecms-field-column,
+.ecms-left-fields,
+.ecms-right-fields,
+.ecms-initiate-card .col-xl-12 {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: none !important;
+}
+
+.ecms-upload-column {
+    grid-column: 1 !important;
+}
+
+.ecms-left-fields {
+    grid-column: 2 !important;
+}
+
+.ecms-right-fields {
+    grid-column: 3 !important;
+}
+
+.ecms-initiate-card .col-xl-12 {
+    grid-column: 1 / -1 !important;
+}
+
+/* Form rows */
+.ecms-basicdetail-page .row.mb-1,
+.ecms-basicdetail-page .row.mb-2,
+.ecms-basicdetail-page .row.mb-3 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 7px !important;
+    align-items: center !important;
+}
+
+.ecms-basicdetail-page .font-weight-bold {
+    color: #061b44 !important;
+    font-weight: 900 !important;
+}
+
+.ecms-basicdetail-page .form-control,
+.ecms-basicdetail-page .form-select,
+.ecms-basicdetail-page select,
+.ecms-basicdetail-page textarea {
+    width: 100% !important;
+    min-height: 34px !important;
+    height: auto !important;
+    border: 1px solid rgba(165, 187, 219, .95) !important;
+    border-radius: 8px !important;
+    background-color: rgba(255,255,255,.98) !important;
+    color: #0b234f !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    box-shadow: inset 0 1px 2px rgba(6,27,68,.04) !important;
+}
+
+    .ecms-basicdetail-page .form-control:focus,
+    .ecms-basicdetail-page .form-select:focus,
+    .ecms-basicdetail-page select:focus,
+    .ecms-basicdetail-page textarea:focus {
+        border-color: #3f7cff !important;
+        box-shadow: 0 0 0 3px rgba(63, 124, 255, .16) !important;
+        outline: none !important;
+    }
+
+    .ecms-basicdetail-page .form-control[readonly],
+    .ecms-basicdetail-page .form-control:disabled,
+    .ecms-basicdetail-page .form-select:disabled,
+    .ecms-basicdetail-page select:disabled,
+    .ecms-basicdetail-page textarea[readonly] {
+        background: linear-gradient(135deg, #eef3fa, #dce5f0) !important;
+        color: #48566d !important;
+        opacity: 1 !important;
+    }
+
+.ecms-basicdetail-page #IdenMark1 {
+    min-height: 62px !important;
+}
+
+.ecms-basicdetail-page #PermanentAddress {
+    min-height: 88px !important;
+}
+
+/* Select2 compatibility */
+.ecms-basicdetail-page .select2-container {
+    width: 100% !important;
+}
+
+.ecms-basicdetail-page .select2-container--default .select2-selection--single {
+    min-height: 34px !important;
+    border: 1px solid rgba(165, 187, 219, .95) !important;
+    border-radius: 8px !important;
+}
+
+/* Upload panel */
+.ecms-upload-column .text-danger,
+.ecms-upload-column .text-red {
+    display: block !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    margin: 4px 0 !important;
+}
+
+.ecms-upload-column .box,
+.ecms-upload-column .box_sig {
+    width: 176px !important;
+    margin: 7px auto !important;
+    border: 2px solid rgba(255, 151, 36, .86) !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, .98) !important;
+    box-shadow: 0 10px 24px rgba(12, 42, 92, .12) !important;
+    overflow: hidden !important;
+    position: relative !important;
+}
+
+.ecms-upload-column .js--image-preview {
+    height: 130px !important;
+}
+
+.ecms-upload-column .js--image-preview_sig {
+    height: 62px !important;
+}
+
+.ecms-upload-column .js--image-preview,
+.ecms-upload-column .js--image-preview_sig {
+    width: 100% !important;
+    background: #fff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.ecms-upload-column #PhotoPath,
+.ecms-upload-column #SignaturePath {
+    max-width: 100% !important;
+    object-fit: contain !important;
+}
+
+.ecms-upload-column .upload-options,
+.ecms-upload-column .upload-options_sign {
+    height: 32px !important;
+    background: linear-gradient(135deg, #2f75e8, #1f5ac7) !important;
+    position: relative !important;
+}
+
+    .ecms-upload-column .upload-options label,
+    .ecms-upload-column .upload-options_sign label {
+        width: 100% !important;
+        height: 32px !important;
+        margin: 0 !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        font-weight: 900 !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+        .ecms-upload-column .upload-options label::before {
+            content: "Upload Photo";
+        }
+
+        .ecms-upload-column .upload-options_sign label::before {
+            content: "Upload Signature";
+        }
+
+.ecms-upload-column input[type="file"] {
+    position: absolute !important;
+    inset: 0 !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+}
+
+/* Declaration + Save button */
+.ecms-declaration-check {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 9px 12px !important;
+    margin: 8px 0 0 0 !important;
+    border: 1px dashed rgba(54, 100, 205, .34) !important;
+    border-radius: 12px !important;
+    background: rgba(239, 246, 255, .92) !important;
+}
+
+    .ecms-declaration-check .form-check-input {
+        position: static !important;
+        margin: 3px 8px 0 0 !important;
+        width: 17px !important;
+        height: 17px !important;
+        accent-color: #315be8 !important;
+        flex: 0 0 auto !important;
+    }
+
+    .ecms-declaration-check label {
+        flex: 1 1 auto !important;
+        margin: 0 !important;
+    }
+
+    .ecms-declaration-check .notefont {
+        margin: 0 !important;
+        padding-left: 16px !important;
+        color: #061b44 !important;
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        line-height: 1.35 !important;
+    }
+
+.ecms-save-row {
+    position: sticky !important;
+    bottom: -76px !important;
+    z-index: 10 !important;
+    margin: 8px -18px -76px -18px !important;
+    padding: 10px 18px 15px 18px !important;
+    background: linear-gradient(180deg, rgba(231,241,254,.70), rgba(231,241,254,.98)) !important;
+    border-top: 1px solid rgba(170, 194, 227, .48) !important;
+}
+
+.ecms-basicdetail-page #btnsave {
+    min-width: 130px !important;
+    min-height: 38px !important;
+    padding: 8px 22px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: linear-gradient(135deg, #3269f5, #2350d8) !important;
+    color: #fff !important;
+    font-weight: 900 !important;
+    box-shadow: 0 12px 22px rgba(35, 80, 216, .24) !important;
+}
+
+    .ecms-basicdetail-page #btnsave.disabled,
+    .ecms-basicdetail-page #btnsave:disabled {
+        background: linear-gradient(135deg, #96a8ca, #64748b) !important;
+        opacity: .78 !important;
+        cursor: not-allowed !important;
+    }
+
+/* Validation */
+.ecms-basicdetail-page .text-danger,
+.ecms-basicdetail-page .text-red,
+.ecms-basicdetail-page .field-validation-error {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+}
+
+/* Compact for 900px height screens */
+@media (max-height: 880px) {
+    .ecms-basicdetail-shell {
+        height: calc(100vh - 270px) !important;
+        max-height: calc(100vh - 270px) !important;
+        margin-top: 9px !important;
+    }
+
+    .ecms-basicdetail-page .seven h1 {
+        height: 31px !important;
+        min-height: 31px !important;
+        padding: 6px 12px !important;
+        font-size: 15px !important;
+    }
+
+    .ecms-summary-card > .mt-2.ml-4 {
+        padding: 8px 12px !important;
+    }
+
+    .ecms-summary-card .form-group {
+        min-height: 38px !important;
+        padding: 5px 9px !important;
+    }
+
+    .ecms-initiate-card > .mt-2.ml-4 {
+        padding-top: 10px !important;
+    }
+
+    .ecms-basicdetail-page .row.mb-1,
+    .ecms-basicdetail-page .row.mb-2,
+    .ecms-basicdetail-page .row.mb-3 {
+        margin-bottom: 5px !important;
+    }
+
+    .ecms-upload-column .js--image-preview {
+        height: 118px !important;
+    }
+
+    .ecms-upload-column .js--image-preview_sig {
+        height: 56px !important;
+    }
+
+    .ecms-basicdetail-page #IdenMark1 {
+        min-height: 54px !important;
+    }
+
+    .ecms-basicdetail-page #PermanentAddress {
+        min-height: 78px !important;
+    }
+}
+
+/* Responsive fallback */
+@media (max-width: 1180px) {
+    .ecms-initiate-card > .mt-2.ml-4 > .row {
+        grid-template-columns: 200px minmax(360px, 1fr) minmax(360px, 1fr) !important;
+        gap: 10px 14px !important;
+    }
+}
+
+@media (max-width: 992px) {
+    body.ecms-basicdetail-body,
+    body:has(.ecms-basicdetail-page) {
+        overflow: auto !important;
+    }
+
+    .ecms-basicdetail-shell {
+        width: calc(100vw - 18px) !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    .ecms-basicdetail-page > .row {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .ecms-form-wrap,
+    .ecms-initiate-card {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+        .ecms-initiate-card > .mt-2.ml-4 {
+            height: auto !important;
+            overflow: visible !important;
+            padding-bottom: 18px !important;
+        }
+
+            .ecms-initiate-card > .mt-2.ml-4 > .row {
+                display: block !important;
+            }
+
+    .ecms-upload-column,
+    .ecms-left-fields,
+    .ecms-right-fields {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 12px !important;
+    }
+}
+
+
+/* =====================================================
+   ECMS BasicDetail Upload Text Fix
+   Fixes duplicate Upload Photo / Upload Signature text and
+   removes old Material Icons placeholder overlay.
+   UI only - no functionality changed.
+===================================================== */
+
+/* Old common Main.css adds text using ::after. Hide it inside this page only. */
+.ecms-basicdetail-page .ecms-upload-column .upload-options label::after,
+.ecms-basicdetail-page .ecms-upload-column .upload-options_sign label::after,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options label::after,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign label::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* Old common Main.css adds huge photo_size_select_actual icon over image. Hide it. */
+.ecms-basicdetail-page .ecms-upload-column .js--image-preview::after,
+.ecms-basicdetail-page .ecms-upload-column .js--image-preview_sig::after,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .js--image-preview::after,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .js--image-preview_sig::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* Keep exactly one clean upload label. */
+.ecms-basicdetail-page .ecms-upload-column .upload-options label::before,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options label::before {
+    content: "Upload Photo" !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    color: #ffffff !important;
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    letter-spacing: .1px !important;
+    position: relative !important;
+    z-index: 2 !important;
+    white-space: nowrap !important;
+    text-shadow: none !important;
+}
+
+.ecms-basicdetail-page .ecms-upload-column .upload-options_sign label::before,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign label::before {
+    content: "Upload Signature" !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    color: #ffffff !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    letter-spacing: .1px !important;
+    position: relative !important;
+    z-index: 2 !important;
+    white-space: nowrap !important;
+    text-shadow: none !important;
+}
+
+/* Ensure image preview itself stays clean and above background. */
+.ecms-basicdetail-page .ecms-upload-column .js--image-preview img,
+.ecms-basicdetail-page .ecms-upload-column .js--image-preview_sig img,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .js--image-preview img,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .js--image-preview_sig img {
+    position: relative !important;
+    z-index: 2 !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+}
+
+/* Hide native file input text but keep click/upload working. */
+.ecms-basicdetail-page .ecms-upload-column .upload-options input[type="file"],
+.ecms-basicdetail-page .ecms-upload-column .upload-options_sign input[type="file"],
+body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options input[type="file"],
+body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign input[type="file"] {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0 !important;
+    z-index: 5 !important;
+    cursor: pointer !important;
+    font-size: 0 !important;
+}
+
+/* Prevent global upload CSS from shrinking or pushing the file input behind the label. */
+.ecms-basicdetail-page .ecms-upload-column .upload-options,
+.ecms-basicdetail-page .ecms-upload-column .upload-options_sign,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options,
+body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign {
+    position: relative !important;
+    overflow: hidden !important;
+    text-align: center !important;
+}
+
+    .ecms-basicdetail-page .ecms-upload-column .upload-options label,
+    .ecms-basicdetail-page .ecms-upload-column .upload-options_sign label,
+    body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options label,
+    body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign label {
+        position: relative !important;
+        z-index: 1 !important;
+        font-family: inherit !important;
+        font-size: 0 !important; /* removes any accidental native/old label text */
+        text-indent: 0 !important;
+    }

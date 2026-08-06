@@ -1,0 +1,322 @@
+/*
+ECMS layout layer
+Keep this file only for body, fixed layout rows, nav, breadcrumb and footer.
+Use Bootstrap rows/columns in markup.
+*/
+
+html,
+body {
+    min-height: 100%;
+    font-family: var(--bs-font-sans-serif);
+}
+
+body {
+    color: var(--ecms-text);
+    background: var(--ecms-bg-overlay), var(--ecms-bg-image) center/cover fixed no-repeat;
+}
+
+    /* Optional body class for fixed header/footer layouts. */
+    body.ecms-fixed-shell {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+/* 3-row fixed layout wrapper: header / render body / footer */
+.ecms-app-shell {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.ecms-app-header {
+    height: var(--ecms-header-height);
+    z-index: 1040;
+    overflow: hidden;
+}
+
+.ecms-app-main {
+    position: fixed;
+    top: var(--ecms-header-height);
+    bottom: var(--ecms-footer-height);
+    left: 0;
+    right: 0;
+    overflow: auto;
+}
+
+.ecms-app-footer {
+    height: var(--ecms-footer-height);
+    z-index: 1040;
+    overflow: hidden;
+}
+
+    .ecms-app-footer footer,
+    footer.fixed-bottom {
+        height: var(--ecms-footer-height);
+        margin: 0;
+        padding: .25rem .5rem;
+        background: #003060;
+        color: var(--ecms-white);
+        display: flex;
+        align-items: center;
+    }
+
+/*
+=====================================================
+ECMS NAV + BREADCRUMB DESIGN
+Manage nav and breadcrumb from this file only.
+
+Change these variables to adjust all nav/breadcrumb sizing
+without editing page CSS or layout.css.
+=====================================================
+*/
+:root {
+    --ecms-nav-strip-height: 44px;
+    --ecms-nav-strip-padding-y: 5px;
+    --ecms-nav-strip-padding-x: 14px;
+    --ecms-nav-gap: 8px;
+    --ecms-nav-tab-height: 34px;
+    --ecms-nav-tab-radius: 7px;
+    --ecms-nav-tab-font-size: 15px;
+    --ecms-nav-strip-bg: linear-gradient(180deg, #4e83d7 0%, #3f7cd8 50%, #3470cc 100%);
+    --ecms-nav-tab-bg: linear-gradient(180deg, rgba(119,166,231,.88) 0%, rgba(85,133,210,.90) 100%);
+    --ecms-nav-tab-hover-bg: linear-gradient(180deg, rgba(128,178,242,.94) 0%, rgba(91,141,219,.94) 100%);
+    --ecms-nav-tab-active-bg: linear-gradient(180deg, #a9df87 0%, #86cf5e 46%, #69bb42 100%);
+    --ecms-breadcrumb-strip-height: 35px;
+    --ecms-breadcrumb-left-padding: 74px;
+    --ecms-breadcrumb-bg: linear-gradient(90deg, #78d1f2 0%, #66bfee 42%, #5d8dea 100%);
+    --ecms-breadcrumb-font-size: 13px;
+    --ecms-breadcrumb-icon-size: 22px;
+}
+
+/* Top 3-tab navigation */
+#layouttask.nav.nav-pills.nav-justified,
+#layouttask {
+    width: 100% !important;
+    height: var(--ecms-nav-strip-height) !important;
+    min-height: var(--ecms-nav-strip-height) !important;
+    max-height: var(--ecms-nav-strip-height) !important;
+    margin: 0 !important;
+    padding: var(--ecms-nav-strip-padding-y) var(--ecms-nav-strip-padding-x) !important;
+    gap: var(--ecms-nav-gap) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: stretch !important;
+    flex-wrap: nowrap !important;
+    background: var(--ecms-nav-strip-bg) !important;
+    border-top: 1px solid rgba(255,255,255,.24) !important;
+    border-bottom: 1px solid rgba(20,79,161,.48) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.20), 0 3px 8px rgba(0,35,95,.18) !important;
+    overflow: hidden !important;
+}
+
+    /* Navigation tab item */
+    #layouttask .nav-link {
+        flex: 1 1 0 !important;
+        height: var(--ecms-nav-tab-height) !important;
+        min-height: var(--ecms-nav-tab-height) !important;
+        margin: 0 !important;
+        padding: 0 12px !important;
+        border: 1px solid rgba(255,255,255,.34) !important;
+        border-radius: var(--ecms-nav-tab-radius) !important;
+        background: var(--ecms-nav-tab-bg) !important;
+        color: var(--ecms-white) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.26), 0 1px 4px rgba(0,29,82,.12) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: var(--ecms-nav-tab-font-size) !important;
+        font-weight: 900 !important;
+        line-height: 1 !important;
+        text-align: center !important;
+        text-decoration: none !important;
+        text-shadow: 0 1px 2px rgba(0,26,75,.32) !important;
+        white-space: nowrap !important;
+        transition: background .16s ease, border-color .16s ease !important;
+    }
+
+        /* Navigation hover/focus */
+        #layouttask .nav-link:hover,
+        #layouttask .nav-link:focus {
+            color: var(--ecms-white) !important;
+            background: var(--ecms-nav-tab-hover-bg) !important;
+            border-color: rgba(255,255,255,.48) !important;
+            text-decoration: none !important;
+            transform: none !important;
+        }
+
+        /* Active navigation tab */
+        #layouttask .nav-link.active,
+        #layouttask .nav-link.show,
+        #layouttask .nav-link.selected,
+        #layouttask .nav-link.current {
+            color: var(--ecms-white) !important;
+            background: var(--ecms-nav-tab-active-bg) !important;
+            border-color: rgba(255,255,255,.56) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.44), 0 1px 5px rgba(53,132,35,.24) !important;
+        }
+
+/* Hidden admin nav placeholder */
+#_layouttask.nav-hide-for-admin,
+.nav-hide-for-admin#_layouttask {
+    width: 100% !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: transparent !important;
+}
+
+/* Breadcrumb row */
+.page-header,
+.page-header.page-header-dark,
+.page-header.page-header-dark.bg-gradient-primary-to-secondary {
+    width: 100% !important;
+    height: var(--ecms-breadcrumb-strip-height) !important;
+    min-height: var(--ecms-breadcrumb-strip-height) !important;
+    max-height: var(--ecms-breadcrumb-strip-height) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--ecms-breadcrumb-bg) !important;
+    border-top: 1px solid rgba(255,255,255,.24) !important;
+    border-bottom: 1px solid rgba(34,91,174,.38) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22) !important;
+    display: block !important;
+    overflow: hidden !important;
+}
+
+    /* Breadcrumb container */
+    .page-header .containerMain,
+    .page-header .container,
+    .page-header .container-fluid {
+        width: 100% !important;
+        max-width: none !important;
+        height: var(--ecms-breadcrumb-strip-height) !important;
+        min-height: var(--ecms-breadcrumb-strip-height) !important;
+        margin: 0 !important;
+        padding: 0 14px 0 var(--ecms-breadcrumb-left-padding) !important;
+    }
+
+    /* Breadcrumb content wrapper */
+    .page-header .page-header-content {
+        width: 100% !important;
+        height: var(--ecms-breadcrumb-strip-height) !important;
+        min-height: var(--ecms-breadcrumb-strip-height) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+        /* Breadcrumb Bootstrap row/col reset */
+        .page-header .page-header-content > .row,
+        .page-header .page-header-content .row,
+        .page-header .page-header-content .col-auto {
+            width: auto !important;
+            height: var(--ecms-breadcrumb-strip-height) !important;
+            min-height: var(--ecms-breadcrumb-strip-height) !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+        }
+
+/* Breadcrumb text */
+.page-header-title {
+    width: auto !important;
+    height: var(--ecms-breadcrumb-strip-height) !important;
+    min-height: var(--ecms-breadcrumb-strip-height) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 9px !important;
+    color: var(--ecms-white) !important;
+    font-size: var(--ecms-breadcrumb-font-size) !important;
+    font-weight: 900 !important;
+    line-height: var(--ecms-breadcrumb-strip-height) !important;
+    letter-spacing: .1px !important;
+    white-space: nowrap !important;
+    text-shadow: 0 1px 2px rgba(0,30,82,.32) !important;
+}
+
+    /* Remove duplicate breadcrumb icon from CSS */
+    .page-header-title::before {
+        content: none !important;
+        display: none !important;
+    }
+
+    /* Breadcrumb icon */
+    .page-header-title .page-header-icon,
+    .page-header-title i,
+    .page-header-title .fa,
+    .page-header-title .fas {
+        width: var(--ecms-breadcrumb-icon-size) !important;
+        height: var(--ecms-breadcrumb-icon-size) !important;
+        min-width: var(--ecms-breadcrumb-icon-size) !important;
+        margin: 0 !important;
+        border-radius: 6px !important;
+        background: rgba(255,255,255,.22) !important;
+        border: 1px solid rgba(255,255,255,.36) !important;
+        color: var(--ecms-white) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.22) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 12px !important;
+        line-height: 1 !important;
+    }
+
+    /* Breadcrumb links */
+    .page-header-title a,
+    .breadcrumb-item,
+    .breadcrumb-item a {
+        color: var(--ecms-white) !important;
+        font-size: var(--ecms-breadcrumb-font-size) !important;
+        font-weight: 900 !important;
+        line-height: var(--ecms-breadcrumb-strip-height) !important;
+        text-decoration: none !important;
+    }
+
+        .page-header-title a:hover,
+        .breadcrumb-item a:hover {
+            color: var(--ecms-white) !important;
+            text-decoration: none !important;
+        }
+
+/* Bootstrap breadcrumb list support */
+.breadcrumb {
+    min-height: var(--ecms-breadcrumb-strip-height) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    align-items: center !important;
+}
+
+/* Responsive nav and breadcrumb */
+@media (max-width: 767.98px) {
+    :root {
+        --ecms-header-height: 110px;
+        --ecms-nav-strip-height: 42px;
+        --ecms-nav-strip-padding-x: 8px;
+        --ecms-nav-gap: 5px;
+        --ecms-nav-tab-height: 32px;
+        --ecms-nav-tab-font-size: 13px;
+        --ecms-breadcrumb-strip-height: 34px;
+        --ecms-breadcrumb-left-padding: 14px;
+        --ecms-breadcrumb-font-size: 12px;
+    }
+
+    #layouttask.nav.nav-pills.nav-justified,
+    #layouttask {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scrollbar-width: thin !important;
+    }
+
+        #layouttask .nav-link {
+            flex: 1 0 132px !important;
+            padding: 0 8px !important;
+        }
+}

@@ -1,15 +1,251 @@
-﻿.modal-xl {
-    max-width: 1140px !important;
-    width: 100% !important;
+﻿/*
+AFSAC Cell Mapping - current-page-only integration.
+The global ECMS theme and _Layout are not modified.
+This file contains only page sizing, DataTable placement and modal-layer helpers.
+*/
+
+.ecms-afsac-page {
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    min-height: 32rem;
 }
 
-.table {
-    min-width: 100% !important;
+    .ecms-afsac-page > .ecms-card,
+    .ecms-afsac-page .ecms-card-body {
+        height: 100%;
+        min-height: 0;
+    }
+
+    .ecms-afsac-page .ecms-card-body {
+        display: flex;
+        flex-direction: column;
+        gap: .65rem;
+    }
+
+    .ecms-afsac-page .ecms-page-title {
+        flex: 0 0 auto;
+    }
+
+    .ecms-afsac-page .ecms-afsac-records {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ecms-afsac-page .ecms-dt-wrap {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .ecms-afsac-page #tbldata_wrapper {
+        height: 100%;
+        min-height: 0;
+    }
+
+        /* DataTables placement only. Visual rules continue to come from the common theme. */
+        .ecms-afsac-page #tbldata_wrapper > .dt-top {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: .75rem;
+        }
+
+        .ecms-afsac-page #tbldata_wrapper > .dt-bottom {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: .75rem;
+            width: 100%;
+            margin-top: .5rem;
+            padding: .45rem .35rem 0;
+        }
+
+    .ecms-afsac-page .dataTables_scroll,
+    .ecms-afsac-page .dt-scroll {
+        height: 100% !important;
+        min-height: 0 !important;
+    }
+
+    .ecms-afsac-page .dataTables_scrollBody,
+    .ecms-afsac-page .dt-scroll-body {
+        height: 100% !important;
+        max-height: none !important;
+        min-height: 10rem !important;
+        overflow: auto !important;
+    }
+
+        .ecms-afsac-page .dataTables_scrollHead,
+        .ecms-afsac-page .dataTables_scrollHeadInner,
+        .ecms-afsac-page .dataTables_scrollHeadInner table,
+        .ecms-afsac-page .dataTables_scrollBody table {
+            width: 100% !important;
+        }
+
+            /* Hide only DataTables' cloned sizing header in the scroll body. */
+            .ecms-afsac-page .dataTables_scrollBody table.dataTable > thead,
+            .ecms-afsac-page .dt-scroll-body table.dataTable > thead {
+                display: none !important;
+            }
+
+    .ecms-afsac-page .dt-buttons {
+        display: none !important;
+    }
+
+    .ecms-afsac-page .col-sno {
+        width: 5rem;
+    }
+
+    .ecms-afsac-page .col-action {
+        width: 12rem;
+        white-space: nowrap;
+    }
+
+    .ecms-afsac-page table.dataTable tbody td:nth-child(2) {
+        text-align: left;
+    }
+
+/* Current modal helper elements. These classes exist only on this page. */
+#AddNewAfsacCellMapping .modal-dialog {
+    max-width: min(760px, calc(100vw - 1.5rem));
 }
 
-.modal .modal-body .table-responsive {
-    max-height: 500px;
+#AddNewAfsacCellMapping .ecms-afsac-modal-title-wrap {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
 }
-#tbldata {
-    table-layout: fixed !important;
+
+#AddNewAfsacCellMapping .ecms-afsac-modal-title-icon {
+    width: 2.35rem;
+    height: 2.35rem;
+    min-width: 2.35rem;
+    border-radius: .75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white);
+    background: rgba(255, 255, 255, .16);
+    border: 1px solid rgba(255, 255, 255, .28);
+}
+
+#AddNewAfsacCellMapping .ecms-afsac-modal-subtitle {
+    margin: .15rem 0 0;
+    color: rgba(255, 255, 255, .86);
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+#AddNewAfsacCellMapping .ecms-afsac-field-label {
+    min-height: 1.65rem;
+    margin-bottom: .4rem;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+}
+
+#AddNewAfsacCellMapping .ecms-afsac-field-icon {
+    width: 1.45rem;
+    height: 1.45rem;
+    min-width: 1.45rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-500));
+    box-shadow: 0 .35rem .8rem rgba(47, 103, 230, .20);
+    font-size: .68rem;
+}
+
+#AddNewAfsacCellMapping .ecms-afsac-modal-actions {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .6rem;
+}
+
+    #AddNewAfsacCellMapping .ecms-afsac-modal-actions .btn {
+        min-width: 5.5rem;
+        height: 2.4rem;
+    }
+
+/*
+Current-page modal portal fix.
+JS adds this body class only while #AddNewAfsacCellMapping is open.
+*/
+body.afsac-cell-modal-open > .modal-backdrop,
+body.afsac-cell-modal-open > .afsac-cell-modal-backdrop {
+    z-index: 1050 !important;
+}
+
+#AddNewAfsacCellMapping {
+    z-index: 1065 !important;
+}
+
+    #AddNewAfsacCellMapping.show,
+    #AddNewAfsacCellMapping.show .modal-dialog,
+    #AddNewAfsacCellMapping.show .modal-content {
+        opacity: 1 !important;
+        visibility: visible !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+.ui-autocomplete {
+    z-index: 1085 !important;
+}
+
+@media (max-width: 991.98px) {
+    .ecms-afsac-page {
+        height: auto;
+        min-height: calc(100vh - var(--ecms-header-height) - var(--ecms-footer-height));
+    }
+
+        .ecms-afsac-page > .ecms-card,
+        .ecms-afsac-page .ecms-card-body {
+            height: auto;
+        }
+
+        .ecms-afsac-page .ecms-afsac-records {
+            min-height: 28rem;
+        }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-afsac-page #tbldata_wrapper > .dt-top,
+    .ecms-afsac-page #tbldata_wrapper > .dt-bottom {
+        align-items: stretch !important;
+        flex-direction: column;
+    }
+
+    .ecms-afsac-page .dataTables_filter,
+    .ecms-afsac-page .dataTables_paginate {
+        justify-content: flex-start;
+    }
+
+    #AddNewAfsacCellMapping .ecms-afsac-modal-actions {
+        justify-content: stretch;
+    }
+
+        #AddNewAfsacCellMapping .ecms-afsac-modal-actions .btn {
+            flex: 1 1 0;
+        }
+}
+
+/* Match the full-width shell used by the previously modernized master pages. */
+.ecms-afsac-page.ecms-page,
+.ecms-afsac-page.ecms-page-full {
+    width: calc(100vw - 1rem) !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+@media (max-width: 768px) {
+    .ecms-afsac-page.ecms-page,
+    .ecms-afsac-page.ecms-page-full {
+        width: calc(100vw - .75rem) !important;
+    }
 }

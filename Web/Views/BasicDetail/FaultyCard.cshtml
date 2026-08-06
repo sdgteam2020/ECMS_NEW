@@ -2,51 +2,52 @@
     ViewData["Title"] = "List of Faulty Card Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/faultycard.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Task" class="mr-2">Task</a> > Misprinted / Faulty Card
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                        <a href="/Home/Task" class="mr-2">Task</a> &gt;
+                        Misprinted / Faulty Card
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <span class="d-none" id="spnCValue">@ViewBag.Claim</span>
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Details of Misprinted / Faulty Card
-                        <small class="text-muted"></small>
-                    </h3>
+
+<div class="containerMain mt-n10 ecms-faultycard-page">
+    <div class="ecms-faultycard-shell">
+        <span class="d-none" id="spnCValue">@ViewBag.Claim</span>
+
+        <div class="ecms-faultycard-header">
+            <div class="ecms-faultycard-title-wrap">
+                <span class="ecms-faultycard-title-icon"><i class="fa fa-exclamation-circle"></i></span>
+                <div>
+                    <h3>Details of Misprinted / Faulty Card</h3>
+                    <p>Track faulty card records, AFSAC remarks and edit actions</p>
                 </div>
+            </div>
+
+            <div class="ecms-faultycard-actions">
+                <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm mr-2 ecms-add-btn">
+                    <i class="fa fa-plus mr-1 font-weight-700"></i>Add
+                </button>
             </div>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="col-xl-12">
-                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                    <h6 class="mb-3 mb-md-0">
-                        &nbsp;
-                    </h6>
-                    <div>
-                        <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
-                    </div>
-                </div>
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
-            </div>
+
+        <div class="ecms-faultycard-table-panel">
+            <table class="table table-striped table-hover border border-purple ecms-faultycard-table" role="grid" id="tbldata"></table>
         </div>
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/FaultyCard.js"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

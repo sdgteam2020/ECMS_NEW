@@ -2,8 +2,93 @@
 var comid = 0; var corId = 0; var divId = 0; var bdeId = 0; var FmnBranchId = 0; var PsoId = 0; var SubDteId = 0;
 var UnitType = 1;
 var table; // Declare table variable outside the function to preserve the instance
+
+/* =====================================================
+   PAGE-ONLY MODAL PORTAL / BACKDROP FIX
+   Move report modals outside layout stacking contexts and
+   let the modal root render the dim layer behind its dialog.
+===================================================== */
+const CARD_REPORT_MODAL_SELECTOR = "#CardReport, #MonthlyProcessedDialog";
+
+function SyncCardReportModalLayerState() {
+    const hasVisibleReportModal = document.querySelector(
+        "body > .ecms-card-report-layer.show"
+    );
+
+    document.body.classList.toggle(
+        "ecms-card-report-modal-open",
+        Boolean(hasVisibleReportModal)
+    );
+}
+
+function PrepareCardReportModalLayer(modalOrSelector) {
+    const modalElement = typeof modalOrSelector === "string"
+        ? document.querySelector(modalOrSelector)
+        : modalOrSelector;
+
+    if (!modalElement) {
+        return null;
+    }
+
+    modalElement.classList.add("ecms-card-report-layer");
+
+    /* Escape any parent transform/filter/stacking context. */
+    if (modalElement.parentElement !== document.body) {
+        document.body.appendChild(modalElement);
+    }
+
+    if (modalElement.dataset.ecmsCardReportLayerBound !== "true") {
+        const onShow = function () {
+            /* Move the modal to the end so stacked report dialogs stay on top. */
+            document.body.appendChild(modalElement);
+            document.body.classList.add("ecms-card-report-modal-open");
+        };
+
+        const onShown = function () {
+            document.body.classList.add("ecms-card-report-modal-open");
+        };
+
+        const onHidden = function () {
+            window.setTimeout(SyncCardReportModalLayerState, 0);
+        };
+
+        /* jQuery binding supports the Bootstrap 4 modal events used by this project. */
+        if (window.jQuery) {
+            $(modalElement)
+                .on("show.bs.modal", onShow)
+                .on("shown.bs.modal", onShown)
+                .on("hidden.bs.modal", onHidden);
+        } else {
+            modalElement.addEventListener("show.bs.modal", onShow);
+            modalElement.addEventListener("shown.bs.modal", onShown);
+            modalElement.addEventListener("hidden.bs.modal", onHidden);
+        }
+
+        modalElement.dataset.ecmsCardReportLayerBound = "true";
+    }
+
+    return modalElement;
+}
+
+function PrepareCardReportModalLayers() {
+    document.querySelectorAll(CARD_REPORT_MODAL_SELECTOR).forEach(function (modalElement) {
+        PrepareCardReportModalLayer(modalElement);
+    });
+}
 $(async function () {
+    document.documentElement.classList.add('ecms-card-report-scroll-lock');
+    document.body.classList.add('ecms-lock-page-scroll', 'ecms-card-report-scroll-lock');
+    PrepareCardReportModalLayers();
+
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+
+    $(window)
+        .off('pagehide.ecmsCardReport')
+        .on('pagehide.ecmsCardReport', function () {
+            document.documentElement.classList.remove('ecms-card-report-scroll-lock');
+            document.body.classList.remove('ecms-lock-page-scroll', 'ecms-card-report-scroll-lock', 'ecms-card-report-modal-open');
+            $(window).off('resize.ecmsCardReportTable');
+        });
 
     if ($('#spnclaimId').length > 0) {
         if ($('#spnclaimId').html() === 'Army Level Reports' || $('#spnclaimId').html() === 'Fmn Level Reports') {
@@ -125,7 +210,7 @@ $(async function () {
         $('#ddlFmnBranch').on('change', async function () {
             FmnBranchId = $(this).val();
             ResetCount();
-            await GetUnitByHierarchy(false,"ddlUnit", 0, $("#ddlCommand").val(), $("#ddlCorps").val(), 1, 1, $("#ddlFmnBranch").val(), 1, 1);
+            await GetUnitByHierarchy(false, "ddlUnit", 0, $("#ddlCommand").val(), $("#ddlCorps").val(), 1, 1, $("#ddlFmnBranch").val(), 1, 1);
 
         });
     }
@@ -133,7 +218,7 @@ $(async function () {
     if ($('#ddlDgSubDte').length > 0) {
         $('#ddlDgSubDte').on('change', async function () {
             SubDteId = $(this).val();
-            await GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, PsoId, $("#ddlDgSubDte").val());
+            await GetUnitByHierarchy(false, "ddlUnit", 0, 1, 1, 1, 1, 1, PsoId, $("#ddlDgSubDte").val());
         });
     }
 
@@ -141,11 +226,11 @@ $(async function () {
         $('#ddlPSODte').on('change', async function () {
             PsoId = $(this).val();
             ResetCount();
-            await GetUnitByHierarchy(false,"ddlUnit", 0, 1, 1, 1, 1, 1, $("#ddlPSODte").val(), SubDteId);
+            await GetUnitByHierarchy(false, "ddlUnit", 0, 1, 1, 1, 1, 1, $("#ddlPSODte").val(), SubDteId);
         });
     }
 
-    $('input[name="UnitTyperdi"]').on("click",async function () {
+    $('input[name="UnitTyperdi"]').on("click", async function () {
 
         UnitType = $("input[type='radio'][name=UnitTyperdi]:checked").val();
         ResetCount();
@@ -257,133 +342,110 @@ $(async function () {
 
 
     $('#txtMonthYear').datepicker({
-            dateFormat: 'mm/yy',
-            changeMonth: true,
-            changeYear: true,
-            showButtonPanel: true,
-            yearRange: function () {
+        dateFormat: 'mm/yy',
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        yearRange: function () {
+            const today = new Date();
+            return 2025 + ":" + today.getFullYear();
+        }(),
+
+        beforeShow: function (input, inst) {
+            setTimeout(function () {
                 const today = new Date();
-                return 2025 + ":" + today.getFullYear();
-            }(),
-
-            beforeShow: function (input, inst) {
-                setTimeout(function () {
-                    const today = new Date();
-                    const currentYear = today.getFullYear();
-                    const currentMonth = today.getMonth();
-
-                    const minYear = 2025;
-                    const minMonth = 2; // March (0-based)
-
-                    function restrictUI() {
-                        $(".ui-datepicker-calendar").hide();
-
-                        const selectedYear = parseInt($(".ui-datepicker-year").val(), 10);
-                        const selectedMonth = parseInt($(".ui-datepicker-month").val(), 10);
-
-                        // Disable future months & past months
-                        $(".ui-datepicker-month option").each(function (index) {
-                            if ((selectedYear === minYear && index < minMonth) || (selectedYear === currentYear && index > currentMonth)) {
-                                $(this).attr("disabled", "disabled");
-                            } else {
-                                $(this).removeAttr("disabled");
-                            }
-                        });
-
-                        // Disable "Next" button if at max month/year
-                        const isMaxMonth = selectedYear === currentYear && selectedMonth >= currentMonth;
-                        if (isMaxMonth) {
-                            $(".ui-datepicker-next").addClass("ui-state-disabled").hide(); // disable + hide
-                        } else {
-                            $(".ui-datepicker-next").removeClass("ui-state-disabled").show(); // enable + show
-                        }
-
-                        // Disable "Prev" if at minimum allowed month/year
-                        const isMinMonth = (selectedYear === minYear && selectedMonth <= minMonth) || (selectedYear < minYear);
-
-                        if (isMinMonth) {
-                            $(".ui-datepicker-prev").addClass("ui-state-disabled").hide();
-                        } else {
-                            $(".ui-datepicker-prev").removeClass("ui-state-disabled").show();
-                        }
-                    }
-
-                    function observeCalendarChanges() {
-                        const observer = new MutationObserver(restrictUI);
-                        const dpDiv = document.querySelector("#ui-datepicker-div");
-                        if (dpDiv) {
-                            observer.observe(dpDiv, { childList: true, subtree: true });
-                        }
-                    }
-
-                    restrictUI();
-                    observeCalendarChanges();
-                }, 0);
-            },
-
-            onClose: function (dateText, inst) {
-                const month = parseInt($("#ui-datepicker-div .ui-datepicker-month :selected").val(), 10);
-                const year = parseInt($("#ui-datepicker-div .ui-datepicker-year :selected").val(), 10);
+                const currentYear = today.getFullYear();
+                const currentMonth = today.getMonth();
 
                 const minYear = 2025;
-                const minMonth = 2; // July (because March is 2, so March is 3)
+                const minMonth = 2; // March (0-based)
 
-                if (year < minYear || (year === minYear && month < minMonth)) {
-                    alert("Please select March 2025 or later.");  // or show error message your way
-                    $(this).val('');  // clear the input
-                    return;
+                function restrictUI() {
+                    $(".ui-datepicker-calendar").hide();
+
+                    const selectedYear = parseInt($(".ui-datepicker-year").val(), 10);
+                    const selectedMonth = parseInt($(".ui-datepicker-month").val(), 10);
+
+                    // Disable future months & past months
+                    $(".ui-datepicker-month option").each(function (index) {
+                        if ((selectedYear === minYear && index < minMonth) || (selectedYear === currentYear && index > currentMonth)) {
+                            $(this).attr("disabled", "disabled");
+                        } else {
+                            $(this).removeAttr("disabled");
+                        }
+                    });
+
+                    // Disable "Next" button if at max month/year
+                    const isMaxMonth = selectedYear === currentYear && selectedMonth >= currentMonth;
+                    if (isMaxMonth) {
+                        $(".ui-datepicker-next").addClass("ui-state-disabled").hide(); // disable + hide
+                    } else {
+                        $(".ui-datepicker-next").removeClass("ui-state-disabled").show(); // enable + show
+                    }
+
+                    // Disable "Prev" if at minimum allowed month/year
+                    const isMinMonth = (selectedYear === minYear && selectedMonth <= minMonth) || (selectedYear < minYear);
+
+                    if (isMinMonth) {
+                        $(".ui-datepicker-prev").addClass("ui-state-disabled").hide();
+                    } else {
+                        $(".ui-datepicker-prev").removeClass("ui-state-disabled").show();
+                    }
                 }
 
-                // valid selection
-                const formattedMonth = ("0" + (month + 1)).slice(-2);
-                $(this).val(formattedMonth + "/" + year); // enforce MM/YYYY format
+                function observeCalendarChanges() {
+                    const observer = new MutationObserver(restrictUI);
+                    const dpDiv = document.querySelector("#ui-datepicker-div");
+                    if (dpDiv) {
+                        observer.observe(dpDiv, { childList: true, subtree: true });
+                    }
+                }
+
+                restrictUI();
+                observeCalendarChanges();
+            }, 0);
+        },
+
+        onClose: function (dateText, inst) {
+            const month = parseInt($("#ui-datepicker-div .ui-datepicker-month :selected").val(), 10);
+            const year = parseInt($("#ui-datepicker-div .ui-datepicker-year :selected").val(), 10);
+
+            const minYear = 2025;
+            const minMonth = 2; // July (because March is 2, so March is 3)
+
+            if (year < minYear || (year === minYear && month < minMonth)) {
+                alert("Please select March 2025 or later.");  // or show error message your way
+                $(this).val('');  // clear the input
+                return;
             }
-        });
+
+            // valid selection
+            const formattedMonth = ("0" + (month + 1)).slice(-2);
+            $(this).val(formattedMonth + "/" + year); // enforce MM/YYYY format
+        }
+    });
 
     $("#txtMonthYear").attr("readonly", true).on("keydown paste input", function (e) {
         e.preventDefault();
     });
 
-    const $dialog = $("#CardReport .modal-dialog");
-
     $("#btnRequisition").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('New Requisition');
 
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "75%");
-        }
-
-        GetReportReturnHistory('Requisition', function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
+        GetReportReturnHistory('Requisition');
     });
     $("#btnNonFunctionalCard").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Non Functional Card');
 
-         // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('NonFunctional', function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
+        GetReportReturnHistory('NonFunctional');
     });
     $("#btnLostCase").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
         $("#CardReport_lblModelTitle").html('Lost Case');
 
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('LostCase', function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
+        GetReportReturnHistory('LostCase');
     });
     $("#btnMonthlyProcessed").on("click", function (event) {
         event.preventDefault(); // Prevent anchor default behavior
@@ -435,29 +497,21 @@ $(async function () {
 
         const monthName = monthNames[inputMonth - 1];
 
-        // ✅ All good: Proceed
-        $("#MonthlyProcessedDialog").modal("hide");
+        // All good: close the month picker before opening the report modal.
         $("#CardReport_lblModelTitle").html(`Monthly Processed :- ${monthName}  ${inputYear}`);
-        //$("#CardReport").modal("show");
-
-        //$('#CardReport').one('shown.bs.modal', function () {
-        //    GetReportReturnHistory('MonthlyProcessed');
-        //});
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('MonthlyProcessed', function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
+        $("#MonthlyProcessedDialog")
+            .one('hidden.bs.modal', function () {
+                GetReportReturnHistory('MonthlyProcessed');
+            })
+            .modal("hide");
     });
 
 });
-function GetReportReturnHistory(Choice, callback) {
+function GetReportReturnHistory(Choice) {
     // STEP 1: Move ALL DataTable code into shown.bs.modal
     $("#CardReport").one('shown.bs.modal', function () {
+        $(window).off('resize.ecmsCardReportTable');
+
         if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
 
             // Destroy the DataTable and clear the table content
@@ -490,13 +544,16 @@ function GetReportReturnHistory(Choice, callback) {
         };
 
         const columns = getColumnsByChoice(Choice);
+
+        if (typeof applyDataTableSearchValidation === 'function') {
+            applyDataTableSearchValidation('#CardReport_tbldatadialog');
+        }
+
         table = $("#CardReport_tbldatadialog").DataTable({
-            scrollY: '65vh',          // ✅ vertical scroll
-            scrollX: true,            // ✅ horizontal scroll
-            scrollCollapse: true,
-            scroller: true,           // ✅ Enable virtual scrolling for better performance
-            deferScroll: true,        // ✅ Improve scrolling performance
-            fixedHeader: false,       // ❌ disable when using scrollY
+            scrollY: 'calc(100vh - 430px)',
+            scrollX: true,
+            scrollCollapse: false,
+            fixedHeader: false,
 
             processing: true,
             serverSide: true,
@@ -505,7 +562,7 @@ function GetReportReturnHistory(Choice, callback) {
 
             autoWidth: false,  //Set autoWidth to true (let DataTables decide)
             responsive: false, // Columns can hide on small screens
-            deferRender: true,// ✅ Handle zoom changes
+            deferRender: true, // Handle zoom changes
             order: [[1, 'desc']], // Default sorting on the first column
 
             ajax: async function (data, callback, settings) {
@@ -525,8 +582,8 @@ function GetReportReturnHistory(Choice, callback) {
                         const jsonData = JSON.stringify(requestData);
                         encryptedPayload = encryptPayloadData(jsonData);
                     }
-                    
-                    
+
+
 
                     let response = await fetch("/Home/GetReportData", {
                         method: "POST",
@@ -556,14 +613,25 @@ function GetReportReturnHistory(Choice, callback) {
             columnDefs: [
                 {
                     targets: '_all',  // Apply to all visible columns
-                    orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
+                    orderSequence: ["asc", "desc"] // Keep a two-state sort cycle
                 },
             ],
             language: {
-                search: "", // Remove the default "Search:" label
-                searchPlaceholder: "Search Army No" // Add custom placeholder
+                search: "",
+                searchPlaceholder: "Search Army No",
+                emptyTable: "No report records found",
+                zeroRecords: "No matching report records found",
+                paginate: {
+                    first: "\u00AB",
+                    previous: "\u2039",
+                    next: "\u203A",
+                    last: "\u00BB"
+                }
             },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            pagingType: 'full_numbers',
+            dom:
+                "<'dt-top d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2'lB<'ms-md-auto'f>>rt" +
+                "<'ecms-dt-footer row g-2'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>",
             buttons: [
                 //{
                 //    extend: 'copy',
@@ -573,12 +641,18 @@ function GetReportReturnHistory(Choice, callback) {
                 //},
                 {
                     extend: 'excel',
+                    text: '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel',
+                    className: 'btn btn-success btn-sm',
+                    titleAttr: 'Export report to Excel',
                     exportOptions: {
                         columns: "thead th:not(.noExport)"
                     }
                 },
                 {
                     extend: 'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF',
+                    className: 'btn btn-danger btn-sm',
+                    titleAttr: 'Export report to PDF',
                     orientation: 'landscape',
                     pageSize: 'LEGAL',
                     title: 'E-IASC_Report',
@@ -589,33 +663,38 @@ function GetReportReturnHistory(Choice, callback) {
                         WaterMarkOnPdf(doc)
                     }
                 }],
-            // 👇 Show modal only after table (header + data) is fully rendered
+            // Finalize the DataTable after it has initialized.
             initComplete: function () {
-                if (typeof callback === "function") {
-                    callback(); // show modal now
-                }
                 // Force DataTables to calculate optimal widths
                 this.api().columns.adjust();
 
                 // Handle zoom/resize
                 var resizeTimer;
-                $(window).on('resize', function () {
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(function () {
-                        table.columns.adjust().responsive.recalc();
-                    }, 100);
-                });
+                $(window)
+                    .off('resize.ecmsCardReportTable')
+                    .on('resize.ecmsCardReportTable', function () {
+                        clearTimeout(resizeTimer);
+                        resizeTimer = setTimeout(function () {
+                            if (table) {
+                                table.columns.adjust();
+                            }
+                        }, 100);
+                    });
 
             },
             drawCallback: function (settings) {
                 // Recalculate widths on each data load
-                this.api().columns.adjust().responsive.recalc();
+                this.api().columns.adjust();
 
                 const tooltipTriggerList = [].slice.call(
                     document.querySelectorAll('[data-bs-toggle="tooltip"]')
                 );
                 tooltipTriggerList.forEach(el => {
-                    new bootstrap.Tooltip(el);
+                    if (bootstrap.Tooltip.getOrCreateInstance) {
+                        bootstrap.Tooltip.getOrCreateInstance(el);
+                    } else {
+                        new bootstrap.Tooltip(el);
+                    }
                 });
 
                 $("#CardReport_tbldatadialog tbody").off("click", ".cls-remarks").on("click", ".cls-remarks", function () {
@@ -631,6 +710,7 @@ function GetReportReturnHistory(Choice, callback) {
                             listItem += "</ul>";
                             $("#MessageDialogLabel").html('Reason');
                             $("#MessageDialogBody").html(listItem);
+                            PrepareCardReportModalLayer("#MessageDialog");
                             $("#MessageDialog").modal('show');
                         }
                     }
@@ -747,7 +827,7 @@ function getColumnsByChoice(choice) {
                         else {
                             color = 'success';
                         }
-                        let Status = `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
+                        let Status = `<span class='badge badge-${color} mr-1'>${row.Status}</span>`;
                         return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${row.Status}">${Status}</span>`;
                     }
                 }
@@ -1118,7 +1198,7 @@ function getColumnsByChoice(choice) {
                         else {
                             color = 'success';
                         }
-                        let Status = `<span class='badge badge-${color} mr-1' >${row.Status}</span></span>`;
+                        let Status = `<span class='badge badge-${color} mr-1'>${row.Status}</span>`;
                         return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${row.Status}">${Status}</span>`;
                     }
                 }
@@ -1371,7 +1451,7 @@ async function mMsater(IsOnly, sectid = '', ddl, TableId, ParentId) {
     const payload = {
         tableName: "",
         id: TableId,
-        parentId: ParentId ? Number(ParentId) : null   // ⭐ THIS IS IMPORTANT
+        parentId: ParentId ? Number(ParentId) : null
     };
     let encryptedPayload = "";
     if (payload) {
@@ -1433,7 +1513,7 @@ async function mMsaterByParent(IsOnly, sectid = '', ddl, TableId, ComdId, CorpsI
         encryptedPayload = encryptPayloadData(jsonData);
 
     }
-    
+
     try {
         const response = await fetch('/Master/GetAllMMasterByParent', {
             method: 'POST',

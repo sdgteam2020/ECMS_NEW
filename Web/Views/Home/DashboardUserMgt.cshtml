@@ -4,103 +4,126 @@
     List<string> RoleNameList = new List<string>() { "user", "coordinator", "DteAdmin", "AFSACUser", "RecordUser", "OROUser" };
 }
 <link asp-href-include="~/developercss/dashboardusermgt.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > User Management
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                        <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt;
+                        User Management
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    @if (RoleNameList.Contains(ViewBag.Role))
-    {
-        <div class="row">
-            <div class="card p-4">
-                <div class="row">
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/Home/RegisterUser" class="clickable">
-                            <div class="counter purple">
-                                <div class="counter-icon">
-                                    <i class="fa fa-users"></i>
-                                </div>
-                                <span class="counter-value" id="TotRegisterUser">0</span>
-                                <h3>Registered Users</h3>
-                            </div>
-                        </a>
+
+<div class="ecms-user-mgt-page">
+    <div class="containerMain ecms-page ecms-user-mgt-container">
+        @if (RoleNameList.Contains(ViewBag.Role))
+        {
+            <section class="ecms-card ecms-user-mgt-shell" aria-labelledby="userManagementTitle">
+                <div class="ecms-card-body">
+                    <div class="ecms-page-title ecms-user-mgt-heading">
+                        <div class="ecms-title-icon ecms-user-mgt-heading-icon" aria-hidden="true">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <div class="ecms-user-mgt-heading-copy">
+                            <h2 id="userManagementTitle">User Management</h2>
+                            <p class="ecms-title-subtitle">Manage users, posting movement, login logs and profile updates</p>
+                        </div>
                     </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="clickable">
-                            <div class="counter red">
-                                <div class="counter-icon">
-                                    <i class="fa fa-reply"></i>
-                                </div>
-                                <span class="counter-value" id="TotPostingIn">0</span>
-                                <h3>Posting In</h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="clickable">
-                            <div class="counter red">
-                                <div class="counter-icon">
-                                    <i class="fa fa-share"></i>
-                                </div>
-                                <span class="counter-value" id="TotPostingOut">0</span>
-                                <h3>Posting Out</h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/Log/LoginLog" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-address-card"></i>
-                                </div>
-                                <h3 class="counter-title">
-                                    Login Logs
-                                </h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2 col-sm-6">
-                        <a href="/UserProfile/Profile" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-user"></i>
-                                </div>
-                                <h3 class="counter-title">
-                                    Update Profile
-                                </h3>
-                            </div>
-                        </a>
-                    </div>
-                    @if (ViewBag.ROFound == 1)
-                    {
-                        <div class="col-md-2 col-sm-6">
-                            <a href="/Master/UpdateRecordOffice" class="clickable">
-                                <div class="counter pink">
-                                    <div class="counter-icon">
-                                        <i class="fa fa-user"></i>
+
+                    <div class="ecms-user-mgt-grid" role="list">
+                        <div class="ecms-user-mgt-item" role="listitem">
+                            <a href="/Home/RegisterUser" class="clickable" aria-label="Open Registered Users">
+                                <div class="ecms-tile counter purple ecms-user-counter" id="btnRegisteredUsers">
+                                    <div class="counter-icon" aria-hidden="true">
+                                        <i class="fa fa-users"></i>
                                     </div>
-                                    <h3 class="counter-title">
-                                        Update Record Office
-                                    </h3>
+                                    <span class="count counter-value" id="TotRegisterUser">0</span>
+                                    <h3 class="label">Registered Users</h3>
+                                    <span class="ecms-user-mgt-card-arrow" aria-hidden="true"><i class="fa fa-angle-right"></i></span>
                                 </div>
                             </a>
                         </div>
-                    }
+
+                        <div class="ecms-user-mgt-item" role="listitem">
+                            <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="clickable" aria-label="Open Posting In requests">
+                                <div class="ecms-tile counter red ecms-user-counter" id="btnPostingIn">
+                                    <div class="counter-icon" aria-hidden="true">
+                                        <i class="fa fa-sign-in"></i>
+                                    </div>
+                                    <span class="count counter-value" id="TotPostingIn">0</span>
+                                    <h3 class="label">Posting In</h3>
+                                    <span class="ecms-user-mgt-card-arrow" aria-hidden="true"><i class="fa fa-angle-right"></i></span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="ecms-user-mgt-item" role="listitem">
+                            <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="clickable" aria-label="Open Posting Out requests">
+                                <div class="ecms-tile counter red ecms-user-counter" id="btnPostingOut">
+                                    <div class="counter-icon" aria-hidden="true">
+                                        <i class="fa fa-sign-out"></i>
+                                    </div>
+                                    <span class="count counter-value" id="TotPostingOut">0</span>
+                                    <h3 class="label">Posting Out</h3>
+                                    <span class="ecms-user-mgt-card-arrow" aria-hidden="true"><i class="fa fa-angle-right"></i></span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="ecms-user-mgt-item" role="listitem">
+                            <a href="/Log/LoginLog" class="clickable" aria-label="Open Login Logs">
+                                <div class="ecms-tile counter pink ecms-user-counter no-count" id="btnLoginLogs">
+                                    <div class="counter-icon" aria-hidden="true">
+                                        <i class="fa fa-history"></i>
+                                    </div>
+                                    <span class="ecms-action-spacer" aria-hidden="true"></span>
+                                    <h3 class="label counter-title">Login Logs</h3>
+                                    <span class="ecms-user-mgt-card-arrow" aria-hidden="true"><i class="fa fa-angle-right"></i></span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="ecms-user-mgt-item" role="listitem">
+                            <a href="/UserProfile/Profile" class="clickable" aria-label="Open Update Profile">
+                                <div class="ecms-tile counter pink ecms-user-counter no-count" id="btnUpdateProfile">
+                                    <div class="counter-icon" aria-hidden="true">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <span class="ecms-action-spacer" aria-hidden="true"></span>
+                                    <h3 class="label counter-title">Update Profile</h3>
+                                    <span class="ecms-user-mgt-card-arrow" aria-hidden="true"><i class="fa fa-angle-right"></i></span>
+                                </div>
+                            </a>
+                        </div>
+
+                        @if (ViewBag.ROFound == 1)
+                        {
+                            <div class="ecms-user-mgt-item" role="listitem">
+                                <a href="/Master/UpdateRecordOffice" class="clickable" aria-label="Open Update Record Office">
+                                    <div class="ecms-tile counter pink ecms-user-counter no-count" id="btnUpdateRecordOffice">
+                                        <div class="counter-icon" aria-hidden="true">
+                                            <i class="fa fa-building"></i>
+                                        </div>
+                                        <span class="ecms-action-spacer" aria-hidden="true"></span>
+                                        <h3 class="label counter-title">Update Record Office</h3>
+                                        <span class="ecms-user-mgt-card-arrow" aria-hidden="true"><i class="fa fa-angle-right"></i></span>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
                 </div>
-            </div>
-        </div>
-    }
+            </section>
+        }
+    </div>
 </div>
+
 <script asp-src-include="~/developerjs/DashboardUserMgt.js"></script>

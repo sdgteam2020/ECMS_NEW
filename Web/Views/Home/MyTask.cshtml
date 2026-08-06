@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
     string? DIDName = null;
-    if (userId !=null)
+    if (userId != null)
     {
         var user = await userManager.FindByIdAsync(userId);
         DIDName = user?.UserName;
@@ -44,7 +44,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
+<div class="containerMain mt-n10 ecms-mytask-page">
 
     <div class="row">
         @if (ViewBag.Type == "OffrsSubmitted")
@@ -70,7 +70,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                         <div class="row">
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
                                                 <div class="card box-shadow">
-                                                    <a href="/BasicDetail/Index/MTE="> 
+                                                    <a href="/BasicDetail/Index/MTE=">
                                                         <div class="card-content">
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
@@ -89,7 +89,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                             </div>
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
                                                 <div class="card box-shadow">
-                                                    <a href="/BasicDetail/Index/ODg="> 
+                                                    <a href="/BasicDetail/Index/ODg=">
                                                         <div class="card-content">
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
@@ -128,7 +128,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                             </div>
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
                                                 <div class="card box-shadow">
-                                                    <a href="/BasicDetail/Index/Nzc="> 
+                                                    <a href="/BasicDetail/Index/Nzc=">
                                                         <div class="card-content">
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
@@ -137,7 +137,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                         <span class="badge badge-pill badge-success p-2">Completed</span>
                                                                     </div>
                                                                     <div class="align-self-center">
-                                                                        <i class="text-success fa fa-times-circle fa-3x" ></i>
+                                                                        <i class="text-success fa fa-times-circle fa-3x"></i>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -223,7 +223,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                         <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
-                                                                        <i class="text-danger fa fa-times-circle fa-3x" ></i>
+                                                                        <i class="text-danger fa fa-times-circle fa-3x"></i>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -279,7 +279,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                             </div>
                         </div>
                     </div>
-                    @if (claims.Count > 0 && claims.Any(i => i.Value == "Appl Approver")) 
+                    @if (claims.Count > 0 && claims.Any(i => i.Value == "Appl Approver"))
                     {
                         <div class="col-xl-12 col-sm-12 col-12">
                             <div class="card card-collapsable mb-3">
@@ -345,7 +345,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                             <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                         </div>
                                                                         <div class="align-self-center">
-                                                                            <i class="text-danger fa fa-times-circle fa-3x" ></i>
+                                                                            <i class="text-danger fa fa-times-circle fa-3x"></i>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -574,7 +574,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
                                                 <div class="card box-shadow">
                                                     <a href="/BasicDetail/Index?Id=MTE=&jcoor=SmNvL09ycw==">
-                                                        
+
                                                         <div class="card-content">
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
@@ -594,7 +594,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
                                                 <div class="card box-shadow">
                                                     <a href="/BasicDetail/Index?Id=ODg=&jcoor=SmNvL09ycw==">
-                                                        
+
                                                         <div class="card-content">
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
@@ -623,7 +623,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                         <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
-                                                                        <i class="text-danger fa fa-times-circle fa-3x" ></i>
+                                                                        <i class="text-danger fa fa-times-circle fa-3x"></i>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -634,7 +634,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
                                                 <div class="card box-shadow">
                                                     <a href="/BasicDetail/Index?Id=Nzc=&jcoor=SmNvL09ycw==">
-                                                        
+
                                                         <div class="card-content">
                                                             <div class="card-body">
                                                                 <div class="media d-flex">
@@ -714,7 +714,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                         <span class="badge badge-pill badge-success p-2">Approved</span>
                                                                     </div>
                                                                     <div class="align-self-center">
-                                                                       &nbsp;
+                                                                        &nbsp;
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -733,7 +733,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                         <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                     </div>
                                                                     <div class="align-self-center">
-                                                                       &nbsp;
+                                                                        &nbsp;
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -875,7 +875,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                                 <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                             </div>
                                                                             <div class="align-self-center">
-                                                                                <i class="text-danger fa fa-times-circle fa-3x" ></i>
+                                                                                <i class="text-danger fa fa-times-circle fa-3x"></i>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -977,7 +977,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                                 <span class="badge badge-pill badge-danger p-2">Rejected</span>
                                                                             </div>
                                                                             <div class="align-self-center">
-                                                                                <i class="text-danger fa fa-times-circle fa-3x" ></i>
+                                                                                <i class="text-danger fa fa-times-circle fa-3x"></i>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -1035,7 +1035,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                             </div>
                         </div>
                     }
-                    @if (claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data")) 
+                    @if (claims.Count > 0 && claims.Any(i => i.Value == "ICard Export Data"))
                     {
                         <div class="col-xl-12 col-sm-12 col-12">
                             <div class="card card-collapsable mb-3">
@@ -1177,6 +1177,6 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
             </div>
         }
     </div>
-</div>  
+</div>
 <script asp-src-include="~/developerjs/MyTask.js"></script>
 

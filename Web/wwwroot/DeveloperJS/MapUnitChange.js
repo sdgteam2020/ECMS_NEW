@@ -1,13 +1,84 @@
 ﻿//const { debug } = require("util");
 
 var table; // Declare table variable outside the function to preserve the instance
+function prepareMapUnitChangeModalRoots() {
+    ["UnitMoveHistoryModal", "MessageDialog"].forEach(function (modalId) {
+        var modalElement = document.getElementById(modalId);
+
+        if (modalElement && modalElement.parentElement !== document.body) {
+            document.body.appendChild(modalElement);
+        }
+    });
+}
+
+function cleanupMapUnitChangeModalState() {
+    if (document.querySelector(".modal.show")) {
+        document.body.classList.add("modal-open");
+        return;
+    }
+
+    document.querySelectorAll(".modal-backdrop").forEach(function (element) {
+        element.remove();
+    });
+
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
+}
+
+function refreshMapUnitChangeDataTable(tableSelector, delay) {
+    var wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            var $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                safeAdjustMapUnitChangeDataTable($(tableSelector).DataTable());
+            }
+        } catch (error) {
+            console.warn("Unit Move Request DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
+function safeAdjustMapUnitChangeDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
+    prepareMapUnitChangeModalRoots();
+
+    $("#UnitMoveHistoryModal, #MessageDialog")
+        .off(".mapUnitChangeUi")
+        .on("shown.bs.modal.mapUnitChangeUi", function () {
+            document.body.classList.add("modal-open");
+        })
+        .on("hidden.bs.modal.mapUnitChangeUi", function () {
+            cleanupMapUnitChangeModalState();
+        });
+
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     applyDataTableSearchValidation('#tbldata');
 
     BindData();
-    $("#btnAdd").on("click", function (){
+    $("#btnAdd").on("click", function () {
         location.href = '/Master/MapUnitChangeRequest';
     });
 });
@@ -18,16 +89,17 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old DataTables sizing markup
     }
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // UI only: normal DataTables scroll inside card
+        deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -36,7 +108,7 @@ function BindData() {
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
         order: [[0, 'desc']], // Default sorting on the first column
-        searching:false,
+        searching: true,
         ajax: async function (data, callback, settings) {
             let requestData = {
                 draw: data.draw,
@@ -60,10 +132,14 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-
+                refreshMapUnitChangeDataTable("#tbldata", 30);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing, .dt-processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                refreshMapUnitChangeDataTable("#tbldata", 30);
             }
         },
         columns: [
@@ -104,7 +180,7 @@ function BindData() {
                 data: "Sus_no",
                 name: "Sus_no",
                 width: "110px",
-                orderable: false, 
+                orderable: false,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}${row.Suffix}">${data}${row.Suffix}</span>`;
@@ -115,7 +191,7 @@ function BindData() {
                 data: "FromArmyNo",
                 name: "FromArmyNo",
                 width: "110px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -138,7 +214,7 @@ function BindData() {
                 data: "FromDID",
                 name: "FromDID",
                 width: "100px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -150,7 +226,7 @@ function BindData() {
                 data: "FromUpdatedOn",
                 name: "FromUpdatedOn",
                 width: "150px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row) {
                     return DateFormateddMMyyyyhhmmss(data);
                 }
@@ -160,7 +236,7 @@ function BindData() {
                 data: "Remark",
                 name: "Remark",
                 width: "150px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -172,7 +248,7 @@ function BindData() {
                 data: "AdminRemark",
                 name: "AdminRemark",
                 width: "150px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row) {
                     if (!data) return '';
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -184,9 +260,9 @@ function BindData() {
                 data: "IsEditAction",
                 name: "Status",
                 width: "100px",
-                orderable: true, 
+                orderable: true,
                 render: function (data, type, row) {
-                    return data == false ? "<span class='badge bg-warning'>Pendding</span>" : row.RequestStatus == true ? "<span class='badge bg-success'>Accepted</span>" : "<span class='badge badge-pill badge-danger'>Rejected</span>";
+                    return data == false ? "<span class='badge bg-warning'>Pending</span>" : row.RequestStatus == true ? "<span class='badge bg-success'>Accepted</span>" : "<span class='badge badge-pill badge-danger'>Rejected</span>";
                 }
             },
 
@@ -201,14 +277,13 @@ function BindData() {
                 render: function (data, type, row) {
                     let role = $("#spnRoleName").html(); // Get current role
                     if (data === false && role === "admin") {
-                        return `<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
+                        return `<span id='btnedit'><button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><span id='btnview'><button type='button' class='cls-btnview btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
                     }
-                    else if (data === true && role === "admin")
-                    {
-                        return `<span class='badge badge-pill badge-danger mr-1'>NA</span><span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
+                    else if (data === true && role === "admin") {
+                        return `<span class='badge badge-pill badge-danger mr-1'>NA</span><span id='btnview'><button type='button' class='cls-btnview btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
                     }
                     else {
-                        return `<span id='btnview'><button type='button' class='cls-btnview btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
+                        return `<span id='btnview'><button type='button' class='cls-btnview btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class="fa fa-eye" ></i></button></span>`;
                     }
                 }
             }
@@ -236,7 +311,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search SUS No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -262,31 +337,43 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
-        // 👇 Show modal only after table (header + data) is fully rendered
         initComplete: function () {
-            // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            let searchBox = $("#tbldata_wrapper div.dataTables_filter input");
+            searchBox.attr("title", "Search SUS No or unit move request details");
 
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
-                }, 100);
-            });
+            safeAdjustMapUnitChangeDataTable(this.api());
+            refreshMapUnitChangeDataTable("#tbldata", 20);
+
+            $(window)
+                .off("resize.mapUnitChangeDataTable")
+                .on("resize.mapUnitChangeDataTable", function () {
+                    window.clearTimeout(window.__mapUnitChangeResizeTimer);
+                    window.__mapUnitChangeResizeTimer = window.setTimeout(function () {
+                        refreshMapUnitChangeDataTable("#tbldata", 0);
+                    }, 120);
+                });
         },
         drawCallback: function (settings) {
-
-            // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustMapUnitChangeDataTable(this.api());
+            refreshMapUnitChangeDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Unit Move Request tooltip skipped:", error);
+                    }
+                });
+            }
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -314,3 +401,18 @@ function BindData() {
     //    table.column(9).visible(false);
     //}
 }
+
+/* ==============================================================
+   PAGE-LOCAL UI EVENTS
+   No global ModernCSS file is changed.
+================================================================ */
+
+$(document)
+    .off("draw.dt.mapUnitChangeUi")
+    .on("draw.dt.mapUnitChangeUi", function (event, settings) {
+        var tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            refreshMapUnitChangeDataTable("#tbldata", 20);
+        }
+    });

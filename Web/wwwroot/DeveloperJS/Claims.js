@@ -1,7 +1,40 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var tableView; // Declare table variable outside the function to preserve the instance
+
+/*
+ * Keep the modal directly below <body>.
+ * This is a UI-only stacking fix: a modal inside a transformed layout container
+ * can appear below its backdrop and look faded/disabled.
+ */
+function PrepareClaimsModalRoot() {
+    var $modal = $("#DataTableDialog");
+
+    if ($modal.length && !$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+}
+
+/*
+ * Common CSS handles the cloned DataTable header and footer layout.
+ * JavaScript now only asks DataTables to recalculate column widths.
+ */
+function RefreshClaimsDataTable(tableSelector, delay) {
+    window.setTimeout(function () {
+        try {
+            $("#loading").addClass("d-none").hide();
+            $(".dataTables_processing, " + tableSelector + "_processing").hide();
+
+            if ($.fn.DataTable.isDataTable(tableSelector)) {
+                $(tableSelector).DataTable().columns.adjust();
+            }
+        } catch (error) {
+            console.warn("Claims DataTable refresh skipped:", error);
+        }
+    }, delay || 0);
+}
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+    PrepareClaimsModalRoot();
 
     //mMsater(0, "ddlRank", Rank, "");
     //mMsater(0, "ddlArmType", ArmyType, "");
@@ -17,17 +50,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // UI fix: remove old DataTables cloned header/body markup
     }
 
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: false,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -60,10 +94,15 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                RefreshClaimsDataTable('#tbldata', 30);
 
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                RefreshClaimsDataTable('#tbldata', 30);
             }
         },
         columns: [
@@ -91,7 +130,8 @@ function BindData() {
             {
                 title: "Claim",
                 data: "ClaimType",
-                name: "ClaimType"
+                name: "ClaimType",
+                className: "col-claim"
             },
             {
                 title: "User Claim Count",
@@ -131,7 +171,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Type / Value" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top ecms-dt-toolbar'lBf>rt<'dt-bottom ecms-dt-footer'ip>", // Common ECMS toolbar/footer classes
         buttons: [
             //{
             //    extend: 'copy',
@@ -160,33 +200,36 @@ function BindData() {
         initComplete: function () {
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
+            RefreshClaimsDataTable('#tbldata', 0);
 
             // Handle zoom/resize
             var resizeTimer;
-            $(window).on('resize', function () {
+            $(window).off('resize.claimsMain').on('resize.claimsMain', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    table.columns.adjust();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            this.api().columns.adjust();
+            RefreshClaimsDataTable('#tbldata', 0);
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btneyetotalusers").on("click", ".cls-btneyetotalusers", function () {
                 var rowData = table.row($(this).closest("tr")).data();
-                if (rowData != null)
-                {
+                if (rowData != null) {
                     BindDialog(rowData.ClaimType);
                 }
             });
-            
+
         }
     });
 }
 function BindDialog(claimValue) {
+    PrepareClaimsModalRoot();
+
     // STEP 1: Move ALL DataTable code into shown.bs.modal
     $("#DataTableDialog").one('shown.bs.modal', function () {
 
@@ -195,19 +238,20 @@ function BindDialog(claimValue) {
             $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
             $("#tbldatadialog thead").empty(); // Clear old thead
             $("#tbldatadialog tbody").empty(); // Clear old tbody
+            $("#tbldatadialog").empty(); // UI fix: remove old DataTables cloned header/body markup
         }
 
         $("#lblModelTitle").html(claimValue);
 
         tableView = $("#tbldatadialog").DataTable({
-            scrollY: '65vh',          // ✅ vertical scroll
+            scrollY: '100%',          // ✅ vertical scroll
             scrollX: true,            // ✅ horizontal scroll
-            scrollCollapse: true,
-            scroller: true,           // ✅ Enable virtual scrolling for better performance
-            deferScroll: true,        // ✅ Improve scrolling performance
+            scrollCollapse: false,
+            scroller: false,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: false,        // ✅ Improve scrolling performance
             fixedHeader: false,       // ❌ disable when using scrollY
 
-            processing: true,
+            processing: false,
             serverSide: true,
             filter: true,
             stateSave: false,
@@ -245,6 +289,10 @@ function BindDialog(claimValue) {
 
                 } catch (error) {
                     console.error("Error fetching data:", error);
+                    $("#loading").addClass("d-none").hide();
+                    $(".dataTables_processing").hide();
+                    callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                    RefreshClaimsDataTable('#tbldatadialog', 30);
                 }
             },
             columns: [
@@ -355,7 +403,7 @@ function BindDialog(claimValue) {
                 search: "", // Remove the default "Search:" label
                 searchPlaceholder: "Search IC No" // Add custom placeholder
             },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            dom: "<'dt-top ecms-dt-toolbar'lBf>rt<'dt-bottom ecms-dt-footer'ip>", // Common ECMS toolbar/footer classes
             buttons: [
                 //{
                 //    extend: 'copy',
@@ -384,32 +432,50 @@ function BindDialog(claimValue) {
             initComplete: function () {
                 // Force DataTables to calculate optimal widths
                 this.api().columns.adjust();
+                RefreshClaimsDataTable('#tbldatadialog', 0);
 
                 // Handle zoom/resize
                 var resizeTimer;
-                $(window).on('resize', function () {
+                $(window).off('resize.claimsDialog').on('resize.claimsDialog', function () {
                     clearTimeout(resizeTimer);
                     resizeTimer = setTimeout(function () {
-                        tableView.columns.adjust().responsive.recalc();
+                        tableView.columns.adjust();
                     }, 100);
                 });
             },
             drawCallback: function (settings) {
                 // Recalculate widths on each data load
-                this.api().columns.adjust().responsive.recalc();
+                this.api().columns.adjust();
+                RefreshClaimsDataTable('#tbldatadialog', 0);
 
                 const tooltipTriggerList = [].slice.call(
                     document.querySelectorAll('[data-bs-toggle="tooltip"]')
                 );
-                tooltipTriggerList.forEach(el => {
-                    new bootstrap.Tooltip(el);
-                });
+                if (window.bootstrap && bootstrap.Tooltip) {
+                    tooltipTriggerList.forEach(el => {
+                        try { new bootstrap.Tooltip(el); } catch (e) { }
+                    });
+                }
 
             }
         });
     });
 
     // STEP 2: Show modal (this triggers the above)
+    PrepareClaimsModalRoot();
     $("#DataTableDialog").modal("show");
 
 }
+
+$('#DataTableDialog')
+    .off('.claimsUi')
+    .on('shown.bs.modal.claimsUi', function () {
+        RefreshClaimsDataTable('#tbldatadialog', 120);
+    })
+    .on('hidden.bs.modal.claimsUi', function () {
+        /* Remove a stale backdrop only when no other Bootstrap modal is open. */
+        if (!$('.modal.show').length) {
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open').css('padding-right', '');
+        }
+    });

@@ -2,191 +2,270 @@
     ViewData["Title"] = "Unit";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/mapunit.css" rel="stylesheet" />
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
-            <div class="row align-items-center justify-content-between">
+            <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > Unit Details
-
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
+                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
+                        <span>&gt;</span>
+                        <span>Unit Details</span>
                     </h1>
                 </div>
             </div>
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Mapped Unit Details
-                        <small class="text-muted"></small>
-                    </h3>
+
+<div class="ecms-screen-stage ecms-bg">
+    <main class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-mapunit-page">
+        <div class="card ecms-card ecms-mapunit-shell">
+            <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
+
+                <div class="ecms-page-title ecms-mapunit-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                    <div class="d-flex align-items-center gap-2 ecms-min-0">
+                        <span class="ecms-title-icon">
+                            <i class="fa fa-sitemap"></i>
+                        </span>
+                        <div class="ecms-min-0">
+                            <h3>Mapped Unit Details</h3>
+                            <p class="ecms-title-subtitle">View, add, update and verify unit mapping records</p>
+                        </div>
+                    </div>
+
+                    <button type="button" id="btnMapUnitAdd" class="btn btn-success ecms-mapunit-add-btn">
+                        <i class="fa fa-plus"></i>
+                        <span>Add Unit</span>
+                    </button>
                 </div>
+
+                <div class="ecms-section ecms-mapunit-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                    <div class="ecms-section-title flex-shrink-0">
+                        <i class="fa fa-list"></i>
+                        <span>Unit Mapping Records</span>
+                    </div>
+
+                    <div class="ecms-dt-wrap ecms-mapunit-table-wrap flex-grow-1 ecms-min-0">
+                        <table class="table table-striped table-hover table-bordered dataTable ecms-mapunit-datatable" width="100%" role="grid" id="tbldata">
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                        <h6 class="mb-3 mb-md-0">
-                            &nbsp;
-                        </h6>
-                        <div class="d-flex"> 
-                            <button type="button" id="btnMapUnitAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add Unit</button>
+    </main>
+</div>
+
+<div class="modal fade ecms-mapunit-modal" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-backdrop="static" data-bs-keyboard="true" data-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ecms-modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header ecms-mapunit-modal-header">
+                <div class="ecms-mapunit-modal-heading ecms-min-0">
+                    <span class="ecms-mapunit-modal-icon" aria-hidden="true">
+                        <i class="fa fa-plus-circle"></i>
+                    </span>
+                    <div class="ecms-min-0">
+                        <h5 class="modal-title ecms-mapunit-modal-title" id="exampleModalLabel">Enter Unit Details With Mapping</h5>
+                        <p class="ecms-title-subtitle mb-0">Fill unit identity, verification and mapping information</p>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-close ecms-mapunit-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" title="Close"></button>
+            </div>
+
+            <div class="modal-body ecms-mapunit-modal-body">
+                <form action="" id="SaveFormMapUnit" method="post" name="SaveForm">
+                    <span class="d-none" id="spnUnitMapId">0</span>
+                    <span id="spnUnitId" class="d-none">0</span>
+
+                    <div class="row g-2 align-items-end">
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-mapunit-label" for="txtSusno">
+                                <i class="fa fa-id-card"></i>
+                                <span>SUS No</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <input class="form-control Alphanumeric"
+                                   placeholder="Enter SUS No"
+                                   id="txtSusno"
+                                   minlength="8"
+                                   maxlength="8"
+                                   data-val="true"
+                                   data-val-regex="Use Seven digit numbers and one alphabet in capital letter without space"
+                                   data-val-required="SUS No is required."
+                                   data-val-regex-pattern="^[0-9]{7}[A-Z]{1}$" />
                         </div>
 
-                    </div>
-                    <table class="table table-striped table-hover border border-purple" width="100%" role="grid" id="tbldata">
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<script asp-src-include="~/developerjs/mtables.js"></script> 
-<script asp-src-include="~/developerjs/MapUnit.js"></script>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ecms-mapunit-label" for="lblUnit">
+                                <i class="fa fa-building"></i>
+                                <span>Unit</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
 
-<partial name="~/Views/Shared/_DataTableJS.cshtml" />
+                            <label class="form-control unit-label-background ecms-mapunit-unit-label" id="lblUnit" name="lblUnit"></label>
+                        </div>
 
-<div class="modal fade" id="AddNewUnitmap" tabindex="-1" aria-labelledby="exampleModalLabel" >
-    <div class="modal-dialog modal-lg" role="dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Enter Unit Details With Mapping</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <form action="" id="SaveFormMapUnit" method="post" name="SaveForm">
-                        <div class="row">
-                            <span class=" d-none" id="spnUnitMapId">0</span>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">SUS No <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <input class="form-control Alphanumeric" placeholder="Enter SUS No" id="txtSusno" minlength="8" maxlength="8" data-val="true" data-val-regex="Use Seven digit numbers and one alphabet in capital letter without space" data-val-required="SUS No is required." data-val-regex-pattern="^[0-9]{7}[A-Z]{1}$" />
-                                </div>
-                            </div>
-                            <span id="spnUnitId" class="d-none">0</span>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Unit <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label col-sm-4 unit-label-background" id="lblUnit" name="lblUnit"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-4">
-                                <label class="col-form-label col-sm-4 fw-bold">Verify<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <div class="form-check form-check-inline">
+                        <div class="col-12 col-lg-6">
+                            <div class="ecms-section ecms-mapunit-radio-card h-100">
+                                <label class="form-label ecms-mapunit-label">
+                                    <i class="fa fa-check-circle"></i>
+                                    <span>Verify</span>
+                                    <i class="fas fa-asterisk mand1"></i>
+                                </label>
+
+                                <div class="d-flex flex-wrap gap-2 ecms-radio-group">
+                                    <div class="form-check form-check-inline ecms-radio-pill">
                                         <input class="form-check-input" type="radio" name="IsVerify" value="true" id="isverifyyes" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="isverifyyes">
-                                            Yes
-                                        </label>
+                                        <label class="form-check-label" for="isverifyyes">Yes</label>
                                     </div>
-                                    <div class="form-check form-check-inline">
+                                    <div class="form-check form-check-inline ecms-radio-pill">
                                         <input class="form-check-input" type="radio" name="IsVerify" value="false" id="isverifyno" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="isverifyno">
-                                            No
-                                        </label>
+                                        <label class="form-check-label" for="isverifyno">No</label>
                                     </div>
-                                    <span class="text-danger field-validation-valid" id="IsVerify-error"></span>
                                 </div>
-                            </div>
-                            <div class="form-group row mb-2">
 
-                                <label class="col-form-label col-sm-4 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <div class="form-check form-check-inline">
+                                <span class="text-danger field-validation-valid" id="IsVerify-error"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="ecms-section ecms-mapunit-radio-card h-100">
+                                <label class="form-label ecms-mapunit-label">
+                                    <i class="fa fa-tags"></i>
+                                    <span>Select Unit Type</span>
+                                    <i class="fas fa-asterisk mand1"></i>
+                                </label>
+
+                                <div class="d-flex flex-wrap gap-2 ecms-radio-group ecms-radio-group-wide">
+                                    <div class="form-check form-check-inline ecms-radio-pill">
                                         <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" checked>
                                         <label class="form-check-label" for="UnitType1">Unit</label>
                                     </div>
-                                    <div class="form-check form-check-inline">
+                                    <div class="form-check form-check-inline ecms-radio-pill">
                                         <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2">
-                                        <label class="form-check-label" for="UnitType2">
-                                            Fmn HQ
-                                        </label>
+                                        <label class="form-check-label" for="UnitType2">Fmn HQ</label>
                                     </div>
-                                    <div class="form-check form-check-inline">
+                                    <div class="form-check form-check-inline ecms-radio-pill">
                                         <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3">
                                         <label class="form-check-label" for="UnitType3">Dte/Sub Dte Branch</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row mb-2 unittype">
-                                <label class="col-form-label col-sm-4 fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlCommand" required id="ddlCommand">
-                                        <option value="0">Select Comd / PSO </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-4 unittype">
-                                <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlCorps" required id="ddlCorps">
-                                        <option value="0">Select Corps / Dte / Area </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2 unittype">
-                                <label class="col-form-label col-sm-4 fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlDiv" required id="ddlDiv">
-                                        <option value="0">Select One </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2 unittype">
-                                <label class="col-form-label col-sm-4 fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlBde" required id="ddlBde">
-                                        <option value="0">Select Bde </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2 FmnBranch  d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlFmnBranch" required id="ddlFmnBranch">
-                                        <option value="1">Select Fmn/Branch </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2 DteBranch d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlPSODte" required id="ddlPSODte">
-                                        <option value="1">Select DG / Sub Dte </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2 DteBranch d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select"   name="ddlDgSubDte" required id="ddlDgSubDte">
-                                        <option value="1">Select DG / Sub Dte</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-primary " value="Save" id="btnUnitMapsave" />
-                                <button type="button" id="btnUnitMapReset" class="btn btn-outline-danger">Reset</button>
-                            </div>
-                            <div class="col-sm-12" id="msg">
+                        </div>
+
+                        <div class="col-12 col-md-6 unittype">
+                            <label class="form-label ecms-mapunit-label" for="ddlCommand">
+                                <i class="fa fa-university"></i>
+                                <span>Comd / PSO</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select" name="ddlCommand" required id="ddlCommand">
+                                <option value="0">Select Comd / PSO</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 unittype">
+                            <label class="form-label ecms-mapunit-label" for="ddlCorps">
+                                <i class="fa fa-map-marker"></i>
+                                <span>Corps / Dte / Area</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select" name="ddlCorps" required id="ddlCorps">
+                                <option value="0">Select Corps / Dte / Area</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 unittype">
+                            <label class="form-label ecms-mapunit-label" for="ddlDiv">
+                                <i class="fa fa-code-fork"></i>
+                                <span>Div/Sub Area</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select" name="ddlDiv" required id="ddlDiv">
+                                <option value="0">Select One</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 unittype">
+                            <label class="form-label ecms-mapunit-label" for="ddlBde">
+                                <i class="fa fa-flag"></i>
+                                <span>Bde</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select" name="ddlBde" required id="ddlBde">
+                                <option value="0">Select Bde</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 FmnBranch d-none">
+                            <label class="form-label ecms-mapunit-label" for="ddlFmnBranch">
+                                <i class="fa fa-random"></i>
+                                <span>Type of Fmn /Branch</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select" name="ddlFmnBranch" required id="ddlFmnBranch">
+                                <option value="1">Select Fmn/Branch</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 DteBranch d-none">
+                            <label class="form-label ecms-mapunit-label" for="ddlPSODte">
+                                <i class="fa fa-share-alt"></i>
+                                <span>PSO /Dte</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select" name="ddlPSODte" required id="ddlPSODte">
+                                <option value="1">Select DG / Sub Dte</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 DteBranch d-none">
+                            <label class="form-label ecms-mapunit-label" for="ddlDgSubDte">
+                                <i class="fa fa-sitemap"></i>
+                                <span>DG / Sub Dte</span>
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <select class="form-select" name="ddlDgSubDte" required id="ddlDgSubDte">
+                                <option value="1">Select DG / Sub Dte</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="ecms-form-actions ecms-mapunit-modal-actions d-flex gap-2 justify-content-center">
+                                <input type="button" class="btn btn-primary" value="Save" id="btnUnitMapsave" />
+                                <button type="button" id="btnUnitMapReset" class="btn btn-danger">Reset</button>
                             </div>
                         </div>
-                    </form>
-                    <div class="col-sm-12" id="msg">
+
+                        <div class="col-12">
+                            <div class="ecms-mapunit-message" id="msg"></div>
+                        </div>
+
                     </div>
-                </div>
+                </form>
             </div>
 
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
+        </div>
+    </div>
 </div>
+
+<script asp-src-include="~/developerjs/mtables.js"></script>
+<script asp-src-include="~/developerjs/MapUnit.js"></script>
+<partial name="~/Views/Shared/_DataTableJS.cshtml" />

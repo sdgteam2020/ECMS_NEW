@@ -1,44 +1,608 @@
-﻿.clickable {
-    height: 190px;
-    width: 190px;
+﻿/* =====================================================
+   ECMS Report Card Movement Modern UI
+   Only page UI changes. Header/footer/layout untouched.
+===================================================== */
+
+:root {
+    --ecms-card-blue-1: #102f73;
+    --ecms-card-blue-2: #2f7dff;
+    --ecms-card-cyan: #55d7ff;
+    --ecms-card-ink: #071b44;
+    --ecms-card-muted: #5b729a;
+    --ecms-card-panel: rgba(232, 244, 255, 0.88);
+    --ecms-card-white: rgba(255,255,255,0.95);
+}
+
+html:has(.ecms-card-movement-page),
+body:has(.ecms-card-movement-page),
+body.ecms-report-card-page {
+    overflow-y: hidden !important;
+}
+
+.ecms-card-movement-page {
+    position: relative;
+    min-height: calc(100vh - 255px);
+    height: calc(100vh - 255px);
+    padding: 12px 18px 46px;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(5, 22, 62, 0.86), rgba(20, 70, 154, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;
+}
+
+    .ecms-card-movement-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 18% 20%, rgba(89, 200, 255, 0.16), transparent 26%), radial-gradient(circle at 84% 72%, rgba(59, 130, 246, 0.18), transparent 30%);
+    }
+
+.ecms-card-movement-container {
+    position: relative;
+    z-index: 1;
+    width: min(1500px, 98vw) !important;
+    max-width: 1500px !important;
+    margin: 0 auto !important;
+}
+
+.ecms-card-movement-shell {
+    width: 100% !important;
+    height: calc(100vh - 276px) !important;
+    max-height: calc(100vh - 276px) !important;
+    margin: 0 auto !important;
+    padding: 12px !important;
+    border: 1px solid rgba(255,255,255,0.70) !important;
+    border-radius: 22px !important;
+    background: var(--ecms-card-panel) !important;
+    box-shadow: 0 22px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
+    overflow: hidden !important;
+}
+
+/* Heading */
+.ecms-card-movement-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px 12px;
+    margin-bottom: 10px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,255,255,0.36));
+    border: 1px solid rgba(255,255,255,0.62);
+}
+
+.ecms-card-movement-head-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1f7cff, #004bd6);
+    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.32);
+    font-size: 21px;
+}
+
+.ecms-card-movement-head h2 {
+    margin: 0;
+    color: var(--ecms-card-ink);
+    font-size: 21px;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.ecms-card-movement-head p {
+    margin: 4px 0 0;
+    color: var(--ecms-card-muted);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* Filter panel */
+.ecms-card-filter-panel {
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(242, 248, 255, 0.70));
+    border: 1px solid rgba(255,255,255,0.72);
+    box-shadow: 0 12px 28px rgba(0, 26, 88, 0.13);
+}
+
+    .ecms-card-filter-panel .SearchTab {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+.ecms-unit-type-row {
+    align-items: center;
+    margin: 0 0 8px !important;
+}
+
+.ecms-card-filter-panel label,
+.ecms-card-filter-panel .col-form-label {
+    color: #10254f !important;
+    font-size: 12.5px !important;
+    font-weight: 900 !important;
+    margin-bottom: 4px !important;
+}
+
+.ecms-radio-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    .ecms-radio-group .form-check {
+        margin: 0 !important;
+        padding: 7px 12px 7px 34px !important;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.74);
+        border: 1px solid rgba(75, 125, 205, 0.22);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.82);
+    }
+
+.ecms-card-movement-page input[type="radio"],
+.ecms-card-movement-page .form-check-input {
+    width: 16px !important;
+    height: 16px !important;
+    accent-color: #1f74ff !important;
+    cursor: pointer;
+}
+
+.ecms-card-movement-page .form-check-label {
+    color: #153263 !important;
+    font-size: 12.5px !important;
+    font-weight: 900 !important;
+    cursor: pointer;
+}
+
+.ecms-filter-grid {
+    row-gap: 8px;
+}
+
+    .ecms-filter-grid > [class*="col-"] {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+    }
+
+.ecms-card-movement-page .form-select,
+.ecms-card-movement-page .form-control {
+    height: 38px !important;
+    min-height: 38px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(93, 125, 175, 0.34) !important;
+    background-color: rgba(255,255,255,0.92) !important;
+    color: #10254f !important;
+    font-size: 12.5px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 8px 18px rgba(0, 30, 80, 0.06), inset 0 1px 0 rgba(255,255,255,0.88) !important;
+}
+
+    .ecms-card-movement-page .form-select:focus,
+    .ecms-card-movement-page .form-control:focus {
+        border-color: #227dff !important;
+        box-shadow: 0 0 0 4px rgba(31, 124, 255, 0.16) !important;
+    }
+
+/* Main internal scroll area */
+.ecms-card-movement-scroll {
+    height: calc(100% - 78px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 6px 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(31, 124, 255, 0.60) rgba(255,255,255,0.25);
+}
+
+.ecms-card-filter-panel + .ecms-card-movement-scroll {
+    height: calc(100% - 190px);
+}
+
+.ecms-card-movement-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.ecms-card-movement-scroll::-webkit-scrollbar-thumb {
+    background: rgba(31, 124, 255, 0.62);
+    border-radius: 999px;
+}
+
+.ecms-card-movement-scroll::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.24);
+    border-radius: 999px;
+}
+
+/* Sections */
+.ecms-card-section {
+    margin: 0 0 14px !important;
+}
+
+    .ecms-card-section:last-child {
+        margin-bottom: 0 !important;
+    }
+
+.ecms-card-movement-page .seven,
+.ecms-card-movement-page .ecms-section-title {
+    width: 100% !important;
+    margin: 8px 0 0 !important;
+}
+
+    .ecms-card-movement-page .seven h1,
+    .ecms-card-movement-page .ecms-section-title h1 {
+        height: 36px !important;
+        line-height: 36px !important;
+        margin: 0 !important;
+        padding: 0 14px !important;
+        border-radius: 12px 12px 0 0 !important;
+        color: #ffffff !important;
+        text-align: center !important;
+        font-size: 15px !important;
+        font-weight: 900 !important;
+        background: linear-gradient(135deg, #153f93, #347cff) !important;
+        box-shadow: 0 10px 20px rgba(17, 69, 168, 0.22), inset 0 1px 0 rgba(255,255,255,0.28) !important;
+    }
+
+.ecms-card-section-body {
+    padding: 14px !important;
+    border-radius: 0 0 16px 16px !important;
+    background: linear-gradient(180deg, rgba(255,255,255,0.74), rgba(235, 246, 255, 0.50)) !important;
+    border: 1px solid rgba(255,255,255,0.62) !important;
+    border-top: 0 !important;
+    box-shadow: 0 15px 34px rgba(0, 30, 90, 0.12) !important;
+}
+
+.ecms-movement-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(142px, 142px));
+    justify-content: center !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+}
+
+/* Cards */
+.ecms-card-movement-page .c-dashboardInfo {
+    width: 142px !important;
+    min-width: 142px !important;
+    max-width: 142px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+    .ecms-card-movement-page .c-dashboardInfo a {
+        display: block !important;
+        height: 100% !important;
+        color: inherit !important;
+        text-decoration: none !important;
+    }
+
+.ecms-card-movement-page .clickable {
+    height: auto !important;
+    width: auto !important;
+    margin-bottom: 0 !important;
+}
+
+.ecms-card-movement-page .ecms-movement-card,
+.ecms-card-movement-page .c-dashboardInfo .wrap {
+    position: relative !important;
+    width: 142px !important;
+    height: 150px !important;
+    min-height: 150px !important;
+    padding: 15px 8px 10px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 5px !important;
+    background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(244, 249, 255,0.92)) !important;
+    border: 1px solid rgba(65, 136, 255, 0.50) !important;
+    box-shadow: 0 15px 30px rgba(0, 32, 85, 0.16), inset 0 1px 0 rgba(255,255,255,0.92) !important;
+    color: #0b2360 !important;
+    text-align: center !important;
+    cursor: pointer;
+    overflow: hidden !important;
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease !important;
+}
+
+    .ecms-card-movement-page .ecms-movement-card::after,
+    .ecms-card-movement-page .c-dashboardInfo .wrap::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        background: radial-gradient(circle at 85% 20%, rgba(31, 124, 255, 0.08), transparent 38%), linear-gradient(145deg, transparent 0%, rgba(13, 91, 225, 0.035) 100%);
+    }
+
+    .ecms-card-movement-page .ecms-movement-card:hover,
+    .ecms-card-movement-page .c-dashboardInfo .wrap:hover {
+        transform: translateY(-3px) !important;
+        border-color: rgba(31, 124, 255, 0.82) !important;
+        box-shadow: 0 22px 44px rgba(0, 45, 120, 0.24), 0 0 0 5px rgba(31, 124, 255, 0.10), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    }
+
+        /* Fixed icon size even on hover/focus */
+        .ecms-card-movement-page .ecms-card-icon,
+        .ecms-card-movement-page .counter-icon,
+        .ecms-card-movement-page .ecms-movement-card:hover .ecms-card-icon,
+        .ecms-card-movement-page .c-dashboardInfo .wrap:hover .ecms-card-icon {
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
+            min-height: 44px !important;
+            max-width: 44px !important;
+            max-height: 44px !important;
+            flex: 0 0 44px !important;
+            margin: 0 0 2px !important;
+            padding: 0 !important;
+            border-radius: 14px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #357cff, #1f4fd8) !important;
+            box-shadow: 0 12px 24px rgba(31, 99, 242, 0.30) !important;
+            transform: none !important;
+            position: relative;
+            z-index: 1;
+        }
+
+            .ecms-card-movement-page .ecms-card-icon i,
+            .ecms-card-movement-page .ecms-movement-card:hover .ecms-card-icon i {
+                color: #ffffff !important;
+                font-size: 21px !important;
+                line-height: 1 !important;
+                transform: none !important;
+            }
+
+/* Different colors by movement type */
+.ecms-card-movement-page .ecms-card-export .ecms-card-icon {
+    background: linear-gradient(135deg, #356cff, #143fc8) !important;
+}
+
+.ecms-card-movement-page .ecms-card-print .ecms-card-icon {
+    background: linear-gradient(135deg, #19a7ff, #0c60c9) !important;
+}
+
+.ecms-card-movement-page .ecms-card-dispatch .ecms-card-icon,
+.ecms-card-movement-page .ecms-card-unit .ecms-card-icon {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+}
+
+.ecms-card-movement-page .ecms-card-office .ecms-card-icon,
+.ecms-card-movement-page .ecms-card-home .ecms-card-icon {
+    background: linear-gradient(135deg, #14b8a6, #0f766e) !important;
+}
+
+.ecms-card-movement-page .ecms-card-done .ecms-card-icon {
+    background: linear-gradient(135deg, #31c48d, #0f8c61) !important;
+}
+
+.ecms-card-movement-page .c-dashboardInfo__count {
+    display: block !important;
+    width: 100% !important;
+    color: #071b44 !important;
+    font-size: 24px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    margin: 1px 0 3px !important;
+    padding: 0 !important;
+    text-align: center !important;
+    position: relative;
+    z-index: 1;
+}
+
+.ecms-card-movement-page .c-dashboardInfo__title {
+    width: 100% !important;
+    min-height: 32px !important;
+    margin: 0 !important;
+    padding: 0 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #0d5be1 !important;
+    font-size: 10.8px !important;
+    font-weight: 900 !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+    position: relative;
+    z-index: 1;
+}
+
+.ecms-card-movement-page .c-dashboardInfo span {
     display: block;
-    margin-bottom: 25px;
 }
 
-.p-4 {
-    padding: 1.5rem !important;
-    padding-bottom: 4.5rem !important;
+/* =====================================================
+   Common-theme integration
+   Shared card, title, section, form, modal and DataTable skins
+   come from ecms.theme.bundle.css. These rules only preserve
+   this page's original dimensions and movement-card layout.
+===================================================== */
+
+/* Neutralize only common .ecms-page spacing for this nested page container. */
+.ecms-card-movement-container.ecms-page {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 }
 
-.ui-datepicker-calendar {
-    display: none !important;
+/* Keep the original dashboard surface while still using .ecms-card. */
+.ecms-card-movement-shell.ecms-card {
+    display: flex;
+    flex-direction: column;
 }
+
+/* Common title structure with the original ReportCard dimensions. */
+.ecms-card-movement-head.ecms-page-title {
+    flex: 0 0 auto;
+}
+
+.ecms-card-movement-head .ecms-title-subtitle,
+.ecms-card-movement-head p {
+    margin: 4px 0 0;
+}
+
+/* The common section/form classes provide the skin; this page owns spacing. */
+.ecms-card-filter-panel.ecms-section,
+.ecms-card-filter-panel.ecms-form-section,
+.ecms-card-section.ecms-section,
+.ecms-card-section-body.ecms-form-section {
+    box-sizing: border-box;
+}
+
+/* Common .ecms-tile is used, but ReportCard keeps its compact tile dimensions. */
+.ecms-card-movement-page .ecms-movement-card.ecms-tile {
+    min-height: 150px !important;
+}
+
+/* =====================================================
+   CardReport modal stacking guard
+   The modal is moved directly under <body> by ReportCard.js.
+   High scoped z-index values prevent any legacy theme/backdrop
+   rule from fading or blocking the dialog.
+===================================================== */
+
+body.ecms-report-card-modal-open > .modal-backdrop,
+body.ecms-report-card-modal-open .modal-backdrop.show {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147482990 !important;
+}
+
+#CardReport,
+#CardReport.modal,
+#CardReport.modal.show {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483000 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    isolation: isolate;
+    pointer-events: auto !important;
+}
+
+    #CardReport .modal-dialog {
+        position: relative !important;
+        z-index: 2 !important;
+        width: min(1320px, calc(100vw - 1.5rem));
+        max-width: min(1320px, calc(100vw - 1.5rem)) !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+    #CardReport .modal-content,
+    #CardReport .modal-header,
+    #CardReport .modal-body {
+        position: relative;
+        z-index: 3;
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+    #CardReport .modal-content {
+        max-height: calc(100dvh - 2rem);
+    }
+
+    #CardReport .modal-body {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    #CardReport .ecms-card-report-table {
+        height: min(65dvh, 620px);
+        min-height: 18rem;
+    }
 
 #CardReport_tbldatadialog {
-    table-layout: auto !important;
     width: 100% !important;
 }
 
-    #CardReport_tbldatadialog th,
-    #CardReport_tbldatadialog td {
-        white-space: nowrap; /* Optional: prevent line wrap */
-        vertical-align: middle;
+#CardReport #msg:empty {
+    display: none;
+}
+
+
+/* Responsive */
+@media (max-width: 1200px) {
+    html:has(.ecms-card-movement-page),
+    body:has(.ecms-card-movement-page),
+    body.ecms-report-card-page {
+        overflow-y: auto !important;
     }
 
-.modal .modal-body .table-responsive {
-    max-height: 500px;
+    .ecms-card-movement-page {
+        height: auto !important;
+        min-height: calc(100vh - 255px) !important;
+        overflow: visible !important;
+    }
+
+    .ecms-card-movement-shell {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    .ecms-card-movement-scroll,
+    .ecms-card-filter-panel + .ecms-card-movement-scroll {
+        height: auto !important;
+        overflow: visible !important;
+    }
 }
 
-.seven h1 {
-    color: rgb(255, 255, 255);
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    text-align: center;
-    font-size: 1.1rem;
-    font-weight: 600;
-    background: linear-gradient(to right, rgb(0, 123, 255), rgb(0, 86, 179));
-    padding: 10px 16px;
+@media (max-width: 768px) {
+    .ecms-card-movement-page {
+        padding: 10px 10px 56px;
+    }
+
+    .ecms-card-movement-head {
+        align-items: flex-start;
+    }
+
+        .ecms-card-movement-head h2 {
+            font-size: 18px;
+        }
+
+    .ecms-movement-grid {
+        grid-template-columns: repeat(auto-fit, minmax(136px, 136px));
+        gap: 12px !important;
+    }
+
+    .ecms-card-movement-page .c-dashboardInfo,
+    .ecms-card-movement-page .ecms-movement-card,
+    .ecms-card-movement-page .c-dashboardInfo .wrap {
+        width: 136px !important;
+        min-width: 136px !important;
+        max-width: 136px !important;
+    }
 }
-#CardReport_tbldatadialog {
-    table-layout: fixed !important;
+
+@media print {
+    @page {
+        margin: 5mm 5mm 8mm 5mm;
+    }
+
+    .ecms-card-movement-page,
+    .ecms-card-movement-shell,
+    .ecms-card-movement-scroll {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+    }
+
+    .ecms-card-movement-head,
+    .ecms-card-filter-panel {
+        display: none !important;
+    }
 }

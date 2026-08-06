@@ -1,3 +1,414 @@
-﻿#tbldata {
-    table-layout: fixed !important;
+﻿/* ==============================================================
+   Master / Unit Move Request
+   PAGE-SPECIFIC UI ONLY
+
+   Important:
+   - No file inside ModernCSS/css is changed.
+   - Existing ECMS common classes provide the shared design.
+   - All additional rules below are scoped to this page and its
+     Unit Move History / Message modal IDs.
+================================================================ */
+
+.swal2-html-container {
+    color: var(--ecms-danger-500, #ef405c) !important;
+}
+
+/* ---------- Fixed page stage ---------- */
+.ecms-screen-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-mapunitchange-page {
+    width: calc(100vw - 1.25rem);
+    max-width: none;
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1rem );
+    min-height: 540px;
+    margin: .5rem auto 0;
+    padding-inline: 0;
+    overflow: hidden;
+}
+
+.ecms-mapunitchange-shell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-mapunitchange-shell > .ecms-card-body {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        padding: .7rem;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+/* ---------- Page title ---------- */
+.ecms-mapunitchange-titlebar {
+    min-height: var(--ecms-title-height, 58px);
+    gap: .75rem;
+}
+
+    .ecms-mapunitchange-titlebar h3 {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: 1.18rem;
+        font-weight: 950;
+        line-height: 1.15;
+    }
+
+.ecms-mapunitchange-actions {
+    min-width: 0;
+}
+
+.ecms-admin-pill,
+.ecms-add-btn {
+    min-height: 2.25rem;
+    padding: .45rem .85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .42rem;
+    border-radius: 999px;
+    font-size: .68rem;
+    font-weight: 950;
+    line-height: 1;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.ecms-admin-pill {
+    border: 1px solid rgba(70, 119, 184, .22);
+    color: var(--ecms-primary-700, #1d57bb) !important;
+    background: rgba(255, 255, 255, .94) !important;
+    box-shadow: 0 .45rem 1rem rgba(0, 35, 100, .1);
+}
+
+    .ecms-admin-pill i {
+        color: var(--ecms-primary-600, #2f67e6);
+    }
+
+.ecms-add-btn {
+    border-radius: .65rem;
+    box-shadow: 0 .65rem 1.35rem rgba(35, 138, 64, .22);
+}
+
+/* ---------- DataTable section ---------- */
+.ecms-mapunitchange-table-section {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-mapunitchange-table-section > .ecms-section-title {
+        flex: 0 0 auto;
+        min-height: 2.1rem;
+        padding-block: .42rem;
+    }
+
+.ecms-mapunitchange-table-wrap {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.ecms-mapunitchange-page #tbldata_wrapper {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 2.5rem minmax(0, 1fr) 2.8rem;
+    overflow: hidden;
+}
+
+    .ecms-mapunitchange-page #tbldata_wrapper > .dt-top {
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: 0 0 .4rem;
+    }
+
+    .ecms-mapunitchange-page #tbldata_wrapper > .dataTables_scroll,
+    .ecms-mapunitchange-page #tbldata_wrapper > .dt-scroll {
+        grid-row: 2;
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .ecms-mapunitchange-page #tbldata_wrapper .dataTables_scrollHead,
+    .ecms-mapunitchange-page #tbldata_wrapper .dt-scroll-head {
+        flex: 0 0 auto;
+    }
+
+    .ecms-mapunitchange-page #tbldata_wrapper .dataTables_scrollBody,
+    .ecms-mapunitchange-page #tbldata_wrapper .dt-scroll-body {
+        flex: 1 1 auto;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: auto !important;
+        padding-bottom: 0;
+    }
+
+    .ecms-mapunitchange-page #tbldata_wrapper > .dt-bottom {
+        grid-row: 3;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: .45rem .1rem 0;
+        overflow: visible;
+    }
+
+.ecms-mapunitchange-page .dataTables_filter,
+.ecms-mapunitchange-page .dt-search {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+    .ecms-mapunitchange-page .dataTables_filter input,
+    .ecms-mapunitchange-page .dt-search input {
+        width: 13rem;
+        max-width: 100%;
+    }
+
+.ecms-mapunitchange-page .dt-buttons {
+    display: none !important;
+}
+
+.ecms-mapunitchange-page .dt-ellipsis,
+.ecms-mapunitchange-page .nowrap {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* Empty result state remains centred inside the available table area. */
+.ecms-mapunitchange-page td.dataTables_empty,
+.ecms-mapunitchange-page td.dt-empty {
+    height: 8rem;
+    color: var(--ecms-muted, #64748b);
+    text-align: center;
+    vertical-align: middle;
+    font-weight: 800;
+}
+
+/* Status badges generated from MapUnitChange.js. */
+.ecms-mapunitchange-page .badge,
+.ecms-mapunitchange-page .badge-pill {
+    min-width: 4rem;
+    min-height: 1.35rem;
+    padding: .25rem .55rem;
+    border: 0;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    font-size: .62rem;
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ecms-mapunitchange-page .bg-warning,
+.ecms-mapunitchange-page .badge-warning {
+    color: var(--ecms-text, #061b44) !important;
+    background: linear-gradient(135deg, #facc15, #f59e0b) !important;
+}
+
+.ecms-mapunitchange-page .bg-success,
+.ecms-mapunitchange-page .badge-success {
+    color: var(--ecms-white, #fff) !important;
+    background: linear-gradient( 135deg, var(--ecms-success-500, #35ad56), var(--ecms-success-600, #238a40) ) !important;
+}
+
+.ecms-mapunitchange-page .badge-danger,
+.ecms-mapunitchange-page .bg-danger {
+    color: var(--ecms-white, #fff) !important;
+    background: linear-gradient( 135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136) ) !important;
+}
+
+/* Action buttons generated from MapUnitChange.js. */
+.ecms-mapunitchange-page .cls-btnedit,
+.ecms-mapunitchange-page .cls-btnview {
+    margin: 0 .16rem;
+    border: 0;
+    box-shadow: 0 .45rem .95rem rgba(0, 30, 80, .16);
+}
+
+.ecms-mapunitchange-page .cls-btnedit {
+    color: var(--ecms-text, #061b44) !important;
+    background: linear-gradient(135deg, #facc15, #f59e0b) !important;
+}
+
+.ecms-mapunitchange-page .cls-btnview {
+    color: var(--ecms-white, #fff) !important;
+    background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-800, #123f8c) ) !important;
+}
+
+/* Hide DataTables' cloned sizing header inside the body scroll area. */
+.ecms-mapunitchange-page .dataTables_scrollBody table thead,
+.ecms-mapunitchange-page .dt-scroll-body table thead {
+    display: none !important;
+    visibility: collapse !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+.ecms-mapunitchange-page .dataTables_processing,
+.ecms-mapunitchange-page .dt-processing,
+#tbldata_processing {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* ---------- Unit Move History / Message modal support ---------- */
+#UnitMoveHistoryModal,
+#MessageDialog,
+.modal.unitmovehistory {
+    z-index: 1080 !important;
+}
+
+    #UnitMoveHistoryModal.show,
+    #MessageDialog.show,
+    .modal.unitmovehistory.show,
+    #UnitMoveHistoryModal.show .modal-dialog,
+    #MessageDialog.show .modal-dialog,
+    .modal.unitmovehistory.show .modal-dialog,
+    #UnitMoveHistoryModal.show .modal-content,
+    #MessageDialog.show .modal-content,
+    .modal.unitmovehistory.show .modal-content {
+        opacity: 1 !important;
+        visibility: visible !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+body.modal-open .modal-backdrop,
+body.modal-open .modal-backdrop.show {
+    z-index: 1070 !important;
+    opacity: .72 !important;
+}
+
+#UnitMoveHistoryModal .modal-dialog,
+#MessageDialog .modal-dialog,
+.modal.unitmovehistory .modal-dialog {
+    width: min(1000px, calc(100vw - 1.5rem));
+    max-width: min(1000px, calc(100vw - 1.5rem));
+}
+
+#UnitMoveHistoryModal .modal-content,
+#MessageDialog .modal-content,
+.modal.unitmovehistory .modal-content {
+    max-height: calc(100vh - 1.5rem);
+}
+
+#UnitMoveHistoryModal .modal-body,
+#MessageDialog .modal-body,
+.modal.unitmovehistory .modal-body {
+    min-height: 0;
+    overflow: auto;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+    .ecms-screen-stage {
+        overflow: visible;
+    }
+
+    .ecms-mapunitchange-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-mapunitchange-shell,
+    .ecms-mapunitchange-shell > .ecms-card-body {
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-mapunitchange-table-section {
+        min-height: 30rem;
+    }
+
+    .ecms-mapunitchange-page #tbldata_wrapper {
+        grid-template-rows: auto minmax(20rem, 1fr) auto;
+    }
+
+        .ecms-mapunitchange-page #tbldata_wrapper > .dt-top,
+        .ecms-mapunitchange-page #tbldata_wrapper > .dt-bottom {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+    .ecms-mapunitchange-page .dataTables_filter,
+    .ecms-mapunitchange-page .dt-search {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+        .ecms-mapunitchange-page .dataTables_filter input,
+        .ecms-mapunitchange-page .dt-search input {
+            width: 100%;
+        }
+
+    .ecms-mapunitchange-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-mapunitchange-titlebar {
+        align-items: flex-start !important;
+        flex-direction: column;
+    }
+
+    .ecms-add-btn,
+    .ecms-admin-pill {
+        width: 100%;
+        justify-content: center;
+    }
 }

@@ -1,19 +1,438 @@
-﻿.form-group .labelprofile {
-    font-size: 14px;
-    font-weight: 700;
+﻿/* =====================================================================
+   ECMS Profile Mapping
+   Page-only layout refinements. Shared ModernCSS remains unchanged and
+   remains the source of truth for colours, surfaces, radii and controls.
+===================================================================== */
+
+/* Keep the legacy container class for compatibility while allowing the
+   common ecms-page sizing to control this page. */
+.ecms-userprofile-page {
+    position: relative;
+    padding: 0 !important;
 }
 
-.cardbg {
-    /*  background: rgb(255,255,255);
-            background: radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(63,251,217,0.3225665266106442) 100%); */
+.ecms-profile-form {
+    width: 100%;
+    margin: 0;
 }
 
-.minheight {
-    min-height: 225px;
+/* Main profile surface uses common ecms-card/ecms-card-body styling. */
+.ecms-profile-shell {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    overflow: visible;
 }
+
+/* Page heading alignment only; visual skin comes from ecms-page-title. */
+.ecms-profile-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.ecms-profile-heading-icon {
+    flex: 0 0 2.6rem;
+}
+
+.ecms-profile-heading > div:last-child {
+    min-width: 0;
+}
+
+.ecms-profile-heading h2 {
+    margin: 0;
+    font-size: clamp(1.15rem, 1.55vw, 1.4rem);
+}
+
+.ecms-profile-heading p {
+    margin: 0.18rem 0 0;
+    color: var(--ecms-text-soft, #123067);
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+/* Unit and domain summary sections. */
+.ecms-profile-grid {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    align-items: stretch;
+}
+
+.ecms-profile-card {
+    min-width: 0;
+}
+
+    .ecms-profile-card .ecms-section-title {
+        min-height: var(--ecms-section-title-height, 36px);
+    }
+
+.ecms-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.48rem 0.58rem;
+}
+
+.ecms-detail-item-wide {
+    grid-column: 1 / -1;
+}
+
+/* Compact read-only information tiles inside the common section. */
+.ecms-detail-item,
+.ecms-form-field,
+.ecms-check-field {
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0.48rem 0.58rem;
+    border: 1px solid rgba(165, 187, 219, 0.46);
+    border-radius: var(--ecms-radius-md, 0.75rem);
+    background: rgba(255, 255, 255, 0.58);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.ecms-userprofile-page .labelprofile {
+    display: block;
+    margin: 0 0 0.2rem;
+    font-size: 0.72rem;
+    line-height: 1.1;
+}
+
+.ecms-value,
+.ecms-readonly-pill {
+    display: block;
+    min-height: 1.1rem;
+    color: var(--ecms-text, #061b44);
+    font-size: 0.79rem;
+    font-weight: 850;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+/* Personal information form. */
+.ecms-personal-card {
+    margin: 0;
+}
+
+.ecms-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.58rem;
+}
+
+.ecms-form-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.ecms-userprofile-page .form-control,
+.ecms-userprofile-page .form-select,
+.ecms-userprofile-page .form-control-Alphabets {
+    width: 100%;
+    min-width: 0;
+}
+
+.ecms-readonly-pill {
+    min-height: var(--ecms-control-height, 36px);
+    padding: 0.45rem 0.65rem;
+    border: 1px solid rgba(165, 187, 219, 0.62);
+    border-radius: var(--ecms-radius-sm, 0.55rem);
+    background: linear-gradient(135deg, #eef3fa, #dce5f0);
+    color: #48566d;
+    display: flex;
+    align-items: center;
+}
+
 .full-width {
     width: 100%;
 }
+
+/* Keep the question visible while reserving a stable area for Yes + checkbox. */
+.ecms-check-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+    .ecms-check-field .labelprofile {
+        margin: 0;
+        white-space: normal;
+        overflow: visible;
+    }
+
+.ecms-check-wrap {
+    min-width: 4.75rem;
+    min-height: 2.1rem;
+    padding: 0.3rem 0.55rem;
+    border: 1px solid rgba(63, 124, 255, 0.22);
+    border-radius: var(--ecms-radius-pill, 999px);
+    background: rgba(255, 255, 255, 0.76);
+    color: var(--ecms-text, #061b44);
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    justify-self: end;
+}
+
+.ecms-check-text {
+    color: var(--ecms-text, #061b44);
+    font-size: 0.75rem;
+    font-weight: 900;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.ecms-userprofile-page .ecms-check-wrap .form-check-input {
+    position: static;
+    float: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    min-width: 1.05rem;
+    margin: 0;
+    flex: 0 0 1.05rem;
+}
+
+/* Form actions use common button styles; only layout is page-specific. */
+.ecms-profile-actions {
+    width: 100%;
+    margin-top: 0;
+    padding: 0.05rem 0.1rem 0;
+    justify-content: flex-end;
+}
+
+    .ecms-profile-actions .ecms-btn {
+        min-height: var(--ecms-control-height, 36px);
+        padding: 0.48rem 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.42rem;
+        font-size: 0.78rem;
+        white-space: nowrap;
+    }
+
+.ecms-token-message-wrap {
+    margin-top: -0.15rem;
+    text-align: center;
+}
+
+#tokenmsg {
+    color: var(--ecms-text, #061b44);
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+/* Confirmation graphic is page content; modal skin comes from common theme. */
+.ecms-confirm-icon {
+    width: 3.25rem;
+    height: 3.25rem;
+    margin: 0 auto 0.75rem;
+    border-radius: 50%;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient(135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136));
+    box-shadow: 0 0.75rem 1.5rem rgba(200, 33, 54, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+/* Modal stacking guard for this page. Shared modal styling remains in
+   ecms.06.modals.css. */
+.ecms-userprofile-modal {
+    z-index: 1060 !important;
+}
+
+    .ecms-userprofile-modal .modal-dialog,
+    .ecms-userprofile-modal .modal-content {
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+body:has(.ecms-userprofile-modal.show) .modal-backdrop {
+    z-index: 1040 !important;
+}
+
+/* Legacy utility classes retained for compatibility. */
 .card-body-min-height {
     min-height: 150px;
+}
+
+.minheight {
+    min-height: auto !important;
+}
+
+.cardbg {
+    background: transparent;
+}
+
+/* Small-height desktop screens: reduce spacing before introducing scroll. */
+@media (min-width: 1200px) and (max-height: 760px) {
+    .ecms-userprofile-page {
+        margin-top: 0.5rem;
+    }
+
+    .ecms-profile-shell {
+        gap: 0.48rem;
+        padding: 0.58rem !important;
+    }
+
+    .ecms-profile-heading {
+        min-height: 3.15rem;
+        padding-block: 0.45rem;
+    }
+
+    .ecms-profile-heading-icon {
+        width: 2.35rem;
+        height: 2.35rem;
+        min-width: 2.35rem;
+        flex-basis: 2.35rem;
+    }
+
+    .ecms-detail-grid,
+    .ecms-form-grid {
+        gap: 0.38rem 0.48rem;
+        padding: 0.55rem 0.65rem;
+    }
+
+    .ecms-detail-item,
+    .ecms-form-field,
+    .ecms-check-field {
+        min-height: 2.55rem;
+        padding: 0.35rem 0.48rem;
+    }
+
+    .ecms-userprofile-page .labelprofile {
+        font-size: 0.68rem;
+        margin-bottom: 0.14rem;
+    }
+
+    .ecms-value,
+    .ecms-readonly-pill {
+        font-size: 0.74rem;
+    }
+}
+
+/* Stack the two mapping sections and permit normal app-main scrolling. */
+@media (max-width: 1199.98px) {
+    .ecms-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-profile-shell {
+        gap: 0.5rem;
+    }
+
+    .ecms-profile-heading {
+        align-items: flex-start;
+    }
+
+        .ecms-profile-heading h2 {
+            font-size: 1.08rem;
+        }
+
+    .ecms-detail-grid,
+    .ecms-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-detail-item-wide {
+        grid-column: auto;
+    }
+
+    .ecms-check-field {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .ecms-profile-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+        .ecms-profile-actions .ecms-btn {
+            width: 100%;
+            white-space: normal;
+        }
+
+    .ecms-token-message-wrap #tokenmsg {
+        width: 100% !important;
+        max-width: none;
+    }
+}
+
+@media (max-width: 419.98px) {
+    .ecms-check-field {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-check-wrap {
+        justify-self: start;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ecms-userprofile-page .btn {
+        transition: none !important;
+    }
+}
+
+/* =====================================================================
+   FINAL DESKTOP SCROLLBAR FIX
+   The shared ECMS layout scrolls inside .ecms-app-main. On this page the
+   default .ecms-page bottom margin includes footer-safe space even though
+   .ecms-app-main already ends above the fixed footer. That extra space
+   creates the right-side page scrollbar. Keep this fix local to Profile.
+===================================================================== */
+@media (min-width: 1200px) and (min-height: 721px) {
+    html:has(.ecms-userprofile-page),
+    body:has(.ecms-userprofile-page) {
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+
+        body:has(.ecms-userprofile-page) .ecms-app-main,
+        .ecms-app-main:has(.ecms-userprofile-page) {
+            overflow-x: hidden !important;
+            overflow-y: hidden !important;
+            overscroll-behavior: none;
+        }
+
+    .ecms-userprofile-page {
+        width: min(1480px, calc(100vw - 1.5rem)) !important;
+        height: calc( 100% - var(--ecms-nav-strip-height, 44px) - var(--ecms-breadcrumb-strip-height, 35px) - 1.25rem ) !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0.625rem auto !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .ecms-profile-form,
+    .ecms-profile-shell {
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .ecms-profile-shell {
+        overflow: hidden !important;
+    }
 }

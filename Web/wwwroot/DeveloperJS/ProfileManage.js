@@ -3,6 +3,8 @@
 var table; // Declare table variable outside the function to preserve the instance
 let UserProfileId = 0;
 $(function () {
+    PrepareProfileManageModalRoots();
+
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
     mMsater(0, "ddlRank", Rank, "");
@@ -29,8 +31,7 @@ $(function () {
         this.value = this.value.toUpperCase();
     });
     $("#btnProfileAddButton").on("click", async function () {
-        if ($("#txtArmyNo").val().length > 7 && $("#txtArmyNo").val().length < 10)
-        {
+        if ($("#txtArmyNo").val().length > 7 && $("#txtArmyNo").val().length < 10) {
             let ArmyNoSfx = ($("#txtArmyNo").val() || "").trim().toUpperCase();
 
             let pattern = /^[A-Z]{2}\d{5,6}[A-Z]$/;
@@ -53,40 +54,40 @@ $(function () {
 
         }
         else {
-                toastr.error("Minimum eight and Maximum nine length of Army No.");
+            toastr.error("Minimum eight and Maximum nine length of Army No.");
         }
 
     });
 
-    $("#IsTokenWaiverYes").on("click", function () { 
+    $("#IsTokenWaiverYes").on("click", function () {
         $("#spnReasonTokenWaiver").removeClass("d-none");
         $('#txtMessage').prop('required', true);
         $("#txtMessage-error").html('Reason for IACA Token Waiver is required.');
     });
-    $("#IsTokenWaiverNo").on("click", function () { 
-        $("#spnReasonTokenWaiver").addClass("d-none"); 
+    $("#IsTokenWaiverNo").on("click", function () {
+        $("#spnReasonTokenWaiver").addClass("d-none");
         $('#txtMessage').prop('required', false);
         $('#txtMessage').val('');
         $("#txtMessage-error").html('');
     });
 
-    $("#btnProfileAdd").on("click",function () {
+    $("#btnProfileAdd").on("click", function () {
         Reset();
         ResetErrorMessage();
         $("#btnProfileAddButton").val("Save");
-        $("#spnReasonTokenWaiver").addClass("d-none"); 
+        $("#spnReasonTokenWaiver").addClass("d-none");
         $("#AddNewProfile").modal('show');
     });
-    $("#btnProfileAddReset").on("click",function () {
+    $("#btnProfileAddReset").on("click", function () {
         Reset();
         ResetErrorMessage();
     });
-    
-    $("#txtSearch").on("keyup",function () {
+
+    $("#txtSearch").on("keyup", function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
             if ($("input[type='radio'][name=choice]:checked").val() == "UserId") {
-                var num_val = parseInt(eThis.val()); 
+                var num_val = parseInt(eThis.val());
                 if (isNaN(num_val)) {
                     alert("Enter only number");
                     eThis.val('')
@@ -143,17 +144,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old DataTables generated sizing markup
     }
 
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: false,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -185,10 +187,14 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-                
+                RefreshProfileManageDataTable("#tbldata", 30);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing, .dt-processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                RefreshProfileManageDataTable("#tbldata", 30);
             }
         },
         columns: [
@@ -272,7 +278,7 @@ function BindData() {
                 width: "100px",
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
-                    return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>" ;
+                    return data ? "<span class='badge badge-pill badge-success'>YES</span>" : "<span class='badge badge-pill badge-danger'>No</span>";
                 }
             },
             {
@@ -330,7 +336,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search IC No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
         buttons: [
             //{
             //    extend: 'copy',
@@ -359,26 +365,39 @@ function BindData() {
         initComplete: function () {
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
+            RefreshProfileManageDataTable("#tbldata", 20);
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    RefreshProfileManageDataTable("#tbldata", 0);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            this.api().columns.adjust();
+            RefreshProfileManageDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Profile Management tooltip skipped:", error);
+                    }
+                });
+            }
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -471,16 +490,16 @@ function ProfileCount() {
     });
 }
 function Save() {
-    let param ={
-            "UserId": UserProfileId,
-            "ArmyNo": $("#txtArmyNo").val(),
-            "Name": $("#txtName").val(),
-            "RankId": $("#ddlRank").val(),
-            "ArmedId": $("#ddlArmType").val(),
-            "IsTokenWaiver": $('input:radio[name=IsTokenWaiver]:checked').val(),
-            "ReasonTokenWaiver": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
-            "IsToken": $('input:radio[name=IsToken]:checked').val(),
-            "IsWithTokenApply": $('input:radio[name=IsWithTokenApply]:checked').val(),
+    let param = {
+        "UserId": UserProfileId,
+        "ArmyNo": $("#txtArmyNo").val(),
+        "Name": $("#txtName").val(),
+        "RankId": $("#ddlRank").val(),
+        "ArmedId": $("#ddlArmType").val(),
+        "IsTokenWaiver": $('input:radio[name=IsTokenWaiver]:checked').val(),
+        "ReasonTokenWaiver": $("#txtMessage").val().length > 0 ? $("#txtMessage").val() : null,
+        "IsToken": $('input:radio[name=IsToken]:checked').val(),
+        "IsWithTokenApply": $('input:radio[name=IsWithTokenApply]:checked').val(),
     }
     $.ajax({
         url: '/Account/SaveProfileManage',
@@ -524,7 +543,7 @@ function Save() {
                     for (var i = 0; i < result.length; i++) {
                         toastr.error(result[i][0].ErrorMessage)
                     }
-                }       
+                }
             }
         }
     });
@@ -699,3 +718,117 @@ async function ChkSfx(ServiceNo) {
     }
 
 }
+
+/* ==============================================================
+   PAGE-LOCAL UI HELPERS
+   No global ModernCSS file is changed by these helpers.
+================================================================ */
+
+function PrepareProfileManageModalRoot(modalSelector) {
+    const $modal = $(modalSelector);
+
+    if (!$modal.length) {
+        return;
+    }
+
+    // A modal nested inside a transformed/layout container can appear below
+    // its own backdrop. Moving only this page's modals to body fixes that.
+    if (!$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+}
+
+function PrepareProfileManageModalRoots() {
+    PrepareProfileManageModalRoot("#AddNewProfile");
+    PrepareProfileManageModalRoot("#hoverModal");
+}
+
+function RefreshProfileManageDataTable(tableSelector, delay) {
+    const wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            const $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            // The common/page ECMS CSS hides this cloned sizing header.
+            // aria-hidden is added only for accessibility.
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                $(tableSelector).DataTable().columns.adjust();
+            }
+        } catch (error) {
+            console.warn("Profile Management DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
+function CleanupProfileManageModalState() {
+    if ($(".modal.show").length) {
+        // Bootstrap can remove modal-open when the small information modal
+        // closes while the main profile modal is still visible.
+        $("body").addClass("modal-open");
+        return;
+    }
+
+    $(".modal-backdrop").remove();
+    $("body")
+        .removeClass("modal-open")
+        .css({
+            "padding-right": "",
+            "overflow": ""
+        });
+}
+
+$(document)
+    .off("draw.dt.profileManageUi")
+    .on("draw.dt.profileManageUi", function (event, settings) {
+        const tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            RefreshProfileManageDataTable("#tbldata", 20);
+        }
+    });
+
+$("#AddNewProfile")
+    .off(".profileManageUi")
+    .on("shown.bs.modal.profileManageUi", function () {
+        const $modal = $(this);
+
+        window.setTimeout(function () {
+            $modal.find("input[type='radio']").each(function () {
+                void this.offsetHeight;
+            });
+        }, 50);
+    })
+    .on("hidden.bs.modal.profileManageUi", CleanupProfileManageModalState);
+
+$("#hoverModal")
+    .off(".profileManageUi")
+    .on("shown.bs.modal.profileManageUi", function () {
+        $("body").addClass("modal-open");
+    })
+    .on("hidden.bs.modal.profileManageUi", CleanupProfileManageModalState);
+
+$(document)
+    .off("keydown.profileManageInfo", "#TokenWaiverInfo")
+    .on("keydown.profileManageInfo", "#TokenWaiverInfo", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            $("#hoverModal").modal("show");
+        }
+    });
+
+$(window)
+    .off("resize.profileManageUi")
+    .on("resize.profileManageUi", function () {
+        window.clearTimeout(window.__profileManageResizeTimer);
+        window.__profileManageResizeTimer = window.setTimeout(function () {
+            RefreshProfileManageDataTable("#tbldata", 0);
+        }, 120);
+    });

@@ -1,13 +1,314 @@
-﻿.clickable {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-}
-.counter-title {
-    margin-top: 2.0rem !important;
+﻿/*
+=====================================================
+ECMS Dashboard - Bootstrap First Final Fix
+Scope: Home/Dashboard only.
+Common design comes from ModernCSS. This file only fixes
+Dashboard card polish and dashboard-only scrolling.
+=====================================================
+*/
+
+/* Keep links/click handlers unchanged. */
+.clickable {
+    display: block !important;
+    color: inherit !important;
+    text-decoration: none !important;
 }
 
-/* .p-4 {
-        padding: 1.5rem !important;
-        padding-bottom: 4.5rem !important;
-    } */
+    .clickable:hover {
+        color: inherit !important;
+        text-decoration: none !important;
+    }
+
+/* Stop the right-side page scrollbar on Dashboard desktop view. */
+@media (min-width: 992px) {
+    html:has(.ecms-dashboard-page),
+    body:has(.ecms-dashboard-page) {
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+
+        body:has(.ecms-dashboard-page) .ecms-main-render-row,
+        body:has(.ecms-dashboard-page) #layoutSidenav_content,
+        body:has(.ecms-dashboard-page) #layoutSidenav_content main {
+            overflow: hidden !important;
+        }
+}
+
+/* Main dashboard background area below breadcrumb. */
+.ecms-dashboard-page {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    background: var(--ecms-bg-overlay), var(--ecms-bg-image) center center / cover no-repeat !important;
+    overflow-x: hidden !important;
+}
+
+/* Desktop: fit dashboard exactly between breadcrumb and fixed footer. */
+@media (min-width: 992px) {
+    .ecms-dashboard-page {
+        height: calc(100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height)) !important;
+        min-height: 0 !important;
+        padding: 14px 16px 12px !important;
+        overflow: hidden !important;
+    }
+}
+
+/* Main content width. */
+.ecms-dashboard-shell {
+    width: min(1320px, 100%) !important;
+    max-width: 1320px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+}
+
+    /* Keep the three dashboard groups visually balanced. */
+    .ecms-dashboard-page > .container-xxl > .row,
+    .ecms-dashboard-shell > .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+/* Group card uses common .ecms-section, with dashboard-only sizing. */
+.ecms-dashboard-group-card {
+    min-height: 214px !important;
+    height: auto !important;
+    border-radius: var(--ecms-radius-lg) !important;
+    border: var(--ecms-border-white) !important;
+    background: linear-gradient(135deg, rgba(244, 249, 255, .96), rgba(219, 235, 253, .90)) !important;
+    box-shadow: var(--ecms-shadow-md) !important;
+    overflow: hidden !important;
+}
+
+    .ecms-dashboard-group-card .ecms-section-title {
+        min-height: 38px !important;
+        padding: 8px 12px !important;
+        border-radius: 0 !important;
+        font-size: 14px !important;
+        line-height: 1.1 !important;
+    }
+
+    .ecms-dashboard-group-card .card-body {
+        min-height: 174px !important;
+        padding: 16px 16px 18px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+        .ecms-dashboard-group-card .card-body > .row {
+            width: 100% !important;
+            align-items: stretch !important;
+        }
+
+/* Dashboard tiles reuse common .ecms-summary-tile but get compact dashboard dimensions. */
+.ecms-dashboard-tile {
+    min-height: 132px !important;
+    height: 100% !important;
+    max-width: 170px !important;
+    margin: 0 auto !important;
+    padding: 14px 10px 12px !important;
+    border-radius: var(--ecms-radius-md) !important;
+    border: 1px solid rgba(63, 124, 255, .42) !important;
+    background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(235,245,255,.95)) !important;
+    box-shadow: 0 14px 28px rgba(10, 43, 96, .14), inset 0 1px 0 rgba(255,255,255,.90) !important;
+    text-decoration: none !important;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+
+    .ecms-dashboard-tile .counter-icon {
+        width: 46px !important;
+        height: 46px !important;
+        min-width: 46px !important;
+        margin: 0 auto 8px auto !important;
+        border-radius: 15px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-500)) !important;
+        color: #ffffff !important;
+        box-shadow: 0 12px 24px rgba(47, 103, 230, .24) !important;
+    }
+
+        .ecms-dashboard-tile .counter-icon i {
+            color: #ffffff !important;
+            font-size: 20px !important;
+            line-height: 1 !important;
+        }
+
+    .ecms-dashboard-tile .counter-value {
+        display: block !important;
+        margin: 0 0 6px 0 !important;
+        color: var(--ecms-primary-600) !important;
+        font-size: 22px !important;
+        font-weight: 950 !important;
+        line-height: 1 !important;
+    }
+
+    .ecms-dashboard-tile h3,
+    .ecms-dashboard-tile .counter-title {
+        margin: 0 !important;
+        color: var(--ecms-primary-700) !important;
+        font-size: 11.5px !important;
+        font-weight: 950 !important;
+        line-height: 1.15 !important;
+        text-align: center !important;
+        text-transform: uppercase !important;
+        letter-spacing: .1px !important;
+    }
+
+.clickable:hover .ecms-dashboard-tile {
+    transform: translateY(-4px) !important;
+    border-color: rgba(63, 124, 255, .66) !important;
+    box-shadow: 0 20px 38px rgba(10, 43, 96, .22), inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+/* Large desktop: keep dashboard cards on one row and prevent over-height. */
+@media (min-width: 1200px) {
+    .ecms-dashboard-shell > .row {
+        align-items: flex-start !important;
+    }
+
+    .ecms-dashboard-group-card {
+        min-height: 214px !important;
+    }
+
+        .ecms-dashboard-group-card .card-body {
+            min-height: 174px !important;
+        }
+}
+
+/* Medium screens: allow natural page scroll and stack Bootstrap columns. */
+@media (max-width: 1199.98px) {
+    .ecms-dashboard-page {
+        height: auto !important;
+        min-height: calc(100vh - var(--ecms-footer-height)) !important;
+        padding: 12px 12px calc(var(--ecms-footer-height) + 18px) !important;
+        overflow-y: auto !important;
+    }
+
+    .ecms-dashboard-group-card {
+        min-height: 0 !important;
+    }
+
+        .ecms-dashboard-group-card .card-body {
+            min-height: 0 !important;
+            padding: 14px !important;
+        }
+}
+
+/* Small screens: one/two Bootstrap cards per row, no clipping. */
+@media (max-width: 575.98px) {
+    .ecms-dashboard-page {
+        padding: 10px 10px calc(var(--ecms-footer-height) + 20px) !important;
+    }
+
+    .ecms-dashboard-tile {
+        min-height: 124px !important;
+        max-width: 245px !important;
+        padding: 12px 8px !important;
+    }
+
+        .ecms-dashboard-tile .counter-icon {
+            width: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
+        }
+
+        .ecms-dashboard-tile .counter-value {
+            font-size: 20px !important;
+        }
+
+        .ecms-dashboard-tile h3,
+        .ecms-dashboard-tile .counter-title {
+            font-size: 11px !important;
+        }
+}
+
+
+/* =====================================================
+   FINAL FIX: Dashboard tile content alignment
+   Bootstrap handles layout columns; these rules only make
+   each tile content perfectly centered and consistent.
+===================================================== */
+
+/* Make every tile column stretch the same height inside Bootstrap rows. */
+.ecms-dashboard-page .card-body .row > [class*="col-"] {
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+/* Anchor must fill the Bootstrap column so the tile can center correctly. */
+.ecms-dashboard-page .clickable {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+/* Force all dashboard tile content into one vertical centered stack. */
+.ecms-dashboard-page .ecms-dashboard-tile,
+.ecms-dashboard-page .ecms-summary-tile.ecms-dashboard-tile {
+    width: 100% !important;
+    max-width: 170px !important;
+    min-height: 132px !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 6px !important;
+}
+
+    /* Reset any old icon positioning/floating and keep icon centered. */
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-icon {
+        position: static !important;
+        float: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto 4px auto !important;
+    }
+
+    /* Counter number always appears centered below icon. */
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-value {
+        width: 100% !important;
+        display: block !important;
+        float: none !important;
+        margin: 0 !important;
+        text-align: center !important;
+    }
+
+    /* Title text stays centered and does not push content sideways. */
+    .ecms-dashboard-page .ecms-dashboard-tile h3,
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-title {
+        width: 100% !important;
+        display: block !important;
+        float: none !important;
+        margin: 0 !important;
+        text-align: center !important;
+        word-break: normal !important;
+        overflow-wrap: break-word !important;
+    }
+
+    /* Cards without numbers need same visual balance. */
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-icon + .counter-title,
+    .ecms-dashboard-page .ecms-dashboard-tile .counter-icon + h3 {
+        margin-top: 4px !important;
+    }
+
+/* Keep group card content centered in the available body height. */
+.ecms-dashboard-page .ecms-dashboard-group-card .card-body > .row {
+    align-items: stretch !important;
+    justify-content: center !important;
+}
+
+@media (max-width: 575.98px) {
+    .ecms-dashboard-page .ecms-dashboard-tile,
+    .ecms-dashboard-page .ecms-summary-tile.ecms-dashboard-tile {
+        max-width: 245px !important;
+        min-height: 124px !important;
+    }
+}

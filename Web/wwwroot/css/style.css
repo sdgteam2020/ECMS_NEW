@@ -15728,7 +15728,6 @@ body {
         justify-content: space-between;
         min-width: 0;
         flex-grow: 1;
-        min-height: calc(98vh - 3.625rem);
         margin-left: -17rem;
     }
 
@@ -15736,8 +15735,7 @@ body {
     transform: translateX(0);
 }
 
-.sidenav-toggled #layoutSidenav #layoutSidenav_content:before {
-    content: "";
+.sidenav-toggled #layoutSidenav #layoutSidenav_content:before {    
     display: block;
     position: absolute;
     top: 0;

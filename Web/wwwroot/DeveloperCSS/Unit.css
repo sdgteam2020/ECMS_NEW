@@ -1,3 +1,474 @@
-﻿#tbldata {
-    table-layout: fixed !important;
+﻿/* ==============================================================
+   Master / Unit
+   PAGE-SPECIFIC UI ONLY
+
+   Important:
+   - No file inside ModernCSS/css is changed.
+   - Existing ECMS common classes provide the shared design.
+   - All additional rules below are scoped to the Unit page.
+================================================================ */
+
+.swal2-html-container {
+    color: var(--ecms-danger-500, #ef405c) !important;
+}
+
+.textarea-auto-height {
+    height: auto;
+}
+
+/* ---------- Fixed page stage ---------- */
+.ecms-screen-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-unit-page {
+    width: calc(100vw - 1.25rem);
+    max-width: none;
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1rem );
+    min-height: 540px;
+    margin: .5rem auto 0;
+    padding-inline: 0;
+    overflow: hidden;
+}
+
+.ecms-unit-shell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-unit-shell > .ecms-card-body {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        padding: .7rem;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+/* ---------- Page title ---------- */
+.ecms-unit-titlebar {
+    min-height: var(--ecms-title-height, 58px);
+    gap: .75rem;
+}
+
+    .ecms-unit-titlebar h3 {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: 1.18rem;
+        font-weight: 950;
+        line-height: 1.15;
+    }
+
+.ecms-unit-pill {
+    min-height: 2rem;
+    padding: .45rem .8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .42rem;
+    border-radius: 999px;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff) ) !important;
+    font-size: .68rem;
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* ---------- Inline form ---------- */
+.ecms-unit-form-section {
+    flex: 0 0 auto;
+    padding: .7rem .85rem;
+    overflow: visible;
+}
+
+    .ecms-unit-form-section form,
+    .ecms-unit-form-section .row {
+        margin: 0;
+    }
+
+.ecms-unit-label {
+    min-width: 0;
+    margin: 0 0 .32rem;
+    display: flex;
+    align-items: center;
+    gap: .42rem;
+    color: var(--ecms-text, #061b44);
+    font-size: .78rem;
+    font-weight: 950;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+    .ecms-unit-label > i:first-child {
+        width: 1.5rem;
+        height: 1.5rem;
+        min-width: 1.5rem;
+        border-radius: .5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white, #fff);
+        background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-800, #123f8c) );
+        font-size: .68rem;
+        box-shadow: 0 .35rem .85rem rgba(47, 103, 230, .18);
+    }
+
+    .ecms-unit-label .mand1 {
+        margin-left: .05rem;
+        font-size: .52rem;
+        vertical-align: super;
+    }
+
+.ecms-unit-control,
+.ecms-unit-form-section .form-control,
+.ecms-unit-form-section .form-control1,
+.ecms-unit-form-section .form-control-Alphabets,
+.ecms-unit-form-section textarea {
+    width: 100%;
+    max-width: 100%;
+    min-height: var(--ecms-control-height, 36px);
+    box-sizing: border-box;
+}
+
+    .ecms-unit-form-section textarea.ecms-unit-control {
+        height: var(--ecms-control-height, 36px);
+        min-height: var(--ecms-control-height, 36px);
+        line-height: 1.25;
+        resize: vertical;
+        overflow-y: auto;
+    }
+
+.ecms-unit-radio-box {
+    min-height: var(--ecms-control-height, 36px);
+    display: flex;
+    align-items: center;
+}
+
+.ecms-unit-radio {
+    min-height: 2rem;
+    margin: 0;
+    padding: .32rem .7rem;
+    border: 1px solid rgba(70, 119, 184, .2);
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: .36rem;
+    color: var(--ecms-text, #061b44);
+    background: rgba(255, 255, 255, .86);
+}
+
+    .ecms-unit-radio .form-check-input {
+        position: static;
+        width: 1rem;
+        height: 1rem;
+        margin: 0;
+        opacity: 1;
+        appearance: auto;
+        accent-color: var(--ecms-primary-600, #2f67e6);
+    }
+
+    .ecms-unit-radio .form-check-label {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: .77rem;
+        font-weight: 850;
+        cursor: pointer;
+    }
+
+.ecms-unit-actions {
+    min-height: var(--ecms-control-height, 36px);
+    margin: 0;
+    padding: 0;
+}
+
+    .ecms-unit-actions .btn,
+    .ecms-unit-actions input[type="button"] {
+        width: auto;
+        min-width: 4.9rem;
+        max-width: 8rem;
+        min-height: var(--ecms-control-height, 36px);
+        padding-inline: 1rem;
+        flex: 0 0 auto;
+    }
+
+/* ---------- DataTable section ---------- */
+.ecms-unit-table-section {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-unit-table-section > .ecms-section-title {
+        flex: 0 0 auto;
+        min-height: 2.1rem;
+        padding-block: .42rem;
+    }
+
+.ecms-unit-table-wrap {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.ecms-unit-page #tbldata_wrapper {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 2.5rem minmax(0, 1fr) 2.8rem;
+    overflow: hidden;
+}
+
+    .ecms-unit-page #tbldata_wrapper > .dt-top {
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: 0 0 .4rem;
+    }
+
+    .ecms-unit-page #tbldata_wrapper > .dataTables_scroll,
+    .ecms-unit-page #tbldata_wrapper > .dt-scroll {
+        grid-row: 2;
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .ecms-unit-page #tbldata_wrapper .dataTables_scrollHead,
+    .ecms-unit-page #tbldata_wrapper .dt-scroll-head {
+        flex: 0 0 auto;
+    }
+
+    .ecms-unit-page #tbldata_wrapper .dataTables_scrollBody,
+    .ecms-unit-page #tbldata_wrapper .dt-scroll-body {
+        flex: 1 1 auto;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: auto !important;
+        padding-bottom: 0;
+    }
+
+    .ecms-unit-page #tbldata_wrapper > .dt-bottom {
+        grid-row: 3;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: .45rem .1rem 0;
+        overflow: visible;
+    }
+
+.ecms-unit-page .dataTables_filter,
+.ecms-unit-page .dt-search {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+    .ecms-unit-page .dataTables_filter input,
+    .ecms-unit-page .dt-search input {
+        width: 13rem;
+        max-width: 100%;
+    }
+
+.ecms-unit-page .dt-buttons {
+    display: none !important;
+}
+
+.ecms-unit-page .dt-ellipsis,
+.ecms-unit-page .nowrap {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* Status badges generated from Unit.js. */
+.ecms-unit-page .badge,
+.ecms-unit-page .badge-pill {
+    min-width: 4.2rem;
+    min-height: 1.35rem;
+    padding: .25rem .55rem;
+    border: 0;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    font-size: .62rem;
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ecms-unit-page .badge-success,
+.ecms-unit-page .bg-success {
+    background: linear-gradient( 135deg, var(--ecms-success-500, #35ad56), var(--ecms-success-600, #238a40) ) !important;
+}
+
+.ecms-unit-page .badge-danger,
+.ecms-unit-page .bg-danger {
+    background: linear-gradient( 135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136) ) !important;
+}
+
+.ecms-unit-page .cls-btnedit,
+.ecms-unit-page .cls-btnDelete {
+    margin: 0 .16rem;
+    border: 0;
+    box-shadow: 0 .45rem .95rem rgba(0, 30, 80, .16);
+}
+
+.ecms-unit-page .cls-btnedit {
+    color: var(--ecms-text, #061b44) !important;
+    background: linear-gradient(135deg, #facc15, #f59e0b) !important;
+}
+
+.ecms-unit-page .cls-btnDelete {
+    color: var(--ecms-white, #fff) !important;
+    background: linear-gradient( 135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136) ) !important;
+}
+
+/* Hide DataTables' cloned sizing header inside the body scroll area. */
+.ecms-unit-page .dataTables_scrollBody table thead,
+.ecms-unit-page .dt-scroll-body table thead {
+    display: none !important;
+    visibility: collapse !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+.ecms-unit-page .dataTables_processing,
+.ecms-unit-page .dt-processing,
+#tbldata_processing {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Validation list used by SweetAlert. */
+.error-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    text-align: left;
+}
+
+    .error-list li {
+        margin-bottom: .35rem;
+    }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1199.98px) {
+    .ecms-unit-form-section .row {
+        align-items: flex-start !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .ecms-screen-stage {
+        overflow: visible;
+    }
+
+    .ecms-unit-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 44rem;
+        overflow: visible;
+    }
+
+    .ecms-unit-shell,
+    .ecms-unit-shell > .ecms-card-body {
+        height: auto;
+        min-height: 44rem;
+        overflow: visible;
+    }
+
+    .ecms-unit-table-section {
+        min-height: 28rem;
+    }
+
+    .ecms-unit-page #tbldata_wrapper {
+        grid-template-rows: auto minmax(20rem, 1fr) auto;
+    }
+
+        .ecms-unit-page #tbldata_wrapper > .dt-top,
+        .ecms-unit-page #tbldata_wrapper > .dt-bottom {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+    .ecms-unit-page .dataTables_filter,
+    .ecms-unit-page .dt-search {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+        .ecms-unit-page .dataTables_filter input,
+        .ecms-unit-page .dt-search input {
+            width: 100%;
+        }
+
+    .ecms-unit-actions {
+        justify-content: flex-start !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-unit-titlebar {
+        align-items: flex-start !important;
+        flex-direction: column;
+    }
+
+    .ecms-unit-pill {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ecms-unit-actions,
+    .ecms-unit-actions .btn,
+    .ecms-unit-actions input[type="button"] {
+        width: 100%;
+        max-width: none;
+    }
+
+    .ecms-unit-actions {
+        flex-direction: column;
+    }
 }

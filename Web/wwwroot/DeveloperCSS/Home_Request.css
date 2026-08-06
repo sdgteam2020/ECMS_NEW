@@ -1,346 +1,812 @@
-﻿.btn1 {
-    padding: 0.85rem 2rem;
-    font-size: 16px;
-    font-weight: 700;
-    border-radius: 12px;
-    transition: all 0.2s ease-in-out;
+﻿/* =====================================================
+   ECMS Initiate Request Page - Modern UI
+   Scope: Views/Home/Request only
+   Header/Footer: untouched
+   Functionality/IDs: untouched
+===================================================== */
+
+:root {
+    --ecms-request-header-height: 175px;
+    --ecms-request-footer-height: 42px;
+    --ecms-request-navy: #061f4d;
+    --ecms-request-blue: #246ff2;
+    --ecms-request-blue-dark: #0647c9;
+    --ecms-request-sky: #43c7f4;
+    --ecms-request-green: #8bd97a;
+    --ecms-request-card: rgba(238, 247, 255, 0.88);
+    --ecms-request-panel: rgba(255, 255, 255, 0.88);
+    --ecms-request-border: rgba(150, 190, 245, 0.35);
+    --ecms-request-text: #10254f;
+    --ecms-request-muted: #5d739c;
 }
 
-.btn-primary,
-.btn-outline-primary:hover,
-.btn-primary:hover,
-.btn-primary:focus {
-    color: #fff;
-    background-color: #2970e7;
-    border-color: #2970e7;
+/* Page background only for Request page */
+body {
+    overflow-x: hidden !important;
+    background: linear-gradient(90deg, rgba(7, 37, 92, 0.90), rgba(16, 93, 180, 0.76)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat fixed !important;
 }
 
-    .btn-primary:focus {
-        box-shadow: 0 0 0 0.2rem rgba(41, 112, 231, 0.25);
-    }
-
-.counter-title {
-    margin-top: 2rem !important;
+/* Do not globally hide vertical scroll. Let page scroll when needed. */
+html,
+body {
+    overflow-y: auto !important;
 }
 
-/* Army No Form */
-.army-form-card {
-    max-width: 640px;
-    margin: 20px auto;
-    background: #ffffff;
-    border: 1px solid #e4e7ec;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 8px 20px rgba(16, 24, 40, 0.1);
-    text-align: left;
-    font-family: 'Arial', sans-serif;
-}
-
-.army-form-header {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-    .army-form-header h5 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
-        color: #2d3748;
-    }
-
-    .army-form-header p {
-        margin-top: 4px;
-        font-size: 14px;
-        color: #4a5568;
-    }
-
-.army-field {
-    margin-bottom: 24px;
-}
-
-    .army-field label {
-        display: block;
-        margin-bottom: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        color: #2d3748;
-    }
-
-.army-combo {
-    display: flex;
-    align-items: center;
-    border: 1px solid #cbd5e0;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #ffffff;
-    transition: all 0.3s ease-in-out;
-}
-
-    .army-combo:focus-within {
-        border-color: #4c9aff;
-        box-shadow: 0 0 0 4px rgba(76, 154, 255, 0.2);
-    }
-
-.army-prefix {
-    width: 120px;
-    border: none;
-    background: #f7fafc;
-    padding: 12px 14px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #4a5568;
-    outline: none;
-}
-
-.army-input-combo {
-    flex: 1;
-    height: 48px;
-    border: none;
-    padding: 12px 16px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #2d3748;
-    outline: none;
-}
-
-    .army-input-combo::placeholder {
-        color: #a0aec0;
-    }
-
-.army-help {
-    display: block;
-    margin-top: 8px;
-    font-size: 12px;
-    color: #4a5568;
-    text-align: center;
-}
-
-@media (max-width: 576px) {
-    .army-form-card {
-        padding: 18px;
-    }
-
-    .army-combo {
-        flex-direction: column;
-    }
-
-    .army-prefix {
-        width: 100%;
-        height: 45px;
-        border-bottom: 1px solid #e4e7ec;
-    }
-}
-
-/* =========================================================
-   COMPACT REQUEST PAGE DESIGN
-   Purpose: fit Initiate Request page in one viewport, reduce gaps,
-   and avoid page scrollbar on desktop screens.
-   ========================================================= */
-
-/* Keep this page inside the visible screen */
-html, body {
-    overflow-y: hidden;
-}
-
-/* Remove large header gap created by page-header + mt-n10 combination */
+/* Breadcrumb strip below your existing common header/navigation */
 .page-header {
-    padding-bottom: 0.45rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: linear-gradient(90deg, rgba(72, 203, 247, 0.94), rgba(38, 125, 230, 0.94)) !important;
+    border-top: 1px solid rgba(255,255,255,0.30) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.34) !important;
+    box-shadow: 0 10px 26px rgba(0, 31, 91, 0.14) !important;
 }
+
+    .page-header .containerMain {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 42px !important;
+        padding-right: 42px !important;
+    }
 
 .page-header-content {
-    padding: 0.55rem 0 !important;
+    padding: 10px 0 !important;
 }
 
 .page-header-title {
-    font-size: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
     margin: 0 !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
     line-height: 1.2 !important;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.14) !important;
 }
 
+    .page-header-title a {
+        color: #ffffff !important;
+        text-decoration: none !important;
+        font-weight: 900 !important;
+    }
+
+.page-header-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    margin-right: 2px !important;
+}
+
+/* Main request page container */
 .request-compact-page {
-    margin-top: 0.55rem !important;
-    padding-left: 30px;
-    padding-right: 30px;
+    width: min(1760px, 96vw) !important;
+    margin: 16px auto calc(var(--ecms-request-footer-height) + 26px) !important;
+    padding: 0 !important;
 }
 
-/* Main white panel */
+    .request-compact-page > .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+/* Main glass shell */
 .request-shell {
-    width: 100%;    
-    overflow: hidden;
-    padding: 12px 22px !important;
-    border-radius: 8px;
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 20px 24px 24px !important;
+    border: 1px solid rgba(255,255,255,0.72) !important;
+    border-radius: 22px !important;
+    background: var(--ecms-request-card) !important;
+    box-shadow: 0 24px 65px rgba(0, 24, 78, 0.28), inset 0 1px 0 rgba(255,255,255,0.86) !important;
+    backdrop-filter: blur(15px) !important;
+    overflow: visible !important;
 }
 
-    /* Blue section headings */
+    /* Section headers, including JS-generated .seven headings */
     .request-shell .seven {
-        margin: 0 0 8px 0 !important;
+        margin: 0 0 14px !important;
+        width: 100% !important;
     }
 
         .request-shell .seven h1 {
-            height: 34px;
-            line-height: 34px;
+            min-height: 38px !important;
+            line-height: 38px !important;
             margin: 0 !important;
-            padding: 0 10px !important;
-            font-size: 14px !important;
-            font-weight: 700 !important;
-            border-radius: 4px;
+            padding: 0 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid rgba(255,255,255,0.28) !important;
+            color: #ffffff !important;
+            text-align: center !important;
+            font-size: 15px !important;
+            font-weight: 900 !important;
+            letter-spacing: 0.1px !important;
+            background: linear-gradient(135deg, #183d82 0%, #267dff 100%) !important;
+            box-shadow: 0 10px 22px rgba(0, 75, 190, 0.18) !important;
         }
 
-    /* Compact all generated Bootstrap top margins in this page */
-    .request-shell .mt-4,
-    .request-shell .ApplyCard.mt-4,
-    .request-shell .btn.mt-4 {
-        margin-top: 8px !important;
-    }
-
-    .request-shell .mr-2 {
-        margin-right: 6px !important;
-    }
-
-    .request-shell .ml-2 {
-        margin-left: 6px !important;
-    }
-
-    /* Choice buttons */
-    .request-shell .btn1 {
-        min-width: 88px;
-        padding: 9px 20px !important;
-        font-size: 13px !important;
-        font-weight: 700;
-        border-radius: 8px !important;
-        line-height: 1.1;
-    }
-
-    /* First option cards, if visible */
+    /* First white card panel */
     .request-shell .cardmain {
-        padding: 10px !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 22px 20px !important;
+        border: 1px solid rgba(145, 184, 240, 0.34) !important;
+        border-radius: 18px !important;
+        background: rgba(255,255,255,0.80) !important;
+        box-shadow: 0 15px 38px rgba(0, 38, 105, 0.12), inset 0 1px 0 rgba(255,255,255,0.80) !important;
+    }
+
+        .request-shell .cardmain .row {
+            display: flex !important;
+            justify-content: flex-start !important;
+            align-items: stretch !important;
+            gap: 34px !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding-left: 26px !important;
+            padding-right: 26px !important;
+        }
+
+        .request-shell .cardmain .col-md-2,
+        .request-shell .cardmain .col-sm-6 {
+            width: auto !important;
+            max-width: none !important;
+            flex: 0 0 auto !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+    .request-shell a,
+    .request-shell a:hover {
+        text-decoration: none !important;
+    }
+
+    /* Modern action tiles while preserving .counter class and IDs */
+    .request-shell .counter {
+        position: relative !important;
+        width: 185px !important;
+        height: 170px !important;
+        min-height: 170px !important;
+        margin: 0 !important;
+        padding: 28px 16px 18px !important;
+        border: 2px solid rgba(37, 127, 255, 0.86) !important;
+        border-radius: 18px !important;
+        color: var(--ecms-request-blue) !important;
+        background: radial-gradient(circle at 65% 18%, rgba(255,255,255,0.95), rgba(255,255,255,0.45) 35%, transparent 36%), linear-gradient(145deg, rgba(255,255,255,0.96), rgba(233,241,252,0.92)) !important;
+        box-shadow: 0 16px 32px rgba(0, 55, 145, 0.16), inset 0 1px 0 rgba(255,255,255,0.92) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+        overflow: hidden !important;
+    }
+
+        .request-shell .counter::before,
+        .request-shell .counter::after {
+            display: none !important;
+        }
+
+        .request-shell .counter:hover {
+            transform: translateY(-5px) !important;
+            border-color: #42a5ff !important;
+            box-shadow: 0 22px 42px rgba(0, 55, 145, 0.24), inset 0 1px 0 rgba(255,255,255,0.96) !important;
+        }
+
+    .request-shell .counter-icon {
+        width: 48px !important;
+        height: 48px !important;
+        margin: 0 0 16px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: linear-gradient(135deg, #42a5ff, #0b5ed7) !important;
+        color: #ffffff !important;
+        font-size: 23px !important;
+        line-height: 1 !important;
+        box-shadow: 0 12px 24px rgba(0, 92, 210, 0.26) !important;
+        transition: transform 0.22s ease !important;
+    }
+
+    .request-shell .counter:hover .counter-icon {
+        transform: scale(1.08) !important;
+    }
+
+    .request-shell .counter-icon i {
+        color: #ffffff !important;
+        font-size: 24px !important;
+        line-height: 1 !important;
+    }
+
+    .request-shell .counter-title,
+    .request-shell .counter h3 {
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #0b63f6 !important;
+        font-size: 13px !important;
+        font-weight: 900 !important;
+        line-height: 1.22 !important;
+        letter-spacing: 0.1px !important;
+        text-transform: uppercase !important;
+        text-align: center !important;
+    }
+
+    /* Dynamic step areas */
+    .request-shell .ApplyCard {
+        margin-top: 13px !important;
+    }
+
+#btnarmytype,
+#btnIcardFor,
+#icardrequestfor {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
+/* Choice buttons, including JS generated buttons */
+.request-shell .btn1,
+.request-shell .applyforoffs,
+.request-shell .applyforicard,
+#btnaddOffrs,
+#btnJCOs,
+#btnNext,
+#btntokenrefresh {
+    min-width: 106px !important;
+    min-height: 38px !important;
+    margin: 4px 5px !important;
+    padding: 9px 22px !important;
+    border-radius: 12px !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    line-height: 1.1 !important;
+    letter-spacing: 0.05px !important;
+    transition: all 0.22s ease !important;
+}
+
+.request-shell .btn-outline-primary,
+.request-shell .btn.btn-outline-primary {
+    color: #0b63f6 !important;
+    background: rgba(255,255,255,0.78) !important;
+    border: 1px solid rgba(18, 105, 250, 0.72) !important;
+    box-shadow: 0 8px 18px rgba(0, 75, 190, 0.08) !important;
+}
+
+    .request-shell .btn-outline-primary:hover,
+    .request-shell .btn-primary,
+    .request-shell .btn.btn-primary {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #3f82ff 0%, #1f63f2 50%, #0647d9 100%) !important;
+        border-color: transparent !important;
+        box-shadow: 0 12px 26px rgba(31, 99, 242, 0.28) !important;
+        transform: translateY(-1px) !important;
+    }
+
+.request-shell .btn-warning,
+.request-shell #btnNext {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #ffbe21 0%, #ff9800 50%, #ee6b00 100%) !important;
+    border: 0 !important;
+    box-shadow: 0 12px 26px rgba(238, 107, 0, 0.30) !important;
+}
+
+    .request-shell #btnNext:hover {
+        background: linear-gradient(135deg, #ffc94c 0%, #ffa51c 50%, #f57900 100%) !important;
+        transform: translateY(-2px) !important;
+    }
+
+.request-shell .btn-danger,
+.request-shell #btntokenrefresh {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #ff5c6c 0%, #e32b3d 100%) !important;
+    border: 0 !important;
+    box-shadow: 0 12px 26px rgba(227, 43, 61, 0.26) !important;
+}
+
+.request-shell .disabled,
+.request-shell button:disabled {
+    opacity: 0.58 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* Army number form */
+.request-shell #armyNoSection {
+    margin-top: 12px !important;
+}
+
+.request-shell .army-form-card {
+    position: relative !important;
+    width: min(560px, 94vw) !important;
+    max-width: 560px !important;
+    margin: 8px auto 0 !important;
+    padding: 22px 22px 18px !important;
+    border: 1px solid rgba(145, 184, 240, 0.40) !important;
+    border-radius: 18px !important;
+    background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(235,244,255,0.94)) !important;
+    box-shadow: 0 18px 42px rgba(0, 40, 112, 0.16), inset 0 1px 0 rgba(255,255,255,0.92) !important;
+    text-align: left !important;
+    overflow: hidden !important;
+}
+
+    .request-shell .army-form-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #43c7f4, #2478ff, #8bd97a);
+    }
+
+.request-shell .army-form-header {
+    margin-bottom: 16px !important;
+    text-align: center !important;
+}
+
+    .request-shell .army-form-header h5 {
+        margin: 0 !important;
+        color: var(--ecms-request-text) !important;
+        font-size: 19px !important;
+        font-weight: 900 !important;
+        letter-spacing: -0.1px !important;
+    }
+
+    .request-shell .army-form-header p {
+        margin: 6px 0 0 !important;
+        color: var(--ecms-request-muted) !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+    }
+
+.request-shell .army-field {
+    margin-bottom: 13px !important;
+}
+
+    .request-shell .army-field label {
+        display: block !important;
+        margin-bottom: 6px !important;
+        color: #132b59 !important;
+        font-size: 13px !important;
+        font-weight: 900 !important;
+    }
+
+.request-shell .army-combo {
+    display: flex !important;
+    align-items: stretch !important;
+    border: 1px solid rgba(92, 126, 175, 0.28) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    background: rgba(255,255,255,0.94) !important;
+    box-shadow: 0 8px 18px rgba(18, 55, 112, 0.06), inset 0 1px 0 rgba(255,255,255,0.82) !important;
+    transition: all 0.20s ease !important;
+}
+
+    .request-shell .army-combo:focus-within {
+        border-color: rgba(0, 111, 255, 0.74) !important;
+        box-shadow: 0 0 0 4px rgba(0,111,255,0.12), 0 12px 26px rgba(18,55,112,0.10) !important;
+    }
+
+.request-shell .army-prefix {
+    width: 115px !important;
+    min-width: 115px !important;
+    height: 43px !important;
+    border: 0 !important;
+    border-right: 1px solid rgba(92,126,175,0.22) !important;
+    background: rgba(232, 240, 252, 0.95) !important;
+    color: #0d2d68 !important;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    outline: 0 !important;
+}
+
+.request-shell .army-input-combo {
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: 43px !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: #10254f !important;
+    padding: 8px 13px !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    outline: 0 !important;
+    text-transform: uppercase;
+}
+
+    .request-shell .army-input-combo::placeholder {
+        color: #8da0bd !important;
+        font-weight: 700 !important;
+        text-transform: none !important;
+    }
+
+.request-shell .army-help {
+    display: block !important;
+    margin-top: 8px !important;
+    color: #5d739c !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+
+#spnNext {
+    margin-top: 8px !important;
+}
+
+#tokenmsg .alert {
+    max-width: 560px !important;
+    margin: 12px auto 0 !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.10) !important;
+    font-weight: 800 !important;
+}
+
+/* SweetAlert buttons on this page */
+.swal2-confirm,
+.swal2-styled.swal2-confirm {
+    background: linear-gradient(135deg, #238dff, #004cce) !important;
+    border-radius: 12px !important;
+    font-weight: 900 !important;
+}
+
+.swal2-cancel,
+.swal2-styled.swal2-cancel {
+    border-radius: 12px !important;
+    font-weight: 900 !important;
+}
+
+/* Responsive */
+@media (max-width: 1199px) {
+    .request-shell .cardmain .row {
+        gap: 22px !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        justify-content: center !important;
     }
 
     .request-shell .counter {
-        min-height: 94px !important;
-        padding: 12px 8px !important;
-        border-radius: 10px !important;
+        width: 175px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    body {
+        background-attachment: scroll !important;
     }
 
-    .request-shell .counter-icon {
-        font-size: 24px !important;
-        margin-bottom: 4px !important;
+    .page-header .containerMain {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
     }
 
-    .request-shell .counter-title {
-        margin-top: 6px !important;
-        font-size: 13px !important;
-        line-height: 1.25 !important;
+    .request-compact-page {
+        width: 94vw !important;
+        margin-top: 14px !important;
+        margin-bottom: 76px !important;
     }
 
-    /* Army number form */
-    .request-shell #armyNoSection {
-        margin-top: 8px !important;
+    .request-shell {
+        padding: 16px 14px 18px !important;
+        border-radius: 18px !important;
+    }
+
+        .request-shell .cardmain .row {
+            justify-content: center !important;
+        }
+}
+
+@media (max-width: 767px) {
+    .page-header-title {
+        font-size: 14px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .request-shell .cardmain {
+        padding: 18px 12px !important;
+    }
+
+    .request-shell .counter {
+        width: min(260px, 88vw) !important;
+        height: 150px !important;
+        min-height: 150px !important;
+    }
+
+    .request-shell .btn1,
+    .request-shell .applyforoffs,
+    .request-shell .applyforicard,
+    #btnaddOffrs,
+    #btnJCOs,
+    #btnNext,
+    #btntokenrefresh {
+        width: 100% !important;
+        max-width: 320px !important;
+        margin: 5px auto !important;
+        display: block !important;
     }
 
     .request-shell .army-form-card {
-        max-width: 520px;
-        margin: 8px auto 0 auto !important;
+        width: 100% !important;
+        padding: 20px 15px 16px !important;
+    }
+
+    .request-shell .army-combo {
+        flex-direction: column !important;
+    }
+
+    .request-shell .army-prefix {
+        width: 100% !important;
+        min-width: 100% !important;
+        border-right: 0 !important;
+        border-bottom: 1px solid rgba(92,126,175,0.22) !important;
+    }
+}
+
+@media print {
+    body {
+        background: #ffffff !important;
+    }
+
+    .request-shell {
+        box-shadow: none !important;
+        border: 1px solid #cccccc !important;
+    }
+}
+/* =====================================================
+   FINAL REQUEST PAGE WIDTH + SCROLLBAR FIX
+   Only UI change - do not affect JS/functionality
+===================================================== */
+
+/* Page wrapper: keep content centered and compact */
+.request-compact-page {
+    width: 100% !important;
+    max-width: 1260px !important;
+    margin: 12px auto 0 auto !important;
+    padding: 0 18px 56px 18px !important;
+}
+
+/* Main request card: reduce width according to content */
+.request-shell {
+    width: 100% !important;
+    max-width: 1160px !important;
+    margin: 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 16px 18px 22px 18px !important;
+    border-radius: 22px !important;
+    background: rgba(232, 244, 255, 0.90) !important;
+    border: 1px solid rgba(255, 255, 255, 0.72) !important;
+    box-shadow: 0 20px 55px rgba(0, 26, 80, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+    overflow: visible !important;
+}
+
+    /* Remove unnecessary vertical height from inner cards */
+    .request-shell .card,
+    .request-shell .card-body,
+    .request-shell .ApplyCard,
+    .request-shell .cardmain {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+    }
+
+    /* Center generated button groups */
+    .request-shell #btnarmytype,
+    .request-shell #btnIcardFor,
+    .request-shell #icardrequestfor,
+    .request-shell #spnNext {
+        text-align: center !important;
+    }
+
+    /* Keep section headers compact */
+    .request-shell .seven {
+        margin: 8px 0 10px 0 !important;
+    }
+
+        .request-shell .seven h1 {
+            height: 34px !important;
+            line-height: 34px !important;
+            margin: 0 !important;
+            padding: 0 12px !important;
+            font-size: 14px !important;
+            font-weight: 900 !important;
+            border-radius: 10px !important;
+        }
+
+    /* Reduce gap between rows */
+    .request-shell .mt-4 {
+        margin-top: 10px !important;
+    }
+
+    .request-shell .mb-4 {
+        margin-bottom: 10px !important;
+    }
+
+    /* Army number small form */
+    .request-shell .army-form-card {
+        max-width: 520px !important;
+        margin: 14px auto 0 auto !important;
+        padding: 18px 20px !important;
+        border-radius: 16px !important;
+    }
+
+    /* Next button */
+    .request-shell #btnNext {
+        min-width: 110px !important;
+        height: 42px !important;
+        margin-top: 12px !important;
+        border-radius: 12px !important;
+    }
+
+/* Fix document scrollbar on desktop but keep content safe */
+@media (min-width: 992px) {
+    html:has(.request-compact-page),
+    body:has(.request-compact-page) {
+        overflow-y: hidden !important;
+    }
+
+    .request-compact-page {
+        max-height: calc(100vh - 230px) !important;
+        overflow-y: auto !important;
+        scrollbar-width: thin;
+    }
+
+        .request-compact-page::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .request-compact-page::-webkit-scrollbar-thumb {
+            background: rgba(31, 99, 242, 0.45);
+            border-radius: 20px;
+        }
+}
+
+/* On small screen allow page scroll */
+@media (max-width: 991px) {
+    html,
+    body {
+        overflow-y: auto !important;
+    }
+
+    .request-compact-page {
+        max-height: none !important;
+        overflow: visible !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .request-shell {
+        max-width: 100% !important;
+    }
+}
+/* =====================================================
+   FINAL REQUEST PAGE SPACE UTILIZATION FIX
+   Remove internal scrollbar by reducing vertical height
+===================================================== */
+
+.request-compact-page {
+    max-width: 1180px !important;
+    margin: 8px auto 0 auto !important;
+    padding: 0 14px 44px 14px !important;
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+/* Main panel more compact */
+.request-shell {
+    max-width: 1060px !important;
+    margin: 0 auto !important;
+    padding: 12px 16px 18px 16px !important;
+    border-radius: 20px !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+    /* Compact headings */
+    .request-shell .seven {
+        margin: 6px 0 8px 0 !important;
+    }
+
+        .request-shell .seven h1 {
+            height: 30px !important;
+            line-height: 30px !important;
+            font-size: 13px !important;
+            border-radius: 9px !important;
+        }
+
+    /* Compact button sections */
+    .request-shell #btnarmytype,
+    .request-shell #btnIcardFor,
+    .request-shell #icardrequestfor {
+        margin-top: 6px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .request-shell .btn1 {
+        padding: 8px 18px !important;
+        min-width: 88px !important;
+        height: 36px !important;
+        font-size: 12px !important;
+        line-height: 1 !important;
+        border-radius: 10px !important;
+    }
+
+    /* Army number card compact */
+    .request-shell .army-form-card {
+        max-width: 470px !important;
+        margin: 10px auto 0 auto !important;
         padding: 14px 18px !important;
-        border-radius: 12px;
-        box-shadow: 0 5px 14px rgba(16, 24, 40, 0.10);
+        border-radius: 16px !important;
     }
 
     .request-shell .army-form-header {
-        margin-bottom: 10px !important;
+        margin-bottom: 8px !important;
     }
 
         .request-shell .army-form-header h5 {
             font-size: 16px !important;
-            line-height: 1.2 !important;
+            margin-bottom: 4px !important;
         }
 
         .request-shell .army-form-header p {
             font-size: 12px !important;
-            margin: 3px 0 0 0 !important;
+            margin: 0 !important;
         }
 
     .request-shell .army-field {
-        margin-bottom: 8px !important;
+        margin-bottom: 6px !important;
     }
 
         .request-shell .army-field label {
-            font-size: 12px !important;
             margin-bottom: 4px !important;
+            font-size: 12px !important;
         }
 
-    .request-shell .army-combo {
-        border-radius: 7px;
-    }
-
     .request-shell .army-prefix {
-        width: 112px;
-        padding: 8px 10px !important;
+        height: 36px !important;
+        width: 105px !important;
+        padding: 7px 9px !important;
         font-size: 12px !important;
     }
 
     .request-shell .army-input-combo {
-        height: 38px !important;
-        padding: 8px 10px !important;
-        font-size: 13px !important;
+        height: 36px !important;
+        padding: 7px 10px !important;
+        font-size: 12px !important;
     }
 
     .request-shell .army-help {
         margin-top: 5px !important;
-        font-size: 11px !important;
+        font-size: 10.5px !important;
     }
 
-    /* Old army no compact field */
-    .request-shell #oldArmyNoWrapper {
-        max-width: 520px;
-        margin: 0 auto 6px auto !important;
-    }
-
-    .request-shell #txtApplyForOldArmyNo {
-        height: 36px !important;
-        font-size: 13px !important;
-    }
-
-    /* Bottom buttons */
+    /* Next button compact */
     .request-shell #spnNext {
-        margin-top: 6px !important;
+        margin-top: 8px !important;
     }
 
-    .request-shell #btnNext,
-    .request-shell #btntokenrefresh {
-        margin-top: 6px !important;
-        padding: 9px 24px !important;
+    .request-shell #btnNext {
+        height: 38px !important;
+        min-width: 105px !important;
+        padding: 8px 22px !important;
+        margin-top: 8px !important;
+        border-radius: 12px !important;
     }
 
-    /* Token message */
-    .request-shell #tokenmsg .alert {
-        margin-top: 6px !important;
-        padding: 6px 12px !important;
-        font-size: 12px !important;
-    }
-
-/* Desktop height tuning */
+/* Remove previous internal scrollbar rule */
 @media (min-width: 992px) {
-    .request-shell .row {
-        margin-left: -6px;
-        margin-right: -6px;
+    html:has(.request-compact-page),
+    body:has(.request-compact-page) {
+        overflow-y: hidden !important;
     }
 
-    .request-shell [class*="col-"] {
-        padding-left: 6px;
-        padding-right: 6px;
-    }
-}
-
-/* Small screen fallback: allow scroll where hiding it would block content */
-@media (max-width: 991px) {
-    html, body {
-        overflow-y: auto;
-    }
-
-    .request-shell {
-        min-height: auto;
-        max-height: none;
-        overflow: visible;
+    .request-compact-page {
+        max-height: none !important;
+        overflow-y: visible !important;
     }
 }

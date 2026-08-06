@@ -457,9 +457,9 @@ footer.fixed-bottom {
 
     .ecms-home-hero {
         /* header approx 117px and footer 42px */
-        height: calc(100vh - 117px - 42px) !important;
+        height: calc(100vh - 118px - 42px) !important;
         min-height: 700px !important;
-        margin-top: 117px !important;
+        margin-top: 0 !important;
         overflow: hidden !important;
     }
 

@@ -1,0 +1,185 @@
+/*
+ECMS modals
+Use Bootstrap modal markup. Add ecms-modal-sm/md/lg/xl to .modal-dialog when custom width is needed.
+*/
+
+.modal {
+    z-index: 1060;
+}
+
+.modal-backdrop {
+    background: rgba(2,11,30,.78);
+}
+
+.modal-content {
+    border: var(--ecms-border-white);
+    border-radius: var(--ecms-radius-xl);
+    background: var(--ecms-modal-surface);
+    box-shadow: var(--ecms-shadow-lg);
+    overflow: hidden;
+    color: var(--ecms-text);
+}
+
+.modal-header {
+    min-height: 3.35rem;
+    padding: .75rem 3.4rem .75rem 1rem;
+    border: 0;
+    background: linear-gradient(135deg, var(--ecms-primary-800), var(--ecms-primary-600), var(--ecms-primary-400));
+    color: var(--ecms-white);
+    position: relative;
+}
+
+.modal-title {
+    color: var(--ecms-white);
+    font-size: 1.05rem;
+    font-weight: 950;
+}
+
+.modal-header .btn-close,
+.modal-header .close {
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    padding: 0;
+    margin: 0;
+    border: 2px solid rgba(255,255,255,.88);
+    border-radius: 50%;
+    background-color: var(--ecms-danger-500);
+    background-image: none;
+    color: var(--ecms-white);
+    opacity: 1;
+    position: absolute;
+    top: .65rem;
+    right: .85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0;
+    text-shadow: none;
+}
+
+    .modal-header .btn-close::before,
+    .modal-header .close::before {
+        content: "×";
+        color: var(--ecms-white);
+        font-size: 1.55rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .modal-header .close span {
+        display: none;
+    }
+
+.modal-body {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(248,252,255,.98), rgba(226,240,255,.96));
+    max-height: calc(100vh - 10rem);
+    overflow: auto;
+}
+
+.modal-footer {
+    padding: .75rem 1rem;
+    border-top: 1px solid rgba(188,210,242,.70);
+    background: linear-gradient(180deg, rgba(232,242,255,.96), rgba(215,232,253,.98));
+}
+
+.ecms-modal-sm {
+    max-width: min(520px, calc(100vw - 1.5rem));
+}
+
+.ecms-modal-md {
+    max-width: min(760px, calc(100vw - 1.5rem));
+}
+
+.ecms-modal-lg {
+    max-width: min(920px, calc(100vw - 1.5rem));
+}
+
+.ecms-modal-xl {
+    max-width: min(1240px, calc(100vw - 1.5rem));
+}
+
+@media print {
+    .modal.print-clean .modal-header,
+    .modal.print-clean .modal-footer,
+    .modal.print-clean .no-print {
+        display: none !important;
+    }
+
+    .modal.print-clean,
+    .modal.print-clean .modal-dialog,
+    .modal.print-clean .modal-content,
+    .modal.print-clean .modal-body {
+        position: static !important;
+        width: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        overflow: visible !important;
+        box-shadow: none !important;
+        border: 0 !important;
+        background: #fff !important;
+    }
+}
+
+
+/*
+=====================================================
+ECMS modal no-fade-over-dialog guard
+Purpose:
+- The modal dialog must remain bright and clickable.
+- The dim background is applied by .modal.show, not by a backdrop sitting over content.
+=====================================================
+*/
+
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+.modal {
+    z-index: 1055 !important;
+}
+
+    .modal.show .modal-dialog,
+    .modal.show .modal-content {
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+
+/* Reusable modal title composition. */
+.ecms-modal-title-wrap {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+
+.ecms-modal-title-icon {
+    width: 2.35rem;
+    height: 2.35rem;
+    min-width: 2.35rem;
+    border-radius: .75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white);
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.34);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.24);
+}
+
+    .ecms-modal-title-icon i {
+        color: inherit;
+        font-size: 1rem;
+    }
+
+.ecms-modal-subtitle {
+    margin: .15rem 0 0;
+    color: rgba(255,255,255,.92);
+    font-size: .72rem;
+    font-weight: 750;
+    line-height: 1.2;
+}

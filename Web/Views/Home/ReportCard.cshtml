@@ -7,297 +7,301 @@
 <link asp-href-include="~/developercss/reportandreturn.css" rel="stylesheet" />
 <link asp-href-include="~/developercss/reportcard.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> >Report & Returns (Cards)
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > Report &amp; Returns (Cards)
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="row">
-        <div class="card">
+
+<div class="ecms-card-movement-page">
+    <div class="containerMain ecms-page ecms-page-full ecms-fit-screen ecms-card-movement-container">
+        <div class="ecms-card ecms-card-movement-shell">
+
+            <div class="ecms-page-title ecms-card-movement-head d-flex align-items-center gap-3 d-print-none">
+                <div class="ecms-title-icon ecms-card-movement-head-icon">
+                    <i class="fa fa-id-card"></i>
+                </div>
+                <div>
+                    <h2>Report &amp; Returns (Cards)</h2>
+                    <p>Card export, printing, dispatch, receipt and distribution movement summary</p>
+                </div>
+            </div>
+
             @if (claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports" || i.Value == "Fmn Level Reports"))
             {
-                <div class="row p-3">
-                    <div class="card  section_to_report_toPrint p-3" id="section_to_report_toPrint">
-                        <div class="row pt-1 SearchTab d-print-none">
-                            <div class="form-group row mb-2">
-                                <span id="spnclaimId" class="d-none">@(claims.Any(i => i.Value == "Army Level Reports") ? "Army Level Reports" : "Fmn Level Reports")</span>
-                                <label class="col-form-label col-md-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-md-10">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
-                                        <label class="form-check-label" for="UnitType1">Unit</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
-                                        <label class="form-check-label" for="UnitType2">
-                                            Unit(Fmn HQ)
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
-                                        <label class="form-check-label" for="UnitType3">Unit(Dte/Branch)</label>
-                                    </div>
+                <div class="ecms-section ecms-form-section ecms-card-filter-panel section_to_report_toPrint d-print-none" id="section_to_report_toPrint">
+                    <div class="row pt-1 SearchTab">
+                        <div class="form-group row mb-2 ecms-unit-type-row">
+                            <span id="spnclaimId" class="d-none">@(claims.Any(i => i.Value == "Army Level Reports") ? "Army Level Reports" : "Fmn Level Reports")</span>
+                            <label class="col-form-label col-md-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
+                            <div class="col-md-10 ecms-radio-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
+                                    <label class="form-check-label" for="UnitType1">Unit</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
+                                    <label class="form-check-label" for="UnitType2">Unit(Fmn HQ)</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
+                                    <label class="form-check-label" for="UnitType3">Unit(Dte/Branch)</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="row SearchTab">
-                            <div class="col-sm-3 unittype">
-                                <label class="col-form-label fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
-                                <select class="form-select"  name="ddlCommand" required id="ddlCommand">
-                                    <option value="">All</option>
-                                </select>
+                    </div>
 
-                            </div>
-                            <div class="col-sm-3 unittype">
-                                <label class="col-form-label fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlCorps" required id="ddlCorps">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 unittype">
-                                <label class="col-form-label fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlDiv" required id="ddlDiv">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 unittype">
-                                <label class="col-form-label fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlBde" required id="ddlBde">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 FmnBranch  d-none">
-                                <label class="col-form-label fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlFmnBranch" required id="ddlFmnBranch">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 DteBranch d-none">
-                                <label class="col-form-label fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlPSODte" required id="ddlPSODte">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 DteBranch d-none">
-                                <label class="col-form-label fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlDgSubDte" required id="ddlDgSubDte">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="col-form-label fw-bold">Unit<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlUnit" required id="ddlUnit">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
+                    <div class="row SearchTab ecms-filter-grid">
+                        <div class="col-sm-3 unittype">
+                            <label class="col-form-label fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlCommand" required id="ddlCommand">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 unittype">
+                            <label class="col-form-label fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlCorps" required id="ddlCorps">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 unittype">
+                            <label class="col-form-label fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlDiv" required id="ddlDiv">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 unittype">
+                            <label class="col-form-label fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlBde" required id="ddlBde">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 FmnBranch d-none">
+                            <label class="col-form-label fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlFmnBranch" required id="ddlFmnBranch">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 DteBranch d-none">
+                            <label class="col-form-label fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlPSODte" required id="ddlPSODte">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 DteBranch d-none">
+                            <label class="col-form-label fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlDgSubDte" required id="ddlDgSubDte">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="col-form-label fw-bold">Unit<i class="fas fa-asterisk mand1"></i></label>
+                            <select class="form-select" name="ddlUnit" required id="ddlUnit">
+                                <option value="">All</option>
+                            </select>
                         </div>
                     </div>
                 </div>
             }
+
             @if (RoleNameList.Contains(ViewBag.Role))
             {
-                <div class="row p-3">
-                    <div class="seven">
-                        <h1>Offrs</h1>
-                    </div>
-                    <div class="card p-3">
-                        <div class="row">
-                            <div class="row align-items-stretch">
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+                <div class="ecms-card-movement-scroll">
+
+                    <section class="ecms-section ecms-card-section">
+                        <div class="seven ecms-section-title">
+                            <h1>Offrs</h1>
+                        </div>
+
+                        <div class="ecms-form-section ecms-card-section-body">
+                            <div class="ecms-movement-grid">
+                                <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap" id="btnExport_Officer">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Exported <br> by AFSAC</h4>
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-export" id="btnExport_Officer">
+                                            <div class="ecms-card-icon"><i class="fa fa-upload"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotExported_Officer">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Exported by AFSAC</h4>
                                         </div>
                                     </a>
                                 </div>
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+
+                                <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap" id="btnPrinted_Officer">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Printed</h4>
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-print" id="btnPrinted_Officer">
+                                            <div class="ecms-card-icon"><i class="fa fa-print"></i></div>
                                             <span class="hind-font caption-12 c-dashboardInfo__count" id="TotPrinted_Officer">0</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="row align-items-stretch">
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
-                                    <a href="#">
-                                        <div class="wrap" id="btnDispatchToORO">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch <br> to Officer Record Office</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToORO">0</span>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
-                                    <a href="#">
-                                        <div class="wrap" id="btnCardInORO">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Officer Record Office</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInORO">0</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="row align-items-stretch">
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
-                                    <a href="#">
-                                        <div class="wrap" id="btnDispatchToUnit_Officer">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch <br> to Unit</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToUnit_Officer">0</span>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
-                                    <a href="#">
-                                        <div class="wrap" id="btnCardInUnit_Officer">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Unit</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInUnit_Officer">0</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="row align-items-stretch">
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
-                                    <a href="#">
-                                        <div class="wrap" id="btnDistributed_Officer">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Distributed</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDistributed_Officer">0</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row p-3">
-                    <div class="seven">
-                        <h1>JCO / OR</h1>
-                    </div>
-                    <div class="card p-3">
-                        <div class="row">
-                            <div class="row align-items-stretch">
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
-                                    <a href="#">
-                                        <div class="wrap" id="btnExport_OR">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Exported <br> by AFSAC</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotExported_OR">0</span>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
-                                    <a href="#">
-                                        <div class="wrap" id="btnPrinted_OR">
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Printed</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotPrinted_OR">0</span>
                                         </div>
                                     </a>
                                 </div>
-                            </div>
-                            <hr />
-                            <div class="row align-items-stretch">
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+
+                                <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap" id="btnDispatchToRegt">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch <br> to Regiment</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToRegt">0</span>
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-dispatch" id="btnDispatchToORO">
+                                            <div class="ecms-card-icon"><i class="fa fa-truck"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToORO">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch to Officer Record Office</h4>
                                         </div>
                                     </a>
                                 </div>
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+
+                                <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap" id="btnCardInRegt">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Regiment</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInRegt">0</span>
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-office" id="btnCardInORO">
+                                            <div class="ecms-card-icon"><i class="fa fa-building"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInORO">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Officer Record Office</h4>
                                         </div>
                                     </a>
                                 </div>
-                            </div>
-                            <hr />
-                            <div class="row align-items-stretch">
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+
+                                <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap" id="btnDispatchToUnit_OR">
-                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch <br> to Unit</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToUnit_OR">0</span>
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-unit" id="btnDispatchToUnit_Officer">
+                                            <div class="ecms-card-icon"><i class="fa fa-share-square"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToUnit_Officer">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch to Unit</h4>
                                         </div>
                                     </a>
                                 </div>
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+
+                                <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap" id="btnCardInUnit_OR">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-home" id="btnCardInUnit_Officer">
+                                            <div class="ecms-card-icon"><i class="fa fa-home"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInUnit_Officer">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Unit</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInUnit_OR">0</span>
                                         </div>
                                     </a>
                                 </div>
-                            </div>
-                            <div class="row align-items-stretch">
-                                <div class="c-dashboardInfo col-lg-1 col-sm-6">
+
+                                <div class="c-dashboardInfo">
                                     <a href="#">
-                                        <div class="wrap" id="btnDistributed_OR">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-done" id="btnDistributed_Officer">
+                                            <div class="ecms-card-icon"><i class="fa fa-check-circle"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDistributed_Officer">0</span>
                                             <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Distributed</h4>
-                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDistributed_OR">0</span>
                                         </div>
                                     </a>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
+
+                    <section class="ecms-section ecms-card-section">
+                        <div class="seven ecms-section-title">
+                            <h1>JCO / OR</h1>
+                        </div>
+
+                        <div class="ecms-form-section ecms-card-section-body">
+                            <div class="ecms-movement-grid">
+                                <div class="c-dashboardInfo">
+                                    <a href="#">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-export" id="btnExport_OR">
+                                            <div class="ecms-card-icon"><i class="fa fa-upload"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotExported_OR">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Exported by AFSAC</h4>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <div class="c-dashboardInfo">
+                                    <a href="#">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-print" id="btnPrinted_OR">
+                                            <div class="ecms-card-icon"><i class="fa fa-print"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotPrinted_OR">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Printed</h4>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <div class="c-dashboardInfo">
+                                    <a href="#">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-dispatch" id="btnDispatchToRegt">
+                                            <div class="ecms-card-icon"><i class="fa fa-truck"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToRegt">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch to Regiment</h4>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <div class="c-dashboardInfo">
+                                    <a href="#">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-office" id="btnCardInRegt">
+                                            <div class="ecms-card-icon"><i class="fa fa-building"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInRegt">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Regiment</h4>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <div class="c-dashboardInfo">
+                                    <a href="#">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-unit" id="btnDispatchToUnit_OR">
+                                            <div class="ecms-card-icon"><i class="fa fa-share-square"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDispatchToUnit_OR">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Dispatch to Unit</h4>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <div class="c-dashboardInfo">
+                                    <a href="#">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-home" id="btnCardInUnit_OR">
+                                            <div class="ecms-card-icon"><i class="fa fa-home"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotCardInUnit_OR">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card in Unit</h4>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <div class="c-dashboardInfo">
+                                    <a href="#">
+                                        <div class="wrap ecms-tile ecms-movement-card ecms-card-done" id="btnDistributed_OR">
+                                            <div class="ecms-card-icon"><i class="fa fa-check-circle"></i></div>
+                                            <span class="hind-font caption-12 c-dashboardInfo__count" id="TotDistributed_OR">0</span>
+                                            <h4 class="heading heading5 hind-font medium-font-weight c-dashboardInfo__title">Card Distributed</h4>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
             }
         </div>
     </div>
 </div>
 
-
-<div class="modal fade" id="CardReport" tabindex="-1" aria-labelledby="exampleModalLabel" >
-    <div class="modal-dialog modal-xl" role="document">
+<div class="modal fade ecms-card-movement-modal" id="CardReport" tabindex="-1" aria-labelledby="CardReport_lblModelTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl ecms-modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
                 <h4 class="modal-title"><span id="CardReport_lblModelTitle"></span></h4>
+                <button type="button" class="close ecms-modal-close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
 
             <div class="modal-body">
-                <div class="row">
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="CardReport_tbldatadialog">
-                    </table>
+                <div class="ecms-dt-wrap ecms-card-report-table">
+                    <table class="table table-striped table-hover dataTable ecms-dt-table" role="grid" id="CardReport_tbldatadialog"></table>
                 </div>
                 <div class="col-sm-12" id="msg">
                 </div>
             </div>
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
+        </div>
+    </div>
 </div>
-<script asp-src-include="~/developerjs/ReportCard.js"></script>
 
+<script asp-src-include="~/developerjs/ReportCard.js"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

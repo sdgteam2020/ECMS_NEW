@@ -5,26 +5,26 @@
 }
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
 <link asp-href-include="~/developercss/registration.css" rel="stylesheet" />
-<div class="container mt-2">
-    <div class="card mb-3 ">
-        <div class="card-header">
+<div class="container mt-2 ecms-registration-page">
+    <div class="card mb-3 ecms-registration-card">
+        <div class="card-header ecms-registration-main-header">
             <div class="row">
                 <div class="col-xl-12 text-center">
                     <h3>
-                       I-Card Appl Request For 
+                        I-Card Appl Request For
                         <small class="text-muted"><span class="text-uppercase" id="icarddetails"></span></small>
-                        
+
                     </h3>
                 </div>
             </div>
         </div>
-        <div class="card-body card-body-min-height" >
+        <div class="card-body card-body-min-height">
             <div class="row g-3 row-deck mb-3">
                 <div class="card1 ">
                     <div class="row">
                         <span id="spnhdns" class="d-none">@ViewBag.hdns</span>
                         <div class="col-md-12 ">
-                            <div class="card cardbg minheight mb-2 mt-2">
+                            <div class="card cardbg minheight mb-2 mt-2 ecms-reg-section ecms-requisition-section">
                                 <div class="seven">
                                     <h1>Requisition Details</h1>
                                 </div>
@@ -78,217 +78,215 @@
                             </div>
                         </div>
                         <div class="col-md-12 ">
-                            <div class="card cardbg minheight mb-2 mt-2">
-                                <div class="mt-2">
-                                    <div class="seven">
-                                        <h1>Applicant Personal Particulars as per Service Records</h1>
-                                    </div>
-                                    <div class="row">
-                                        <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="Registration" id="Registration" name="Registration" method="post" class="mt-3">
-                                            <div class="card-body">
-                                                <input type="hidden" id="EncryptedData" name="EncryptedData" value="null" />
-                                                <input hidden asp-for="ApplyForId" />
-                                                <input hidden asp-for="RegistrationId" />
-                                                <input hidden asp-for="TypeId" />
-                                                <input hidden asp-for="RemarksIds" />
-                                                <form id="Reg" name="Reg" method="post">
-                                                    <div class="row">
-                                                        <div class="col-xl-12">
-                                                            <div class="form-group row mb-2 required">
-                                                                <label class="col-form-label col-sm-3 form-label labelprofile">Service No </label>
-                                                                <div class="col-sm-3">
-                                                                    <input asp-for="ServiceNumber" readonly class="form-control alpha-num-only text-uppercase" />
-                                                                    <span asp-validation-for="ServiceNumber" class="text-danger"></span>
-                                                                </div>
-                                                                <div class="col-sm-4 spnhideServiceNo">
-                                                                    <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary">Fetch Data From DB</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xl-6">
-                                                            
-                                                        </div>
-                                                    </div>
-                                                </form>
+                            <div class="card cardbg minheight mb-2 mt-2 ecms-reg-section ecms-applicant-section">
+                                <div class="seven">
+                                    <h1>Applicant Personal Particulars as per Service Records</h1>
+                                </div>
+                                <div class="row">
+                                    <form enctype="multipart/form-data" asp-controller="BasicDetail" asp-action="Registration" id="Registration" name="Registration" method="post" class="mt-3">
+                                        <div class="card-body ecms-registration-form-body">
+                                            <input type="hidden" id="EncryptedData" name="EncryptedData" value="null" />
+                                            <input hidden asp-for="ApplyForId" />
+                                            <input hidden asp-for="RegistrationId" />
+                                            <input hidden asp-for="TypeId" />
+                                            <input hidden asp-for="RemarksIds" />
+                                            <form id="Reg" name="Reg" method="post">
                                                 <div class="row">
-                                                    <div class="col-xl-6">
-                                                        <div class="form-group row mb-2 OldServiceNo">
-                                                            <label class="col-sm-6 col-form-label form-label labelprofile">Old Service No</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="OldServiceNo" readonly class="form-control alpha-num-only text-uppercase" />
-                                                                <span asp-validation-for="OldServiceNo" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 required">
-                                                            <label asp-for="RankId" class="col-sm-6 col-form-label form-label labelprofile"></label>
-                                                            <div class="col-sm-6">
-                                                                <select asp-for="RankId" class="form-select full-width" required>
-                                                                </select>
-                                                                <span asp-validation-for="RankId" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 required">
-                                                            <label asp-for="FName" class="col-form-label col-sm-6 labelprofile">First Name</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="FName" class="form-control alpha-num-only text-uppercase" placeholder="Max 18 Characters incl spaces" required readonly />
-                                                                <span asp-validation-for="FName" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2">
-                                                            <label asp-for="LName" class="col-form-label col-sm-6 labelprofile">Last Name</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="LName" class="form-control alpha-num-only text-uppercase" placeholder="Max 18 Characters incl spaces" readonly />
-                                                                <span asp-validation-for="LName" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 required">
-                                                            <label asp-for="ArmedId" class="col-sm-6 col-form-label form-label labelprofile">Name of Arms, Service & Corps</label>
-                                                            <div class="col-sm-6">
-                                                                <select asp-for="ArmedId" class="form-select full-width" required>
-                                                                </select>
-                                                                <span asp-validation-for="ArmedId" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                       
-                                                        <div class="form-group row mb-2 persAddress">
-                                                            <label class="col-form-label col-sm-6 labelprofile">
-                                                                Permt Address as per Service Records
-                                                            </label>
-                                                            <div class="col-sm-6">
-                                                                <textarea id="PermanentAddress" rows="6" class="form-control alpha-num-only text-uppercase" placeholder="" readonly></textarea>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 entryaddress">
-                                                            <label class="col-form-label col-sm-6 labelprofile">State</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="State" class="form-control alpha-num-only paddress text-uppercase" maxlength="50" />
-                                                                <span id="lblState" name="lblState" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 entryaddress">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Police Station</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="PS" class="form-control alpha-num-only text-uppercase" maxlength="50" />
-                                                                <span id="lblPS" name="lblPS" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 entryaddress">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Village</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="Village" class="form-control alpha-num-only text-uppercase" maxlength="50" />
-                                                                <span id="lblVillage" name="lblVillage" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 entryaddress">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Pin Code</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="PinCode" class="form-control alpha-num-only" />
-                                                                <span asp-validation-for="PinCode" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xl-6">
-                                                        <div class="form-group row mb-2 spnhideServiceNo">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Service No as per Service Record</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="ServiceNo" class="form-control alpha-num-only text-uppercase" maxlength="9" placeholder="IC12345X/JC12345X" readonly />
-                                                                <span asp-validation-for="ServiceNo" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2">
-                                                            <label asp-for="NameAsPerRecord" class="col-form-label col-sm-6 labelprofile">Name as per Service Record</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="NameAsPerRecord" class="form-control alpha-num-only text-uppercase" placeholder="Max 36 Characters incl spaces" readonly />
-                                                                <span asp-validation-for="NameAsPerRecord" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Dt of Birth</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="DOB_" class="form-control" autocomplete="off" readonly />
-                                                                <span asp-validation-for="DOB_" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Dt of Commissioning/ Enrolment</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="DOC_" class="form-control" autocomplete="off" readonly />
-                                                                <span asp-validation-for="DOC_" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 entryaddress">
-                                                            <label class="col-form-label col-sm-6 labelprofile">District</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="District" class="form-control alpha-num-only text-uppercase" maxlength="50" />
-                                                                <span id="lblDistrict" name="lblDistrict" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 entryaddress">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Post Office</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="PO" class="form-control alpha-num-only text-uppercase" maxlength="50" />
-                                                                <span id="lblPO" name="lblPO" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 entryaddress">
-                                                            <label class="col-form-label col-sm-6 labelprofile">Tehsil</label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="Tehsil" class="form-control alpha-num-only text-uppercase" maxlength="50" />
-                                                                <span id="lblTehsil" name="lblTehsil" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row mb-2 required">
-                                                            <label asp-for="SubmitType" class="col-form-label col-sm-6 form-label labelprofile">
-                                                                I hereby certify that all the details are correct and I am ready to proceed for filling I Card Appl.
-
-                                                            </label>
-                                                            <div class="col-sm-6">
-                                                                <input asp-for="SubmitType" class="submitTypeRadio" type="radio" value="1" />
-                                                                <label>Yes</label>
-                                                                <input asp-for="SubmitType" class="submitTypeRadio" type="radio" value="2" />
-                                                                <label>No</label>
-                                                                <span asp-validation-for="SubmitType" class="text-danger"></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                     <div class="col-xl-12">
-                                                        <div class="col-sm-12">
-                                                            <div class="form-group labelprofile">
-                                                                <label class="col-form-label form-label labelprofile">
-                                                                    Note :- In case your data ie Name, DoB, DoC & Add as reflected above is incorrect, kindly approach Record Office and raise an obsn alongwith sp docu for rectification.
-                                                                </label>
+                                                        <div class="form-group row mb-2 required">
+                                                            <label class="col-form-label col-sm-3 form-label labelprofile">Service No </label>
+                                                            <div class="col-sm-3">
+                                                                <input asp-for="ServiceNumber" readonly class="form-control alpha-num-only text-uppercase" />
+                                                                <span asp-validation-for="ServiceNumber" class="text-danger"></span>
                                                             </div>
+                                                            <div class="col-sm-4 spnhideServiceNo">
+                                                                <button type="button" id="btngetdata" name="btngetdata" class="btn btn-primary">Fetch Data From DB</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xl-6">
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <div class="row">
+                                                <div class="col-xl-6">
+                                                    <div class="form-group row mb-2 OldServiceNo">
+                                                        <label class="col-sm-6 col-form-label form-label labelprofile">Old Service No</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="OldServiceNo" readonly class="form-control alpha-num-only text-uppercase" />
+                                                            <span asp-validation-for="OldServiceNo" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 required">
+                                                        <label asp-for="RankId" class="col-sm-6 col-form-label form-label labelprofile"></label>
+                                                        <div class="col-sm-6">
+                                                            <select asp-for="RankId" class="form-select full-width" required>
+                                                            </select>
+                                                            <span asp-validation-for="RankId" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 required">
+                                                        <label asp-for="FName" class="col-form-label col-sm-6 labelprofile">First Name</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="FName" class="form-control alpha-num-only text-uppercase" placeholder="Max 18 Characters incl spaces" required readonly />
+                                                            <span asp-validation-for="FName" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2">
+                                                        <label asp-for="LName" class="col-form-label col-sm-6 labelprofile">Last Name</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="LName" class="form-control alpha-num-only text-uppercase" placeholder="Max 18 Characters incl spaces" readonly />
+                                                            <span asp-validation-for="LName" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 required">
+                                                        <label asp-for="ArmedId" class="col-sm-6 col-form-label form-label labelprofile">Name of Arms, Service & Corps</label>
+                                                        <div class="col-sm-6">
+                                                            <select asp-for="ArmedId" class="form-select full-width" required>
+                                                            </select>
+                                                            <span asp-validation-for="ArmedId" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
 
+                                                    <div class="form-group row mb-2 persAddress">
+                                                        <label class="col-form-label col-sm-6 labelprofile">
+                                                            Permt Address as per Service Records
+                                                        </label>
+                                                        <div class="col-sm-6">
+                                                            <textarea id="PermanentAddress" rows="6" class="form-control alpha-num-only text-uppercase" placeholder="" readonly></textarea>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 entryaddress">
+                                                        <label class="col-form-label col-sm-6 labelprofile">State</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="State" class="form-control alpha-num-only paddress text-uppercase" maxlength="50" />
+                                                            <span id="lblState" name="lblState" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 entryaddress">
+                                                        <label class="col-form-label col-sm-6 labelprofile">Police Station</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="PS" class="form-control alpha-num-only text-uppercase" maxlength="50" />
+                                                            <span id="lblPS" name="lblPS" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 entryaddress">
+                                                        <label class="col-form-label col-sm-6 labelprofile">Village</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="Village" class="form-control alpha-num-only text-uppercase" maxlength="50" />
+                                                            <span id="lblVillage" name="lblVillage" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 entryaddress">
+                                                        <label class="col-form-label col-sm-6 labelprofile">Pin Code</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="PinCode" class="form-control alpha-num-only" />
+                                                            <span asp-validation-for="PinCode" class="text-danger"></span>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xl-12 Remarks d-none">
+                                                <div class="col-xl-6">
+                                                    <div class="form-group row mb-2 spnhideServiceNo">
+                                                        <label class="col-form-label col-sm-6 labelprofile">Service No as per Service Record</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="ServiceNo" class="form-control alpha-num-only text-uppercase" maxlength="9" placeholder="IC12345X/JC12345X" readonly />
+                                                            <span asp-validation-for="ServiceNo" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
                                                     <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-2">Select Remarks</label>
-                                                        <div class="col-sm-10">
+                                                        <label asp-for="NameAsPerRecord" class="col-form-label col-sm-6 labelprofile">Name as per Service Record</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="NameAsPerRecord" class="form-control alpha-num-only text-uppercase" placeholder="Max 36 Characters incl spaces" readonly />
+                                                            <span asp-validation-for="NameAsPerRecord" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-6 labelprofile">Dt of Birth</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="DOB_" class="form-control" autocomplete="off" readonly />
+                                                            <span asp-validation-for="DOB_" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2">
+                                                        <label class="col-form-label col-sm-6 labelprofile">Dt of Commissioning/ Enrolment</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="DOC_" class="form-control" autocomplete="off" readonly />
+                                                            <span asp-validation-for="DOC_" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 entryaddress">
+                                                        <label class="col-form-label col-sm-6 labelprofile">District</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="District" class="form-control alpha-num-only text-uppercase" maxlength="50" />
+                                                            <span id="lblDistrict" name="lblDistrict" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 entryaddress">
+                                                        <label class="col-form-label col-sm-6 labelprofile">Post Office</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="PO" class="form-control alpha-num-only text-uppercase" maxlength="50" />
+                                                            <span id="lblPO" name="lblPO" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 entryaddress">
+                                                        <label class="col-form-label col-sm-6 labelprofile">Tehsil</label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="Tehsil" class="form-control alpha-num-only text-uppercase" maxlength="50" />
+                                                            <span id="lblTehsil" name="lblTehsil" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row mb-2 required">
+                                                        <label asp-for="SubmitType" class="col-form-label col-sm-6 form-label labelprofile">
+                                                            I hereby certify that all the details are correct and I am ready to proceed for filling I Card Appl.
 
-                                                            <select class="form-control" multiple="" placeholder="Please select a Photos" tabindex="-1" name="Remarks" required id="ddlRemarks">
-                                                            </select>
+                                                        </label>
+                                                        <div class="col-sm-6">
+                                                            <input asp-for="SubmitType" class="submitTypeRadio" type="radio" value="1" />
+                                                            <label>Yes</label>
+                                                            <input asp-for="SubmitType" class="submitTypeRadio" type="radio" value="2" />
+                                                            <label>No</label>
+                                                            <span asp-validation-for="SubmitType" class="text-danger"></span>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-12">
-                                                    <div class="d-flax text-center">
-                                                        <button type="button" id="btnclear" name="btnclear" class="btn btn-primary">Clear</button>
-                                                        <button type="button" id="btnsubmit" name="btnsubmit" class="btn btn-primary" disabled>Proceed</button>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group labelprofile ecms-registration-note">
+                                                            <label class="col-form-label form-label labelprofile">
+                                                                Note :- In case your data ie Name, DoB, DoC & Add as reflected above is incorrect, kindly approach Record Office and raise an obsn alongwith sp docu for rectification.
+                                                            </label>
+                                                        </div>
+
                                                     </div>
-                                                    <div class="col-xl-12 mt-2">
-                                                        <div class="col-sm-12 text-center">
-                                                            <div id="tokenmsg" class="d-grid gap-2 col-4 mx-auto">
-                                                            </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-12 Remarks d-none">
+                                                <div class="form-group row mb-2">
+                                                    <label class="col-form-label col-sm-2">Select Remarks</label>
+                                                    <div class="col-sm-10">
+
+                                                        <select class="form-control" multiple="" placeholder="Please select a Photos" tabindex="-1" name="Remarks" required id="ddlRemarks">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-12">
+                                                <div class="d-flex text-center justify-content-center gap-2 ecms-registration-actions">
+                                                    <button type="button" id="btnclear" name="btnclear" class="btn btn-primary">Clear</button>
+                                                    <button type="button" id="btnsubmit" name="btnsubmit" class="btn btn-primary" disabled>Proceed</button>
+                                                </div>
+                                                <div class="col-xl-12 mt-2">
+                                                    <div class="col-sm-12 text-center">
+                                                        <div id="tokenmsg" class="d-grid gap-2 col-4 mx-auto">
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
-                                    </div>
+                                        </div>
+                                    </form>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -298,11 +296,11 @@
     </div>
 </div>
 
-@section Scripts{   
+@section Scripts {
     <script asp-src-include="~/developerjs/registration.js"></script>
     <script asp-src-include="~/developerjs/token.js"></script>
     <script asp-src-include="~/developerjs/mtables.js"></script>
     <script asp-src-include="~/developerjs/commanvalidation.js"></script>
     <script asp-src-include="~/select2/js/select2.min.js"></script>
 
-    }
+}

@@ -1,5 +1,40 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 let BdeId = 0;
+function refreshBdeDataTable(tableSelector, delay) {
+    var wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            var $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                safeAdjustBdeDataTable($(tableSelector).DataTable());
+            }
+        } catch (error) {
+            console.warn("Brigade DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
+function safeAdjustBdeDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -11,20 +46,20 @@ $(function () {
 
 
     $('#ddlCommand').on('change', function () {
-       
+
         mMsater(0, "ddlCorps", 2, $('#ddlCommand').val());
     });
-        
+
     $('#ddlCorps').on('change', function () {
 
-        mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val() ,$('#ddlCorps').val(),0,0);///ComdId,CorpsId,DivId,BdeId
+        mMsaterByParent(0, "ddlDiv", 3, $('#ddlCommand').val(), $('#ddlCorps').val(), 0, 0);///ComdId,CorpsId,DivId,BdeId
     });
 
-    $("#btnReset").on("click",function () {
+    $("#btnReset").on("click", function () {
         Reset();
     });
 
-    $("#btnsave").on("click",function () {
+    $("#btnsave").on("click", function () {
         if ($("#SaveForm")[0].checkValidity()) {
 
             Swal.fire({
@@ -43,27 +78,27 @@ $(function () {
 
         } else {
             $("#SaveForm")[0].reportValidity();
-    }
+        }
 
 
 
         // 
 
     });
- 
-    $('#btnMultiDelete').on("click",function () {
+
+    $('#btnMultiDelete').on("click", function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
 
             memberTable.$('input[type="checkbox"]:checked').each(function () {
 
-                
+
                 var id = $(this).attr("Id");
                 lst.push(id);
 
             });
-          
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Delete",
@@ -74,7 +109,7 @@ $(function () {
                 confirmButtonText: 'Yes, Delete it!'
             }).then((result) => {
                 if (result.value) {
-                   
+
                     DeleteMultiple(lst);
 
                 }
@@ -93,17 +128,18 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old DataTables sizing markup
     }
     const columns = getColumnsForBde();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // UI only: normal DataTables scroll inside card
+        deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -135,10 +171,14 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-
+                refreshBdeDataTable("#tbldata", 30);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing, .dt-processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                refreshBdeDataTable("#tbldata", 30);
             }
         },
         columns: columns,
@@ -156,15 +196,15 @@ function BindData() {
             { targets: 4, width: "200px" },
             { targets: -1, width: "120px" },
             {
-                targets: '_all',  
-                orderSequence: ["asc", "desc"]  
+                targets: '_all',
+                orderSequence: ["asc", "desc"]
             },
         ],
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -191,33 +231,42 @@ function BindData() {
                 }
             }],
         initComplete: function () {
-            // Add tooltip to the search input box
-            let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search Comd/Abbreviation');
+            let searchBox = $("#tbldata_wrapper div.dataTables_filter input");
+            searchBox.attr("title", "Search Comd, Corps, Division or Brigade");
 
-            // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            safeAdjustBdeDataTable(this.api());
+            refreshBdeDataTable("#tbldata", 20);
 
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
-                }, 100);
-            });
+            $(window)
+                .off("resize.bdeDataTable")
+                .on("resize.bdeDataTable", function () {
+                    window.clearTimeout(window.__bdeResizeTimer);
+                    window.__bdeResizeTimer = window.setTimeout(function () {
+                        refreshBdeDataTable("#tbldata", 0);
+                    }, 120);
+                });
         },
         drawCallback: function (settings) {
-
-            // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustBdeDataTable(this.api());
+            refreshBdeDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Brigade tooltip skipped:", error);
+                    }
+                });
+            }
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -281,7 +330,7 @@ function Save() {
     let jsonData = JSON.stringify(payload);
 
     let encrypted = encryptPayloadData(jsonData);
-   
+
     $.ajax({
         url: '/Master/SaveBde',
         type: 'POST',
@@ -384,7 +433,7 @@ function Delete(BdeId) {
 }
 
 function DeleteMultiple(BdeCatId) {
-   
+
     var userdata =
     {
         "ints": BdeCatId,
@@ -515,11 +564,26 @@ function getColumnsForBde() {
             className: "noExport text-center col-action",
             width: "120px",
             render: function (data, type, row) {
-                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
+                let Action = `<button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
+                                <button type='button' class='cls-btnDelete btn ecms-action-btn btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
                 return Action;
             }
         }
     ];
     return columns;
 }
+
+/* ==============================================================
+   PAGE-LOCAL UI EVENTS
+   No global ModernCSS file is changed.
+================================================================ */
+
+$(document)
+    .off("draw.dt.bdeUi")
+    .on("draw.dt.bdeUi", function (event, settings) {
+        var tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            refreshBdeDataTable("#tbldata", 20);
+        }
+    });

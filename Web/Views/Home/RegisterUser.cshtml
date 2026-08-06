@@ -2,65 +2,87 @@
     ViewData["Title"] = "Registered User";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link asp-href-include="~/developercss/registeruser.css" rel="stylesheet" />
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/registeruser.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > <a href="/Home/DashboardUserMgt" class="mr-2"> User Mgt</a> >Registered User
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                        <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt;
+                        <a href="/Home/DashboardUserMgt" class="mr-2">User Mgt</a> &gt;
+                        Registered User
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Details of Registered Users
-                        <small class="text-muted"></small>
-                    </h3>
-                </div>
-            </div>
-        </div>
-        <div class="card-body card-body-min-height">
-            <div class="row">
-                <div class="col-xl-6">
-                </div>
-                <div class="col-xl-6">
-                    <div class="d-flex d-md-flex justify-content-md-between align-items-md-center">
-                        <h6 class="mb-3 mb-md-0">
-                        </h6>
-                    </div>
-                </div>
-                <table class="table border border-purple table-striped no-footer table-hover" role="grid" id="tbldata">
-                    <thead>
-                        <tr>
-                            <th class="nowrap">S No</th>
-                            <th class="nowrap">Domain ID</th>
-                            <th class="nowrap">Army No</th>
-                            <th class="nowrap">Rank</th>
-                            <th class="nowrap">Name</th>
-                            <th class="nowrap">Appt</th>
-                        </tr>
-                    </thead>
-                    <tbody id="DetailBody">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script asp-src-include="~/developerjs/RegisterUser.js"></script>
+<main class="ecms-register-user-page" aria-labelledby="registeredUsersTitle">
+    <div class="containerMain ecms-page ecms-register-user-container">
+        <section class="card ecms-card ecms-register-shell" aria-describedby="registeredUsersDescription">
+            <div class="card-header ecms-page-title ecms-register-heading">
+                <div class="ecms-title-icon ecms-register-heading-icon" aria-hidden="true">
+                    <i class="fa fa-users"></i>
+                </div>
+
+                <div class="ecms-register-heading-copy">
+                    <h2 id="registeredUsersTitle">Details of Registered Users</h2>
+                    <p id="registeredUsersDescription" class="ecms-title-subtitle">
+                        Registered domain users and mapped appointment details
+                    </p>
+                </div>
+            </div>
+
+            <div class="card-body ecms-card-body card-body-min-height ecms-register-body ecms-min-0">
+                <section class="ecms-section ecms-register-directory" aria-labelledby="registeredUsersDirectoryTitle">
+                    <div class="ecms-register-toolbar">
+                        <h3 id="registeredUsersDirectoryTitle" class="ecms-register-toolbar-label">
+                            <span class="ecms-register-toolbar-icon" aria-hidden="true">
+                                <i class="fa fa-table"></i>
+                            </span>
+                            <span>User Directory</span>
+                        </h3>
+
+                        <div id="registerUserTableActions"
+                             class="ecms-register-table-actions"
+                             aria-label="Export registered users">
+                        </div>
+                    </div>
+
+                    <div class="ecms-dt-wrap ecms-register-table-wrap ecms-min-0">
+                        <table class="table table-striped table-hover no-footer ecms-dt-table ecms-register-table"
+                               id="tbldata"
+                               role="grid"
+                               aria-label="Registered users">
+                            <caption class="ecms-register-visually-hidden">
+                                Registered domain users with Army number, rank, name and appointment.
+                            </caption>
+                            <thead>
+                                <tr>
+                                    <th class="nowrap ecms-register-serial-column">S No</th>
+                                    <th class="nowrap">Domain ID</th>
+                                    <th class="nowrap">Army No</th>
+                                    <th class="nowrap">Rank</th>
+                                    <th class="nowrap">Name</th>
+                                    <th class="nowrap">Appt</th>
+                                </tr>
+                            </thead>
+                            <tbody id="DetailBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+</main>
 
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
+<script asp-src-include="~/developerjs/RegisterUser.js"></script>

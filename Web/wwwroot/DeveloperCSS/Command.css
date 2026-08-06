@@ -1,3 +1,472 @@
-﻿#tbldata {
-    table-layout: fixed !important;
+﻿/* ==============================================================
+   Master / Command & PSO
+   PAGE-SPECIFIC UI ONLY
+
+   Important:
+   - No file inside ModernCSS/css is changed.
+   - Existing ECMS common classes provide the shared design.
+   - All additional rules below are scoped to this page and its modal.
+================================================================ */
+
+.swal2-html-container {
+    color: var(--ecms-danger-500, #ef405c) !important;
+}
+
+/* ---------- Fixed page stage ---------- */
+.ecms-screen-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-command-page {
+    width: calc(100vw - 1.25rem);
+    max-width: none;
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1rem );
+    min-height: 540px;
+    margin: .5rem auto 0;
+    padding-inline: 0;
+    overflow: hidden;
+}
+
+.ecms-command-shell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-command-shell > .ecms-card-body {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        padding: .7rem;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+/* ---------- Page title ---------- */
+.ecms-command-titlebar {
+    min-height: var(--ecms-title-height, 58px);
+    gap: .75rem;
+}
+
+    .ecms-command-titlebar h3 {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: 1.18rem;
+        font-weight: 950;
+        line-height: 1.15;
+    }
+
+.ecms-command-pill {
+    min-height: 2rem;
+    padding: .45rem .8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .42rem;
+    border-radius: 999px;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff) ) !important;
+    font-size: .68rem;
+    font-weight: 950;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* ---------- Inline create/edit form ---------- */
+.ecms-command-form-section {
+    flex: 0 0 auto;
+    padding: .7rem .85rem;
+    overflow: visible;
+}
+
+    .ecms-command-form-section form,
+    .ecms-command-form-section .row {
+        margin: 0;
+    }
+
+.ecms-command-label {
+    min-width: 0;
+    margin: 0 0 .32rem;
+    display: flex;
+    align-items: center;
+    gap: .42rem;
+    color: var(--ecms-text, #061b44);
+    font-size: .78rem;
+    font-weight: 950;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+    .ecms-command-label > i:first-child {
+        width: 1.5rem;
+        height: 1.5rem;
+        min-width: 1.5rem;
+        border-radius: .5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white, #fff);
+        background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-800, #123f8c) );
+        font-size: .68rem;
+        box-shadow: 0 .35rem .85rem rgba(47, 103, 230, .18);
+    }
+
+    .ecms-command-label .mand1 {
+        margin-left: .05rem;
+        font-size: .52rem;
+        vertical-align: super;
+    }
+
+.ecms-command-form-section .form-control {
+    width: 100%;
+    min-height: var(--ecms-control-height, 36px);
+    box-sizing: border-box;
+}
+
+.ecms-command-actions {
+    min-height: var(--ecms-control-height, 36px);
+    margin: 0;
+    padding: 0;
+}
+
+    .ecms-command-actions .btn,
+    .ecms-command-actions input[type="button"] {
+        width: auto;
+        min-width: 4.9rem;
+        max-width: 8rem;
+        min-height: var(--ecms-control-height, 36px);
+        padding-inline: 1rem;
+        flex: 0 0 auto;
+    }
+
+.ecms-command-msg {
+    display: none;
+}
+
+/* ---------- DataTable section ---------- */
+.ecms-command-table-section {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-command-table-section > .ecms-section-title {
+        flex: 0 0 auto;
+        min-height: 2.1rem;
+        padding-block: .42rem;
+    }
+
+.ecms-command-table-wrap {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.ecms-command-page #tbldata_wrapper {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 2.5rem minmax(0, 1fr) 2.8rem;
+    overflow: hidden;
+}
+
+    .ecms-command-page #tbldata_wrapper > .dt-top {
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: 0 0 .4rem;
+    }
+
+    .ecms-command-page #tbldata_wrapper > .dataTables_scroll,
+    .ecms-command-page #tbldata_wrapper > .dt-scroll {
+        grid-row: 2;
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .ecms-command-page #tbldata_wrapper .dataTables_scrollHead,
+    .ecms-command-page #tbldata_wrapper .dt-scroll-head {
+        flex: 0 0 auto;
+    }
+
+    .ecms-command-page #tbldata_wrapper .dataTables_scrollBody,
+    .ecms-command-page #tbldata_wrapper .dt-scroll-body {
+        flex: 1 1 auto;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: auto !important;
+        padding-bottom: 0;
+    }
+
+    .ecms-command-page #tbldata_wrapper > .dt-bottom {
+        grid-row: 3;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: .45rem .1rem 0;
+        overflow: visible;
+    }
+
+.ecms-command-page .dataTables_filter input,
+.ecms-command-page .dt-search input {
+    width: 13rem;
+    max-width: 100%;
+}
+
+.ecms-command-page .dt-buttons {
+    display: none !important;
+}
+
+.ecms-command-page .dt-ellipsis {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* Action/order controls generated by command.js. */
+.ecms-command-page .cls-btnedit,
+.ecms-command-page .cls-btnDelete,
+.ecms-command-page .cls-btnorder {
+    margin: 0 .16rem;
+    border: 0;
+    box-shadow: 0 .45rem .95rem rgba(0, 30, 80, .16);
+}
+
+.ecms-command-page .cls-btnedit {
+    color: var(--ecms-text, #061b44) !important;
+    background: linear-gradient(135deg, #facc15, #f59e0b) !important;
+}
+
+.ecms-command-page .cls-btnDelete {
+    color: var(--ecms-white, #fff) !important;
+    background: linear-gradient( 135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136) ) !important;
+}
+
+.ecms-command-page .cls-btnorder {
+    color: var(--ecms-text, #061b44) !important;
+    background: linear-gradient( 135deg, var(--ecms-cyan-400, #53c9f0), var(--ecms-cyan-500, #19a9e5) ) !important;
+}
+
+.ecms-command-page .bg-secondary {
+    min-width: 2.8rem;
+    padding: .25rem .48rem;
+    border-radius: 999px;
+    color: var(--ecms-white, #fff);
+    background: var(--ecms-slate-500, #64748b) !important;
+    font-size: .62rem;
+    font-weight: 950;
+    text-transform: uppercase;
+}
+
+/* Hide the cloned DataTables sizing header inside the scroll body. */
+.ecms-command-page .dataTables_scrollBody table thead,
+.ecms-command-page .dt-scroll-body table thead {
+    display: none !important;
+    visibility: collapse !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+.ecms-command-page .dataTables_processing,
+.ecms-command-page .dt-processing,
+#tbldata_processing {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* ---------- Hierarchy modal ---------- */
+.ecms-command-modal {
+    z-index: 1080 !important;
+}
+
+    .ecms-command-modal.show,
+    .ecms-command-modal.show .modal-dialog,
+    .ecms-command-modal.show .modal-content {
+        opacity: 1 !important;
+        visibility: visible !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+body.modal-open .modal-backdrop,
+body.modal-open .modal-backdrop.show {
+    z-index: 1070 !important;
+    opacity: .72 !important;
+}
+
+.ecms-command-modal .modal-dialog {
+    width: min(1180px, calc(100vw - 1.5rem));
+    max-width: min(1180px, calc(100vw - 1.5rem));
+}
+
+.ecms-command-modal .modal-content {
+    max-height: calc(100vh - 1.5rem);
+}
+
+.ecms-command-modal .modal-header {
+    min-height: 4rem;
+    padding: .75rem 3.6rem .75rem 1rem;
+}
+
+.ecms-command-modal-heading {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+
+.ecms-command-modal-icon {
+    width: 2.35rem;
+    height: 2.35rem;
+    min-width: 2.35rem;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: .72rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: rgba(255, 255, 255, .14);
+}
+
+.ecms-command-modal .modal-title {
+    margin: 0;
+    color: var(--ecms-white, #fff);
+    font-size: 1.05rem;
+    font-weight: 950;
+    line-height: 1.15;
+}
+
+.ecms-command-modal-subtitle {
+    margin: .15rem 0 0;
+    color: rgba(255, 255, 255, .86);
+    font-size: .72rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.ecms-command-modal .modal-body {
+    min-height: 0;
+    overflow: auto;
+}
+
+.ecms-command-modal #tree,
+.ecms-command-modal .tree {
+    min-width: 100%;
+    padding: .9rem;
+}
+
+.ecms-command-modal .bullet-list-round,
+.ecms-command-modal .bullet-list-round ul {
+    text-align: left;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+    .ecms-screen-stage {
+        overflow: visible;
+    }
+
+    .ecms-command-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-command-shell,
+    .ecms-command-shell > .ecms-card-body {
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-command-table-section {
+        min-height: 28rem;
+    }
+
+    .ecms-command-page #tbldata_wrapper {
+        grid-template-rows: auto minmax(20rem, 1fr) auto;
+    }
+
+        .ecms-command-page #tbldata_wrapper > .dt-top,
+        .ecms-command-page #tbldata_wrapper > .dt-bottom {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+    .ecms-command-page .dataTables_filter,
+    .ecms-command-page .dt-search {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+        .ecms-command-page .dataTables_filter input,
+        .ecms-command-page .dt-search input {
+            width: 100%;
+        }
+
+    .ecms-command-actions {
+        justify-content: flex-start !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-command-titlebar {
+        align-items: flex-start !important;
+        flex-direction: column;
+    }
+
+    .ecms-command-pill {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ecms-command-actions,
+    .ecms-command-actions .btn,
+    .ecms-command-actions input[type="button"] {
+        width: 100%;
+        max-width: none;
+    }
+
+    .ecms-command-actions {
+        flex-direction: column;
+    }
 }

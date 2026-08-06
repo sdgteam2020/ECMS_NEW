@@ -1,3 +1,265 @@
-﻿#tbldata {
-    table-layout: fixed !important;
+﻿/*
+=====================================================
+ECMS Arms / Service & Corps page
+Purpose:
+- Keep only page-level layout and ArmedType form exceptions here.
+- DataTable structure/scroll/header/footer is handled globally in ecms.05.datatables.css.
+=====================================================
+*/
+
+/* Page content height below common header/nav/breadcrumb/footer. */
+.ecms-armedtype-page {
+    height: calc(100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem);
+    margin-top: .5rem;
+    overflow: hidden;
+}
+
+/* Main page card fills the available page area. */
+.ecms-armedtype-shell,
+.ecms-armedtype-shell .ecms-card-body {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Title row only needs small page-specific sizing. */
+.ecms-armedtype-titlebar {
+    min-height: var(--ecms-title-height);
+}
+
+    .ecms-armedtype-titlebar h3 {
+        font-size: 1.25rem;
+    }
+
+.ecms-armedtype-pill {
+    min-height: 2rem;
+    padding: .5rem .85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    text-transform: uppercase;
+}
+
+/* Form section uses Bootstrap grid in the cshtml. */
+.ecms-armedtype-form-section,
+.ecms-armedtype-form-section form,
+.ecms-armedtype-form-section .row {
+    margin: 0;
+}
+
+/* ArmedType label icon style; common input design comes from ecms.03.forms.css. */
+.ecms-armedtype-label {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-bottom: .3rem;
+    white-space: nowrap;
+}
+
+    .ecms-armedtype-label > i:first-child {
+        width: 1.45rem;
+        height: 1.45rem;
+        min-width: 1.45rem;
+        border-radius: .55rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white);
+        background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-800));
+        font-size: .72rem;
+        box-shadow: 0 .35rem .85rem rgba(47,103,230,.18);
+    }
+
+    .ecms-armedtype-label .mand1 {
+        margin-left: .05rem;
+        font-size: .55rem;
+        vertical-align: super;
+    }
+
+/* Keep all controls equal height. */
+.ecms-armedtype-control,
+.ecms-armedtype-form-section .form-control,
+.ecms-armedtype-form-section .form-select {
+    min-height: var(--ecms-control-height);
+}
+
+/* Infantry radio group. */
+.ecms-armedtype-radio-box {
+    min-height: var(--ecms-control-height);
+    display: flex;
+    align-items: center;
+}
+
+.ecms-armedtype-radio {
+    min-height: 2rem;
+    margin: 0;
+    padding: .35rem .75rem;
+    border: 1px solid rgba(70,119,184,.20);
+    border-radius: 999px;
+    background: rgba(255,255,255,.82);
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+    .ecms-armedtype-radio .form-check-input {
+        margin: 0;
+        opacity: 1;
+        position: static;
+        appearance: auto;
+        accent-color: var(--ecms-primary-600);
+    }
+
+    .ecms-armedtype-radio .form-check-label {
+        color: var(--ecms-ink);
+        font-size: .78rem;
+        font-weight: 850;
+    }
+
+/* Save/Reset alignment. */
+.ecms-armedtype-actions {
+    margin: 0;
+    padding: 0;
+}
+
+    .ecms-armedtype-actions .btn,
+    .ecms-armedtype-actions input[type="button"] {
+        min-width: 4.9rem;
+        min-height: var(--ecms-control-height);
+    }
+
+/* Table area fills remaining card height; DataTable internals are common CSS. */
+.ecms-armedtype-table-section {
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-armedtype-table-section > .ecms-section-title {
+        min-height: 2.15rem;
+        padding-block: .42rem;
+    }
+
+.ecms-armedtype-table-wrap {
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Badges and action buttons created from ArmedType.js. */
+
+/* Bootstrap YES/NO badges generated from ArmedType.js. */
+.ecms-armedtype-page .ecms-status-badge {
+    min-width: 2.7rem;
+    min-height: 1.45rem;
+    padding: .32rem .65rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .65rem;
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+    border: 0;
+}
+
+/* YES badge uses Bootstrap green. */
+.ecms-armedtype-page .badge.bg-success.ecms-status-yes {
+    background-color: var(--bs-success, #198754) !important;
+    color: #fff !important;
+}
+
+/* NO badge uses Bootstrap red. */
+.ecms-armedtype-page .badge.bg-danger.ecms-status-no {
+    background-color: var(--bs-danger, #dc3545) !important;
+    color: #fff !important;
+}
+
+.ecms-armedtype-page .cls-btnedit,
+.ecms-armedtype-page .cls-btnDelete {
+    margin-inline: .25rem;
+    border: 0;
+    box-shadow: 0 .5rem 1rem rgba(0,30,80,.16);
+}
+
+.ecms-armedtype-page .cls-btnedit {
+    background: linear-gradient(135deg, #facc15, #f59e0b);
+    color: #061b44;
+}
+
+.ecms-armedtype-page .cls-btnDelete {
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600));
+    color: var(--ecms-white);
+}
+
+/* SweetAlert validation list. */
+.error-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    text-align: left;
+}
+
+    .error-list li {
+        margin-bottom: .35rem;
+    }
+
+/* Tablet and mobile: allow natural page scroll; Bootstrap stacks fields. */
+@media (max-width: 991.98px) {
+    .ecms-armedtype-page {
+        height: auto;
+        min-height: calc(100vh - var(--ecms-header-height) - var(--ecms-footer-height));
+        overflow: visible;
+    }
+
+    .ecms-armedtype-shell,
+    .ecms-armedtype-shell .ecms-card-body {
+        height: auto;
+        overflow: visible;
+    }
+
+    .ecms-armedtype-table-section {
+        min-height: 28rem;
+    }
+
+    .ecms-armedtype-actions {
+        justify-content: flex-start !important;
+    }
+}
+
+/* Phone: buttons become full width. */
+@media (max-width: 575.98px) {
+    .ecms-armedtype-page {
+        width: calc(100vw - .75rem);
+        margin-top: .4rem;
+    }
+
+    .ecms-armedtype-titlebar h3 {
+        font-size: 1.05rem;
+    }
+
+    .ecms-armedtype-actions,
+    .ecms-armedtype-actions .btn,
+    .ecms-armedtype-actions input[type="button"] {
+        width: 100%;
+    }
+
+    .ecms-armedtype-actions {
+        flex-direction: column;
+    }
+}
+
+
+/*
+ArmedType page table area correction:
+- The common DataTable CSS controls toolbar/footer.
+- This only reserves enough height for the common footer inside the ArmedType card.
+*/
+.ecms-armedtype-table-wrap.ecms-dt-wrap {
+    padding-top: .55rem;
+}
+
+/* Keep ArmedType action buttons aligned in cell center. */
+.ecms-armedtype-page .col-action,
+.ecms-armedtype-page table.dataTable tbody td:last-child {
+    text-align: center !important;
+    vertical-align: middle !important;
 }

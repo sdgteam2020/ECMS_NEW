@@ -1,3 +1,558 @@
-﻿#tbldata {
-    table-layout: fixed !important;
+﻿/*
+=====================================================
+ECMS Appointment
+Bootstrap-first page CSS
+
+Common design comes from ModernCSS:
+- ecms.02.pages.css
+- ecms.03.forms.css
+- ecms.04.buttons-badges.css
+- ecms.05.datatables.css
+
+This file keeps only Appointment-page placement and small exceptions.
+=====================================================
+*/
+
+/* Page height inside fixed header/nav/breadcrumb/footer shell. */
+.ecms-appointment-page {
+    height: calc(100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem);
+    margin-top: .5rem;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+/* Main card fills available area. */
+.ecms-appointment-shell {
+    height: 100%;
+    min-height: 0;
+}
+
+    .ecms-appointment-shell .ecms-card-body {
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+/* Compact title row; common appearance remains from .ecms-page-title. */
+.ecms-appointment-titlebar {
+    min-height: var(--ecms-title-height);
+}
+
+    .ecms-appointment-titlebar h3 {
+        font-size: 1.25rem;
+    }
+
+.ecms-appointment-pill {
+    min-height: 2rem;
+    padding: .5rem .85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    text-transform: uppercase;
+}
+
+/* Form uses Bootstrap grid for responsiveness. */
+.ecms-appointment-form-section {
+    overflow: visible;
+}
+
+    .ecms-appointment-form-section form,
+    .ecms-appointment-form-section .row {
+        margin: 0;
+    }
+
+/* Label icon only for this page. */
+.ecms-appointment-label {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-bottom: .3rem;
+    white-space: nowrap;
+}
+
+    .ecms-appointment-label > i:first-child {
+        width: 1.45rem;
+        height: 1.45rem;
+        min-width: 1.45rem;
+        border-radius: .55rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white);
+        background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-800));
+        font-size: .72rem;
+        box-shadow: 0 .35rem .85rem rgba(47,103,230,.18);
+    }
+
+    .ecms-appointment-label .mand1 {
+        margin-left: .05rem;
+        font-size: .55rem;
+        vertical-align: super;
+    }
+
+/* Controls stay compact and equal height. */
+.ecms-appointment-control,
+.ecms-appointment-form-section .form-control,
+.ecms-appointment-form-section .form-control1 {
+    min-height: var(--ecms-control-height);
+}
+
+/* Radio pills. */
+.ecms-appointment-radio-box {
+    min-height: var(--ecms-control-height);
+    display: flex;
+    align-items: center;
+}
+
+.ecms-radio-pill,
+.ecms-appointment-radio {
+    min-height: 2rem;
+    margin: 0;
+    padding: .35rem .75rem;
+    border: 1px solid rgba(70,119,184,.20);
+    border-radius: 999px;
+    background: rgba(255,255,255,.82);
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+    .ecms-radio-pill .form-check-input,
+    .ecms-appointment-radio .form-check-input {
+        margin: 0;
+        opacity: 1;
+        position: static;
+        appearance: auto;
+        accent-color: var(--ecms-primary-600);
+    }
+
+    .ecms-radio-pill .form-check-label,
+    .ecms-appointment-radio .form-check-label {
+        color: var(--ecms-ink);
+        font-size: .78rem;
+        font-weight: 850;
+    }
+
+/* Buttons align with input baseline on desktop. */
+.ecms-appointment-actions {
+    margin: 0;
+    padding: 0;
+}
+
+    .ecms-appointment-actions .btn,
+    .ecms-appointment-actions input[type="button"] {
+        min-width: 4.9rem;
+        min-height: var(--ecms-control-height);
+    }
+
+/* Table section consumes remaining card height. */
+.ecms-appointment-table-section {
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-appointment-table-section > .ecms-section-title {
+        min-height: 2.15rem;
+        padding-block: .42rem;
+    }
+
+.ecms-appointment-table-wrap {
+    min-height: 0;
+    overflow: hidden;
+}
+
+    /* DataTable layout: toolbar / scroll table / footer. */
+    .ecms-appointment-table-wrap .dataTables_wrapper,
+    .ecms-appointment-table-wrap .dt-container {
+        height: 100%;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        overflow: hidden;
+    }
+
+/* Bootstrap toolbar generated from Appointment.js dom. */
+.ecms-appointment-page .ecms-dt-toolbar {
+    margin: 0 0 .45rem 0;
+}
+
+.ecms-appointment-page .dataTables_length,
+.ecms-appointment-page .dataTables_filter,
+.ecms-appointment-page .dt-length,
+.ecms-appointment-page .dt-search {
+    margin: 0;
+}
+
+.ecms-appointment-page .dataTables_filter,
+.ecms-appointment-page .dt-search {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+    .ecms-appointment-page .dataTables_filter label,
+    .ecms-appointment-page .dt-search label {
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .ecms-appointment-page .dataTables_filter input,
+    .ecms-appointment-page .dt-search input {
+        width: 14rem;
+        max-width: 100%;
+    }
+
+/* Let DataTables manage header/body scroll cloning. */
+.ecms-appointment-page .dataTables_scroll,
+.ecms-appointment-page .dt-scroll {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    margin: 0;
+    border-radius: var(--ecms-radius-lg);
+    overflow: hidden;
+    border: 1px solid rgba(51,103,185,.24);
+    background: rgba(255,255,255,.72);
+}
+
+.ecms-appointment-page .dataTables_scrollHead,
+.ecms-appointment-page .dt-scroll-head,
+.ecms-appointment-page .dataTables_scrollHeadInner,
+.ecms-appointment-page .dataTables_scrollHeadInner table,
+.ecms-appointment-page .dataTables_scrollBody table,
+.ecms-appointment-page .dt-scroll-headInner,
+.ecms-appointment-page .dt-scroll-headInner table,
+.ecms-appointment-page .dt-scroll-body table {
+    width: 100% !important;
+}
+
+.ecms-appointment-page .dataTables_scrollBody,
+.ecms-appointment-page .dt-scroll-body {
+    height: 100% !important;
+    max-height: none !important;
+    min-height: 0;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    padding-bottom: 0;
+}
+
+/* Footer stays at bottom and is always solid. */
+.ecms-appointment-page .ecms-dt-footer {
+    margin-top: .45rem;
+    padding: .5rem .35rem;
+    border-top: 1px solid rgba(70,119,184,.24);
+    background: linear-gradient(135deg, rgba(245,250,255,.99), rgba(224,238,255,.99));
+    border-radius: 0 0 var(--ecms-radius-lg) var(--ecms-radius-lg);
+    position: relative;
+    z-index: 3;
+}
+
+.ecms-appointment-page .dataTables_info,
+.ecms-appointment-page .dt-info {
+    padding-top: 0;
+    color: var(--ecms-ink);
+    font-weight: 850;
+}
+
+.ecms-appointment-page .dataTables_paginate,
+.ecms-appointment-page .dt-paging {
+    padding-top: 0;
+}
+
+/* Prevent Bootstrap/DataTables pagination double boxes. */
+.ecms-appointment-page .pagination {
+    margin: 0;
+    gap: .35rem;
+}
+
+    .ecms-appointment-page .pagination .page-item {
+        border: 0;
+        background: transparent;
+    }
+
+    .ecms-appointment-page .pagination .page-link {
+        margin: 0;
+    }
+
+/* Ellipsis cells generated from JS. */
+.ecms-appointment-page .dt-ellipsis,
+.ecms-appointment-page .nowrap {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Status badges generated from JS. */
+.ecms-appointment-page .badge,
+.ecms-appointment-page .badge-pill {
+    min-height: 1.45rem;
+    min-width: 2.7rem;
+    padding: .35rem .65rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .65rem;
+    font-weight: 950;
+    border: 0;
+    color: var(--ecms-white);
+    text-transform: uppercase;
+}
+
+.ecms-appointment-page .badge-success,
+.ecms-appointment-page .bg-success {
+    background: linear-gradient(135deg, #34d399, #059669) !important;
+    color: var(--ecms-white) !important;
+}
+
+.ecms-appointment-page .badge-danger,
+.ecms-appointment-page .bg-danger {
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600)) !important;
+    color: var(--ecms-white) !important;
+}
+
+/* Action buttons generated from Appointment.js. */
+.ecms-appointment-page .cls-btnedit,
+.ecms-appointment-page .cls-btnDelete {
+    margin-inline: .25rem;
+    border: 0;
+    box-shadow: 0 .5rem 1rem rgba(0,30,80,.16);
+}
+
+.ecms-appointment-page .cls-btnedit {
+    background: linear-gradient(135deg, #facc15, #f59e0b);
+    color: #061b44;
+}
+
+.ecms-appointment-page .cls-btnDelete {
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600));
+    color: var(--ecms-white);
+}
+
+/* Tablet/mobile: page becomes naturally scrollable and form stacks through Bootstrap. */
+@media (max-width: 991.98px) {
+    .ecms-appointment-page {
+        height: auto;
+        min-height: calc(100vh - var(--ecms-header-height) - var(--ecms-footer-height));
+        overflow: visible;
+    }
+
+    .ecms-appointment-shell,
+    .ecms-appointment-shell .ecms-card-body {
+        height: auto;
+        overflow: visible;
+    }
+
+    .ecms-appointment-table-section {
+        min-height: 28rem;
+    }
+
+    .ecms-appointment-page .dataTables_filter input,
+    .ecms-appointment-page .dt-search input {
+        width: 100%;
+    }
+
+    .ecms-appointment-actions {
+        justify-content: flex-start !important;
+    }
+}
+
+/* Phone: full-width buttons and tighter spacing. */
+@media (max-width: 575.98px) {
+    .ecms-appointment-page {
+        width: calc(100vw - .75rem);
+        margin-top: .4rem;
+    }
+
+    .ecms-appointment-titlebar h3 {
+        font-size: 1.05rem;
+    }
+
+    .ecms-appointment-actions,
+    .ecms-appointment-actions .btn,
+    .ecms-appointment-actions input[type="button"] {
+        width: 100%;
+    }
+
+    .ecms-appointment-actions {
+        flex-direction: column;
+    }
+}
+
+
+/*
+=====================================================
+Appointment DataTable HEADER + SCROLL FINAL FIX
+Issue:
+- Header cells were compressing/stacking because DataTables scroll table
+  width was recalculated smaller than the real column total.
+Effect:
+- Header/body use same fixed minimum width.
+- Duplicate sizing header inside scroll body is hidden without breaking column widths.
+- Footer remains solid and pagination stays aligned.
+=====================================================
+*/
+
+/* DataTables wrapper areas: toolbar / scrollable table / footer. */
+.ecms-appointment-table-wrap .dataTables_wrapper,
+.ecms-appointment-table-wrap .dt-container {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) auto !important;
+    overflow: hidden !important;
+}
+
+/* Let DataTables manage the scroll head/body, but force both to the same usable width. */
+.ecms-appointment-page .dataTables_scroll,
+.ecms-appointment-page .dt-scroll {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+    border-radius: var(--ecms-radius-lg) !important;
+    border: 1px solid rgba(51,103,185,.24) !important;
+    background: rgba(255,255,255,.72) !important;
+}
+
+/* Critical: cloned header table and body table must share the same min-width. */
+.ecms-appointment-page .dataTables_scrollHead,
+.ecms-appointment-page .dataTables_scrollBody,
+.ecms-appointment-page .dt-scroll-head,
+.ecms-appointment-page .dt-scroll-body {
+    width: 100% !important;
+}
+
+    .ecms-appointment-page .dataTables_scrollHeadInner,
+    .ecms-appointment-page .dataTables_scrollHeadInner table,
+    .ecms-appointment-page .dataTables_scrollBody table,
+    .ecms-appointment-page .dt-scroll-headInner,
+    .ecms-appointment-page .dt-scroll-headInner table,
+    .ecms-appointment-page .dt-scroll-body table,
+    .ecms-appointment-page table#tbldata {
+        width: 100% !important;
+        min-width: 990px !important;
+        table-layout: fixed !important;
+    }
+
+    /* Keep real visible header as proper single-line header. */
+    .ecms-appointment-page .dataTables_scrollHead table thead,
+    .ecms-appointment-page .dt-scroll-head table thead {
+        display: table-header-group !important;
+    }
+
+    .ecms-appointment-page .dataTables_scrollHead table tr,
+    .ecms-appointment-page .dt-scroll-head table tr {
+        display: table-row !important;
+    }
+
+    .ecms-appointment-page .dataTables_scrollHead table th,
+    .ecms-appointment-page .dt-scroll-head table th,
+    .ecms-appointment-page table#tbldata thead th {
+        display: table-cell !important;
+        height: 38px !important;
+        padding: 8px 10px !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+        text-align: center !important;
+        color: var(--ecms-white) !important;
+        background: linear-gradient(135deg, var(--ecms-primary-800), var(--ecms-primary-600)) !important;
+    }
+
+    /* Hide DataTables sizing header inside scroll body but keep its width calculation safe. */
+    .ecms-appointment-page .dataTables_scrollBody table#tbldata > thead,
+    .ecms-appointment-page .dt-scroll-body table#tbldata > thead {
+        visibility: collapse !important;
+        height: 0 !important;
+    }
+
+        .ecms-appointment-page .dataTables_scrollBody table#tbldata > thead th,
+        .ecms-appointment-page .dataTables_scrollBody table#tbldata > thead td,
+        .ecms-appointment-page .dt-scroll-body table#tbldata > thead th,
+        .ecms-appointment-page .dt-scroll-body table#tbldata > thead td {
+            height: 0 !important;
+            line-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            border-top: 0 !important;
+            border-bottom: 0 !important;
+            overflow: hidden !important;
+            color: transparent !important;
+            background: transparent !important;
+        }
+
+/* Body scroll area. */
+.ecms-appointment-page .dataTables_scrollBody,
+.ecms-appointment-page .dt-scroll-body {
+    height: 100% !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+}
+
+/* Body cells remain normal table cells; do not stack. */
+.ecms-appointment-page table#tbldata tbody {
+    display: table-row-group !important;
+}
+
+    .ecms-appointment-page table#tbldata tbody tr {
+        display: table-row !important;
+    }
+
+    .ecms-appointment-page table#tbldata tbody td {
+        display: table-cell !important;
+        height: 38px !important;
+        padding: 6px 10px !important;
+        vertical-align: middle !important;
+        white-space: nowrap !important;
+    }
+
+/* Footer must remain visible and non-transparent. */
+.ecms-appointment-page .ecms-dt-footer {
+    margin-top: .45rem !important;
+    padding: .5rem .35rem !important;
+    border-top: 1px solid rgba(70,119,184,.24) !important;
+    background: linear-gradient(135deg, rgba(245,250,255,.99), rgba(224,238,255,.99)) !important;
+    border-radius: 0 0 var(--ecms-radius-lg) var(--ecms-radius-lg) !important;
+    position: relative !important;
+    z-index: 4 !important;
+}
+
+/* Align footer text and pagination. */
+.ecms-appointment-page .dataTables_info,
+.ecms-appointment-page .dt-info,
+.ecms-appointment-page .dataTables_paginate,
+.ecms-appointment-page .dt-paging {
+    padding-top: 0 !important;
+    color: var(--ecms-ink) !important;
+    font-weight: 850 !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+.ecms-appointment-page .pagination {
+    margin: 0 !important;
+    gap: .35rem !important;
+}
+
+/* Column alignment. Hidden ApptId is not counted visually; these are visible columns. */
+.ecms-appointment-page table#tbldata th:nth-child(1),
+.ecms-appointment-page table#tbldata td:nth-child(1) {
+    text-align: center !important;
+}
+
+.ecms-appointment-page table#tbldata th:nth-child(4),
+.ecms-appointment-page table#tbldata td:nth-child(4),
+.ecms-appointment-page table#tbldata th:last-child,
+.ecms-appointment-page table#tbldata td:last-child {
+    text-align: center !important;
 }

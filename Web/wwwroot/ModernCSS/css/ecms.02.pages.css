@@ -1,0 +1,139 @@
+/*
+ECMS page components
+Bootstrap handles grid/responsive columns. These classes only provide ECMS theme skin.
+Recommended markup: .container-fluid.ecms-page > .card.ecms-card > Bootstrap rows/cols.
+*/
+
+.ecms-page {
+    width: min(1480px, calc(100vw - 1.5rem));
+    margin: .75rem auto calc(var(--ecms-footer-height) + .75rem);
+    color: var(--ecms-text);
+}
+
+.ecms-page-full {
+    width: calc(100vw - 1rem);
+    max-width: none;
+}
+
+.ecms-fit-screen {
+    min-height: 0;
+}
+
+.ecms-card {
+    border: var(--ecms-border-white);
+    border-radius: var(--ecms-radius-xl);
+    background: var(--ecms-page-surface);
+    box-shadow: var(--ecms-shadow-md);
+    overflow: hidden;
+}
+
+.ecms-card-body {
+    padding: .75rem;
+}
+
+.ecms-page-title {
+    min-height: var(--ecms-title-height);
+    padding: .65rem .9rem;
+    border: var(--ecms-border-white);
+    border-radius: var(--ecms-radius-lg);
+    background: var(--ecms-card-surface);
+    box-shadow: var(--ecms-shadow-sm);
+}
+
+.ecms-title-icon {
+    width: 2.6rem;
+    height: 2.6rem;
+    min-width: 2.6rem;
+    border-radius: .85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, #6f7cff, var(--ecms-primary-500));
+    box-shadow: 0 .75rem 1.35rem rgba(63,124,255,.28);
+}
+
+.ecms-page-title h1,
+.ecms-page-title h2,
+.ecms-page-title h3,
+.ecms-page-title h4 {
+    margin: 0;
+    color: var(--ecms-text);
+    font-weight: 950;
+    line-height: 1.1;
+}
+
+.ecms-title-subtitle {
+    margin: .15rem 0 0;
+    color: var(--ecms-text-soft);
+    font-size: .8rem;
+    font-weight: 800;
+}
+
+.ecms-section {
+    border: var(--ecms-border);
+    border-radius: var(--ecms-radius-lg);
+    background: var(--ecms-section-surface);
+    box-shadow: var(--ecms-shadow-sm);
+    overflow: hidden;
+}
+
+.ecms-section-title {
+    min-height: var(--ecms-section-title-height);
+    padding: .5rem .85rem;
+    margin: 0;
+    color: var(--ecms-white);
+    font-weight: 950;
+    text-align: center;
+    background: linear-gradient(90deg, #284ba0, var(--ecms-primary-500));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+}
+
+/* Use with Bootstrap .row and .col-* inside. */
+.ecms-form-section {
+    padding: .7rem .85rem;
+}
+
+/* Summary tiles: use Bootstrap row-cols-* for responsiveness. */
+.ecms-tile {
+    min-height: 4.5rem;
+    padding: .75rem;
+    border: var(--ecms-border);
+    border-radius: var(--ecms-radius-lg);
+    background: var(--ecms-card-surface);
+    box-shadow: var(--ecms-shadow-sm);
+    text-align: center;
+}
+
+    .ecms-tile .count {
+        color: var(--ecms-text);
+        font-size: 1.4rem;
+        font-weight: 950;
+        line-height: 1;
+    }
+
+    .ecms-tile .label {
+        color: var(--ecms-primary-600);
+        font-size: .7rem;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+
+@media (max-width: 768px) {
+    .ecms-page,
+    .ecms-page-full {
+        width: calc(100vw - .75rem);
+        margin-top: .5rem;
+    }
+
+    .ecms-card-body {
+        padding: .5rem;
+    }
+
+    .ecms-page-title {
+        min-height: auto;
+    }
+}

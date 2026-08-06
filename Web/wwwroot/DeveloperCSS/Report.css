@@ -1,33 +1,412 @@
-﻿.clickable {
-    height: 190px;
-    width: 190px;
-    display: block;
-    margin-bottom: 25px;
+﻿/* =====================================================
+   REPORT & RETURNS (CARDS) - PAGE-SPECIFIC LAYOUT
+   Global ECMS files provide the page, card, forms,
+   buttons, modal and DataTable appearance.
+===================================================== */
+
+html.ecms-card-report-scroll-lock,
+body.ecms-card-report-scroll-lock {
+    overflow: hidden !important;
 }
 
-.p-4 {
-    padding: 1.5rem !important;
-    padding-bottom: 4.5rem !important;
+/* =====================================================
+   PAGE-ONLY MODAL LAYER FIX
+   The report modals are moved directly under <body> by
+   Report.js. Bootstrap's generated backdrop is hidden and
+   the modal root provides the dim layer behind the dialog.
+   This prevents the backdrop from fading/blocking the modal.
+===================================================== */
+body.ecms-card-report-modal-open > .modal-backdrop {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+body > .ecms-card-report-layer {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483000 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    background-color: transparent !important;
+    transition: background-color .15s linear !important;
+}
+
+    body > .ecms-card-report-layer.show {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+        background-color: rgba(2, 11, 30, .62) !important;
+    }
+
+        body > .ecms-card-report-layer.show .modal-dialog,
+        body > .ecms-card-report-layer.show .modal-content,
+        body > .ecms-card-report-layer.show .modal-header,
+        body > .ecms-card-report-layer.show .modal-body,
+        body > .ecms-card-report-layer.show .modal-footer {
+            position: relative;
+            opacity: 1 !important;
+            filter: none !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
+
+        body > .ecms-card-report-layer.show .modal-dialog {
+            z-index: 1 !important;
+        }
+
+/* Month picker must remain above the reporting-month modal. */
+body.ecms-card-report-modal-open .ui-datepicker,
+body.ecms-card-report-modal-open #ui-datepicker-div {
+    z-index: 2147483200 !important;
+}
+
+.ecms-card-report-page {
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    height: calc( 100dvh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    min-height: 27rem;
+    margin: .75rem auto !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.ecms-card-report-shell,
+.ecms-card-report-body {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+.ecms-card-report-body {
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+}
+
+.ecms-card-report-title {
+    flex: 0 0 auto;
+}
+
+    .ecms-card-report-title h2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+.ecms-card-report-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+    padding: .05rem .25rem .5rem;
+}
+
+    .ecms-card-report-content > .ecms-section + .ecms-section {
+        margin-top: 0;
+    }
+
+/* Optional hierarchy filters. */
+.ecms-card-filter-panel {
+    margin: 0;
+}
+
+.ecms-report-filter-body {
+    padding: .7rem .85rem;
+}
+
+    .ecms-report-filter-body .SearchTab {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+.ecms-unit-type-row {
+    align-items: center;
+    margin: 0 0 .45rem !important;
+}
+
+.ecms-radio-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+    .ecms-radio-group .form-check {
+        margin: 0;
+        padding: .4rem .75rem .4rem 2rem;
+        border: var(--ecms-border);
+        border-radius: var(--ecms-radius-pill);
+        background: rgba(255, 255, 255, .78);
+    }
+
+.ecms-filter-grid {
+    row-gap: .5rem;
+}
+
+    .ecms-filter-grid > [class*="col-"] {
+        padding-left: .35rem;
+        padding-right: .35rem;
+    }
+
+    .ecms-filter-grid .col-form-label {
+        display: block;
+        padding: 0 0 .3rem;
+    }
+
+/* Summary tiles use the common .ecms-tile skin. */
+.ecms-card-summary-section {
+    flex: 1 1 auto;
+    min-height: 13rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.ecms-card-report-grid {
+    flex: 1 1 auto;
+    width: min(56rem, 100%);
+    margin: 0 auto;
+    padding: 1.1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.ecms-report-tile {
+    width: 100%;
+    min-height: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .55rem;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+    .ecms-report-tile:hover,
+    .ecms-report-tile:focus-visible {
+        transform: translateY(-2px);
+        border-color: rgba(63, 124, 255, .62);
+        box-shadow: var(--ecms-shadow-md);
+        outline: none;
+    }
+
+    .ecms-report-tile:active {
+        transform: translateY(0);
+    }
+
+.ecms-report-tile-icon {
+    width: 2.8rem;
+    height: 2.8rem;
+    flex: 0 0 2.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .85rem;
+    color: var(--ecms-white);
+    box-shadow: var(--ecms-shadow-sm);
+    font-size: 1.2rem;
+}
+
+.ecms-report-tile-icon-primary {
+    background: linear-gradient(135deg, var(--ecms-primary-500), var(--ecms-primary-700));
+}
+
+.ecms-report-tile-icon-info {
+    background: linear-gradient(135deg, #38a9ff, #1368c8);
+}
+
+.ecms-report-tile-icon-success {
+    background: linear-gradient(135deg, var(--ecms-success-500), var(--ecms-success-600));
+}
+
+.ecms-report-tile-icon-danger {
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600));
+}
+
+.ecms-report-tile .count {
+    font-size: 1.5rem;
+}
+
+.ecms-report-tile .label {
+    min-height: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.15;
+}
+
+/* Card report modal sizing and internal table layout. */
+.ecms-card-report-dialog {
+    width: calc(100vw - 1.5rem);
+}
+
+#CardReport .modal-content {
+    height: min(46rem, calc(100vh - 2rem));
+}
+
+.ecms-card-report-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ecms-card-report-table-wrap {
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    padding-top: 0;
+}
+
+#CardReport_tbldatadialog_wrapper .dt-top {
+    display: flex;
+}
+
+#CardReport_tbldatadialog_wrapper .dt-buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+#CardReport_tbldatadialog_wrapper .dataTables_filter,
+#CardReport_tbldatadialog_wrapper .dt-search {
+    margin-left: auto;
+}
+
+#CardReport_tbldatadialog_wrapper .dt-ellipsis {
+    max-width: 13rem;
+}
+
+#CardReport_tbldatadialog_wrapper .col-sno {
+    text-align: center;
+}
+
+#CardReport #msg {
+    flex: 0 0 auto;
+}
+
+.ecms-month-dialog {
+    width: calc(100vw - 1.5rem);
+}
+
+#MonthlyProcessedDialog .modal-body {
+    overflow: visible;
+}
+
+#txtMonthYear {
+    cursor: pointer;
 }
 
 .ui-datepicker-calendar {
     display: none !important;
 }
 
-#CardReport_tbldatadialog {
-    table-layout: auto !important;
-    width: 100% !important;
+.ui-datepicker {
+    z-index: 1090 !important;
 }
 
-    #CardReport_tbldatadialog th,
-    #CardReport_tbldatadialog td {
-        white-space: nowrap; /* Optional: prevent line wrap */
-        vertical-align: middle;
+@media (max-width: 767.98px) {
+    html.ecms-card-report-scroll-lock,
+    body.ecms-card-report-scroll-lock {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
     }
 
-.modal .modal-body .table-responsive {
-    max-height: 500px;
+    .ecms-card-report-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) );
+        margin: .5rem auto calc(var(--ecms-footer-height) + .75rem) !important;
+        padding-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        overflow: visible;
+    }
+
+    .ecms-card-report-shell,
+    .ecms-card-report-body {
+        height: auto;
+    }
+
+    .ecms-card-report-title {
+        align-items: flex-start !important;
+    }
+
+        .ecms-card-report-title h2 {
+            font-size: 1.15rem;
+            white-space: normal;
+        }
+
+    .ecms-card-report-content {
+        display: block;
+        overflow: visible;
+    }
+
+        .ecms-card-report-content > .ecms-section + .ecms-section {
+            margin-top: .7rem;
+        }
+
+    .ecms-radio-group {
+        padding-top: .35rem;
+    }
+
+    .ecms-card-report-grid {
+        padding: .75rem;
+    }
+
+    .ecms-report-tile {
+        min-height: 8.75rem;
+        padding: .65rem .4rem;
+    }
+
+        .ecms-report-tile .label {
+            font-size: .64rem;
+        }
+
+    #CardReport .modal-content {
+        height: calc(100vh - 1rem);
+    }
+
+    #CardReport_tbldatadialog_wrapper .dt-top {
+        align-items: stretch !important;
+    }
+
+    #CardReport_tbldatadialog_wrapper .dt-buttons {
+        justify-content: center;
+    }
+
+    #CardReport_tbldatadialog_wrapper .dataTables_filter,
+    #CardReport_tbldatadialog_wrapper .dt-search {
+        width: 100%;
+        margin-left: 0;
+    }
 }
-#CardReport_tbldatadialog {
-    table-layout: fixed !important;
+
+@media print {
+    @page {
+        margin: 5mm 5mm 8mm;
+    }
+
+    html.ecms-card-report-scroll-lock,
+    body.ecms-card-report-scroll-lock,
+    .ecms-card-report-page,
+    .ecms-card-report-shell,
+    .ecms-card-report-body,
+    .ecms-card-report-content {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    .ecms-card-report-page,
+    .ecms-card-report-shell {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        box-shadow: none !important;
+    }
 }

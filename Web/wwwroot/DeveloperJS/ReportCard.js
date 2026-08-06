@@ -5,6 +5,79 @@ var table; // Declare table variable outside the function to preserve the instan
 $(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    // Keep page scroll and modal stacking local to this page.
+    $("body").addClass("ecms-report-card-page");
+
+    const $cardReportModal = $("#CardReport");
+
+    // A modal inside a transformed/positioned page wrapper can remain below the
+    // backdrop even with a large z-index. Detaching it to <body> removes that
+    // stacking-context problem without changing any modal ID or functionality.
+    if ($cardReportModal.length > 0 && !$cardReportModal.parent().is("body")) {
+        $cardReportModal.detach().appendTo(document.body);
+    }
+
+    function placeCardReportAboveBackdrop() {
+        const $backdrop = $("body > .modal-backdrop").last();
+
+        if ($backdrop.length > 0) {
+            // Keep the backdrop immediately before the modal in DOM order and
+            // below it in z-index. This also handles legacy CSS with !important.
+            $backdrop.insertBefore($cardReportModal);
+            $backdrop.css("z-index", 2147482990);
+        }
+
+        $cardReportModal.css("z-index", 2147483000);
+        $cardReportModal.find(".modal-dialog, .modal-content")
+            .css({
+                "z-index": 2,
+                "opacity": 1,
+                "filter": "none",
+                "pointer-events": "auto"
+            });
+    }
+
+    $cardReportModal
+        .off(".reportCardUi")
+        .on("show.bs.modal.reportCardUi", function () {
+            // Remove only stale backdrops when no other modal is active.
+            if ($(".modal.show").not(this).length === 0) {
+                $("body > .modal-backdrop").remove();
+            }
+
+            if (!$(this).parent().is("body")) {
+                $(this).detach().appendTo(document.body);
+            }
+
+            $("body").addClass("ecms-report-card-modal-open");
+        })
+        .on("shown.bs.modal.reportCardUi", function () {
+            placeCardReportAboveBackdrop();
+
+            // Run once more after Bootstrap completes its transition/backdrop work.
+            window.requestAnimationFrame(placeCardReportAboveBackdrop);
+
+            if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
+                adjustReportCardTable($("#CardReport_tbldatadialog").DataTable());
+            }
+        })
+        .on("hidden.bs.modal.reportCardUi", function () {
+            $(window).off("resize.reportCardTable");
+
+            if ($(".modal.show").length === 0) {
+                $("body > .modal-backdrop").remove();
+                $("body")
+                    .removeClass("modal-open ecms-report-card-modal-open")
+                    .css("padding-right", "");
+            }
+        });
+
+    $(window)
+        .off("beforeunload.reportCardUi")
+        .on("beforeunload.reportCardUi", function () {
+            $("body").removeClass("ecms-report-card-page ecms-report-card-modal-open");
+        });
+
     if ($('#spnclaimId').length > 0) {
         if ($('#spnclaimId').html() === 'Army Level Reports' || $('#spnclaimId').html() === 'Fmn Level Reports') {
             await GetLoginUnitMappingDetails();
@@ -256,385 +329,295 @@ $(async function () {
     });
 
 
-    const $dialog = $("#CardReport .modal-dialog");
     const ApplyForId_Officer = 1;
     const ApplyForId_OR = 2;
 
-    $("#btnExport_Officer").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Exported I-Card');
+    // One UI-only action map replaces repeated modal-open code.
+    // IDs, report choices and ApplyForId values remain unchanged.
+    const reportCardActions = [
+        { selector: "#btnExport_Officer", title: "Exported I-Card", choice: "Export", applyForId: ApplyForId_Officer },
+        { selector: "#btnPrinted_Officer", title: "Printed I-Card", choice: "Printed", applyForId: ApplyForId_Officer },
+        { selector: "#btnDispatchToORO", title: "Card Dispatch to Officer Record Office", choice: "DispatchToORO_Regt", applyForId: ApplyForId_Officer },
+        { selector: "#btnCardInORO", title: "Card in Officer Record Office", choice: "CardInORO_Regt", applyForId: ApplyForId_Officer },
+        { selector: "#btnDispatchToUnit_Officer", title: "Card Dispatch to Unit", choice: "DispatchToUnit", applyForId: ApplyForId_Officer },
+        { selector: "#btnCardInUnit_Officer", title: "Card in Unit", choice: "CardInUnit", applyForId: ApplyForId_Officer },
+        { selector: "#btnDistributed_Officer", title: "Card Distributed", choice: "CardDistributed", applyForId: ApplyForId_Officer },
+        { selector: "#btnExport_OR", title: "Exported I-Card", choice: "Export", applyForId: ApplyForId_OR },
+        { selector: "#btnPrinted_OR", title: "Printed I-Card", choice: "Printed", applyForId: ApplyForId_OR },
+        { selector: "#btnDispatchToRegt", title: "Card Dispatch to Regiment", choice: "DispatchToORO_Regt", applyForId: ApplyForId_OR },
+        { selector: "#btnCardInRegt", title: "Card in Regiment", choice: "CardInORO_Regt", applyForId: ApplyForId_OR },
+        { selector: "#btnDispatchToUnit_OR", title: "Card Dispatch to Unit", choice: "DispatchToUnit", applyForId: ApplyForId_OR },
+        { selector: "#btnCardInUnit_OR", title: "Card in Unit", choice: "CardInUnit", applyForId: ApplyForId_OR },
+        { selector: "#btnDistributed_OR", title: "Card Distributed", choice: "CardDistributed", applyForId: ApplyForId_OR }
+    ];
 
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "75%");
-        }
-
-        GetReportReturnHistory('Export', ApplyForId_Officer, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnPrinted_Officer").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Printed I-Card');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('Printed', ApplyForId_Officer, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnDispatchToORO").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card Dispatch to Officer Record Office');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('DispatchToORO_Regt', ApplyForId_Officer, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnCardInORO").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card in Officer Record Office');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('CardInORO_Regt', ApplyForId_Officer, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnDispatchToUnit_Officer").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card Dispatch to Unit');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('DispatchToUnit', ApplyForId_Officer, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnCardInUnit_Officer").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card in Unit');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('CardInUnit', ApplyForId_Officer, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnDistributed_Officer").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card Distributed');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('CardDistributed', ApplyForId_Officer, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnExport_OR").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Exported I-Card');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('Export', ApplyForId_OR, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnPrinted_OR").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Printed I-Card');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('Printed', ApplyForId_OR, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnDispatchToRegt").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card Dispatch to Regiment');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('DispatchToORO_Regt', ApplyForId_OR, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnCardInRegt").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card in Regiment');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('CardInORO_Regt', ApplyForId_OR, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnDispatchToUnit_OR").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card Dispatch to Unit');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('DispatchToUnit', ApplyForId_OR, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnCardInUnit_OR").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card in Unit');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('CardInUnit', ApplyForId_OR, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
-    });
-
-    $("#btnDistributed_OR").on("click", function (event) {
-        event.preventDefault(); // Prevent anchor default behavior
-        $("#CardReport_lblModelTitle").html('Card Distributed');
-
-        // If modal-xl class is present, override its width
-        if ($dialog.hasClass("modal-xl")) {
-            $dialog.css("width", "100%");
-        }
-
-        GetReportReturnHistory('CardDistributed', ApplyForId_OR, function () {
-            $("#CardReport").modal("show"); // shown only after data is fully ready
-        });
+    reportCardActions.forEach(function (action) {
+        $(action.selector)
+            .off("click.reportCard")
+            .on("click.reportCard", function (event) {
+                event.preventDefault();
+                $("#CardReport_lblModelTitle").text(action.title);
+                GetReportReturnHistory(action.choice, action.applyForId);
+            });
     });
 });
-function GetReportReturnHistory(Choice, ApplyForId, callback) {
-    // STEP 1: Move ALL DataTable code into shown.bs.modal
-    $("#CardReport").one('shown.bs.modal', function () {
-        if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
-            // Destroy the DataTable and clear the table content
-            $("#CardReport_tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
-            $("#CardReport_tbldatadialog thead").empty(); // Clear old thead
-            $("#CardReport_tbldatadialog tbody").empty(); // Clear old tbody
-        }
+function showCardReportModal($modal) {
+    if (!$modal || $modal.length === 0) {
+        return;
+    }
 
-        function parseVal(val) {
-            if (val === "null" || val === undefined || val === "") {
-                return null;
-            }
-            return val;
-        }
+    if ($.fn.modal) {
+        $modal.modal("show");
+        return;
+    }
 
-        var userdata =
-        {
-            "Choice": Choice,
-            "ApplyForId": ApplyForId,
-            "UnitType": $("input[type='radio'][name=UnitTyperdi]").length > 0 ? parseVal($("input[type='radio'][name=UnitTyperdi]:checked").val()) : null,
-            "ComdId": $('#ddlCommand').length > 0 ? parseVal($('#ddlCommand').val()) : null,
-            "CorpsId": $('#ddlCorps').length > 0 ? parseVal($('#ddlCorps').val()) : null,
-            "DivId": $('#ddlDiv').length > 0 ? parseVal($('#ddlDiv').val()) : null,
-            "BdeId": $('#ddlBde').length > 0 ? parseVal($('#ddlBde').val()) : null,
-            "FmnBranchID": $('#ddlFmnBranch').length > 0 ? parseVal($('#ddlFmnBranch').val()) : null,
-            "PsoId": $('#ddlPSODte').length > 0 ? parseVal($('#ddlPSODte').val()) : null,
-            "SubDteId": $('#ddlDgSubDte').length > 0 ? parseVal($('#ddlDgSubDte').val()) : null,
-            "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null
-        };
-
-        const columns = getColumnsByChoice(Choice);
-        table = $("#CardReport_tbldatadialog").DataTable({
-            scrollY: '65vh',          // ✅ vertical scroll
-            scrollX: true,            // ✅ horizontal scroll
-            scrollCollapse: true,
-            scroller: true,           // ✅ Enable virtual scrolling for better performance
-            deferScroll: true,        // ✅ Improve scrolling performance
-            fixedHeader: false,       // ❌ disable when using scrollY
-
-            processing: true,
-            serverSide: true,
-            filter: true,
-            stateSave: false,
-
-            autoWidth: false,  //Set autoWidth to true (let DataTables decide)
-            responsive: false, // Columns can hide on small screens
-            deferRender: true,// ✅ Handle zoom changes
-            order: [[1, 'desc']], // Default sorting on the first column
-
-            ajax: async function (data, callback, settings) {
-
-                let requestData = {
-                    Draw: data.draw,
-                    Start: data.start,
-                    Length: data.length,
-                    SearchValue: data.search.value,
-                    SortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
-                    SortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
-                    ...userdata
-                };
-                let encryptedPayload = "";
-                if (requestData) {
-                    const jsonData = JSON.stringify(requestData);
-                    encryptedPayload = encryptPayloadData(jsonData);
-
-                }
-                try {
-                    let response = await fetch("/Home/GetReportCardData", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            'RequestVerificationToken': globalThis.RequestVerificationToken
-                        },
-                        body: JSON.stringify({ data: encryptedPayload })
-                    });
-                    if (!response.ok) {
-                        $("#CardReport").modal("hide");
-                        const error = await response.json();
-                        toastr.error(error.message || `Error ${response.status}`, "Error");
-                        throw new Error(error.message || `HTTP error! Status: ${response.status}`);
-                    }
-
-
-                    let result = await response.json();
-                    //$("#lblTotal").html(result.recordsTotal);
-                    callback(result); // Sends data to DataTables
-
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            },
-            columns: columns,
-            columnDefs: [
-                {
-                    targets: '_all',  // Apply to all visible columns
-                    orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
-                },
-            ],
-            language: {
-                search: "", // Remove the default "Search:" label
-                searchPlaceholder: "Search Army No" // Add custom placeholder
-            },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-            buttons: [
-                //{
-                //    extend: 'copy',
-                //    exportOptions: {
-                //        columns: "thead th:not(.noExport)"
-                //    }
-                //},
-                {
-                    extend: 'excel',
-                    exportOptions: {
-                        columns: "thead th:not(.noExport)"
-                    }
-                },
-                {
-                    extend: 'pdfHtml5',
-                    orientation: 'landscape',
-                    pageSize: 'LEGAL',
-                    title: 'E-IASC_Report',
-                    exportOptions: {
-                        columns: "thead th:not(.noExport)"
-                    },
-                    customize: function (doc) {
-                        WaterMarkOnPdf(doc)
-                    }
-                }],
-            // 👇 Show modal only after table (header + data) is fully rendered
-            initComplete: function () {
-                if (typeof callback === "function") {
-                    callback(); // show modal now
-                }
-                // Force DataTables to calculate optimal widths
-                this.api().columns.adjust();
-
-                // Handle zoom/resize
-                var resizeTimer;
-                $(window).on('resize', function () {
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(function () {
-                        table.columns.adjust().responsive.recalc();
-                    }, 100);
-                });
-            },
-            drawCallback: function (settings) {
-                // Recalculate widths on each data load
-                this.api().columns.adjust().responsive.recalc();
-
-                const tooltipTriggerList = [].slice.call(
-                    document.querySelectorAll('[data-bs-toggle="tooltip"]')
-                );
-                tooltipTriggerList.forEach(el => {
-                    new bootstrap.Tooltip(el);
-                });
-
-                $("#CardReport_tbldatadialog tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
-                    var rowData = table.row($(this).closest("tr")).data();
-                    if (rowData != null) {
-                        GetRequestHistory(rowData.RequestId);
-                    }
-                });
-                $("#CardReport_tbldatadialog tbody").off("click", ".cls-cardhistoryRequest").on("click", ".cls-cardhistoryRequest", function () {
-                    var rowData = table.row($(this).closest("tr")).data();
-                    if (rowData != null) {
-                        GetMovementHistory(rowData.RequestId);
-                    }
-                });
-
-            }
-        });
-    });
-    // STEP 2: Show modal (this triggers the above)
-    $("#CardReport").modal("show");
-
-
+    if (window.bootstrap && bootstrap.Modal) {
+        bootstrap.Modal.getOrCreateInstance($modal[0]).show();
+    }
 }
+
+function hideCardReportModal($modal) {
+    if (!$modal || $modal.length === 0) {
+        return;
+    }
+
+    if ($.fn.modal) {
+        $modal.modal("hide");
+        return;
+    }
+
+    if (window.bootstrap && bootstrap.Modal) {
+        const instance = bootstrap.Modal.getInstance($modal[0]);
+        if (instance) {
+            instance.hide();
+        }
+    }
+}
+
+function adjustReportCardTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
+function GetReportReturnHistory(Choice, ApplyForId) {
+    const $modal = $("#CardReport");
+    const $reportTable = $("#CardReport_tbldatadialog");
+
+    if ($modal.length === 0 || $reportTable.length === 0) {
+        return;
+    }
+
+    if (!$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+
+    $modal
+        .off("shown.bs.modal.reportCardTable")
+        .one("shown.bs.modal.reportCardTable", function () {
+            if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
+                $reportTable.DataTable().clear().destroy();
+            }
+
+            $reportTable.empty();
+
+            function parseVal(val) {
+                if (val === "null" || val === undefined || val === "") {
+                    return null;
+                }
+                return val;
+            }
+
+            const userdata = {
+                "Choice": Choice,
+                "ApplyForId": ApplyForId,
+                "UnitType": $("input[type='radio'][name=UnitTyperdi]").length > 0 ? parseVal($("input[type='radio'][name=UnitTyperdi]:checked").val()) : null,
+                "ComdId": $('#ddlCommand').length > 0 ? parseVal($('#ddlCommand').val()) : null,
+                "CorpsId": $('#ddlCorps').length > 0 ? parseVal($('#ddlCorps').val()) : null,
+                "DivId": $('#ddlDiv').length > 0 ? parseVal($('#ddlDiv').val()) : null,
+                "BdeId": $('#ddlBde').length > 0 ? parseVal($('#ddlBde').val()) : null,
+                "FmnBranchID": $('#ddlFmnBranch').length > 0 ? parseVal($('#ddlFmnBranch').val()) : null,
+                "PsoId": $('#ddlPSODte').length > 0 ? parseVal($('#ddlPSODte').val()) : null,
+                "SubDteId": $('#ddlDgSubDte').length > 0 ? parseVal($('#ddlDgSubDte').val()) : null,
+                "UnitMapId": $('#ddlUnit').length > 0 ? parseVal($('#ddlUnit').val()) : null
+            };
+
+            const columns = getColumnsByChoice(Choice);
+
+            table = $reportTable.DataTable({
+                scrollY: '55vh',
+                scrollX: true,
+                scrollCollapse: false,
+                scroller: true,
+                deferScroll: true,
+                fixedHeader: false,
+
+                processing: true,
+                serverSide: true,
+                filter: true,
+                stateSave: false,
+
+                autoWidth: false,
+                responsive: false,
+                deferRender: true,
+                order: [[1, 'desc']],
+
+                ajax: async function (data, dataTableCallback) {
+                    const requestData = {
+                        Draw: data.draw,
+                        Start: data.start,
+                        Length: data.length,
+                        SearchValue: data.search.value,
+                        SortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',
+                        SortDirection: data.order.length > 0 ? data.order[0].dir : '',
+                        ...userdata
+                    };
+
+                    let encryptedPayload = "";
+                    if (requestData) {
+                        encryptedPayload = encryptPayloadData(JSON.stringify(requestData));
+                    }
+
+                    try {
+                        const response = await fetch("/Home/GetReportCardData", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                'RequestVerificationToken': globalThis.RequestVerificationToken
+                            },
+                            body: JSON.stringify({ data: encryptedPayload })
+                        });
+
+                        if (!response.ok) {
+                            hideCardReportModal($modal);
+                            const error = await response.json();
+                            toastr.error(error.message || `Error ${response.status}`, "Error");
+                            throw new Error(error.message || `HTTP error! Status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        dataTableCallback(result);
+                    } catch (error) {
+                        console.error("Error fetching data:", error);
+                    }
+                },
+
+                columns: columns,
+                columnDefs: [
+                    {
+                        targets: '_all',
+                        orderSequence: ["asc", "desc"]
+                    }
+                ],
+
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search Army No",
+                    emptyTable: "No card movement records found"
+                },
+
+                dom:
+                    "<'dt-top row g-2 align-items-center'" +
+                    "<'col-12 col-md-auto'l>" +
+                    "<'col-12 col-md-auto'B>" +
+                    "<'col-12 col-md ms-md-auto'f>" +
+                    ">rt" +
+                    "<'ecms-dt-footer row g-2'" +
+                    "<'col-12 col-md-6 dt-info-col'i>" +
+                    "<'col-12 col-md-6 dt-page-col'p>" +
+                    ">",
+
+                buttons: [
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: "thead th:not(.noExport)"
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL',
+                        title: 'E-IASC_Report',
+                        exportOptions: {
+                            columns: "thead th:not(.noExport)"
+                        },
+                        customize: function (doc) {
+                            WaterMarkOnPdf(doc);
+                        }
+                    }
+                ],
+
+                initComplete: function () {
+                    const api = this.api();
+                    window.setTimeout(function () {
+                        adjustReportCardTable(api);
+                    }, 0);
+
+                    let resizeTimer;
+                    $(window)
+                        .off("resize.reportCardTable")
+                        .on("resize.reportCardTable", function () {
+                            window.clearTimeout(resizeTimer);
+                            resizeTimer = window.setTimeout(function () {
+                                if ($.fn.DataTable.isDataTable("#CardReport_tbldatadialog")) {
+                                    adjustReportCardTable($reportTable.DataTable());
+                                }
+                            }, 120);
+                        });
+                },
+
+                drawCallback: function () {
+                    adjustReportCardTable(this.api());
+
+                    const tooltipElements = document.querySelectorAll(
+                        '[data-bs-toggle="tooltip"], [data-toggle="tooltip"]'
+                    );
+
+                    tooltipElements.forEach(function (element) {
+                        if (window.bootstrap && bootstrap.Tooltip) {
+                            const existingTooltip = bootstrap.Tooltip.getInstance
+                                ? bootstrap.Tooltip.getInstance(element)
+                                : null;
+
+                            if (!existingTooltip) {
+                                new bootstrap.Tooltip(element);
+                            }
+                        }
+                    });
+
+                    $reportTable.find("tbody")
+                        .off("click", ".cls-historyRequest")
+                        .on("click", ".cls-historyRequest", function () {
+                            const rowData = table.row($(this).closest("tr")).data();
+                            if (rowData != null) {
+                                GetRequestHistory(rowData.RequestId);
+                            }
+                        });
+
+                    $reportTable.find("tbody")
+                        .off("click", ".cls-cardhistoryRequest")
+                        .on("click", ".cls-cardhistoryRequest", function () {
+                            const rowData = table.row($(this).closest("tr")).data();
+                            if (rowData != null) {
+                                GetMovementHistory(rowData.RequestId);
+                            }
+                        });
+                }
+            });
+        });
+
+    // Show exactly once. The table is initialized after the modal is visible,
+    // so DataTables can calculate the real column widths correctly.
+    showCardReportModal($modal);
+}
+
 function getColumnsByChoice(choice) {
     let columns = [];
 
@@ -1653,7 +1636,7 @@ async function GetUnitByHierarchy(IsOnly, ddl, sectid, ComdId, CorpsId, DivId, B
             const jsonData = JSON.stringify(userdata);
             encryptedPayload = encryptPayloadData(jsonData);
         }
-        
+
         const response = await fetch('/Master/GetUnitByHierarchy', {
             method: 'POST',
             headers: {

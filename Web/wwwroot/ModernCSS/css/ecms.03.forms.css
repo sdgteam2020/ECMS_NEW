@@ -1,0 +1,132 @@
+/*
+ECMS forms
+Use Bootstrap grid for responsiveness:
+.row.g-2 > .col-12.col-md-6.col-xl-5 etc.
+*/
+
+label,
+.form-label,
+.col-form-label,
+.labelprofile {
+    color: var(--ecms-text);
+    font-size: .82rem;
+    font-weight: 900;
+    line-height: 1.2;
+}
+
+.required,
+.text-danger,
+.field-validation-error,
+.mand1 {
+    color: var(--ecms-danger-500) !important;
+    font-size: .75rem;
+    font-weight: 800;
+}
+
+.form-control,
+.form-control1,
+.form-control-Alphabets,
+.form-control-domainId,
+.form-select,
+textarea {
+    min-height: var(--ecms-control-height);
+    border: 1px solid rgba(165,187,219,.95);
+    border-radius: var(--ecms-radius-sm);
+    background-color: rgba(255,255,255,.98);
+    color: #0b234f;
+    font-size: .84rem;
+    font-weight: 700;
+    box-shadow: inset 0 1px 2px rgba(6,27,68,.04);
+}
+
+    .form-control:focus,
+    .form-control1:focus,
+    .form-control-Alphabets:focus,
+    .form-control-domainId:focus,
+    .form-select:focus,
+    textarea:focus {
+        border-color: var(--ecms-primary-500);
+        box-shadow: 0 0 0 .2rem rgba(63,124,255,.16);
+    }
+
+    .form-control:disabled,
+    .form-control[readonly],
+    .form-select:disabled,
+    textarea:disabled,
+    textarea[readonly] {
+        background: linear-gradient(135deg, #eef3fa, #dce5f0);
+        color: #48566d;
+        opacity: 1;
+    }
+
+/* Keep native select arrow. Select2 will hide original select separately. */
+select.form-control,
+select.form-select {
+    appearance: auto;
+    -webkit-appearance: auto;
+}
+
+/* Radio/checkbox selected state remains visible. */
+.form-check-input,
+input[type="radio"],
+input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--ecms-primary-600);
+    cursor: pointer;
+}
+
+.form-check-label {
+    color: var(--ecms-text);
+    font-weight: 800;
+}
+
+/* Select2 minimal Bootstrap-like skin */
+.select2-hidden-accessible {
+    border: 0 !important;
+    clip: rect(0 0 0 0) !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+}
+
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    min-height: var(--ecms-control-height);
+    border: 1px solid rgba(165,187,219,.95);
+    border-radius: var(--ecms-radius-sm);
+    background: rgba(255,255,255,.98);
+}
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: calc(var(--ecms-control-height) - 2px);
+        color: #0b234f;
+        font-weight: 700;
+    }
+
+.select2-container--open,
+.select2-dropdown {
+    z-index: 1085 !important;
+}
+
+.select2-dropdown {
+    border: 1px solid rgba(88,126,202,.60);
+    border-radius: var(--ecms-radius-sm);
+    box-shadow: var(--ecms-shadow-md);
+    overflow: hidden;
+}
+
+/* Common form action row. Use Bootstrap d-flex classes where possible. */
+.ecms-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+}

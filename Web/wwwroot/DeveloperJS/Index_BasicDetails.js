@@ -1,4 +1,61 @@
-﻿var table_Fwd; // Declare table variable outside the function to preserve the instance
+﻿var table_Fwd; // Preserve the shared DataTable instance
+
+function safeAdjustBasicIndexTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
+function prepareBasicIndexModal(modalElement) {
+    if (!modalElement) {
+        return;
+    }
+
+    if (modalElement.parentElement !== document.body) {
+        document.body.appendChild(modalElement);
+    }
+}
+
+function cleanupBasicIndexModalState() {
+    if (document.querySelector(".modal.show")) {
+        document.body.classList.add("modal-open");
+        return;
+    }
+
+    document.querySelectorAll(".modal-backdrop").forEach(function (element) {
+        element.remove();
+    });
+
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
+}
+
+function refreshBasicIndexTable(delay) {
+    var wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            if (
+                $("#tbldatatabledata_Fwd").length &&
+                $.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")
+            ) {
+                safeAdjustBasicIndexTable(
+                    $("#tbldatatabledata_Fwd").DataTable()
+                );
+            }
+        } catch (error) {
+            console.warn("Basic Detail table adjustment skipped:", error);
+        }
+    }, wait);
+}
+
 $(function () {
     sessionStorage.clear();
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
@@ -7,15 +64,34 @@ $(function () {
 
     applyDataTableSearchValidation('#tbldatatabledata_Fwd');
 
+    document.body.classList.add("ecms-basic-index-page-active");
+
     BindData(StepCounter, JCOOR, function () {
     });
 
-    $(window).on('resize', function () {
-        // Check if element exists AND is a DataTable
-        if ($('#tbldatatabledata_Fwd').length && $.fn.DataTable.isDataTable('#tbldatatabledata_Fwd')) {
-            $('#tbldatatabledata_Fwd').DataTable().columns.adjust();
-        }
-    });
+    $(document)
+        .off("show.bs.modal.basicIndexPage", ".modal")
+        .on("show.bs.modal.basicIndexPage", ".modal", function () {
+            prepareBasicIndexModal(this);
+        })
+        .off("shown.bs.modal.basicIndexPage", ".modal")
+        .on("shown.bs.modal.basicIndexPage", ".modal", function () {
+            prepareBasicIndexModal(this);
+            document.body.classList.add("modal-open");
+        })
+        .off("hidden.bs.modal.basicIndexPage", ".modal")
+        .on("hidden.bs.modal.basicIndexPage", ".modal", function () {
+            cleanupBasicIndexModalState();
+        });
+
+    $(window)
+        .off("resize.basicIndexTable")
+        .on("resize.basicIndexTable", function () {
+            window.clearTimeout(window.__basicIndexResizeTimer);
+            window.__basicIndexResizeTimer = window.setTimeout(function () {
+                refreshBasicIndexTable(0);
+            }, 120);
+        });
 });
 function BindData(StepCounter, JCOOR) {
     if ($.fn.DataTable.isDataTable("#tbldatatabledata_Fwd")) {
@@ -23,17 +99,18 @@ function BindData(StepCounter, JCOOR) {
         $("#tbldatatabledata_Fwd").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldatatabledata_Fwd thead").empty(); // Clear old thead
         $("#tbldatatabledata_Fwd tbody").empty(); // Clear old tbody
+        $("#tbldatatabledata_Fwd").empty(); // Remove generated sizing markup
     }
- 
+
     table_Fwd = $("#tbldatatabledata_Fwd").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: false,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -77,10 +154,18 @@ function BindData(StepCounter, JCOOR) {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
-
+                refreshBasicIndexTable(30);
+                refreshBasicIndexTable(150);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                callback({
+                    draw: data.draw,
+                    recordsTotal: 0,
+                    recordsFiltered: 0,
+                    data: []
+                });
+                refreshBasicIndexTable(30);
             }
         },
         columns: [
@@ -214,8 +299,7 @@ function BindData(StepCounter, JCOOR) {
                     let html = `<button class="btn btn-icon btn-round btn-primary mr-2 cls-ICardPrintPreviewByRequestId"><i class="fa fa-eye mt-2"></i></button>`;
 
                     // Case 1: Editable + Forward
-                    if ((row.StepCounter == 1 || row.StepCounter == 7 || row.StepCounter == 8 || row.StepCounter == 9 || row.StepCounter == 10) && row.IsLock == false)
-                    {
+                    if ((row.StepCounter == 1 || row.StepCounter == 7 || row.StepCounter == 8 || row.StepCounter == 9 || row.StepCounter == 10) && row.IsLock == false) {
                         html += `<a href="/BasicDetail/BasicDetail?Id=${row.EncryptedId}" class="btn btn-icon btn-round btn-warning mr-2"><i class="fas fa-edit mt-2"></i></a>
                                 <button class="btn btn-icon btn-round btn-primary mr-1 cls-fwdrecord"><i class="fa fa-step-forward"></i></button>`;
                     }
@@ -264,7 +348,9 @@ function BindData(StepCounter, JCOOR) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No / Appl ID" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'row g-2 align-items-center ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
+            "rt" +
+            "<'row g-2 align-items-center ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -290,31 +376,36 @@ function BindData(StepCounter, JCOOR) {
                     WaterMarkOnPdf(doc)
                 }
             }],
-        // 👇 Show modal only after table (header + data) is fully rendered
         initComplete: function () {
-            // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            let searchBox = $("#tbldatatabledata_Fwd_wrapper div.dataTables_filter input");
+            searchBox.attr("title", "Search Army No or Application ID");
 
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    table_Fwd.columns.adjust().responsive.recalc();
-                }, 100);
-            });
+            safeAdjustBasicIndexTable(this.api());
+            refreshBasicIndexTable(20);
+            refreshBasicIndexTable(150);
         },
         drawCallback: function (settings) {
-
-            // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustBasicIndexTable(this.api());
+            refreshBasicIndexTable(20);
+            refreshBasicIndexTable(120);
 
             const tooltipTriggerList = [].slice.call(
-                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                document.querySelectorAll('[data-bs-toggle="tooltip"], [data-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Basic Detail tooltip skipped:", error);
+                    }
+                });
+            }
 
             $("#tbldatatabledata_Fwd tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
                 var rowData = table_Fwd.row($(this).closest("tr")).data();
@@ -349,3 +440,54 @@ function BindData(StepCounter, JCOOR) {
         }
     });
 }
+
+// UI-only fix: DataTables with scrollX/scrollY keeps a hidden THEAD inside scrollBody.
+// Some project CSS makes that hidden THEAD visible as a blank blue row, so hide it after DataTables draws.
+(function () {
+    function fixBasicDetailDataTableHeader() {
+        var $wrapper = $('#tbldatatabledata_Fwd_wrapper');
+        if (!$wrapper.length) return;
+
+        var $bodyHead = $wrapper.find('div.dataTables_scrollBody table.dataTable thead');
+        $bodyHead.css({
+            'visibility': 'hidden',
+            'height': '0px',
+            'max-height': '0px',
+            'line-height': '0px',
+            'overflow': 'hidden'
+        });
+
+        $bodyHead.find('tr, th, td').css({
+            'height': '0px',
+            'max-height': '0px',
+            'min-height': '0px',
+            'line-height': '0px',
+            'padding-top': '0px',
+            'padding-bottom': '0px',
+            'border-top': '0px',
+            'border-bottom': '0px',
+            'font-size': '0px',
+            'color': 'transparent',
+            'background': 'transparent'
+        });
+
+        $bodyHead.find('.dataTables_sizing, div, span').css({
+            'height': '0px',
+            'max-height': '0px',
+            'line-height': '0px',
+            'overflow': 'hidden',
+            'font-size': '0px',
+            'padding': '0px',
+            'margin': '0px'
+        });
+    }
+
+    $(document).on('init.dt draw.dt column-sizing.dt', '#tbldatatabledata_Fwd', function () {
+        setTimeout(fixBasicDetailDataTableHeader, 0);
+        setTimeout(fixBasicDetailDataTableHeader, 100);
+    });
+
+    $(window).on('load resize', function () {
+        setTimeout(fixBasicDetailDataTableHeader, 150);
+    });
+})();

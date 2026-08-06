@@ -1,3 +1,174 @@
-﻿.card-body-min-height {
-    min-height: 150px;
+﻿/* =====================================================
+   INCORRECT DETAILS / DATA - PAGE-SPECIFIC LAYOUT
+   Global ECMS files provide the page, card, button and
+   DataTable appearance. This file only handles this page.
+===================================================== */
+
+html.ecms-inaccurate-scroll-lock,
+body.ecms-inaccurate-scroll-lock {
+    overflow: hidden !important;
+}
+
+.ecms-inaccurate-page {
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    height: calc( 100dvh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) - var(--ecms-footer-height) - 1.5rem );
+    min-height: 26rem;
+    margin: .75rem auto !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.ecms-inaccurate-card {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+.ecms-inaccurate-card-body {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+}
+
+.ecms-inaccurate-title {
+    flex: 0 0 auto;
+}
+
+    .ecms-inaccurate-title h2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+.ecms-inaccurate-title-icon {
+    background: linear-gradient(135deg, var(--ecms-warning-500), #d97706);
+    box-shadow: 0 .75rem 1.35rem rgba(217, 119, 6, .25);
+}
+
+.ecms-inaccurate-count {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.ecms-inaccurate-section {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+    .ecms-inaccurate-section > .ecms-section-title {
+        flex: 0 0 auto;
+    }
+
+    .ecms-inaccurate-section > .ecms-dt-wrap {
+        flex: 1 1 auto;
+        height: 100%;
+        min-height: 0;
+    }
+
+/* Toolbar placement only; controls inherit their appearance from the theme. */
+.ecms-inaccurate-page #tbldatatabledata_wrapper .dt-top {
+    display: flex;
+}
+
+.ecms-inaccurate-page #tbldatatabledata_wrapper .dataTables_filter,
+.ecms-inaccurate-page #tbldatatabledata_wrapper .dt-search {
+    margin-left: auto;
+}
+
+/* Page-specific column behavior. */
+.ecms-inaccurate-page #tbldatatabledata_wrapper th:first-child,
+.ecms-inaccurate-page #tbldatatabledata_wrapper td:first-child {
+    width: 4.5rem !important;
+    text-align: center;
+}
+
+.ecms-inaccurate-page #tbldatatabledata_wrapper th:last-child,
+.ecms-inaccurate-page #tbldatatabledata_wrapper td:last-child {
+    width: 1% !important;
+    white-space: nowrap;
+}
+
+.ecms-inaccurate-page #tbldatatabledata_wrapper td:nth-child(5) {
+    min-width: 17rem;
+    max-width: 30rem;
+    white-space: normal;
+    text-align: left;
+}
+
+.ecms-observation-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--ecms-text);
+    line-height: 1.35;
+}
+
+    .ecms-observation-list:empty {
+        display: none;
+    }
+
+    .ecms-observation-list li + li {
+        margin-top: .25rem;
+    }
+
+.ecms-inaccurate-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    min-width: 7rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 767.98px) {
+    html.ecms-inaccurate-scroll-lock,
+    body.ecms-inaccurate-scroll-lock {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    .ecms-inaccurate-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height) - var(--ecms-breadcrumb-strip-height) );
+        margin: .5rem auto calc(var(--ecms-footer-height) + .75rem) !important;
+        padding-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        overflow: visible;
+    }
+
+    .ecms-inaccurate-card {
+        height: auto;
+        min-height: 27rem;
+    }
+
+    .ecms-inaccurate-title {
+        align-items: flex-start !important;
+    }
+
+        .ecms-inaccurate-title h2 {
+            font-size: 1.15rem;
+            white-space: normal;
+        }
+
+    .ecms-inaccurate-count {
+        padding: .4rem .65rem !important;
+        font-size: .72rem;
+    }
+
+    .ecms-inaccurate-section > .ecms-dt-wrap {
+        min-height: 21rem;
+    }
+
+    .ecms-inaccurate-page #tbldatatabledata_wrapper .dt-top {
+        align-items: stretch !important;
+    }
+
+    .ecms-inaccurate-page #tbldatatabledata_wrapper .dataTables_filter,
+    .ecms-inaccurate-page #tbldatatabledata_wrapper .dt-search {
+        width: 100%;
+        margin-left: 0;
+    }
 }

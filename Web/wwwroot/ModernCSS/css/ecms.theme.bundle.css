@@ -1,0 +1,13 @@
+/*
+ECMS Bootstrap-first optimized bundle
+Load after Bootstrap, DataTables, Select2 and old project CSS.
+*/
+
+@import url('./ecms.00.tokens.css');
+@import url('./ecms.01.layout.css');
+@import url('./ecms.02.pages.css');
+@import url('./ecms.03.forms.css');
+@import url('./ecms.04.buttons-badges.css');
+@import url('./ecms.05.datatables.css');
+@import url('./ecms.06.modals.css');
+@import url('./ecms.07.utilities.css');

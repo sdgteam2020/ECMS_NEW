@@ -1,24 +1,217 @@
-﻿var table; // Declare table variable outside the function to preserve the instance
+﻿var table; // DataTable API instance
 var RegId = 0;
 var UnitMapId = 0;
+var regimentalResizeTimer;
+
+function setRegimentalModalMode(isEdit) {
+    $("#exampleModalLabel").text(isEdit ? "Update Regimental Details" : "Add Regimental Details");
+    $("#regimentalModalSubtitle").text(
+        isEdit
+            ? "Review and update the selected regimental centre details"
+            : "Fill regimental centre, arms/service and unit mapping details"
+    );
+    $("#btnSaveRegimental").val(isEdit ? "Update" : "Save");
+}
+
+function moveRegimentalModalToBody() {
+    const modalElement = document.getElementById("AddNewRegimental");
+    if (!modalElement) return null;
+
+    /*
+       Keep the modal as a direct child of <body>. This removes the layout
+       stacking context that previously allowed the backdrop to cover it.
+       It is done before opening—not during Bootstrap's show event.
+    */
+    if (modalElement.parentElement !== document.body) {
+        document.body.appendChild(modalElement);
+    }
+
+    return modalElement;
+}
+
+function openRegimentalModalFallback(modalElement) {
+    if (!modalElement || modalElement.classList.contains("show")) return;
+
+    document.querySelectorAll("body > .modal-backdrop.ecms-regimental-manual-backdrop")
+        .forEach(function (backdrop) { backdrop.remove(); });
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop fade show ecms-regimental-manual-backdrop";
+    document.body.appendChild(backdrop);
+
+    modalElement.style.display = "block";
+    modalElement.removeAttribute("aria-hidden");
+    modalElement.setAttribute("aria-modal", "true");
+    modalElement.setAttribute("role", "dialog");
+    modalElement.classList.add("show");
+    document.body.classList.add("modal-open");
+
+    const firstInput = modalElement.querySelector("input:not([type='hidden']), select, textarea, button");
+    if (firstInput) {
+        window.setTimeout(function () { firstInput.focus(); }, 0);
+    }
+}
+
+function closeRegimentalModalFallback(modalElement) {
+    if (!modalElement) return;
+
+    modalElement.classList.remove("show");
+    modalElement.style.display = "none";
+    modalElement.setAttribute("aria-hidden", "true");
+    modalElement.removeAttribute("aria-modal");
+
+    document.querySelectorAll("body > .modal-backdrop.ecms-regimental-manual-backdrop")
+        .forEach(function (backdrop) { backdrop.remove(); });
+
+    if (!document.querySelector("body > .modal.show")) {
+        document.body.classList.remove("modal-open");
+        document.body.style.removeProperty("padding-right");
+        document.body.style.removeProperty("overflow");
+    }
+}
+
+function showRegimentalModal() {
+    const modalElement = moveRegimentalModalToBody();
+    if (!modalElement) return;
+
+    /* Remove only an old page fallback backdrop. Bootstrap manages its own backdrop. */
+    document.querySelectorAll("body > .modal-backdrop.ecms-regimental-manual-backdrop")
+        .forEach(function (backdrop) { backdrop.remove(); });
+
+    /* The application originally used the Bootstrap jQuery modal plug-in. */
+    if (window.jQuery && $.fn && typeof $.fn.modal === "function") {
+        try {
+            $(modalElement).modal("show");
+
+            /* Safety fallback when a conflicting modal plug-in fails silently. */
+            window.setTimeout(function () {
+                if (!modalElement.classList.contains("show")) {
+                    openRegimentalModalFallback(modalElement);
+                }
+            }, 150);
+            return;
+        } catch (error) {
+            console.warn("Bootstrap jQuery modal could not open Regimental modal:", error);
+        }
+    }
+
+    if (window.bootstrap && window.bootstrap.Modal) {
+        try {
+            const instance = typeof window.bootstrap.Modal.getOrCreateInstance === "function"
+                ? window.bootstrap.Modal.getOrCreateInstance(modalElement, { backdrop: true, keyboard: true })
+                : new window.bootstrap.Modal(modalElement, { backdrop: true, keyboard: true });
+            instance.show();
+            return;
+        } catch (error) {
+            console.warn("Bootstrap modal could not open Regimental modal:", error);
+        }
+    }
+
+    openRegimentalModalFallback(modalElement);
+}
+
+function hideRegimentalModal() {
+    const modalElement = document.getElementById("AddNewRegimental");
+    if (!modalElement) return;
+
+    if (window.jQuery && $.fn && typeof $.fn.modal === "function") {
+        try {
+            $(modalElement).modal("hide");
+            window.setTimeout(function () {
+                if (modalElement.classList.contains("show")) {
+                    closeRegimentalModalFallback(modalElement);
+                } else {
+                    document.querySelectorAll("body > .modal-backdrop.ecms-regimental-manual-backdrop")
+                        .forEach(function (backdrop) { backdrop.remove(); });
+                }
+            }, 200);
+            return;
+        } catch (error) {
+            console.warn("Bootstrap jQuery modal could not close Regimental modal:", error);
+        }
+    }
+
+    if (window.bootstrap && window.bootstrap.Modal) {
+        try {
+            const instance = typeof window.bootstrap.Modal.getInstance === "function"
+                ? window.bootstrap.Modal.getInstance(modalElement)
+                : null;
+            if (instance) {
+                instance.hide();
+                return;
+            }
+        } catch (error) {
+            console.warn("Bootstrap modal could not close Regimental modal:", error);
+        }
+    }
+
+    closeRegimentalModalFallback(modalElement);
+}
+
+function adjustRegimentalTable() {
+    if (!table || typeof table.columns !== "function") return;
+
+    table.columns.adjust();
+
+    if (table.responsive && typeof table.responsive.recalc === "function") {
+        table.responsive.recalc();
+    }
+}
+
+function initializeRegimentalTooltips() {
+    if (!(window.bootstrap && bootstrap.Tooltip)) return;
+
+    document.querySelectorAll('#tbldata [data-bs-toggle="tooltip"]').forEach(function (element) {
+        bootstrap.Tooltip.getOrCreateInstance(element);
+    });
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    /*
+       Initialise and bind the modal before DataTable startup. Therefore a table
+       error cannot prevent the Add button from receiving its click handler.
+    */
+    moveRegimentalModalToBody();
+
+    $(document)
+        .off("click.ecmsRegimentalAdd", "#btnAddRegimental")
+        .on("click.ecmsRegimentalAdd", "#btnAddRegimental", function (e) {
+            e.preventDefault();
+            Reset();
+            ResetErrorMessage();
+            setRegimentalModalMode(false);
+            showRegimentalModal();
+        })
+        .off("click.ecmsRegimentalClose", "#AddNewRegimental [data-dismiss='modal'], #AddNewRegimental [data-bs-dismiss='modal']")
+        .on("click.ecmsRegimentalClose", "#AddNewRegimental [data-dismiss='modal'], #AddNewRegimental [data-bs-dismiss='modal']", function (e) {
+            e.preventDefault();
+            hideRegimentalModal();
+        });
+
+    $(document)
+        .off("keydown.ecmsRegimentalModal")
+        .on("keydown.ecmsRegimentalModal", function (e) {
+            if (e.key === "Escape" && document.getElementById("AddNewRegimental")?.classList.contains("show")) {
+                hideRegimentalModal();
+            }
+        });
+
     mMsater(0, "ddlArmType", 9, "");
 
-    applyDataTableSearchValidation('#tbldata');
+    if (typeof applyDataTableSearchValidation === "function") { applyDataTableSearchValidation('#tbldata'); }
 
-    BindData()
-    $("#btnAddRegimental").on("click",function () {
-        Reset();
-        ResetErrorMessage();
-        $("#AddNewRegimental").modal('show');
-    });
+    try {
+        BindData();
+    } catch (error) {
+        console.error("Regimental DataTable initialisation failed:", error);
+    }
     $('input.js-uppercase').on('input', function () {
         this.value = this.value.toUpperCase();
     });
 
-    $("#btnResetRegimental").on("click",function () {
+    $("#btnResetRegimental").on("click", function () {
         Reset();
         ResetErrorMessage();
     });
@@ -68,10 +261,10 @@ $(function () {
             $("#txtUnitName").val(i.item.label);
             UnitMapId = i.item.value;
         },
-        
+
     });
 
-    $('#txtUnitName').on('keyup',function (e) {
+    $('#txtUnitName').on('keyup', function (e) {
         if (e.key === 'Delete') {
             $("#txtUnitName").val("");
             UnitMapId = 0;
@@ -79,8 +272,8 @@ $(function () {
             $("#ddlTDMId").val("0");
         }
     });
-   
-    $("#btnSaveRegimental").on("click",function () {
+
+    $("#btnSaveRegimental").on("click", function () {
         Proceed();
     });
 });
@@ -103,7 +296,7 @@ function Proceed() {
             if (result.isConfirmed) {
                 Save();
             }
-        })
+        });
     }
     else {
         Swal.fire({
@@ -111,7 +304,7 @@ function Proceed() {
             title: 'Oops...',
             text: 'Please fill required field.',
 
-        })
+        });
         toastr.error('Please fill required field.');
         return false;
     }
@@ -126,12 +319,10 @@ function BindData() {
     }
     const columns = getColumnsForRegimental();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
-        fixedHeader: false,       // ❌ disable when using scrollY
+        scrollY: 'var(--ecms-regimental-scroll-height)',
+        scrollX: true,
+        scrollCollapse: false,
+        fixedHeader: false,
 
         processing: true,
         serverSide: true,
@@ -181,13 +372,13 @@ function BindData() {
                 width: "0px",
                 searchable: false
             },
-            { targets: 1, width: "60px" },
-            { targets: 2, width: "200px" },
-            { targets: 3, width: "200px" },
-            { targets: 4, width: "200px" },
-            { targets: 5, width: "200px" },
-            { targets: 6, width: "200px" },
-            { targets: 7, width: "120px" },
+            { targets: 1, width: "6%" },
+            { targets: 2, width: "20%" },
+            { targets: 3, width: "14%" },
+            { targets: 4, width: "14%" },
+            { targets: 5, width: "22%" },
+            { targets: 6, width: "14%" },
+            { targets: 7, width: "10%" },
             {
                 targets: '_all',  // Apply to all visible columns
                 orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
@@ -197,7 +388,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'dt-top'lBf>rt<'ecms-dt-footer row g-2'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -224,33 +415,24 @@ function BindData() {
                 }
             }],
         initComplete: function () {
-            // Add tooltip to the search input box
-            let searchBox = $('div.dataTables_filter input');
-            searchBox.attr('title', 'Search Comd/Abbreviation');
-
-            // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
-
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
-                }, 100);
+            const searchBox = $('#tbldata_wrapper .dataTables_filter input, #tbldata_wrapper .dt-search input');
+            searchBox.attr({
+                title: 'Search Regimental Centre, Abbreviation or Location',
+                'aria-label': 'Search regimental centre records'
             });
+
+            adjustRegimentalTable();
+
+            $(window)
+                .off('resize.ecmsRegimentalTable')
+                .on('resize.ecmsRegimentalTable', function () {
+                    clearTimeout(regimentalResizeTimer);
+                    regimentalResizeTimer = setTimeout(adjustRegimentalTable, 120);
+                });
         },
-        drawCallback: function (settings) {
-
-            // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
-
-            const tooltipTriggerList = [].slice.call(
-                document.querySelectorAll('[data-bs-toggle="tooltip"]')
-            );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+        drawCallback: function () {
+            adjustRegimentalTable();
+            initializeRegimentalTooltips();
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -271,8 +453,8 @@ function BindData() {
                         UnitMapId = 0;
                         $("#txtUnitName").val("");
                     }
-                    $("#btnSaveRegimental").val("Update");
-                    $("#AddNewRegimental").modal('show');
+                    setRegimentalModalMode(true);
+                    showRegimentalModal();
                 }
                 else {
                     //Invalid Data
@@ -346,7 +528,7 @@ function Save() {
 
             if (result.Result == true) {
                 toastr.success(result.Message);
-                $("#AddNewRegimental").modal('hide');
+                hideRegimentalModal();
                 BindData();
                 Reset();
             }
@@ -388,6 +570,7 @@ function Reset() {
     $("#ddlArmType").val("0");
     UnitMapId = 0;
     RegId = 0;
+    setRegimentalModalMode(false);
 }
 function ResetErrorMessage() {
     $("#txtName-error").html("");
@@ -438,7 +621,7 @@ function Delete(Id) {
 }
 
 function DeleteMultiple(ids) {
-   
+
     var userdata =
     {
         "ints": ids,
@@ -460,13 +643,13 @@ function DeleteMultiple(ids) {
                 else if (response == Success) {
                     //lol++;
                     //if (lol == Tot) {
-                     toastr.error('Deleted Selected');
+                    toastr.error('Deleted Selected');
                     BindData();
                 }
 
                 //}
             }
-           
+
         },
         error: function (result) {
             Swal.fire({
@@ -493,7 +676,7 @@ function getColumnsForRegimental() {
             name: "SerialNumber",
             orderable: false, // Disable sorting for this column
             className: "text-center col-sno",
-            width: "60px",
+            width: "6%",
             render: function (data, type, row, meta) {
                 // Calculate serial number based on row index
                 return meta.row + meta.settings._iDisplayStart + 1;
@@ -504,7 +687,7 @@ function getColumnsForRegimental() {
             data: "Name",
             name: "Name",
             className: "nowrap",
-            width: "200px",
+            width: "20%",
             orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
@@ -516,7 +699,7 @@ function getColumnsForRegimental() {
             data: "Abbreviation",
             name: "Abbreviation",
             className: "nowrap",
-            width: "200px",
+            width: "14%",
             orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
@@ -528,7 +711,7 @@ function getColumnsForRegimental() {
             data: "Location",
             name: "Location",
             className: "nowrap",
-            width: "200px",
+            width: "14%",
             orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
@@ -540,7 +723,7 @@ function getColumnsForRegimental() {
             data: "ArmedName",
             name: "ArmedName",
             className: "nowrap",
-            width: "200px",
+            width: "22%",
             orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
@@ -552,8 +735,8 @@ function getColumnsForRegimental() {
             data: "UnitAbbreviation",
             name: "UnitAbbreviation",
             className: "nowrap",
-            width: "200px",
-            orderable: false, 
+            width: "14%",
+            orderable: false,
             render: function (data, type, row, meta) {
                 if (row.UnitId != null)
                     return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -565,15 +748,28 @@ function getColumnsForRegimental() {
         {
             title: "Action",
             data: null,
-            className: "noExport",
             name: "Action",
             orderable: false,
+            searchable: false,
             className: "noExport text-center col-action",
-            width: "120px",
-            render: function (data, type, row) {
-                let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
-                                <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;
-                return Action;
+            width: "10%",
+            render: function () {
+                return `<button type="button"
+                                class="cls-btnedit btn btn-warning ecms-action-btn"
+                                title="Edit"
+                                aria-label="Edit regimental centre"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top">
+                            <i class="fas fa-edit" aria-hidden="true"></i>
+                        </button>
+                        <button type="button"
+                                class="cls-btnDelete btn btn-danger ecms-action-btn"
+                                title="Delete"
+                                aria-label="Delete regimental centre"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top">
+                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                        </button>`;
             }
         }
     ];

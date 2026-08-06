@@ -11,98 +11,106 @@
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                      
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > 
-                            @if (ViewBag.PreviousLink == "DashboardUserMgt")
-                            {
-                                <a href="/Home/DashboardUserMgt" class="mr-2">User Mgt</a>
-                            }
-                            else
-                            {
-                                <a href="/Home/SubDashboard" class="mr - 2">I-Card Request</a>
-                            }
-                        > @ViewBag.Type
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                        <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt;
+                        @if (ViewBag.PreviousLink == "DashboardUserMgt")
+                        {
+                            <a href="/Home/DashboardUserMgt" class="mr-2">User Mgt</a>
+                        }
+                        else
+                        {
+                            <a href="/Home/SubDashboard" class="mr-2">I-Card Request</a>
+                        }
+                        &gt; @ViewBag.Type
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-<span id="Type" name="Type" class="d-none">@ViewBag.Type</span>
-    @if (RoleNameList.Contains(ViewBag.Role))
-    {
-        <div class="row">
 
-            <div class="card p-4">
-                <div class="row">
+<div class="ecms-request-dashboard-page">
+    <div class="containerMain ecms-request-dashboard-container">
+        <span id="Type" name="Type" class="d-none">@ViewBag.Type</span>
 
+        @if (RoleNameList.Contains(ViewBag.Role))
+        {
+            <div class="ecms-request-dashboard-shell">
+                <div class="ecms-request-dashboard-heading">
+                    <div class="ecms-request-dashboard-heading-icon">
+                        @if (ViewBag.Type == "Posting Out")
+                        {
+                            <i class="fa fa-sign-out"></i>
+                        }
+                        else
+                        {
+                            <i class="fa fa-sign-in"></i>
+                        }
+                    </div>
+                    <div>
+                        <h2>@ViewBag.Type Dashboard</h2>
+                        <p>Officer and JCOs/OR request movement summary</p>
+                    </div>
+                </div>
+
+                <div class="ecms-request-dashboard-grid">
                     @if (ViewBag.Type == "Posting Out")
                     {
-                        <div class="col-md-2 col-sm-6">
+                        <div class="ecms-request-dashboard-item">
                             <a href="/Posting/GetPostingOutWithType?Type=MQ==&PostingType=UG9zdGluZ091dA==" class="clickable">
-                                <div class="counter blue">
+                                <div class="counter blue ecms-request-counter" id="btnPostingOutOffrs">
                                     <div class="counter-icon">
-                                        <i class="fa fa-users"></i>
+                                        <i class="fa fa-user"></i>
                                     </div>
                                     <span class="counter-value" id="ToPostingOutOffrs">0</span>
-                                    <h3>
-                                        Posting Out (Offr<span class="text-lowercase">s</span>)
-                                    </h3>
-
+                                    <h3>Posting Out<br />Officers</h3>
                                 </div>
                             </a>
                         </div>
-                        <div class="col-md-2 col-sm-6">
+
+                        <div class="ecms-request-dashboard-item">
                             <a href="/Posting/GetPostingOutWithType?Type=Mg==&PostingType=UG9zdGluZ091dA==" class="clickable">
-                                <div class="counter blue">
+                                <div class="counter blue ecms-request-counter" id="btnPostingOutJCO">
                                     <div class="counter-icon">
                                         <i class="fa fa-users"></i>
                                     </div>
                                     <span class="counter-value" id="ToPostingOutJCO">0</span>
-                                    <h3>
-                                        Posting Out (JCO<span class="text-lowercase">s</span>/OR)
-                                    </h3>
+                                    <h3>Posting Out<br />JCOs/OR</h3>
                                 </div>
                             </a>
                         </div>
                     }
                     else if (ViewBag.Type == "Posting In")
                     {
-                        <div class="col-md-2 col-sm-6">
+                        <div class="ecms-request-dashboard-item">
                             <a href="/Posting/GetPostingOutWithType?Type=MQ==&PostingType=UG9zdGluZ0lu" class="clickable">
-                                <div class="counter blue">
+                                <div class="counter blue ecms-request-counter" id="btnPostingInOffrs">
                                     <div class="counter-icon">
-                                        <i class="fa fa-users"></i>
+                                        <i class="fa fa-user-plus"></i>
                                     </div>
                                     <span class="counter-value" id="ToPostingInOffrs">0</span>
-                                    <h3>
-                                        Posting In (Offr<span class="text-lowercase">s</span>)
-                                    </h3>
-
+                                    <h3>Posting In<br />Officers</h3>
                                 </div>
                             </a>
                         </div>
-                        <div class="col-md-2 col-sm-6">
+
+                        <div class="ecms-request-dashboard-item">
                             <a href="/Posting/GetPostingOutWithType?Type=Mg==&PostingType=UG9zdGluZ0lu" class="clickable">
-                                <div class="counter blue">
+                                <div class="counter blue ecms-request-counter" id="btnPostingInJCO">
                                     <div class="counter-icon">
                                         <i class="fa fa-users"></i>
                                     </div>
                                     <span class="counter-value" id="ToPostingInJCO">0</span>
-                                    <h3>
-                                        Posting In (JCO<span class="text-lowercase">s</span>/OR)
-                                    </h3>
+                                    <h3>Posting In<br />JCOs/OR</h3>
                                 </div>
                             </a>
                         </div>
                     }
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
+
 <script asp-src-include="~/developerjs/RequestDashboard.js"></script>

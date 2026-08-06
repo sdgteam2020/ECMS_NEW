@@ -1,0 +1,56 @@
+/*
+ECMS utilities
+Keep this small. Prefer Bootstrap utilities first.
+*/
+
+.ecms-bg {
+    background: var(--ecms-bg-overlay), var(--ecms-bg-image) center/cover fixed no-repeat;
+}
+
+.ecms-glass {
+    border: var(--ecms-border-white);
+    background: var(--ecms-page-surface);
+    box-shadow: var(--ecms-shadow-md);
+}
+
+.ecms-scroll-y {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+}
+
+.ecms-scroll-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+}
+
+.ecms-scroll-both {
+    overflow: auto;
+    scrollbar-width: thin;
+}
+
+.ecms-min-0 {
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-footer-safe {
+    padding-bottom: calc(var(--ecms-footer-height) + .75rem);
+}
+
+.ecms-text-muted {
+    color: var(--ecms-text-muted);
+}
+
+.ecms-shadow-sm {
+    box-shadow: var(--ecms-shadow-sm);
+}
+
+.ecms-shadow-md {
+    box-shadow: var(--ecms-shadow-md);
+}
+
+.ecms-shadow-lg {
+    box-shadow: var(--ecms-shadow-lg);
+}

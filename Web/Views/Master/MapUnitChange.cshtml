@@ -2,68 +2,91 @@
     ViewData["Title"] = "List of Unit Move Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/mapunitchange.css" rel="stylesheet" />
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
-            <div class="row align-items-center justify-content-between">
+            <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
                         @if (ViewBag.RoleName == "admin")
                         {
-                            <div><a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > Unit Move Request</div>
+                            <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
+                            <span class="mx-1">&gt;</span>
+                            <span>Unit Move Request</span>
                         }
                         else
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Task" class="mr-2">Task</a> > Unit Move Request</div>
+                            <a href="/Home/Index" class="mr-2">Home</a>
+                            <span class="mx-1">&gt;</span>
+                            <a href="/Home/Task" class="mr-2">Task</a>
+                            <span class="mx-1">&gt;</span>
+                            <span>Unit Move Request</span>
                         }
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <span class="d-none" id="spnRoleName">@ViewBag.RoleName</span>
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Details of Unit Move
-                        <small class="text-muted"></small>
-                    </h3>
-                </div>
-            </div>
-        </div>
-        <div class="card-body card-body-min-height">
-            <div class="col-xl-12">
-                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                    <h6 class="mb-3 mb-md-0">
-                        
-                    </h6>
-                    <div>
+
+<div class="ecms-screen-stage ecms-bg">
+    <main class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-mapunitchange-page">
+        <div class="card ecms-card ecms-mapunitchange-shell">
+            <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
+
+                <span class="d-none" id="spnRoleName">@ViewBag.RoleName</span>
+
+                <div class="ecms-page-title ecms-mapunitchange-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                    <div class="d-flex align-items-center gap-2 ecms-min-0">
+                        <span class="ecms-title-icon">
+                            <i class="fa fa-exchange"></i>
+                        </span>
+                        <div class="ecms-min-0">
+                            <h3>Details of Unit Move</h3>
+                            <p class="ecms-title-subtitle">Track unit move requests, remarks, status and approval actions</p>
+                        </div>
+                    </div>
+
+                    <div class="ecms-mapunitchange-actions d-flex align-items-center gap-2 flex-wrap">
                         @if (ViewBag.RoleName == "admin")
                         {
-                            <span>&nbsp;</span>
+                            <span class="badge bg-light text-primary ecms-badge ecms-admin-pill">
+                                <i class="fa fa-user-shield"></i>
+                                Admin View
+                            </span>
                         }
                         else
                         {
-                            <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm"><i class="fa fa-plus mr-1 font-weight-700"></i>Add</button>
+                            <button type="button" id="btnAdd" class="btn btn-success ecms-btn-success ecms-add-btn">
+                                <i class="fa fa-plus"></i>
+                                <span>Add</span>
+                            </button>
                         }
-                       
                     </div>
                 </div>
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
+
+                <div class="ecms-section ecms-mapunitchange-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                    <div class="ecms-section-title flex-shrink-0">
+                        <i class="fa fa-list"></i>
+                        <span>Unit Move Request Records</span>
+                    </div>
+
+                    <div class="ecms-dt-wrap ecms-mapunitchange-table-wrap flex-grow-1 ecms-min-0">
+                        <table class="table table-striped table-hover ecms-dt-table ecms-mapunitchange-datatable" role="grid" id="tbldata" aria-label="Unit move request records">
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
+    </main>
 </div>
+
 <script asp-src-include="~/developerjs/MapUnitChange.js"></script>
 <script asp-src-include="~/developerjs/UnitMoveHistory.js"></script>
-
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

@@ -1,22 +1,63 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 let ArmedId = 0;
+function ecmsArmedTypeSafeCall(name, callback) {
+    try {
+        return callback();
+    } catch (error) {
+        console.error("ArmedType startup error in " + name + ":", error);
+        return null;
+    }
+}
+
+function safeAdjustArmedTypeDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
-    Reset();
-    mMsater(0, "ddlArmedCat", ArmyCat, "");
 
-    applyDataTableSearchValidation('#tbldata');
+    ecmsArmedTypeSafeCall("Reset", function () {
+        if (typeof Reset === "function") {
+            Reset();
+        }
+    });
 
-    BindData(function () { });
-    $("#btnReset").on("click",function () {
+    ecmsArmedTypeSafeCall("mMsater ddlArmedCat bind", function () {
+        if (typeof mMsater === "function" && typeof ArmyCat !== "undefined") {
+            mMsater(0, "ddlArmedCat", ArmyCat, "");
+        } else {
+            console.error("Required dependency missing: mMsater or ArmyCat. Check mtables.js and command.js load before ArmedType.js.");
+        }
+    });
+
+    ecmsArmedTypeSafeCall("DataTable search validation", function () {
+        if (typeof applyDataTableSearchValidation === "function") {
+            applyDataTableSearchValidation('#tbldata');
+        }
+    });
+
+    ecmsArmedTypeSafeCall("BindData", function () {
+        if (typeof BindData === "function") {
+            BindData(function () { });
+        }
+    });
+    $("#btnReset").on("click", function () {
         Reset();
     });
 
     $('input.js-uppercase').on('input', function () {
         this.value = this.value.toUpperCase();
     });
-   
-    $("#btnsave").on("click",function (e) {
+
+    $("#btnsave").on("click", function (e) {
         if ($("#SaveForm")[0].checkValidity()) {
             if ($("input[name='radioInf']:checked").length === 0) {
                 e.preventDefault();
@@ -42,30 +83,30 @@ $(function () {
                     Save();
                 }
             })
-           
+
         } else {
             $("#SaveForm")[0].reportValidity();
         }
 
-       
-       
-       // 
+
+
+        // 
 
     });
 
-    $('#btnMultiDelete').on("click",function () {
+    $('#btnMultiDelete').on("click", function () {
         var lst = new Array();
 
         if (memberTable.$('input[type="checkbox"]:checked').length > 0) {
 
             memberTable.$('input[type="checkbox"]:checked').each(function () {
 
-                
+
                 var id = $(this).attr("Id");
                 lst.push(id);
 
             });
-          
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to Delete",
@@ -76,7 +117,7 @@ $(function () {
                 confirmButtonText: 'Yes, Delete it!'
             }).then((result) => {
                 if (result.value) {
-                   
+
                     DeleteMultiple(lst);
 
                 }
@@ -99,11 +140,11 @@ function BindData() {
     }
     const columns = getColumnsForArmedType();
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollY: '300px',          // DataTables vertical scroll
+        scrollX: true,            // DataTables horizontal scroll when needed
+        scrollCollapse: false,
+        scroller: false,         // Do not use Scroller here; pagination is already enabled
+        deferScroll: false,    // Avoid virtual-width calculation issues
         fixedHeader: false,       // ❌ disable when using scrollY
 
         processing: true,
@@ -111,8 +152,8 @@ function BindData() {
         filter: true,
         stateSave: false,
 
-        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
-        responsive: false, // Columns can hide on small screens
+        autoWidth: true,       // Let DataTables calculate natural column widths
+        responsive: false,     // Keep normal DataTable columns
         deferRender: true,// ✅ Handle zoom changes
         order: [[0, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
@@ -122,7 +163,7 @@ function BindData() {
                 start: data.start,
                 length: data.length,
                 searchValue: data.search?.value || '',  // ✅ Safe access
-                sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',  
+                sortColumn: data.order?.[0]?.column >= 0 && data.columns?.[data.order[0].column]?.data || '',
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '' // Add a check for data.order
             };
             try {
@@ -146,24 +187,19 @@ function BindData() {
             }
         },
         columns: columns,
-        /* ===== FORCE WIDTHS (IMPORTANT) ===== */
         columnDefs: [
-            { targets: 0, width: "60px" },
-            { targets: 1, width: "200px" },
-            { targets: 2, width: "200px" },
-            { targets: 3, width: "120px" },
-            { targets: 4, width: "120px" },
-            { targets: 5, width: "120px" },
             {
-                targets: '_all',  // Apply to all visible columns
-                orderSequence: ["asc", "desc"]  // ⬅️ ONLY 2 states!
-            },
+                targets: '_all',
+                orderSequence: ["asc", "desc"]
+            }
         ],
         language: {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip",
+        dom: "<'row g-2 align-items-center mb-2 ecms-dt-toolbar'<'col-12 col-md-4 d-flex justify-content-start dt-length-col'l><'col-12 col-md-4 d-flex justify-content-center dt-buttons-col'B><'col-12 col-md-4 d-flex justify-content-md-end dt-filter-col'f>>" +
+            "rt" +
+            "<'row g-2 align-items-center mt-2 ecms-dt-footer'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 d-flex justify-content-md-end dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -195,28 +231,31 @@ function BindData() {
             searchBox.attr('title', 'Search Comd/Abbreviation');
 
             // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            safeAdjustArmedTypeDataTable(this.api());
+            setTimeout(function () { safeAdjustArmedTypeDataTable(table); }, 80);
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    safeAdjustArmedTypeDataTable(table);
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustArmedTypeDataTable(this.api());
 
-            const tooltipTriggerList = [].slice.call(
-                document.querySelectorAll('[data-bs-toggle="tooltip"]')
-            );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+            if (window.bootstrap && bootstrap.Tooltip) {
+                const tooltipTriggerList = [].slice.call(
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                );
+                tooltipTriggerList.forEach(el => {
+                    new bootstrap.Tooltip(el);
+                });
+            }
 
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -369,7 +408,7 @@ function Delete(Id) {
 }
 
 function DeleteMultiple(ids) {
-   
+
     var userdata =
     {
         "ints": ids,
@@ -391,13 +430,13 @@ function DeleteMultiple(ids) {
                 else if (response == Success) {
                     //lol++;
                     //if (lol == Tot) {
-                     toastr.error('Deleted Selected');
+                    toastr.error('Deleted Selected');
                     BindData();
                 }
 
                 //}
             }
-           
+
         },
         error: function (result) {
             Swal.fire({
@@ -416,7 +455,6 @@ function getColumnsForArmedType() {
             name: "SerialNumber",
             orderable: false, // Disable sorting for this column
             className: "text-center col-sno",
-            width: "60px",
             render: function (data, type, row, meta) {
                 // Calculate serial number based on row index
                 return meta.row + meta.settings._iDisplayStart + 1;
@@ -427,8 +465,7 @@ function getColumnsForArmedType() {
             data: "ArmedName",
             name: "ArmedName",
             className: "nowrap",
-            width: "200px",
-            orderable: true,  
+            orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
                 return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -439,8 +476,7 @@ function getColumnsForArmedType() {
             data: "Abbreviation",
             name: "Abbreviation",
             className: "nowrap",
-            width: "200px",
-            orderable: true,  
+            orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
                 return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -451,10 +487,18 @@ function getColumnsForArmedType() {
             data: "FlagInf",
             name: "FlagInf",
             className: "text-center nowrap",
-            width: "200px",
-            orderable: true,  
+            orderable: true,
             render: function (data, type, row, meta) {
-                return data ? "<span>Yes</span>" : "<span>No</span>";
+                var value = String(data).toLowerCase();
+                var isYes = data === true || data === 1 || value === "true" || value === "1" || value === "yes";
+
+                if (type !== "display") {
+                    return isYes ? "YES" : "NO";
+                }
+
+                return isYes
+                    ? "<span class='badge rounded-pill bg-success text-white ecms-status-badge ecms-status-yes'>YES</span>"
+                    : "<span class='badge rounded-pill bg-danger text-white ecms-status-badge ecms-status-no'>NO</span>";
             }
         },
         {
@@ -462,8 +506,7 @@ function getColumnsForArmedType() {
             data: "Name",
             name: "Name",
             className: "nowrap",
-            width: "200px",
-            orderable: true,  
+            orderable: true,
             render: function (data, type, row, meta) {
                 if (!data) return '';
                 return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
@@ -477,7 +520,6 @@ function getColumnsForArmedType() {
             name: "Action",
             orderable: false,
             className: "noExport text-center col-action",
-            width: "120px",
             render: function (data, type, row) {
                 let Action = `<button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button>
                                 <button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>`;

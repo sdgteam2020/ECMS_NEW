@@ -1,14 +1,16 @@
 ﻿$(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    prepareProfileModals();
+
     await GetByArmyNo(null);
-    $("#btntokenrefresh").on("click",async function () {
-       
+    $("#btntokenrefresh").on("click", async function () {
+
         await GetTokenvalidatepersid2fawiththumbprint($("#txtProArmy").val(), "tokenmsg", "txtspnTokenArmyNo", "Thumbprint");
     });
-    $("#btnProfilesave").on("click",function () {
+    $("#btnProfilesave").on("click", function () {
 
-       /* alert($("#intoffsyes").prop("checked") )*/
+        /* alert($("#intoffsyes").prop("checked") )*/
         if ($("#SaveFormProfile")[0].checkValidity()) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -23,17 +25,17 @@
                     var RankId = $("#ddlProRank").val();
                     var Name = $("#txtName").val();
                     var Thumbprint = $("#Thumbprint").val();
-                
 
-                    let  IsRO = false;//$("#chkRO").prop("checked");
-                    let  IsIO = $("#chkIO").prop("checked");
+
+                    let IsRO = false;//$("#chkRO").prop("checked");
+                    let IsIO = $("#chkIO").prop("checked");
                     let IsCO = $("#chkCO").prop("checked");
                     let IsORO = false;// $("#chkORO").prop("checked");
-                    
-                    UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, Thumbprint); 
+
+                    UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, Thumbprint);
                 }
             })
-             } else {
+        } else {
             $("#SaveFormProfile")[0].reportValidity();
         }
 
@@ -53,7 +55,7 @@
             event.preventDefault();
         }
     });
-   
+
     $("#btnderegprofile").on("click", function () {
         $("#DeRegisterConfirmModal").modal('show');
     });
@@ -85,7 +87,7 @@
             }
         });
     });
-  
+
 });
 
 function GetALLByUnitById(param1) {
@@ -95,9 +97,8 @@ function GetALLByUnitById(param1) {
         data: { "UnitMapId": encryptPayloadData(param1) },
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
-        success: function (data)
-        {
-            
+        success: function (data) {
+
             //$("#lblunittype").html();
 
             $("#spnUnitIdUserPro").html(data.UnitMapId);
@@ -137,7 +138,7 @@ function GetALLByUnitById(param1) {
     });
 }
 
-function UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, Thumbprint) { 
+function UpdateProfileWithMapping(RankId, Name, IsRO, IsIO, IsCO, IsORO, Thumbprint) {
     let param = {
         "RankId": RankId, "Name": Name, "IsRO": IsRO, "IsIO": IsIO, "IsCO": IsCO, "IsORO": IsORO, "Thumbprint": Thumbprint
     }
@@ -225,3 +226,55 @@ async function GetByArmyNo(ArmyNo) {
             });
         });
 }
+
+/* UI-only modal guard.
+   Moves profile modals outside page containers so the common backdrop can
+   never cover or dim the dialog. It does not change modal business logic. */
+function prepareProfileModals() {
+    const $profileModals = $("#AddNewProfile, #DeRegisterConfirmModal");
+
+    $profileModals.each(function () {
+        const $modal = $(this);
+
+        if (!$modal.parent().is("body")) {
+            $modal.appendTo(document.body);
+        }
+
+        $modal
+            .off("show.bs.modal.profileUi shown.bs.modal.profileUi hidden.bs.modal.profileUi")
+            .on("show.bs.modal.profileUi", function () {
+                const $currentModal = $(this);
+
+                if (!$('.modal.show').not($currentModal).length) {
+                    $('.modal-backdrop').remove();
+                }
+
+                $currentModal.appendTo(document.body).css({
+                    zIndex: 1060,
+                    opacity: 1,
+                    filter: "none",
+                    pointerEvents: "auto"
+                });
+            })
+            .on("shown.bs.modal.profileUi", function () {
+                $(this).css({
+                    zIndex: 1060,
+                    opacity: 1,
+                    filter: "none",
+                    pointerEvents: "auto"
+                });
+
+                $('.modal-backdrop').last().css({
+                    zIndex: 1040,
+                    pointerEvents: "auto"
+                });
+            })
+            .on("hidden.bs.modal.profileUi", function () {
+                if (!$('.modal.show').length) {
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('padding-right', '');
+                }
+            });
+    });
+}
+

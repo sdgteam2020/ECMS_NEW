@@ -1,58 +1,78 @@
-﻿ @{
-    ViewData["Title"] = "Home";
+﻿@{
+    ViewData["Title"] = "Contact Us";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
- 
+
 <link asp-href-include="~/developercss/contactus.css" rel="stylesheet" />
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10 ecms-contact-breadcrumb-header">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
-                    <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > ContactUs
+                    <h1 class="page-header-title ecms-contact-breadcrumb">
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a>
+                        <span class="ecms-breadcrumb-separator">&gt;</span>
+                        <span>Contact Us</span>
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="row">
-        <div class="card p-4">
-            <div class="row">
-                <div class="col-md-12 col-sm-12 text-center">
-                    <img src="~/Images/ASDC_Log.png" />
-                    <h5 class="font-color">WELCOMES ALL SUGGESTIONS / FEEDBACK</h5>
-                    <h5 class="font-color">Army Software Development Centre(ASDC), DGIS, New Delhi - 110010</h5>
+
+<div class="containerMain mt-n10 ecms-contact-page">
+    <div class="ecms-contact-shell">
+        <div class="ecms-contact-card">
+            <div class="ecms-contact-top">
+                <div class="ecms-contact-logo-wrap">
+                    <img src="~/Images/ASDC_Log.png" alt="Army Software Development Centre Logo" class="ecms-contact-logo" />
+                </div>
+                <div class="ecms-contact-title-block">
+                    <span class="ecms-contact-chip"><i class="fa fa-comments"></i> Suggestions / Feedback</span>
+                    <h2>Contact &amp; Support</h2>
+                    <p>Army Software Development Centre (ASDC), DGIS, New Delhi - 110010</p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    <div>
-                        <i class="fas fa-envelope fs-1 font-color" ></i>
+
+            <div class="ecms-contact-message">
+                <i class="fa fa-star"></i>
+                <span>Welcomes all suggestions / feedback</span>
+                <i class="fa fa-star"></i>
+            </div>
+
+            <div class="ecms-contact-grid">
+                <div class="ecms-contact-info-card ecms-contact-mail">
+                    <div class="ecms-contact-icon">
+                        <i class="fas fa-envelope"></i>
                     </div>
-                    <div>
-                        <h6 class="mt-1 fw-bold font-color">eOffice Id: g1coord_asdc_ihqa</h6>
+                    <div class="ecms-contact-info">
+                        <span>eOffice Id</span>
+                        <h5>g1coord_asdc_ihqa</h5>
+                        <p>For official correspondence and support communication.</p>
                     </div>
                 </div>
-                <div class="col-md-4 text-center">
-                    <div>
-                        <i class="fas fa-phone-alt fs-1 font-color" ></i>
+
+                <div class="ecms-contact-info-card ecms-contact-phone">
+                    <div class="ecms-contact-icon">
+                        <i class="fas fa-phone-alt"></i>
                     </div>
-                    <div>
-                        <h6 class="mt-1 fw-bold font-color">Army : 39644</h6>
+                    <div class="ecms-contact-info">
+                        <span>Army Contact</span>
+                        <h5>39644</h5>
+                        <p>Contact ASDC support team through Army exchange.</p>
                     </div>
                 </div>
-                <div class="col-md-4 text-center">
-                    <div>
-                        <i class="fas fa-question-circle fs-1 font-color" ></i>
+
+                <div class="ecms-contact-info-card ecms-contact-help">
+                    <div class="ecms-contact-icon">
+                        <i class="fas fa-question-circle"></i>
                     </div>
-                    <div>
-                        <h6 class="mt-1 fw-bold font-color">Log query/Suggestion</h6>
-                        <h6 class="fw-bold font-color"> Recommendation</h6>                        
+                    <div class="ecms-contact-info">
+                        <span>Support Type</span>
+                        <h5>Log query / Suggestion</h5>
+                        <p>Submit recommendation and feedback for improvement.</p>
                     </div>
                 </div>
             </div>

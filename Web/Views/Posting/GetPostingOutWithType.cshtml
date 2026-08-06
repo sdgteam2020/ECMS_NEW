@@ -1,125 +1,142 @@
 ﻿@model IEnumerable<DataTransferObject.Response.DTOPostingOutDetilsResponse>
 
 @{
-
     ViewData["Title"] = "GetPostingOut";
+
+    string pageTitle = "Posting Details";
+    string pageSubTitle = "Posting movement records and dispatch status";
+    string postingIcon = "fa fa-exchange";
+
+    if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingOut")
+    {
+        pageTitle = "Posting Out Offrs Details";
+        pageSubTitle = "Officer posting out records with dispatch detail status";
+        postingIcon = "fa fa-sign-out";
+    }
+    else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingOut")
+    {
+        pageTitle = "Posting Out JCOs/OR Details";
+        pageSubTitle = "JCOs/OR posting out records with dispatch detail status";
+        postingIcon = "fa fa-sign-out";
+    }
+    else if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingIn")
+    {
+        pageTitle = "Posting In (Offrs) Details";
+        pageSubTitle = "Officer posting in records and movement status";
+        postingIcon = "fa fa-sign-in";
+    }
+    else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingIn")
+    {
+        pageTitle = "Posting In (JCOs/OR) Details";
+        pageSubTitle = "JCOs/OR posting in records and movement status";
+        postingIcon = "fa fa-sign-in";
+    }
 }
-<link asp-href-include="~/developercss/getpostingoutwithtype.css" rel="stylesheet" />
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/getpostingoutwithtype.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
                         @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingOut")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> >Posting Out Offrs</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt; <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> &gt; <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> &gt; Posting Out Offrs</div>
                         }
                         else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingOut")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> >Posting Out JCOs/OR</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt; <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> &gt; <a href="/Home/RequestDashboard/UG9zdGluZyBPdXQ=" class="mr-2">Posting Out</a> &gt; Posting Out JCOs/OR</div>
                         }
-                        else @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingIn")
+                        else if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingIn")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> >Posting In Offrs</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt; <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> &gt; <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> &gt; Posting In Offrs</div>
                         }
                         else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingIn")
                         {
-                            <div><a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a>  >  <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> >Posting IN JCOs/OR</div>
+                            <div><a href="/Home/Index" class="mr-2">Home</a> &gt; <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt; <a href="/Home/DashboardUserMgt" class="mr-2">User Management</a> &gt; <a href="/Home/RequestDashboard/UG9zdGluZyBJbg==" class="mr-2">Posting In</a> &gt; Posting In JCOs/OR</div>
                         }
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingOut")
-                    {
-                        <h3>Posting Out Offrs Details</h3>
 
-                        <small class="text-muted"></small>
-                    }
-                    else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingOut")
-                    {
-                        <h3>Posting Out JCOs/OR Details</h3>
-
-                        <small class="text-muted"></small>
-                    }
-                    else  @if (ViewBag.Type == 1 && ViewBag.PostingType == "PostingIn")
-                    {
-                        <h3>Posting In (Offrs) Details</h3>
-
-                        <small class="text-muted"></small>
-                    }
-                    else if (ViewBag.Type == 2 && ViewBag.PostingType == "PostingIn")
-                    {
-                        <h3>Posting In (JCOs/OR) Details</h3>
-
-                        <small class="text-muted"></small>
-                    }
+<main class="containerMain ecms-page ecms-page-full ecms-fit-screen ecms-posting-type-page">
+    <div class="ecms-posting-container">
+        <div class="card ecms-card ecms-card-body ecms-posting-shell">
+            <div class="ecms-page-title ecms-posting-heading d-flex align-items-center">
+                <div class="ecms-title-icon ecms-posting-heading-icon" aria-hidden="true">
+                    <i class="@postingIcon"></i>
+                </div>
+                <div class="ecms-posting-heading-copy">
+                    <h3>@pageTitle</h3>
+                    <p class="ecms-title-subtitle">@pageSubTitle</p>
                 </div>
             </div>
-        </div>
-        <div class="card-body card-body-min-height">
-            <div class="col-xl-12">
-                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                    <h6 class="mb-3 mb-md-0">
-                        Total Records :<label class="font-weight-bold" id="lblTotal">0</label>
-                    </h6>
-                    <div class="d-flex">
-@*                         <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm mr-2"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button> *@
+
+            <div class="card-body card-body-min-height ecms-posting-body">
+                <div class="ecms-section ecms-form-section ecms-posting-summary">
+                    <div class="ecms-total-records">
+                        <span>Total Records</span>
+                        <span class="badge ecms-badge ecms-posting-total-badge" id="lblTotal">0</span>
+                    </div>
+                    <div class="ecms-toolbar-actions">
+                        @* <button type="button" id="btnAdd" class="btn btn-success btn-sm"><i class="fa fa-plus mr-1"></i>Add</button> *@
                     </div>
                 </div>
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
+
+                <section class="ecms-section ecms-posting-table-section" aria-labelledby="postingRecordsHeading">
+                    <h4 class="ecms-section-title" id="postingRecordsHeading">
+                        <i class="fa fa-table" aria-hidden="true"></i>
+                        Posting Records
+                    </h4>
+                    <div class="ecms-dt-wrap ecms-posting-table-wrap">
+                        <table class="table table-striped table-hover ecms-dt-table ecms-posting-table" role="grid" id="tbldata"></table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="modal fade ecms-posting-modal" id="AddDispatchDetails" tabindex="-1" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm ecms-modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    <i class="fa fa-truck mr-2"></i>Add Dispatch Details
+                </h5>
+                <button type="button" class="close ecms-modal-close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="SaveDispatchDetails" name="SaveDispatchDetails" method="post">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group ecms-form-group">
+                                <label for="txtDispatchDate" class="fw-bold">Dispatch Date<i class="fas fa-asterisk mand1"></i></label>
+                                <input type="text" id="txtDispatchDate" placeholder="Select dispatch date" class="form-control alpha-num-only" autocomplete="off" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group ecms-form-group">
+                                <label for="txtRefNo" class="fw-bold">Ref No Regd SDS<i class="fas fa-asterisk mand1"></i></label>
+                                <input type="text" id="txtRefNo" class="form-control" placeholder="Enter reference number" maxlength="20" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-right ecms-modal-actions">
+                            <input type="button" class="btn btn-primary" value="Save" id="btnDispatchDetailsAddButton" />
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="AddDispatchDetails" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Dispatch Details</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <form action="" id="SaveDispatchDetails" name="SaveDispatchDetails" method="post">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <label for="txtDispatchDate" class="fw-bold">Dispatch Date<i class="fas fa-asterisk mand1"></i></label>
-                                    <input type="text" id="txtDispatchDate" placeholder=" " class="form-control alpha-num-only" autocomplete="off" required />
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <label for="txtRefNo" class="fw-bold">Ref No Regd SDS<i class="fas fa-asterisk mand1"></i></label>
-                                    <input type="text" id="txtRefNo" class="" placeholder=" " maxlength="20" required />
-                                </div>
-                            </div>
 
-
-                            <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnDispatchDetailsAddButton" />
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
 <script asp-src-include="~/developerjs/GetPostingOutWithType.js"></script>
-
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

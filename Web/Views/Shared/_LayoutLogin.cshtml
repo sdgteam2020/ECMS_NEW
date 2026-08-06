@@ -3,11 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    @* Effect: Makes the layout responsive on desktop, tablet and mobile browsers. *@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <meta name="description" content="">
     <meta name="author" content="">
+
     <link rel="icon" type="image/x-icon" asp-href-include="/images/AFSAC.png">
-    <title> E-ISAC </title>
+    <title>E-ISAC</title>
+
+    @* Vendor / existing CSS *@
     <link asp-href-include="~/css/style.css" rel="stylesheet" />
     <link asp-href-include="~/css/nunito.css" rel="stylesheet" />
     <link asp-href-include="~/css/roboto.css" rel="stylesheet" />
@@ -15,40 +21,70 @@
     <link asp-href-include="~/lib/jqueryui/themes/base/jquery-ui.min.css" rel="stylesheet" />
     <link asp-href-include="~/css/login.css" rel="stylesheet" />
     <link asp-href-include="~/fonts/css/all.min.css" rel="stylesheet" />
-
     <link asp-href-include="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link asp-href-include="~/css/feed.css" rel="stylesheet" />
-
     <link asp-href-include="~/css/normalize.min.css" rel="stylesheet" />
-    @*   <link asp-href-include="~/css/swiper.min.css" rel="stylesheet" /> *@
-    <link asp-href-include="~/css/feed.css" rel="stylesheet" />
+    @* <link asp-href-include="~/css/swiper.min.css" rel="stylesheet" /> *@
     <link asp-href-include="~/css/main.css" rel="stylesheet" />
-    @*     <link asp-href-include="~/css/sliders/style.css" rel="stylesheet" /> *@
-    <link asp-href-include="~/developercss/layoutlogin.css" rel="stylesheet" />
+    @* <link asp-href-include="~/css/sliders/style.css" rel="stylesheet" /> *@
+
+    @* ECMS common theme. Keep before LayoutLogin.css so login layout can override only this page. *@
+    <link rel="stylesheet" href="~/ModernCSS/css/ecms.theme.bundle.css" asp-append-version="true" />
+
+    @* Login layout override. Keep this LAST for this layout. *@
+    <link asp-href-include="~/DeveloperCSS/LayoutLogin.css" rel="stylesheet" />
 </head>
-<body>
+
+<body class="ecms-login-layout-body">
     @Html.AntiForgeryToken()
-     <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" /> 
-        @* <partial name="~/Views/Shared/_CommonHeader.cshtml" /> *@
-    <div>
-        @RenderBody()
-        <footer class="fixed-bottom">
-            <section class="page_copyright ls section_padding_25">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-12 text-center">
-                            <div class="footer-content">
-                                @if (ViewBag.Footer != null)
-                                {
-                                    @ViewBag.Footer
-                                }
+
+    @*
+        Three Bootstrap rows only:
+        1. Header row   : fixed at top
+        2. RenderBody   : middle content area
+        3. Footer row   : fixed at bottom
+
+        g-0 and m-0 remove Bootstrap gutter/margin, so there is no gap between rows.
+    *@
+    <div class="container-fluid p-0 m-0 ecms-login-layout">
+
+        @* Row 1: Fixed top header *@
+        <div class="row g-0 m-0 ecms-login-header-row fixed-top">
+            <div class="col-12 p-0 m-0">
+                <partial name="~/Views/Shared/_CommonHeaderInternal.cshtml" />
+                
+            </div>
+        </div>
+
+        @* Row 2: Middle RenderBody area *@
+        <main class="row g-0 m-0 ecms-login-render-row">
+            <div class="col-12 p-0 m-0 ecms-login-render-col">
+                @RenderBody()
+            </div>
+        </main>
+
+        @* Row 3: Fixed bottom footer *@
+        <footer class="row g-0 m-0 ecms-login-footer-row fixed-bottom">
+            <div class="col-12 p-0 m-0">
+                <section class="page_copyright ls section_padding_25 ecms-login-footer-section">
+                    <div class="container-fluid p-0 m-0">
+                        <div class="row g-0 m-0">
+                            <div class="col-12 text-center p-0 m-0">
+                                <div class="footer-content ecms-login-footer-content">
+                                    @if (ViewBag.Footer != null)
+                                    {
+                                        @ViewBag.Footer
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </footer>
+
     </div>
+
     <script asp-src-include="~/lib/jquery/jquery.js"></script>
     <script asp-src-include="~/lib/jquery-validate/jquery.validate.js" defer></script>
     <script asp-src-include="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" defer></script>
@@ -56,6 +92,7 @@
     <script asp-src-include="~/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script asp-src-include="~/bootstrap/js/bootstrap.min.js"></script>
     <script asp-src-include="~/sweetalert2/sweetalert2.min.js"></script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -7,6 +7,8 @@ var UserProfileId = 0;
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
+    PrepareUserRegnModalRoots();
+
     applyDataTableSearchValidation('#tbldata');
 
     BindData("");
@@ -18,10 +20,10 @@ $(function () {
         ProceedForMapping();
     });
 
-    $("#AddNewDomain input[name='txtapproval']").on("click",function () {
+    $("#AddNewDomain input[name='txtapproval']").on("click", function () {
         $("#txtapproval-error").html("");
     });
-    $("#AddNewDomain input[name='txtactive']").on("click",function () {
+    $("#AddNewDomain input[name='txtactive']").on("click", function () {
         $("#txtactive-error").html("");
     });
 
@@ -78,10 +80,10 @@ $(function () {
                 }
             });
         },
-        
+
     });
 
-    $('#txtArmyNo').on("keyup",function (e) {
+    $('#txtArmyNo').on("keyup", function (e) {
         if (e.key === 'Delete' || e.key === 'Del' || e.key === 'Backspace') {
             UserProfileId = 0;
             $("#txtArmyNo").val('');
@@ -90,7 +92,7 @@ $(function () {
         }
     });
 
-    $("#txtSearch").on("keyup",function () {
+    $("#txtSearch").on("keyup", function () {
         var eThis = $(this);
         if ($("input[type='radio'][name=choice]:checked").length > 0) {
             var ChoiceValue = $("input[type='radio'][name=choice]:checked").val();
@@ -114,7 +116,7 @@ $(function () {
         }
     });
 
-    $("#btnUser").on("click",function () {
+    $("#btnUser").on("click", function () {
 
         if ($("#lblUser").html() > 0) {
             $("#tbldatadialog").DataTable().destroy();
@@ -216,7 +218,7 @@ $(function () {
             applyDataTableSearchValidation('#tbldatadialog');
 
             BindDialog("CO");
-         }
+        }
     });
     //$("#btnRO").click(function () {
     //    if ($("#lblRO").html() > 0) {
@@ -243,17 +245,18 @@ function BindDialog(Choice) {
             $("#tbldatadialog").DataTable().clear().destroy(); // Clear and destroy DataTable properly
             $("#tbldatadialog thead").empty(); // Clear old thead
             $("#tbldatadialog tbody").empty(); // Clear old tbody
+            $("#tbldatadialog").empty(); // Remove old generated header/body markup
         }
 
         tabledialog = $("#tbldatadialog").DataTable({
-            scrollY: '65vh',          // ✅ vertical scroll
+            scrollY: '100%',          // ✅ vertical scroll
             scrollX: true,            // ✅ horizontal scroll
-            scrollCollapse: true,
-            scroller: true,           // ✅ Enable virtual scrolling for better performance
-            deferScroll: true,        // ✅ Improve scrolling performance
+            scrollCollapse: false,
+            scroller: false,           // ✅ Enable virtual scrolling for better performance
+            deferScroll: false,        // ✅ Improve scrolling performance
             fixedHeader: false,       // ❌ disable when using scrollY
 
-            processing: true,
+            processing: false,
             serverSide: true,
             filter: true,
             stateSave: false,
@@ -422,7 +425,7 @@ function BindDialog(Choice) {
                 search: "", // Remove the default "Search:" label
                 searchPlaceholder: "Search Domain ID" // Add custom placeholder
             },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
             buttons: [
                 //{
                 //    extend: 'copy',
@@ -455,33 +458,41 @@ function BindDialog(Choice) {
 
                 // Force DataTables to calculate optimal widths
                 this.api().columns.adjust();
+                RefreshUserRegnDataTable("#tbldatadialog", 20);
 
                 // Handle zoom/resize
                 var resizeTimer;
                 $(window).on('resize', function () {
                     clearTimeout(resizeTimer);
                     resizeTimer = setTimeout(function () {
-                        tabledialog.columns.adjust().responsive.recalc();
+                        tabledialog.columns.adjust();
                     }, 100);
                 });
             },
             drawCallback: function (settings) {
                 // Recalculate widths on each data load
-                this.api().columns.adjust().responsive.recalc();
+                this.api().columns.adjust();
+                RefreshUserRegnDataTable("#tbldatadialog", 20);
 
                 const tooltipTriggerList = [].slice.call(
                     document.querySelectorAll('[data-bs-toggle="tooltip"]')
                 );
-                tooltipTriggerList.forEach(el => {
-                    new bootstrap.Tooltip(el);
-                });
+                if (window.bootstrap && bootstrap.Tooltip) {
+                    tooltipTriggerList.forEach(function (element) {
+                        try {
+                            bootstrap.Tooltip.getOrCreateInstance
+                                ? bootstrap.Tooltip.getOrCreateInstance(element)
+                                : new bootstrap.Tooltip(element);
+                        } catch (error) { }
+                    });
+                }
             }
         });
     });
     // STEP 2: Show modal (this triggers the above)
     $("#DataTableDialog").modal("show");
 
-    
+
 }
 function BindData() {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
@@ -489,16 +500,17 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old generated header/body markup
     }
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,           // ✅ Enable virtual scrolling for better performance
+        deferScroll: false,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -530,8 +542,12 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                RefreshUserRegnDataTable("#tbldata", 30);
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                RefreshUserRegnDataTable("#tbldata", 30);
             }
         },
         columns: [
@@ -694,7 +710,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Domain ID" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>", // Add buttons to the DOM
         buttons: [
             //{
             //    extend: 'copy',
@@ -723,26 +739,34 @@ function BindData() {
         initComplete: function () {
             // Force DataTables to calculate optimal widths
             this.api().columns.adjust();
+            RefreshUserRegnDataTable("#tbldata", 20);
 
             // Handle zoom/resize
             var resizeTimer;
             $(window).on('resize', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    table.columns.adjust();
                 }, 100);
             });
         },
         drawCallback: function (settings) {
 
             this.api().columns.adjust();
+            RefreshUserRegnDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        bootstrap.Tooltip.getOrCreateInstance
+                            ? bootstrap.Tooltip.getOrCreateInstance(element)
+                            : new bootstrap.Tooltip(element);
+                    } catch (error) { }
+                });
+            }
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -1240,3 +1264,111 @@ function AccountCount() {
         }
     });
 }
+
+/* ==============================================================
+   PAGE-LOCAL UI HELPERS
+   No global ModernCSS file is changed by these helpers.
+================================================================ */
+
+function PrepareUserRegnModalRoot(modalSelector) {
+    const $modal = $(modalSelector);
+
+    if (!$modal.length) {
+        return;
+    }
+
+    if (!$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+}
+
+function PrepareUserRegnModalRoots() {
+    PrepareUserRegnModalRoot("#AddDomainFlag");
+    PrepareUserRegnModalRoot("#AddMapping");
+    PrepareUserRegnModalRoot("#DataTableDialog");
+}
+
+function RefreshUserRegnDataTable(tableSelector, delay) {
+    const wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            const $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            // The page/Common ECMS CSS hides this cloned sizing header.
+            // aria-hidden is added only for accessibility.
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                $(tableSelector).DataTable().columns.adjust();
+            }
+        } catch (error) {
+            console.warn("User Registration DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
+function CleanupUserRegnModalState() {
+    if ($(".modal.show").length) {
+        return;
+    }
+
+    $(".modal-backdrop").remove();
+    $("body")
+        .removeClass("modal-open")
+        .css({
+            "padding-right": "",
+            "overflow": ""
+        });
+}
+
+$(document)
+    .off("draw.dt.userRegnUi")
+    .on("draw.dt.userRegnUi", function (event, settings) {
+        const tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            RefreshUserRegnDataTable("#tbldata", 20);
+        } else if (tableId === "tbldatadialog") {
+            RefreshUserRegnDataTable("#tbldatadialog", 20);
+        }
+    });
+
+$("#DataTableDialog")
+    .off(".userRegnUi")
+    .on("shown.bs.modal.userRegnUi", function () {
+        RefreshUserRegnDataTable("#tbldatadialog", 120);
+    })
+    .on("hidden.bs.modal.userRegnUi", CleanupUserRegnModalState);
+
+$("#AddDomainFlag, #AddMapping")
+    .off(".userRegnUi")
+    .on("shown.bs.modal.userRegnUi", function () {
+        const $modal = $(this);
+
+        // Force a small repaint so native checked radio states stay visible.
+        window.setTimeout(function () {
+            $modal.find("input[type='radio']").each(function () {
+                void this.offsetHeight;
+            });
+        }, 50);
+    })
+    .on("hidden.bs.modal.userRegnUi", CleanupUserRegnModalState);
+
+$(window)
+    .off("resize.userRegnUi")
+    .on("resize.userRegnUi", function () {
+        window.clearTimeout(window.__userRegnResizeTimer);
+        window.__userRegnResizeTimer = window.setTimeout(function () {
+            RefreshUserRegnDataTable("#tbldata", 0);
+
+            if ($("#DataTableDialog").hasClass("show")) {
+                RefreshUserRegnDataTable("#tbldatadialog", 0);
+            }
+        }, 120);
+    });

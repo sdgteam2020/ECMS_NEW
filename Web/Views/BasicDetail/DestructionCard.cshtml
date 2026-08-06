@@ -2,51 +2,57 @@
     ViewData["Title"] = "List of Destruction Card Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/destructioncard.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> >  <a href="/Home/Task" class="mr-2">Task</a> > I-CARD DESTRUCTION
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                        <a href="/Home/Task" class="mr-2">Task</a> &gt;
+                        I-Card Destruction
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Details of I-Card Destruction
-                        <small class="text-muted"></small>
-                    </h3>
+
+<div class="containerMain mt-n10 ecms-destructioncard-page">
+    <div class="ecms-destructioncard-shell">
+        <div class="ecms-destructioncard-header">
+            <div class="ecms-destructioncard-title-wrap">
+                <span class="ecms-destructioncard-title-icon"><i class="fa fa-trash"></i></span>
+                <div>
+                    <h3>Details of I-Card Destruction</h3>
+                    <p>Track destructed card records, reasons and remarks</p>
                 </div>
+            </div>
+
+            <div class="ecms-destructioncard-actions">
+                <div class="ecms-total-pill">
+                    <i class="fa fa-trash"></i>
+                    <span>Total Card Destruction</span>
+                    <strong id="lblTotal">0</strong>
+                </div>
+
+                <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm mr-2 ecms-add-btn">
+                    <i class="fa fa-plus mr-1 font-weight-700"></i>Add
+                </button>
             </div>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="col-xl-12">
-                <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                    <h6 class="mb-3 mb-md-0">
-                        Total Card Destruction :<label class="font-weight-bold" id="lblTotal">0</label>
-                    </h6>
-                    <div class="d-flex">                        
-                        <button type="button" id="btnAdd" class="btn btn-outline-success font-weight-600 btn-sm mr-2"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add</button>
-                    </div>
-                </div>
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
-            </div>
+
+        <div class="ecms-destructioncard-table-panel">
+            <table class="table table-striped table-hover border border-purple ecms-destructioncard-table" role="grid" id="tbldata"></table>
         </div>
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/DestructionCard.js"></script>
 <script asp-src-include="~/developerjs/CheckedFunction.js"></script>
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

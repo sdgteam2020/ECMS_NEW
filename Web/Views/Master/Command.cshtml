@@ -1,113 +1,149 @@
 ﻿@{
-    ViewData["Title"] = "Create Draft";
+    ViewData["Title"] = "Command / PSO";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link asp-href-include="~/css/hierarchy.css" rel="stylesheet" />
-<link asp-href-include="~/developercss/command.css" rel="stylesheet" />
-<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<link asp-href-include="~/css/hierarchy.css" rel="stylesheet" />
+<partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/command.css" rel="stylesheet" />
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
-            <div class="row align-items-center justify-content-between">
+            <div class="row g-0 align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > Comd / PSO Details
-
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
+                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
+                        <span class="mx-1">&gt;</span>
+                        <span>Comd / PSO Details</span>
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3">
-        <div class="card-header">
 
-            <span id="SpnTxnId" class="d-none">0</span> 
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Comd / PSO Sectt
-                        <small class="text-muted"></small>
-                    </h3>
+<div class="ecms-screen-stage ecms-bg">
+    <main class="container-fluid ecms-page ecms-page-full ecms-fit-screen ecms-command-page">
+        <div class="card ecms-card ecms-command-shell">
+            <div class="card-body ecms-card-body d-flex flex-column gap-2 h-100 ecms-min-0">
+
+                <div class="ecms-page-title ecms-command-titlebar d-flex align-items-center justify-content-between flex-wrap gap-2 flex-shrink-0">
+                    <div class="d-flex align-items-center gap-2 ecms-min-0">
+                        <span class="ecms-title-icon">
+                            <i class="fa fa-university"></i>
+                        </span>
+                        <div class="ecms-min-0">
+                            <h3>Comd / PSO Sectt</h3>
+                            <p class="ecms-title-subtitle">Create, update, arrange and manage command / PSO records</p>
+                        </div>
+                    </div>
+
+                    <span class="badge bg-primary ecms-badge ecms-command-pill">
+                        <i class="fa fa-database"></i>
+                        Master
+                    </span>
                 </div>
+
+                <div class="ecms-section ecms-form-section ecms-command-form-section flex-shrink-0">
+                    <span id="SpnTxnId" class="d-none">0</span>
+
+                    <form action="" id="SaveForm" method="post" name="SaveForm">
+                        <div class="row g-2 align-items-end">
+
+                            <div class="col-12 col-md-6 col-xl-5">
+                                <label class="form-label ecms-command-label" for="txtComandName">
+                                    <i class="fa fa-sitemap"></i>
+                                    <span>Comd / PSO</span>
+                                    <i class="fa fa-asterisk mand1"></i>
+                                </label>
+
+                                <input class="form-control Alphanumeric"
+                                       placeholder="Enter Comd"
+                                       id="txtComandName"
+                                       maxlength="50"
+                                       required
+                                       pattern="^[a-zA-Z0-9 ]*$"
+                                       title="Only Alphabets and Numbers allowed" />
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xl-5">
+                                <label class="form-label ecms-command-label" for="txtAbbreviation">
+                                    <i class="fa fa-font"></i>
+                                    <span>Abbreviation</span>
+                                    <i class="fa fa-asterisk mand1"></i>
+                                </label>
+
+                                <input class="form-control Alphanumeric js-uppercase"
+                                       placeholder="Enter Abbreviation"
+                                       id="txtAbbreviation"
+                                       maxlength="20"
+                                       required
+                                       pattern="^[A-Z0-9 ]*$"
+                                       title="Only UpperCase Alphabets and Numbers allowed" />
+                            </div>
+
+                            <div class="col-12 col-xl-2">
+                                <div class="ecms-form-actions ecms-command-actions d-flex gap-2 justify-content-xl-end">
+                                    <input type="button" class="btn btn-primary ecms-btn-primary" value="Save" id="btnsave" />
+                                    <button type="button" id="btnReset" class="btn btn-danger ecms-btn-danger">Reset</button>
+                                    <div id="msg" class="ecms-command-msg"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="ecms-section ecms-command-table-section d-flex flex-column flex-grow-1 ecms-min-0">
+                    <div class="ecms-section-title flex-shrink-0">
+                        <i class="fa fa-list"></i>
+                        <span>Command / PSO Records</span>
+                    </div>
+
+                    <div class="ecms-dt-wrap ecms-command-table-wrap flex-grow-1 ecms-min-0">
+                        <table class="table table-striped table-hover ecms-dt-table ecms-command-datatable" role="grid" id="tbldata">
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <div class="card-body card-body-min-height">
-            <div class="row">
-                <form action="" id="SaveForm" method="post" name="SaveForm">
-                    <div class="row">
-                        <div class="col-sm-5">
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <input class="form-control Alphanumeric" placeholder="Enter Comd" id="txtComandName" maxlength="50" required pattern="^[a-zA-Z0-9 ]*$" title="Only Alphabets and Numbers allowed" />
-                                </div>
+    </main>
+</div>
 
-                            </div>
-                        </div>
-                        <div class="col-sm-5">
-                            <div class="form-group row mb-2">
+<div class="modal fade ecms-command-modal" id="treeview" tabindex="-1" aria-labelledby="treeviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ecms-modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="ecms-command-modal-heading">
+                    <span class="ecms-command-modal-icon" aria-hidden="true">
+                        <i class="fa fa-sitemap"></i>
+                    </span>
+                    <div class="ecms-min-0">
+                        <h5 class="modal-title" id="treeviewModalLabel">Hierarchy Chart</h5>
+                        <p class="ecms-command-modal-subtitle">Command, corps, division, brigade and unit structure</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close" title="Close"></button>
+            </div>
 
-                                <label class="col-form-label col-sm-4 fw-bold">Abbreviation <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-
-                                    <input class="form-control Alphanumeric js-uppercase" placeholder="Enter Abbreviation" id="txtAbbreviation" maxlength="20" required pattern="^[A-Z0-9 ]*$" title="Only UpperCase Alphabets and Numbers allowed" />
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="col-sm-12 text-left">
-                                <input type="button" class="btn btn-outline-primary " value="Save" id="btnsave" />
-                                <button type="button" id="btnReset" class="btn btn-outline-danger">Reset</button>
-                            </div>
-                            <div class="col-sm-12" id="msg">
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row g-0 flex-row flex-nowrap ecms-scroll-x">
+                        <div class="col-12 text-center">
+                            <div class="tree" id="tree">
                             </div>
                         </div>
                     </div>
-                </form>
-                <div class="col-xl-12">
-                    <div class="mb-2 d-md-flex justify-content-md-between align-items-md-center">
-                        <h6 class="mb-3 mb-md-0">
-                            &nbsp;
-                        </h6>
-                        <div>
-                            &nbsp;
-                        </div>
-                    </div>
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                    </table>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="treeview" tabindex="-1" aria-labelledby="exampleModalLabel" >
-    <div class="modal-dialog modal-dialog-centered modal-xl " role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Hierarchy Chart</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body ">   
-                <div class="container-fluid">
-                    <div class="scrolling-wrapper row flex-row flex-nowrap">
-                        <div class="col-md-12 text-center">
-                            <div class="tree" id="tree">
-                            </div>
-                    </div>
-                </div>
-            </div>
-            </div>
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
 <script asp-src-include="~/developerjs/command.js"></script>
 <script asp-src-include="~/developerjs/commandvalidation.js"></script>
-
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />

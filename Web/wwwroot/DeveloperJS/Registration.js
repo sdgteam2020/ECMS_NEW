@@ -5,8 +5,8 @@ $(function () {
     $(function () {
         let oldText = "";
         let oldMoment = null;
-        const min = moment().subtract(75, 'year'); 
-        const max = moment().subtract(18, 'year'); 
+        const min = moment().subtract(75, 'year');
+        const max = moment().subtract(18, 'year');
 
         if ($('#DOB_').data('DateTimePicker')) {
             $('#DOB_').data('DateTimePicker').destroy();
@@ -84,7 +84,7 @@ $(function () {
         $('#DOB_').on('keydown', (e) => {
             e.preventDefault();
             return false;
-        });  
+        });
 
         if ($('#DOC_').data('DateTimePicker')) {
             $('#DOC_').data('DateTimePicker').destroy();
@@ -140,7 +140,7 @@ $(function () {
         $('#DOC_').on('keydown', (e) => {
             e.preventDefault();
             return false;
-        });  
+        });
 
     });
 
@@ -348,7 +348,7 @@ function getApplyIcardDetails() {
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response, status) {
             if (response != null) {
-                
+
                 if (response == InternalServerError) {
                     Swal.fire({
                         text: errormsg
@@ -445,7 +445,7 @@ function CallDataFromAPI() {
                     let dobMoment = moment(dobValue, "YYYY-MM-DD", true);
 
                     if (!dobMoment.isValid()) {
-                        dobMoment = moment(dobValue); 
+                        dobMoment = moment(dobValue);
                     }
                     if (dobMoment.isValid()) {
                         $("#DOB_").datetimepicker("date", dobMoment);
@@ -599,7 +599,7 @@ function Proceed(id) {
                     $("#EncryptedData").val(encrypted);
 
                     $("#Registration")[0].submit(); // native submit
-                   // $("#Registration").submit();
+                    // $("#Registration").submit();
                 }
                 else {
                     return false;
@@ -724,3 +724,41 @@ function validateDOBAndDOC() {
 
     return true;
 }
+
+/* =====================================================
+   ECMS REGISTRATION PAGE UI HELPERS
+   UI-only. Does not change registration validation, AJAX,
+   encryption, form submit or session storage functionality.
+===================================================== */
+$(function () {
+    document.body.classList.add("ecms-registration-body");
+
+    // Keep Select2 controls aligned with the new card design.
+    setTimeout(function () {
+        try {
+            $('.ecms-registration-page select').each(function () {
+                if ($(this).data('select2')) {
+                    $(this).select2({ width: '100%' });
+                }
+            });
+        } catch (e) {
+            console.warn("Registration UI Select2 resize skipped:", e);
+        }
+    }, 300);
+
+    // Visual-only radio active state for clear selected feedback.
+    function syncRegistrationRadioState() {
+        $('.ecms-registration-page .submitTypeRadio').each(function () {
+            $(this).closest('.col-sm-6').toggleClass('ecms-radio-selected', $('.ecms-registration-page .submitTypeRadio:checked').length > 0);
+        });
+    }
+
+    $(document).on('change', '.ecms-registration-page .submitTypeRadio', syncRegistrationRadioState);
+    syncRegistrationRadioState();
+});
+
+
+/* Safety class for page-scroll removal CSS */
+$(function () {
+    document.body.classList.add("ecms-registration-body");
+});

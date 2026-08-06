@@ -1,37 +1,564 @@
-﻿.count-label {
-    background-color: #044C92;
+﻿/* ==============================================================
+   Account / User Registration
+   PAGE-SPECIFIC UI ONLY
+
+   Important:
+   - ModernCSS files remain unchanged.
+   - Existing ECMS common classes provide the base theme.
+   - Every additional rule below is scoped to this page/modals.
+================================================================ */
+
+.swal2-html-container {
+    color: var(--ecms-danger-500, #ef405c) !important;
+}
+
+/* ---------- Page stage and fixed-height shell ---------- */
+.ecms-screen-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-userregn-page {
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1.5rem );
+    min-height: 560px;
+    margin: .65rem auto;
+    overflow: hidden;
+}
+
+.ecms-userregn-shell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: .7rem;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: .65rem;
+    box-sizing: border-box;
+}
+
+/* ---------- Page title ---------- */
+.ecms-user-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.ecms-user-title-content {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.ecms-user-title-copy {
+    min-width: 0;
+}
+
+    .ecms-user-title-copy h3 {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: 1.18rem;
+        font-weight: 950;
+        line-height: 1.15;
+    }
+
+.ecms-user-title-pill {
+    flex: 0 0 auto;
+    min-height: 2.2rem;
+    padding: .48rem 1rem;
+    border-radius: var(--ecms-radius-pill, 999px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient(135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff));
+    box-shadow: 0 .65rem 1.3rem rgba(47, 103, 230, .24);
+    font-size: .72rem;
+    font-weight: 950;
+    letter-spacing: .25px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* ---------- Summary tiles ---------- */
+.ecms-user-stats {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: .55rem;
+}
+
+.ecms-stat-card {
+    min-width: 0;
+    min-height: 4.65rem;
+    padding: .55rem .4rem;
+    border: var(--ecms-border, 1px solid rgba(195, 215, 244, .92));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .2rem;
+    cursor: pointer;
+    color: var(--ecms-text, #061b44);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+    .ecms-stat-card:hover,
+    .ecms-stat-card:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: var(--ecms-shadow-md, 0 1rem 2.25rem rgba(10, 43, 96, .18));
+    }
+
+    .ecms-stat-card:focus-visible {
+        outline: 3px solid rgba(63, 124, 255, .24);
+        outline-offset: 1px;
+    }
+
+.ecms-stat-icon {
+    width: 1.7rem;
+    height: 1.7rem;
+    min-width: 1.7rem;
+    border-radius: .55rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient(135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff));
+    font-size: .72rem;
+}
+
+.ecms-stat-title {
+    max-width: 100%;
+    overflow: hidden;
+    color: var(--ecms-primary-600, #2f67e6);
+    font-size: .67rem;
+    font-weight: 950;
+    line-height: 1.05;
     text-align: center;
-    padding: 0.5rem !important;
-    margin-right: 0.25rem !important;
-    border: hidden;
-    font-weight: 700 !important;
-    color: #fff !important;
-    width: 120px;
-    height: 60px;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
 
-.modal-xl {
-    max-width: 90% !important;
-    width: 100% !important;
+.ecms-stat-count {
+    color: var(--ecms-text, #061b44);
+    font-size: 1.1rem;
+    font-weight: 950;
+    line-height: 1;
 }
 
-/*     .modal-content {
-            max-height :600px!important;
-            height: 600px!important;
-    } */
-.table {
-    min-width: 100% !important;
+/* ---------- Main DataTable ---------- */
+.ecms-user-table-section {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
 }
 
-.modal .modal-body .table-responsive {
-    max-height: 500px;
+.ecms-user-table-wrap,
+.ecms-user-dialog-table-wrap {
+    min-width: 0;
+    min-height: 0;
 }
-.textarea-auto-height {
+
+.ecms-user-table-wrap {
+    height: 100%;
+    padding: .45rem .55rem .35rem;
+}
+
+.ecms-userregn-page #tbldata_wrapper,
+.ecms-userregn-dialog-modal #tbldatadialog_wrapper {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 2.45rem minmax(0, 1fr) 2.75rem;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: hidden;
+}
+
+.ecms-userregn-page .dt-top,
+.ecms-userregn-dialog-modal .dt-top {
+    grid-row: 1;
+    min-width: 0;
+    min-height: 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .65rem;
+    margin-top:2px;
+    padding-bottom: .4rem;
+}
+
+.ecms-userregn-page .dataTables_scroll,
+.ecms-userregn-dialog-modal .dataTables_scroll,
+.ecms-userregn-page .dt-scroll,
+.ecms-userregn-dialog-modal .dt-scroll {
+    grid-row: 2;
+    min-width: 0;
+    min-height: 0 !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ecms-userregn-page .dataTables_scrollHead,
+.ecms-userregn-dialog-modal .dataTables_scrollHead,
+.ecms-userregn-page .dt-scroll-head,
+.ecms-userregn-dialog-modal .dt-scroll-head {
+    flex: 0 0 auto;
+}
+
+.ecms-userregn-page .dataTables_scrollBody,
+.ecms-userregn-dialog-modal .dataTables_scrollBody,
+.ecms-userregn-page .dt-scroll-body,
+.ecms-userregn-dialog-modal .dt-scroll-body {
+    flex: 1 1 auto;
+    min-height: 0 !important;
     height: auto !important;
+    max-height: none !important;
+    overflow: auto !important;
 }
-#tbldata {
-    table-layout: fixed !important;
+
+.ecms-userregn-page .dt-bottom,
+.ecms-userregn-dialog-modal .dt-bottom {
+    grid-row: 3;
+    min-width: 0;
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding-top: .45rem;
 }
-#tbldatadialog {
-    table-layout: fixed !important;
+
+.ecms-userregn-page .badge,
+.ecms-userregn-dialog-modal .badge {
+    min-width: 2.25rem;
+    padding: .28rem .48rem;
+    font-size: .62rem;
+    text-transform: uppercase;
+}
+
+.ecms-userregn-page .cls-btnedit,
+.ecms-userregn-page .cls-btneditMapping {
+    margin: 0;
+}
+
+/* Page-local fallback for DataTables cloned sizing headers. */
+.ecms-userregn-page .dataTables_scrollBody table thead,
+.ecms-userregn-page .dt-scroll-body table thead,
+.ecms-userregn-dialog-modal .dataTables_scrollBody table thead,
+.ecms-userregn-dialog-modal .dt-scroll-body table thead {
+    display: none !important;
+    visibility: collapse !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+.ecms-userregn-page .dataTables_processing,
+.ecms-userregn-dialog-modal .dataTables_processing,
+.ecms-userregn-page .dt-processing,
+.ecms-userregn-dialog-modal .dt-processing,
+#tbldata_processing,
+#tbldatadialog_processing {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* ---------- Modal root / fade correction ---------- */
+.ecms-userregn-modal,
+.ecms-userregn-dialog-modal {
+    z-index: 1080 !important;
+}
+
+    .ecms-userregn-modal.show,
+    .ecms-userregn-dialog-modal.show,
+    .ecms-userregn-modal.show .modal-dialog,
+    .ecms-userregn-dialog-modal.show .modal-dialog,
+    .ecms-userregn-modal.show .modal-content,
+    .ecms-userregn-dialog-modal.show .modal-content {
+        opacity: 1 !important;
+        visibility: visible !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+/* Loaded only on User Registration, therefore this backdrop rule is page-local. */
+body.modal-open .modal-backdrop,
+body.modal-open .modal-backdrop.show {
+    z-index: 1070 !important;
+    opacity: .72 !important;
+}
+
+.ecms-userregn-modal .modal-dialog {
+    width: min(920px, calc(100vw - 2rem));
+    max-width: min(920px, calc(100vw - 2rem));
+}
+
+.ecms-userregn-modal .modal-content {
+    max-height: calc(100vh - 2rem);
+}
+
+.ecms-userregn-modal .modal-body {
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ecms-user-users-dialog {
+    width: min(1420px, calc(100vw - 2rem));
+    max-width: min(1420px, calc(100vw - 2rem));
+}
+
+.ecms-userregn-dialog-modal .modal-content {
+    max-height: calc(100vh - 2rem);
+}
+
+.ecms-userregn-dialog-modal .modal-body {
+    min-height: 0;
+    padding: .75rem;
+    overflow: hidden;
+}
+
+.ecms-user-dialog-table-wrap {
+    height: min(68vh, 35rem);
+    min-height: 25rem;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* ---------- Modal title content ---------- */
+.ecms-userregn-modal .ecms-modal-title-wrap,
+.ecms-userregn-dialog-modal .ecms-modal-title-wrap {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+
+.ecms-userregn-modal .ecms-modal-icon,
+.ecms-userregn-dialog-modal .ecms-modal-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: .7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: rgba(255, 255, 255, .14);
+}
+
+.ecms-userregn-modal .ecms-modal-header small {
+    display: block;
+    margin-top: .12rem;
+    color: rgba(255, 255, 255, .86);
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+/* ---------- Approval and mapping forms ---------- */
+.ecms-userregn-modal .ecms-form-grid {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .65rem;
+}
+
+.ecms-userregn-modal .ecms-span-2 {
+    grid-column: 1 / -1;
+}
+
+.ecms-userregn-modal .ecms-form-field,
+.ecms-userregn-modal .ecms-radio-card {
+    min-width: 0;
+    padding: .6rem;
+    border: 1px solid rgba(100, 132, 190, .2);
+    border-radius: .75rem;
+    background: rgba(255, 255, 255, .7);
+    box-sizing: border-box;
+}
+
+    .ecms-userregn-modal .ecms-form-field > label:first-child,
+    .ecms-userregn-modal .ecms-radio-card > label:first-child {
+        margin: 0 0 .38rem;
+        display: block;
+        color: var(--ecms-text, #061b44);
+        font-size: .78rem;
+        font-weight: 950;
+        line-height: 1.25;
+    }
+
+.ecms-userregn-modal .form-control,
+.ecms-userregn-modal .form-control1,
+.ecms-userregn-modal textarea,
+.ecms-userregn-modal .unit-label-background {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.ecms-userregn-modal textarea {
+    min-height: 4.1rem;
+    resize: vertical;
+}
+
+.ecms-userregn-modal .unit-label-background {
+    min-height: var(--ecms-control-height, 36px);
+    margin: 0;
+    padding: .48rem .65rem;
+    border: 1px solid rgba(165, 187, 219, .75);
+    border-radius: var(--ecms-radius-sm, .55rem);
+    display: block;
+    color: var(--ecms-text, #061b44);
+    background: linear-gradient(135deg, #eef3fa, #dce5f0);
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+}
+
+    .ecms-userregn-modal .unit-label-background:empty::after {
+        content: "—";
+        color: var(--ecms-text-muted, #73819b);
+    }
+
+.ecms-userregn-modal .ecms-radio-options {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .9rem;
+}
+
+    .ecms-userregn-modal .ecms-radio-options .form-check,
+    .ecms-userregn-modal .ecms-radio-options .form-check-inline {
+        min-height: 1.25rem;
+        margin: 0;
+        padding-left: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+    }
+
+.ecms-userregn-modal input[type="radio"] {
+    position: static;
+    margin: 0;
+    flex: 0 0 1rem;
+    accent-color: var(--ecms-primary-600, #2f67e6);
+}
+
+    .ecms-userregn-modal input[type="radio"]:disabled {
+        cursor: not-allowed;
+        opacity: .72;
+    }
+
+.ecms-userregn-modal .ecms-modal-actions {
+    width: 100%;
+    margin-top: .8rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .55rem;
+}
+
+    .ecms-userregn-modal .ecms-modal-actions .btn,
+    .ecms-userregn-modal .ecms-modal-actions input[type="button"] {
+        width: auto;
+        min-width: 5.5rem;
+        max-width: 8rem;
+        min-height: 2.4rem;
+        padding: .45rem 1rem;
+        flex: 0 0 auto;
+    }
+
+.ecms-userregn-modal #msg {
+    margin-top: .5rem;
+}
+
+/* Autocomplete must remain above the open mapping dialog. */
+.ui-autocomplete {
+    z-index: 1095 !important;
+    max-height: 16rem;
+    overflow-y: auto;
+    border-radius: var(--ecms-radius-sm, .55rem);
+    box-shadow: var(--ecms-shadow-md, 0 1rem 2.25rem rgba(10, 43, 96, .18));
+}
+
+/* ---------- Responsive behavior ---------- */
+@media (max-width: 1199.98px) {
+    .ecms-userregn-page {
+        width: calc(100vw - 1.25rem);
+    }
+
+    .ecms-user-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-screen-stage {
+        overflow: visible;
+    }
+
+    .ecms-userregn-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-userregn-shell {
+        height: auto;
+        min-height: 42rem;
+    }
+
+    .ecms-user-title-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ecms-user-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ecms-userregn-page .dt-top,
+    .ecms-userregn-dialog-modal .dt-top,
+    .ecms-userregn-page .dt-bottom,
+    .ecms-userregn-dialog-modal .dt-bottom {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ecms-userregn-page #tbldata_wrapper,
+    .ecms-userregn-dialog-modal #tbldatadialog_wrapper {
+        grid-template-rows: auto minmax(18rem, 1fr) auto;
+    }
+
+    .ecms-userregn-modal .ecms-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-userregn-modal .ecms-span-2 {
+        grid-column: auto;
+    }
+
+    .ecms-user-dialog-table-wrap {
+        height: 62vh;
+        min-height: 21rem;
+    }
 }

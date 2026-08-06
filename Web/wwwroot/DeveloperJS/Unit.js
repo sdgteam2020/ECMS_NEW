@@ -1,5 +1,40 @@
 ﻿var table; // Declare table variable outside the function to preserve the instance
 var UnitId;
+function refreshUnitDataTable(tableSelector, delay) {
+    var wait = Number.isFinite(delay) ? delay : 0;
+
+    window.setTimeout(function () {
+        try {
+            var $wrapper = $(tableSelector + "_wrapper");
+
+            $("#loading").addClass("d-none").hide();
+            $wrapper.find(".dataTables_processing, .dt-processing").hide();
+
+            $wrapper
+                .find(".dataTables_scrollBody table thead, .dt-scroll-body table thead")
+                .attr("aria-hidden", "true");
+
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable(tableSelector)) {
+                safeAdjustUnitDataTable($(tableSelector).DataTable());
+            }
+        } catch (error) {
+            console.warn("Unit DataTable refresh skipped:", error);
+        }
+    }, wait);
+}
+
+function safeAdjustUnitDataTable(api) {
+    if (!api) {
+        return;
+    }
+
+    api.columns.adjust();
+
+    if (api.responsive && typeof api.responsive.recalc === "function") {
+        api.responsive.recalc();
+    }
+}
+
 $(function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -104,16 +139,17 @@ function BindData() {
         $("#tbldata").DataTable().clear().destroy(); // Clear and destroy DataTable properly
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
+        $("#tbldata").empty(); // Remove old DataTables sizing markup
     }
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
+        scrollY: '100%',          // CSS stretches the scroll body inside the table card
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
+        scrollCollapse: false,
+        scroller: false,          // UI only: normal DataTables scroll inside card
+        deferScroll: false,        // UI only: normal scroll
         fixedHeader: false,       // ❌ disable when using scrollY
 
-        processing: true,
+        processing: false,
         serverSide: true,
         filter: true,
         stateSave: false,
@@ -121,7 +157,7 @@ function BindData() {
         autoWidth: false,  //Set autoWidth to true (let DataTables decide)
         responsive: false, // Columns can hide on small screens
         deferRender: true,// ✅ Handle zoom changes
-        searching: false,
+        searching: true,
         order: [[0, 'desc']], // Default sorting on the first column
         ajax: async function (data, callback, settings) {
             let requestData = {
@@ -146,9 +182,14 @@ function BindData() {
 
                 let result = await response.json();
                 callback(result); // Sends data to DataTables
+                refreshUnitDataTable("#tbldata", 30);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                $("#loading").addClass("d-none").hide();
+                $(".dataTables_processing, .dt-processing").hide();
+                callback({ draw: data.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                refreshUnitDataTable("#tbldata", 30);
             }
         },
         columns: [
@@ -218,7 +259,7 @@ function BindData() {
                 orderable: true,
                 render: function (data, type, row) {
                     // Convert boolean to "Yes" or "No"
-                    return data ? "<span class='badge badge-pill badge-success'>Verifed</span>" : "<span class='badge badge-pill badge-danger'>Not Verify</span>";
+                    return data ? "<span class='badge badge-pill badge-success'>Verified</span>" : "<span class='badge badge-pill badge-danger'>Not Verified</span>";
                 }
             },
             // Additional column for Edit action
@@ -229,7 +270,7 @@ function BindData() {
                 className: "noExport text-center col-action",
                 width: "120px",
                 render: function (data, type, row) {
-                    return "<span id='btnedit'><button type='button' class='cls-btnedit btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
+                    return "<span id='btnedit'><button type='button' class='cls-btnedit btn ecms-action-btn btn-icon btn-round btn-warning mr-1'><i class='fas fa-edit'></i></button></span><button type='button' class='cls-btnDelete btn ecms-action-btn btn-icon btn-round btn-danger mr-1'><i class='fas fa-trash-alt'></i></button>";
                 }
             }
         ],
@@ -257,7 +298,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "UNIT SUS No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top'lBf>rt<'dt-bottom'ip>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -283,30 +324,43 @@ function BindData() {
                     WaterMarkOnPdf(doc)
                 }
             }],
-        // ✅ ADD: initComplete for zoom handling
         initComplete: function () {
-            // Force DataTables to calculate optimal widths
-            this.api().columns.adjust();
+            let searchBox = $("#tbldata_wrapper div.dataTables_filter input");
+            searchBox.attr("title", "Search Unit SUS No, suffix, name or abbreviation");
 
-            // Handle zoom/resize
-            var resizeTimer;
-            $(window).on('resize', function () {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
-                }, 100);
-            });
+            safeAdjustUnitDataTable(this.api());
+            refreshUnitDataTable("#tbldata", 20);
+
+            $(window)
+                .off("resize.unitDataTable")
+                .on("resize.unitDataTable", function () {
+                    window.clearTimeout(window.__unitResizeTimer);
+                    window.__unitResizeTimer = window.setTimeout(function () {
+                        refreshUnitDataTable("#tbldata", 0);
+                    }, 120);
+                });
         },
         drawCallback: function (settings) {
-            // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            safeAdjustUnitDataTable(this.api());
+            refreshUnitDataTable("#tbldata", 20);
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
             );
-            tooltipTriggerList.forEach(el => {
-                new bootstrap.Tooltip(el);
-            });
+
+            if (window.bootstrap && bootstrap.Tooltip) {
+                tooltipTriggerList.forEach(function (element) {
+                    try {
+                        if (bootstrap.Tooltip.getOrCreateInstance) {
+                            bootstrap.Tooltip.getOrCreateInstance(element);
+                        } else {
+                            new bootstrap.Tooltip(element);
+                        }
+                    } catch (error) {
+                        console.warn("Unit tooltip skipped:", error);
+                    }
+                });
+            }
 
             // Re-bind the click event after each draw
             $("#tbldata tbody").off("click", ".cls-btnedit").on("click", ".cls-btnedit", function () {
@@ -506,3 +560,18 @@ function DeleteMultiple(Id) {
         }
     });
 }
+
+/* ==============================================================
+   PAGE-LOCAL UI EVENTS
+   No global ModernCSS file is changed.
+================================================================ */
+
+$(document)
+    .off("draw.dt.unitUi")
+    .on("draw.dt.unitUi", function (event, settings) {
+        var tableId = settings && settings.nTable ? settings.nTable.id : "";
+
+        if (tableId === "tbldata") {
+            refreshUnitDataTable("#tbldata", 20);
+        }
+    });

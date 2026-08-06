@@ -1,3 +1,216 @@
-﻿#tbldata {
-    table-layout: fixed !important;
+﻿/*
+=====================================================
+ECMS Rank page
+Purpose:
+- Keep only Rank page layout/form/button exceptions here.
+- DataTable header/body/scroll/footer behavior is handled globally in ecms.05.datatables.css.
+=====================================================
+*/
+
+/* Page content height below common header/nav/breadcrumb/footer. */
+.ecms-rank-page {
+    height: calc(100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem);
+    margin-top: .5rem;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+/* Main page card fills available area. */
+.ecms-rank-shell,
+.ecms-rank-shell .ecms-card-body {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Compact title row; common appearance remains from .ecms-page-title. */
+.ecms-rank-titlebar {
+    min-height: var(--ecms-title-height);
+}
+
+    .ecms-rank-titlebar h3 {
+        font-size: 1.25rem;
+    }
+
+.ecms-rank-pill {
+    min-height: 2rem;
+    padding: .5rem .85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    text-transform: uppercase;
+}
+
+/* Form section uses Bootstrap grid in cshtml. */
+.ecms-rank-form-section,
+.ecms-rank-form-section form,
+.ecms-rank-form-section .row {
+    margin: 0;
+}
+
+/* Rank label icon style; common input design comes from ecms.03.forms.css. */
+.ecms-rank-label {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin-bottom: .3rem;
+    white-space: nowrap;
+}
+
+    .ecms-rank-label > i:first-child {
+        width: 1.45rem;
+        height: 1.45rem;
+        min-width: 1.45rem;
+        border-radius: .55rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white);
+        background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-800));
+        font-size: .72rem;
+        box-shadow: 0 .35rem .85rem rgba(47,103,230,.18);
+    }
+
+    .ecms-rank-label .mand1 {
+        margin-left: .05rem;
+        font-size: .55rem;
+        vertical-align: super;
+    }
+
+/* Keep all Rank form controls equal height. */
+.ecms-rank-control,
+.ecms-rank-form-section .form-control,
+.ecms-rank-form-section .form-select {
+    min-height: var(--ecms-control-height);
+}
+
+/* Save/Reset alignment. */
+.ecms-rank-actions {
+    margin: 0;
+    padding: 0;
+}
+
+    .ecms-rank-actions .btn,
+    .ecms-rank-actions input[type="button"] {
+        min-width: 4.9rem;
+        min-height: var(--ecms-control-height);
+    }
+
+/* Table area fills remaining card height; DataTable internals are common CSS. */
+.ecms-rank-table-section {
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-rank-table-section > .ecms-section-title {
+        min-height: 2.15rem;
+        padding-block: .42rem;
+    }
+
+.ecms-rank-table-wrap {
+    min-height: 0;
+    overflow: hidden;
+}
+
+    /* Common DataTable wrapper spacing for this page. */
+    .ecms-rank-table-wrap.ecms-dt-wrap {
+        padding-top: .55rem;
+    }
+
+/* Last badge and buttons generated from rank.js. */
+.ecms-rank-page .badge,
+.ecms-rank-page .badge-pill {
+    min-height: 1.45rem;
+    padding: .35rem .65rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .68rem;
+    font-weight: 950;
+    border: 0;
+    color: var(--ecms-white);
+}
+
+.ecms-rank-page .bg-secondary,
+.ecms-rank-page .badge-secondary {
+    background: linear-gradient(135deg, #64748b, #334155) !important;
+    color: var(--ecms-white) !important;
+}
+
+/* Action/order buttons generated from rank.js. */
+.ecms-rank-page .cls-btnedit,
+.ecms-rank-page .cls-btnDelete,
+.ecms-rank-page .cls-btnorder {
+    width: 2.1rem;
+    height: 2.1rem;
+    min-width: 2.1rem;
+    padding: 0;
+    margin-inline: .25rem;
+    border: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .7rem;
+    box-shadow: 0 .5rem 1rem rgba(0,30,80,.16);
+}
+
+.ecms-rank-page .cls-btnorder {
+    background: linear-gradient(135deg, #67e8f9, #38bdf8);
+    color: #061b44;
+}
+
+.ecms-rank-page .cls-btnedit {
+    background: linear-gradient(135deg, #facc15, #f59e0b);
+    color: #061b44;
+}
+
+.ecms-rank-page .cls-btnDelete {
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600));
+    color: var(--ecms-white);
+}
+
+/* Tablet and mobile: allow natural page scroll; Bootstrap stacks fields. */
+@media (max-width: 991.98px) {
+    .ecms-rank-page {
+        height: auto;
+        min-height: calc(100vh - var(--ecms-header-height) - var(--ecms-footer-height));
+        overflow: visible;
+    }
+
+    .ecms-rank-shell,
+    .ecms-rank-shell .ecms-card-body {
+        height: auto;
+        overflow: visible;
+    }
+
+    .ecms-rank-table-section {
+        min-height: 28rem;
+    }
+
+    .ecms-rank-actions {
+        justify-content: flex-start !important;
+    }
+}
+
+/* Phone: buttons become full width. */
+@media (max-width: 575.98px) {
+    .ecms-rank-page {
+        width: calc(100vw - .75rem);
+        margin-top: .4rem;
+    }
+
+    .ecms-rank-titlebar h3 {
+        font-size: 1.05rem;
+    }
+
+    .ecms-rank-actions,
+    .ecms-rank-actions .btn,
+    .ecms-rank-actions input[type="button"] {
+        width: 100%;
+    }
+
+    .ecms-rank-actions {
+        flex-direction: column;
+    }
 }

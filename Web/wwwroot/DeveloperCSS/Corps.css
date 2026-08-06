@@ -1,12 +1,380 @@
-﻿#tbldata {
-    table-layout: fixed !important;
-}
-.error-list {
-    text-align: left;
-    margin: 0;
-    padding-left: 20px;
+﻿/* ==============================================================
+   Master / Corps, Directorate & Area
+   PAGE-SPECIFIC UI ONLY
+
+   Important:
+   - No file inside ModernCSS/css is changed.
+   - Existing ECMS common classes provide the shared design.
+   - All additional rules below are scoped to this page.
+================================================================ */
+
+.swal2-html-container {
+    color: var(--ecms-danger-500, #ef405c) !important;
 }
 
-.error-list li {
-    margin-bottom: 5px;
+/* ---------- Fixed page stage ---------- */
+.ecms-screen-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-corps-page {
+    width: calc(100vw - 1.25rem);
+    max-width: none;
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1rem );
+    min-height: 540px;
+    margin: .5rem auto 0;
+    padding-inline: 0;
+    overflow: hidden;
+}
+
+.ecms-corps-shell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-corps-shell > .ecms-card-body {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        padding: .7rem;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+/* ---------- Page title ---------- */
+.ecms-corps-titlebar {
+    min-height: var(--ecms-title-height, 58px);
+    gap: .75rem;
+}
+
+    .ecms-corps-titlebar h3 {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: 1.18rem;
+        font-weight: 950;
+        line-height: 1.15;
+    }
+
+.ecms-corps-pill {
+    min-height: 2rem;
+    padding: .45rem .8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .42rem;
+    border-radius: 999px;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff) ) !important;
+    font-size: .68rem;
+    font-weight: 950;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* ---------- Inline form ---------- */
+.ecms-corps-form-section {
+    flex: 0 0 auto;
+    padding: .7rem .85rem;
+    overflow: visible;
+}
+
+    .ecms-corps-form-section form,
+    .ecms-corps-form-section .row {
+        margin: 0;
+    }
+
+.ecms-corps-label {
+    min-width: 0;
+    margin: 0 0 .32rem;
+    display: flex;
+    align-items: center;
+    gap: .42rem;
+    color: var(--ecms-text, #061b44);
+    font-size: .78rem;
+    font-weight: 950;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+    .ecms-corps-label > i:first-child {
+        width: 1.5rem;
+        height: 1.5rem;
+        min-width: 1.5rem;
+        border-radius: .5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white, #fff);
+        background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-800, #123f8c) );
+        font-size: .68rem;
+        box-shadow: 0 .35rem .85rem rgba(47, 103, 230, .18);
+    }
+
+    .ecms-corps-label .mand1 {
+        margin-left: .05rem;
+        font-size: .52rem;
+        vertical-align: super;
+    }
+
+.ecms-corps-form-section .form-control,
+.ecms-corps-form-section .form-select {
+    width: 100%;
+    min-height: var(--ecms-control-height, 36px);
+    box-sizing: border-box;
+}
+
+.ecms-corps-actions {
+    min-height: var(--ecms-control-height, 36px);
+    margin: 0;
+    padding: 0;
+}
+
+    .ecms-corps-actions .btn,
+    .ecms-corps-actions input[type="button"] {
+        width: auto;
+        min-width: 4.9rem;
+        max-width: 8rem;
+        min-height: var(--ecms-control-height, 36px);
+        padding-inline: 1rem;
+        flex: 0 0 auto;
+    }
+
+.ecms-corps-msg {
+    display: none;
+}
+
+/* ---------- DataTable section ---------- */
+.ecms-corps-table-section {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-corps-table-section > .ecms-section-title {
+        flex: 0 0 auto;
+        min-height: 2.1rem;
+        padding-block: .42rem;
+    }
+
+.ecms-corps-table-wrap {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.ecms-corps-page #tbldata_wrapper {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 2.5rem minmax(0, 1fr) 2.8rem;
+    overflow: hidden;
+}
+
+    .ecms-corps-page #tbldata_wrapper > .dt-top {
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: 0 0 .4rem;
+    }
+
+    .ecms-corps-page #tbldata_wrapper > .dataTables_scroll,
+    .ecms-corps-page #tbldata_wrapper > .dt-scroll {
+        grid-row: 2;
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .ecms-corps-page #tbldata_wrapper .dataTables_scrollHead,
+    .ecms-corps-page #tbldata_wrapper .dt-scroll-head {
+        flex: 0 0 auto;
+    }
+
+    .ecms-corps-page #tbldata_wrapper .dataTables_scrollBody,
+    .ecms-corps-page #tbldata_wrapper .dt-scroll-body {
+        flex: 1 1 auto;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: auto !important;
+        padding-bottom: 0;
+    }
+
+    .ecms-corps-page #tbldata_wrapper > .dt-bottom {
+        grid-row: 3;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: .45rem .1rem 0;
+        overflow: visible;
+    }
+
+.ecms-corps-page .dataTables_filter input,
+.ecms-corps-page .dt-search input {
+    width: 13rem;
+    max-width: 100%;
+}
+
+.ecms-corps-page .dt-buttons {
+    display: none !important;
+}
+
+.ecms-corps-page .dt-ellipsis {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.ecms-corps-page .cls-btnedit,
+.ecms-corps-page .cls-btnDelete {
+    margin: 0 .16rem;
+    border: 0;
+    box-shadow: 0 .45rem .95rem rgba(0, 30, 80, .16);
+}
+
+.ecms-corps-page .cls-btnedit {
+    color: var(--ecms-text, #061b44) !important;
+    background: linear-gradient(135deg, #facc15, #f59e0b) !important;
+}
+
+.ecms-corps-page .cls-btnDelete {
+    color: var(--ecms-white, #fff) !important;
+    background: linear-gradient( 135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136) ) !important;
+}
+
+/* Hide DataTables' cloned sizing header inside the body scroll area. */
+.ecms-corps-page .dataTables_scrollBody table thead,
+.ecms-corps-page .dt-scroll-body table thead {
+    display: none !important;
+    visibility: collapse !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+.ecms-corps-page .dataTables_processing,
+.ecms-corps-page .dt-processing,
+#tbldata_processing {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Validation list used by SweetAlert. */
+.error-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    text-align: left;
+}
+
+    .error-list li {
+        margin-bottom: .35rem;
+    }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+    .ecms-screen-stage {
+        overflow: visible;
+    }
+
+    .ecms-corps-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-corps-shell,
+    .ecms-corps-shell > .ecms-card-body {
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-corps-table-section {
+        min-height: 28rem;
+    }
+
+    .ecms-corps-page #tbldata_wrapper {
+        grid-template-rows: auto minmax(20rem, 1fr) auto;
+    }
+
+        .ecms-corps-page #tbldata_wrapper > .dt-top,
+        .ecms-corps-page #tbldata_wrapper > .dt-bottom {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+    .ecms-corps-page .dataTables_filter,
+    .ecms-corps-page .dt-search {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+        .ecms-corps-page .dataTables_filter input,
+        .ecms-corps-page .dt-search input {
+            width: 100%;
+        }
+
+    .ecms-corps-actions {
+        justify-content: flex-start !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-corps-titlebar {
+        align-items: flex-start !important;
+        flex-direction: column;
+    }
+
+    .ecms-corps-pill {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ecms-corps-actions,
+    .ecms-corps-actions .btn,
+    .ecms-corps-actions input[type="button"] {
+        width: 100%;
+        max-width: none;
+    }
+
+    .ecms-corps-actions {
+        flex-direction: column;
+    }
 }

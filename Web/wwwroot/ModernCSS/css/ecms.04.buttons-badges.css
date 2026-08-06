@@ -1,0 +1,81 @@
+/*
+ECMS buttons and badges
+Use Bootstrap button classes in HTML: btn btn-primary, btn btn-danger, btn-sm, d-flex, gap-2.
+*/
+
+.btn {
+    border-radius: var(--ecms-radius-sm);
+    font-weight: 900;
+}
+
+.btn-primary,
+.ecms-btn-primary {
+    border: 0;
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, var(--ecms-primary-600), var(--ecms-primary-500));
+    box-shadow: 0 .6rem 1.35rem rgba(47,103,230,.22);
+}
+
+.btn-success,
+.ecms-btn-success {
+    border: 0;
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, var(--ecms-success-500), var(--ecms-success-600));
+}
+
+.btn-danger,
+.ecms-btn-danger {
+    border: 0;
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600));
+}
+
+.btn-secondary,
+.ecms-btn-secondary {
+    border: 0;
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, #5d72a0, #344869);
+}
+
+.btn-warning,
+.ecms-btn-warning {
+    border: 0;
+    color: #061b44;
+    background: linear-gradient(135deg, #ffc928, #ffb300);
+}
+
+.btn:hover {
+    filter: brightness(1.03);
+}
+
+/* Square action icon button. */
+.ecms-action-btn,
+.btn-icon,
+.btn-action {
+    width: 2.15rem;
+    height: 2.15rem;
+    min-width: 2.15rem;
+    padding: 0;
+    border-radius: .7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge,
+.ecms-badge {
+    border-radius: var(--ecms-radius-pill);
+    font-weight: 900;
+}
+
+.ecms-badge-yes,
+.ecms-status-yes {
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, var(--ecms-success-500), var(--ecms-success-600));
+}
+
+.ecms-badge-no,
+.ecms-status-no {
+    color: var(--ecms-white);
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600));
+}

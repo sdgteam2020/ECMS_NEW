@@ -4,204 +4,181 @@
     List<string> RoleNameList = new List<string>() { "user" };
 }
 <link asp-href-include="~/developercss/subdashboard.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a>  > I-Card Request
-
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> > I-Card Request
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
+
+<div class="containerMain mt-n10 ecms-subdashboard-page">
     @if (RoleNameList.Contains(ViewBag.Role))
     {
-        <div class="row">
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>
-                        Drafted Appl
-                    </h1>
-                </div>
-                <div class="row align-items-start">
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/BasicDetail/Index/MQ==" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-water"></i>
-                                </div>
-                                <span class="counter-value" id="ToDraftedOffrs">0</span>
-                                <h3>Appl Drafted (Offr<span class="text-lowercase">s</span>)</h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/BasicDetail/Index/?Id=MQ==&jcoor=SmNvL09ycw==" class="clickable">
-                            <div class="counter blue">
-                                <div class="counter-icon">
-                                    <i class="fa fa-user"></i>
-                                </div>
-                                <span class="counter-value" id="ToDraftedJCO">0</span>
-                                <h3>Appl Drafted (JCO<span class="text-lowercase">s</span>/OR)</h3>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>
-                        Submitted Appl
-                    </h1>
-                </div>
-                <div class="row align-items-start">
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/BasicDetail/Index/ODg4" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-water"></i>
-                                </div>
-                                <span class="counter-value" id="ToSubmittedOffrs">0</span>
-                                <h3>
-                                    Appl Submitted (Offr<span class="text-lowercase">s</span>)
-                                </h3>
+        <div class="ecms-subdashboard-shell">
+            <div class="row ecms-subdashboard-grid">
 
-                            </div>
-                        </a>
+                <div class="card new_css p-4 ecms-status-group ecms-drafted">
+                    <div class="seven">
+                        <h1>Drafted Appl</h1>
                     </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/BasicDetail/Index/?Id=ODg4&jcoor=SmNvL09ycw==" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-user"></i>
+                    <div class="row align-items-start ecms-status-row">
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/BasicDetail/Index/MQ==" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-pencil-square"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToDraftedOffrs">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Drafted</span><span class="ecms-card-title-sub">(OFFRS)</span></h3>
                                 </div>
-                                <span class="counter-value" id="ToSubmittedJCO">0</span>
-                                <h3>
-                                    Appl Submitted (JCO<span class="text-lowercase">s</span>/OR)
-                                </h3>
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/BasicDetail/Index/?Id=MQ==&jcoor=SmNvL09ycw==" class="clickable">
+                                <div class="counter blue">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-pencil-square"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToDraftedJCO">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Drafted</span><span class="ecms-card-title-sub">(JCOS/OR)</span></h3>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-                            </div>
-                        </a>
+                <div class="card new_css p-4 ecms-status-group ecms-submitted">
+                    <div class="seven">
+                        <h1>Submitted Appl</h1>
+                    </div>
+                    <div class="row align-items-start ecms-status-row">
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/BasicDetail/Index/ODg4" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-paper-plane"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedOffrs">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Submitted</span><span class="ecms-card-title-sub">(OFFRS)</span></h3>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/BasicDetail/Index/?Id=ODg4&jcoor=SmNvL09ycw==" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-paper-plane"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToSubmittedJCO">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Submitted</span><span class="ecms-card-title-sub">(JCOS/OR)</span></h3>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>
-                        Rejected Appl
-                    </h1>
-                </div>
-                <div class="row align-items-start">
-                    <div id="RejectedOffrs" class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/BasicDetail/Index/OTk5" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-ban"></i>
-                                </div>
-                                <span class="counter-value" id="ToRejectedOffrs">0</span>
-                                <h3>
-                                    Appl Rejected (Offr<span class="text-lowercase">s</span>)
-                                </h3>
 
-                            </div>
-                        </a>
+                <div class="card new_css p-4 ecms-status-group ecms-rejected">
+                    <div class="seven">
+                        <h1>Rejected Appl</h1>
                     </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/BasicDetail/Index?Id=OTk5&jcoor=SmNvL09ycw==" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-ban"></i>
+                    <div class="row align-items-start ecms-status-row">
+                        <div id="RejectedOffrs" class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/BasicDetail/Index/OTk5" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-ban"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToRejectedOffrs">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Rejected</span><span class="ecms-card-title-sub">(OFFRS)</span></h3>
                                 </div>
-                                <span class="counter-value" id="ToRejectedJCO">0</span>
-                                <h3>
-                                    Appl Rejected (JCO<span class="text-lowercase">s</span>/OR)
-                                </h3>
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/BasicDetail/Index?Id=OTk5&jcoor=SmNvL09ycw==" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-ban"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToRejectedJCO">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Rejected</span><span class="ecms-card-title-sub">(JCOS/OR)</span></h3>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-                            </div>
-                        </a>
+                <div class="card new_css p-4 ecms-status-group ecms-closed">
+                    <div class="seven">
+                        <h1>Closed Appl</h1>
+                    </div>
+                    <div class="row align-items-start ecms-status-row">
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/Posting/AppCloseList/" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-times-circle"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToClosedOffrs">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Closed</span><span class="ecms-card-title-sub">(OFFRS)</span></h3>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/Posting/AppCloseList/?jcoor=SmNvL09ycw==" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-times-circle"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToClosedJCO">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Closed</span><span class="ecms-card-title-sub">(JCOS/OR)</span></h3>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>
-                        Closed Appl
-                    </h1>
-                </div>
-                <div class="row align-items-start">
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/Posting/AppCloseList/" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                                <span class="counter-value" id="ToClosedOffrs">0</span>
-                                <h3>
-                                    Appl Closed (Offr<span class="text-lowercase">s</span>)
-                                </h3>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/Posting/AppCloseList/?jcoor=SmNvL09ycw==" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                                <span class="counter-value" id="ToClosedJCO">0</span>
-                                <h3>
-                                    Appl Closed (JCO<span class="text-lowercase">s</span>/OR)
-                                </h3>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="card new_css p-4">
-                <div class="seven">
-                    <h1>
-                        Completed Appl
-                    </h1>
-                </div>
-                <div class="row align-items-start">
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/BasicDetail/Index/Nzc3" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-check"></i>
-                                </div>
-                                <span class="counter-value" id="ToCompletedOffrs">0</span>
-                                <h3>
-                                    Appl Completed (Offr<span class="text-lowercase">s</span>)
-                                </h3>
 
-                            </div>
-                        </a>
+                <div class="card new_css p-4 ecms-status-group ecms-completed">
+                    <div class="seven">
+                        <h1>Completed Appl</h1>
                     </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                        <a href="/BasicDetail/Index/?Id=Nzc3&jcoor=SmNvL09ycw==" class="clickable">
-                            <div class="counter pink">
-                                <div class="counter-icon">
-                                    <i class="fa fa-check"></i>
+                    <div class="row align-items-start ecms-status-row">
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/BasicDetail/Index/Nzc3" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-check-circle"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToCompletedOffrs">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Completed</span><span class="ecms-card-title-sub">(OFFRS)</span></h3>
                                 </div>
-                                <span class="counter-value" id="ToCompletedJCO">0</span>
-                                <h3>
-                                    Appl Completed (JCO<span class="text-lowercase">s</span>/OR)
-                                </h3>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <a href="/BasicDetail/Index/?Id=Nzc3&jcoor=SmNvL09ycw==" class="clickable">
+                                <div class="counter pink">
+                                    <div class="counter-icon">
+                                        <i class="fa fa-check-circle"></i>
+                                    </div>
+                                    <span class="counter-value" id="ToCompletedJCO">0</span>
+                                    <h3><span class="ecms-card-title-main">Appl Completed</span><span class="ecms-card-title-sub">(JCOS/OR)</span></h3>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
     }
 </div>
+
 <script asp-src-include="~/developerjs/Subdashboard.js"></script>

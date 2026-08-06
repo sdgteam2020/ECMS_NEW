@@ -1,8 +1,522 @@
-﻿.unit-label-background {
-    background-color: #e9ecef;
-    max-width: 400px;
-    min-width: 400px;
+﻿/* ==============================================================
+   Master / Map Unit
+   PAGE-SPECIFIC UI ONLY
+
+   Important:
+   - No file inside ModernCSS/css is changed.
+   - Existing ECMS theme classes provide the common design.
+   - All additional rules below are scoped to Map Unit.
+================================================================ */
+
+.swal2-html-container {
+    color: var(--ecms-danger-500, #ef405c) !important;
 }
-#tbldata {
-    table-layout: fixed !important;
+
+/* ---------- Fixed page area ---------- */
+.ecms-screen-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-mapunit-page {
+    width: calc(100vw - 1.25rem);
+    max-width: none;
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1rem );
+    min-height: 540px;
+    margin: .5rem auto 0;
+    padding-inline: 0;
+    overflow: hidden;
+}
+
+.ecms-mapunit-shell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-mapunit-shell > .ecms-card-body {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        padding: .7rem;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+/* ---------- Page title ---------- */
+.ecms-mapunit-titlebar {
+    min-height: var(--ecms-title-height, 58px);
+    gap: .75rem;
+}
+
+    .ecms-mapunit-titlebar h3 {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: 1.18rem;
+        font-weight: 950;
+        line-height: 1.15;
+    }
+
+.ecms-mapunit-add-btn {
+    min-width: 7rem;
+    min-height: 2.35rem;
+    padding: .45rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    white-space: nowrap;
+    font-weight: 900;
+    box-shadow: 0 .65rem 1.35rem rgba(35, 138, 64, .22);
+}
+
+/* ---------- Table section ---------- */
+.ecms-mapunit-table-section {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-mapunit-table-section > .ecms-section-title {
+        flex: 0 0 auto;
+        min-height: 2.1rem;
+        padding-block: .42rem;
+    }
+
+.ecms-mapunit-table-wrap {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.ecms-mapunit-page #tbldata_wrapper {
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 2.5rem minmax(0, 1fr) 2.8rem;
+    overflow: hidden;
+}
+
+    .ecms-mapunit-page #tbldata_wrapper > .dt-top {
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: 0 0 .4rem;
+    }
+
+    .ecms-mapunit-page #tbldata_wrapper > .dataTables_scroll,
+    .ecms-mapunit-page #tbldata_wrapper > .dt-scroll {
+        grid-row: 2;
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .ecms-mapunit-page #tbldata_wrapper .dataTables_scrollHead,
+    .ecms-mapunit-page #tbldata_wrapper .dt-scroll-head {
+        flex: 0 0 auto;
+    }
+
+    .ecms-mapunit-page #tbldata_wrapper .dataTables_scrollBody,
+    .ecms-mapunit-page #tbldata_wrapper .dt-scroll-body {
+        flex: 1 1 auto;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: auto !important;
+        padding-bottom: 0;
+    }
+
+    .ecms-mapunit-page #tbldata_wrapper > .dt-bottom {
+        grid-row: 3;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin: 0;
+        padding: .45rem .1rem 0;
+        overflow: visible;
+    }
+
+.ecms-mapunit-page .dataTables_filter input,
+.ecms-mapunit-page .dt-search input {
+    width: 12.5rem;
+    max-width: 100%;
+}
+
+.ecms-mapunit-page .dt-buttons {
+    display: none !important;
+}
+
+/* Page-local cell presentation. */
+.ecms-mapunit-page .dt-ellipsis {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.ecms-mapunit-page .badge,
+.ecms-mapunit-page .badge-success,
+.ecms-mapunit-page .badge-danger,
+.ecms-mapunit-page .bg-primary {
+    min-width: 3.25rem;
+    min-height: 1.25rem;
+    padding: .22rem .52rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    font-size: .62rem;
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ecms-mapunit-page .bg-primary {
+    background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff) ) !important;
+}
+
+.ecms-mapunit-page .badge-success {
+    background: linear-gradient( 135deg, var(--ecms-success-500, #35ad56), var(--ecms-success-600, #238a40) ) !important;
+}
+
+.ecms-mapunit-page .badge-danger {
+    background: linear-gradient( 135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136) ) !important;
+}
+
+.ecms-mapunit-page .cls-btnedit,
+.ecms-mapunit-page .cls-btnDelete {
+    margin: 0 .16rem;
+    border: 0;
+    box-shadow: 0 .45rem .95rem rgba(0, 30, 80, .16);
+}
+
+.ecms-mapunit-page .cls-btnedit {
+    color: var(--ecms-text, #061b44) !important;
+    background: linear-gradient(135deg, #facc15, #f59e0b) !important;
+}
+
+.ecms-mapunit-page .cls-btnDelete {
+    color: var(--ecms-white, #fff) !important;
+    background: linear-gradient( 135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136) ) !important;
+}
+
+/* DataTables cloned sizing header generated inside the scroll body. */
+.ecms-mapunit-page .dataTables_scrollBody table thead,
+.ecms-mapunit-page .dt-scroll-body table thead {
+    display: none !important;
+    visibility: collapse !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
+
+.ecms-mapunit-page .dataTables_processing,
+.ecms-mapunit-page .dt-processing,
+#tbldata_processing {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* ---------- Modal ---------- */
+.ecms-mapunit-modal {
+    z-index: 1080 !important;
+}
+
+    .ecms-mapunit-modal.show,
+    .ecms-mapunit-modal.show .modal-dialog,
+    .ecms-mapunit-modal.show .modal-content {
+        opacity: 1 !important;
+        visibility: visible !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+body.modal-open .modal-backdrop,
+body.modal-open .modal-backdrop.show {
+    z-index: 1070 !important;
+    opacity: .72 !important;
+}
+
+.ecms-mapunit-modal .modal-dialog {
+    width: min(920px, calc(100vw - 1.5rem));
+    max-width: min(920px, calc(100vw - 1.5rem));
+}
+
+.ecms-mapunit-modal .modal-content {
+    max-height: calc(100vh - 1.5rem);
+}
+
+.ecms-mapunit-modal-header {
+    min-height: 4rem;
+    padding: .75rem 3.6rem .75rem 1rem;
+}
+
+.ecms-mapunit-modal-heading {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+
+.ecms-mapunit-modal-icon {
+    width: 2.35rem;
+    height: 2.35rem;
+    min-width: 2.35rem;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: .72rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: rgba(255, 255, 255, .14);
+    font-size: .95rem;
+}
+
+.ecms-mapunit-modal .modal-title {
+    margin: 0;
+    color: var(--ecms-white, #fff);
+    font-size: 1.05rem;
+    font-weight: 950;
+    line-height: 1.15;
+}
+
+.ecms-mapunit-modal .modal-header .ecms-title-subtitle {
+    margin: .15rem 0 0;
+    color: rgba(255, 255, 255, .86);
+    font-size: .72rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.ecms-mapunit-modal-body {
+    min-height: 0;
+    max-height: calc(100vh - 7rem);
+    padding: .85rem 1rem 1rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ecms-mapunit-modal .form-control,
+.ecms-mapunit-modal .form-select,
+.ecms-mapunit-unit-label {
+    width: 100%;
+    max-width: 100%;
+    min-height: var(--ecms-control-height, 36px);
+    box-sizing: border-box;
+}
+
+.ecms-mapunit-label {
+    min-width: 0;
+    margin: 0 0 .32rem;
+    display: flex;
+    align-items: center;
+    gap: .42rem;
+    color: var(--ecms-text, #061b44);
+    font-size: .78rem;
+    font-weight: 950;
+    line-height: 1.2;
+}
+
+    .ecms-mapunit-label > i:first-child {
+        width: 1.48rem;
+        height: 1.48rem;
+        min-width: 1.48rem;
+        border-radius: .48rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white, #fff);
+        background: linear-gradient( 135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-800, #123f8c) );
+        font-size: .68rem;
+    }
+
+    .ecms-mapunit-label .mand1 {
+        margin-left: .05rem;
+        font-size: .52rem;
+        vertical-align: super;
+    }
+
+.ecms-mapunit-unit-label {
+    margin: 0;
+    padding: .45rem .7rem;
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(100, 132, 190, .28);
+    border-radius: var(--ecms-radius-sm, .55rem);
+    color: var(--ecms-text, #061b44);
+    background: rgba(226, 232, 240, .72);
+    font-weight: 800;
+}
+
+.ecms-mapunit-radio-card {
+    height: 100%;
+    padding: .65rem;
+    border: 1px solid rgba(100, 132, 190, .2);
+    border-radius: .78rem;
+    background: rgba(255, 255, 255, .7);
+}
+
+.ecms-mapunit-modal .ecms-radio-group {
+    min-height: 2rem;
+    align-items: center;
+}
+
+.ecms-mapunit-modal .ecms-radio-pill {
+    min-height: 1.95rem;
+    margin: 0;
+    padding: .32rem .7rem;
+    border: 1px solid rgba(70, 119, 184, .2);
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: .36rem;
+    color: var(--ecms-text, #061b44);
+    background: rgba(255, 255, 255, .86);
+}
+
+    .ecms-mapunit-modal .ecms-radio-pill .form-check-input {
+        position: static;
+        width: 1rem;
+        height: 1rem;
+        margin: 0;
+        opacity: 1;
+        appearance: auto;
+        accent-color: var(--ecms-primary-600, #2f67e6);
+    }
+
+    .ecms-mapunit-modal .ecms-radio-pill .form-check-label {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: .77rem;
+        font-weight: 850;
+        cursor: pointer;
+    }
+
+.ecms-mapunit-modal-actions {
+    margin-top: .35rem;
+}
+
+    .ecms-mapunit-modal-actions .btn,
+    .ecms-mapunit-modal-actions input[type="button"] {
+        width: auto;
+        min-width: 5.25rem;
+        max-width: 8rem;
+        min-height: var(--ecms-control-height, 36px);
+        padding-inline: 1rem;
+        flex: 0 0 auto;
+    }
+
+.error-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    text-align: left;
+}
+
+    .error-list li {
+        margin-bottom: .35rem;
+    }
+
+/* jQuery UI autocomplete must stay above the modal. */
+.ui-autocomplete {
+    z-index: 20000 !important;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+    .ecms-screen-stage {
+        overflow: visible;
+    }
+
+    .ecms-mapunit-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-mapunit-shell,
+    .ecms-mapunit-shell > .ecms-card-body {
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-mapunit-table-section {
+        min-height: 30rem;
+    }
+
+    .ecms-mapunit-page #tbldata_wrapper {
+        grid-template-rows: auto minmax(20rem, 1fr) auto;
+    }
+
+        .ecms-mapunit-page #tbldata_wrapper > .dt-top,
+        .ecms-mapunit-page #tbldata_wrapper > .dt-bottom {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+    .ecms-mapunit-page .dataTables_filter,
+    .ecms-mapunit-page .dt-search {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+        .ecms-mapunit-page .dataTables_filter input,
+        .ecms-mapunit-page .dt-search input {
+            width: 100%;
+        }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-mapunit-titlebar {
+        align-items: flex-start !important;
+        flex-direction: column;
+    }
+
+    .ecms-mapunit-add-btn,
+    .ecms-mapunit-modal-actions,
+    .ecms-mapunit-modal-actions .btn,
+    .ecms-mapunit-modal-actions input[type="button"] {
+        width: 100%;
+        max-width: none;
+    }
+
+    .ecms-mapunit-modal-actions {
+        flex-direction: column;
+    }
 }

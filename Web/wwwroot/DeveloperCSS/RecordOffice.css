@@ -1,3 +1,220 @@
-﻿#tbldata {
-    table-layout: fixed !important;
+﻿/* =====================================================
+   Record Office page
+   Page-specific layout only. Shared colors, controls,
+   field icons, buttons, DataTables and modal skin come
+   from the global ECMS theme.
+===================================================== */
+
+.ecms-recordoffice-page {
+    --ecms-recordoffice-scroll-height: clamp(15rem, calc(100vh - 31rem), 28rem);
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem );
+    min-height: 0;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
 }
+
+.ecms-recordoffice-shell,
+.ecms-recordoffice-shell-body,
+.ecms-recordoffice-records,
+.ecms-recordoffice-table-wrap {
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-recordoffice-shell {
+    height: 100%;
+}
+
+.ecms-recordoffice-shell-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.ecms-recordoffice-add-btn {
+    min-height: 2.15rem;
+    padding-inline: .9rem;
+    white-space: nowrap;
+}
+
+.ecms-recordoffice-records {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ecms-recordoffice-table-wrap {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding-inline: .7rem;
+    padding-bottom: .65rem;
+}
+
+    .ecms-recordoffice-table-wrap .dataTables_wrapper,
+    .ecms-recordoffice-table-wrap .dt-container {
+        flex: 1 1 auto;
+    }
+
+.ecms-recordoffice-page .dataTables_scrollBody,
+.ecms-recordoffice-page .dt-scroll-body {
+    height: var(--ecms-recordoffice-scroll-height) !important;
+    max-height: var(--ecms-recordoffice-scroll-height) !important;
+    min-height: 12rem !important;
+}
+
+    .ecms-recordoffice-page table#tbldata,
+    .ecms-recordoffice-page .dataTables_scrollHeadInner,
+    .ecms-recordoffice-page .dataTables_scrollHeadInner table,
+    .ecms-recordoffice-page .dataTables_scrollBody table,
+    .ecms-recordoffice-page .dt-scroll-headInner,
+    .ecms-recordoffice-page .dt-scroll-headInner table,
+    .ecms-recordoffice-page .dt-scroll-body table {
+        width: 100% !important;
+    }
+
+        .ecms-recordoffice-page table#tbldata,
+        .ecms-recordoffice-page .dataTables_scrollHeadInner table,
+        .ecms-recordoffice-page .dataTables_scrollBody table {
+            table-layout: fixed !important;
+        }
+
+.ecms-recordoffice-page .col-sno {
+    width: 4.5rem !important;
+}
+
+.ecms-recordoffice-page .col-action {
+    width: 7.5rem !important;
+    white-space: nowrap !important;
+}
+
+.ecms-recordoffice-page .cls-btnedit,
+.ecms-recordoffice-page .cls-btnDelete {
+    margin-inline: .2rem;
+}
+
+.ecms-recordoffice-page table.dataTable tbody tr {
+    transition: background-color .16s ease;
+}
+
+    .ecms-recordoffice-page table.dataTable tbody tr:hover {
+        background: rgba(220, 235, 255, .96);
+    }
+
+.ecms-recordoffice-message-control {
+    min-height: 4.35rem;
+    resize: vertical;
+}
+
+.ecms-recordoffice-message:empty {
+    display: none;
+}
+
+/* jQuery UI autocomplete must remain above the modal. */
+.ui-autocomplete {
+    z-index: 2090 !important;
+    max-height: 15rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: var(--ecms-radius-sm);
+    box-shadow: var(--ecms-shadow-md);
+}
+
+@media (max-height: 800px) and (min-width: 992px) {
+    .ecms-recordoffice-page {
+        --ecms-recordoffice-scroll-height: clamp(12rem, calc(100vh - 29rem), 22rem);
+    }
+
+    .ecms-recordoffice-shell-body {
+        gap: .45rem;
+        padding: .55rem;
+    }
+
+    .ecms-recordoffice-page .ecms-page-title {
+        min-height: 3.1rem;
+        padding-block: .45rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    body {
+        overflow-y: auto;
+    }
+
+    .ecms-recordoffice-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: calc(100vh - var(--ecms-footer-height) - 1rem);
+        margin-top: .4rem;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem);
+    }
+
+    .ecms-recordoffice-shell {
+        height: auto;
+    }
+
+    .ecms-recordoffice-records {
+        min-height: 30rem;
+    }
+
+    .ecms-recordoffice-page .dataTables_scrollBody,
+    .ecms-recordoffice-page .dt-scroll-body {
+        height: 20rem !important;
+        max-height: 20rem !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-recordoffice-page .ecms-page-title {
+        align-items: stretch !important;
+    }
+
+    .ecms-recordoffice-add-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ecms-recordoffice-table-wrap {
+        padding-inline: .4rem;
+    }
+}
+
+/* =====================================================
+   Record Office modal stacking fix (page scoped)
+   The global theme is intentionally not modified.
+===================================================== */
+#AddNewRecordOffice.modal {
+    z-index: 2000 !important;
+}
+
+    #AddNewRecordOffice.modal .modal-dialog {
+        position: relative;
+        z-index: 2001 !important;
+    }
+
+    #AddNewRecordOffice.modal.show,
+    #AddNewRecordOffice.modal.show .modal-dialog,
+    #AddNewRecordOffice.modal.show .modal-content,
+    #AddNewRecordOffice.modal.show .modal-header,
+    #AddNewRecordOffice.modal.show .modal-body,
+    #AddNewRecordOffice.modal.show .modal-footer {
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+/* This stylesheet is loaded only by the Record Office page. */
+body > .modal-backdrop {
+    z-index: 1990 !important;
+    background-color: #020b1e !important;
+}
+
+    body > .modal-backdrop.show {
+        opacity: .58 !important;
+    }
+
+    body > .modal-backdrop.ecms-recordoffice-manual-backdrop {
+        z-index: 1990 !important;
+    }

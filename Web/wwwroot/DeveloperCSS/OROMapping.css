@@ -1,15 +1,302 @@
-﻿.modal-xl {
-    max-width: 1140px !important;
-    width: 100% !important;
+﻿/* =====================================================
+   ORO Mapping page
+   Page-specific layout and modal stacking only.
+   Shared colors, controls, field icons, buttons,
+   DataTables and modal skin come from the ECMS theme.
+===================================================== */
+
+.ecms-oro-page {
+    --ecms-oro-scroll-height: clamp(16rem, calc(100vh - 31.5rem), 29rem);
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem );
+    min-height: 0;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
 }
 
-.table {
-    min-width: 100% !important;
+.ecms-oro-shell,
+.ecms-oro-shell-body,
+.ecms-oro-records,
+.ecms-oro-table-wrap {
+    min-width: 0;
+    min-height: 0;
 }
 
-.modal .modal-body .table-responsive {
-    max-height: 500px;
+.ecms-oro-shell {
+    height: 100%;
 }
-#tbldata {
-    table-layout: fixed !important;
+
+.ecms-oro-shell-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.ecms-oro-add-btn {
+    min-height: 2.15rem;
+    padding-inline: .9rem;
+    white-space: nowrap;
+}
+
+.ecms-oro-records {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ecms-oro-table-wrap {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding-inline: .7rem;
+    padding-bottom: .65rem;
+}
+
+    .ecms-oro-table-wrap .dataTables_wrapper,
+    .ecms-oro-table-wrap .dt-container {
+        flex: 1 1 auto;
+    }
+
+.ecms-oro-page .dataTables_scrollBody,
+.ecms-oro-page .dt-scroll-body {
+    height: var(--ecms-oro-scroll-height) !important;
+    max-height: var(--ecms-oro-scroll-height) !important;
+    min-height: 13rem !important;
+    padding-bottom: 1.25rem !important;
+    box-sizing: border-box !important;
+    scroll-padding-bottom: 1.25rem;
+    overscroll-behavior: contain;
+}
+
+    /*
+   Keep enough scroll space below the final record so the last row and its
+   action buttons can move fully above the DataTable footer.
+*/
+    .ecms-oro-page .dataTables_scrollBody table#tbldata,
+    .ecms-oro-page .dt-scroll-body table#tbldata {
+        margin-bottom: 1.25rem !important;
+    }
+
+    .ecms-oro-page table#tbldata,
+    .ecms-oro-page .dataTables_scrollHeadInner,
+    .ecms-oro-page .dataTables_scrollHeadInner table,
+    .ecms-oro-page .dataTables_scrollBody table,
+    .ecms-oro-page .dt-scroll-headInner,
+    .ecms-oro-page .dt-scroll-headInner table,
+    .ecms-oro-page .dt-scroll-body table {
+        width: 100% !important;
+    }
+
+        .ecms-oro-page table#tbldata,
+        .ecms-oro-page .dataTables_scrollHeadInner table,
+        .ecms-oro-page .dataTables_scrollBody table {
+            table-layout: fixed !important;
+        }
+
+/* ORO rows may contain several Arms / Service values. */
+.ecms-oro-page table.dataTable tbody td {
+    height: auto;
+    min-height: var(--ecms-dt-row-height);
+    vertical-align: top;
+    white-space: normal;
+}
+
+    .ecms-oro-page table.dataTable tbody td.col-sno,
+    .ecms-oro-page table.dataTable tbody td.col-action {
+        vertical-align: middle;
+    }
+
+.ecms-oro-page .col-sno {
+    width: 4.5rem !important;
+}
+
+.ecms-oro-page .col-action {
+    width: 7.5rem !important;
+    white-space: nowrap !important;
+}
+
+.ecms-oro-page .cls-btnedit,
+.ecms-oro-page .cls-btnDelete {
+    margin-inline: .2rem;
+}
+
+.ecms-oro-page table.dataTable tbody tr {
+    transition: background-color .16s ease;
+}
+
+    .ecms-oro-page table.dataTable tbody tr:hover {
+        background: rgba(220, 235, 255, .96);
+    }
+
+.ecms-oro-arms-list {
+    max-height: none !important;
+    margin: 0;
+    padding-left: 1.1rem;
+    overflow: visible !important;
+    line-height: 1.4;
+    text-align: left;
+}
+
+/* Use only the main DataTable scrollbar. Nested list scrollbars trap the
+   mouse wheel and make the final record appear unreachable. */
+.ecms-oro-page table.dataTable tbody tr:last-child td {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(185, 205, 236, .9);
+}
+
+.ecms-oro-arms-list li {
+    margin: 0 0 .18rem;
+}
+
+.ecms-oro-message:empty {
+    display: none;
+}
+
+/* Keep modal fields and Select2 visually aligned with the shared field-icon design. */
+#AddNewOROMapping .modal-dialog {
+    max-width: min(900px, calc(100vw - 1.5rem));
+}
+
+#AddNewOROMapping .select2-container--default .select2-selection--multiple {
+    min-height: var(--ecms-control-height);
+    padding: .15rem .35rem;
+}
+
+    #AddNewOROMapping .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .25rem;
+        padding: 0;
+    }
+
+    #AddNewOROMapping .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        margin: .15rem 0;
+        padding: .2rem .45rem;
+        border: 1px solid rgba(63, 124, 255, .24);
+        border-radius: var(--ecms-radius-pill);
+        background: rgba(226, 238, 255, .98);
+        color: var(--ecms-text);
+        font-size: .75rem;
+        font-weight: 800;
+    }
+
+#AddNewOROMapping .select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: var(--ecms-primary-500);
+    box-shadow: 0 0 0 .2rem rgba(63, 124, 255, .16);
+}
+
+#AddNewOROMapping .select2-container--open,
+#AddNewOROMapping .select2-dropdown {
+    z-index: 2075 !important;
+}
+
+/* jQuery UI autocomplete must remain above this modal. */
+.ui-autocomplete {
+    z-index: 2090 !important;
+    max-height: 15rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: var(--ecms-radius-sm);
+    box-shadow: var(--ecms-shadow-md);
+}
+
+/* =====================================================
+   ORO modal stacking fix (page scoped)
+   No global theme file is changed.
+===================================================== */
+#AddNewOROMapping.modal {
+    z-index: 2055 !important;
+}
+
+    #AddNewOROMapping.modal .modal-dialog {
+        position: relative;
+        z-index: 2056 !important;
+    }
+
+    #AddNewOROMapping.modal.show,
+    #AddNewOROMapping.modal.show .modal-dialog,
+    #AddNewOROMapping.modal.show .modal-content,
+    #AddNewOROMapping.modal.show .modal-header,
+    #AddNewOROMapping.modal.show .modal-body {
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+body.ecms-oro-modal-open > .modal-backdrop {
+    z-index: 2045 !important;
+    background-color: #020b1e !important;
+}
+
+    body.ecms-oro-modal-open > .modal-backdrop.show {
+        opacity: .58 !important;
+    }
+
+@media (max-height: 800px) and (min-width: 992px) {
+    .ecms-oro-page {
+        --ecms-oro-scroll-height: clamp(13rem, calc(100vh - 29rem), 23rem);
+    }
+
+    .ecms-oro-shell-body {
+        gap: .45rem;
+        padding: .55rem;
+    }
+
+    .ecms-oro-page .ecms-page-title {
+        min-height: 3.1rem;
+        padding-block: .45rem;
+    }
+
+    #AddNewOROMapping .modal-body {
+        padding-block: .75rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    body:has(.ecms-oro-page) {
+        overflow-y: auto;
+    }
+
+    .ecms-oro-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: calc(100vh - var(--ecms-footer-height) - 1rem);
+        margin-top: .4rem;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem);
+    }
+
+    .ecms-oro-shell {
+        height: auto;
+    }
+
+    .ecms-oro-records {
+        min-height: 31rem;
+    }
+
+    .ecms-oro-page .dataTables_scrollBody,
+    .ecms-oro-page .dt-scroll-body {
+        height: 21rem !important;
+        max-height: 21rem !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-oro-page .ecms-page-title {
+        align-items: stretch !important;
+    }
+
+    .ecms-oro-add-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ecms-oro-table-wrap {
+        padding-inline: .4rem;
+    }
+
+    .ecms-oro-modal-actions .btn,
+    .ecms-oro-modal-actions input[type="button"] {
+        flex: 1 1 8rem;
+    }
 }

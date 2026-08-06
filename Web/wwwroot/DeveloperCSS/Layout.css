@@ -1,220 +1,162 @@
-﻿.select2-container--default .select2-selection--multiple .select2-selection__choice {
-    font-size: .925rem;
-}
+﻿/*
+=====================================================
+ECMS MAIN LAYOUT - BOOTSTRAP-FIRST OPTIMIZED
+File: wwwroot/developercss/layout.css
 
-footer {
-    padding: 5px;
-    /* background: linear-gradient(90deg, rgba(0,211,255,1) 0%, rgba(12,141,242,1) 66%, rgba(22,125,207,1) 99%); */
-    background: #003060 !important;
-    color: white;
-    margin-top: 20px;
-}
+Purpose:
+- Keep only layout-specific rules for _Layout.cshtml.
+- Use Bootstrap rows/cols/utilities for structure and responsiveness.
+- Use ModernCSS/css/ecms.*.css for common theme, forms, tables, buttons and modals.
+=====================================================
+*/
 
-footer .text-end span {
-    font-size: 0.9rem; /* Optional: Adjust the font size for span values */
-}
-.select2-hidden-accessible {
-    border: 0 !important;
-    clip: rect(0 0 0 0) !important;
-    height: 1px !important;
-    margin: -1px !important;
-    overflow: hidden !important;
+/* Full viewport application shell. */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
     padding: 0 !important;
-    position: absolute !important;
-    width: 1px !important
 }
 
-.form-control {
-    display: block;
+    /* Fixed shell: header and footer stay fixed, only middle area scrolls. */
+    body.ecms-fixed-shell,
+    body.ecms-main-layout-body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden !important;
+    }
+
+/* Bootstrap 3-row wrapper: row 1 header, row 2 render body, row 3 footer. */
+.ecms-main-layout,
+.ecms-app-shell {
     width: 100%;
-    height: 34px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+    height: 100vh;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
 }
 
-.form-control-Alphabets {
-    display: block;
+/* Row 1: fixed top header. */
+.ecms-main-header-row,
+.ecms-app-header {
+    top: 0;
+    left: 0;
+    right: 0;
     width: 100%;
-    height: 34px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+    min-height: var(--ecms-header-height);
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 1040;
+    overflow: visible;
+    background: #003060;
 }
 
-    .form-control-Alphabets:focus {
-        border-color: #66afe9;
-        outline: 0;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
-    }
-
-.form-control1 {
-    display: block;
+/* Row 2: render body area between fixed header and fixed footer. */
+.ecms-main-render-row,
+.ecms-app-main {   
     width: 100%;
-    height: 34px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
-}
-
-    .form-control1:focus {
-        border-color: #66afe9;
-        outline: 0;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
-    }
-
-.form-control-domainId {
-    display: block;
-    width: 100%;
-    height: 34px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
-}
-
-    .form-control-domainId:focus {
-        border-color: #66afe9;
-        outline: 0;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
-    }
-
-.select2-container--default .select2-selection--single,
-.select2-selection .select2-selection--single {
-    border: 1px solid #d2d6de;
-    border-radius: 0;
-    padding: 6px 12px;
-    height: 34px
-}
-
-.select2-container--default .select2-selection--single {
-    background-color: #fff;
-    border: 1px solid #aaa;
-    border-radius: 4px
-}
-
-.select2-container .select2-selection--single {
-    box-sizing: border-box;
-    cursor: pointer;
-    display: block;
-    height: 28px;
-    user-select: none;
-    -webkit-user-select: none
-}
-
-    .select2-container .select2-selection--single .select2-selection__rendered {
-        padding-right: 10px
-    }
-
-    .select2-container .select2-selection--single .select2-selection__rendered {
-        padding-left: 0;
-        padding-right: 0;
-        height: auto;
-        margin-top: -3px
-    }
-
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: #444;
-    line-height: 28px
-}
-
-.select2-container--default .select2-selection--single,
-.select2-selection .select2-selection--single {
-    border: 1px solid #d2d6de;
-    border-radius: 0 !important;
-    padding: 6px 12px;
-    height: 40px !important
-}
-
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 26px;
-        position: absolute;
-        top: 6px !important;
-        right: 1px;
-        width: 20px;
-    }
-
-.unit-label-background {
-    background-color: #e9ecef;
-    max-width: 300px;
-    min-width: 300px;
-    height: 45px;
-}
-
-.select2-dropdown {
-    color: black;
-    text-align: left;
-}
-
-.select2-container--default .select2-results > .select2-results__options {
-    max-height: 200px;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0;
     overflow-y: auto;
-    text-align: left;
-}
-/* Make Select2 container full-width for select3 controls */
-.select3 + .select2-container {
-    width: 100% !important;
+    overflow-x: hidden;
+    z-index: 1;
 }
 
-/* (Optional but recommended) Make the search box inside multi-select full width */
-.select2-container--default .select2-selection--multiple .select2-search__field {
-    min-width: 100% !important;
-}
-.modal-body {
-    color: black;
+/* Main content wrappers: no extra spacing, no unwanted horizontal overflow. */
+.ecms-main-render-col,
+.ecms-main-layout-sidenav,
+.ecms-main-layout-content,
+.ecms-main-panel,
+.ecms-main-content-wrapper,
+#layoutSidenav,
+#layoutSidenav_content,
+.main-panel,
+.content-wrapper {
+    width: 100%;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-.page-header-title a {
-    text-decoration: none !important;
-    color: white;
+/* Keep page content scrollable inside the middle row. */
+/*.ecms-main-content-wrapper,
+.content-wrapper {
+    min-height: 100%;
+    overflow-x: hidden;
+}*/
+
+/* Admin hidden nav placeholder should not create extra vertical gap. */
+#_layouttask.nav-hide-for-admin,
+.nav-hide-for-admin {
+    min-height: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: transparent !important;
 }
 
+/* Row 3: fixed bottom footer. */
+.ecms-main-footer-row,
+.ecms-app-footer {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--ecms-footer-height);
+    min-height: var(--ecms-footer-height);
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 1040;
+    overflow: hidden;
+}
+
+/* Footer content uses Bootstrap flex in markup; this only applies ECMS color/height. */
+.ecms-footer-content {
+    width: 100%;
+    height: var(--ecms-footer-height);
+    margin: 0 !important;
+    padding: 0 .5rem !important;
+    background: #003060 !important;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+}
+
+    .ecms-footer-content .container-fluid,
+    .ecms-footer-content .row,
+    .ecms-footer-content .col-12 {
+        height: 100%;
+    }
+
+/* Left invisible footer spacer used to keep copyright center aligned. */
+.footer-placeholder {
+    width: 20%;
+    min-width: 20%;
+}
+
+/* Footer visitor count text. */
+.ecms-footer-content .text-end span {
+    font-size: .9rem;
+    white-space: nowrap;
+}
+
+/*
+=====================================================
+Legacy compatibility utilities
+These are kept because older pages may still reference them.
+Do not add new page design rules here.
+=====================================================
+*/
 
 .watermark {
     position: fixed;
     top: 47%;
     left: 50%;
     transform: translate(-50%, -50%);
-    opacity: 0.1;
+    opacity: .1;
     z-index: 1000;
     pointer-events: none;
     text-align: center;
@@ -226,7 +168,7 @@ footer .text-end span {
     top: 50%;
     left: 12%;
     transform: translate(-25%, -20%) rotate(-45deg);
-    opacity: 0.6;
+    opacity: .6;
     z-index: 1000;
     pointer-events: none;
     text-align: left;
@@ -238,7 +180,7 @@ footer .text-end span {
     top: 50%;
     right: 12%;
     transform: translate(-25%, -20%) rotate(-45deg);
-    opacity: 0.4;
+    opacity: .4;
     z-index: 1000;
     pointer-events: none;
     text-align: right;
@@ -246,46 +188,69 @@ footer .text-end span {
 }
 
 .watermark img {
-    width: 150px;
-}
-
-.watermark h4, .watermark span {
-    margin: 0;
-    font-size: 14px;
-    color: rgba(50, 50, 50, 0.8);
-}
-
-.watermark img {
     width: 700px;
     height: 700px;
 }
-.footer-placeholder {
-    width: 20%;
+
+.watermark h4,
+.watermark span {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(50, 50, 50, .8);
 }
+
 .mt--20 {
     margin-top: -20px;
 }
+
 .signature-box {
-    background-color: white;
+    background-color: #ffffff;
 }
+
 .identification-mark {
     line-height: 1;
 }
+
 .line-zero {
     line-height: 0 !important;
 }
+
+    .line-zero p {
+        text-align: left;
+    }
+
+        .line-zero p span {
+            float: right;
+        }
+
 .modal-history {
     width: 500px !important;
 }
+
 .full-width {
     width: 100%;
 }
+
+.width-auto {
+    width: auto;
+}
+
 .card-body-min-height {
     min-height: 150px;
 }
+
 .textarea-auto-height {
     height: auto !important;
 }
+
+.unit-label-background {
+    background-color: #e9ecef;
+    max-width: 300px;
+    min-width: 300px;
+    height: 45px;
+}
+
+/* Search Army No modal autocomplete compatibility. */
 #unitoffrsModal #suggesstion-box {
     position: relative;
 }
@@ -293,27 +258,89 @@ footer .text-end span {
 #unitoffrsModal .ui-autocomplete {
     max-width: 100% !important;
     overflow-x: hidden !important;
-    z-index: 1060; /* above modal body */
+    z-index: 1086;
 }
 
 #unitoffrsModal .ui-menu-item-wrapper {
-    white-space: nowrap !important; /* keep in one line */
+    white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    display: block; /* needed for ellipsis */
+    display: block;
 }
 
-.line-zero p {
-    text-align: left;
+/* Loader compatibility. */
+#loading.loader {
+    z-index: 2000;
 }
 
-    .line-zero p span {
-        float: right;
+/*
+=====================================================
+Responsive layout adjustments
+Bootstrap handles page grids; these rules only adjust shell/footer.
+=====================================================
+*/
+
+@media (max-width: 991.98px) {
+    :root {
+        --ecms-header-height: 116px;
+        --ecms-footer-height: 34px;
+    }
+
+    .footer-placeholder {
+        width: 5%;
+        min-width: 5%;
+    }
+
+    .ecms-footer-content {
+        padding-inline: .35rem !important;
+    }
+
+        .ecms-footer-content .text-end span {
+            font-size: .75rem;
+        }
+}
+
+@media (max-width: 575.98px) {
+    body.ecms-fixed-shell,
+    body.ecms-main-layout-body {
+        overflow: hidden !important;
+    }
+
+    .ecms-footer-content .d-flex {
+        gap: .35rem;
+    }
+
+    .ecms-footer-content .flex-grow-1 {
+        font-size: .75rem;
+        line-height: 1.1;
+    }
+
+    .ecms-footer-content .text-end {
+        font-size: .7rem;
+        white-space: nowrap;
     }
 }
-.width-auto {
-    width: auto;
-}
-.mt-initiate {
-    margin-top: 3.5rem !important;
+
+/* Print: remove fixed shell behavior. */
+@media print {
+    body.ecms-fixed-shell,
+    body.ecms-main-layout-body {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .ecms-main-header-row,
+    .ecms-main-footer-row,
+    .ecms-app-header,
+    .ecms-app-footer {
+        display: none !important;
+    }
+
+    .ecms-main-render-row,
+    .ecms-app-main {
+        position: static !important;
+        top: auto !important;
+        bottom: auto !important;
+        overflow: visible !important;
+    }
 }

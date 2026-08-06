@@ -1,14 +1,256 @@
-﻿.modal.left .modal-dialog, .modal.right .modal-dialog {
-    position: fixed;
-    margin: auto;
-    width: 700px;
-    height: 100%;
-    text-align: left;
-    -webkit-transform: translate3d(0%, 0, 0);
-    -ms-transform: translate3d(0%, 0, 0);
-    -o-transform: translate3d(0%, 0, 0);
-    transform: translate3d(0%, 0, 0);
+﻿/*
+=====================================================
+Basic Detail / Application List
+PAGE-SPECIFIC PLACEMENT ONLY
+
+Common design comes from:
+- ModernCSS/css/ecms.02.pages.css
+- ModernCSS/css/ecms.04.buttons-badges.css
+- ModernCSS/css/ecms.05.datatables.css
+- ModernCSS/css/ecms.06.modals.css
+- ModernCSS/css/ecms.07.utilities.css
+
+No ModernCSS file is changed.
+=====================================================
+*/
+
+/*
+This page includes the common header, three-tab navigation,
+breadcrumb and fixed footer. Keep the application card inside
+the remaining viewport and prevent the layout container from
+creating an outer vertical scrollbar.
+*/
+body.ecms-basic-index-page-active,
+body.ecms-basic-index-page-active .ecms-app-main {
+    overflow: hidden !important;
 }
-.card-body-min-height {
-    min-height: 150px;
+
+.ecms-basic-index-page {
+    max-width: none;
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1rem );
+    min-height: 0;
+    margin: .5rem auto 0;
+    padding-inline: 0;
+    overflow: hidden;
+}
+
+.ecms-basic-index-shell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-basic-index-shell > .ecms-card-body {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        padding: .7rem;
+        gap: .55rem;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+/* Common page-title appearance with page-specific compact sizing. */
+.ecms-basic-index-titlebar {
+    flex: 0 0 auto;
+    min-height: var(--ecms-title-height, 58px);
+    gap: .75rem;
+}
+
+    .ecms-basic-index-titlebar h3 {
+        margin: 0;
+        font-size: 1.18rem;
+        line-height: 1.15;
+    }
+
+.ecms-basic-index-pill {
+    min-height: 2rem;
+    padding: .45rem .8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .42rem;
+    font-size: .68rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* The common ECMS section occupies the remaining card height. */
+.ecms-basic-index-table-section {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+    .ecms-basic-index-table-section > .ecms-section-title {
+        flex: 0 0 auto;
+        min-height: 2.1rem;
+        padding-block: .42rem;
+        font-size: .82rem;
+        line-height: 1;
+    }
+
+/*
+Use the same common DataTable wrapper as Div/Bde.
+Only the wide-table sizing exception below is page-specific.
+*/
+.ecms-basic-index-table-wrap {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.ecms-basic-index-page #tbldatatabledata_Fwd_wrapper {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/*
+The application table has eleven columns whose configured widths
+total about 1400px. Keep that minimum width inside the table scroll
+area so columns remain horizontal instead of compressing or stacking.
+*/
+.ecms-basic-index-page .ecms-dt-wrap .dataTables_scrollHeadInner,
+.ecms-basic-index-page .ecms-dt-wrap .dataTables_scrollHeadInner table,
+.ecms-basic-index-page .ecms-dt-wrap .dataTables_scrollBody table,
+.ecms-basic-index-page .ecms-dt-wrap .dt-scroll-headInner,
+.ecms-basic-index-page .ecms-dt-wrap .dt-scroll-headInner table,
+.ecms-basic-index-page .ecms-dt-wrap .dt-scroll-body table {
+    width: 100% !important;
+    min-width: 1400px !important;
+}
+
+    /*
+The current common .ecms-dt-wrap rule hides this sizing THEAD with
+display:none. This table needs it during DataTables width calculation.
+Restore its table display while the existing page JavaScript keeps it
+at zero visual height, preventing a duplicate header row.
+*/
+    .ecms-basic-index-page .ecms-dt-wrap .dataTables_scrollBody table.dataTable > thead,
+    .ecms-basic-index-page .ecms-dt-wrap .dt-scroll-body table.dataTable > thead {
+        display: table-header-group !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        max-height: 0 !important;
+    }
+
+        .ecms-basic-index-page .ecms-dt-wrap .dataTables_scrollBody table.dataTable > thead > tr,
+        .ecms-basic-index-page .ecms-dt-wrap .dt-scroll-body table.dataTable > thead > tr,
+        .ecms-basic-index-page .ecms-dt-wrap .dataTables_scrollBody table.dataTable > thead > tr > th,
+        .ecms-basic-index-page .ecms-dt-wrap .dataTables_scrollBody table.dataTable > thead > tr > td,
+        .ecms-basic-index-page .ecms-dt-wrap .dt-scroll-body table.dataTable > thead > tr > th,
+        .ecms-basic-index-page .ecms-dt-wrap .dt-scroll-body table.dataTable > thead > tr > td {
+            height: 0 !important;
+            min-height: 0 !important;
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            border: 0 !important;
+            line-height: 0 !important;
+            font-size: 0 !important;
+            color: transparent !important;
+            background: transparent !important;
+            visibility: hidden !important;
+            overflow: hidden !important;
+        }
+
+/* Fill the available section height; scroll only inside the table body. */
+.ecms-basic-index-page .ecms-dt-wrap .dataTables_scroll,
+.ecms-basic-index-page .ecms-dt-wrap .dt-scroll {
+    height: 100%;
+    min-height: 0;
+}
+
+.ecms-basic-index-page .ecms-dt-wrap .dataTables_scrollBody,
+.ecms-basic-index-page .ecms-dt-wrap .dt-scroll-body {
+    height: 100% !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+    padding-bottom: 0;
+}
+
+/* Match the search width used on the other modernized master pages. */
+.ecms-basic-index-page .dataTables_filter input,
+.ecms-basic-index-page .dt-search input {
+    width: 14rem;
+    max-width: 100%;
+}
+
+/* No visible export button group is required in the toolbar. */
+.ecms-basic-index-page .dt-buttons {
+    display: none !important;
+}
+
+/* Keep empty data state centred without enlarging the row. */
+.ecms-basic-index-page td.dataTables_empty,
+.ecms-basic-index-page td.dt-empty {
+    height: 7rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Remove icon-library margins inside common square action buttons. */
+.ecms-basic-index-page .btn-icon i,
+.ecms-basic-index-page .btn-action i,
+.ecms-basic-index-page .ecms-action-btn i {
+    margin: 0 !important;
+}
+
+/* Common modal design remains active after JS moves dialogs under body. */
+body.ecms-basic-index-page-active .modal.show .modal-dialog,
+body.ecms-basic-index-page-active .modal.show .modal-content {
+    opacity: 1 !important;
+    visibility: visible !important;
+    filter: none !important;
+    pointer-events: auto !important;
+}
+
+@media (max-width: 991.98px) {
+    body.ecms-basic-index-page-active,
+    body.ecms-basic-index-page-active .ecms-app-main {
+        overflow: auto !important;
+    }
+
+    .ecms-basic-index-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 44rem;
+        overflow: visible;
+    }
+
+    .ecms-basic-index-shell,
+    .ecms-basic-index-shell > .ecms-card-body {
+        height: auto;
+        min-height: 44rem;
+        overflow: visible;
+    }
+
+    .ecms-basic-index-table-section {
+        min-height: 30rem;
+    }
+
+    .ecms-basic-index-page .ecms-dt-toolbar,
+    .ecms-basic-index-page .ecms-dt-footer {
+        row-gap: .45rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-basic-index-titlebar {
+        align-items: flex-start !important;
+        flex-direction: column;
+    }
+
+    .ecms-basic-index-pill {
+        width: 100%;
+        justify-content: center;
+    }
 }

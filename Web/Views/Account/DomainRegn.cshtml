@@ -2,66 +2,400 @@
     ViewData["Title"] = "Domain Regn";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link asp-href-include="~/developercss/domainregn.css" rel="stylesheet" />
+
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<link asp-href-include="~/developercss/domainregn.css" rel="stylesheet" />
+
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a> > Domain Registration
-
+                        <span class="page-header-icon"><i class="fa fa-bars"></i></span>
+                        <a href="/Master/DashboardMaster" class="mr-2">Dashboard</a>
+                        <span class="mx-1">&gt;</span>
+                        <span>Domain Registration</span>
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Domain Registration Details
-                        <small class="text-muted"></small>
-                    </h3>
-                </div>
-            </div>
-        </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row">
-                <div class="col-xl-6">
-                </div>
-                <div class="col-xl-6">
-                    <div class="d-flex d-md-flex justify-content-md-between align-items-md-center">
-                        <h6 class="mb-3 mb-md-0">
-                            &nbsp;
-                        </h6>
-                        <div class="d-flex">
-                            <div>
-                                <button type="button" id="btnDomainAdd" class="btn btn-outline-success font-weight-600 btn-md ml-4"><i class="fa fa-plus mr-1 font-weight-700" ></i>Add Domain</button>
-                            </div>
-                        </div>
+
+<div class="ecms-screen-stage ecms-bg">
+    <main class="ecms-page ecms-page-full ecms-fit-screen ecms-domainregn-page">
+        <section class="ecms-card ecms-domainregn-shell">
+            <div class="ecms-page-title ecms-domain-title-row">
+                <div class="ecms-domain-title-content">
+                    <span class="ecms-title-icon" aria-hidden="true">
+                        <i class="fa fa-key"></i>
+                    </span>
+                    <div class="ecms-domain-title-copy">
+                        <h3>Domain Registration Details</h3>
+                        <p class="ecms-title-subtitle">Create, update and manage domain ID, claims and user configuration</p>
                     </div>
                 </div>
-                <div class="d-flex mt-1 mb-1">
-                    <button class="count-label" id="btnUser" name="btnUser">Total Users <br /><span id="lblUser">0</span></button>
-                    <button class="count-label" id="btnMappedUser" name="btnMappedUser">Mapped <br /><span id="lblMappedUser">0</span></button>
-                    <button class="count-label" id="btnUnMappedUser" name="btnUnMappedUser">Not Mapped <br /><span id="lblUnMappedUser">0</span></button>
-                    <button class="count-label" id="btnActiveUser" name="btnActiveUser">Active <br /><span id="lblActiveUser">0</span></button>
-                    <button class="count-label" id="btnInActiveUser" name="btnActiveUser">Inactive <br /><span id="lblInActiveUser">0</span></button>
-                    <button class="count-label" id="btnVerified" name="btnVerified">Verified <br /><span id="lblVerifiedUser">0</span></button>
-                    <button class="count-label" id="btnNotVerifiedUser" name="btnNotVerifiedUser">Not Verified <br /><span id="lblNotVerifiedUser">0</span></button>
+
+                <button type="button" id="btnDomainAdd" class="btn btn-success ecms-btn-success ecms-domain-add-btn">
+                    <i class="fa fa-plus mr-1"></i>
+                    Add Domain
+                </button>
+            </div>
+
+            <section class="ecms-domain-stats" aria-label="Domain registration summary">
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnUser" name="btnUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-users"></i></span>
+                    <span class="ecms-stat-title">Total Users</span>
+                    <span class="ecms-stat-count" id="lblUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnMappedUser" name="btnMappedUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-link"></i></span>
+                    <span class="ecms-stat-title">Mapped</span>
+                    <span class="ecms-stat-count" id="lblMappedUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnUnMappedUser" name="btnUnMappedUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-unlink"></i></span>
+                    <span class="ecms-stat-title">Not Mapped</span>
+                    <span class="ecms-stat-count" id="lblUnMappedUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnActiveUser" name="btnActiveUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-check-circle"></i></span>
+                    <span class="ecms-stat-title">Active</span>
+                    <span class="ecms-stat-count" id="lblActiveUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnInActiveUser" name="btnActiveUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-times-circle"></i></span>
+                    <span class="ecms-stat-title">Inactive</span>
+                    <span class="ecms-stat-count" id="lblInActiveUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnVerified" name="btnVerified">
+                    <span class="ecms-stat-icon"><i class="fa fa-shield-alt"></i></span>
+                    <span class="ecms-stat-title">Verified</span>
+                    <span class="ecms-stat-count" id="lblVerifiedUser">0</span>
+                </button>
+
+                <button type="button" class="ecms-tile ecms-stat-card" id="btnNotVerifiedUser" name="btnNotVerifiedUser">
+                    <span class="ecms-stat-icon"><i class="fa fa-exclamation-circle"></i></span>
+                    <span class="ecms-stat-title">Not Verified</span>
+                    <span class="ecms-stat-count" id="lblNotVerifiedUser">0</span>
+                </button>
+            </section>
+
+            <section class="ecms-section ecms-domain-table-section">
+                <h2 class="ecms-section-title">
+                    <i class="fa fa-table" aria-hidden="true"></i>
+                    Domain Registration Records
+                </h2>
+
+                <div class="ecms-dt-wrap ecms-domain-table-wrap">
+                    <span id="SpnTxnId" class="d-none">0</span>
+                    <table id="tbldata"
+                           class="table table-striped table-hover ecms-dt-table"
+                           role="grid"
+                           aria-label="Domain registration records"></table>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+
+<div class="modal fade ecms-domain-modal"
+     id="AddNewDomain"
+     tabindex="-1"
+     aria-labelledby="addDomainModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ecms-modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="ecms-modal-heading">
+                    <span class="ecms-modal-title-icon" aria-hidden="true"><i class="fa fa-key"></i></span>
+                    <div class="ecms-min-0">
+                        <h5 class="modal-title" id="addDomainModalTitle">Enter Domain Details</h5>
+                        <p class="ecms-modal-subtitle">Fill domain, role, claims, appointment and unit mapping details</p>
+                    </div>
                 </div>
 
-                <table class="table table-striped table-hover border border-purple" role="grid" id="tbldata">
-                </table>
+                <button type="button"
+                        class="close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                        title="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+
+            <div class="modal-body">
+                <form action="" id="SaveDomain" name="SaveDomain" method="post">
+                    <div class="ecms-form-grid">
+                        <div class="ecms-form-field">
+                            <label class="ecms-form-label" for="txtDomainId">
+                                <span><i class="fa fa-id-card"></i></span>
+                                Domain ID<i class="fas fa-asterisk mand1"></i>
+                            </label>
+                            <input class="form-control-domainId"
+                                   placeholder="Enter Domain ID"
+                                   id="txtDomainId"
+                                   name="txtDomainId"
+                                   maxlength="20"
+                                   data-val="true"
+                                   data-val-regex="This special chars and space not allowed for security reasons."
+                                   data-val-required="Domain Id is required."
+                                   data-val-regex-pattern="^[\w]+$" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtDomainId" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-form-field">
+                            <label class="ecms-form-label" for="ddlRoles">
+                                <span><i class="fa fa-user-tag"></i></span>
+                                Role<i class="fas fa-asterisk mand1"></i>
+                            </label>
+                            <select class="form-select"
+                                    multiple="multiple"
+                                    name="ddlRoles"
+                                    id="ddlRoles"
+                                    data-val="true"
+                                    data-val-regex="This special chars and space not allowed for security reasons."
+                                    data-val-required="Role is required."></select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlRoles" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-form-field">
+                            <label class="ecms-form-label" for="ddClaims">
+                                <span><i class="fa fa-list-check"></i></span>
+                                Assign Claims
+                            </label>
+                            <select class="form-select"
+                                    multiple="multiple"
+                                    name="ddClaims"
+                                    id="ddClaims"
+                                    data-val="true"
+                                    data-val-regex="This special chars and space not allowed for security reasons."></select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="ddClaims" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-form-field">
+                            <label class="ecms-form-label" for="txtAppointmentName">
+                                <span><i class="fa fa-briefcase"></i></span>
+                                Appointment<i class="fas fa-asterisk mand1"></i>
+                            </label>
+                            <input class="form-control alpha-num-only"
+                                   placeholder="Type Appointment"
+                                   id="txtAppointmentName"
+                                   name="txtAppointmentName"
+                                   data-val="true"
+                                   data-val-regex="This special chars not allowed for security reasons."
+                                   data-val-required="Appointment Name is required."
+                                   data-val-regex-pattern="^[\w \& \()]*$" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointmentName" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-form-field">
+                            <label class="ecms-form-label" for="txtUnitName">
+                                <span><i class="fa fa-building"></i></span>
+                                Unit Name<i class="fas fa-asterisk mand1"></i>
+                            </label>
+                            <input class="form-control alpha-num-only"
+                                   placeholder="Type SUS No"
+                                   id="txtUnitName"
+                                   name="txtUnitName"
+                                   data-val="true"
+                                   data-val-regex="This special chars not allowed for security reasons."
+                                   data-val-required="Unit Name is required."
+                                   data-val-regex-pattern="^[\w ]*$" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-form-field">
+                            <label class="ecms-form-label">
+                                <span><i class="fa fa-hashtag"></i></span>
+                                SUS No
+                            </label>
+                            <label id="lblSusno" class="col-form-label unit-label-background"></label>
+                        </div>
+
+                        <div id="lbl1" class="ecms-form-field d-none">
+                            <label class="ecms-form-label"><span><i class="fa fa-sitemap"></i></span>PSO / Dte</label>
+                            <label class="col-form-label unit-label-background" id="lblPso"></label>
+                        </div>
+
+                        <div id="lbl2" class="ecms-form-field d-none">
+                            <label class="ecms-form-label"><span><i class="fa fa-sitemap"></i></span>DG / Sub Dte</label>
+                            <label class="col-form-label unit-label-background" id="lblDG"></label>
+                        </div>
+
+                        <div id="lbl3" class="ecms-form-field d-none">
+                            <label class="ecms-form-label"><span><i class="fa fa-sitemap"></i></span>Comd / PSO</label>
+                            <label class="col-form-label unit-label-background" id="lblComd"></label>
+                        </div>
+
+                        <div id="lbl4" class="ecms-form-field d-none">
+                            <label class="ecms-form-label"><span><i class="fa fa-sitemap"></i></span>Corps / Dte / Area</label>
+                            <label class="col-form-label unit-label-background" id="lblCorps"></label>
+                        </div>
+
+                        <div id="lbl5" class="ecms-form-field d-none">
+                            <label class="ecms-form-label"><span><i class="fa fa-sitemap"></i></span>Div / Branch / Sub Area</label>
+                            <label class="col-form-label unit-label-background" id="lblDiv"></label>
+                        </div>
+
+                        <div id="lbl6" class="ecms-form-field d-none">
+                            <label class="ecms-form-label"><span><i class="fa fa-sitemap"></i></span>Bde</label>
+                            <label class="col-form-label unit-label-background" id="lblBde"></label>
+                        </div>
+
+                        <div id="lbl7" class="ecms-form-field d-none">
+                            <label class="ecms-form-label"><span><i class="fa fa-sitemap"></i></span>Type of Fmn / Branch</label>
+                            <label class="col-form-label unit-label-background" id="lblFmn"></label>
+                        </div>
+                    </div>
+
+                    <div class="ecms-radio-grid">
+                        <div class="ecms-radio-card">
+                            <label class="ecms-radio-title">Approval<i class="fas fa-asterisk mand1"></i></label>
+                            <div class="ecms-radio-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyes" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="txtapprovalyes">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtapproval" value="false" id="txtapprovalno" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="txtapprovalno">No</label>
+                                </div>
+                            </div>
+                            <span class="text-danger field-validation-valid" id="txtapproval-error"></span>
+                        </div>
+
+                        <div class="ecms-radio-card">
+                            <label class="ecms-radio-title">Active<i class="fas fa-asterisk mand1"></i></label>
+                            <div class="ecms-radio-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyes" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="txtactiveyes">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="txtactive" value="false" id="txtactiveno" data-val="true" data-val-regex-pattern="^[\w]*$">
+                                    <label class="form-check-label" for="txtactiveno">No</label>
+                                </div>
+                            </div>
+                            <span class="text-danger field-validation-valid" id="txtactive-error"></span>
+                        </div>
+
+                        <div class="ecms-radio-card">
+                            <label class="ecms-radio-title">Are you performing the Duties of OC / CO / OC Tps?<i class="fas fa-asterisk mand1"></i></label>
+                            <div class="ecms-radio-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="InitatingOffr" value="true" id="initatingOffryes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                    <label class="form-check-label" for="initatingOffryes">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="InitatingOffr" value="false" id="initatingOffrno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                    <label class="form-check-label" for="initatingOffrno">No</label>
+                                </div>
+                            </div>
+                            <span class="text-danger field-validation-valid" id="InitatingOffr-error" data-valmsg-for="InitatingOffr" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="ecms-radio-card">
+                            <label class="ecms-radio-title">Are you Commanding a Unit/ Sub Unit/ Fmn / Dte?<i class="fas fa-asterisk mand1"></i></label>
+                            <div class="ecms-radio-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="CommandingOffr" value="true" id="commandingOffryes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                    <label class="form-check-label" for="commandingOffryes">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="CommandingOffr" value="false" id="commandingOffrno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
+                                    <label class="form-check-label" for="commandingOffrno">No</label>
+                                </div>
+                            </div>
+                            <span class="text-danger field-validation-valid" id="CommandingOffr-error" data-valmsg-for="CommandingOffr" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="ecms-form-actions ecms-modal-actions">
+                        <input type="button" class="btn btn-primary ecms-btn-primary" value="Save" id="btnDomainAddDialog" />
+                        <button type="button" id="btnDomainAddReset" class="btn btn-danger ecms-btn-danger">Reset</button>
+                    </div>
+
+                    <div class="col-sm-12" id="msg"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade ecms-domain-dialog-modal"
+     id="DataTableDialog"
+     tabindex="-1"
+     aria-labelledby="domainUsersModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ecms-domain-users-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="ecms-modal-heading">
+                    <span class="ecms-modal-title-icon" aria-hidden="true"><i class="fa fa-users"></i></span>
+                    <div class="ecms-min-0">
+                        <h5 class="modal-title" id="domainUsersModalTitle"><span id="lblModelTitle"></span></h5>
+                        <p class="ecms-modal-subtitle">Domain user list by selected category</p>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                        title="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="ecms-dt-wrap ecms-domain-dialog-table-wrap">
+                    <table id="tbldatadialog"
+                           class="table table-striped table-hover ecms-dt-table"
+                           role="grid"
+                           aria-label="Domain users"></table>
+                </div>
+                <div class="col-sm-12" id="msg"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade ecms-claims-show-modal"
+     id="ClaimsShow"
+     tabindex="-1"
+     aria-labelledby="claimsShowModalTitle"
+     aria-hidden="true"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered ecms-claims-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="ecms-modal-heading">
+                    <span class="ecms-modal-title-icon" aria-hidden="true"><i class="fa fa-list"></i></span>
+                    <div class="ecms-min-0">
+                        <h6 class="modal-title" id="claimsShowModalTitle">
+                            Claims Details of Domain Id (<span id="claimDomainId"></span>)
+                        </h6>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div id="ClaimsShowBody" class="modal-body"></div>
         </div>
     </div>
 </div>
@@ -69,226 +403,4 @@
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/domainregn.js"></script>
 <script asp-src-include="~/select2/js/select2.min.js"></script>
-
 <partial name="~/Views/Shared/_DataTableJS.cshtml" />
-
-<div class="modal fade" id="AddNewDomain" tabindex="-1" aria-labelledby="exampleModalLabel" >
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Enter Domain Details</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <form action="" id="SaveDomain" name="SaveDomain" method="post">
-                        <div class="row">
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Domain ID<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <input class="form-control-domainId" placeholder="Enter Domain ID" id="txtDomainId" name="txtDomainId" maxlength="20" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Domain Id is required." data-val-regex-pattern="^[\w]+$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtDomainId" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Role<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select" multiple="" placeholder="Select Role" name="ddlRoles" id="ddlRoles" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Role is required.">
-                                    </select>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddlRoles" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Assign Claims</label>
-                                <div class="col-sm-8">
-                                    <select class="form-select" multiple="" placeholder="Select Claims" name="ddClaims" id="ddClaims" data-val="true" data-val-regex="This special chars and space not allowed for security reasons.">
-                                    </select>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="ddClaims" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Appointment<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <input class="form-control alpha-num-only" placeholder="Type Appointment" id="txtAppointmentName" name="txtAppointmentName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Appointment Name is required." data-val-regex-pattern="^[\w \& \()]*$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtAppointmentName" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Unit Name<i class="fas fa-asterisk mand1"></i></label>@* Unit Name *@
-                                <div class="col-sm-8">
-                                    <input class="form-control alpha-num-only" placeholder="Type SUS No" id="txtUnitName" name="txtUnitName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Unit Name is required." data-val-regex-pattern="^[\w ]*$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtUnitName" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">SUS No</label>
-                                <div class="col-sm-8">
-                                    <label id="lblSusno" class="col-form-label unit-label-background"></label>
-                                </div>
-                            </div>
-                            <div id="lbl1" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">PSO / Dte</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblPso"></label>
-                                </div>
-                            </div>
-                            <div id="lbl2" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">DG / Sub Dte</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblDG"></label>
-                                </div>
-                            </div>
-                            <div id="lbl3" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Comd / PSO</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblComd"></label>
-                                </div>
-                            </div>
-                            <div id="lbl4" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Corps / Dte / Area</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblCorps"></label>
-                                </div>
-                            </div>
-                            <div id="lbl5" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Div / Branch / Sub Area</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblDiv"></label>
-                                </div>
-                            </div>
-                            <div id="lbl6" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Bde</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblBde"></label>
-                                </div>
-                            </div>
-                            <div id="lbl7" class="row mb-2 d-none">
-                                <label class="col-form-label col-sm-4 fw-bold">Type of Fmn / Branch</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblFmn"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-9 fw-bold">Approval<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-3">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtapproval" value="true" id="txtapprovalyes" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtapprovalyes">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtapproval" value="false" id="txtapprovalno" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtapprovalno">
-                                            No
-                                        </label>
-                                    </div>
-                                    <span class="text-danger field-validation-valid" id="txtapproval-error"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-9 fw-bold">Active<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-3">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtactive" value="true" id="txtactiveyes" data-val="true" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtactiveyes">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="txtactive" value="false" id="txtactiveno" data-val="true" data-val-regex-pattern="^[\w]*$">
-                                        <label class="form-check-label" for="txtactiveno">
-                                            No
-                                        </label>
-                                    </div>
-                                    <span class="text-danger field-validation-valid" id="txtactive-error"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-9 fw-bold">Are you performing the Duties of OC / CO / OC Tps?<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-3">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="InitatingOffr" value="true" id="initatingOffryes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                        <label class="form-check-label" for="initatingOffryes">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="InitatingOffr" value="false" id="initatingOffrno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                        <label class="form-check-label" for="initatingOffrno">
-                                            No
-                                        </label>
-                                    </div>
-                                    <span class="text-danger field-validation-valid" id="InitatingOffr-error" data-valmsg-for="InitatingOffr" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-9 fw-bold">Are you Commanding a Unit/ Sub Unit/ Fmn / Dte?<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-3">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="CommandingOffr" value="true" id="commandingOffryes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                        <label class="form-check-label" for="commandingOffryes">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="CommandingOffr" value="false" id="commandingOffrno" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                        <label class="form-check-label" for="commandingOffrno">
-                                            No
-                                        </label>
-                                    </div>
-                                    <span class="text-danger field-validation-valid" id="CommandingOffr-error" data-valmsg-for="CommandingOffr" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                           
-                            <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnDomainAddDialog" />
-                                <button type="button" id="btnDomainAddReset" class="btn btn-outline-danger">Reset</button>
-                            </div>
-                            <div class="col-sm-12" id="msg">
-                            </div>
-                        </div>
-                    </form>
-
-                    <div class="col-sm-12" id="msg">
-                    </div>
-                </div>
-            </div>
-
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
-
-<div class="modal fade" id="DataTableDialog" tabindex="-1" aria-labelledby="exampleModalLabel" >
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel"><span id="lblModelTitle"></span></h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatadialog">
-                    </table>
-
-                </div>
-                <div class="col-sm-12" id="msg">
-                </div>
-            </div>
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>
-<div class="modal fade" id="ClaimsShow" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" id="exampleModalLabel">Claims Details of Domain Id (<span id="claimDomainId"></span>)</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div id="ClaimsShowBody" class="modal-body">
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div>

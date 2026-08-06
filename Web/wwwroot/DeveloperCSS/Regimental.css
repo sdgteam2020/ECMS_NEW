@@ -1,3 +1,219 @@
-﻿#tbldata {
-    table-layout: fixed !important;
+﻿/* =====================================================
+   Regimental Centre page
+   Page-specific layout only. Shared colors, controls,
+   buttons, DataTables and modal skin come from ECMS theme.
+===================================================== */
+
+.ecms-regimental-page {
+    --ecms-regimental-scroll-height: clamp(15rem, calc(100vh - 31rem), 28rem);
+    height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-height) - var(--ecms-breadcrumb-height) - var(--ecms-footer-height) - 1rem );
+    min-height: 0;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
 }
+
+.ecms-regimental-shell,
+.ecms-regimental-shell-body,
+.ecms-regimental-records,
+.ecms-regimental-table-wrap {
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-regimental-shell {
+    height: 100%;
+}
+
+.ecms-regimental-shell-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.ecms-regimental-add-btn {
+    min-height: 2.15rem;
+    padding-inline: .9rem;
+    white-space: nowrap;
+}
+
+.ecms-regimental-records {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ecms-regimental-table-wrap {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding-inline: .7rem;
+    padding-bottom: .65rem;
+}
+
+    .ecms-regimental-table-wrap .dataTables_wrapper,
+    .ecms-regimental-table-wrap .dt-container {
+        flex: 1 1 auto;
+    }
+
+.ecms-regimental-page .dataTables_scrollBody,
+.ecms-regimental-page .dt-scroll-body {
+    height: var(--ecms-regimental-scroll-height) !important;
+    max-height: var(--ecms-regimental-scroll-height) !important;
+    min-height: 12rem !important;
+}
+
+    .ecms-regimental-page table#tbldata,
+    .ecms-regimental-page .dataTables_scrollHeadInner,
+    .ecms-regimental-page .dataTables_scrollHeadInner table,
+    .ecms-regimental-page .dataTables_scrollBody table,
+    .ecms-regimental-page .dt-scroll-headInner,
+    .ecms-regimental-page .dt-scroll-headInner table,
+    .ecms-regimental-page .dt-scroll-body table {
+        width: 100% !important;
+    }
+
+        .ecms-regimental-page table#tbldata,
+        .ecms-regimental-page .dataTables_scrollHeadInner table,
+        .ecms-regimental-page .dataTables_scrollBody table {
+            table-layout: fixed !important;
+        }
+
+.ecms-regimental-page .col-sno {
+    width: 4.5rem !important;
+}
+
+.ecms-regimental-page .col-action {
+    width: 7.5rem !important;
+    white-space: nowrap !important;
+}
+
+.ecms-regimental-page .cls-btnedit,
+.ecms-regimental-page .cls-btnDelete {
+    margin-inline: .2rem;
+}
+
+.ecms-regimental-page table.dataTable tbody tr {
+    transition: background-color .16s ease;
+}
+
+    .ecms-regimental-page table.dataTable tbody tr:hover {
+        background: rgba(220, 235, 255, .96);
+    }
+
+.ecms-regimental-location {
+    min-height: 4.25rem;
+    resize: vertical;
+}
+
+.ecms-regimental-message:empty {
+    display: none;
+}
+
+/* jQuery UI autocomplete must stay above the Bootstrap modal. */
+.ui-autocomplete {
+    z-index: 1090 !important;
+    max-height: 15rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: var(--ecms-radius-sm);
+    box-shadow: var(--ecms-shadow-md);
+}
+
+@media (max-height: 800px) and (min-width: 992px) {
+    .ecms-regimental-page {
+        --ecms-regimental-scroll-height: clamp(12rem, calc(100vh - 29rem), 22rem);
+    }
+
+    .ecms-regimental-shell-body {
+        gap: .45rem;
+        padding: .55rem;
+    }
+
+    .ecms-regimental-page .ecms-page-title {
+        min-height: 3.1rem;
+        padding-block: .45rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    body {
+        overflow-y: auto;
+    }
+
+    .ecms-regimental-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: calc(100vh - var(--ecms-footer-height) - 1rem);
+        margin-top: .4rem;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem);
+    }
+
+    .ecms-regimental-shell {
+        height: auto;
+    }
+
+    .ecms-regimental-records {
+        min-height: 30rem;
+    }
+
+    .ecms-regimental-page .dataTables_scrollBody,
+    .ecms-regimental-page .dt-scroll-body {
+        height: 20rem !important;
+        max-height: 20rem !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ecms-regimental-page .ecms-page-title {
+        align-items: stretch !important;
+    }
+
+    .ecms-regimental-add-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ecms-regimental-table-wrap {
+        padding-inline: .4rem;
+    }
+}
+
+/* =====================================================
+   Regimental modal stacking fix (page scoped)
+   The global ECMS theme is intentionally not modified.
+===================================================== */
+#AddNewRegimental.modal {
+    z-index: 2000 !important;
+}
+
+    #AddNewRegimental.modal .modal-dialog {
+        position: relative;
+        z-index: 2001 !important;
+    }
+
+    #AddNewRegimental.modal.show,
+    #AddNewRegimental.modal.show .modal-dialog,
+    #AddNewRegimental.modal.show .modal-content,
+    #AddNewRegimental.modal.show .modal-header,
+    #AddNewRegimental.modal.show .modal-body,
+    #AddNewRegimental.modal.show .modal-footer {
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+/* This CSS file loads only on the Regimental page. */
+body > .modal-backdrop {
+    z-index: 1990 !important;
+    background-color: #020b1e !important;
+}
+
+    body > .modal-backdrop.show {
+        opacity: .58 !important;
+    }
+
+    body > .modal-backdrop.ecms-regimental-manual-backdrop {
+        z-index: 1990 !important;
+    }

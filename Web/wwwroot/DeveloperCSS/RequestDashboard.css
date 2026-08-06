@@ -1,5 +1,268 @@
-﻿.clickable {
-    height: 190px;
-    width: 190px;
-    display: block;
+﻿/* =====================================================
+   ECMS Request Dashboard Modern UI
+   Only page UI changes. Header/footer/layout untouched.
+===================================================== */
+
+:root {
+    --ecms-req-blue-1: #102f73;
+    --ecms-req-blue-2: #2f7dff;
+    --ecms-req-cyan: #55d7ff;
+    --ecms-req-green: #31c48d;
+    --ecms-req-orange: #f59e0b;
+    --ecms-req-ink: #071b44;
+    --ecms-req-muted: #5d739c;
+    --ecms-req-panel: rgba(232, 244, 255, 0.88);
+    --ecms-req-white: rgba(255,255,255,0.95);
+}
+
+html:has(.ecms-request-dashboard-page),
+body:has(.ecms-request-dashboard-page) {
+    overflow-y: hidden !important;
+}
+
+.ecms-request-dashboard-page {
+    position: relative;
+    min-height: calc(100vh - 255px);
+    height: calc(100vh - 255px);
+    padding: 12px 18px 46px;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(5, 22, 62, 0.86), rgba(20, 70, 154, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;
+}
+
+    .ecms-request-dashboard-page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 18% 20%, rgba(89, 200, 255, 0.14), transparent 26%), radial-gradient(circle at 84% 72%, rgba(59, 130, 246, 0.18), transparent 30%);
+    }
+
+.ecms-request-dashboard-container {
+    position: relative;
+    z-index: 1;
+    width: min(1180px, 96vw) !important;
+    max-width: 1180px !important;
+    margin: 0 auto !important;
+}
+
+.ecms-request-dashboard-shell {
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 12px !important;
+    border: 1px solid rgba(255,255,255,0.70) !important;
+    border-radius: 22px !important;
+    background: var(--ecms-req-panel) !important;
+    box-shadow: 0 22px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
+    overflow: visible !important;
+}
+
+.ecms-request-dashboard-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px 12px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,255,255,0.36));
+    border: 1px solid rgba(255,255,255,0.62);
+}
+
+.ecms-request-dashboard-heading-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1f7cff, #004bd6);
+    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.32);
+    font-size: 21px;
+}
+
+.ecms-request-dashboard-heading h2 {
+    margin: 0;
+    color: var(--ecms-req-ink);
+    font-size: 21px;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.ecms-request-dashboard-heading p {
+    margin: 4px 0 0;
+    color: var(--ecms-req-muted);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.ecms-request-dashboard-grid {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 30px;
+    padding: 18px 16px 20px;
+}
+
+.ecms-request-dashboard-item {
+    flex: 0 0 180px;
+    width: 180px;
+    max-width: 180px;
+}
+
+.ecms-request-dashboard-page .clickable {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 !important;
+    text-decoration: none !important;
+}
+
+.ecms-request-dashboard-page .counter,
+.ecms-request-dashboard-page .ecms-request-counter {
+    width: 100% !important;
+    height: 174px !important;
+    min-height: 174px !important;
+    padding: 18px 12px 14px !important;
+    border-radius: 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+    overflow: hidden !important;
+    background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(244, 249, 255,0.92)) !important;
+    border: 1px solid rgba(65, 136, 255, 0.50) !important;
+    box-shadow: 0 18px 38px rgba(0, 32, 85, 0.16), inset 0 1px 0 rgba(255,255,255,0.92) !important;
+    color: #0b2360 !important;
+    text-align: center !important;
+    cursor: pointer;
+    transition: all 0.22s ease !important;
+}
+
+    .ecms-request-dashboard-page .counter:hover,
+    .ecms-request-dashboard-page .ecms-request-counter:hover {
+        transform: translateY(-3px) !important;
+        border-color: rgba(31, 124, 255, 0.82) !important;
+        box-shadow: 0 24px 48px rgba(0, 45, 120, 0.24), 0 0 0 5px rgba(31, 124, 255, 0.10), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    }
+
+        .ecms-request-dashboard-page .counter-icon,
+        .ecms-request-dashboard-page .counter:hover .counter-icon {
+            width: 50px !important;
+            height: 50px !important;
+            min-width: 50px !important;
+            min-height: 50px !important;
+            max-width: 50px !important;
+            max-height: 50px !important;
+            margin: 0 0 4px 0 !important;
+            padding: 0 !important;
+            border-radius: 16px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #357cff, #1f4fd8) !important;
+            box-shadow: 0 14px 28px rgba(31, 99, 242, 0.32) !important;
+            flex: 0 0 50px !important;
+            transform: none !important;
+        }
+
+.ecms-request-dashboard-page #btnPostingInOffrs .counter-icon,
+.ecms-request-dashboard-page #btnPostingInJCO .counter-icon {
+    background: linear-gradient(135deg, #14b8a6, #0f766e) !important;
+}
+
+.ecms-request-dashboard-page #btnPostingOutOffrs .counter-icon,
+.ecms-request-dashboard-page #btnPostingOutJCO .counter-icon {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+}
+
+.ecms-request-dashboard-page .counter-icon i,
+.ecms-request-dashboard-page .counter:hover .counter-icon i {
+    color: #ffffff !important;
+    font-size: 22px !important;
+    line-height: 1 !important;
+    transform: none !important;
+}
+
+.ecms-request-dashboard-page .counter-value,
+.ecms-request-dashboard-page .counter:hover .counter-value {
+    display: block !important;
+    color: #071b44 !important;
+    font-size: 28px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    margin: 3px 0 6px 0 !important;
+    padding: 0 !important;
+    flex: 0 0 auto !important;
+}
+
+.ecms-request-dashboard-page .counter h3,
+.ecms-request-dashboard-page .counter-title,
+.ecms-request-dashboard-page .counter:hover h3 {
+    width: 100% !important;
+    min-height: 34px !important;
+    margin: 0 !important;
+    padding: 0 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #075de3 !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    line-height: 1.14 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+}
+
+@media (max-width: 991px) {
+    html:has(.ecms-request-dashboard-page),
+    body:has(.ecms-request-dashboard-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-request-dashboard-page {
+        height: auto !important;
+        min-height: calc(100vh - 255px) !important;
+        overflow: visible !important;
+        padding: 10px 10px 54px;
+    }
+
+    .ecms-request-dashboard-grid {
+        flex-wrap: wrap;
+        gap: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .ecms-request-dashboard-shell {
+        padding: 10px !important;
+        border-radius: 18px !important;
+    }
+
+    .ecms-request-dashboard-heading {
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+        .ecms-request-dashboard-heading h2 {
+            font-size: 18px;
+        }
+
+    .ecms-request-dashboard-item {
+        flex: 0 0 155px;
+        width: 155px;
+        max-width: 155px;
+    }
+
+    .ecms-request-dashboard-page .counter,
+    .ecms-request-dashboard-page .ecms-request-counter {
+        height: 164px !important;
+        min-height: 164px !important;
+    }
 }

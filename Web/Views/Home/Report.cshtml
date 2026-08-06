@@ -6,221 +6,255 @@
 }
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
 <link asp-href-include="~/developercss/report.css" rel="stylesheet" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/Dashboard" class="mr-2">Dashboard</a> >Report & Returns (Cards)
-
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <div>
+                            <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                            <a href="/Home/Dashboard" class="mr-2">Dashboard</a> &gt;
+                            Report &amp; Returns (Cards)
+                        </div>
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="row">
-        <div class="card">
-            @if (claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports" || i.Value == "Fmn Level Reports"))
-            {
-                <div class="row p-3">
-                    <div class="card  section_to_report_toPrint p-3" id="section_to_report_toPrint">
-                        <div class="row pt-1 SearchTab d-print-none">
-                            <div class="form-group row mb-2">
-                                <span id="spnclaimId" class="d-none">@(claims.Any(i => i.Value == "Army Level Reports") ? "Army Level Reports" : "Fmn Level Reports")</span>
-                                <label class="col-form-label col-md-2 fw-bold">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-md-10">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
-                                        <label class="form-check-label" for="UnitType1">Unit</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
-                                        <label class="form-check-label" for="UnitType2">
-                                            Unit(Fmn HQ)
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
-                                        <label class="form-check-label" for="UnitType3">Unit(Dte/Branch)</label>
+
+<main class="ecms-page ecms-fit-screen ecms-footer-safe ecms-card-report-page">
+    <section class="ecms-card ecms-card-report-shell">
+        <div class="ecms-card-body ecms-card-report-body">
+            <div class="ecms-page-title ecms-card-report-title d-flex align-items-center gap-3 d-print-none">
+                <div class="ecms-title-icon" aria-hidden="true">
+                    <i class="fa fa-credit-card"></i>
+                </div>
+                <div class="ecms-min-0">
+                    <h2>Report &amp; Returns (Cards)</h2>
+                    <p class="ecms-title-subtitle">Card requisition, lost case, monthly processed and non-functional card summary</p>
+                </div>
+            </div>
+
+            <div class="ecms-card-report-content ecms-scroll-y ecms-min-0">
+                @if (claims.Count > 0 && claims.Any(i => i.Value == "Army Level Reports" || i.Value == "Fmn Level Reports"))
+                {
+                    <section class="ecms-section ecms-card-filter-panel section_to_report_toPrint d-print-none"
+                             id="section_to_report_toPrint"
+                             aria-labelledby="reportFilterTitle">
+                        <h3 class="ecms-section-title" id="reportFilterTitle">
+                            <i class="fa fa-filter" aria-hidden="true"></i>
+                            <span>Report Filters</span>
+                        </h3>
+
+                        <div class="ecms-report-filter-body">
+                            <div class="row SearchTab">
+                                <div class="form-group row mb-2 ecms-unit-type-row">
+                                    <span id="spnclaimId" class="d-none">@(claims.Any(i => i.Value == "Army Level Reports") ? "Army Level Reports" : "Fmn Level Reports")</span>
+                                    <label class="col-form-label col-md-2">Select Unit Type <i class="fas fa-asterisk mand1"></i></label>
+                                    <div class="col-md-10 ecms-radio-group">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType1" value="1" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
+                                            <label class="form-check-label" for="UnitType1">Unit</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType2" value="2" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
+                                            <label class="form-check-label" for="UnitType2">Unit (Fmn HQ)</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="UnitTyperdi" id="UnitType3" value="3" @(claims.Any(i => i.Value == "Army Level Reports") ? "" : "disabled") />
+                                            <label class="form-check-label" for="UnitType3">Unit (Dte/Branch)</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row SearchTab">
-                            <div class="col-sm-3 unittype">
-                                <label class="col-form-label fw-bold">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
-                                <select class="form-select"  name="ddlCommand" required id="ddlCommand">
-                                    <option value="">All</option>
-                                </select>
 
-                            </div>
-                            <div class="col-sm-3 unittype">
-                                <label class="col-form-label fw-bold">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlCorps" required id="ddlCorps">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 unittype">
-                                <label class="col-form-label fw-bold">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlDiv" required id="ddlDiv">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 unittype">
-                                <label class="col-form-label fw-bold">Bde<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlBde" required id="ddlBde">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 FmnBranch  d-none">
-                                <label class="col-form-label fw-bold">Type of Fmn /Branch<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlFmnBranch" required id="ddlFmnBranch">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 DteBranch d-none">
-                                <label class="col-form-label fw-bold">PSO /Dte <i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlPSODte" required id="ddlPSODte">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3 DteBranch d-none">
-                                <label class="col-form-label fw-bold">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlDgSubDte" required id="ddlDgSubDte">
-                                    <option value="">All</option>
-                                </select>
-
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="col-form-label fw-bold">Unit<i class="fas fa-asterisk mand1"></i></label>
-
-                                <select class="form-select"  name="ddlUnit" required id="ddlUnit">
-                                    <option value="">All</option>
-                                </select>
-
+                            <div class="row SearchTab ecms-filter-grid">
+                                <div class="col-sm-6 col-lg-3 unittype">
+                                    <label class="col-form-label" for="ddlCommand">Comd / PSO<i class="fas fa-asterisk mand1"></i></label>
+                                    <select class="form-select" name="ddlCommand" required id="ddlCommand">
+                                        <option value="">All</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 col-lg-3 unittype">
+                                    <label class="col-form-label" for="ddlCorps">Corps / Dte / Area<i class="fas fa-asterisk mand1"></i></label>
+                                    <select class="form-select" name="ddlCorps" required id="ddlCorps">
+                                        <option value="">All</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 col-lg-3 unittype">
+                                    <label class="col-form-label" for="ddlDiv">Div/Sub Area<i class="fas fa-asterisk mand1"></i></label>
+                                    <select class="form-select" name="ddlDiv" required id="ddlDiv">
+                                        <option value="">All</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 col-lg-3 unittype">
+                                    <label class="col-form-label" for="ddlBde">Bde<i class="fas fa-asterisk mand1"></i></label>
+                                    <select class="form-select" name="ddlBde" required id="ddlBde">
+                                        <option value="">All</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 col-lg-3 FmnBranch d-none">
+                                    <label class="col-form-label" for="ddlFmnBranch">Type of Fmn / Branch<i class="fas fa-asterisk mand1"></i></label>
+                                    <select class="form-select" name="ddlFmnBranch" required id="ddlFmnBranch">
+                                        <option value="">All</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 col-lg-3 DteBranch d-none">
+                                    <label class="col-form-label" for="ddlPSODte">PSO / Dte <i class="fas fa-asterisk mand1"></i></label>
+                                    <select class="form-select" name="ddlPSODte" required id="ddlPSODte">
+                                        <option value="">All</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 col-lg-3 DteBranch d-none">
+                                    <label class="col-form-label" for="ddlDgSubDte">DG / Sub Dte <i class="fas fa-asterisk mand1"></i></label>
+                                    <select class="form-select" name="ddlDgSubDte" required id="ddlDgSubDte">
+                                        <option value="">All</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 col-lg-3">
+                                    <label class="col-form-label" for="ddlUnit">Unit<i class="fas fa-asterisk mand1"></i></label>
+                                    <select class="form-select" name="ddlUnit" required id="ddlUnit">
+                                        <option value="">All</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            }
-            @if (RoleNameList.Contains(ViewBag.Role))
-            {
-                <div class="row p-3">
-                    <div class="card p-3">
-                        <div class="row">
-                            <div class="col-md-2 col-sm-6">
-                                <a href="#" class="clickable">
-                                    <div class="counter pink" id="btnRequisition">
-                                        <div class="counter-icon">
-                                            <i class="fa fa-tasks"></i>
-                                        </div>
-                                        <span class="counter-value" id="TotRequisition">0</span>
-                                        <h3>New Requisition</h3>
-                                    </div>
-                                </a>
+                    </section>
+                }
+
+                @if (RoleNameList.Contains(ViewBag.Role))
+                {
+                    <section class="ecms-section ecms-card-summary-section" aria-labelledby="cardSummaryTitle">
+                        <h3 class="ecms-section-title" id="cardSummaryTitle">
+                            <i class="fa fa-th-large" aria-hidden="true"></i>
+                            <span>Card Report Summary</span>
+                        </h3>
+
+                        <div class="row row-cols-2 row-cols-md-4 g-3 ecms-card-report-grid">
+                            <div class="col">
+                                <button type="button" class="ecms-tile ecms-report-tile" id="btnRequisition">
+                                    <span class="ecms-report-tile-icon ecms-report-tile-icon-primary" aria-hidden="true">
+                                        <i class="fa fa-list-ul"></i>
+                                    </span>
+                                    <span class="count counter-value" id="TotRequisition">0</span>
+                                    <span class="label">New Requisition</span>
+                                </button>
                             </div>
-                            <div class="col-md-2 col-sm-6">
-                                <a href="#" class="clickable">
-                                    <div class="counter pink" id="btnLostCase">
-                                        <div class="counter-icon">
-                                            <i class="fa fa-question-circle"></i>
-                                        </div>
-                                        <span class="counter-value" id="TotLostCases">0</span>
-                                        <h3>Lost Cases</h3>
-                                    </div>
-                                </a>
+                            <div class="col">
+                                <button type="button" class="ecms-tile ecms-report-tile" id="btnLostCase">
+                                    <span class="ecms-report-tile-icon ecms-report-tile-icon-info" aria-hidden="true">
+                                        <i class="fa fa-question-circle"></i>
+                                    </span>
+                                    <span class="count counter-value" id="TotLostCases">0</span>
+                                    <span class="label">Lost Cases</span>
+                                </button>
                             </div>
-                            <div class="col-md-2 col-sm-6">
-                                <a href="#" class="clickable">
-                                    <div class="counter pink" id="btnMonthlyProcessed">
-                                        <div class="counter-icon">
-                                            <i class="fa fa-calendar"></i>
-                                        </div>
-                                        <span class="counter-value" id="TotMonthlyProcessed">0</span>
-                                        <h3>Monthly Processed Appl</h3>
-                                    </div>
-                                </a>
+                            <div class="col">
+                                <button type="button" class="ecms-tile ecms-report-tile" id="btnMonthlyProcessed">
+                                    <span class="ecms-report-tile-icon ecms-report-tile-icon-success" aria-hidden="true">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <span class="count counter-value" id="TotMonthlyProcessed">0</span>
+                                    <span class="label">Monthly Processed Appl</span>
+                                </button>
                             </div>
-                            <div class="col-md-2 col-sm-6">
-                                <a href="#" class="clickable">
-                                    <div class="counter pink" id="btnNonFunctionalCard">
-                                        <div class="counter-icon">
-                                            <i class="fa fa-times-circle"></i>
-                                        </div>
-                                        <span class="counter-value" id="TotNonFunctionalCard">0</span>
-                                        <h3>Non Functional Card</h3>
-                                    </div>
-                                </a>
+                            <div class="col">
+                                <button type="button" class="ecms-tile ecms-report-tile" id="btnNonFunctionalCard">
+                                    <span class="ecms-report-tile-icon ecms-report-tile-icon-danger" aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                    <span class="count counter-value" id="TotNonFunctionalCard">0</span>
+                                    <span class="label">Non-Functional Card</span>
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            }
+                    </section>
+                }
+            </div>
         </div>
-        </div>
-    </div>
+    </section>
+</main>
 
-
-<div class="modal fade" id="CardReport" tabindex="-1" aria-labelledby="exampleModalLabel" >
-    <div class="modal-dialog modal-xl" role="document">
+<div class="modal fade ecms-card-report-modal ecms-card-report-layer"
+     id="CardReport"
+     tabindex="-1"
+     aria-labelledby="CardReport_lblModelTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ecms-modal-xl ecms-card-report-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-                <h4 class="modal-title"><span id="CardReport_lblModelTitle"></span></h4>
+                <div class="d-flex align-items-center gap-2 ecms-min-0">
+                    <i class="fa fa-table" aria-hidden="true"></i>
+                    <h4 class="modal-title" id="CardReport_lblModelTitle">Card Report</h4>
+                </div>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                </button>
             </div>
-
-            <div class="modal-body">
-                <div class="row">
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="CardReport_tbldatadialog">
+            <div class="modal-body ecms-card-report-modal-body ecms-min-0">
+                <div class="ecms-dt-wrap ecms-card-report-table-wrap ecms-min-0">
+                    <table class="table table-striped table-hover ecms-dt-table"
+                           role="grid"
+                           id="CardReport_tbldatadialog"
+                           aria-label="Card report records">
                     </table>
                 </div>
-                <div class="col-sm-12" id="msg">
-                </div>
+                <div id="msg" role="status"></div>
             </div>
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
+        </div>
+    </div>
 </div>
-<!-- Message Dialog  -->
-<div class="modal fade" id="MonthlyProcessedDialog" tabindex="-1" aria-labelledby="exampleModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
+
+<div class="modal fade ecms-card-report-modal ecms-card-report-layer"
+     id="MonthlyProcessedDialog"
+     tabindex="-1"
+     aria-labelledby="MonthlyProcessedDialogLabel"
+     aria-hidden="true"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered ecms-modal-sm ecms-month-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h6 class="modal-title" id="MonthlyProcessedDialogLabel">Choose Reporting Month</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="d-flex align-items-center gap-2 ecms-min-0">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                    <h4 class="modal-title" id="MonthlyProcessedDialogLabel">Choose Reporting Month</h4>
+                </div>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                </button>
             </div>
             <div id="MonthlyProcessedDialogBody" class="modal-body">
-                <div class="col-sm-12">
-                    <div class="form-group row mb-2">
-                        <label class="col-form-label col-sm-4">Select Month</label>
-                        <div class="col-sm-8">
-                            <input type="text" id="txtMonthYear" class="form-control readonly dateInputMonthYear" placeholder="MM/YYYY" required />
-                        </div>
+                <div class="row g-2 align-items-center">
+                    <label class="col-sm-4 col-form-label" for="txtMonthYear">Select Month</label>
+                    <div class="col-sm-8">
+                        <input type="text"
+                               id="txtMonthYear"
+                               class="form-control readonly dateInputMonthYear"
+                               placeholder="MM/YYYY"
+                               autocomplete="off"
+                               required />
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btnMonthlyProcessedDialogOk">Ok</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnMonthlyProcessedDialogOk">OK</button>
             </div>
         </div>
     </div>
 </div>
-<script asp-src-include="~/developerjs/Report.js"></script>
 
-<partial name="~/Views/Shared/_DataTableJS.cshtml" />
+@section Scripts {
+    <partial name="~/Views/Shared/_DataTableJS.cshtml" />
+    <script asp-src-include="~/developerjs/Report.js"></script>
+}

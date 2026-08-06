@@ -1,13 +1,26 @@
 ﻿var table;
 let dataExportType = 1;
+
 $(function () {
+    document.documentElement.classList.add('ecms-appclose-scroll-lock');
+    document.body.classList.add('ecms-lock-page-scroll', 'ecms-appclose-scroll-lock');
+
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
     applyDataTableSearchValidation('#tbldata');
 
-    let applyFor = $('#spnapplyFor').html();
-    BindData(applyFor,function () {
+    let applyFor = $('#spnapplyFor').text();
+    BindData(applyFor, function () {
     });
+
+    $(window)
+        .off('pagehide.ecmsAppClose')
+        .on('pagehide.ecmsAppClose', function () {
+            document.documentElement.classList.remove('ecms-appclose-scroll-lock');
+            document.body.classList.remove('ecms-lock-page-scroll', 'ecms-appclose-scroll-lock');
+            $(window).off('resize.ecmsAppClose');
+        });
 });
+
 function BindData(applyFor) {
     if ($.fn.DataTable.isDataTable("#tbldata")) {
         // Destroy the DataTable and clear the table content
@@ -15,23 +28,25 @@ function BindData(applyFor) {
         $("#tbldata thead").empty(); // Clear old thead
         $("#tbldata tbody").empty(); // Clear old tbody
     }
+
+    $(window).off('resize.ecmsAppClose');
+
     table = $("#tbldata").DataTable({
-        scrollY: '65vh',          // ✅ vertical scroll
-        scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,
-        scroller: true,           // ✅ Enable virtual scrolling for better performance
-        deferScroll: true,        // ✅ Improve scrolling performance
-        fixedHeader: false,       // ❌ disable when using scrollY
+        // Keep scrolling inside the table so the page and footer stay fixed.
+        scrollY: 'calc(100vh - 485px)',
+        scrollX: true,
+        scrollCollapse: false,
+        fixedHeader: false,
 
         processing: true,
         serverSide: true,
         filter: true,
         stateSave: false,
 
-        autoWidth: false,  //Set autoWidth to true (let DataTables decide)
-        responsive: false, // Columns can hide on small screens
-        deferRender: true,// ✅ Handle zoom changes
-        order: [[8, 'desc']], // Default sorting on the first column
+        autoWidth: false,
+        responsive: false,
+        deferRender: true,
+        order: [[1, 'desc']], // Latest updated application first
         ajax: async function (data, callback, settings) {
 
             let requestData = {
@@ -96,7 +111,7 @@ function BindData(applyFor) {
                 className: "",
                 width: "150px",
                 render: function (data, type, row) {
-                    return DateFormateddMMyyyyhhmmss(data);
+                    return data ? DateFormateddMMyyyyhhmmss(data) : "";
                 }
             },
             //{ data: "RequestId", name: "RequestId" },
@@ -107,13 +122,15 @@ function BindData(applyFor) {
                 className: "nowrap",
                 width: "120px",
                 render: function (data, type, row) {
+                    const serviceNo = data || "";
+
                     // Check if first two characters are alphabets
-                    if (/^[A-Za-z]{2}/.test(data)) {
+                    if (/^[A-Za-z]{2}/.test(serviceNo)) {
                         // Insert space after first two characters
-                        return data.slice(0, 2) + ' ' + data.slice(2);
+                        return serviceNo.slice(0, 2) + ' ' + serviceNo.slice(2);
                     } else {
                         // No space needed
-                        return data;
+                        return serviceNo;
                     }
                 }
             },
@@ -171,9 +188,12 @@ function BindData(applyFor) {
         ],
         language: {
             search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search Army No / Auth" // Add custom placeholder
+            searchPlaceholder: "Search Army No / Auth",
+            emptyTable: "No closed application records found"
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom:
+            "<'dt-top d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2'lB<'ms-md-auto'f>>rt" +
+            "<'ecms-dt-footer row g-2'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -183,12 +203,18 @@ function BindData(applyFor) {
             //},
             {
                 extend: 'excel',
+                text: '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel',
+                className: 'btn btn-success btn-sm',
+                titleAttr: 'Export closed applications to Excel',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 }
             },
             {
                 extend: 'pdfHtml5',
+                text: '<i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF',
+                className: 'btn btn-danger btn-sm',
+                titleAttr: 'Export closed applications to PDF',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
                 title: 'E-IASC_AppClosed',
@@ -206,16 +232,18 @@ function BindData(applyFor) {
 
             // Handle zoom/resize
             var resizeTimer;
-            $(window).on('resize', function () {
+            $(window).on('resize.ecmsAppClose', function () {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function () {
-                    table.columns.adjust().responsive.recalc();
+                    if (table) {
+                        table.columns.adjust();
+                    }
                 }, 100);
             });
         },
         drawCallback: function (settings) {
             // Recalculate widths on each data load
-            this.api().columns.adjust().responsive.recalc();
+            this.api().columns.adjust();
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')

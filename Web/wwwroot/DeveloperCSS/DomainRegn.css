@@ -1,36 +1,575 @@
-﻿.count-label {
-    background-color: #044C92;
-    text-align: center;
-    padding: 0.5rem !important;
-    margin-right: 0.25rem !important;
-    border: hidden;
-    font-weight: 700 !important;
-    color: #fff !important;
-    width: 120px;
-    height: 60px;
+﻿/* ==============================================================
+   Account / Domain Registration
+   PAGE-SPECIFIC UI ONLY
+
+   Important:
+   - ModernCSS files remain unchanged.
+   - Existing ECMS common classes provide the base theme.
+   - Every additional rule below is scoped to this page/modals.
+================================================================ */
+
+.swal2-html-container {
+    color: var(--ecms-danger-500, #ef405c) !important;
 }
 
-.modal-xl {
-    max-width: 90% !important;
-    width: 90% !important;
+/* ---------- Page stage and fixed-height shell ---------- */
+.ecms-screen-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
 }
 
-.table {
-    min-width: 100% !important;
+.ecms-domainregn-page {
+    height: calc( 100vh - var(--ecms-header-height, 95px) - var(--ecms-nav-height, 44px) - var(--ecms-breadcrumb-height, 34px) - var(--ecms-footer-height, 34px) - 1.5rem );
+    min-height: 560px;
+    margin: .65rem auto;
+    overflow: hidden;
 }
 
-.modal .modal-body .table-responsive {
-    max-height: 500px;
+.ecms-domainregn-shell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: .7rem;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: .65rem;
+    box-sizing: border-box;
 }
-.requested-generated-col {
-    width: 6rem;
+
+/* ---------- Page title ---------- */
+.ecms-domain-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 }
-#tbldatadialog td {
+
+.ecms-domain-title-content {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.ecms-domain-title-copy {
+    min-width: 0;
+}
+
+    .ecms-domain-title-copy h3 {
+        margin: 0;
+        color: var(--ecms-text, #061b44);
+        font-size: 1.18rem;
+        font-weight: 950;
+        line-height: 1.15;
+    }
+
+.ecms-domain-add-btn {
+    flex: 0 0 auto;
+    min-height: 2.35rem;
+    padding: .5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+/* ---------- Summary tiles ---------- */
+.ecms-domain-stats {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: .55rem;
+}
+
+.ecms-stat-card {
+    min-width: 0;
+    min-height: 4.65rem;
+    padding: .55rem .4rem;
+    border: var(--ecms-border, 1px solid rgba(195, 215, 244, .92));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .2rem;
     cursor: pointer;
+    color: var(--ecms-text, #061b44);
+    transition: transform .15s ease, box-shadow .15s ease;
 }
-#tbldatadialog {
-    table-layout: fixed !important;
+
+    .ecms-stat-card:hover,
+    .ecms-stat-card:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: var(--ecms-shadow-md, 0 1rem 2.25rem rgba(10, 43, 96, .18));
+    }
+
+    .ecms-stat-card:focus-visible {
+        outline: 3px solid rgba(63, 124, 255, .24);
+        outline-offset: 1px;
+    }
+
+.ecms-stat-icon {
+    width: 1.7rem;
+    height: 1.7rem;
+    min-width: 1.7rem;
+    border-radius: .55rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient(135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff));
+    font-size: .72rem;
 }
-#tbldata {
-    table-layout: fixed !important;
+
+.ecms-stat-title {
+    max-width: 100%;
+    overflow: hidden;
+    color: var(--ecms-primary-600, #2f67e6);
+    font-size: .67rem;
+    font-weight: 950;
+    line-height: 1.05;
+    text-align: center;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ecms-stat-count {
+    color: var(--ecms-text, #061b44);
+    font-size: 1.1rem;
+    font-weight: 950;
+    line-height: 1;
+}
+
+/* ---------- Main DataTable ---------- */
+.ecms-domain-table-section {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+.ecms-domain-table-wrap,
+.ecms-domain-dialog-table-wrap {
+    min-width: 0;
+    min-height: 0;
+}
+
+.ecms-domain-table-wrap {
+    height: 100%;
+    padding: .45rem .55rem .35rem;
+}
+
+.ecms-domainregn-page #tbldata_wrapper,
+.ecms-domain-dialog-modal #tbldatadialog_wrapper {
+    height: 100%;
+    min-height: 0;
+}
+
+/* DataTables uses a custom DOM string, so its top and bottom rows need flex. */
+.ecms-domainregn-page .dt-top,
+.ecms-domain-dialog-modal .dt-top {
+    min-height: 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .65rem;
+}
+
+.ecms-domainregn-page .dt-bottom,
+.ecms-domain-dialog-modal .dt-bottom {
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+}
+
+.ecms-domainregn-page .dataTables_scroll,
+.ecms-domain-dialog-modal .dataTables_scroll,
+.ecms-domainregn-page .dt-scroll,
+.ecms-domain-dialog-modal .dt-scroll,
+.ecms-domainregn-page .dataTables_scrollBody,
+.ecms-domain-dialog-modal .dataTables_scrollBody,
+.ecms-domainregn-page .dt-scroll-body,
+.ecms-domain-dialog-modal .dt-scroll-body {
+    min-height: 0 !important;
+}
+
+.ecms-domainregn-page .badge,
+.ecms-domain-dialog-modal .badge {
+    min-width: 2.25rem;
+    padding: .28rem .48rem;
+    font-size: .62rem;
+    text-transform: uppercase;
+}
+
+.ecms-domainregn-page .cls-claimtypes,
+.ecms-domainregn-page .cls-btnedit {
+    margin: 0;
+}
+
+/* ---------- Modal root / fade correction ---------- */
+.ecms-domain-modal,
+.ecms-domain-dialog-modal,
+.ecms-claims-show-modal {
+    z-index: 1080 !important;
+}
+
+    .ecms-domain-modal.show,
+    .ecms-domain-dialog-modal.show,
+    .ecms-claims-show-modal.show,
+    .ecms-domain-modal.show .modal-dialog,
+    .ecms-domain-dialog-modal.show .modal-dialog,
+    .ecms-claims-show-modal.show .modal-dialog,
+    .ecms-domain-modal.show .modal-content,
+    .ecms-domain-dialog-modal.show .modal-content,
+    .ecms-claims-show-modal.show .modal-content {
+        opacity: 1 !important;
+        visibility: visible !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+/* Loaded only on Domain Registration, therefore this backdrop rule is page-local. */
+body.modal-open .modal-backdrop,
+body.modal-open .modal-backdrop.show {
+    z-index: 1070 !important;
+    opacity: .72 !important;
+}
+
+.ecms-domain-modal .modal-dialog {
+    width: min(920px, calc(100vw - 2rem));
+    max-width: min(920px, calc(100vw - 2rem));
+}
+
+.ecms-domain-modal .modal-content {
+    max-height: calc(100vh - 2rem);
+}
+
+.ecms-domain-modal .modal-body {
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ecms-domain-users-dialog {
+    width: min(1420px, calc(100vw - 2rem));
+    max-width: min(1420px, calc(100vw - 2rem));
+}
+
+.ecms-domain-dialog-modal .modal-content {
+    max-height: calc(100vh - 2rem);
+}
+
+.ecms-domain-dialog-modal .modal-body {
+    min-height: 0;
+    padding: .75rem;
+    overflow: hidden;
+}
+
+.ecms-domain-dialog-table-wrap {
+    height: min(68vh, 35rem);
+    min-height: 25rem;
+    padding: 0;
+    overflow: hidden;
+}
+
+.ecms-claims-dialog {
+    width: min(440px, calc(100vw - 1.5rem));
+    max-width: min(440px, calc(100vw - 1.5rem));
+}
+
+/* ---------- Modal title content ---------- */
+.ecms-modal-heading {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+
+.ecms-modal-title-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: .7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ecms-white, #fff);
+    background: rgba(255, 255, 255, .14);
+}
+
+.ecms-modal-subtitle {
+    margin: .12rem 0 0;
+    color: rgba(255, 255, 255, .86);
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+/* ---------- Add / Edit domain form ---------- */
+.ecms-domain-modal .ecms-form-grid,
+.ecms-domain-modal .ecms-radio-grid {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .65rem;
+}
+
+.ecms-domain-modal .ecms-radio-grid {
+    margin-top: .65rem;
+}
+
+.ecms-domain-modal .ecms-form-field,
+.ecms-domain-modal .ecms-radio-card {
+    min-width: 0;
+    padding: .6rem;
+    border: 1px solid rgba(100, 132, 190, .2);
+    border-radius: .75rem;
+    background: rgba(255, 255, 255, .7);
+    box-sizing: border-box;
+}
+
+.ecms-domain-modal .ecms-form-label {
+    margin: 0 0 .38rem;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    color: var(--ecms-text, #061b44);
+    font-size: .78rem;
+    font-weight: 950;
+}
+
+    .ecms-domain-modal .ecms-form-label > span {
+        width: 1.45rem;
+        height: 1.45rem;
+        min-width: 1.45rem;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ecms-white, #fff);
+        background: linear-gradient(135deg, var(--ecms-primary-600, #2f67e6), var(--ecms-primary-500, #3f7cff));
+        font-size: .65rem;
+    }
+
+.ecms-domain-modal .form-control,
+.ecms-domain-modal .form-control-domainId,
+.ecms-domain-modal .form-select,
+.ecms-domain-modal .ecms-form-field select,
+.ecms-domain-modal .ecms-form-field textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.ecms-domain-modal .unit-label-background {
+    width: 100%;
+    min-height: var(--ecms-control-height, 36px);
+    margin: 0;
+    padding: .48rem .65rem;
+    border: 1px solid rgba(165, 187, 219, .75);
+    border-radius: var(--ecms-radius-sm, .55rem);
+    display: block;
+    color: var(--ecms-text, #061b44);
+    background: linear-gradient(135deg, #eef3fa, #dce5f0);
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1.25;
+    box-sizing: border-box;
+}
+
+.ecms-domain-modal .select2-container {
+    width: 100% !important;
+    max-width: 100%;
+    display: block;
+}
+
+.ecms-domain-modal .select2-container--default .select2-selection--multiple {
+    min-height: var(--ecms-control-height, 36px);
+    padding: .16rem .4rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+    .ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        width: 100%;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: .2rem;
+    }
+
+    .ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        margin: .12rem 0;
+        padding: .12rem .42rem;
+        border: 0;
+        border-radius: var(--ecms-radius-pill, 999px);
+        color: var(--ecms-white, #fff);
+        background: var(--ecms-primary-600, #2f67e6);
+        font-size: .68rem;
+        font-weight: 850;
+    }
+
+    .ecms-domain-modal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        margin-right: .22rem;
+        color: var(--ecms-white, #fff);
+    }
+
+.ecms-domain-modal .select2-search--inline {
+    flex: 1 1 9rem;
+    min-width: 7rem;
+}
+
+.ecms-domain-modal .select2-search__field {
+    width: 100% !important;
+    min-width: 7rem;
+    min-height: 1.55rem !important;
+    height: 1.55rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.ecms-domain-modal .ecms-radio-title {
+    margin: 0 0 .42rem;
+    display: block;
+    color: var(--ecms-text, #061b44);
+    font-size: .78rem;
+    font-weight: 950;
+    line-height: 1.25;
+}
+
+.ecms-domain-modal .ecms-radio-options {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .9rem;
+}
+
+    .ecms-domain-modal .ecms-radio-options .form-check,
+    .ecms-domain-modal .ecms-radio-options .form-check-inline {
+        min-height: 1.25rem;
+        margin: 0;
+        padding-left: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+    }
+
+.ecms-domain-modal input[type="radio"] {
+    position: static;
+    margin: 0;
+    flex: 0 0 1rem;
+    accent-color: var(--ecms-primary-600, #2f67e6);
+}
+
+.ecms-domain-modal .ecms-modal-actions {
+    width: 100%;
+    margin-top: .8rem;
+    justify-content: flex-end;
+}
+
+    .ecms-domain-modal .ecms-modal-actions .btn,
+    .ecms-domain-modal .ecms-modal-actions input[type="button"] {
+        width: auto;
+        min-width: 5.5rem;
+        max-width: 8rem;
+        min-height: 2.4rem;
+        padding: .45rem 1rem;
+        flex: 0 0 auto;
+    }
+
+/* Select2 and autocomplete must remain above the open dialog. */
+.select2-container--open,
+.select2-dropdown,
+.ui-autocomplete {
+    z-index: 1095 !important;
+}
+
+.ui-autocomplete {
+    max-height: 16rem;
+    overflow-y: auto;
+    border-radius: var(--ecms-radius-sm, .55rem);
+    box-shadow: var(--ecms-shadow-md, 0 1rem 2.25rem rgba(10, 43, 96, .18));
+}
+
+/* ---------- Claims detail popup ---------- */
+.ecms-claims-show-modal #ClaimsShowBody {
+    max-height: min(55vh, 25rem);
+    overflow-y: auto;
+}
+
+    .ecms-claims-show-modal #ClaimsShowBody ul {
+        margin: 0;
+        padding-left: 1.25rem;
+    }
+
+    .ecms-claims-show-modal #ClaimsShowBody li {
+        margin: .35rem 0;
+        color: var(--ecms-text, #061b44);
+        font-weight: 750;
+    }
+
+/* ---------- Responsive behavior ---------- */
+@media (max-width: 1199.98px) {
+    .ecms-domainregn-page {
+        width: calc(100vw - 1.25rem);
+    }
+
+    .ecms-domain-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-screen-stage {
+        overflow: visible;
+    }
+
+    .ecms-domainregn-page {
+        width: calc(100vw - .75rem);
+        height: auto;
+        min-height: 42rem;
+        overflow: visible;
+    }
+
+    .ecms-domainregn-shell {
+        height: auto;
+        min-height: 42rem;
+    }
+
+    .ecms-domain-title-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ecms-domain-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ecms-domainregn-page .dt-top,
+    .ecms-domain-dialog-modal .dt-top,
+    .ecms-domainregn-page .dt-bottom,
+    .ecms-domain-dialog-modal .dt-bottom {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ecms-domain-modal .ecms-form-grid,
+    .ecms-domain-modal .ecms-radio-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-domain-dialog-table-wrap {
+        height: 62vh;
+        min-height: 21rem;
+    }
 }
