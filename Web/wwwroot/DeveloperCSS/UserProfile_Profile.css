@@ -1,1136 +1,438 @@
-﻿/* =====================================================
-   ECMS User Profile Modern UI
-   Only page UI changes. Header/footer/layout untouched.
-===================================================== */
+﻿/* =====================================================================
+   ECMS Profile Mapping
+   Page-only layout refinements. Shared ModernCSS remains unchanged and
+   remains the source of truth for colours, surfaces, radii and controls.
+===================================================================== */
 
-:root {
-    --ecms-profile-blue-1: #102f73;
-    --ecms-profile-blue-2: #2f7dff;
-    --ecms-profile-cyan: #55d7ff;
-    --ecms-profile-green: #31c48d;
-    --ecms-profile-red: #dc3545;
-    --ecms-profile-ink: #071b44;
-    --ecms-profile-muted: #5b729a;
-    --ecms-profile-panel: rgba(232, 244, 255, 0.88);
-    --ecms-profile-white: rgba(255,255,255,0.94);
-}
-
-html:has(.ecms-userprofile-page),
-body:has(.ecms-userprofile-page) {
-    overflow-y: hidden !important;
-}
-
+/* Keep the legacy container class for compatibility while allowing the
+   common ecms-page sizing to control this page. */
 .ecms-userprofile-page {
     position: relative;
-    min-height: calc(100vh - 255px) !important;
-    height: calc(100vh - 255px) !important;
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 12px 18px 46px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(5, 22, 62, 0.86), rgba(20, 70, 154, 0.72)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat;
+    padding: 0 !important;
 }
 
-    .ecms-userprofile-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 20% 18%, rgba(89, 200, 255, 0.16), transparent 26%), radial-gradient(circle at 84% 72%, rgba(59, 130, 246, 0.18), transparent 30%);
-    }
+.ecms-profile-form {
+    width: 100%;
+    margin: 0;
+}
 
-.ecms-profile-form,
+/* Main profile surface uses common ecms-card/ecms-card-body styling. */
 .ecms-profile-shell {
-    position: relative;
-    z-index: 1;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    overflow: visible;
 }
 
-.ecms-profile-shell {
-    width: min(1500px, 94vw) !important;
-    height: calc(100vh - 282px) !important;
-    max-height: calc(100vh - 282px) !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border: 1px solid rgba(255,255,255,0.70) !important;
-    border-radius: 22px !important;
-    background: var(--ecms-profile-panel) !important;
-    box-shadow: 0 22px 62px rgba(0, 20, 70, 0.34), inset 0 1px 0 rgba(255,255,255,0.86) !important;
-    overflow: hidden !important;
-}
-
+/* Page heading alignment only; visual skin comes from ecms-page-title. */
 .ecms-profile-heading {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 14px 12px;
-    margin-bottom: 10px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.76), rgba(255,255,255,0.38));
-    border: 1px solid rgba(255,255,255,0.64);
+    gap: 0.75rem;
+    margin: 0;
 }
 
 .ecms-profile-heading-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    background: linear-gradient(135deg, #1f7cff, #004bd6);
-    box-shadow: 0 12px 24px rgba(31, 124, 255, 0.32);
-    font-size: 21px;
-    flex: 0 0 46px;
+    flex: 0 0 2.6rem;
+}
+
+.ecms-profile-heading > div:last-child {
+    min-width: 0;
 }
 
 .ecms-profile-heading h2 {
     margin: 0;
-    color: var(--ecms-profile-ink);
-    font-size: 21px;
-    font-weight: 900;
-    line-height: 1.1;
+    font-size: clamp(1.15rem, 1.55vw, 1.4rem);
 }
 
 .ecms-profile-heading p {
-    margin: 4px 0 0;
-    color: var(--ecms-profile-muted);
-    font-size: 11px;
+    margin: 0.18rem 0 0;
+    color: var(--ecms-text-soft, #123067);
+    font-size: 0.78rem;
     font-weight: 800;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
 }
 
+/* Unit and domain summary sections. */
 .ecms-profile-grid {
+    min-width: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    align-items: stretch;
 }
 
 .ecms-profile-card {
-    border: 1px solid rgba(255,255,255,0.68) !important;
-    border-radius: 18px !important;
-    background: linear-gradient(145deg, rgba(255,255,255,0.74), rgba(232, 244, 255,0.62)) !important;
-    box-shadow: 0 14px 32px rgba(0, 26, 88, 0.16), inset 0 1px 0 rgba(255,255,255,0.82) !important;
-    overflow: hidden;
+    min-width: 0;
 }
 
-.ecms-section-title {
-    height: 38px;
-    padding: 0 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: #ffffff;
-    background: linear-gradient(135deg, #153f93, #347cff);
-    font-size: 14px;
-    font-weight: 900;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.26);
-}
-
-    .ecms-section-title i {
-        font-size: 14px;
+    .ecms-profile-card .ecms-section-title {
+        min-height: var(--ecms-section-title-height, 36px);
     }
 
 .ecms-detail-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px 12px;
-    padding: 12px 14px 14px;
-}
-
-.ecms-detail-item,
-.ecms-form-field,
-.ecms-check-field {
-    min-height: 50px;
-    padding: 8px 10px;
-    border-radius: 13px;
-    background: rgba(255,255,255,0.52);
-    border: 1px solid rgba(80, 124, 190, 0.16);
+    gap: 0.48rem 0.58rem;
 }
 
 .ecms-detail-item-wide {
-    grid-column: span 2;
+    grid-column: 1 / -1;
 }
 
-.ecms-userprofile-page .labelprofile,
-.ecms-userprofile-page .form-group .labelprofile {
-    display: block !important;
-    margin: 0 0 5px !important;
-    color: #10254f !important;
-    font-size: 12px !important;
-    font-weight: 900 !important;
-    line-height: 1.1 !important;
+/* Compact read-only information tiles inside the common section. */
+.ecms-detail-item,
+.ecms-form-field,
+.ecms-check-field {
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0.48rem 0.58rem;
+    border: 1px solid rgba(165, 187, 219, 0.46);
+    border-radius: var(--ecms-radius-md, 0.75rem);
+    background: rgba(255, 255, 255, 0.58);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.ecms-userprofile-page .labelprofile {
+    display: block;
+    margin: 0 0 0.2rem;
+    font-size: 0.72rem;
+    line-height: 1.1;
 }
 
 .ecms-value,
-.ecms-readonly-pill,
-.ecms-userprofile-page .col-form-label:not(.labelprofile) {
+.ecms-readonly-pill {
     display: block;
-    min-height: 22px;
-    color: #0d2556 !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    line-height: 1.25 !important;
-    word-break: break-word;
+    min-height: 1.1rem;
+    color: var(--ecms-text, #061b44);
+    font-size: 0.79rem;
+    font-weight: 850;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
 }
 
+/* Personal information form. */
 .ecms-personal-card {
-    margin-top: 12px;
+    margin: 0;
 }
 
 .ecms-form-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-    padding: 14px;
+    gap: 0.58rem;
+}
+
+.ecms-form-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .ecms-userprofile-page .form-control,
 .ecms-userprofile-page .form-select,
 .ecms-userprofile-page .form-control-Alphabets {
-    width: 100% !important;
-    height: 38px !important;
-    min-height: 38px !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(93, 125, 175, 0.34) !important;
-    background-color: rgba(255,255,255,0.94) !important;
-    color: #10254f !important;
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    padding: 7px 12px !important;
-    box-shadow: 0 8px 18px rgba(0, 30, 80, 0.06), inset 0 1px 0 rgba(255,255,255,0.88) !important;
+    width: 100%;
+    min-width: 0;
 }
 
-.ecms-userprofile-page input[readonly],
 .ecms-readonly-pill {
-    background: rgba(230, 240, 255, 0.88) !important;
-}
-
-.ecms-userprofile-page .form-control:focus,
-.ecms-userprofile-page .form-select:focus,
-.ecms-userprofile-page .form-control-Alphabets:focus {
-    border-color: #227dff !important;
-    box-shadow: 0 0 0 4px rgba(31, 124, 255, 0.16) !important;
-    outline: none !important;
-}
-
-.ecms-check-field {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 10px;
-}
-
-    .ecms-check-field .labelprofile {
-        margin-bottom: 0 !important;
-    }
-
-.ecms-check-wrap {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 7px 10px;
-    border-radius: 999px;
-    color: #10254f;
-    background: rgba(255,255,255,0.68);
-    border: 1px solid rgba(55, 125, 255, 0.20);
-    font-size: 12px;
-    font-weight: 900;
-}
-
-.ecms-userprofile-page .form-check-input {
-    width: 18px !important;
-    height: 18px !important;
-    margin: 0 !important;
-    cursor: pointer;
-    accent-color: #2f7dff !important;
-}
-
-    .ecms-userprofile-page .form-check-input:checked {
-        background-color: #2f7dff !important;
-        border-color: #2f7dff !important;
-    }
-
-.ecms-profile-actions {
+    min-height: var(--ecms-control-height, 36px);
+    padding: 0.45rem 0.65rem;
+    border: 1px solid rgba(165, 187, 219, 0.62);
+    border-radius: var(--ecms-radius-sm, 0.55rem);
+    background: linear-gradient(135deg, #eef3fa, #dce5f0);
+    color: #48566d;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 14px 4px 0;
-}
-
-.ecms-btn {
-    min-height: 38px !important;
-    padding: 9px 18px !important;
-    border: 0 !important;
-    border-radius: 12px !important;
-    font-size: 13px !important;
-    font-weight: 900 !important;
-    box-shadow: 0 12px 24px rgba(0, 42, 120, 0.22) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-}
-
-.ecms-btn-primary,
-#btnProfilesave,
-#btnDeRegisterConfirmModalSubmit {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #238dff, #064bd8) !important;
-}
-
-.ecms-btn-danger,
-#btntokenrefresh,
-#btnderegprofile {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
-}
-
-.ecms-btn-secondary {
-    color: #10254f !important;
-    background: linear-gradient(135deg, #e9f2ff, #d4e4fb) !important;
-}
-
-.ecms-btn:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.04);
-}
-
-.ecms-token-message-wrap {
-    margin-top: 8px;
-    text-align: center;
-}
-
-#tokenmsg {
-    color: #0d2556;
-    font-weight: 800;
-}
-
-/* Existing utility classes retained */
-.cardbg {
-}
-
-.minheight {
-    min-height: auto !important;
 }
 
 .full-width {
     width: 100%;
 }
 
+/* Keep the question visible while reserving a stable area for Yes + checkbox. */
+.ecms-check-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+    .ecms-check-field .labelprofile {
+        margin: 0;
+        white-space: normal;
+        overflow: visible;
+    }
+
+.ecms-check-wrap {
+    min-width: 4.75rem;
+    min-height: 2.1rem;
+    padding: 0.3rem 0.55rem;
+    border: 1px solid rgba(63, 124, 255, 0.22);
+    border-radius: var(--ecms-radius-pill, 999px);
+    background: rgba(255, 255, 255, 0.76);
+    color: var(--ecms-text, #061b44);
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    justify-self: end;
+}
+
+.ecms-check-text {
+    color: var(--ecms-text, #061b44);
+    font-size: 0.75rem;
+    font-weight: 900;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.ecms-userprofile-page .ecms-check-wrap .form-check-input {
+    position: static;
+    float: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    min-width: 1.05rem;
+    margin: 0;
+    flex: 0 0 1.05rem;
+}
+
+/* Form actions use common button styles; only layout is page-specific. */
+.ecms-profile-actions {
+    width: 100%;
+    margin-top: 0;
+    padding: 0.05rem 0.1rem 0;
+    justify-content: flex-end;
+}
+
+    .ecms-profile-actions .ecms-btn {
+        min-height: var(--ecms-control-height, 36px);
+        padding: 0.48rem 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.42rem;
+        font-size: 0.78rem;
+        white-space: nowrap;
+    }
+
+.ecms-token-message-wrap {
+    margin-top: -0.15rem;
+    text-align: center;
+}
+
+#tokenmsg {
+    color: var(--ecms-text, #061b44);
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+/* Confirmation graphic is page content; modal skin comes from common theme. */
+.ecms-confirm-icon {
+    width: 3.25rem;
+    height: 3.25rem;
+    margin: 0 auto 0.75rem;
+    border-radius: 50%;
+    color: var(--ecms-white, #fff);
+    background: linear-gradient(135deg, var(--ecms-danger-500, #ef405c), var(--ecms-danger-600, #c82136));
+    box-shadow: 0 0.75rem 1.5rem rgba(200, 33, 54, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+/* Modal stacking guard for this page. Shared modal styling remains in
+   ecms.06.modals.css. */
+.ecms-userprofile-modal {
+    z-index: 1060 !important;
+}
+
+    .ecms-userprofile-modal .modal-dialog,
+    .ecms-userprofile-modal .modal-content {
+        opacity: 1 !important;
+        filter: none !important;
+        pointer-events: auto !important;
+    }
+
+body:has(.ecms-userprofile-modal.show) .modal-backdrop {
+    z-index: 1040 !important;
+}
+
+/* Legacy utility classes retained for compatibility. */
 .card-body-min-height {
     min-height: 150px;
 }
 
-/* Modal styling */
-.ecms-userprofile-modal .modal-content {
-    border: 1px solid rgba(255,255,255,0.72) !important;
-    border-radius: 18px !important;
-    overflow: hidden;
-    box-shadow: 0 30px 70px rgba(0, 20, 60, 0.42) !important;
+.minheight {
+    min-height: auto !important;
 }
 
-.ecms-userprofile-modal .modal-header {
-    position: relative;
-    min-height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #ffffff;
-    background: linear-gradient(135deg, #123f8c, #2f7dff) !important;
-    border-bottom: 0 !important;
-    padding: 14px 56px 14px 18px !important;
+.cardbg {
+    background: transparent;
 }
 
-.ecms-userprofile-modal .modal-title {
-    color: #ffffff !important;
-    font-size: 18px !important;
-    font-weight: 900 !important;
-    margin: 0 !important;
-}
-
-.ecms-userprofile-modal .modal-header .close,
-.ecms-userprofile-modal .modal-header button.close {
-    position: absolute !important;
-    top: 10px !important;
-    right: 14px !important;
-    width: 34px !important;
-    height: 34px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    border: 1px solid rgba(255,255,255,0.35) !important;
-    border-radius: 50% !important;
-    color: #ffffff !important;
-    background: rgba(255,255,255,0.18) !important;
-    opacity: 1 !important;
-    text-shadow: none !important;
-}
-
-    .ecms-userprofile-modal .modal-header .close span {
-        color: #ffffff !important;
-        font-size: 28px !important;
-        line-height: 28px !important;
+/* Small-height desktop screens: reduce spacing before introducing scroll. */
+@media (min-width: 1200px) and (max-height: 760px) {
+    .ecms-userprofile-page {
+        margin-top: 0.5rem;
     }
 
-.ecms-userprofile-modal .modal-header .btn-close {
-    position: absolute !important;
-    top: 15px !important;
-    right: 16px !important;
-    opacity: 1 !important;
-    filter: invert(1) grayscale(100%) brightness(200%) !important;
-}
-
-.ecms-userprofile-modal .modal-body {
-    padding: 18px !important;
-    background: #f5f9ff !important;
-    color: #10254f !important;
-}
-
-.ecms-userprofile-modal .modal-footer {
-    border-top: 1px solid rgba(36, 89, 160, 0.14) !important;
-    background: #f5f9ff !important;
-}
-
-.ecms-confirm-icon {
-    width: 54px;
-    height: 54px;
-    margin: 0 auto 12px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    background: linear-gradient(135deg, #ef4444, #b91c1c);
-    box-shadow: 0 12px 24px rgba(185, 28, 28, 0.22);
-    font-size: 22px;
-}
-
-@media (max-width: 1199px) {
-    html:has(.ecms-userprofile-page),
-    body:has(.ecms-userprofile-page) {
-        overflow-y: auto !important;
-    }
-
-    .ecms-userprofile-page,
     .ecms-profile-shell {
-        height: auto !important;
-        max-height: none !important;
-        min-height: calc(100vh - 255px) !important;
-        overflow: visible !important;
+        gap: 0.48rem;
+        padding: 0.58rem !important;
     }
 
-    .ecms-profile-grid,
+    .ecms-profile-heading {
+        min-height: 3.15rem;
+        padding-block: 0.45rem;
+    }
+
+    .ecms-profile-heading-icon {
+        width: 2.35rem;
+        height: 2.35rem;
+        min-width: 2.35rem;
+        flex-basis: 2.35rem;
+    }
+
+    .ecms-detail-grid,
+    .ecms-form-grid {
+        gap: 0.38rem 0.48rem;
+        padding: 0.55rem 0.65rem;
+    }
+
+    .ecms-detail-item,
+    .ecms-form-field,
+    .ecms-check-field {
+        min-height: 2.55rem;
+        padding: 0.35rem 0.48rem;
+    }
+
+    .ecms-userprofile-page .labelprofile {
+        font-size: 0.68rem;
+        margin-bottom: 0.14rem;
+    }
+
+    .ecms-value,
+    .ecms-readonly-pill {
+        font-size: 0.74rem;
+    }
+}
+
+/* Stack the two mapping sections and permit normal app-main scrolling. */
+@media (max-width: 1199.98px) {
+    .ecms-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ecms-form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-profile-shell {
+        gap: 0.5rem;
+    }
+
+    .ecms-profile-heading {
+        align-items: flex-start;
+    }
+
+        .ecms-profile-heading h2 {
+            font-size: 1.08rem;
+        }
+
+    .ecms-detail-grid,
     .ecms-form-grid {
         grid-template-columns: 1fr;
     }
 
     .ecms-detail-item-wide {
-        grid-column: span 1;
+        grid-column: auto;
+    }
+
+    .ecms-check-field {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .ecms-profile-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+        .ecms-profile-actions .ecms-btn {
+            width: 100%;
+            white-space: normal;
+        }
+
+    .ecms-token-message-wrap #tokenmsg {
+        width: 100% !important;
+        max-width: none;
     }
 }
 
-@media (max-width: 768px) {
-    .ecms-userprofile-page {
-        padding: 10px 10px 54px !important;
-    }
-
-    .ecms-profile-shell {
-        width: 100% !important;
-        padding: 10px !important;
-        border-radius: 18px !important;
-    }
-
-    .ecms-profile-heading h2 {
-        font-size: 18px;
-    }
-
-    .ecms-detail-grid {
+@media (max-width: 419.98px) {
+    .ecms-check-field {
         grid-template-columns: 1fr;
     }
 
-    .ecms-profile-actions {
-        justify-content: center;
-    }
-
-    .ecms-btn {
-        width: 100%;
+    .ecms-check-wrap {
+        justify-self: start;
     }
 }
 
-
-/* =====================================================
-   FINAL FIX: Profile action buttons hidden near footer
-   Only UI change - no functionality / ID changes
-===================================================== */
-
-/* This page has more content than the available area above the fixed footer.
-   Keep the same theme, but give the shell safe bottom space. */
-html:has(.ecms-userprofile-page),
-body:has(.ecms-userprofile-page) {
-    overflow-y: hidden !important;
-}
-
-.ecms-userprofile-page {
-    height: calc(100vh - 255px) !important;
-    min-height: calc(100vh - 255px) !important;
-    padding: 10px 18px 72px !important;
-    overflow: hidden !important;
-}
-
-.ecms-profile-shell {
-    height: calc(100vh - 330px) !important;
-    max-height: calc(100vh - 330px) !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    padding: 10px 12px 14px !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(47, 125, 255, 0.65) rgba(255,255,255,0.22);
-}
-
-    .ecms-profile-shell::-webkit-scrollbar {
-        width: 7px;
-    }
-
-    .ecms-profile-shell::-webkit-scrollbar-thumb {
-        background: rgba(47, 125, 255, 0.65);
-        border-radius: 999px;
-    }
-
-    .ecms-profile-shell::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.22);
-        border-radius: 999px;
-    }
-
-/* Compact the content slightly so action buttons remain visible on 1366/1600px screens */
-.ecms-profile-heading {
-    padding: 8px 12px 9px !important;
-    margin-bottom: 8px !important;
-}
-
-.ecms-profile-heading-icon {
-    width: 42px !important;
-    height: 42px !important;
-    flex-basis: 42px !important;
-    border-radius: 14px !important;
-}
-
-.ecms-profile-heading h2 {
-    font-size: 20px !important;
-}
-
-.ecms-profile-heading p {
-    font-size: 10.5px !important;
-}
-
-.ecms-profile-grid {
-    gap: 10px !important;
-}
-
-.ecms-profile-card {
-    border-radius: 17px !important;
-}
-
-.ecms-section-title {
-    height: 34px !important;
-    min-height: 34px !important;
-    font-size: 13px !important;
-}
-
-.ecms-detail-grid {
-    gap: 7px 10px !important;
-    padding: 10px 12px 12px !important;
-}
-
-.ecms-detail-item,
-.ecms-form-field,
-.ecms-check-field {
-    min-height: 44px !important;
-    padding: 6px 9px !important;
-    border-radius: 12px !important;
-}
-
-.ecms-personal-card {
-    margin-top: 10px !important;
-}
-
-.ecms-form-grid {
-    gap: 8px !important;
-    padding: 10px 12px !important;
-}
-
-.ecms-userprofile-page .form-control,
-.ecms-userprofile-page .form-select,
-.ecms-userprofile-page .form-control-Alphabets {
-    height: 34px !important;
-    min-height: 34px !important;
-    padding: 6px 11px !important;
-}
-
-/* Action buttons must never hide below footer */
-.ecms-profile-actions {
-    position: sticky !important;
-    bottom: 0 !important;
-    z-index: 8 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    gap: 10px !important;
-    margin-top: 10px !important;
-    padding: 10px 6px 4px !important;
-    border-radius: 0 0 16px 16px !important;
-    background: linear-gradient(180deg, rgba(232,244,255,0.15), rgba(232,244,255,0.98) 36%, rgba(232,244,255,0.98)) !important;
-    backdrop-filter: blur(8px);
-}
-
-    .ecms-profile-actions .ecms-btn,
-    .ecms-profile-actions #btnProfilesave,
-    .ecms-profile-actions #btnderegprofile,
-    .ecms-profile-actions #btntokenrefresh {
-        min-height: 38px !important;
-        height: 38px !important;
-        padding: 8px 18px !important;
-        white-space: nowrap !important;
-    }
-
-.ecms-token-message-wrap {
-    margin-top: 6px !important;
-}
-
-/* Small laptops / browser zoom safe */
-@media (max-height: 820px) {
-    .ecms-profile-shell {
-        height: calc(100vh - 320px) !important;
-        max-height: calc(100vh - 320px) !important;
-    }
-
-    .ecms-detail-item,
-    .ecms-form-field,
-    .ecms-check-field {
-        min-height: 40px !important;
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
-    }
-
-    .ecms-userprofile-page .labelprofile,
-    .ecms-userprofile-page .form-group .labelprofile {
-        font-size: 11px !important;
-        margin-bottom: 3px !important;
-    }
-
-    .ecms-value,
-    .ecms-readonly-pill,
-    .ecms-userprofile-page .col-form-label:not(.labelprofile) {
-        font-size: 12px !important;
+@media (prefers-reduced-motion: reduce) {
+    .ecms-userprofile-page .btn {
+        transition: none !important;
     }
 }
 
-@media (max-width: 1199px) {
+/* =====================================================================
+   FINAL DESKTOP SCROLLBAR FIX
+   The shared ECMS layout scrolls inside .ecms-app-main. On this page the
+   default .ecms-page bottom margin includes footer-safe space even though
+   .ecms-app-main already ends above the fixed footer. That extra space
+   creates the right-side page scrollbar. Keep this fix local to Profile.
+===================================================================== */
+@media (min-width: 1200px) and (min-height: 721px) {
     html:has(.ecms-userprofile-page),
     body:has(.ecms-userprofile-page) {
-        overflow-y: auto !important;
+        height: 100% !important;
+        overflow: hidden !important;
     }
 
-    .ecms-userprofile-page,
-    .ecms-profile-shell {
-        height: auto !important;
-        max-height: none !important;
-        min-height: calc(100vh - 255px) !important;
-        overflow: visible !important;
-    }
+        body:has(.ecms-userprofile-page) .ecms-app-main,
+        .ecms-app-main:has(.ecms-userprofile-page) {
+            overflow-x: hidden !important;
+            overflow-y: hidden !important;
+            overscroll-behavior: none;
+        }
 
-    .ecms-profile-actions {
-        position: static !important;
-        background: transparent !important;
-    }
-}
-
-/* =====================================================
-   FINAL FIX: remove inner scrollbar + fix Yes checkbox text
-   Only UI CSS change - no functionality / ID changes
-===================================================== */
-
-html:has(.ecms-userprofile-page),
-body:has(.ecms-userprofile-page) {
-    overflow-y: hidden !important;
-}
-
-.ecms-userprofile-page {
-    height: calc(100vh - 255px) !important;
-    min-height: calc(100vh - 255px) !important;
-    padding: 10px 18px 46px !important;
-    overflow: hidden !important;
-}
-
-/* No internal scrollbar. Content is compacted to fit above footer. */
-.ecms-profile-shell {
-    height: auto !important;
-    max-height: calc(100vh - 292px) !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    padding: 9px 12px 10px !important;
-}
-
-.ecms-profile-heading {
-    padding: 7px 12px 8px !important;
-    margin-bottom: 7px !important;
-}
-
-.ecms-profile-heading-icon {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    flex: 0 0 40px !important;
-    border-radius: 13px !important;
-}
-
-.ecms-profile-heading h2 {
-    font-size: 19px !important;
-    line-height: 1.05 !important;
-}
-
-.ecms-profile-heading p {
-    font-size: 10px !important;
-    line-height: 1.1 !important;
-    margin-top: 3px !important;
-}
-
-.ecms-profile-grid {
-    gap: 8px !important;
-}
-
-.ecms-section-title {
-    height: 30px !important;
-    min-height: 30px !important;
-    font-size: 12.5px !important;
-}
-
-.ecms-detail-grid {
-    gap: 6px 8px !important;
-    padding: 8px 10px 9px !important;
-}
-
-.ecms-detail-item,
-.ecms-form-field,
-.ecms-check-field {
-    min-height: 38px !important;
-    padding: 5px 8px !important;
-    border-radius: 11px !important;
-}
-
-.ecms-userprofile-page .labelprofile,
-.ecms-userprofile-page .form-group .labelprofile {
-    font-size: 10.5px !important;
-    line-height: 1.05 !important;
-    margin-bottom: 3px !important;
-}
-
-.ecms-value,
-.ecms-readonly-pill,
-.ecms-userprofile-page .col-form-label:not(.labelprofile) {
-    min-height: 18px !important;
-    font-size: 11.5px !important;
-    line-height: 1.12 !important;
-}
-
-.ecms-personal-card {
-    margin-top: 8px !important;
-}
-
-.ecms-form-grid {
-    gap: 7px 8px !important;
-    padding: 8px 10px !important;
-}
-
-.ecms-userprofile-page .form-control,
-.ecms-userprofile-page .form-select,
-.ecms-userprofile-page .form-control-Alphabets {
-    height: 31px !important;
-    min-height: 31px !important;
-    padding: 5px 10px !important;
-    font-size: 12px !important;
-}
-
-/* Fix hidden Yes text beside checkboxes */
-.ecms-check-field {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 78px !important;
-    align-items: center !important;
-    gap: 8px !important;
-    overflow: visible !important;
-}
-
-    .ecms-check-field .labelprofile {
-        margin: 0 !important;
-        padding-right: 4px !important;
-        white-space: normal !important;
-        overflow: visible !important;
-        text-overflow: unset !important;
-    }
-
-.ecms-check-wrap {
-    width: 72px !important;
-    min-width: 72px !important;
-    height: 32px !important;
-    padding: 5px 8px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    overflow: visible !important;
-    justify-self: end !important;
-}
-
-    .ecms-check-wrap span {
-        display: inline-block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        color: #10254f !important;
-        font-size: 11.5px !important;
-        font-weight: 900 !important;
-        line-height: 1 !important;
-        white-space: nowrap !important;
-    }
-
-.ecms-userprofile-page .form-check-input {
-    width: 17px !important;
-    height: 17px !important;
-    min-width: 17px !important;
-    flex: 0 0 17px !important;
-}
-
-/* Normal action row; no sticky overlay and no inner scrollbar */
-.ecms-profile-actions {
-    position: static !important;
-    bottom: auto !important;
-    z-index: 1 !important;
-    justify-content: flex-end !important;
-    margin-top: 8px !important;
-    padding: 6px 6px 0 !important;
-    background: transparent !important;
-    backdrop-filter: none !important;
-}
-
-    .ecms-profile-actions .ecms-btn,
-    .ecms-profile-actions #btnProfilesave,
-    .ecms-profile-actions #btnderegprofile,
-    .ecms-profile-actions #btntokenrefresh {
-        min-height: 34px !important;
-        height: 34px !important;
-        padding: 7px 15px !important;
-        font-size: 12px !important;
-    }
-
-.ecms-token-message-wrap {
-    margin-top: 4px !important;
-}
-
-/* Hide any scrollbar styles from previous fix */
-.ecms-profile-shell::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0 !important;
-}
-
-@media (max-height: 820px) {
-    .ecms-profile-shell {
-        max-height: calc(100vh - 285px) !important;
-    }
-
-    .ecms-detail-item,
-    .ecms-form-field,
-    .ecms-check-field {
-        min-height: 36px !important;
-        padding-top: 4px !important;
-        padding-bottom: 4px !important;
-    }
-
-    .ecms-form-grid {
-        gap: 6px 8px !important;
-    }
-
-    .ecms-profile-actions {
-        margin-top: 6px !important;
-    }
-}
-
-@media (max-width: 1199px) {
-    .ecms-profile-shell {
-        height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-    }
-
-    .ecms-check-field {
-        grid-template-columns: minmax(0, 1fr) 78px !important;
-    }
-}
-
-
-/* =====================================================
-   FINAL v2: Profile page height + checkbox Yes text fix
-   Only UI CSS change - no functionality / ID changes
-===================================================== */
-
-/* Keep page fixed without inner scrollbar, but use more available height */
-html:has(.ecms-userprofile-page),
-body:has(.ecms-userprofile-page) {
-    overflow-y: hidden !important;
-}
-
-.ecms-userprofile-page {
-    height: calc(100vh - 255px) !important;
-    min-height: calc(100vh - 255px) !important;
-    padding: 10px 18px 58px !important;
-    overflow: hidden !important;
-}
-
-.ecms-profile-shell {
-    height: calc(100vh - 345px) !important;
-    min-height: 520px !important;
-    max-height: calc(100vh - 345px) !important;
-    overflow: hidden !important;
-    padding: 11px 12px 12px !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* Use the available card height better */
-.ecms-profile-heading {
-    padding: 9px 14px 10px !important;
-    margin-bottom: 9px !important;
-}
-
-.ecms-profile-heading-icon {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    flex: 0 0 44px !important;
-}
-
-.ecms-profile-heading h2 {
-    font-size: 21px !important;
-    line-height: 1.08 !important;
-}
-
-.ecms-profile-heading p {
-    font-size: 10.8px !important;
-    line-height: 1.15 !important;
-}
-
-.ecms-profile-grid {
-    gap: 10px !important;
-}
-
-.ecms-section-title {
-    height: 34px !important;
-    min-height: 34px !important;
-    font-size: 13px !important;
-}
-
-.ecms-detail-grid {
-    gap: 7px 9px !important;
-    padding: 9px 11px 10px !important;
-}
-
-.ecms-detail-item,
-.ecms-form-field,
-.ecms-check-field {
-    min-height: 43px !important;
-    padding: 6px 9px !important;
-    border-radius: 12px !important;
-}
-
-.ecms-userprofile-page .labelprofile,
-.ecms-userprofile-page .form-group .labelprofile {
-    font-size: 11.2px !important;
-    line-height: 1.08 !important;
-    margin-bottom: 4px !important;
-}
-
-.ecms-value,
-.ecms-readonly-pill,
-.ecms-userprofile-page .col-form-label:not(.labelprofile) {
-    min-height: 19px !important;
-    font-size: 12.4px !important;
-    line-height: 1.16 !important;
-}
-
-.ecms-personal-card {
-    margin-top: 9px !important;
-}
-
-.ecms-form-grid {
-    gap: 8px 9px !important;
-    padding: 10px 12px !important;
-}
-
-.ecms-userprofile-page .form-control,
-.ecms-userprofile-page .form-select,
-.ecms-userprofile-page .form-control-Alphabets {
-    height: 34px !important;
-    min-height: 34px !important;
-    padding: 6px 11px !important;
-    font-size: 12.6px !important;
-}
-
-/* Checkbox rows: reserve proper space for label + Yes pill */
-.ecms-check-field {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 96px !important;
-    align-items: center !important;
-    column-gap: 12px !important;
-    overflow: visible !important;
-}
-
-    .ecms-check-field .labelprofile {
-        margin: 0 !important;
-        padding: 0 8px 0 0 !important;
-        white-space: normal !important;
-        overflow: visible !important;
-        text-overflow: unset !important;
-    }
-
-/* Build the visible Yes text using CSS so global checkbox styles cannot hide it */
-.ecms-check-wrap {
-    position: relative !important;
-    width: 90px !important;
-    min-width: 90px !important;
-    height: 34px !important;
-    padding: 0 11px !important;
-    display: inline-flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 8px !important;
-    justify-self: end !important;
-    overflow: visible !important;
-    color: #10254f !important;
-}
-
-    .ecms-check-wrap::before {
-        content: "Yes" !important;
-        display: inline-block !important;
-        color: #10254f !important;
-        font-size: 12px !important;
-        font-weight: 900 !important;
-        line-height: 1 !important;
-        white-space: nowrap !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-
-    /* Hide the HTML span to avoid duplicate Yes if browser also renders it */
-    .ecms-check-wrap > span {
-        display: none !important;
-    }
-
-    .ecms-check-wrap .form-check-input,
-    .ecms-userprofile-page .ecms-check-wrap .form-check-input,
-    .ecms-userprofile-page input.form-check-input#chkIO,
-    .ecms-userprofile-page input.form-check-input#chkCO {
-        position: static !important;
-        float: none !important;
-        margin: 0 !important;
-        margin-left: 0 !important;
-        width: 18px !important;
-        height: 18px !important;
-        min-width: 18px !important;
-        max-width: 18px !important;
-        flex: 0 0 18px !important;
-        display: inline-block !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        z-index: 2 !important;
-        cursor: pointer !important;
-    }
-
-.ecms-profile-actions {
-    position: static !important;
-    margin-top: auto !important;
-    padding: 9px 6px 0 !important;
-    background: transparent !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    gap: 10px !important;
-}
-
-    .ecms-profile-actions .ecms-btn,
-    .ecms-profile-actions #btnProfilesave,
-    .ecms-profile-actions #btnderegprofile,
-    .ecms-profile-actions #btntokenrefresh {
-        min-height: 36px !important;
-        height: 36px !important;
-        padding: 7px 16px !important;
-        font-size: 12.5px !important;
-        white-space: nowrap !important;
-    }
-
-.ecms-token-message-wrap {
-    margin-top: 4px !important;
-}
-
-@media (max-height: 820px) {
-    .ecms-profile-shell {
-        height: calc(100vh - 330px) !important;
+    .ecms-userprofile-page {
+        width: min(1480px, calc(100vw - 1.5rem)) !important;
+        height: calc( 100% - var(--ecms-nav-strip-height, 44px) - var(--ecms-breadcrumb-strip-height, 35px) - 1.25rem ) !important;
         min-height: 0 !important;
-        max-height: calc(100vh - 330px) !important;
-    }
-
-    .ecms-profile-heading {
-        padding: 7px 12px 8px !important;
-        margin-bottom: 7px !important;
-    }
-
-    .ecms-section-title {
-        height: 30px !important;
-        min-height: 30px !important;
-    }
-
-    .ecms-detail-item,
-    .ecms-form-field,
-    .ecms-check-field {
-        min-height: 38px !important;
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
-    }
-
-    .ecms-userprofile-page .labelprofile,
-    .ecms-userprofile-page .form-group .labelprofile {
-        font-size: 10.6px !important;
-        margin-bottom: 3px !important;
-    }
-
-    .ecms-value,
-    .ecms-readonly-pill,
-    .ecms-userprofile-page .col-form-label:not(.labelprofile) {
-        font-size: 11.8px !important;
-    }
-
-    .ecms-form-grid {
-        gap: 7px 8px !important;
-        padding: 8px 10px !important;
-    }
-}
-
-@media (max-width: 1199px) {
-    html:has(.ecms-userprofile-page),
-    body:has(.ecms-userprofile-page) {
-        overflow-y: auto !important;
-    }
-
-    .ecms-userprofile-page,
-    .ecms-profile-shell {
-        height: auto !important;
-        min-height: auto !important;
         max-height: none !important;
-        overflow: visible !important;
+        margin: 0.625rem auto !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
     }
 
-    .ecms-check-field {
-        grid-template-columns: minmax(0, 1fr) 96px !important;
+    .ecms-profile-form,
+    .ecms-profile-shell {
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .ecms-profile-shell {
+        overflow: hidden !important;
     }
 }

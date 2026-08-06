@@ -41,11 +41,11 @@ else
     </header>
 }
 
-<div class="containerMain ecms-userprofile-page">
+<div class="containerMain ecms-page ecms-page-full ecms-userprofile-page">
     <form action="" id="SaveFormProfile" method="post" name="SaveForm" class="ecms-profile-form">
-        <div class="ecms-profile-shell">
-            <div class="ecms-profile-heading">
-                <div class="ecms-profile-heading-icon"><i class="fa fa-id-badge"></i></div>
+        <div class="card ecms-card ecms-card-body ecms-profile-shell">
+            <div class="ecms-page-title ecms-profile-heading">
+                <div class="ecms-title-icon ecms-profile-heading-icon"><i class="fa fa-id-badge"></i></div>
                 <div>
                     <h2>Profile Mapping Details</h2>
                     <p>Review unit mapping, domain mapping and update personal profile information</p>
@@ -53,12 +53,12 @@ else
             </div>
 
             <div class="ecms-profile-grid">
-                <section class="ecms-profile-card ecms-profile-card-unit">
+                <section class="ecms-section ecms-profile-card ecms-profile-card-unit">
                     <div class="ecms-section-title">
                         <i class="fa fa-sitemap"></i>
                         <span>Unit Mapping Details</span>
                     </div>
-                    <div class="ecms-detail-grid">
+                    <div class="ecms-form-section ecms-detail-grid">
                         <span id="spnUnitIdUserPro" class="d-none"></span>
 
                         <div class="ecms-detail-item ecms-detail-item-wide">
@@ -104,12 +104,12 @@ else
                     </div>
                 </section>
 
-                <section class="ecms-profile-card ecms-profile-card-domain">
+                <section class="ecms-section ecms-profile-card ecms-profile-card-domain">
                     <div class="ecms-section-title">
                         <i class="fa fa-shield"></i>
                         <span>Domain Details</span>
                     </div>
-                    <div class="ecms-detail-grid">
+                    <div class="ecms-form-section ecms-detail-grid">
                         <div class="ecms-detail-item">
                             <label class="labelprofile">Mapped Domain ID</label>
                             <span id="lblDomainId" class="ecms-value"></span>
@@ -138,13 +138,13 @@ else
                 </section>
             </div>
 
-            <section class="ecms-profile-card ecms-personal-card">
+            <section class="ecms-section ecms-profile-card ecms-personal-card">
                 <div class="ecms-section-title">
                     <i class="fa fa-user"></i>
                     <span>Personal Information</span>
                 </div>
 
-                <div class="ecms-form-grid">
+                <div class="ecms-form-section ecms-form-grid">
                     <div class="ecms-form-field">
                         <label class="labelprofile">Service No</label>
                         <input class="form-control alpha-num-only" placeholder="Enter Army No" id="txtProArmy" required maxlength="8" readonly />
@@ -170,16 +170,16 @@ else
                     <div class="ecms-check-field">
                         <label class="labelprofile">Are you performing the Duties of OC / CO / OC Tps?</label>
                         <div class="ecms-check-wrap">
-                            <input class="form-check-input" type="checkbox" value="" id="chkIO">
-                            <span>Yes</span>
+                            <span class="ecms-check-text">Yes</span>
+                            <input class="form-check-input" type="checkbox" value="" id="chkIO" aria-label="Performing duties of OC, CO or OC Troops">
                         </div>
                     </div>
 
                     <div class="ecms-check-field">
                         <label class="labelprofile">Are you Commanding a Unit/ Sub Unit/ Fmn / Dte?</label>
                         <div class="ecms-check-wrap">
-                            <input class="form-check-input" type="checkbox" value="" id="chkCO">
-                            <span>Yes</span>
+                            <span class="ecms-check-text">Yes</span>
+                            <input class="form-check-input" type="checkbox" value="" id="chkCO" aria-label="Commanding a unit, sub unit, formation or directorate">
                         </div>
                     </div>
 
@@ -190,16 +190,16 @@ else
                 </div>
             </section>
 
-            <div class="ecms-profile-actions">
-                <button type="button" class="btn ecms-btn ecms-btn-danger" id="btntokenrefresh">
+            <div class="ecms-form-actions ecms-profile-actions">
+                <button type="button" class="btn btn-danger ecms-btn ecms-btn-danger" id="btntokenrefresh">
                     <i class="fa fa-refresh"></i>
                     Refresh to Fetch Thumbprint from Token
                 </button>
-                <button type="button" class="btn ecms-btn ecms-btn-danger" id="btnderegprofile">
+                <button type="button" class="btn btn-danger ecms-btn ecms-btn-danger" id="btnderegprofile">
                     <i class="fa fa-user-times"></i>
                     Unregister Profile
                 </button>
-                <input type="button" class="btn ecms-btn ecms-btn-primary" value="Submit" id="btnProfilesave" />
+                <input type="button" class="btn btn-primary ecms-btn ecms-btn-primary" value="Submit" id="btnProfilesave" />
             </div>
 
             <div class="ecms-token-message-wrap">
@@ -210,7 +210,7 @@ else
     </form>
 
     <div class="modal fade ecms-userprofile-modal" id="AddNewProfile" tabindex="-1" aria-labelledby="exampleModalLabel">
-        <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-dialog modal-xl ecms-modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalToggleLabel">Update Profile</h5>
@@ -227,7 +227,7 @@ else
 <script asp-src-include="~/developerjs/token.js"></script>
 
 <div class="modal fade ecms-userprofile-modal" id="DeRegisterConfirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered ecms-modal-sm">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Unregister Profile</h5>
@@ -238,8 +238,8 @@ else
                 <div class="fw-bold">Are you sure you want to unregister your profile?</div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn ecms-btn ecms-btn-secondary" data-bs-dismiss="modal">No</button>
-                <button type="button" class="btn ecms-btn ecms-btn-primary" id="btnDeRegisterConfirmModalSubmit">Yes</button>
+                <button type="button" class="btn btn-secondary ecms-btn ecms-btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary ecms-btn ecms-btn-primary" id="btnDeRegisterConfirmModalSubmit">Yes</button>
             </div>
         </div>
     </div>
