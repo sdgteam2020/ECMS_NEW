@@ -68,7 +68,7 @@ $(async function () {
     });    
 
 
-    var RemarkTypeID = [6];
+    var RemarkTypeID = [8];
     GetRemarks("ddlDestructionRemark", 0, RemarkTypeID);
 
     $('.select2').select2({

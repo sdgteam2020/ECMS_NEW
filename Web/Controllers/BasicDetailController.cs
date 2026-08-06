@@ -1,6 +1,7 @@
 ﻿using BusinessLogicsLayer.BasicDet;
 using BusinessLogicsLayer.BasicDetTemp;
 using BusinessLogicsLayer.Bde;
+using BusinessLogicsLayer.CompletedICard;
 using BusinessLogicsLayer.CSVImports;
 using BusinessLogicsLayer.DestructionCard;
 using BusinessLogicsLayer.DispatchCard;
@@ -13,6 +14,7 @@ using BusinessLogicsLayer.HotlistCard;
 using BusinessLogicsLayer.LostCard;
 using BusinessLogicsLayer.Master;
 using BusinessLogicsLayer.OROMapp;
+using BusinessLogicsLayer.Posting;
 using BusinessLogicsLayer.RecordOffice;
 using BusinessLogicsLayer.Service;
 using BusinessLogicsLayer.TrnICardHold;
@@ -20,6 +22,7 @@ using BusinessLogicsLayer.TrnLoginLog;
 using BusinessLogicsLayer.Unit;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Dapper;
 using DataAccessLayer;
 using DataAccessLayer.Healpers;
 using DataTransferObject.Constants;
@@ -28,16 +31,20 @@ using DataTransferObject.Domain.Master;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.Response.User;
 using DataTransferObject.ViewModels;
 using EntityFramework.Exceptions.Common;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Management.Smo;
 using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
 using System.IO.Compression;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
@@ -94,6 +101,9 @@ namespace Web.Controllers
         private readonly IOROMappingBL oROMappingBL;// For ORO Mapping
         private readonly IRegimentalBL regimentalBL;// For Regimental Database
         private readonly IRecordOfficeBL recordOfficeBL; // For Record Office
+        private readonly ICompletedICardRequestBL _completedICardRequestBL; // For Completed I-Card Request
+        private readonly IHttpContextAccessor _httpContextAccessor;//Interface for accessing HTTP context details
+        private readonly IApplCloseBL applCloseBL; // For Application Close
         public const string SessionKeySalt = "_Salt";
 
         /// <summary>
@@ -109,7 +119,7 @@ namespace Web.Controllers
             , IBasicUploadBL basicUploadBL, IBasicAddressBL basicAddressBL, IBasicinfoBL basicinfoBL, IRankBL rankBL, INotificationBL notificationBL, IMasterBL masterBL
            , ITrnLoginLogBL iTrnLoginLogBL, IICardHoldBL iICardHoldBL, IcsvImportBl iCSVImportBL, IFaultyCardBL _faultyCardBL, IHotlistCardBL hotlistCardBL, ILostCardBL lostCardBL, IDistributeCardBL distributeCardBL,
            IDestructionCardBL destructionCardBL, IDispatchCardBL dispatchCardBL, IDispatchCardMappingBL dispatchCardMappingBL, IImageEncryptAndDecrypt imageEncryptAndDecrypt, IEncryptionSettingBL encryptionSettingBL,
-           IOROMappingBL oROMappingBL, IRegimentalBL regimentalBL, IRecordOfficeBL recordOfficeBL)
+           IOROMappingBL oROMappingBL, IRegimentalBL regimentalBL, IRecordOfficeBL recordOfficeBL, ICompletedICardRequestBL _completedICardRequestBL, IHttpContextAccessor httpContextAccessor, IApplCloseBL applCloseBL)
         {
             _configuration = configuration;
             this.basicDetailBL = basicDetailBL;
@@ -148,6 +158,9 @@ namespace Web.Controllers
             this.oROMappingBL = oROMappingBL;
             this.regimentalBL = regimentalBL;
             this.recordOfficeBL = recordOfficeBL;
+            this._completedICardRequestBL = _completedICardRequestBL;
+            _httpContextAccessor = httpContextAccessor;
+            this.applCloseBL = applCloseBL;
         }
 
         #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
@@ -2177,6 +2190,13 @@ namespace Web.Controllers
                             mTrnICardRequest.TrnDomainMappingId = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").TrnDomainMappingId;
                             mTrnICardRequest.UpdatedOn = DateTime.Now;
                             mTrnICardRequest.Updatedby = Convert.ToInt32(userId);
+                            mTrnICardRequest.CardSerialNo = null;
+                            mTrnICardRequest.ChipNo = null;
+                            mTrnICardRequest.CardExportedByAspNetUserId = null;
+                            mTrnICardRequest.CardExportedByUserId = null;
+                            mTrnICardRequest.CardPrintedByAspNetUserId = null;
+                            mTrnICardRequest.CardPrintedByUserId = null;
+
                             //SessionHeplers.GetObject<string>(HttpContext.Session, "ArmyNo");
                             // mTrnICardRequest = await iTrnICardRequestBL.AddWithReturn(mTrnICardRequest);
 
@@ -3209,12 +3229,24 @@ namespace Web.Controllers
                     return Json(KeyConstants.InternalServerError);
                 }
 
+                DtoSession? dtoSession = null;
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
+
+                if (dtoSession == null)
+                {
+                    return Json(KeyConstants.InternalServerError);
+                }
+
+                Data.CardExportedByUserId = dtoSession.UserId;
+                Data.CardExportedByAspNetUserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
                 // Fetch basic details for requested data export
                 List<DTODataExportsResponse> retdata = await basicDetailBL.GetBesicdetailsByRequestId(Data, dTOApplFwdCondition);
                 if (retdata.Count() > 0)
                 {
-                    // Retrieve session object
-                    DtoSession dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
 
                     // Create folder for export with unique random name
                     string sourceFolderPhotoPhy = Convert.ToString(ForCreateFolderrandom(Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData", "ExportAFSACCell"), dtoSession.DoaminId));
@@ -4301,6 +4333,33 @@ namespace Web.Controllers
 
                         // Save the record and return success response
                         var result = await _hotlistCardBL.AddWithReturn(model);
+
+                        CompletedICardRequest? completedICardRequest = await _completedICardRequestBL.GetByRequestId(model.RequestId);
+                        if (completedICardRequest != null)
+                        {
+                            string? historyJson = completedICardRequest?.CardRequestHistoryJson;
+                            if (!string.IsNullOrWhiteSpace(historyJson))
+                            {
+                                DTOCardMovementHistoryResponse hotlistBy = new DTOCardMovementHistoryResponse
+                                {
+                                    StepName = "I-Card Holtist",
+                                    ReportedBy = $"({dtoSession?.DoaminId}) {dtoSession?.RankName} {dtoSession?.Name}",
+                                    Remark = model.Remark ?? string.Empty,
+                                    ReportedOn = model.UpdatedOn ?? DateTime.Now
+                                };
+
+                                ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();
+                                cardHistoryResponseAll = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                                cardHistoryResponseAll.CardMovement.Add(hotlistBy);
+
+                                var cardRequestHistoryJson = JsonConvert.SerializeObject(cardHistoryResponseAll);
+
+                                completedICardRequest.CardRequestHistoryJson = cardRequestHistoryJson;
+                                await _completedICardRequestBL.Update(completedICardRequest);
+                            }
+
+                        }
+
                         dTOFaulty.Result = true;
                         dTOFaulty.Message = "Record created!";
                         dTOFaulty.Value.CurrentTime = result.UpdatedOn.GetValueOrDefault(); // Return saved record timestamp
@@ -4578,8 +4637,16 @@ namespace Web.Controllers
                         model.AppointmentName = checkCardBeforeLost.AppointmentName;
                         model.HotlistCardId = checkCardBeforeLost.HotlistCardId;
 
+                        DTOCardMovementHistoryResponse LostReportBy = new DTOCardMovementHistoryResponse
+                        {
+                            StepName = "I-Card Lost",
+                            ReportedBy = $"({dtoSession?.DoaminId}) {dtoSession?.RankName} {dtoSession?.Name}",
+                            Remark = model.Remark ?? string.Empty,
+                            ReportedOn = model.UpdatedOn ?? DateTime.Now
+                        };
+
                         // Save entity and trigger related business logic
-                        dTOResponse = await _lostCardBL.SaveLostCardRequest(model);
+                        dTOResponse = await _lostCardBL.SaveLostCardRequest(model, LostReportBy);
                     }
                     else
                     {
@@ -4785,6 +4852,17 @@ namespace Web.Controllers
                     {
                         // Fetch card history to record distribution details
                         ICardHistoryResponseAll cardHistoryResponses = await basicDetailBL.ICardHistory(model.RequestId);
+
+                        DTOCardMovementHistoryResponse Distribute = new DTOCardMovementHistoryResponse
+                        {
+                            StepName = "I-Card Distributed",
+                            ReportedBy = $"({dtoSession?.DoaminId}) {dtoSession?.RankName} {dtoSession?.Name}",
+                            Remark = model.Remark ?? string.Empty,
+                            ReportedOn = model.DistributedOn ?? DateTime.Now
+                        };
+                        cardHistoryResponses.CardMovement = await basicDetailBL.GetCardMovementHistory(model.RequestId);
+                        cardHistoryResponses.CardMovement.Add(Distribute);
+
                         // Save the distribution record and get the response
                         dTOResponse = await _distributeCardBL.SaveDistributeCard(model, cardHistoryResponses);
                     }
@@ -5096,15 +5174,21 @@ namespace Web.Controllers
             // Check the current status of the card for the given request
             var cardStatus = await basicDetailBL.CheckCardStatus(RequestId);
 
-            if (cardStatus.GetValueOrDefault() == 1 || cardStatus.GetValueOrDefault() == 3)
+            if (cardStatus.GetValueOrDefault() == 1)
             {
                 // If card is pending, fetch pending card history
                 cardHistoryResponses = await basicDetailBL.ICardHistory(RequestId);
             }
-            else if (cardStatus.GetValueOrDefault() == 2)
+            else if (cardStatus.GetValueOrDefault() == 2 )
             {
                 // If card is completed, fetch completed card history
                 cardHistoryResponses = await basicDetailBL.ICardHistoryCompleted(RequestId);
+            }
+            else if (cardStatus.GetValueOrDefault() == 3)
+            {
+                // If card is closed, fetch closed card history
+                cardHistoryResponses = await basicDetailBL.ICardHistoryClosed(RequestId);
+
             }
 
             // Return the card history as JSON
@@ -5684,8 +5768,18 @@ namespace Web.Controllers
                 }
                 #endregion Upload File Without Remarks
 
+                // Initialize session DTO
+                DtoSession? dtoSession = null;
+
+                // Retrieve session token if available
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                {
+                    dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                }
+                int CardPrintedByUserId  = dtoSession != null ? dtoSession.UserId : 0;
+                int CardPrintedByAspNetUserId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 // Validate the CSV records
-                var validateResult = await basicDetailBL.ValidateCardPrinitng(records);
+                var validateResult = await basicDetailBL.ValidateCardPrinitng(records, CardPrintedByAspNetUserId , CardPrintedByUserId);
 
                 // Update response with validation statistics
                 response.Result = true;
@@ -5736,7 +5830,7 @@ namespace Web.Controllers
                     DbInvalidRecords = response.DbInValidRecords,
                     SheetInvalidRecords = response.SheetInValidRecords,
                     DBUpdated = false,
-                    ImportedBy = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                    ImportedBy = CardPrintedByAspNetUserId,
                     ImportedOn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"))
                 };
 
@@ -5970,7 +6064,7 @@ namespace Web.Controllers
         public async Task<IActionResult> SaveDestructionCardRequest(DTOTrnDestructionCardSaveRequest dTOTrnDestruction)
         {
             // Initialize the response object for front-end
-            var dTOFaulty = new DTOGenericResponse<DTOCommonResponse>
+            var dTODestruction = new DTOGenericResponse<DTOCommonResponse>
             {
                 Value = new DTOCommonResponse()
             };
@@ -5984,22 +6078,41 @@ namespace Web.Controllers
                         .SelectMany(x => x.Value!.Errors.Select(e => $"{x.Key}: {e.ErrorMessage}"))
                         .ToList();
 
-                    dTOFaulty.Result = false;
-                    dTOFaulty.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
-                    return Json(dTOFaulty);
+                    dTODestruction.Result = false;
+                    dTODestruction.Message = errors.Any() ? string.Join("; ", errors) : "Invalid request.";
+                    return Json(dTODestruction);
                 }
 
                 var checkCardBeforeDistruction = await _destructionCardBL.CheckBeforeDestructionCardReport(dTOTrnDestruction.RequestId);
 
                 if (!checkCardBeforeDistruction.Result)
                 {
-                    dTOFaulty.Result = false;
-                    dTOFaulty.Message = checkCardBeforeDistruction.Message;
-                    return Json(dTOFaulty);
+                    dTODestruction.Result = false;
+                    dTODestruction.Message = checkCardBeforeDistruction.Message;
+                    return Json(dTODestruction);
                 }
 
-                // Initialize session DTO
-                DtoSession? dtoSession = null;
+                if (checkCardBeforeDistruction.StatusId == (byte)RequestStatusEnum.Complete)
+                {
+                    if (checkCardBeforeDistruction.CompletedId == null)
+                    {
+                        dTODestruction.Result = false;
+                        dTODestruction.Message = "Application completion ID not found.";
+                        return Json(dTODestruction);
+                    }
+                }
+                else if (checkCardBeforeDistruction.StatusId == (byte)RequestStatusEnum.Closed)
+                {
+                    if (checkCardBeforeDistruction.ApplCloseId == null)
+                    {
+                        dTODestruction.Result = false;
+                        dTODestruction.Message = "Application closure ID not found.";
+                        return Json(dTODestruction);
+                    }
+                }
+
+                    // Initialize session DTO
+                    DtoSession? dtoSession = null;
 
                 // Retrieve session token if available
                 if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
@@ -6010,9 +6123,9 @@ namespace Web.Controllers
                 var userIdClaim = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (!int.TryParse(userIdClaim, out int updatedBy))
                 {
-                    dTOFaulty.Result = false;
-                    dTOFaulty.Message = "Invalid user session.";
-                    return Json(dTOFaulty);
+                    dTODestruction.Result = false;
+                    dTODestruction.Message = "Invalid user session.";
+                    return Json(dTODestruction);
                 }
 
 
@@ -6029,30 +6142,29 @@ namespace Web.Controllers
                 };
 
                 // Add the new destruction card and return success response
-                var result = await _destructionCardBL.AddWithReturn(model);
+                var result = await _destructionCardBL.SaveDestructionCardRequest(model, checkCardBeforeDistruction);
 
-                if (result == null)
+                if (result.Result == true)
                 {
-                    dTOFaulty.Result = false;
-                    dTOFaulty.Message = "Failed to save record.";
-                    return Json(dTOFaulty);
+                    return Json(result);
                 }
-
-                dTOFaulty.Result = true;
-                dTOFaulty.Message = "Record created!";
-                dTOFaulty.Value.CurrentTime = result.UpdatedOn.GetValueOrDefault();
-                dTOFaulty.Value.Id = result.DestructedCardId.ToString();
+                else
+                {
+                    dTODestruction.Result = false;
+                    dTODestruction.Message = "Failed to save record.";
+                    return Json(dTODestruction);
+                }
             }
             catch (Exception ex)
             {
                 // Log exception and return generic error response
                 _logger.LogError(1001, ex, "BasicDetail->SaveDestructionCardRequest");
-                dTOFaulty.Result = false;
-                dTOFaulty.Message = "Internal Server Error!";
+                dTODestruction.Result = false;
+                dTODestruction.Message = "Internal Server Error!";
             }
 
             // Return JSON response to the client
-            return Json(dTOFaulty);
+            return Json(dTODestruction);
         }
 
         #endregion DestructionCard
@@ -7321,6 +7433,264 @@ namespace Web.Controllers
 
         #endregion
 
+        #region Completed Card History
+        [HttpGet]
+        public async Task<ActionResult> CompletedHistory(string Id, string jcoor)
+        {
+            // Fetch current role from session and store in ViewBag
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+            ViewBag.Role = role;
+
+            // Validate Id: must be Base64 encoded and non-empty
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            string decodedString = string.Empty; // decoded string from Base64 Id
+            string UserType = string.Empty;
+
+            try
+            {
+                // Decode Base64 Id into integer and assign as stepCounter
+                decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));
+            }
+            catch (Exception ex)
+            {
+                // Log error and redirect on decoding failure
+                _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            // Determine Title, Type, StepCounter, and Export flags based on decoded Id
+            switch (decodedString)
+            {
+                case "Completed_IO":
+                    UserType = decodedString;
+                    break;
+
+                case "Completed_ORO":
+                    UserType = decodedString;
+                    break;
+                
+                case "Completed_RO":
+                    UserType = decodedString;
+                    break;
+
+                case "Completed_ADC":
+                    UserType = decodedString;
+                    break;
+                default:
+                    UserType = "Completed_IO";
+                    break;
+            }
+
+            // Assign computed values to ViewBag for the view
+            ViewBag.UserType = UserType;
+            ViewBag.ApplyForId = string.IsNullOrEmpty(jcoor) ? 1 : 2;
+            ViewBag.Title = "I-Card Completed History";
+
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> GetAllCompletedHistory([FromBody] EncryptedRequest Data)
+        {
+            DTODataTablesRequestFor_CompletedHistory dTO = await AESEncrytDecry.DecryptAESWithDTO<DTODataTablesRequestFor_CompletedHistory>(Data.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+
+            List<DTOCompletedHistoryResponse> dTOCompleteds = new List<DTOCompletedHistoryResponse>();
+            // If an exception occurs, return an empty response to avoid breaking the UI
+            
+            var responseData = new DTODataTablesResponse<DTOCompletedHistoryResponse>
+            {
+                draw = 1,        // DataTables draw counter (0 since error)
+                recordsTotal = 0,       // Total records (0 since error)
+                recordsFiltered = 0,    // Filtered records (0 since error)
+                data = dTOCompleteds    // Empty list of data
+            };
+            
+            if (dTO == null)
+            {
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                return Json(responseData);
+            }
+
+            try
+            {
+                ModelState.Clear();
+                if (TryValidateModel(dTO))
+                {
+                    // Get the current logged-in user's ASP.NET Identity Id
+                    dTO.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                    DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                    dTO.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                    dTO.TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+
+                    // Call business layer to retrieve dispatch card data for dialog
+                    return Json(await basicDetailBL.GetAllCompletedHistory(dTO));
+                }
+                else
+                {
+                    responseData.Result = false;
+                    responseData.Message = "Invalid Input";
+                    return Json(responseData);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging and tracking
+                _logger.LogError(1001, ex, "BasicDetail->GetDispatchCardDataForDialog");
+                responseData.Result = false;
+                responseData.Message = "Invalid Input";
+                // Return JSON with empty data
+                return Json(responseData);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCompletedHistory(string Request)
+        {
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            // Initialize the generic response object
+            DTOGenericResponse<ICardHistoryResponseAll> response = new DTOGenericResponse<ICardHistoryResponseAll>();
+            try
+            {
+                // Retrieve the basic detail record for the given RequestId
+                ICardHistoryResponseAll responseAll = await basicDetailBL.GetCompletedHistoryByRequestId(RequestId);
+
+                string PhotoImagePath = responseAll.BasicDetail.PhotoImagePath;
+                string SignatureImagePath = responseAll.BasicDetail.SignatureImagePath;
+
+                if (!string.IsNullOrWhiteSpace(PhotoImagePath) && !string.IsNullOrWhiteSpace(SignatureImagePath))
+                {
+                    // Define the root physical folder where images are stored
+                    string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                    // Build the full path for the photo image
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", PhotoImagePath);
+
+                    // Decrypt the photo image and assign it to the VM
+                    responseAll.BasicDetail.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                    // Build the full path for the signature image
+                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", SignatureImagePath);
+
+                    // Decrypt the signature image and assign it to the VM
+                    responseAll.BasicDetail.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+                    response.Result = true;
+                    response.Message = "Success";
+                    response.Value = responseAll;
+                }
+                else
+                {
+                    response.Result = false;
+                    response.Message = "Photo and Signature not found.";
+                    response.Value = new ICardHistoryResponseAll();
+                }
+                return Json(response);
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetCompletedHistory");
+                response.Result = false;
+                response.Message = "Photo and Signature not found.";
+                response.Value = new ICardHistoryResponseAll();
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetCompletedHistory");
+                response.Result = false;
+                response.Message = "Internal Error.";
+                response.Value = new ICardHistoryResponseAll();
+                return Json(response);
+            }
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetCompletedHistoryPdf(string Request)
+        {
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            // Initialize the generic response object
+            DTOGenericResponse<byte[]> response = new DTOGenericResponse<byte[]>();
+            string ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
+            try
+            {
+                // Retrieve the basic detail record for the given RequestId
+                ICardHistoryResponseAll responseAll = await basicDetailBL.GetCompletedHistoryByRequestId(RequestId);
+
+                string PhotoImagePath = responseAll.BasicDetail.PhotoImagePath;
+                string SignatureImagePath = responseAll.BasicDetail.SignatureImagePath;
+
+                if (!string.IsNullOrWhiteSpace(PhotoImagePath) && !string.IsNullOrWhiteSpace(SignatureImagePath))
+                {
+                    // Define the root physical folder where images are stored
+                    string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                    // Build the full path for the photo image
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", PhotoImagePath);
+
+                    // Decrypt the photo image and assign it to the VM
+                    responseAll.BasicDetail.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                    // Build the full path for the signature image
+                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", SignatureImagePath);
+
+                    // Decrypt the signature image and assign it to the VM
+                    responseAll.BasicDetail.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+                    if (!string.IsNullOrWhiteSpace(responseAll.BasicDetail.PhotoInBase64) && !string.IsNullOrWhiteSpace(responseAll.BasicDetail.SignatureInBase64))
+                    {
+                        var now = DateTime.Now;
+                        string timestamp = $"{now:yyyy}{now:MMMM}{now:dd}{now:hh}{now:mm}{now:ss}";
+                        string pdfName = $"{responseAll.BasicDetail.ServiceNo}_{RequestId}_{timestamp}.pdf";
+                        response = await _completedICardRequestBL.GetCompletedHistoryPdf(responseAll, ipAddress);
+                        return File(response.Value, "application/pdf", pdfName);
+                    }
+                    else {
+                        return StatusCode(500, "Photo and Signature not found.");
+                    }
+                }
+                else
+                {
+                    return StatusCode(500, "Photo and Signature not found.");
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetCompletedHistory");
+                return StatusCode(500, "Photo and Signature not found.");
+            }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetCompletedHistory");
+                return StatusCode(500, "Internal Error.");
+            }
+
+        }
+
+        #endregion
+
         #region Set Session and Get Session
         /// <summary>
         /// Sets the session data with the provided DTO object.
@@ -7407,6 +7777,284 @@ namespace Web.Controllers
             return Json(response);
         }
 
+        #endregion
+
+        #region Close Card Dispatch History
+        /// <summary>
+        ///  Closes the dispatch card history for a given dispatch card ID.
+        ///  closes the dispatch card history by calling the business layer method and returns a JSON response indicating success or failure.
+        ///  Closes card dispatch history for a officer and JCO/OR based on the provided dispatch card ID.
+        ///  
+        [HttpGet]
+        public async Task<ActionResult> ClosedHistory(string Id, string jcoor)
+        {
+            // Fetch current role from session and store in ViewBag
+            string role = SessionHelper.GetRoleFromSession(HttpContext);
+            ViewBag.Role = role;
+
+            // Extract userId from claims and validate it
+            var userIdStr = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                TempData["error"] = "Invalid User.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+            // Validate Id: must be Base64 encoded and non-empty
+            if (string.IsNullOrEmpty(Id) || !service.IsValidBase64(Id))
+            {
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }        
+            string userType = string.Empty; 
+            string decodedString = string.Empty; // decoded Base64 string representing user type
+            try
+            {
+                // Decode Base64 Id into integer and assign as stepCounter
+                decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(Id));               
+            }
+            catch (Exception ex)
+            {
+                // Log error and redirect on decoding failure
+                _logger.LogError(ex, "Invalid Base64 Id: {Id}", Id);
+                TempData["error"] = "Invalid Input.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+
+            // Determine Title, Type, StepCounter, and Export flags based on decoded Id
+            switch (decodedString)
+            {
+                case "Closed_IO":
+                    userType = decodedString;
+                    break;
+
+                case "Closed_ORO":
+                    userType = decodedString;
+                    break;
+                case "Closed_RO":
+                    userType = decodedString;
+                    break;
+                case "Closed_ADC":
+                    userType = decodedString;
+                    break;
+                default:
+                    userType = "Closed_IO";
+                    break;
+            }
+
+            // Assign computed values to ViewBag for the view
+            ViewBag.UserType = userType;
+           
+            ViewBag.ApplyForId = string.IsNullOrEmpty(jcoor) ? 1 : 2;
+            ViewBag.Title = "I-Card Closed History";
+            if (role == "user")
+            {
+                return View();
+            }
+            else
+            {
+                TempData["error"] = "Switch to user role.";
+                TempData.Keep("error");
+                return RedirectToAction("ContactUs", "Home");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetAllClosedHistory([FromBody] EncryptedRequest request)
+        {
+            DTODataTableRequestForAppClosedHistory dTORecord = await AESEncrytDecry.DecryptAESWithDTO<DTODataTableRequestForAppClosedHistory>(request.Data, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            if (dTORecord == null)
+            {
+                return BadRequest(new { message = "Invalid Data" });
+            }
+            List<DTOClosedHistoryResponse> dTOApps = new List<DTOClosedHistoryResponse>();
+            var responseData = new DTODataTablesResponse<DTOClosedHistoryResponse>
+            {
+                draw = dTORecord.Draw,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = dTOApps
+            };        
+            try
+            {
+                // Get the current logged-in user's ASP.NET Identity Id
+                dTORecord.AspNetUsersId = Convert.ToInt32(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                DtoSession? dtoSession = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+                dTORecord.UnitId = dtoSession != null ? dtoSession.UnitId : 0;
+                dTORecord.TDMId = dtoSession != null ? dtoSession.TrnDomainMappingId : 0;
+                
+                ModelState.Clear();
+                if (TryValidateModel(dTORecord))
+                {                   
+                    // Call business layer to retrieve dispatch card data for dialog
+                    return Json(await basicDetailBL.GetAllClosedHistory(dTORecord));
+                }
+                else
+                {
+                    return Json(responseData);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error with event id 1001 and return 400 Bad Request
+                _logger.LogError(1001, ex, "BasicDetail->GetAllClosedHistory");
+                return BadRequest(new { message = "Internal Server Error" });
+            }
+        }      
+        [HttpPost]
+        public async Task<IActionResult> GetClosedHistoryByRequestId(string RequestId)
+        {
+            string photoPath = string.Empty;
+            string signaturePath = string.Empty;
+            int decryptedRequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(RequestId, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            // Initialize the generic response object            
+            DTOGenericResponse<ICardHistoryResponseAll?> response = new DTOGenericResponse<ICardHistoryResponseAll?>();          
+            try
+            {
+                // Fetch the basic detail data for the given request ID
+                ICardHistoryResponseAll? cardHistoryResponseAll = await basicDetailBL.GetClosedHistoryByRequestId(decryptedRequestId);
+
+                if (cardHistoryResponseAll != null)
+                {              
+                    photoPath = cardHistoryResponseAll.BasicDetail.PhotoImagePath;
+                    signaturePath = cardHistoryResponseAll.BasicDetail.SignatureImagePath;
+                    if (!string.IsNullOrEmpty(photoPath) || !string.IsNullOrEmpty(signaturePath))
+                    {
+                        // Set the physical path to the storage folder for images
+                        string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                        // Construct full path for the photo and decrypt it to Base64
+                        string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", photoPath);
+                        cardHistoryResponseAll.BasicDetail.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                        // Construct full path for the signature and decrypt it to Base64
+                        string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", signaturePath);
+                        cardHistoryResponseAll.BasicDetail.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                        // Return the VM as JSON
+                        response.Result = true;
+                        response.Message = "Success";
+                        response.Value = cardHistoryResponseAll;
+                        return Json(response);
+                    }
+                    else
+                    {
+                        response.Result = false;
+                        response.Message = "Photo or Signature path is missing.";
+                        response.Value = null;
+                        return Json(response);
+                    }
+                }
+                else
+                {
+                    // Return null if no basic detail found for the request ID                
+                    response.Result = false;
+                    response.Message = "RequestId not found.";
+                    response.Value = null;
+                    return Json(response);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetClosedHistoryByRequestId");
+                response.Result = false;
+                response.Message = "Photo and Signature not found.";
+                response.Value = null;
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GetClosedHistoryByRequestId");
+                response.Result = false;
+                response.Message = "Internal Error.";
+                response.Value = null;
+                return Json(response);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateClosedHistoryPDF(string RequestId)
+        {
+            string photoPath = string.Empty;
+            string signaturePath = string.Empty;
+            int decryptedRequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(RequestId, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            // Initialize the generic response object            
+            DTOGenericResponse<byte[]> response = new DTOGenericResponse<byte[]>();
+            try
+            {
+                   string ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown IP";
+                // Fetch the basic detail data for the given request ID
+                ICardHistoryResponseAll? cardHistoryResponseAll = await basicDetailBL.GetClosedHistoryByRequestId(decryptedRequestId);
+
+                if (cardHistoryResponseAll != null)
+                {
+                    photoPath = cardHistoryResponseAll.BasicDetail.PhotoImagePath;
+                    signaturePath = cardHistoryResponseAll.BasicDetail.SignatureImagePath;
+                    if (!string.IsNullOrEmpty(photoPath) || !string.IsNullOrEmpty(signaturePath))
+                    {
+                        // Set the physical path to the storage folder for images
+                        string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
+
+                        // Construct full path for the photo and decrypt it to Base64
+                        string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", photoPath);
+                        cardHistoryResponseAll.BasicDetail.PhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+
+                        // Construct full path for the signature and decrypt it to Base64
+                        string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", signaturePath);
+                        cardHistoryResponseAll.BasicDetail.SignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+
+                        if (!string.IsNullOrWhiteSpace(cardHistoryResponseAll.BasicDetail.PhotoInBase64) && !string.IsNullOrWhiteSpace(cardHistoryResponseAll.BasicDetail.SignatureInBase64))
+                        {
+                            var now = DateTime.Now;
+                            string timestamp = $"{now:yyyy}{now:MMMM}{now:dd}{now:hh}{now:mm}{now:ss}";
+                            string pdfName = $"{cardHistoryResponseAll.BasicDetail.ServiceNo}_{RequestId}_{timestamp}.pdf";
+                            response = await applCloseBL.GenerateClosedHistoryPDF(cardHistoryResponseAll, ipAddress);
+                            return File(response.Value, "application/pdf", pdfName);
+                        }
+                        else
+                        {
+                            return StatusCode(500, "Photo and Signature not found.");
+                        }
+                    }
+                    else
+                    {
+                        response.Result = false;
+                        response.Message = "Photo or Signature path is missing.";
+                        response.Value = null;
+                        return Json(response);
+                    }
+                }
+                else
+                {
+                    // Return null if no basic detail found for the request ID                
+                    response.Result = false;
+                    response.Message = "RequestId not found.";
+                    response.Value = null;
+                    return Json(response);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GenerateClosedHistoryPDF");
+                response.Result = false;
+                response.Message = "Photo and Signature not found.";
+                response.Value = null;
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "BasicDetail->GenerateClosedHistoryPDF");
+                response.Result = false;
+                response.Message = "Internal Error.";
+                response.Value = null;
+                return Json(response);
+            }
+        }
         #endregion
     }
 }

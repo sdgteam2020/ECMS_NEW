@@ -37,21 +37,27 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOFwdLastRecForDigitalSign> ICardFwdLastRec(int RequestId);
         public Task<List<ICardHistoryResponse>?> ICardHistoryByRequestId(int RequestId);
         public Task<DTOBasicDetailsSaveResponse> SaveBasicDetailsWithAll(BasicDetail Data, MTrnAddress address, MTrnUpload trnUpload, MTrnIdentityInfo mTrnIdentityInfo, MTrnICardRequest mTrnICardRequest, MStepCounter mStepCounter);
-        public Task<DTOICardTaskCountResponse?> GetTaskCountICardRequest(int UserId,int Type, int applyForId);
+        public Task<DTOGenericResponse<DTOICardTaskCountResponse>> GetTaskCountICardRequest(DTOGetTaskCountICardRequest dTOGetTaskCount);
         public Task<DTONotificationResult> GetNotification(int UserId);
         public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId);
         public Task<List<DTODataExportsResponse>> GetBesicdetailsByRequestId(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
         public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         Task<DTOUploadChipAndSerialResponse> CardPrintingCSVUpload(List<DTOCardPriningRequest> requests);
-        Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests);
+        Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests, int CardPrintedByAspNetUserId, int CardPrintedByUserId);
         public Task<DTOGenericResponse<string>> DispatchCardIn(List<DTODispatchCardInRequest> dTODispatch, byte StepId, int DispatchCardId, string ToRemark);
         Task<byte?> CheckCardStatus(int RequestId);
         Task<ICardHistoryResponseAll> ICardHistoryCompleted(int RequestId);
+        Task<ICardHistoryResponseAll> ICardHistoryClosed(int RequestId);
         Task<List<DTOCardMovementHistoryResponse>> GetCardMovementHistory(int requestId);
         Task UpdateCardStatus(int requestId, byte status);
         public Task<DTOGenericResponse<string>> CheckBeforeDistribution(int requestId, int UnitId);
         public Task<DTOPreventBasicDetailEditResponse?> GetPreventBasicDetailEdit(int BasicDetailId);
         public Task<DTOGenericResponse<string>> CheckBeforeBesicDetailPost(BasicDetailCrtAndUpdVM basicDetail);
+        public Task<DTODataTablesResponse<DTOCompletedHistoryResponse>> GetAllCompletedHistory(DTODataTablesRequestFor_CompletedHistory dTO);
+        public Task<DTOGetMappingDetailsForCompletedHistoryResponse> GetMappingDetailsForCompletedHistory(DTODataTablesRequestFor_CompletedHistory dTO);
+        public Task<DTODataTablesResponse<DTOClosedHistoryResponse>> GetAllClosedHistory(DTODataTableRequestForAppClosedHistory dTO);
+        public Task<DTOGetMappingDetailsForClosedHistoryResponse> GetMappingDetailsForClosedHistory(DTODataTableRequestForAppClosedHistory dTO);
+        public Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId);
     }
 }

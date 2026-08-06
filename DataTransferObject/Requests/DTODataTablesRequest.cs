@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DataTransferObject.Requests;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataTransferObject.Requests
 {
@@ -222,5 +224,58 @@ namespace DataTransferObject.Requests
         
         [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitMapId is number.")]
         public int UnitMapId { get; set; }
+    }
+    public class DTODataTablesRequestFor_CompletedHistory : DTODataTablesRequest
+    {
+        [RegularExpression("^[a-zA-Z0-9_ ]*$", ErrorMessage = "Only Alphabets and Numbers are allowed.")]
+        public string UserType { get; set; } = string.Empty;
+
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public int ApplyForId { get; set; }
+
+        [JsonIgnore]
+        [ScaffoldColumn(false)]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public byte CValue { get; set; }
+
+        [JsonIgnore]
+        [ScaffoldColumn(false)]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "UnitMapId is number.")]
+        public int UnitId { get; set; }
+
+        [JsonIgnore]
+        [ScaffoldColumn(false)]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public int TDMId { get; set; }
+
+        [JsonIgnore]
+        [ScaffoldColumn(false)]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RecordOfficeId is number.")]
+        public byte? RecordOfficeId { get; set; }
+
+        [JsonIgnore]
+        [ScaffoldColumn(false)]
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "AspNetUsersId is number.")]
+        public int AspNetUsersId { get; set; }
+
+    }
+    public class DTODataTableRequestForAppClosedHistory : DTODataTablesRequest
+    {
+        [RegularExpression("^[a-zA-Z0-9_ ]*$", ErrorMessage = "Only Alphabets and Numbers are allowed.")]
+        public string? UserType { get; set; }
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public int? ApplyForId { get; set; }
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public byte CValue { get; set; }
+
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public int TDMId { get; set; }
+
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public int UnitId { get; set; }
+        [RegularExpression(@"^[\d]+$", ErrorMessage = "RecordOfficeId is number.")]
+        public byte? RecordOfficeId { get; set; }
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Numbers allowed.")]
+        public int AspNetUsersId { get; set; }
     }
 }

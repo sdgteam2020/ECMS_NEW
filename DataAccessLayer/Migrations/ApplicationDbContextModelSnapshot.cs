@@ -1628,6 +1628,9 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(max)");
 
+                    b.Property<int?>("DestructedCardId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1659,6 +1662,8 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("CompletedId");
 
                     b.HasIndex("ApplyForId");
+
+                    b.HasIndex("DestructedCardId");
 
                     b.HasIndex("RankId");
 
@@ -2041,8 +2046,20 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("BasicDetailId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CardExportedByAspNetUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CardExportedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("CardExportedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CardPrintedByAspNetUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CardPrintedByUserId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CardPrintedOn")
                         .HasColumnType("datetime2");
@@ -2080,6 +2097,14 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("RequestId");
+
+                    b.HasIndex("CardExportedByAspNetUserId");
+
+                    b.HasIndex("CardExportedByUserId");
+
+                    b.HasIndex("CardPrintedByAspNetUserId");
+
+                    b.HasIndex("CardPrintedByUserId");
 
                     b.HasIndex("RecordOfficeId");
 
@@ -2309,6 +2334,9 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(max)");
 
+                    b.Property<int?>("DestructedCardId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -2347,6 +2375,8 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApplyForId");
+
+                    b.HasIndex("DestructedCardId");
 
                     b.HasIndex("RankId");
 
@@ -3724,6 +3754,11 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Model.TrnDestructionCard", "TrnDestructionCard")
+                        .WithMany()
+                        .HasForeignKey("DestructedCardId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("DataTransferObject.Domain.Master.MRank", "Rank")
                         .WithMany()
                         .HasForeignKey("RankId")
@@ -3753,6 +3788,8 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MTrnICardRequest");
 
                     b.Navigation("Rank");
+
+                    b.Navigation("TrnDestructionCard");
 
                     b.Navigation("UserProfileUserUpdate");
                 });
@@ -3931,6 +3968,26 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnICardRequest", b =>
                 {
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserCardExported")
+                        .WithMany()
+                        .HasForeignKey("CardExportedByAspNetUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "UserProfileCardExported")
+                        .WithMany()
+                        .HasForeignKey("CardExportedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataTransferObject.Domain.Identitytable.ApplicationUser", "ApplicationUserCardPrinted")
+                        .WithMany()
+                        .HasForeignKey("CardPrintedByAspNetUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataTransferObject.Domain.MUserProfile", "UserProfileCardPrinted")
+                        .WithMany()
+                        .HasForeignKey("CardPrintedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("DataTransferObject.Domain.Master.MRecordOffice", "MRecordOffice")
                         .WithMany()
                         .HasForeignKey("RecordOfficeId")
@@ -3966,6 +4023,10 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("Updatedby")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.Navigation("ApplicationUserCardExported");
+
+                    b.Navigation("ApplicationUserCardPrinted");
+
                     b.Navigation("ApplicationUserUpdate");
 
                     b.Navigation("MICardType");
@@ -3977,6 +4038,10 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Registration");
 
                     b.Navigation("TrnDomainMapping");
+
+                    b.Navigation("UserProfileCardExported");
+
+                    b.Navigation("UserProfileCardPrinted");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.MTrnIdentityInfo", b =>
@@ -4084,6 +4149,11 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataTransferObject.Domain.Model.TrnDestructionCard", "TrnDestructionCard")
+                        .WithMany()
+                        .HasForeignKey("DestructedCardId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("DataTransferObject.Domain.Master.MRank", "Rank")
                         .WithMany()
                         .HasForeignKey("RankId")
@@ -4124,6 +4194,8 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("MUserProfile");
 
                     b.Navigation("Rank");
+
+                    b.Navigation("TrnDestructionCard");
                 });
 
             modelBuilder.Entity("DataTransferObject.Domain.Model.TrnApplCloseMapping", b =>

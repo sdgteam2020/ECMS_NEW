@@ -1,13 +1,16 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DataAccessLayer
 {
@@ -95,10 +98,6 @@ namespace DataAccessLayer
 
                 var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "") ? allowedSortColumns[dTO.sortColumn!] : "tdc.UpdatedOn";
 
-                if (string.Equals(dTO.sortColumn, "ServiceNo", StringComparison.OrdinalIgnoreCase))
-                {
-                    sortColumn = "ISNULL(basic_2.ServiceNo , bd.ServiceNo )";
-                }
 
                 var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
 
@@ -106,24 +105,17 @@ namespace DataAccessLayer
                 string selectFields = "";
                 string fromJoinClause = "";
                 string whereClause = "";
-                selectFields = @"appl.Name ApplyFor,
-                                req.RequestId,tdc.DestructedCardId,
-                                ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ranks.RankAbbreviation RankName,
-                                bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,
-                                Muni.Abbreviation UnitAbbreviation,
-                                tdc.UpdatedOn,tdc.Remark,
-                                tdc.DestructedOn,
+                selectFields = @"appl.Name ApplyFor,req.RequestId,tdc.DestructedCardId,basic_2.ServiceNo,ranks.RankAbbreviation RankName,basic_2.FName,basic_2.LName,Muni.Abbreviation UnitAbbreviation,tdc.UpdatedOn,tdc.Remark,tdc.DestructedOn,
                                 (select STRING_AGG(Remarks,'#') from MRemarks where RemarksId in (select value from string_split(tdc.RemarksIds,','))) RemarksNameList";
                 fromJoinClause = @"from TrnDestructionCards tdc
                                 inner join TrnICardRequest req on req.RequestId = tdc.RequestId
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
-                                LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
-                                LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
-                                inner join MRank ranks on ranks.RankId=ISNULL(basic_2.RankId,bd.RankId)
-                                inner join MapUnit uni on uni.UnitMapId=ISNULL(basic_2.UnitId,bd.UnitId)
+                                inner join AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
+                                inner join MRank ranks on ranks.RankId = basic_2.RankId
+                                inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
                                 inner join MUnit Muni on Muni.UnitId=uni.UnitId
-                                inner join MApplyFor appl on appl.ApplyForId=ISNULL(basic_2.ApplyForId,bd.ApplyForId)";
-                whereClause = @"Where  @SearchTerm IS NULL OR bd.ServiceNo LIKE @SearchTerm OR basic_2.ServiceNo LIKE @SearchTerm ";
+                                inner join MApplyFor appl on appl.ApplyForId = basic_2.ApplyForId";
+                whereClause = @"Where  @SearchTerm IS NULL OR basic_2.ServiceNo LIKE @SearchTerm ";
 
                 var multiQuery = $@"
                         WITH RecordCTE AS (
@@ -155,15 +147,6 @@ namespace DataAccessLayer
                     else
                     {
                         selectedIds = null;
-                    }
-
-                    if (records != null)
-                    {
-                        foreach (var item in records)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
                     }
 
                     responseData = new DTODataTablesWithSelectedIdsResponse<DTODestructionCardGetResponse>
@@ -200,18 +183,17 @@ namespace DataAccessLayer
             try
             {
                 // SQL query to retrieve destruction card details along with related information
-                string query = @"select req.RequestId,tdc.DestructedCardId,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ArmyNo,
-	                                ranks.RankAbbreviation,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,Muni.Abbreviation Unit,
+                string query = @"select req.RequestId,tdc.DestructedCardId,basic_2.ServiceNo AS ArmyNo,
+	                                ranks.RankAbbreviation,basic_2.FName,basic_2.LName,Muni.Abbreviation Unit,
 	                                tdc.UpdatedOn as DateAndTime,tdc.Remark,tdc.IsActive as IsActiveBool,
 	                                req.CardSerialNo,req.ChipNo,tdc.DestructedOn,
                                     (select STRING_AGG(Remarks,' | ') from MRemarks where RemarksId in (select value from string_split(tdc.RemarksIds,','))) Reasons
 	                                from TrnDestructionCards tdc
 	                                inner join TrnICardRequest req on req.RequestId = tdc.RequestId
-	                                LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId
-                                    LEFT JOIN  AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId 
-	                                inner join MRank ranks on ranks.RankId = ISNULL(basic_2.RankId,bd.RankId)
-	                                inner join MapUnit uni on uni.UnitMapId = ISNULL(basic_2.UnitId,bd.UnitId)
-	                                inner join MUnit Muni on Muni.UnitId=uni.UnitId
+                                    inner join  AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId 
+	                                inner join MRank ranks on ranks.RankId = basic_2.RankId
+	                                inner join MapUnit uni on uni.UnitMapId = basic_2.UnitId
+	                                inner join MUnit Muni on Muni.UnitId = uni.UnitId
                                   Where req.RequestId in @Ids";
 
                 // Create parameters for the query
@@ -223,14 +205,6 @@ namespace DataAccessLayer
                 {
                     var ret = await connection.QueryAsync<DTODestructionCardExportResponse>(query, parameters);
                     
-                    if (ret != null)
-                    {
-                        foreach (var item in ret)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }
-                    }
                     records = ret.ToList();
                 }
             }
@@ -241,37 +215,41 @@ namespace DataAccessLayer
             }
             return records;
         }
-        public async Task<DTOGenericResponse<string>> CheckBeforeDestructionCardReport(int RequestId)
+        public async Task<DTOCheckBeforeDestructionCardReportResponse> CheckBeforeDestructionCardReport(int RequestId)
         {
-            DTOGenericResponse<string> response = new DTOGenericResponse<string>();
+            DTOCheckBeforeDestructionCardReportResponse response = new DTOCheckBeforeDestructionCardReportResponse();
             try
             {
-                string query = @"SELECT CASE
+                string query = @"SELECT currentReq.StatusId,appclose.Id AS ApplCloseId,comp.CompletedId,
+                                        CASE
                                             WHEN dest.RequestId = @RequestId THEN 0
-                                            WHEN currentReq.StatusId IN (1,3)  THEN 0
-                                            WHEN stepcount.StepId != 15 THEN 0
+                                            WHEN currentReq.StatusId = 1  THEN 0
+                                            WHEN stepcount.StepId NOT IN (6,11,12,13,14,15) THEN 0
                                             ELSE 1
                                         END AS Result,
 		                                case
                                             WHEN dest.RequestId = @RequestId THEN 'This card has already been reported as destroyed in the system.'
-                                            WHEN currentReq.StatusId IN (1,3) THEN 'The application is no longer active.'
-                                            WHEN stepcount.StepId != 15 THEN 'The application is currently being processed.'
+                                            WHEN currentReq.StatusId = 1 THEN 'The application is no longer active.'
+                                            WHEN stepcount.StepId NOT IN (6,11,12,13,14,15) THEN 'The card has not been printed.'
 		                                    ELSE 'Valid'
 		                                END as Message
                                 FROM TrnICardRequest currentReq
                                 INNER JOIN TrnStepCounter stepcount on currentReq.RequestId=stepcount.RequestId 
                                 LEFT JOIN TrnDestructionCards dest on dest.RequestId = currentReq.RequestId
+                                LEFT JOIN TrnApplClose appclose on appclose.RequestId = currentReq.RequestId
+                                LEFT JOIN CompletedICardRequests comp on comp.RequestId = currentReq.RequestId
                                 WHERE currentReq.RequestId = @RequestId;";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@RequestId", RequestId, DbType.Int32, ParameterDirection.Input);
-                    var result = await connection.QueryFirstOrDefaultAsync<DTOGenericResponse<string>>(query, parameters);
-                    return result ?? new DTOGenericResponse<string>
+                    var result = await connection.QueryFirstOrDefaultAsync<DTOCheckBeforeDestructionCardReportResponse>(query, parameters);
+                    return result ?? new DTOCheckBeforeDestructionCardReportResponse
                     {
                         Result = false,
                         Message = "Request not found",
+                        StatusId = 0,
                     };
                 }
             }
@@ -280,8 +258,83 @@ namespace DataAccessLayer
                 _logger.LogError(1001, ee, "DestructionCardDB->CheckBeforeDestructionCardReport");
                 response.Result = false;
                 response.Message = "Something went wrong";
-                response.Value = string.Empty;
+                response.StatusId = 0;
                 return response;
+            }
+        }
+
+        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveDestructionCardRequest(TrnDestructionCard Data, DTOCheckBeforeDestructionCardReportResponse checkCardBeforeDistruction)
+        {
+            var dTOResponse = new DTOGenericResponse<DTOCommonResponse?>();
+
+            // Initialize transaction for multiple database operations
+            var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
+
+            try
+            {
+                var insertDestructionCard = @$" INSERT INTO TrnDestructionCards (RequestId, RemarksIds, DestructedOn, Remark, UpdatedbyUserId, IsActive, Updatedby, UpdatedOn)
+                                                OUTPUT INSERTED.DestructedCardId 
+                                                VALUES (@RequestId, @RemarksIds, @DestructedOn, @Remark, @UpdatedbyUserId, @IsActive, @Updatedby, @UpdatedOn);";
+                var parameters = new DynamicParameters();
+                parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@RemarksIds", Data.RemarksIds, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@DestructedOn", Data.DestructedOn, DbType.DateTime, ParameterDirection.Input);
+                parameters.Add("@Remark", Data.Remark, DbType.String, ParameterDirection.Input, 100);
+                parameters.Add("@UpdatedbyUserId", Data.UpdatedbyUserId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@IsActive", Data.IsActive, DbType.Boolean, ParameterDirection.Input);
+                parameters.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
+
+
+
+                // Insert the new posting record and get its ID
+                var DestructionCardId = await db.QuerySingleAsync<int>(insertDestructionCard, parameters, transaction: transaction);
+
+
+                if (checkCardBeforeDistruction.StatusId == (byte)RequestStatusEnum.Complete)
+                {
+                    string UpdateCompleteHistory = @"Update CompletedICardRequests Set DestructedCardId = @DestructionCardId Where CompletedId = @CompletedId";
+                    var parameters1 = new DynamicParameters();
+                    parameters1.Add("@CompletedId", checkCardBeforeDistruction.CompletedId, DbType.Int32, ParameterDirection.Input);
+                    parameters1.Add("@DestructionCardId", DestructionCardId, DbType.Int32, ParameterDirection.Input);
+                    await db.ExecuteAsync(UpdateCompleteHistory, parameters1, transaction: transaction);
+                }
+
+                if (checkCardBeforeDistruction.StatusId == (byte)RequestStatusEnum.Closed)
+                {
+                    string UpdateCompleteHistory = @"Update TrnApplClose Set DestructedCardId = @DestructionCardId Where Id = @ApplCloseId";
+                    var parameters1 = new DynamicParameters();
+                    parameters1.Add("@ApplCloseId", checkCardBeforeDistruction.ApplCloseId, DbType.Int32, ParameterDirection.Input);
+                    parameters1.Add("@DestructionCardId", DestructionCardId, DbType.Int32, ParameterDirection.Input);
+                    await db.ExecuteAsync(UpdateCompleteHistory, parameters1, transaction: transaction);
+                }
+
+
+                // Commit the transaction if all operations succeed
+                transaction.Commit();
+                dTOResponse.Result = true;
+                dTOResponse.Message = "Destruction card request saved successfully.";
+                dTOResponse.Value = new DTOCommonResponse
+                {
+                    Id = DestructionCardId.ToString(),
+                    CurrentTime = Data.UpdatedOn.GetValueOrDefault()
+                };
+                return dTOResponse;
+            }
+            catch (Exception ex)
+            {
+                // Rollback the transaction if any operation fails
+                transaction.Rollback();
+                _logger.LogError(1001, ex, "DestructionCardDB->SaveDestructionCardRequest");
+                dTOResponse.Result = false;
+                dTOResponse.Message = "Internal Server Error";
+                dTOResponse.Value = new DTOCommonResponse();
+                return dTOResponse;
+            }
+            finally
+            {
+                // Dispose of the connection
+                db.Dispose();
             }
         }
     }

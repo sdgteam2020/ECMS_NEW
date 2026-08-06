@@ -9,5 +9,6 @@ namespace BusinessLogicsLayer.Posting
     {
         public Task<DTOApplicationCloseResponse> RequestIdExists(DTOApplicationCloseRequest DTo);
         public Task<bool> ApplCloseWithUpdateStatus(TrnApplClose Data, ICardHistoryResponseAll? cardHistoryResponses);
+        public Task<DTOGenericResponse<byte[]>> GenerateClosedHistoryPDF(ICardHistoryResponseAll? cardHistoryResponseAll, string ipAddress);
     }
 }

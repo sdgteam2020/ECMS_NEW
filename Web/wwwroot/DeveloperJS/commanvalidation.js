@@ -743,7 +743,7 @@ function DateFormateddMMyyyyhhmmss(date) {
     var ss = `${datef2.getSeconds()}`;
     if (year > 1902) {
 
-        var datemmddyyyy = dayans + `/` + monthsans + `/` + year + ` ` + hh + `:` + mm + `:` + ss
+        var datemmddyyyy = dayans + `-` + monthsans + `-` + year + ` ` + hh + `:` + mm + `:` + ss
         return datemmddyyyy;
     }
     else {

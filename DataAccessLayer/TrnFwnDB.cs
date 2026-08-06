@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System.Data;
+using System.Reflection.Metadata;
 using System.Transactions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -244,49 +245,41 @@ namespace DataAccessLayer
             var (db2, transaction2) = _contextDP2.CreateConnectionWithTransaction();
             try
             {
-                string insertSql;
-                string query1, query2, query3,query4;
+                string UpdateAndInsertSql;
+                string  query2, query4;
 
                 if (data.Flag == "R")
                 {
-                    if (StepId == 3)
-                    {
-                        query2 = @"Update BasicDetails set DateOfIssue=GETDATE() where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
-                        var parameters2 = new DynamicParameters();
-                        parameters2.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
-                        await db.ExecuteAsync(query2, parameters2, transaction: transaction);
-                    }
-
                     query4 = @"UPDATE [dbo].[XmlFilesFwdLog] SET [XmlFiles] =@XmlFiles ,[Updatedby] = @Updatedby,[UpdatedOn] = @UpdatedOn WHERE [RequestId]= @RequestId";
                     var parameters4 = new DynamicParameters();
                     parameters4.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
                     parameters4.Add("@Updatedby", data.Updatedby, DbType.Int32, ParameterDirection.Input);
                     parameters4.Add("@UpdatedOn", data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                     parameters4.Add("@XmlFiles", "", DbType.String);
+                    parameters4.Add("@IsLock", data.IsLock, DbType.Boolean, ParameterDirection.Input);
 
                     await db2.ExecuteAsync(query4, parameters4, transaction: transaction2);
                 }
-                query2 = @"Update BasicDetails set IsLock=@IsLock where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
-                var parameters5 = new DynamicParameters();
-                parameters5.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
-                parameters5.Add("@IsLock", data.IsLock, DbType.Boolean, ParameterDirection.Input);
-                await db.ExecuteAsync(query2, parameters5, transaction: transaction);
-
-                query1 = @"Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@RequestId";
-                var parameters1 = new DynamicParameters();
-                parameters1.Add("@StepId", data.StepId, DbType.Byte, ParameterDirection.Input);
-                parameters1.Add("@Updatedby", data.Updatedby, DbType.Int32, ParameterDirection.Input);
-                parameters1.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
-                await db.ExecuteAsync(query1, parameters1, transaction: transaction);
-
-                query3 = @"UPDATE TrnFwds set IsComplete=1 where RequestId=@RequestId";
-                var parameters3 = new DynamicParameters();
-                parameters3.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
-                await db.ExecuteAsync(query3, parameters3, transaction: transaction);
-
+                if (StepId == 3)
+                {
+                    query2 = @"Update BasicDetails set DateOfIssue=GETDATE() where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
+                    var parameters2 = new DynamicParameters();
+                    parameters2.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
+                    await db.ExecuteAsync(query2, parameters2, transaction: transaction);
+                }
+                if ((StepId == 1 || StepId == 7 || StepId == 8 || StepId == 9 || StepId == 10) || data.Flag == "R")
+                {
+                    query2 = @"Update BasicDetails set IsLock=@IsLock where BasicDetailId=(select BasicDetailId from TrnICardRequest where RequestId=@RequestId)";
+                    var parameters5 = new DynamicParameters();
+                    parameters5.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
+                    parameters5.Add("@IsLock", data.IsLock, DbType.Boolean, ParameterDirection.Input);
+                    await db.ExecuteAsync(query2, parameters5, transaction: transaction);
+                }
 
                 // Insert new posting record
-                insertSql = @$"INSERT INTO TrnFwds(RequestId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,UnitId,Remark,TypeId,IsComplete,IsActive,Updatedby,UpdatedOn,RemarksIds,FwdStatusId,StepId)
+                UpdateAndInsertSql = @"Update TrnStepCounter set StepId=@StepId,Updatedby=@Updatedby where RequestId=@RequestId
+                                UPDATE TrnFwds set IsComplete=1 where RequestId=@RequestId
+                                INSERT INTO TrnFwds(RequestId,ToUserId,FromUserId,FromAspNetUsersId,ToAspNetUsersId,UnitId,Remark,TypeId,IsComplete,IsActive,Updatedby,UpdatedOn,RemarksIds,FwdStatusId,StepId)
                                 VALUES (@RequestId,@ToUserId,@FromUserId,@FromAspNetUsersId,@ToAspNetUsersId,@UnitId,@Remark,@TypeId,@IsComplete,@IsActive,@Updatedby,@UpdatedOn,@RemarksIds,@FwdStatusId,@StepId);";
                 var parameters = new DynamicParameters();
                 parameters.Add("@RequestId", data.RequestId, DbType.Int32, ParameterDirection.Input);
@@ -306,7 +299,7 @@ namespace DataAccessLayer
                 parameters.Add("@StepId", data.StepId, DbType.Byte, ParameterDirection.Input);
 
                 // Insert the new TrnFwds record
-                await db.ExecuteAsync(insertSql, parameters, transaction: transaction);
+                await db.ExecuteAsync(UpdateAndInsertSql, parameters, transaction: transaction);
 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();

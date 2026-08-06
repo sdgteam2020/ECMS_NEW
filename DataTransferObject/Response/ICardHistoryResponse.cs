@@ -57,6 +57,7 @@ namespace DataTransferObject.Response
         public List<ICardHistoryResponse> ICardHistory { get; set; } = new();
         public List<ICardHistoryPostingOutResponse> PostingOut { get; set; } = new();
         public List<ICardHistoryFaultyCardResponse> FaultyCard { get; set; } = new();
+        public List<DTOCardMovementHistoryResponse> CardMovement { get; set; } = new();
         public ICardApplCloseCardResponse CloseCard { get; set; } = new();
     }
 }

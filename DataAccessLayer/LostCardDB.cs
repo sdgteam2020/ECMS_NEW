@@ -1,14 +1,19 @@
 ﻿using Dapper;
 using DataAccessLayer.BaseInterfaces;
 using DataAccessLayer.Logger;
+using DataTransferObject.Constants;
 using DataTransferObject.Domain.Model;
 using DataTransferObject.Requests;
 using DataTransferObject.Response;
+using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Data;
 using System.Reflection.Metadata;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DataAccessLayer
 {
@@ -22,6 +27,7 @@ namespace DataAccessLayer
         private readonly DapperContext _contextDP;
         private readonly IDataProtector protector;
         private readonly ILogger<LostCardDB> _logger;
+        private readonly IBasicDetailDB _iBasicDetailDB;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LostCardDB"/> class.
@@ -31,11 +37,12 @@ namespace DataAccessLayer
         /// <param name="dataProtectionProvider">The <see cref="IDataProtectionProvider"/> to create data protectors.</param>
         /// <param name="logger">The <see cref="ILogger{LostCardDB}"/> for logging.</param>
         /// <param name="dataProtectionPurposeStrings">The purpose strings for data protection.</param>
-        public LostCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<LostCardDB> logger, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
+        public LostCardDB(ApplicationDbContext context, DapperContext contextDP, IDataProtectionProvider dataProtectionProvider, ILogger<LostCardDB> logger, IBasicDetailDB BasicDetail, DataProtectionPurposeStrings dataProtectionPurposeStrings) : base(context)
         {
             _context = context;
             _contextDP = contextDP;
             _logger = logger;
+            _iBasicDetailDB = BasicDetail;
             // Pass the purpose string as a parameter
             this.protector = dataProtectionProvider.CreateProtector(
                 dataProtectionPurposeStrings.AFSACIdRouteValue);
@@ -308,7 +315,7 @@ namespace DataAccessLayer
                 };
             }
         }
-        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data)
+        public async Task<DTOGenericResponse<DTOCommonResponse?>> SaveLostCardRequest(DTOLostCardAddRequest Data, DTOCardMovementHistoryResponse LostReportBy)
         {
             var dTOResponse = new DTOGenericResponse<DTOCommonResponse?>();
             string LostRemarksId = "65";
@@ -356,8 +363,31 @@ namespace DataAccessLayer
                     await db.ExecuteAsync(insertHotlistCard, parameters2, transaction: transaction);
                 }
 
-                if (Data.StatusId ==1)
+                if (Data.StatusId == (byte)RequestStatusEnum.Running)
                 {
+                    ICardHistoryResponseAll? cardHistoryResponses = await _iBasicDetailDB.ICardHistory(Data.RequestId);
+                    cardHistoryResponses.CardMovement = await _iBasicDetailDB.GetCardMovementHistory(Data.RequestId);
+                    cardHistoryResponses.CardMovement.Add(LostReportBy);
+
+                    string name = (cardHistoryResponses.BasicDetail.FName + " " + cardHistoryResponses.BasicDetail.LName).Trim();
+                    short RankId = cardHistoryResponses.BasicDetail.RankId;
+                    byte ApplyForId = cardHistoryResponses.BasicDetail.ApplyForId;
+                    string serviceNo = (cardHistoryResponses.BasicDetail.ServiceNo ?? string.Empty).Trim();
+                    int? DestructedCardId = null;
+                    List<int> AspnetuserId = new List<int>();
+                    if (cardHistoryResponses != null)
+                    {
+                        foreach (var item in cardHistoryResponses.ICardHistory)
+                        {
+                            if (item.StepId == 2)
+                            {
+                                AspnetuserId.Add(item.ToAspNetUsersId);
+                            }
+                        }
+                    }
+                    // Serialize the card request history to store in the database
+                    var cardRequestHistoryJson = JsonConvert.SerializeObject(cardHistoryResponses);
+
                     string query = "UPDATE TrnICardRequest SET StatusId = @StatusId WHERE RequestId = @RequestId";
 
                     var parameters4 = new DynamicParameters();
@@ -367,8 +397,10 @@ namespace DataAccessLayer
                     await db.ExecuteAsync(query, parameters4, transaction: transaction);
 
 
-                    var insertApplClose = @$" INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, Updatedby, UpdatedOn, UserId)
-                                         VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @Updatedby, @UpdatedOn, @UserId);";
+                    var insertApplClose = @$" INSERT INTO TrnApplClose (ReasonId, Authority, Remarks, RequestId, IsActive, UpdatedOn, Updatedby, UserId,CardRequestHistoryJson,Name,RankId,ServiceNo,ApplyForId,DestructedCardId)
+                                         VALUES (@ReasonId, @Authority, @Remarks, @RequestId, @IsActive, @UpdatedOn, @Updatedby, @UserId, @CardRequestHistoryJson, @Name, @RankId, @ServiceNo,@ApplyForId,@DestructedCardId);                                    
+                                         DECLARE @Id INT = SCOPE_IDENTITY();                                
+                                         Select @Id;";
 
                     var parameters3 = new DynamicParameters();
                     parameters3.Add("@ReasonId", ReasonId, DbType.Byte, ParameterDirection.Input);
@@ -379,8 +411,57 @@ namespace DataAccessLayer
                     parameters3.Add("@Updatedby", Data.Updatedby, DbType.Int32, ParameterDirection.Input);
                     parameters3.Add("@UpdatedOn", Data.UpdatedOn, DbType.DateTime, ParameterDirection.Input);
                     parameters3.Add("@UserId", Data.UpdatedbyUserId, DbType.Int32, ParameterDirection.Input);
+                    parameters3.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.AnsiString, ParameterDirection.Input, size: -1);
+                    parameters3.Add("@Name", name, DbType.String, ParameterDirection.Input, 36);
+                    parameters3.Add("@RankId", RankId, DbType.Int16, ParameterDirection.Input);
+                    parameters3.Add("@ServiceNo", serviceNo, DbType.String, ParameterDirection.Input, 10);
+                    parameters3.Add("@ApplyForId", ApplyForId, DbType.Byte, ParameterDirection.Input);
+                    parameters3.Add("@DestructedCardId", DestructedCardId, DbType.Int32, ParameterDirection.Input);
 
-                    await db.ExecuteAsync(insertApplClose, parameters3, transaction: transaction);
+                    int closeId = await db.ExecuteScalarAsync<int>(insertApplClose, parameters3, transaction: transaction);
+                    if (AspnetuserId != null && AspnetuserId.Count > 0)
+                    {
+                        foreach (var item in AspnetuserId)
+                        {
+                            // SQL query to update the status of the RequestId in the TrnICardRequest table.
+                            string query3 = "Insert into TrnApplCloseMapping(CloseId,AspNetUsersId) VALUES(@CloseId,@AspNetUsersId)";
+                            var query3_parameters = new DynamicParameters();
+                            query3_parameters.Add("@CloseId", closeId, DbType.Int32, ParameterDirection.Input);
+                            query3_parameters.Add("@AspNetUsersId", item, DbType.Int32, ParameterDirection.Input);
+                            // Execute the update query asynchronously with transaction.
+                            await db.ExecuteAsync(query3, query3_parameters, transaction: transaction);
+                        }
+                    }
+                }
+
+                if (Data.StatusId == (byte)RequestStatusEnum.Complete)
+                {
+                    
+                    string SelectCompleteHistory = @"select CompleteReq.CompletedId,CompleteReq.CardRequestHistoryJson from CompletedICardRequests CompleteReq
+	                                                Where CompleteReq.RequestId = @RequestId";
+
+                    // Parameters for SQL query, adding the list of Request IDs
+                    var parameters5 = new DynamicParameters();
+                    parameters5.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
+                    CompletedICardRequest completedICard = await db.QuerySingleAsync<CompletedICardRequest>(SelectCompleteHistory, parameters5, transaction: transaction);
+
+                    string? historyJson = completedICard?.CardRequestHistoryJson;
+
+                    if (!string.IsNullOrWhiteSpace(historyJson))
+                    {
+                        ICardHistoryResponseAll cardHistoryResponseAll = new ICardHistoryResponseAll();
+                        cardHistoryResponseAll = JsonConvert.DeserializeObject<ICardHistoryResponseAll>(historyJson) ?? new ICardHistoryResponseAll();
+                        cardHistoryResponseAll.CardMovement.Add(LostReportBy);
+
+                        var cardRequestHistoryJson = JsonConvert.SerializeObject(cardHistoryResponseAll);
+
+                        string UpdateCompleteHistory = @"Update CompletedICardRequests Set CardRequestHistoryJson = @CardRequestHistoryJson Where CompletedId = @CompletedId";
+                        var parameters6 = new DynamicParameters();
+                        parameters6.Add("@CardRequestHistoryJson", cardRequestHistoryJson, DbType.AnsiString, ParameterDirection.Input, size: -1);
+                        parameters6.Add("@CompletedId", completedICard?.CompletedId, DbType.Int32, ParameterDirection.Input);
+
+                        await db.ExecuteAsync(UpdateCompleteHistory, parameters6, transaction: transaction);
+                    }
                 }
 
 

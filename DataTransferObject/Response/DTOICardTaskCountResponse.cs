@@ -22,6 +22,16 @@ namespace DataTransferObject.Response
         public int _4thLevelPending { get; set; }
         public int _4thLevelApproved { get; set; }
         public int CsvUploadCount { get; set; }
+        public int Closed_IO { get; set; }
+        public int Closed_ADC { get; set; }
+        public int Closed_ORO { get; set; }
+        public int Closed_RO { get; set; }
+        public int Closed_RO_2 { get; set; }
+        public int Completed_IO { get; set; }
+        public int Completed_ADC { get; set; }
+        public int Completed_ORO { get; set; }
+        public int Completed_RO { get; set; }
+        public int Completed_RO_2 { get; set; }
 
     }
 }
