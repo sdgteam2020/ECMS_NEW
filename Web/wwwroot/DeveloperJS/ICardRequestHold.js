@@ -8,19 +8,21 @@ $(function () {
 
     applyDataTableSearchValidation('#tbldata');
 
+    prepareICardHoldModal();
+
     BindData(cvalue, function () {
     });
     $('.select2').select2({
         dropdownParent: $('#AddICardRequestHold'),
         closeOnSelect: false
     });
-    $("#btnRequestHoldAdd").on("click", function (){
+    $("#btnRequestHoldAdd").on("click", function () {
         Reset();
         ResetErrorMessage();
         $("#gpUnHoldReason").addClass("d-none");
         $("#txtArmyNo").prop('readonly', false);
         $("#txtHoldReason").prop('readonly', false);
-        $("#AddICardRequestHold").modal('show');
+        showICardHoldModal();
     });
 
     $("#btnAddICardRequestHold").on("click", function () {
@@ -111,7 +113,7 @@ $(function () {
                 }
             });
         },
-        
+
     });
 
     $('#txtArmyNo').on("keyup", function (e) {
@@ -125,7 +127,90 @@ $(function () {
     });
 
 });
+
+/* UI-only helper: move this modal outside fixed/stacking containers and keep
+   the dim backdrop below the bright, clickable dialog. */
+function prepareICardHoldModal() {
+    const selector = "#AddICardRequestHold";
+    const $modal = $(selector);
+
+    if ($modal.length && !$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+
+    $(document)
+        .off("show.bs.modal.icardHold", selector)
+        .on("show.bs.modal.icardHold", selector, function () {
+            if ($(".modal.show").length === 0) {
+                $(".modal-backdrop").remove();
+            }
+
+            $(this).css({ zIndex: 1055, opacity: 1, pointerEvents: "auto" });
+        })
+        .off("shown.bs.modal.icardHold", selector)
+        .on("shown.bs.modal.icardHold", selector, function () {
+            $(this).css({ zIndex: 1055, opacity: 1, pointerEvents: "auto" });
+            $(this).find(".modal-dialog, .modal-content").css({
+                opacity: 1,
+                filter: "none",
+                pointerEvents: "auto"
+            });
+            $(".modal-backdrop").last().css("z-index", 1040);
+        })
+        .off("hidden.bs.modal.icardHold", selector)
+        .on("hidden.bs.modal.icardHold", selector, function () {
+            if ($(".modal.show").length === 0) {
+                $(".modal-backdrop").remove();
+                $("body").removeClass("modal-open").css("padding-right", "");
+            }
+        });
+}
+
+/* UI-only helper: open the existing Bootstrap modal after ensuring its DOM
+   position cannot place it below the shared page overlay. */
+function showICardHoldModal() {
+    const $modal = $("#AddICardRequestHold");
+
+    if (!$modal.length) {
+        return;
+    }
+
+    if (!$modal.parent().is("body")) {
+        $modal.appendTo(document.body);
+    }
+
+    $modal.modal("show");
+}
+
+/* UI-only helper: adjust DataTable columns safely, whether or not the
+   Responsive extension is loaded. */
+function adjustICardHoldTable(api) {
+    const currentTable = api || table;
+
+    if (!currentTable || typeof currentTable.columns !== "function") {
+        return;
+    }
+
+    currentTable.columns.adjust();
+
+    if (currentTable.responsive && typeof currentTable.responsive.recalc === "function") {
+        currentTable.responsive.recalc();
+    }
+}
+
+
+$(window)
+    .off("resize.icardHoldTable")
+    .on("resize.icardHoldTable", function () {
+        window.clearTimeout(globalThis.icardHoldResizeTimer);
+        globalThis.icardHoldResizeTimer = window.setTimeout(function () {
+            adjustICardHoldTable();
+        }, 120);
+    });
+
 function BindData(cvalue, callback) {
+    cvalue = cvalue ?? $("#spnFlagICardAppl").html();
+
     if ($.fn.DataTable.isDataTable("#tbldata")) {
         $("#tbldata").DataTable().destroy();
         $("#tbldata").empty(); // Clear old thead/tbody
@@ -137,7 +222,7 @@ function BindData(cvalue, callback) {
         scrollCollapse: true,
         fixedHeader: false,       // ❌ disable when using scrollY
         autoWidth: false, // Let us handle width via CSS
-        responsive: true, // Responsive breaks layout for width control
+        responsive: false, // Keep all columns available through the horizontal table scroll
         processing: true,
         serverSide: true,
         filter: true,
@@ -165,7 +250,7 @@ function BindData(cvalue, callback) {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
-                if (result.Result === false ) {
+                if (result.Result === false) {
                     toastr.error(result.Message);
                     callback({
                         draw: data.draw,
@@ -184,10 +269,13 @@ function BindData(cvalue, callback) {
         },
         columns: columns,
         language: {
-            search: "", // Remove the default "Search:" label
-            searchPlaceholder: "Search" // Add custom placeholder
+            search: "",
+            searchPlaceholder: "Search Army No / Name",
+            emptyTable: "No I-Card hold records found"
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'row g-2 align-items-center dt-top ecms-dt-toolbar'<'col-auto'l><'col-auto'B><'col ml-auto ms-auto'f>>" +
+            "rt" +
+            "<'row ecms-dt-footer'<'col-md-6 dt-info-col'i><'col-md-6 dt-page-col'p>>",
         buttons: [
             //{
             //    extend: 'copy',
@@ -197,12 +285,14 @@ function BindData(cvalue, callback) {
             //},
             {
                 extend: 'excel',
+                className: 'btn btn-primary btn-sm',
                 exportOptions: {
                     columns: "thead th:not(.noExport)"
                 }
             },
             {
                 extend: 'pdfHtml5',
+                className: 'btn btn-primary btn-sm',
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
                 title: 'E-IASC_ApplicationHold',
@@ -214,8 +304,10 @@ function BindData(cvalue, callback) {
                 }
             }],
         initComplete: function () {
+            adjustICardHoldTable(this.api());
         },
         drawCallback: function (settings) {
+            adjustICardHoldTable(this.api());
 
             const tooltipTriggerList = [].slice.call(
                 document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -240,7 +332,7 @@ function BindData(cvalue, callback) {
                     $("#lblName").html(`${rowData.FName || ""} ${rowData.LName || ""}`.trim());
                     $("#lblUnitName").html(rowData.UnitName);
                     $("#txtHoldReason").val(rowData.HoldReason);
-                    $("#txtUnHoldReason").val(rowData.UnHoldReason != null ? rowData.UnHoldReason :"");
+                    $("#txtUnHoldReason").val(rowData.UnHoldReason != null ? rowData.UnHoldReason : "");
 
                     if (rowData.IsHold == true) {
                         $("#IsHoldYes").prop("checked", true);
@@ -250,7 +342,7 @@ function BindData(cvalue, callback) {
                     }
 
                     $("#btnAddICardRequestHold").val("Update");
-                    $("#AddICardRequestHold").modal('show');
+                    showICardHoldModal();
                 }
                 else {
                     $("#spnDispatchCardId").html(0);
@@ -280,8 +372,8 @@ function Save() {
             "RequestId": spnRequestId,
             "IsHold": $('input:radio[name=IsHold]:checked').val(),
             "HoldReason": $("#txtHoldReason").val(),
-            "UnHoldReason": $("#txtUnHoldReason").val().length > 0 ?$("#txtUnHoldReason").val() : null,
-        }, 
+            "UnHoldReason": $("#txtUnHoldReason").val().length > 0 ? $("#txtUnHoldReason").val() : null,
+        },
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
@@ -502,13 +594,16 @@ function getColumnsData(choice) {
     return columns;
 }
 function Reset() {
-    spnICardHoldId = 0
+    spnICardHoldId = 0;
+    spnRequestId = 0;
+    $("#btnAddICardRequestHold").val("Save");
     $("#spnUserProfileId").html("0");
     $("#txtArmyNo").val("");
     $("#lblRank").html("");
     $("#lblName").html("");
     $("#lblUnitName").html("");
     $("#txtHoldReason").val("");
+    $("#txtUnHoldReason").val("");
     $("#IsHoldYes").prop("checked", false);
     $("#IsHoldNo").prop("checked", false);
 }

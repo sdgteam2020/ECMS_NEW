@@ -1,11 +1,512 @@
-﻿.modal.left .modal-dialog, .modal.right .modal-dialog {
-    position: fixed;
-    margin: auto;
-    width: 700px;
-    height: 100%;
-    text-align: left;
-    -webkit-transform: translate3d(0%, 0, 0);
-    -ms-transform: translate3d(0%, 0, 0);
-    -o-transform: translate3d(0%, 0, 0);
-    transform: translate3d(0%, 0, 0);
+﻿/* =====================================================================
+   ECMS I-Card Request Hold
+   Page-specific layout only. Shared ModernCSS theme files are unchanged.
+===================================================================== */
+
+.ecms-icard-hold-page {
+    position: relative;
+    height: calc( 100dvh - var(--ecms-header-height, 95px) - var(--ecms-footer-height, 34px) - var(--ecms-nav-strip-height, var(--ecms-nav-height, 44px)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height, 35px)) );
+    min-height: 0;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0.5rem 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
+
+.ecms-icard-hold-container {
+    width: calc(100vw - 1rem) !important;
+    max-width: none !important;
+    height: 100%;
+    min-height: 0;
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+.ecms-icard-hold-shell {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0 !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ecms-icard-hold-heading {
+    flex: 0 0 auto;
+    gap: 0.75rem;
+    margin: 0 0 0.55rem;
+}
+
+.ecms-icard-hold-title-wrap {
+    min-width: 0;
+    gap: 0.75rem;
+}
+
+.ecms-icard-hold-heading-icon {
+    flex: 0 0 2.6rem;
+}
+
+.ecms-icard-hold-heading-copy {
+    min-width: 0;
+}
+
+.ecms-icard-hold-heading h2 {
+    margin: 0;
+    font-size: clamp(1.1rem, 1.45vw, 1.35rem);
+}
+
+.ecms-icard-hold-heading .ecms-title-subtitle {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.ecms-icard-hold-add-btn {
+    flex: 0 0 auto;
+    min-height: 2.2rem;
+    padding: 0.4rem 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
+.card-body-min-height {
+    min-height: 0;
+}
+
+.ecms-icard-hold-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 0 !important;
+    background: transparent !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ecms-icard-hold-table-section {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+    .ecms-icard-hold-table-section .ecms-section-title {
+        flex: 0 0 auto;
+    }
+
+.ecms-icard-hold-table-wrap {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    padding: 0.55rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+    .ecms-icard-hold-table-wrap .dataTables_wrapper,
+    .ecms-icard-hold-table-wrap .dt-container {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        flex: 1 1 auto;
+    }
+
+.ecms-icard-hold-page .dt-top,
+.ecms-icard-hold-page .ecms-dt-toolbar {
+    flex: 0 0 auto;
+}
+
+.ecms-icard-hold-page .dataTables_scroll,
+.ecms-icard-hold-page .dt-scroll {
+    min-height: 0;
+}
+
+.ecms-icard-hold-page .dataTables_scrollBody,
+.ecms-icard-hold-page .dt-scroll-body {
+    min-height: 8rem;
+}
+
+.ecms-icard-hold-page .dataTables_length,
+.ecms-icard-hold-page .dt-length,
+.ecms-icard-hold-page .dataTables_filter,
+.ecms-icard-hold-page .dt-search {
+    margin: 0;
+}
+
+    .ecms-icard-hold-page .dataTables_filter input,
+    .ecms-icard-hold-page .dt-search input {
+        min-width: 12rem;
+    }
+
+.ecms-icard-hold-page .dt-buttons {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+    .ecms-icard-hold-page .dt-buttons .btn,
+    .ecms-icard-hold-page .dt-button {
+        min-height: 2.15rem;
+        margin: 0 !important;
+        padding: 0.4rem 0.75rem !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+.ecms-icard-hold-page table#tbldata {
+    width: 100% !important;
+    min-width: 72rem;
+}
+
+    .ecms-icard-hold-page table#tbldata tbody td {
+        max-width: 18rem;
+    }
+
+        .ecms-icard-hold-page table#tbldata tbody td .dt-ellipsis {
+            display: block;
+        }
+
+    .ecms-icard-hold-page table#tbldata th:first-child,
+    .ecms-icard-hold-page table#tbldata td:first-child {
+        width: 4.25rem !important;
+        min-width: 4.25rem !important;
+        text-align: center !important;
+    }
+
+.ecms-icard-hold-page .cls-historyRequest,
+.ecms-icard-hold-page .cls-btnedit {
+    width: 2.15rem !important;
+    height: 2.15rem !important;
+    min-width: 2.15rem !important;
+    min-height: 2.15rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.ecms-icard-hold-page .badge-success {
+    color: var(--ecms-white) !important;
+    background: linear-gradient(135deg, var(--ecms-success-500), var(--ecms-success-600)) !important;
+}
+
+.ecms-icard-hold-page .badge-danger {
+    color: var(--ecms-white) !important;
+    background: linear-gradient(135deg, var(--ecms-danger-500), var(--ecms-danger-600)) !important;
+}
+
+/* Modal-specific arrangement; visual skin comes from common modal/form rules. */
+.ecms-icard-hold-modal .modal-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.ecms-icard-hold-form {
+    width: 100%;
+}
+
+.ecms-hold-form-row {
+    margin: 0 0 0.7rem !important;
+    padding: 0.65rem 0.7rem;
+    border: var(--ecms-border);
+    border-radius: var(--ecms-radius-md);
+    background: rgba(255, 255, 255, 0.66);
+    align-items: flex-start;
+}
+
+    .ecms-hold-form-row > .col-form-label {
+        padding-top: 0.45rem;
+    }
+
+    .ecms-hold-form-row .form-control,
+    .ecms-hold-form-row .form-control1,
+    .ecms-hold-form-row textarea {
+        width: 100%;
+    }
+
+.ecms-hold-textarea-row textarea {
+    min-height: 5rem;
+    resize: vertical;
+}
+
+.ecms-hold-readonly-value {
+    width: 100%;
+    min-height: var(--ecms-control-height, 36px);
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgba(165, 187, 219, 0.78);
+    border-radius: var(--ecms-radius-sm);
+    background: linear-gradient(135deg, #eef3fa, #dce5f0);
+    color: var(--ecms-text);
+    font-size: 0.84rem;
+    font-weight: 800;
+    line-height: 1.35;
+    display: flex;
+    align-items: center;
+    word-break: break-word;
+}
+
+    .ecms-hold-readonly-value:empty::after {
+/*        content: "—";*/
+        color: var(--ecms-text-muted);
+    }
+
+.ecms-hold-radio-group {
+    min-height: var(--ecms-control-height, 36px);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.ecms-hold-radio-option {
+    min-width: 5.2rem;
+    min-height: 2.15rem;
+    margin: 0;
+    padding: 0.4rem 0.75rem;
+    border: var(--ecms-border);
+    border-radius: var(--ecms-radius-pill);
+    background: rgba(255, 255, 255, 0.92);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    cursor: pointer;
+}
+
+    .ecms-hold-radio-option span {
+        color: var(--ecms-text);
+        font-size: 0.82rem;
+        font-weight: 900;
+    }
+
+.ecms-hold-modal-actions {
+    margin-top: 0.25rem;
+}
+
+#btnAddICardRequestHold {
+    min-width: 6.5rem;
+}
+
+/* Autocomplete must remain above the modal and fixed page shell. */
+.ui-autocomplete {
+    z-index: 1090 !important;
+    max-height: 16rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: var(--ecms-border) !important;
+    border-radius: var(--ecms-radius-sm) !important;
+    background: var(--ecms-modal-surface) !important;
+    box-shadow: var(--ecms-shadow-md) !important;
+}
+
+/* Keep the page inside the fixed shell; only the DataTable body scrolls. */
+@media (min-width: 1200px) and (min-height: 721px) {
+    html:has(.ecms-icard-hold-page),
+    body:has(.ecms-icard-hold-page) {
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+
+        body:has(.ecms-icard-hold-page) .ecms-app-main {
+            overflow-x: hidden !important;
+            overflow-y: hidden !important;
+        }
+}
+
+@media (max-width: 1199.98px), (max-height: 720.98px) {
+    .ecms-icard-hold-page {
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .ecms-icard-hold-container,
+    .ecms-icard-hold-shell,
+    .ecms-icard-hold-body,
+    .ecms-icard-hold-table-section,
+    .ecms-icard-hold-table-wrap,
+    .ecms-icard-hold-table-wrap .dataTables_wrapper,
+    .ecms-icard-hold-table-wrap .dt-container {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .ecms-icard-hold-page .dataTables_scrollBody,
+    .ecms-icard-hold-page .dt-scroll-body {
+        height: min(55vh, var(--ecms-dt-scroll-height, 320px)) !important;
+        max-height: min(55vh, var(--ecms-dt-scroll-height, 320px)) !important;
+        overflow: auto !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-icard-hold-page {
+        width: calc(100vw - 0.75rem);
+        padding: 0.5rem 0;
+    }
+
+    .ecms-icard-hold-container {
+        width: 100% !important;
+    }
+
+    .ecms-icard-hold-shell {
+        padding: 0.55rem;
+    }
+
+    .ecms-icard-hold-heading {
+        align-items: flex-start !important;
+        flex-direction: column;
+        margin-bottom: 0.45rem;
+    }
+
+    .ecms-icard-hold-title-wrap {
+        align-items: flex-start !important;
+    }
+
+    .ecms-icard-hold-heading h2 {
+        font-size: 1.05rem;
+    }
+
+    .ecms-icard-hold-heading .ecms-title-subtitle {
+        font-size: 0.73rem;
+    }
+
+    .ecms-icard-hold-add-btn {
+        width: 100%;
+    }
+
+    .ecms-icard-hold-table-wrap {
+        padding: 0.35rem;
+    }
+
+    .ecms-icard-hold-page .dt-top,
+    .ecms-icard-hold-page .ecms-dt-toolbar {
+        align-items: stretch !important;
+    }
+
+        .ecms-icard-hold-page .dt-top > [class*="col-"],
+        .ecms-icard-hold-page .ecms-dt-toolbar > [class*="col-"] {
+            width: 100%;
+            max-width: 100%;
+            flex: 0 0 100%;
+        }
+
+    .ecms-icard-hold-page .dataTables_filter,
+    .ecms-icard-hold-page .dt-search,
+    .ecms-icard-hold-page .dataTables_filter label,
+    .ecms-icard-hold-page .dt-search label,
+    .ecms-icard-hold-page .dataTables_filter input,
+    .ecms-icard-hold-page .dt-search input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .ecms-icard-hold-page .dt-buttons,
+    .ecms-icard-hold-page .dt-buttons .btn {
+        width: 100%;
+    }
+
+    .ecms-hold-form-row {
+        padding: 0.55rem;
+    }
+
+        .ecms-hold-form-row > .col-form-label {
+            padding-top: 0;
+            margin-bottom: 0.35rem;
+        }
+
+    .ecms-hold-modal-actions,
+    .ecms-hold-modal-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ecms-icard-hold-page .btn,
+    .ecms-icard-hold-modal .btn {
+        transition: none !important;
+    }
+}
+
+/* =====================================================
+   FINAL FIX: Is Hold radio-button alignment
+   Page-only override. Shared ECMS theme remains unchanged.
+   Bootstrap's legacy .form-check-input positioning can move
+   radio controls over the Yes/No text, so reset it locally.
+===================================================== */
+.ecms-icard-hold-page .ecms-hold-radio-option input.form-check-input[type="radio"],
+#AddICardRequestHold .ecms-hold-radio-option input.form-check-input[type="radio"] {
+    position: static !important;
+    float: none !important;
+    inset: auto !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    flex: 0 0 18px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    vertical-align: middle !important;
+    appearance: auto !important;
+    -webkit-appearance: radio !important;
+    accent-color: var(--ecms-primary-600, #2f67e6) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    cursor: pointer !important;
+}
+
+#AddICardRequestHold .ecms-hold-radio-group {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+#AddICardRequestHold .ecms-hold-radio-option {
+    position: relative !important;
+    min-width: 82px !important;
+    min-height: 36px !important;
+    padding: 7px 12px !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    overflow: visible !important;
+}
+
+    #AddICardRequestHold .ecms-hold-radio-option > span {
+        position: static !important;
+        display: inline-block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #AddICardRequestHold .ecms-hold-radio-option:has(input[type="radio"]:checked) {
+        border-color: var(--ecms-primary-500, #3f7cff) !important;
+        background: rgba(63, 124, 255, 0.09) !important;
+        box-shadow: 0 0 0 3px rgba(63, 124, 255, 0.10) !important;
+    }

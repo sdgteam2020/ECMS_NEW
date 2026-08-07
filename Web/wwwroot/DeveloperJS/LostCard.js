@@ -6,7 +6,7 @@ $(function () {
     applyDataTableSearchValidation('#tbldata');
 
     BindData()
-    $("#btnAdd").on("click",function () {
+    $("#btnAdd").on("click", function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
@@ -313,7 +313,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top ecms-dt-toolbar d-flex justify-content-between align-items-center flex-wrap'lBf>rt<'ecms-dt-footer row no-gutters'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>", // Use shared ModernCSS DataTable toolbar/footer
         buttons: [
             //{
             //    extend: 'copy',
@@ -427,7 +427,7 @@ function DataExport() {
         body: JSON.stringify(userdata),
         credentials: 'same-origin'
     })
-    .then(response => response.json())
+        .then(response => response.json())
         .then(data => {
             if (data.Result) {
                 const baseUrl = window.location.origin;
@@ -446,7 +446,7 @@ function DataExport() {
                     text: data.Message
                 });
             }
-    });
+        });
 }
 function resetSelectedFields() {
     // Reset global variables as explained

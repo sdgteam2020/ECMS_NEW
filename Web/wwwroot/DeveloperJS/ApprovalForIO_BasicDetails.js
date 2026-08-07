@@ -156,7 +156,7 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No / Appl ID" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top ecms-dt-toolbar d-flex justify-content-between align-items-center flex-wrap'lBf>rt<'ecms-dt-footer row no-gutters'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>", // Use shared ModernCSS DataTable toolbar/footer
         buttons: [
             //{
             //    extend: 'copy',

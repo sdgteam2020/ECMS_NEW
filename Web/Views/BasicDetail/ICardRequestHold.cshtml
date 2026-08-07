@@ -1,54 +1,153 @@
 ﻿@{
     List<Claim> claims = ViewBag.UserClaims;
+    bool canManageHold = claims.Count > 0 && claims.Any(i => i.Value == "Flag ICard Appl");
 }
+
 <link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
 <link asp-href-include="~/developercss/icardrequesthold.css" rel="stylesheet" />
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
                 <div class="col-auto">
                     <h1 class="page-header-title">
-                        <div class="page-header-icon"> <i class="fa fa-bars"></i></div>
-                        <a href="/Home/Index" class="mr-2">Home</a> > <a href="/Home/InitiateRequest" class="mr-2">Request</a> ><a href="/Home/Request">Initiate Request</a> > Appl Flagged due to Disciplinary Action
+                        <div class="page-header-icon"><i class="fa fa-bars"></i></div>
+                        <a href="/Home/Index" class="mr-2">Home</a> &gt;
+                        <a href="/Home/InitiateRequest" class="mr-2">Request</a> &gt;
+                        <a href="/Home/Request" class="mr-2">Initiate Request</a> &gt;
+                        Appl Flagged due to Disciplinary Action
                     </h1>
                 </div>
             </div>
-
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        ICard Request Hold Details
-                        <small class="text-muted"></small>
-                    </h3>
+
+<main class="containerMain ecms-page ecms-page-full ecms-fit-screen ecms-icard-hold-page">
+    <div class="ecms-icard-hold-container">
+        <div class="card ecms-card ecms-card-body ecms-icard-hold-shell">
+            <div class="ecms-page-title ecms-icard-hold-heading d-flex align-items-center justify-content-between">
+                <div class="ecms-icard-hold-title-wrap d-flex align-items-center">
+                    <div class="ecms-title-icon ecms-icard-hold-heading-icon" aria-hidden="true">
+                        <i class="fa fa-pause-circle"></i>
+                    </div>
+                    <div class="ecms-icard-hold-heading-copy">
+                        <h2>I-Card Request Hold Details</h2>
+                        <p class="ecms-title-subtitle">Manage held I-Card applications, hold reasons, status and request history</p>
+                    </div>
                 </div>
+
+                @if (canManageHold)
+                {
+                    <button type="button" id="btnRequestHoldAdd" class="btn btn-success btn-sm ecms-icard-hold-add-btn">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        <span>Add More</span>
+                    </button>
+                }
+            </div>
+
+            <div class="card-body card-body-min-height ecms-icard-hold-body">
+                <span id="spnFlagICardAppl" class="d-none">@(canManageHold ? "Flag ICard Appl" : "")</span>
+
+                <section class="ecms-section ecms-icard-hold-table-section" aria-labelledby="holdRecordsHeading">
+                    <h3 class="ecms-section-title" id="holdRecordsHeading">
+                        <i class="fa fa-table" aria-hidden="true"></i>
+                        I-Card Hold Records
+                    </h3>
+                    <div class="ecms-dt-wrap ecms-icard-hold-table-wrap">
+                        <table class="table table-striped table-hover ecms-dt-table ecms-icard-hold-table" role="grid" id="tbldata"></table>
+                    </div>
+                </section>
             </div>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row">
-                <span id="spnFlagICardAppl" class="d-none">@(claims.Count > 0 && claims.Any(i => i.Value == "Flag ICard Appl") ? "Flag ICard Appl" : "")</span>
-                <div class="col-xl-12">
-                    <div class="mb-2 d-flex justify-content-end">
-                        @if (claims.Count > 0 && claims.Any(i => i.Value == "Flag ICard Appl"))
-                        {
-                            <div>
-                                <button type="button" id="btnRequestHoldAdd" class="btn btn-outline-success font-weight-600 btn-sm">Add More</button>
-                            </div>
-                        }
-                    </div>
-                    <table class="table border border-purple table-striped no-footer dataTable table-hover" role="grid" id="tbldata">
-                    </table>
-                </div>
+    </div>
+</main>
+
+<div class="modal fade ecms-icard-hold-modal" id="AddICardRequestHold" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg ecms-modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    <i class="fa fa-pause-circle" aria-hidden="true"></i>
+                    I-Card Request Hold
+                </h5>
+                <button type="button" class="close ecms-modal-close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div><!-- Row End -->
+            <div class="modal-body">
+                <form action="" id="SaveICardRequestHold" name="SaveICardRequestHold" method="post" class="ecms-icard-hold-form">
+                    <div class="form-group row ecms-hold-form-row">
+                        <label for="txtArmyNo" class="col-form-label col-sm-4 fw-bold">Army No<i class="fas fa-asterisk mand1"></i></label>
+                        <div class="col-sm-8">
+                            <input class="form-control" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" minlength="8" maxlength="9" autocomplete="off" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Army No is required." data-val-regex-pattern="^[\w]+$" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group row ecms-hold-form-row">
+                        <label class="col-form-label col-sm-4 fw-bold">Rank</label>
+                        <div class="col-sm-8">
+                            <div class="ecms-hold-readonly-value" id="lblRank"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row ecms-hold-form-row">
+                        <label class="col-form-label col-sm-4 fw-bold">Name</label>
+                        <div class="col-sm-8">
+                            <div class="ecms-hold-readonly-value" id="lblName"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row ecms-hold-form-row">
+                        <label class="col-form-label col-sm-4 fw-bold">Unit Name</label>
+                        <div class="col-sm-8">
+                            <div class="ecms-hold-readonly-value" id="lblUnitName"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row ecms-hold-form-row">
+                        <label class="col-form-label col-sm-4 fw-bold">Is Hold<i class="fas fa-asterisk mand1"></i></label>
+                        <div class="col-sm-8">
+                            <div class="ecms-hold-radio-group">
+                                <label class="ecms-hold-radio-option" for="IsHoldYes">
+                                    <input class="form-check-input" type="radio" name="IsHold" value="true" id="IsHoldYes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$" />
+                                    <span>Yes</span>
+                                </label>
+                                <label class="ecms-hold-radio-option" for="IsHoldNo">
+                                    <input class="form-check-input" type="radio" name="IsHold" value="false" id="IsHoldNo" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$" />
+                                    <span>No</span>
+                                </label>
+                            </div>
+                            <span class="text-danger field-validation-valid" id="IsHold-error" data-valmsg-for="IsHold" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group row ecms-hold-form-row ecms-hold-textarea-row">
+                        <label for="txtHoldReason" class="col-form-label col-sm-4 fw-bold">Reason for Hold<i class="fas fa-asterisk mand1"></i></label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control1 textarea-auto-height" name="txtHoldReason" id="txtHoldReason" rows="3" maxlength="50" data-val-maxlength="Maximum length of Reason for Hold is 50 character." data-val-maxlength-max="50" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Reason for Hold is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtHoldReason" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group row ecms-hold-form-row ecms-hold-textarea-row d-none" id="gpUnHoldReason">
+                        <label for="txtUnHoldReason" class="col-form-label col-sm-4 fw-bold">Reason for UnHold<i class="fas fa-asterisk mand1"></i></label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control1 textarea-auto-height" name="txtUnHoldReason" id="txtUnHoldReason" rows="3" maxlength="50" data-val-maxlength="Maximum length of Reason for Hold is 50 character." data-val-maxlength-max="50" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Reason for UnHold is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="txtUnHoldReason" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="ecms-form-actions ecms-hold-modal-actions justify-content-end">
+                        <input type="button" class="btn btn-primary" value="Save" id="btnAddICardRequestHold" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -57,85 +156,5 @@
     <script asp-src-include="~/developerjs/ICardPrint.js"></script>
     <script asp-src-include="~/developerjs/ICardRequestHold.js"></script>
     <script asp-src-include="~/select2/js/select2.min.js"></script>
-
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }
-<div class="modal fade" id="AddICardRequestHold" tabindex="-1" aria-labelledby="exampleModalLabel" >
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">ICard Request Hold</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span >&times;</span></button>
-            </div>
-            <div class="modal-body model-body-background">
-                <div class="row">
-                    <form action="" id="SaveICardRequestHold" name="SaveICardRequestHold" method="post">
-                        <div class="row">
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Army No<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <input class="form-control" placeholder="Enter Army No" id="txtArmyNo" name="txtArmyNo" minlength="8" maxlength="9" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Army No is required." data-val-regex-pattern="^[\w]+$" />
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Rank</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblRank"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Name</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblName"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Unit Name</label>
-                                <div class="col-sm-8">
-                                    <label class="col-form-label unit-label-background" id="lblUnitName"></label>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Is Hold<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="IsHold" value="true" id="IsHoldYes" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                        <label class="form-check-label" for="IsHoldYes">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="IsHold" value="false" id="IsHoldNo" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[a-zA-Z]*$">
-                                        <label class="form-check-label" for="IsHoldNo">
-                                            No
-                                        </label>
-                                    </div>
-                                    <span class="text-danger field-validation-valid" id="IsHold-error" data-valmsg-for="IsHold" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2">
-                                <label class="col-form-label col-sm-4 fw-bold">Reason for Hold<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <textarea class="form-control1 textarea-auto-height" name="txtHoldReason" id="txtHoldReason" rows="3" maxlength="50" data-val-maxlength="Maximum length of Reason for Hold is 50 character." data-val-maxlength-max="50" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Reason for Hold is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtHoldReason" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row mb-2 d-none" id="gpUnHoldReason">
-                                <label class="col-form-label col-sm-4 fw-bold">Reason for UnHold<i class="fas fa-asterisk mand1"></i></label>
-                                <div class="col-sm-8">
-                                    <textarea class="form-control1 textarea-auto-height" name="txtUnHoldReason" id="txtUnHoldReason" rows="3" maxlength="50" data-val-maxlength="Maximum length of Reason for Hold is 50 character." data-val-maxlength-max="50" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Reason for UnHold is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                    <span class="text-danger field-validation-valid" data-valmsg-for="txtUnHoldReason" data-valmsg-replace="true"></span>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 text-right">
-                                <input type="button" class="btn btn-outline-primary" value="Save" id="btnAddICardRequestHold" />
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-        </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-</div>

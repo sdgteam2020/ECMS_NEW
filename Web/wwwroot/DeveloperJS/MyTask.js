@@ -47,7 +47,7 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                 else if (Id == 2) { // Pending
                     $("#_2ndLevelPending").html(response.Value._2ndLevelPending);
                     $("#_2ndLevelApproved").html(response.Value._2ndLevelApproved);
-                    $("#_2ndLevelReject").html(response.Value._2ndLevelReject);                  
+                    $("#_2ndLevelReject").html(response.Value._2ndLevelReject);
                     $("#_3rdLevelPending").html(response.Value._3rdLevelPending);
                     $("#_3rdLevelApproved").html(response.Value._3rdLevelApproved);
                     $("#ToInternalForward").html(response.Value.ToInternalForward);
@@ -73,17 +73,17 @@ function GetTaskIcardRequestCount(Id, applyForId) {
                     $('.counter-value').each(function () {
                         let finalValue = parseInt($(this).text()) || 0;
 
-                                $(this).prop('Counter', 0).animate({
-                                    Counter: finalValue
-                                }, {
-                                    duration: 200,
-                                    easing: 'swing',
-                                    step: function (now) {
-                                        $(this).text(Math.ceil(now));
-                                    }
-                                });
-                            });
-                        }
+                        $(this).prop('Counter', 0).animate({
+                            Counter: finalValue
+                        }, {
+                            duration: 200,
+                            easing: 'swing',
+                            step: function (now) {
+                                $(this).text(Math.ceil(now));
+                            }
+                        });
+                    });
+                }
 
             }
             else {

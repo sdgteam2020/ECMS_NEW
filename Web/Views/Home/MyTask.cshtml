@@ -29,7 +29,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
     <span class="d-none" id="Id">2</span>
 }
 <link asp-href-include="~/developercss/MyTask.css" rel="stylesheet" />
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10 ecms-mytask-header">
     <div class="containerMain">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-between">
@@ -44,17 +44,17 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10 ecms-mytask-page">
+<div class="containerMain mt-n10 ecms-page ecms-fit-screen ecms-mytask-page">
 
     <div class="row">
         @if (ViewBag.Type == "OffrsSubmitted")
         {
-            <div class="card p-4">
+            <div class="card p-4 ecms-card ecms-mytask-shell">
                 <div class="row">
-                    <h5 class="card-title">Status of Appl (Offrs) submitted  @(DIDName ?? "using this " + DIDName)</h5>
+                    <h5 class="card-title ecms-page-title ecms-mytask-title">Status of Appl (Offrs) submitted  @(DIDName ?? "using this " + DIDName)</h5>
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">
-                            <a class="card-header collapsed" href="#IO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                            <a class="card-header ecms-section-title ecms-mytask-section-toggle" href="#IO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
                                 Status
                                 <div class="card-collapsable-arrow">
                                     <i class="fas fa-angle-double-down"></i>
@@ -69,7 +69,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                     <div class="feature-icon-box3 mb-3">
                                         <div class="row">
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/Index/MTE=">
                                                         <div class="card-content">
                                                             <div class="card-body">
@@ -88,7 +88,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/Index/ODg=">
                                                         <div class="card-content">
                                                             <div class="card-body">
@@ -107,7 +107,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/Index/OTk=">
                                                         <div class="number1 SpnIOReject" id=""></div>
                                                         <div class="card-content">
@@ -127,7 +127,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/Index/Nzc=">
                                                         <div class="card-content">
                                                             <div class="card-body">
@@ -157,12 +157,12 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
 
         else if (ViewBag.Type == "OffrsPending")
         {
-            <div class="card p-4">
+            <div class="card p-4 ecms-card ecms-mytask-shell">
                 <div class="row">
-                    <h5 class="card-title">Approver Pending Actions(Offrs) </h5>
+                    <h5 class="card-title ecms-page-title ecms-mytask-title">Approver Pending Actions(Offrs) </h5>
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">
-                            <a class="card-header collapsed" href="#IOA" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                            <a class="card-header ecms-section-title ecms-mytask-section-toggle" href="#IOA" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
                                 Action for Approver
                                 <div class="card-collapsable-arrow">
                                     <i class="fas fa-angle-double-down"></i>
@@ -174,7 +174,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                         <div class="row">
 
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/ApprovalForIO/Mg==">
                                                         <div class="number1 SpnIO"></div>
                                                         <div class="card-content">
@@ -194,7 +194,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/ApprovalForIO/MjIy">
                                                         <div class="card-content">
                                                             <div class="card-body">
@@ -213,7 +213,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/ApprovalForIO/MjI=">
                                                         <div class="card-content">
                                                             <div class="card-body">
@@ -232,7 +232,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/CompletedHistory/Q29tcGxldGVkX0lP=">
                                                         @* Completed_IO *@
                                                         <div class="card-content">
@@ -252,7 +252,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/ClosedHistory/Q2xvc2VkX0lP">
                                                         @*  Closed_IO *@
                                                         <div class="card-content">
@@ -265,7 +265,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                     </div>
                                                                     <div class="align-self-center">
                                                                         <i class="fa fa-times-circle fa-3x icon-purple"></i>
-                                                                       
+
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -283,7 +283,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                     {
                         <div class="col-xl-12 col-sm-12 col-12">
                             <div class="card card-collapsable mb-3">
-                                <a class="card-header collapsed" href="#AGSO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                <a class="card-header ecms-section-title ecms-mytask-section-toggle" href="#AGSO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
                                     Record Office
                                     <div class="card-collapsable-arrow">
                                         <i class="fas fa-angle-double-down"></i>
@@ -296,7 +296,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                             <div class="row">
 
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ApprovalForIO/Mw==">
                                                             <div class="number1 SpnORO"></div>
                                                             <div class="card-content">
@@ -316,7 +316,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ApprovalForIO/MzMz">
                                                             <div class="card-content">
                                                                 <div class="card-body">
@@ -335,7 +335,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ApprovalForIO/MzM=">
                                                             <div class="card-content">
                                                                 <div class="card-body">
@@ -355,7 +355,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
 
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ClosedHistory/Q2xvc2VkX09STw==">
                                                             @*  Closed_ORO *@
                                                             <div class="card-content">
@@ -375,7 +375,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/CompletedHistory/Q29tcGxldGVkX09STw==">
                                                             @* Completed_ORO *@
                                                             <div class="card-content">
@@ -405,7 +405,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                     {
                         <div class="col-xl-12 col-sm-12 col-12">
                             <div class="card card-collapsable mb-3">
-                                <a class="card-header collapsed" href="#AMI11" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                <a class="card-header ecms-section-title ecms-mytask-section-toggle" href="#AMI11" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
                                     AFSAC Cell
                                     <div class="card-collapsable-arrow">
                                         <i class="fas fa-angle-double-down"></i>
@@ -418,7 +418,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                             <div class="row">
 
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ApprovalForIO/NA==">
                                                             <div class="number1 SpnADC_Officer">
                                                                 0
@@ -440,7 +440,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ApprovalForIO/NDQ0">
                                                             <div class="card-content">
                                                                 <div class="card-body">
@@ -459,7 +459,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ClosedHistory/Q2xvc2VkX0FEQw==">
                                                             @*  Closed_ADC *@
                                                             <div class="card-content">
@@ -479,7 +479,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/CompletedHistory/Q29tcGxldGVkX0FEQw==">
                                                             @* Completed_ADC *@
                                                             <div class="card-content">
@@ -500,7 +500,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
 
                                                 <div class="col-xl-4 col-sm-4 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/DecryptZipFile?jcoor=MA==">
                                                             <div class="card-content">
                                                                 <div class="card-body">
@@ -519,7 +519,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/CSVFileUpload?jcoor=MA==">
                                                             <div class="card-content">
                                                                 <div class="card-body">
@@ -550,14 +550,14 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
 
         else if (ViewBag.Type == "JCOsSubmitted")
         {
-            <div class="card p-4">
+            <div class="card p-4 ecms-card ecms-mytask-shell">
                 <div class="row">
-                    <h5 class="card-title">
+                    <h5 class="card-title ecms-page-title ecms-mytask-title">
                         Status of Appl(JCOs/Other Ranks) submitted @(DIDName ?? "using this " + DIDName)
                     </h5>
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">
-                            <a class="card-header collapsed" href="#CO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                            <a class="card-header ecms-section-title ecms-mytask-section-toggle" href="#CO" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
                                 Status
                                 <div class="card-collapsable-arrow">
                                     <i class="fas fa-angle-double-down"></i>
@@ -572,7 +572,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                     <div class="feature-icon-box3 mb-3">
                                         <div class="row">
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/Index?Id=MTE=&jcoor=SmNvL09ycw==">
 
                                                         <div class="card-content">
@@ -592,7 +592,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/Index?Id=ODg=&jcoor=SmNvL09ycw==">
 
                                                         <div class="card-content">
@@ -612,7 +612,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/Index?Id=OTk=&jcoor=SmNvL09ycw==">
                                                         <div class="number1 SpnCOReject" id=""></div>
                                                         <div class="card-content">
@@ -632,7 +632,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-4 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/Index?Id=Nzc=&jcoor=SmNvL09ycw==">
 
                                                         <div class="card-content">
@@ -663,15 +663,15 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
 
         else if (ViewBag.Type == "JCOsPending")
         {
-            <div class="card p-4">
+            <div class="card p-4 ecms-card ecms-mytask-shell">
                 <div class="row">
-                    <h5 class="card-title">
+                    <h5 class="card-title ecms-page-title ecms-mytask-title">
                         Approver Pending Actions(JCOs\OR)
                     </h5>
 
                     <div class="col-xl-12 col-sm-12 col-12">
                         <div class="card card-collapsable mb-3">
-                            <a class="card-header collapsed" href="#COA" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                            <a class="card-header ecms-section-title ecms-mytask-section-toggle" href="#COA" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
                                 Action for Approver
 
                                 <div class="card-collapsable-arrow">
@@ -683,7 +683,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                     <div class="feature-icon-box3 mb-3">
                                         <div class="row">
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/ApprovalForIO?Id=Mg==&jcoor=SmNvL09ycw==">
                                                         <div class="number1 SpnCO"></div>
                                                         <div class="card-content">
@@ -703,7 +703,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/ApprovalForIO?Id=MjIy&jcoor=SmNvL09ycw==">
 
                                                         <div class="card-content">
@@ -723,7 +723,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/ApprovalForIO?Id=MjI=&jcoor=SmNvL09ycw==">
                                                         <div class="card-content">
                                                             <div class="card-body">
@@ -741,9 +741,9 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </a>
                                                 </div>
                                             </div>
-                                         
+
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/ClosedHistory?Id=Q2xvc2VkX0lP&jcoor=SmNvL09ycw==">
                                                         @*  Closed_IO *@
                                                         <div class="card-content">
@@ -752,7 +752,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                     <div class="media-body text-left">
                                                                         <h3 class="success counter-value" id="Closed_IO">0</h3>
                                                                         <span class="badge badge-pill badge-closed p-2">Closed</span>
-                                                                    
+
                                                                     </div>
                                                                     <div class="align-self-center">
                                                                         <i class="fa fa-times-circle fa-3x icon-purple"></i>
@@ -764,7 +764,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                <div class="card box-shadow">
+                                                <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                     <a href="/BasicDetail/CompletedHistory?Id=Q29tcGxldGVkX0lP&jcoor=SmNvL09ycw==">
                                                         @* Completed_IO *@
                                                         <div class="card-content">
@@ -793,7 +793,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                     {
                         <div class="col-xl-12 col-sm-12 col-12 d-none1">
                             <div class="card card-collapsable mb-3">
-                                <a class="card-header collapsed" href="#ADID" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                <a class="card-header ecms-section-title ecms-mytask-section-toggle" href="#ADID" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
                                     Record Office
                                     <div class="card-collapsable-arrow">
                                         <i class="fas fa-angle-double-down"></i>
@@ -807,7 +807,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 @if (claims.Count > 0 && claims.Any(i => i.Value == "Internal Wk Distr"))
                                                 {
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/ApprovalForIO?Id=Mw==&jcoor=SmNvL09ycw==">
                                                                 <div class="number1 SpnRO"></div>
                                                                 <div class="card-content">
@@ -827,7 +827,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/ApprovalForIO?Id=MTE=&jcoor=SmNvL09ycw==">
                                                                 <div class="card-content">
                                                                     <div class="card-body">
@@ -846,7 +846,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/ApprovalForIO?Id=MzMz&jcoor=SmNvL09ycw==">
                                                                 <div class="card-content">
                                                                     <div class="card-body">
@@ -865,7 +865,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/ApprovalForIO?Id=MzM=&jcoor=SmNvL09ycw==">
                                                                 <div class="card-content">
                                                                     <div class="card-body">
@@ -884,7 +884,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/ClosedHistory?Id=Q2xvc2VkX0lP&jcoor=SmNvL09ycw==">
                                                                 @*  Closed_IO *@
                                                                 <div class="card-content">
@@ -896,7 +896,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                             </div>
                                                                             <div class="align-self-center">
                                                                                 <i class="fa fa-times-circle fa-3x icon-purple"></i>
-                                                                               
+
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -905,7 +905,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/CompletedHistory?Id=Q29tcGxldGVkX1JP&jcoor=SmNvL09ycw==">
                                                                 @* Completed_RO *@
                                                                 <div class="card-content">
@@ -928,7 +928,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                 else
                                                 {
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/ApprovalForIO?Id=Mw==&jcoor=SmNvL09ycw==">
                                                                 <div class="number1 SpnRO"></div>
                                                                 <div class="card-content">
@@ -948,7 +948,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/ApprovalForIO?Id=MzMz&jcoor=SmNvL09ycw==">
                                                                 <div class="card-content">
                                                                     <div class="card-body">
@@ -967,7 +967,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/ApprovalForIO?Id=MzM=&jcoor=SmNvL09ycw==">
                                                                 <div class="card-content">
                                                                     <div class="card-body">
@@ -986,7 +986,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/CompletedHistory?Id=Q29tcGxldGVkX1JP&jcoor=SmNvL09ycw==">
                                                                 @* Completed_RO *@
                                                                 <div class="card-content">
@@ -1006,7 +1006,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                         </div>
                                                     </div>
                                                     <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                        <div class="card box-shadow">
+                                                        <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                             <a href="/BasicDetail/ClosedHistory?Id=Q2xvc2VkX1JP&jcoor=SmNvL09ycw==">
                                                                 @*  Closed_RO *@
                                                                 <div class="card-content">
@@ -1018,7 +1018,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                                             </div>
                                                                             <div class="align-self-center">
                                                                                 <i class="fa fa-times-circle fa-3x icon-purple"></i>
-                                                                                
+
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -1039,7 +1039,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                     {
                         <div class="col-xl-12 col-sm-12 col-12">
                             <div class="card card-collapsable mb-3">
-                                <a class="card-header collapsed" href="#AExport" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                <a class="card-header ecms-section-title ecms-mytask-section-toggle" href="#AExport" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
                                     AFSAC Cell
                                     <div class="card-collapsable-arrow">
                                         <i class="fas fa-angle-double-down"></i>
@@ -1050,7 +1050,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                         <div class="feature-icon-box3 mb-3">
                                             <div class="row">
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ApprovalForIO?Id=NA==&jcoor=SmNvL09ycw==">
                                                             <div class="number1 SpnADC_JCOOR"></div>
                                                             <div class="card-content">
@@ -1070,7 +1070,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ApprovalForIO?Id=NDQ0&jcoor=SmNvL09ycw==">
                                                             <div class="card-content">
                                                                 <div class="card-body">
@@ -1088,7 +1088,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/CompletedHistory?Id=Q29tcGxldGVkX0FEQw==&jcoor=SmNvL09ycw==">
                                                             @* Completed_ADC *@
                                                             <div class="card-content">
@@ -1108,7 +1108,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/ClosedHistory?Id=Q2xvc2VkX0FEQw==&jcoor=SmNvL09ycw==">
                                                             @*  Closed_ADC *@
                                                             <div class="card-content">
@@ -1128,7 +1128,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-4 col-sm-4 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/DecryptZipFile?jcoor=MQ==">
                                                             <div class="card-content">
                                                                 <div class="card-body">
@@ -1147,7 +1147,7 @@ else if (ViewBag.Type == "OffrsPending" || ViewBag.Type == "JCOsPending")
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-3 col-sm-3 col-12 mt-2">
-                                                    <div class="card box-shadow">
+                                                    <div class="card box-shadow ecms-tile ecms-mytask-tile">
                                                         <a href="/BasicDetail/CSVFileUpload?jcoor=MA==">
                                                             <div class="card-content">
                                                                 <div class="card-body">

@@ -589,24 +589,24 @@
         </div>
     </div>
 
-    <div class="modal fade right" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel">
+    <div class="modal fade right ecms-icard-print-modal" id="ICardPrint" tabindex="-1" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog modal-xl " role="document">
             <div class="modal-content ">
                 <div class="modal-header ">
                     <button type="button" class="close no-print" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                     <h4 class="modal-title no-print" id="lblICardPrint">I-Card Print Preview</h4>
                 </div>
-                <div class="modal-body section-to-print-popup" id="section-to-print-popup">
-                    <div class="card">
-                        <div class="card-body">
+                <div class="modal-body section-to-print-popup ecms-icard-preview-body" id="section-to-print-popup">
+                    <div class="card icard-preview-root">
+                        <div class="card-body icard-preview-root-body">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="card mb-1 mt-1">
-                                        <h5 class="text-center badge badge-success no-print">I-Card Print Preview</h5>
+                                    <div class="card mb-1 mt-1 icard-preview-stage">
+                                        <h5 class="text-center badge badge-success no-print icard-preview-badge">I-Card Print Preview</h5>
                                         <div class="mt-2 ml-2 mr-2">
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                    <div class="card">
+                                                    <div class="card icard-preview-face icard-preview-front">
                                                         <div class="row p-4">
                                                             <div class="col-sm-12">
                                                                 <div class="line-zero">
@@ -639,7 +639,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12">
-                                                    <div class="card mt-2 mb-2">
+                                                    <div class="card mt-2 mb-2 icard-preview-face icard-preview-back">
                                                         <div class="row p-4">
                                                             <div class="col-sm-2 justify-content-center">
                                                                 <div class="mt-4 ml-3"><img src="~/writereaddata/images/indian-army-logo.jpg" height="60" width="50" /></div>
@@ -687,14 +687,14 @@
                                                                     FINDERS TO DROP THIS LETTER BOX POSTAGE FREE TO ARMY/NAVAL/AIR HEAD QUARTERS, NEW DELHI 110011 OR HANDOVER TO THE NEAREST MILITARY UNIT OR POLICE STATION.
                                                                 </div>
                                                             </div>
-                                                            <div class="col-sm-3 mt-2">
-                                                                <span class="font-weight-800 border border-dark p-2">1545485</span>
+                                                            <div class="col-sm-3 mt-2 icard-preview-number-cell">
+                                                                <span class="font-weight-800 border border-dark p-2 icard-preview-number">1545485</span>
                                                             </div>
-                                                            <div class="col-sm-3 mt-2">
-                                                                <span class="font-weight-800 border border-dark p-2">SIGNATURE</span>
+                                                            <div class="col-sm-3 mt-2 icard-preview-sign-label-cell">
+                                                                <span class="font-weight-800 border border-dark p-2 icard-preview-sign-label">SIGNATURE</span>
                                                             </div>
-                                                            <div class="col-sm-6 text-center mt-2 p-2 border border-dark signature-box">
-                                                                <span class="p-2"><img class="SignaturePath_ICardPrint" data-fallback="/Images/Signature.png" height="30" width="80" /></span>
+                                                            <div class="col-sm-6 text-center mt-2 p-2 border border-dark signature-box icard-preview-signature-cell">
+                                                                <span class="p-2 icard-preview-signature-wrap"><img class="SignaturePath_ICardPrint" data-fallback="/Images/Signature.png" height="30" width="80" /></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -757,5 +757,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Global modal host/stack manager: UI-only, no page business logic. -->
+    <script asp-src-include="~/developerjs/ecms-global-modals.js" asp-append-version="true"></script>
 </body>
 </html>

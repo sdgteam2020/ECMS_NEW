@@ -54,7 +54,7 @@ body {
 
 /* Row 2: render body area between fixed header and fixed footer. */
 .ecms-main-render-row,
-.ecms-app-main {   
+.ecms-app-main {
     width: 100%;
     margin: 0 !important;
     padding: 0 !important;
@@ -342,5 +342,551 @@ Bootstrap handles page grids; these rules only adjust shell/footer.
         top: auto !important;
         bottom: auto !important;
         overflow: visible !important;
+    }
+}
+
+/*
+=====================================================
+ECMS GLOBAL MODAL HARMONIZER
+Purpose:
+- Modernize every Bootstrap modal used from _Layout and individual pages.
+- Keep ModernCSS tokens as the source of truth.
+- Do not change the application header, navigation, page layout or footer.
+- Support standard centered dialogs and legacy .modal.right drawers.
+=====================================================
+*/
+
+/* Global modal/backdrop stacking. The JS helper also keeps stacked dialogs safe. */
+body.ecms-main-layout-body .modal {
+    z-index: 1060 !important;
+}
+
+body.ecms-main-layout-body > .modal-backdrop,
+body.ecms-main-layout-body .modal-backdrop {
+    z-index: 1050 !important;
+    background: rgba(3, 15, 42, .60) !important;
+    opacity: 1 !important;
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+}
+
+/* Standard modal frame. High specificity intentionally wins over page-local modal shells. */
+body.ecms-main-layout-body .modal:not(.right) .modal-dialog {
+    width: auto;
+    margin: 1rem auto !important;
+}
+
+body.ecms-main-layout-body .modal .modal-content {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 2rem) !important;
+    border: var(--ecms-border-white) !important;
+    border-radius: var(--ecms-radius-xl) !important;
+    background: var(--ecms-modal-surface) !important;
+    box-shadow: 0 1.75rem 4.5rem rgba(0, 0, 0, .40), 0 0 0 1px rgba(255,255,255,.22) inset !important;
+    color: var(--ecms-text) !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+    filter: none !important;
+    pointer-events: auto !important;
+}
+
+/* Consistent modal header across all pages. */
+body.ecms-main-layout-body .modal .modal-header {
+    position: relative !important;
+    flex: 0 0 auto !important;
+    min-height: 3.55rem !important;
+    padding: .82rem 3.7rem .82rem 1.1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    border: 0 !important;
+    background: linear-gradient(135deg, var(--ecms-primary-800), var(--ecms-primary-600), var(--ecms-primary-400)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22) !important;
+    color: var(--ecms-white) !important;
+}
+
+    body.ecms-main-layout-body .modal .modal-title,
+    body.ecms-main-layout-body .modal .modal-header h4,
+    body.ecms-main-layout-body .modal .modal-header h5,
+    body.ecms-main-layout-body .modal .modal-header h6 {
+        margin: 0 !important;
+        color: var(--ecms-white) !important;
+        font-size: 1.02rem !important;
+        font-weight: 950 !important;
+        line-height: 1.25 !important;
+        letter-spacing: .005em;
+    }
+
+    /* One close-button treatment for Bootstrap 4 (.close) and Bootstrap 5 (.btn-close). */
+    body.ecms-main-layout-body .modal .modal-header .btn-close,
+    body.ecms-main-layout-body .modal .modal-header button.btn-close,
+    body.ecms-main-layout-body .modal .modal-header .close,
+    body.ecms-main-layout-body .modal .modal-header button.close {
+        position: absolute !important;
+        top: 50% !important;
+        right: .9rem !important;
+        z-index: 3 !important;
+        width: 2.1rem !important;
+        height: 2.1rem !important;
+        min-width: 2.1rem !important;
+        min-height: 2.1rem !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        transform: translateY(-50%) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: 2px solid rgba(255,255,255,.88) !important;
+        border-radius: 50% !important;
+        background-color: var(--ecms-danger-500) !important;
+        background-image: none !important;
+        color: var(--ecms-white) !important;
+        opacity: 1 !important;
+        filter: none !important;
+        box-shadow: 0 .45rem 1rem rgba(116, 12, 31, .28), inset 0 1px 0 rgba(255,255,255,.20) !important;
+        text-shadow: none !important;
+        font-size: 0 !important;
+        cursor: pointer !important;
+        transition: transform .16s ease, filter .16s ease, box-shadow .16s ease !important;
+    }
+
+        body.ecms-main-layout-body .modal .modal-header .btn-close::before,
+        body.ecms-main-layout-body .modal .modal-header .close::before {
+            content: "×" !important;
+            display: block !important;
+            color: var(--ecms-white) !important;
+            font-size: 1.55rem !important;
+            font-weight: 950 !important;
+            line-height: 1 !important;
+        }
+
+        body.ecms-main-layout-body .modal .modal-header .close > span,
+        body.ecms-main-layout-body .modal .modal-header button.close > span {
+            display: none !important;
+        }
+
+        body.ecms-main-layout-body .modal .modal-header .btn-close:hover,
+        body.ecms-main-layout-body .modal .modal-header .close:hover {
+            filter: brightness(1.08) !important;
+            box-shadow: 0 .6rem 1.2rem rgba(116, 12, 31, .36), 0 0 0 4px rgba(255,255,255,.15) !important;
+        }
+
+/* Modal body owns scrolling; the application shell remains unchanged. */
+body.ecms-main-layout-body .modal .modal-body {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 1rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    background: linear-gradient(135deg, rgba(248,252,255,.99), rgba(226,240,255,.97)) !important;
+    color: var(--ecms-text) !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(47,103,230,.62) rgba(225,237,252,.82);
+}
+
+    body.ecms-main-layout-body .modal .modal-body::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+    }
+
+    body.ecms-main-layout-body .modal .modal-body::-webkit-scrollbar-thumb {
+        border-radius: var(--ecms-radius-pill);
+        background: rgba(47,103,230,.62);
+    }
+
+    body.ecms-main-layout-body .modal .modal-body::-webkit-scrollbar-track {
+        border-radius: var(--ecms-radius-pill);
+        background: rgba(225,237,252,.82);
+    }
+
+/* Avoid the old double-card appearance in simple form dialogs only. */
+body.ecms-main-layout-body .modal:not(#ICardPrint) .modal-body > .card {
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: var(--ecms-radius-lg) !important;
+    background: rgba(255,255,255,.42) !important;
+    box-shadow: none !important;
+}
+
+/* Footer stays visible while long modal bodies scroll. */
+body.ecms-main-layout-body .modal .modal-footer {
+    flex: 0 0 auto !important;
+    min-height: 3.65rem;
+    padding: .72rem 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex-wrap: wrap !important;
+    gap: .5rem !important;
+    border-top: 1px solid rgba(188,210,242,.75) !important;
+    background: linear-gradient(180deg, rgba(235,244,255,.98), rgba(216,232,253,.99)) !important;
+}
+
+    body.ecms-main-layout-body .modal .modal-footer .btn {
+        min-height: 2.25rem;
+        margin: 0 !important;
+        padding-inline: .9rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .4rem;
+    }
+
+/* Keep validation and read-only content legible inside globally styled dialogs. */
+body.ecms-main-layout-body .modal .text-danger,
+body.ecms-main-layout-body .modal .field-validation-error,
+body.ecms-main-layout-body .modal label.error {
+    font-weight: 800;
+}
+
+body.ecms-main-layout-body .modal .form-control[readonly],
+body.ecms-main-layout-body .modal .form-control:disabled,
+body.ecms-main-layout-body .modal .form-select:disabled {
+    opacity: 1 !important;
+}
+
+/*
+Right-side global drawer modals.
+Existing .right class is retained so HistoryModal and ICardPrint keep their behavior.
+*/
+body.ecms-main-layout-body .modal.right {
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+    body.ecms-main-layout-body .modal.right .modal-dialog,
+    body.ecms-main-layout-body .modal.right .modal-dialog.modal-history {
+        position: fixed !important;
+        top: .65rem !important;
+        right: .65rem !important;
+        bottom: .65rem !important;
+        left: auto !important;
+        width: min(560px, calc(100vw - 1.3rem)) !important;
+        max-width: min(560px, calc(100vw - 1.3rem)) !important;
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        transform: translate3d(105%, 0, 0) !important;
+        transition: transform .25s ease-out !important;
+    }
+
+    body.ecms-main-layout-body .modal.right.show .modal-dialog,
+    body.ecms-main-layout-body .modal.right.in .modal-dialog {
+        transform: translate3d(0, 0, 0) !important;
+    }
+
+    body.ecms-main-layout-body .modal.right .modal-content {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        border-radius: var(--ecms-radius-xl) !important;
+    }
+
+    body.ecms-main-layout-body .modal.right .modal-body {
+        min-height: 0 !important;
+        max-height: none !important;
+    }
+
+/* Print Preview keeps the printed I-card markup untouched; only the drawer shell is modernized. */
+body.ecms-main-layout-body #ICardPrint .modal-dialog {
+    width: min(540px, calc(100vw - 1.3rem)) !important;
+    max-width: min(540px, calc(100vw - 1.3rem)) !important;
+}
+
+body.ecms-main-layout-body #ICardPrint .modal-body {
+    padding: .75rem !important;
+    background: linear-gradient(180deg, #f7fbff, #e7f1ff) !important;
+}
+
+body.ecms-main-layout-body #ICardPrint #section-to-print-popup {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* History drawer gets a comfortable reading width while keeping the existing timeline markup. */
+body.ecms-main-layout-body #HistoryModal .modal-dialog,
+body.ecms-main-layout-body #HistoryModal .modal-dialog.modal-history {
+    width: min(600px, calc(100vw - 1.3rem)) !important;
+    max-width: min(600px, calc(100vw - 1.3rem)) !important;
+}
+
+body.ecms-main-layout-body #HistoryModal .modal-body {
+    padding: 1rem 1.1rem !important;
+}
+
+/* Search/photo modal polish without changing IDs or lookup behavior. */
+body.ecms-main-layout-body #unitoffrsModal .armynosearchAllpic {
+    max-width: 100%;
+    border-radius: var(--ecms-radius-lg);
+    box-shadow: var(--ecms-shadow-sm);
+}
+
+/* Widgets opened from modal fields must remain above the current dialog. */
+body.modal-open .select2-container--open,
+body.modal-open .ui-autocomplete,
+body.modal-open .ui-datepicker,
+body.modal-open .bootstrap-datetimepicker-widget {
+    z-index: 1125 !important;
+}
+
+/* Stacked modal levels are assigned by ecms-global-modals.js. */
+body.ecms-main-layout-body .modal.ecms-modal-stack-active {
+    opacity: 1 !important;
+    filter: none !important;
+    pointer-events: auto !important;
+}
+
+/* Mobile: standard dialogs and drawers use the complete safe viewport. */
+@media (max-width: 575.98px) {
+    body.ecms-main-layout-body .modal:not(.right) .modal-dialog {
+        width: calc(100vw - 1rem) !important;
+        max-width: calc(100vw - 1rem) !important;
+        margin: .5rem auto !important;
+    }
+
+    body.ecms-main-layout-body .modal .modal-content {
+        max-height: calc(100dvh - 1rem) !important;
+        border-radius: var(--ecms-radius-lg) !important;
+    }
+
+    body.ecms-main-layout-body .modal .modal-header {
+        min-height: 3.25rem !important;
+        padding: .7rem 3.35rem .7rem .85rem !important;
+    }
+
+    body.ecms-main-layout-body .modal .modal-body {
+        padding: .75rem !important;
+    }
+
+    body.ecms-main-layout-body .modal .modal-footer {
+        padding: .65rem .75rem !important;
+    }
+
+    body.ecms-main-layout-body .modal.right .modal-dialog,
+    body.ecms-main-layout-body .modal.right .modal-dialog.modal-history,
+    body.ecms-main-layout-body #ICardPrint .modal-dialog,
+    body.ecms-main-layout-body #HistoryModal .modal-dialog {
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100dvh !important;
+    }
+
+    body.ecms-main-layout-body .modal.right .modal-content {
+        border-radius: 0 !important;
+        border-left: 0 !important;
+        border-right: 0 !important;
+    }
+}
+
+/* Respect reduced-motion preference without changing modal functionality. */
+@media (prefers-reduced-motion: reduce) {
+    body.ecms-main-layout-body .modal.right .modal-dialog,
+    body.ecms-main-layout-body .modal .modal-header .btn-close,
+    body.ecms-main-layout-body .modal .modal-header .close {
+        transition: none !important;
+    }
+}
+
+/* Printing remains controlled by the existing page/print rules. */
+@media print {
+    body.ecms-main-layout-body .modal-backdrop {
+        display: none !important;
+    }
+}
+
+/* =====================================================
+   I-CARD PRINT PREVIEW - FINAL GLOBAL MODAL REFINEMENT
+   Screen-only UI rules. Print markup/data/IDs remain unchanged.
+   ===================================================== */
+@media screen {
+    /* Give the identity-card layout enough horizontal room so fixed labels
+       and the signature area never wrap or break inside the drawer. */
+    body.ecms-main-layout-body #ICardPrint .modal-dialog {
+        width: min(620px, calc(100vw - 1.3rem)) !important;
+        max-width: min(620px, calc(100vw - 1.3rem)) !important;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .modal-content {
+        border: 1px solid rgba(255,255,255,.90) !important;
+        box-shadow: 0 1.6rem 4rem rgba(3, 27, 75, .38) !important;
+        background: linear-gradient(180deg, #f8fbff 0%, #e9f3ff 100%) !important;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .modal-header {
+        border-bottom: 1px solid rgba(255,255,255,.25) !important;
+        background: linear-gradient(135deg, var(--ecms-primary-800, #123f8c), var(--ecms-primary-500, #3f7cff)) !important;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .ecms-icard-preview-body {
+        padding: .7rem .75rem .85rem !important;
+        overflow-x: hidden !important;
+        background: radial-gradient(circle at 100% 0%, rgba(67,199,244,.13), transparent 30%), linear-gradient(180deg, #f8fbff 0%, #eaf3ff 100%) !important;
+    }
+
+    /* Remove the generic nested .card surfaces that were creating several
+       visible layers around the actual front/back I-card faces. */
+    body.ecms-main-layout-body #ICardPrint .icard-preview-root,
+    body.ecms-main-layout-body #ICardPrint .icard-preview-root-body,
+    body.ecms-main-layout-body #ICardPrint .icard-preview-stage {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+        body.ecms-main-layout-body #ICardPrint .icard-preview-stage > .mt-2 {
+            margin: 0 !important;
+        }
+
+    body.ecms-main-layout-body #ICardPrint .icard-preview-badge {
+        width: calc(100% - .4rem) !important;
+        min-height: 1.55rem !important;
+        margin: .1rem .2rem .65rem !important;
+        padding: .3rem .75rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: 0 !important;
+        border-radius: var(--ecms-radius-pill, 999px) !important;
+        color: #fff !important;
+        background: linear-gradient(135deg, var(--ecms-success-500, #35ad56), #43c77a) !important;
+        box-shadow: 0 .45rem 1rem rgba(35,138,64,.18) !important;
+        font-size: .75rem !important;
+        font-weight: 900 !important;
+        letter-spacing: .02em !important;
+    }
+
+    /* Only the physical front/back card faces keep a card surface. */
+    body.ecms-main-layout-body #ICardPrint .icard-preview-face {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        border: 1px solid rgba(111,133,166,.32) !important;
+        border-radius: .65rem !important;
+        background: #fff !important;
+        box-shadow: 0 .45rem 1.15rem rgba(15,42,84,.14) !important;
+        overflow: hidden !important;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .icard-preview-front {
+        margin-top: 0 !important;
+        margin-bottom: .6rem !important;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .icard-preview-back {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Keep the original Bootstrap grid but remove accidental overflow caused
+       by nested card padding and fixed-size media. */
+    body.ecms-main-layout-body #ICardPrint .icard-preview-face > .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 1rem !important;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .icard-preview-face [class*="col-"] {
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .icard-preview-face img {
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+    /* Bottom number/signature row: prevent word-breaking and keep all three
+       boxes aligned on a single row. */
+    body.ecms-main-layout-body #ICardPrint .icard-preview-number-cell,
+    body.ecms-main-layout-body #ICardPrint .icard-preview-sign-label-cell,
+    body.ecms-main-layout-body #ICardPrint .icard-preview-signature-cell {
+        min-width: 0 !important;
+        display: flex !important;
+        align-items: stretch !important;
+        box-sizing: border-box !important;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .icard-preview-number,
+    body.ecms-main-layout-body #ICardPrint .icard-preview-sign-label {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 2.55rem !important;
+        padding: .45rem .35rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+        white-space: nowrap !important;
+        word-break: keep-all !important;
+        overflow-wrap: normal !important;
+        line-height: 1 !important;
+        font-size: .77rem !important;
+        border: 1px solid #29364a !important;
+        border-radius: .35rem !important;
+        background: #fff !important;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .icard-preview-signature-cell {
+        min-height: 2.55rem !important;
+        padding: .3rem .45rem !important;
+        justify-content: center !important;
+        border: 1px solid #29364a !important;
+        border-radius: .35rem !important;
+        background: #fff !important;
+        overflow: hidden !important;
+    }
+
+    body.ecms-main-layout-body #ICardPrint .icard-preview-signature-wrap {
+        width: 100% !important;
+        height: 100% !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+        body.ecms-main-layout-body #ICardPrint .icard-preview-signature-wrap img,
+        body.ecms-main-layout-body #ICardPrint .SignaturePath_ICardPrint {
+            width: auto !important;
+            max-width: 100% !important;
+            height: 30px !important;
+            max-height: 30px !important;
+            display: block !important;
+            object-fit: contain !important;
+        }
+
+    /* Remove the empty legacy footer strip that looked like another card layer. */
+    body.ecms-main-layout-body #ICardPrint .card-fotter {
+        display: none !important;
+    }
+
+    /* Slightly soften type inside the preview without changing data layout. */
+    body.ecms-main-layout-body #ICardPrint .icard-preview-face p,
+    body.ecms-main-layout-body #ICardPrint .icard-preview-face span,
+    body.ecms-main-layout-body #ICardPrint .icard-preview-face div {
+        overflow-wrap: normal;
+    }
+
+    @media (max-width: 767.98px) {
+        body.ecms-main-layout-body #ICardPrint .modal-dialog {
+            width: 100vw !important;
+            max-width: 100vw !important;
+        }
+
+        body.ecms-main-layout-body #ICardPrint .icard-preview-face > .row {
+            padding: .75rem !important;
+        }
     }
 }

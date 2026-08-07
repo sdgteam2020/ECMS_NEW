@@ -48,14 +48,14 @@ $(function () {
                             alert("Error fetching data: " + error);
                         });
                 }
-            } 
+            }
         },
         select: function (e, i) {
             e.preventDefault();
             $("#searchText").val(i.item.label);
             $("#spnUnitMapId").html(i.item.value);
         },
-        
+
     });
 
     if ($('#btnAdd').length) {
@@ -95,7 +95,7 @@ $(function () {
             if (searchField == null) {
                 toastr.error('Please Select Field.');
             }
-            else if (searchText == null || searchText.trim() === "" ) {
+            else if (searchText == null || searchText.trim() === "") {
                 toastr.error('Please Valid Search Input.');
             }
             else {
@@ -133,7 +133,7 @@ $(function () {
         $("#DataTableDialog").modal("show");
 
         // Then initialize the table
-        DispatchCardStatusListBindDialog(cvalue,function () {
+        DispatchCardStatusListBindDialog(cvalue, function () {
             // Callback to show modal after DataTable is ready
         });
     });
@@ -144,7 +144,7 @@ $(function () {
         let DispatchCardId = parseInt($("#spnDispatchCardId").html());
         if (DispatchCardId == 0 || DispatchCardId < 0) {
             toastr.error('Invalid Dispatch Card Id.');
-            return false; 
+            return false;
         }
         if ($("#TermsConditions").prop("checked")) {
             // Check Form Validation
@@ -194,7 +194,7 @@ $(function () {
 
             $container.html(newSelect); // Replace input with dropdown
 
-            selectedField === 'regimentalname'? mMsater(0, "searchText", AllRegimental, "") : mMsater(0, "searchText", ORO, "");
+            selectedField === 'regimentalname' ? mMsater(0, "searchText", AllRegimental, "") : mMsater(0, "searchText", ORO, "");
 
         }
     });
@@ -335,7 +335,7 @@ function BindData(cvalue, callback) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top ecms-dt-toolbar d-flex justify-content-between align-items-center flex-wrap'lBf>rt<'ecms-dt-footer row no-gutters'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>", // Shared ModernCSS DataTable toolbar/footer
         buttons: [
             //{
             //    extend: 'copy',
@@ -385,7 +385,7 @@ function BindData(cvalue, callback) {
                     table.columns.adjust().responsive.recalc();
                 }, 100);
             });
-            
+
         },
         drawCallback: function (settings) {
 
@@ -419,7 +419,7 @@ function BindData(cvalue, callback) {
                             `<strong>Unit & SUS No : </strong> ${rowData.ToUnit} ${rowData.ToSUSNo}${rowData.ToSuffix} |
                              ${rowData.ApplyForId == 1 ? `<strong>ORO : </strong> ${rowData.RecordOfficeName}` : `<strong>Regiment : </strong> ${rowData.RegimentalName}`} |
                              <strong>Name Of Courier Incharge : </strong> ${rowData.NameOfCourierIncharge} |
-                             <strong>Dispatch To : </strong > ${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo)? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo} |
+                             <strong>Dispatch To : </strong > ${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo) ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo} |
                              <strong>Sender Remark : </strong> ${rowData.FromRemark} |
                              <strong>Receiver Remark : </strong> ${rowData.ToRemark != null ? rowData.ToRemark : ''} 
                     `;
@@ -430,8 +430,8 @@ function BindData(cvalue, callback) {
                              <strong>Name Of Courier Incharge : </strong> ${rowData.NameOfCourierIncharge} |
                              ${rowData.Step == 1 ?
                                 `<strong>Dispatch From : </strong >${`${rowData.FromDID} (${rowData.FromRankName} ${rowData.FromName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.FromServiceNo) ? `${rowData.FromServiceNo.slice(0, 2)}  ${rowData.FromServiceNo.slice(2)}` : rowData.FromServiceNo} |`
-                                :`<strong>Dispatch To : </strong >${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo) ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo} |`
-                              } 
+                                : `<strong>Dispatch To : </strong >${`${rowData.ToDID} (${rowData.ToRankName} ${rowData.ToName})`.trim()} ${/^[A-Za-z]{2}/.test(rowData.ToServiceNo) ? `${rowData.ToServiceNo.slice(0, 2)}  ${rowData.ToServiceNo.slice(2)}` : rowData.ToServiceNo} |`
+                            } 
                              <strong>Sender Remark : </strong> ${rowData.FromRemark} |
                              <strong>Receiver Remark : </strong> ${rowData.ToRemark != null ? rowData.ToRemark : ''} 
                     `;
@@ -602,7 +602,7 @@ function BindDialog(rowData, cvalue, callback) {
                 search: "", // Remove the default "Search:" label
                 searchPlaceholder: "Search" // Add custom placeholder
             },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            dom: "<'dt-top ecms-dt-toolbar d-flex justify-content-between align-items-center flex-wrap'lBf>rt<'ecms-dt-footer row no-gutters'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>", // Shared ModernCSS DataTable toolbar/footer
             buttons: [
                 //{
                 //    extend: 'copy',
@@ -748,7 +748,7 @@ function getColumnsForDispatchCard(choice) {
                         else {
                             return ``;
                         }
-                        
+
                     }
                 },
                 {
@@ -1514,7 +1514,7 @@ function DispatchCardStatusListBindDialog(cvalue, callback) {
                 search: "", // Remove the default "Search:" label
                 searchPlaceholder: "Search ReqId/Arm/SUSNo/ORO/Regt" // Add custom placeholder
             },
-            dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+            dom: "<'dt-top ecms-dt-toolbar d-flex justify-content-between align-items-center flex-wrap'lBf>rt<'ecms-dt-footer row no-gutters'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>", // Shared ModernCSS DataTable toolbar/footer
             buttons: [
                 //{
                 //    extend: 'copy',

@@ -1,640 +1,304 @@
 ﻿/* =====================================================
-   ECMS Lost Card Modern UI
-   Only page UI changes. Header/footer/layout/JS unchanged.
-===================================================== */
+   ECMS - Lost Card / Report Loss of AFSAC
+   Page-only layout rules.
 
-:root {
-    --ecms-lost-blue-1: #12377d;
-    --ecms-lost-blue-2: #2f7dff;
-    --ecms-lost-cyan: #55d7ff;
-    --ecms-lost-green: #31c48d;
-    --ecms-lost-orange: #f59e0b;
-    --ecms-lost-red: #ef4444;
-    --ecms-lost-ink: #061b44;
-    --ecms-lost-muted: #536f9a;
-}
+   IMPORTANT
+   - ModernCSS remains the source of truth for page/card/title/table/
+     toolbar/footer/buttons/badges/modals/colors/radius/shadows.
+   - This file only handles LostCard-specific sizing/alignment.
+   ===================================================== */
 
-/* remove unwanted browser scroll only on this page */
-html:has(.ecms-lostcard-page),
-body:has(.ecms-lostcard-page) {
-    overflow-y: hidden !important;
-}
-
-/* Compact breadcrumb row like modern ECMS pages */
-body .page-header.page-header-dark.bg-gradient-primary-to-secondary,
-body .page-header.page-header-dark {
-    width: 100% !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    max-height: 42px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    background: linear-gradient(90deg, rgba(75, 207, 239, 0.96), rgba(61, 126, 244, 0.96)) !important;
-    box-shadow: 0 12px 25px rgba(0, 38, 95, 0.22) !important;
-}
-
-    body .page-header.page-header-dark .containerMain {
-        width: 100% !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        margin: 0 !important;
-        padding: 0 14px 0 66px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
+/* -----------------------------------------------------
+   Desktop viewport fit
+   Keep the browser itself fixed between the shared breadcrumb/footer.
+   The DataTable keeps its own internal scroll area.
+   ----------------------------------------------------- */
+@media (min-width: 1200px) {
+    html:has(.ecms-lostcard-page),
+    body:has(.ecms-lostcard-page) {
+        overflow-y: hidden !important;
     }
 
-    body .page-header.page-header-dark .page-header-content,
-    body .page-header.page-header-dark .page-header-content > .row,
-    body .page-header.page-header-dark .page-header-content .row.align-items-center,
-    body .page-header.page-header-dark .page-header-content .col-auto {
-        width: auto !important;
+    .ecms-lostcard-page.ecms-page.ecms-page-full {
+        width: calc(100vw - 1rem) !important;
         max-width: none !important;
-        min-width: 0 !important;
-        flex: 0 0 auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
+        height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height, var(--ecms-nav-height)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height)) - var(--ecms-footer-height) ) !important;
+        min-height: 0 !important;
+        margin: 0 auto !important;
+        padding: .5rem 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
     }
+}
 
-    body .page-header.page-header-dark .page-header-title {
-        width: auto !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        height: 42px !important;
-        min-height: 42px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        flex-wrap: nowrap !important;
-        gap: 8px !important;
-        white-space: nowrap !important;
-        color: #ffffff !important;
-        font-size: 14px !important;
-        line-height: 42px !important;
-        font-weight: 900 !important;
-        text-shadow: 0 2px 7px rgba(0, 30, 80, 0.38) !important;
-    }
-
-        body .page-header.page-header-dark .page-header-title .page-header-icon {
-            width: 26px !important;
-            height: 26px !important;
-            min-width: 26px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            border-radius: 50% !important;
-            background: rgba(255, 255, 255, 0.22) !important;
-            border: 1px solid rgba(255, 255, 255, 0.42) !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 10px rgba(0,33,90,0.16) !important;
-            margin-right: 4px !important;
-        }
-
-            body .page-header.page-header-dark .page-header-title .page-header-icon i {
-                color: #ffffff !important;
-                font-size: 13px !important;
-            }
-
-        body .page-header.page-header-dark .page-header-title a {
-            color: #ffffff !important;
-            text-decoration: none !important;
-            margin: 0 !important;
-        }
-
-/* Main page background */
-.ecms-lostcard-page {
-    position: relative !important;
+/* Shared .ecms-card and .ecms-card-body provide the surface/radius/shadow. */
+.ecms-lostcard-shell {
     width: 100% !important;
     max-width: none !important;
-    min-height: calc(100vh - 255px) !important;
-    height: calc(100vh - 255px) !important;
-    margin: 0 !important;
-    padding: 12px 26px 44px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.88), rgba(15, 70, 160, 0.79)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
-}
-
-    .ecms-lostcard-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 24% 18%, rgba(96, 213, 255, 0.13), transparent 30%), radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.18), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.00));
-    }
-
-.ecms-lostcard-shell {
-    position: relative !important;
-    z-index: 1 !important;
-    width: min(1500px, calc(100% - 220px)) !important;
-    min-width: 1000px !important;
+    min-width: 0 !important;
     height: 100% !important;
     min-height: 0 !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border-radius: 22px !important;
-    background: linear-gradient(135deg, rgba(246,251,255,0.94), rgba(213,229,247,0.88)), rgba(232, 244, 255, 0.90) !important;
-    border: 1px solid rgba(255,255,255,0.86) !important;
-    box-shadow: 0 24px 70px rgba(0, 18, 60, 0.28) !important;
+    display: flex !important;
+    flex-direction: column !important;
     overflow: hidden !important;
 }
 
+/* -----------------------------------------------------
+   Page title
+   Shared .ecms-page-title / .ecms-title-icon provide the visual skin.
+   ----------------------------------------------------- */
 .ecms-lostcard-header {
-    height: 72px !important;
-    min-height: 72px !important;
-    padding: 10px 14px !important;
-    border-radius: 16px !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin: 0 0 .55rem 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    gap: 12px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(232, 243, 255, 0.83)) !important;
-    border: 1px solid rgba(255,255,255,0.92) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 24px rgba(15, 58, 140, 0.12) !important;
+    gap: .75rem !important;
 }
 
 .ecms-lostcard-title-wrap {
+    min-width: 0 !important;
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
+    gap: .7rem !important;
 }
 
-.ecms-lostcard-title-icon {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    border-radius: 14px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #f59e0b, #ef4444) !important;
-    color: #ffffff !important;
-    box-shadow: 0 10px 22px rgba(239, 68, 68, 0.26) !important;
-}
-
-    .ecms-lostcard-title-icon i {
-        font-size: 20px !important;
-        line-height: 1 !important;
-        color: #ffffff !important;
+    .ecms-lostcard-title-wrap > div {
+        min-width: 0 !important;
     }
 
-.ecms-lostcard-header h3 {
-    margin: 0 !important;
-    color: var(--ecms-lost-ink) !important;
-    font-size: 22px !important;
-    line-height: 1.1 !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.01em !important;
+    .ecms-lostcard-title-wrap h3 {
+        margin: 0 !important;
+    }
+
+/* Lost-card warning icon is intentionally semantic; geometry/shadow still
+   comes from the shared .ecms-title-icon component. */
+.ecms-lostcard-title-icon.ecms-title-icon {
+    background: linear-gradient( 135deg, var(--ecms-warning-500), var(--ecms-danger-500) ) !important;
 }
 
-.ecms-lostcard-header p {
-    margin: 4px 0 0 !important;
-    color: #48618e !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
-
+/* Header actions */
 .ecms-lostcard-actions {
+    flex: 0 0 auto !important;
     display: flex !important;
     align-items: center !important;
     justify-content: flex-end !important;
-    gap: 10px !important;
-    flex: 0 0 auto !important;
+    gap: .55rem !important;
 }
 
+/* Compact page-specific summary pill; all colors use common theme tokens. */
 .ecms-total-pill {
-    height: 38px !important;
-    padding: 0 14px !important;
-    border-radius: 13px !important;
+    min-height: 2.25rem !important;
+    padding: .35rem .75rem !important;
+    border: var(--ecms-border) !important;
+    border-radius: var(--ecms-radius-md) !important;
+    background: var(--ecms-card-surface) !important;
+    box-shadow: var(--ecms-shadow-sm) !important;
+    color: var(--ecms-text) !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 8px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(244, 249, 255, 0.86)) !important;
-    border: 1px solid rgba(70, 119, 184, 0.24) !important;
-    box-shadow: 0 9px 19px rgba(0, 35, 100, 0.10) !important;
-    color: #10254f !important;
-    font-size: 12px !important;
+    gap: .45rem !important;
+    font-size: .78rem !important;
     font-weight: 900 !important;
     white-space: nowrap !important;
 }
 
-    .ecms-total-pill i {
-        color: #ef4444 !important;
-        font-size: 14px !important;
+    .ecms-total-pill > i {
+        color: var(--ecms-danger-500) !important;
     }
 
-    .ecms-total-pill strong {
-        min-width: 26px !important;
-        height: 24px !important;
-        padding: 0 8px !important;
-        border-radius: 9px !important;
+    .ecms-total-pill > strong {
+        min-width: 1.65rem !important;
+        height: 1.5rem !important;
+        padding: 0 .45rem !important;
+        border-radius: var(--ecms-radius-pill) !important;
+        color: var(--ecms-white) !important;
+        background: linear-gradient( 135deg, var(--ecms-danger-500), var(--ecms-danger-600) ) !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #ef4444, #d02222) !important;
-        font-size: 13px !important;
-        font-weight: 950 !important;
+        line-height: 1 !important;
     }
 
 .ecms-add-btn {
-    height: 38px !important;
-    min-width: 86px !important;
-    padding: 0 15px !important;
-    border-radius: 12px !important;
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #35c786, #149e6a) !important;
-    font-weight: 900 !important;
-    box-shadow: 0 9px 19px rgba(24, 120, 88, 0.22) !important;
+    min-height: 2.25rem !important;
+    padding-left: .9rem !important;
+    padding-right: .9rem !important;
 }
 
-    .ecms-add-btn:hover {
-        color: #ffffff !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 12px 24px rgba(24, 120, 88, 0.28) !important;
-    }
-
-    .ecms-add-btn i {
-        color: #ffffff !important;
-    }
-
-/* Table panel */
-.ecms-lostcard-table-panel {
-    height: calc(100% - 84px) !important;
+/* -----------------------------------------------------
+   Lost AFSAC Records section
+   Shared .ecms-section / .ecms-section-title provide the design.
+   ----------------------------------------------------- */
+.ecms-lostcard-records {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
     min-height: 0 !important;
-    margin-top: 10px !important;
-    overflow: hidden !important;
-}
-
-/* DataTables modern styling */
-.ecms-lostcard-page .dt-container,
-.ecms-lostcard-page .dataTables_wrapper {
-    height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
-    padding: 0 !important;
-    color: var(--ecms-lost-ink) !important;
+    overflow: hidden !important;
 }
 
-    .ecms-lostcard-page .dt-top,
-    .ecms-lostcard-page .dataTables_wrapper .dt-top {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        flex-wrap: wrap !important;
-        gap: 10px !important;
-        padding: 10px 12px !important;
-        margin: 0 0 10px 0 !important;
-        border-radius: 14px !important;
-        background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(242, 248, 255, 0.74)) !important;
-        border: 1px solid rgba(255,255,255,0.72) !important;
-        box-shadow: 0 12px 28px rgba(0, 26, 88, 0.12) !important;
+    .ecms-lostcard-records > .ecms-section-title {
+        flex: 0 0 var(--ecms-section-title-height) !important;
     }
 
-.ecms-lostcard-page .dt-length,
-.ecms-lostcard-page .dt-buttons,
-.ecms-lostcard-page .dt-search,
-.ecms-lostcard-page .dataTables_length,
-.ecms-lostcard-page .dataTables_filter {
+/* -----------------------------------------------------
+   DataTable remaining-height layout
+   Common ecms.05.datatables.css controls table skin/header/rows/paging.
+   ----------------------------------------------------- */
+.ecms-lostcard-table-panel {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding-top: .55rem !important;
+    overflow: hidden !important;
+}
+
+    .ecms-lostcard-table-panel .dataTables_wrapper,
+    .ecms-lostcard-table-panel .dt-container {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+    }
+
+/* Keep length / export extensions / search aligned like the other modern pages. */
+.ecms-lostcard-page .dt-top,
+.ecms-lostcard-page .ecms-dt-toolbar {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 2.75rem !important;
+    margin: 0 0 .5rem 0 !important;
+    padding: .25rem .45rem !important;
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: .5rem !important;
+}
+
+.ecms-lostcard-page .dt-buttons:empty {
+    display: none !important;
+}
+
+.ecms-lostcard-page .ecms-dt-footer {
+    flex: 0 0 auto !important;
+}
+
+/* The Reason eye button is JS-generated; the shared action-button geometry
+   is used, while warning semantics are retained. */
+.ecms-lostcard-page .cls-remarks.btn-icon,
+.ecms-lostcard-page .cls-remarks.btn-round {
+    background: linear-gradient( 135deg, var(--ecms-warning-500), #f59e0b ) !important;
+    color: var(--ecms-primary-950) !important;
+}
+
+.ecms-lostcard-page .cls-remarks i {
     margin: 0 !important;
+    color: inherit !important;
 }
 
-    .ecms-lostcard-page .dt-length label,
-    .ecms-lostcard-page .dataTables_length label {
-        margin: 0 !important;
-        color: #17325e !important;
-        font-size: 12px !important;
-        font-weight: 850 !important;
-    }
-
-    .ecms-lostcard-page .dt-length select,
-    .ecms-lostcard-page .dataTables_length select {
-        width: 68px !important;
-        height: 34px !important;
-        padding: 4px 8px !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(70, 119, 184, 0.32) !important;
-        background: rgba(255,255,255,0.94) !important;
-        color: #0a234e !important;
-        font-weight: 800 !important;
-        outline: none !important;
-    }
-
-    .ecms-lostcard-page .dt-search input,
-    .ecms-lostcard-page .dataTables_filter input {
-        width: 200px !important;
-        height: 34px !important;
-        padding: 6px 12px !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(70, 119, 184, 0.34) !important;
-        color: #09234f !important;
-        background: rgba(255,255,255,0.96) !important;
-        font-weight: 800 !important;
-        outline: none !important;
-        box-shadow: inset 0 1px 2px rgba(0,0,0,0.03) !important;
-    }
-
-.ecms-lostcard-page .dt-button,
-.ecms-lostcard-page .buttons-excel,
-.ecms-lostcard-page .buttons-pdf {
-    min-height: 32px !important;
-    padding: 6px 12px !important;
-    border-radius: 10px !important;
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #2e80ff, #1355d9) !important;
-    font-size: 12px !important;
-    font-weight: 900 !important;
-    box-shadow: 0 8px 18px rgba(22, 84, 214, 0.22) !important;
-}
-
-.ecms-lostcard-page .dt-scroll,
-.ecms-lostcard-page .dataTables_scroll {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    border-radius: 14px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(255,255,255,0.62) !important;
-    box-shadow: 0 14px 32px rgba(0, 26, 88, 0.14) !important;
-    background: rgba(255,255,255,0.92) !important;
-}
-
-.ecms-lostcard-page .dt-scroll-body,
-.ecms-lostcard-page .dataTables_scrollBody {
-    max-height: calc(100vh - 465px) !important;
-    height: calc(100vh - 465px) !important;
-    min-height: 210px !important;
-    overflow: auto !important;
-    background: rgba(255,255,255,0.88) !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(31, 124, 255, 0.60) rgba(255,255,255,0.25);
-}
-
-    .ecms-lostcard-page .dt-scroll-body::-webkit-scrollbar,
-    .ecms-lostcard-page .dataTables_scrollBody::-webkit-scrollbar {
-        width: 7px;
-        height: 7px;
-    }
-
-    .ecms-lostcard-page .dt-scroll-body::-webkit-scrollbar-thumb,
-    .ecms-lostcard-page .dataTables_scrollBody::-webkit-scrollbar-thumb {
-        background: rgba(31, 124, 255, 0.62);
-        border-radius: 999px;
-    }
-
-.ecms-lostcard-page table.dataTable,
-.ecms-lostcard-page #tbldata {
-    width: 100% !important;
-    min-width: 100% !important;
-    margin: 0 !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    table-layout: fixed !important;
-    color: var(--ecms-lost-ink) !important;
-    background: rgba(255,255,255,0.96) !important;
-}
-
-    .ecms-lostcard-page table.dataTable thead th,
-    .ecms-lostcard-page #tbldata thead th {
-        height: 42px !important;
-        padding: 10px 12px !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #153f8f, #236dd2) !important;
-        border-color: rgba(255,255,255,0.22) !important;
-        font-size: 13px !important;
-        font-weight: 900 !important;
-        text-align: left !important;
-        vertical-align: middle !important;
-        white-space: nowrap !important;
-    }
-
-    .ecms-lostcard-page table.dataTable tbody td,
-    .ecms-lostcard-page #tbldata tbody td {
-        padding: 10px 12px !important;
-        color: #10254f !important;
-        font-size: 12.5px !important;
-        font-weight: 750 !important;
-        vertical-align: middle !important;
-        border-top: 1px solid rgba(35, 99, 170, 0.10) !important;
-        background: rgba(255,255,255,0.94) !important;
-    }
-
-    .ecms-lostcard-page table.dataTable tbody tr:hover td {
-        background: rgba(236, 246, 255, 0.98) !important;
-    }
-
-.ecms-lostcard-page .dt-ellipsis,
-.ecms-lostcard-page .nowrap {
-    white-space: nowrap !important;
-}
-
-.ecms-lostcard-page .dt-ellipsis {
-    display: inline-block !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-}
-
-.ecms-lostcard-page .badge {
-    min-width: 48px !important;
-    padding: 6px 10px !important;
-    border-radius: 999px !important;
-    font-size: 10px !important;
-    font-weight: 950 !important;
-    letter-spacing: .02em !important;
-}
-
+/* Keep yes/no statuses entirely theme-driven. */
 .ecms-lostcard-page .badge-success {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #35c786, #149e6a) !important;
+    color: var(--ecms-white) !important;
+    background: linear-gradient( 135deg, var(--ecms-success-500), var(--ecms-success-600) ) !important;
 }
 
 .ecms-lostcard-page .badge-danger {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #ef4444, #c82020) !important;
+    color: var(--ecms-white) !important;
+    background: linear-gradient( 135deg, var(--ecms-danger-500), var(--ecms-danger-600) ) !important;
 }
 
-.ecms-lostcard-page .dt-info,
-.ecms-lostcard-page .dt-paging,
-.ecms-lostcard-page .dataTables_info,
-.ecms-lostcard-page .dataTables_paginate {
-    margin-top: 10px !important;
-    color: #10254f !important;
-    font-size: 12.5px !important;
-    font-weight: 850 !important;
+/* Preserve clean truncation for long Unit / Remark values. */
+.ecms-lostcard-page .dt-ellipsis {
+    max-width: 100% !important;
 }
 
-.ecms-lostcard-page .dt-paging,
-.ecms-lostcard-page .dataTables_paginate {
-    align-self: flex-end !important;
-}
-
-    .ecms-lostcard-page .dt-paging .dt-paging-button,
-    .ecms-lostcard-page .dataTables_paginate .paginate_button {
-        min-width: 32px !important;
-        height: 32px !important;
-        margin-left: 4px !important;
-        border-radius: 9px !important;
-        border: 1px solid rgba(55, 105, 173, 0.18) !important;
-        background: rgba(255,255,255,0.88) !important;
-        color: #194d9b !important;
-        font-size: 12px !important;
-        font-weight: 900 !important;
-    }
-
-        .ecms-lostcard-page .dt-paging .dt-paging-button.current,
-        .ecms-lostcard-page .dataTables_paginate .paginate_button.current {
-            color: #ffffff !important;
-            background: linear-gradient(135deg, #277cff, #0f4ed7) !important;
-            border-color: transparent !important;
-        }
-
-/* Hide duplicate header created inside DataTables scroll body */
-.ecms-lostcard-page .dt-scroll-body table > thead,
-.ecms-lostcard-page .dataTables_scrollBody table > thead {
-    height: 0 !important;
-    max-height: 0 !important;
-    overflow: hidden !important;
-    visibility: collapse !important;
-}
-
-    .ecms-lostcard-page .dt-scroll-body table > thead th,
-    .ecms-lostcard-page .dataTables_scrollBody table > thead th {
-        height: 0 !important;
-        max-height: 0 !important;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        border: 0 !important;
-        line-height: 0 !important;
-        font-size: 0 !important;
-        color: transparent !important;
-    }
-
-/* Action buttons generated by JS */
-.ecms-lostcard-page .btn-icon,
-.ecms-lostcard-page .btn-round {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    padding: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 11px !important;
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #f59e0b, #ef4444) !important;
-    box-shadow: 0 9px 18px rgba(239, 68, 68, 0.22) !important;
-}
-
-    .ecms-lostcard-page .btn-icon i,
-    .ecms-lostcard-page .btn-round i {
-        margin: 0 !important;
-        font-size: 14px !important;
-        line-height: 1 !important;
-        color: #ffffff !important;
-    }
-
-/* Checkbox support if export checkbox is re-enabled later */
+/* Checkbox support retained if the commented export-selection column is
+   enabled again later. */
 .ecms-lostcard-page .custom-control.custom-checkbox,
 .ecms-lostcard-page .wd-30-f {
     position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 1.5rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 100% !important;
-    min-height: 24px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: visible !important;
 }
 
 .ecms-lostcard-page .custom-control-input,
 .ecms-lostcard-page input[type="checkbox"] {
     position: static !important;
-    width: 16px !important;
-    height: 16px !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    margin: 0 !important;
     opacity: 1 !important;
     visibility: visible !important;
-    cursor: pointer !important;
-    accent-color: #31c48d !important;
     appearance: auto !important;
     -webkit-appearance: checkbox !important;
+    accent-color: var(--ecms-success-500) !important;
+    cursor: pointer !important;
 }
 
-.ecms-lostcard-page .custom-control-label {
+.ecms-lostcard-page .custom-control-label,
+.ecms-lostcard-page .custom-control-label::before,
+.ecms-lostcard-page .custom-control-label::after {
     display: none !important;
+    content: none !important;
 }
 
-/* fallback for older DataTables markup */
-.ecms-lostcard-page .dataTables_wrapper .row {
-    width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-#tbldata {
-    table-layout: fixed !important;
-}
-
-@media (max-width: 1300px) {
-    .ecms-lostcard-shell {
-        width: calc(100% - 70px) !important;
-        min-width: 0 !important;
-    }
-
-    .ecms-lostcard-header h3 {
-        font-size: 19px !important;
-    }
-}
-
-@media (max-width: 992px) {
+/* -----------------------------------------------------
+   Responsive fallback
+   Smaller screens use normal page scrolling; DataTables retain their own
+   horizontal/vertical scrolling behavior.
+   ----------------------------------------------------- */
+@media (max-width: 1199.98px) {
     html:has(.ecms-lostcard-page),
     body:has(.ecms-lostcard-page) {
         overflow-y: auto !important;
     }
 
-    body .page-header.page-header-dark .containerMain {
-        padding-left: 16px !important;
-        padding-right: 12px !important;
-    }
-
-    body .page-header.page-header-dark .page-header-title {
-        font-size: 12px !important;
-        gap: 5px !important;
-        max-width: calc(100vw - 32px) !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-
-    .ecms-lostcard-page {
+    .ecms-lostcard-page.ecms-page.ecms-page-full {
         height: auto !important;
-        min-height: calc(100vh - 255px) !important;
-        padding: 12px 12px 70px !important;
+        min-height: 0 !important;
+        margin-top: .5rem !important;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        padding: 0 !important;
         overflow: visible !important;
     }
 
     .ecms-lostcard-shell {
-        width: 100% !important;
-        min-width: 0 !important;
         height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-lostcard-records {
+        min-height: 30rem !important;
+    }
+
+    .ecms-lostcard-table-panel {
+        min-height: 26rem !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-lostcard-page.ecms-page.ecms-page-full {
+        width: calc(100vw - .75rem) !important;
     }
 
     .ecms-lostcard-header {
-        height: auto !important;
+        align-items: flex-start !important;
         flex-direction: column !important;
+    }
+
+    .ecms-lostcard-title-wrap {
         align-items: flex-start !important;
     }
 
@@ -644,14 +308,8 @@ body .page-header.page-header-dark {
         flex-wrap: wrap !important;
     }
 
-    .ecms-lostcard-table-panel {
-        height: auto !important;
-        min-height: 420px !important;
-    }
-
-    .ecms-lostcard-page .dt-scroll-body,
-    .ecms-lostcard-page .dataTables_scrollBody {
-        height: 300px !important;
-        max-height: 300px !important;
+    .ecms-lostcard-page .dt-top,
+    .ecms-lostcard-page .ecms-dt-toolbar {
+        align-items: stretch !important;
     }
 }

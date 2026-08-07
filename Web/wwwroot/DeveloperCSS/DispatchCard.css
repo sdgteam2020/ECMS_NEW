@@ -1,933 +1,607 @@
 ﻿/* =====================================================
-   ECMS Dispatch Card Modern UI
-   Only page UI changes. Header/footer/layout/JS unchanged.
-===================================================== */
+   ECMS - Dispatch Card
+   Page-only layout rules.
 
-:root {
-    --ecms-dispatch-blue-1: #12377d;
-    --ecms-dispatch-blue-2: #2f7dff;
-    --ecms-dispatch-cyan: #55d7ff;
-    --ecms-dispatch-green: #31c48d;
-    --ecms-dispatch-orange: #f59e0b;
-    --ecms-dispatch-red: #ef4444;
-    --ecms-dispatch-ink: #061b44;
-    --ecms-dispatch-muted: #536f9a;
-    --ecms-dispatch-panel: rgba(232, 244, 255, 0.90);
-}
+   IMPORTANT
+   - ModernCSS remains the source of truth for page/card/title/table/
+     toolbar/footer/buttons/forms/modals/colors/radius/shadows.
+   - This file only handles DispatchCard sizing, layout and generated
+     Bootstrap/DataTables markup that is specific to this page.
+   ===================================================== */
 
-/* prevent only this page from creating unwanted browser scroll */
-html:has(.ecms-dispatch-page),
-body:has(.ecms-dispatch-page) {
-    overflow-y: hidden !important;
-}
-
-/* Breadcrumb row same compact style as previous modern pages */
-body .page-header.page-header-dark.bg-gradient-primary-to-secondary,
-body .page-header.page-header-dark {
-    width: 100% !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    max-height: 42px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    background: linear-gradient(90deg, rgba(75, 207, 239, 0.96), rgba(61, 126, 244, 0.96)) !important;
-    box-shadow: 0 12px 25px rgba(0, 38, 95, 0.22) !important;
-}
-
-    body .page-header.page-header-dark .containerMain {
-        width: 100% !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        margin: 0 !important;
-        padding: 0 14px 0 66px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
+/* -----------------------------------------------------
+   Desktop viewport fit
+   Keep the browser page fixed between breadcrumb and footer; the
+   DataTable owns the scrolling area. This avoids the right-side
+   browser scrollbar seen on fixed-screen list pages.
+   ----------------------------------------------------- */
+@media (min-width: 1200px) {
+    html:has(.ecms-dispatch-page),
+    body:has(.ecms-dispatch-page) {
+        overflow-y: hidden !important;
     }
 
-    body .page-header.page-header-dark .page-header-content,
-    body .page-header.page-header-dark .page-header-content > .row,
-    body .page-header.page-header-dark .page-header-content .row.align-items-center,
-    body .page-header.page-header-dark .page-header-content .col-auto {
-        width: auto !important;
+    .ecms-dispatch-page.ecms-page.ecms-page-full {
+        width: calc(100vw - 1rem) !important;
         max-width: none !important;
-        min-width: 0 !important;
-        flex: 0 0 auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
+        height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height, var(--ecms-nav-height)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height)) - var(--ecms-footer-height) ) !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 auto !important;
+        padding: .5rem 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
     }
+}
 
-    body .page-header.page-header-dark .page-header-title {
-        width: auto !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        height: 42px !important;
-        min-height: 42px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        flex-wrap: nowrap !important;
-        gap: 8px !important;
-        white-space: nowrap !important;
-        color: #ffffff !important;
-        font-size: 14px !important;
-        line-height: 42px !important;
-        font-weight: 900 !important;
-        text-shadow: 0 2px 7px rgba(0, 30, 80, 0.38) !important;
-    }
-
-        body .page-header.page-header-dark .page-header-title .page-header-icon {
-            width: 26px !important;
-            height: 26px !important;
-            min-width: 26px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            border-radius: 50% !important;
-            background: rgba(255, 255, 255, 0.22) !important;
-            border: 1px solid rgba(255, 255, 255, 0.42) !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 10px rgba(0,33,90,0.16) !important;
-            margin-right: 4px !important;
-        }
-
-            body .page-header.page-header-dark .page-header-title .page-header-icon i {
-                color: #ffffff !important;
-                font-size: 13px !important;
-            }
-
-        body .page-header.page-header-dark .page-header-title a {
-            color: #ffffff !important;
-            text-decoration: none !important;
-            margin: 0 !important;
-        }
-
-/* Page background and shell */
-.ecms-dispatch-page {
-    position: relative !important;
+/* Shared .ecms-card and .ecms-card-body provide the shell visual skin. */
+.ecms-dispatch-shell {
     width: 100% !important;
     max-width: none !important;
-    min-height: calc(100vh - 255px) !important;
-    height: calc(100vh - 255px) !important;
-    margin: 0 !important;
-    padding: 12px 26px 44px !important;
-    overflow: hidden !important;
-    background: linear-gradient(90deg, rgba(7, 25, 68, 0.88), rgba(15, 70, 160, 0.79)), url('/Images/HomePage/indexbackgroundimg.png') center center / cover no-repeat !important;
-}
-
-    .ecms-dispatch-page::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(circle at 28% 18%, rgba(96, 213, 255, 0.13), transparent 28%), radial-gradient(circle at 88% 24%, rgba(59, 130, 246, 0.18), transparent 28%), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.00));
-    }
-
-.ecms-dispatch-shell {
-    position: relative !important;
-    z-index: 1 !important;
-    width: min(1500px, calc(100% - 220px)) !important;
-    min-width: 1000px !important;
+    min-width: 0 !important;
     height: 100% !important;
     min-height: 0 !important;
-    margin: 0 auto !important;
-    padding: 12px !important;
-    border-radius: 22px !important;
-    background: linear-gradient(135deg, rgba(246,251,255,0.94), rgba(213,229,247,0.88)), rgba(232, 244, 255, 0.90) !important;
-    border: 1px solid rgba(255,255,255,0.86) !important;
-    box-shadow: 0 24px 70px rgba(0, 18, 60, 0.28) !important;
+    display: flex !important;
+    flex-direction: column !important;
     overflow: hidden !important;
 }
 
+/* -----------------------------------------------------
+   Page title
+   Visual skin comes from .ecms-page-title / .ecms-title-icon.
+   ----------------------------------------------------- */
 .ecms-dispatch-header {
-    height: 66px !important;
-    min-height: 66px !important;
-    padding: 10px 14px !important;
-    border-radius: 16px !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin: 0 0 .55rem 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    gap: 12px !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(232, 243, 255, 0.83)) !important;
-    border: 1px solid rgba(255,255,255,0.92) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 24px rgba(15, 58, 140, 0.12) !important;
+    gap: .75rem !important;
 }
 
 .ecms-dispatch-title-wrap {
+    min-width: 0 !important;
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
-    min-width: 0 !important;
+    gap: .7rem !important;
 }
 
-.ecms-dispatch-title-icon,
-.ecms-modal-title-icon {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    border-radius: 14px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #397fff, #2453df) !important;
-    color: #ffffff !important;
-    box-shadow: 0 10px 22px rgba(35, 89, 220, 0.34) !important;
-}
-
-    .ecms-dispatch-title-icon i,
-    .ecms-modal-title-icon i {
-        font-size: 19px !important;
-        line-height: 1 !important;
-        color: #ffffff !important;
+    .ecms-dispatch-title-wrap > div {
+        min-width: 0 !important;
     }
 
-.ecms-dispatch-header h3 {
-    margin: 0 !important;
-    color: var(--ecms-dispatch-ink) !important;
-    font-size: 22px !important;
-    line-height: 1.1 !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.01em !important;
-}
-
-.ecms-dispatch-header p {
-    margin: 3px 0 0 !important;
-    color: #48618e !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
+    .ecms-dispatch-title-wrap h3 {
+        margin: 0 !important;
+    }
 
 .ecms-ready-btn {
-    height: 36px !important;
-    min-width: 178px !important;
-    padding: 0 16px !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(49, 196, 141, 0.95) !important;
-    color: #08734d !important;
-    background: rgba(255,255,255,0.72) !important;
-    font-weight: 900 !important;
-    box-shadow: 0 9px 19px rgba(24, 120, 88, 0.11) !important;
-}
-
-    .ecms-ready-btn:hover {
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #35c786, #149e6a) !important;
-        transform: translateY(-1px) !important;
-    }
-
-/* Main DataTable panel */
-.ecms-dispatch-table-panel {
-    height: calc(100% - 78px) !important;
-    min-height: 0 !important;
-    margin-top: 10px !important;
-    overflow: hidden !important;
-}
-
-/* DataTables modern styling */
-.ecms-dispatch-page .dt-container,
-.ecms-dispatch-page .dataTables_wrapper,
-.ecms-dispatch-modal .dt-container,
-.ecms-dispatch-modal .dataTables_wrapper {
-    height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 0 !important;
-    color: var(--ecms-dispatch-ink) !important;
-}
-
-    .ecms-dispatch-page .dt-top,
-    .ecms-dispatch-page .dataTables_wrapper .dt-top,
-    .ecms-dispatch-modal .dt-top,
-    .ecms-dispatch-modal .dataTables_wrapper .dt-top {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        flex-wrap: wrap !important;
-        gap: 10px !important;
-        padding: 10px 12px !important;
-        margin: 0 0 10px 0 !important;
-        border-radius: 14px !important;
-        background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(242, 248, 255, 0.74)) !important;
-        border: 1px solid rgba(255,255,255,0.72) !important;
-        box-shadow: 0 12px 28px rgba(0, 26, 88, 0.12) !important;
-    }
-
-.ecms-dispatch-page .dt-length,
-.ecms-dispatch-page .dt-buttons,
-.ecms-dispatch-page .dt-search,
-.ecms-dispatch-page .dataTables_length,
-.ecms-dispatch-page .dataTables_filter,
-.ecms-dispatch-modal .dt-length,
-.ecms-dispatch-modal .dt-buttons,
-.ecms-dispatch-modal .dt-search,
-.ecms-dispatch-modal .dataTables_length,
-.ecms-dispatch-modal .dataTables_filter {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    margin: 0 !important;
-}
-
-    .ecms-dispatch-page .dt-length label,
-    .ecms-dispatch-page .dataTables_length label,
-    .ecms-dispatch-modal .dt-length label,
-    .ecms-dispatch-modal .dataTables_length label {
-        margin: 0 !important;
-        color: #17325e !important;
-        font-size: 12px !important;
-        font-weight: 850 !important;
-    }
-
-    .ecms-dispatch-page .dt-length select,
-    .ecms-dispatch-page .dataTables_length select,
-    .ecms-dispatch-modal .dt-length select,
-    .ecms-dispatch-modal .dataTables_length select {
-        width: 68px !important;
-        height: 34px !important;
-        padding: 4px 8px !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(70, 119, 184, 0.32) !important;
-        background: rgba(255,255,255,0.94) !important;
-        color: #0a234e !important;
-        font-weight: 800 !important;
-        outline: none !important;
-    }
-
-    .ecms-dispatch-page .dt-search input,
-    .ecms-dispatch-page .dataTables_filter input,
-    .ecms-dispatch-modal .dt-search input,
-    .ecms-dispatch-modal .dataTables_filter input {
-        width: 190px !important;
-        height: 34px !important;
-        padding: 6px 12px !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(70, 119, 184, 0.34) !important;
-        color: #09234f !important;
-        background: rgba(255,255,255,0.96) !important;
-        font-weight: 800 !important;
-        outline: none !important;
-        box-shadow: inset 0 1px 2px rgba(0,0,0,0.03) !important;
-    }
-
-.ecms-dispatch-page .dt-button,
-.ecms-dispatch-page .buttons-excel,
-.ecms-dispatch-page .buttons-pdf,
-.ecms-dispatch-modal .dt-button,
-.ecms-dispatch-modal .buttons-excel,
-.ecms-dispatch-modal .buttons-pdf {
-    min-height: 32px !important;
-    padding: 6px 12px !important;
-    border-radius: 10px !important;
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #2e80ff, #1355d9) !important;
-    font-size: 12px !important;
-    font-weight: 900 !important;
-    box-shadow: 0 8px 18px rgba(22, 84, 214, 0.22) !important;
-}
-
-.ecms-dispatch-page .dt-scroll,
-.ecms-dispatch-page .dataTables_scroll,
-.ecms-dispatch-modal .dt-scroll,
-.ecms-dispatch-modal .dataTables_scroll {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    border-radius: 14px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(255,255,255,0.62) !important;
-    box-shadow: 0 14px 32px rgba(0, 26, 88, 0.14) !important;
-    background: rgba(255,255,255,0.92) !important;
-}
-
-.ecms-dispatch-page .dt-scroll-body,
-.ecms-dispatch-page .dataTables_scrollBody {
-    max-height: calc(100vh - 455px) !important;
-    height: calc(100vh - 455px) !important;
-    min-height: 210px !important;
-    overflow: auto !important;
-    background: rgba(255,255,255,0.88) !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(31, 124, 255, 0.60) rgba(255,255,255,0.25);
-}
-
-.ecms-dispatch-modal .dt-scroll-body,
-.ecms-dispatch-modal .dataTables_scrollBody {
-    max-height: 48vh !important;
-    height: 48vh !important;
-    min-height: 220px !important;
-    overflow: auto !important;
-    background: rgba(255,255,255,0.90) !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(31, 124, 255, 0.60) rgba(255,255,255,0.25);
-}
-
-    .ecms-dispatch-page .dt-scroll-body::-webkit-scrollbar,
-    .ecms-dispatch-page .dataTables_scrollBody::-webkit-scrollbar,
-    .ecms-dispatch-modal .dt-scroll-body::-webkit-scrollbar,
-    .ecms-dispatch-modal .dataTables_scrollBody::-webkit-scrollbar {
-        width: 7px;
-        height: 7px;
-    }
-
-    .ecms-dispatch-page .dt-scroll-body::-webkit-scrollbar-thumb,
-    .ecms-dispatch-page .dataTables_scrollBody::-webkit-scrollbar-thumb,
-    .ecms-dispatch-modal .dt-scroll-body::-webkit-scrollbar-thumb,
-    .ecms-dispatch-modal .dataTables_scrollBody::-webkit-scrollbar-thumb {
-        background: rgba(31, 124, 255, 0.62);
-        border-radius: 999px;
-    }
-
-.ecms-dispatch-page table.dataTable,
-.ecms-dispatch-page #tbldata,
-.ecms-dispatch-modal table.dataTable,
-.ecms-dispatch-modal #tbldatadialog,
-.ecms-dispatch-modal #tbldatadialogLot {
-    width: 100% !important;
-    margin: 0 !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    table-layout: fixed !important;
-    color: var(--ecms-dispatch-ink) !important;
-    background: rgba(255,255,255,0.96) !important;
-}
-
-    .ecms-dispatch-page table.dataTable thead th,
-    .ecms-dispatch-page #tbldata thead th,
-    .ecms-dispatch-modal table.dataTable thead th,
-    .ecms-dispatch-modal #tbldatadialog thead th,
-    .ecms-dispatch-modal #tbldatadialogLot thead th {
-        height: 42px !important;
-        padding: 10px 12px !important;
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #153f8f, #236dd2) !important;
-        border-color: rgba(255,255,255,0.22) !important;
-        font-size: 13px !important;
-        font-weight: 900 !important;
-        text-align: left !important;
-        vertical-align: middle !important;
-        white-space: nowrap !important;
-    }
-
-    .ecms-dispatch-page table.dataTable tbody td,
-    .ecms-dispatch-page #tbldata tbody td,
-    .ecms-dispatch-modal table.dataTable tbody td,
-    .ecms-dispatch-modal #tbldatadialog tbody td,
-    .ecms-dispatch-modal #tbldatadialogLot tbody td {
-        padding: 10px 12px !important;
-        color: #10254f !important;
-        font-size: 12.5px !important;
-        font-weight: 750 !important;
-        vertical-align: middle !important;
-        border-top: 1px solid rgba(35, 99, 170, 0.10) !important;
-        background: rgba(255,255,255,0.94) !important;
-    }
-
-    .ecms-dispatch-page table.dataTable tbody tr:hover td,
-    .ecms-dispatch-modal table.dataTable tbody tr:hover td {
-        background: rgba(236, 246, 255, 0.98) !important;
-    }
-
-.ecms-dispatch-page .dt-ellipsis,
-.ecms-dispatch-page .nowrap,
-.ecms-dispatch-modal .dt-ellipsis,
-.ecms-dispatch-modal .nowrap {
+    flex: 0 0 auto !important;
+    min-height: var(--ecms-control-height) !important;
     white-space: nowrap !important;
 }
 
-.ecms-dispatch-page .dt-ellipsis,
-.ecms-dispatch-modal .dt-ellipsis {
-    display: inline-block !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-}
-
-.ecms-dispatch-page .dt-info,
-.ecms-dispatch-page .dt-paging,
-.ecms-dispatch-page .dataTables_info,
-.ecms-dispatch-page .dataTables_paginate,
-.ecms-dispatch-modal .dt-info,
-.ecms-dispatch-modal .dt-paging,
-.ecms-dispatch-modal .dataTables_info,
-.ecms-dispatch-modal .dataTables_paginate {
-    margin-top: 10px !important;
-    color: #10254f !important;
-    font-size: 12.5px !important;
-    font-weight: 850 !important;
-}
-
-.ecms-dispatch-page .dt-paging,
-.ecms-dispatch-page .dataTables_paginate,
-.ecms-dispatch-modal .dt-paging,
-.ecms-dispatch-modal .dataTables_paginate {
-    align-self: flex-end !important;
-}
-
-    .ecms-dispatch-page .dt-paging .dt-paging-button,
-    .ecms-dispatch-page .dataTables_paginate .paginate_button,
-    .ecms-dispatch-modal .dt-paging .dt-paging-button,
-    .ecms-dispatch-modal .dataTables_paginate .paginate_button {
-        min-width: 32px !important;
-        height: 32px !important;
-        margin-left: 4px !important;
-        border-radius: 9px !important;
-        border: 1px solid rgba(55, 105, 173, 0.18) !important;
-        background: rgba(255,255,255,0.88) !important;
-        color: #194d9b !important;
-        font-size: 12px !important;
-        font-weight: 900 !important;
-    }
-
-        .ecms-dispatch-page .dt-paging .dt-paging-button.current,
-        .ecms-dispatch-page .dataTables_paginate .paginate_button.current,
-        .ecms-dispatch-modal .dt-paging .dt-paging-button.current,
-        .ecms-dispatch-modal .dataTables_paginate .paginate_button.current {
-            color: #ffffff !important;
-            background: linear-gradient(135deg, #277cff, #0f4ed7) !important;
-            border-color: transparent !important;
-        }
-
-/* Hide duplicate header created inside DataTables scroll body */
-.ecms-dispatch-page .dt-scroll-body table > thead,
-.ecms-dispatch-page .dataTables_scrollBody table > thead,
-.ecms-dispatch-modal .dt-scroll-body table > thead,
-.ecms-dispatch-modal .dataTables_scrollBody table > thead {
-    height: 0 !important;
-    max-height: 0 !important;
-    overflow: hidden !important;
-    visibility: collapse !important;
-}
-
-    .ecms-dispatch-page .dt-scroll-body table > thead th,
-    .ecms-dispatch-page .dataTables_scrollBody table > thead th,
-    .ecms-dispatch-modal .dt-scroll-body table > thead th,
-    .ecms-dispatch-modal .dataTables_scrollBody table > thead th {
-        height: 0 !important;
-        max-height: 0 !important;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-        border: 0 !important;
-        line-height: 0 !important;
-        font-size: 0 !important;
-        color: transparent !important;
-    }
-
-/* Action buttons generated by JS */
-.ecms-dispatch-page .btn-icon,
-.ecms-dispatch-page .btn-round,
-.ecms-dispatch-modal .btn-icon,
-.ecms-dispatch-modal .btn-round {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    padding: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 11px !important;
-    border: 0 !important;
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #2f7dff, #2351d8) !important;
-    box-shadow: 0 9px 18px rgba(0, 45, 120, 0.20) !important;
-}
-
-    .ecms-dispatch-page .btn-icon i,
-    .ecms-dispatch-page .btn-round i,
-    .ecms-dispatch-modal .btn-icon i,
-    .ecms-dispatch-modal .btn-round i {
-        margin: 0 !important;
-        font-size: 14px !important;
-        line-height: 1 !important;
-    }
-
-/* Modal modern UI */
-.ecms-dispatch-modal .modal-xl {
-    max-width: 90% !important;
-    width: 90% !important;
-}
-
-.ecms-dispatch-modal .modal-dialog {
-    margin-top: 4.5rem !important;
-}
-
-.ecms-dispatch-modal .modal-content {
-    border: 1px solid rgba(255,255,255,0.85) !important;
-    border-radius: 18px !important;
-    overflow: hidden !important;
-    background: linear-gradient(135deg, rgba(248,252,255,0.98), rgba(225, 238, 252, 0.96)) !important;
-    box-shadow: 0 28px 90px rgba(0, 13, 42, 0.40) !important;
-}
-
-.ecms-dispatch-modal .modal-header {
-    min-height: 58px !important;
-    padding: 10px 16px !important;
+/* -----------------------------------------------------
+   Dispatch Records section
+   .ecms-section / .ecms-section-title own all colors and surfaces.
+   ----------------------------------------------------- */
+.ecms-dispatch-records {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
     display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
-    border: 0 !important;
-    background: linear-gradient(135deg, #173f8f, #347dff) !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+    .ecms-dispatch-records > .ecms-section-title {
+        flex: 0 0 var(--ecms-section-title-height) !important;
+    }
+
+/* -----------------------------------------------------
+   Main DataTable remaining-height layout
+   DataTable appearance is inherited from ecms.05.datatables.css.
+   ----------------------------------------------------- */
+.ecms-dispatch-table-panel {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+    .ecms-dispatch-table-panel .dataTables_wrapper,
+    .ecms-dispatch-table-panel .dt-container {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+    }
+
+.ecms-dispatch-page .dt-top,
+.ecms-dispatch-page .ecms-dt-toolbar {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 2.75rem !important;
+    margin: 0 0 .5rem 0 !important;
+    padding: .25rem .45rem !important;
+    gap: .5rem !important;
+}
+
+.ecms-dispatch-page .dt-buttons:empty,
+.ecms-dispatch-modal .dt-buttons:empty {
+    display: none !important;
+}
+
+.ecms-dispatch-page .ecms-dt-footer,
+.ecms-dispatch-modal .ecms-dt-footer {
+    flex: 0 0 auto !important;
+}
+
+/* Keep page-specific generated action icons vertically centered. */
+.ecms-dispatch-page .btn-icon i,
+.ecms-dispatch-page .btn-round i,
+.ecms-dispatch-modal .btn-icon i,
+.ecms-dispatch-modal .btn-round i {
+    margin: 0 !important;
+}
+
+/* -----------------------------------------------------
+   Dispatch DataTable dialogs
+   Common modal CSS owns modal surface/header/close/button design.
+   These rules only control the large table-dialog geometry.
+   ----------------------------------------------------- */
+.ecms-dispatch-modal .modal-dialog.modal-xl,
+.ecms-dispatch-modal .modal-dialog.ecms-modal-xl {
+    width: min(94vw, 1500px) !important;
+    max-width: min(94vw, 1500px) !important;
 }
 
 .ecms-modal-title-wrap {
+    min-width: 0 !important;
     display: flex !important;
     align-items: center !important;
-    gap: 11px !important;
-    min-width: 0 !important;
+    gap: .65rem !important;
 }
 
-.ecms-dispatch-modal .modal-title {
-    margin: 0 !important;
-    color: #ffffff !important;
-    font-size: 18px !important;
-    font-weight: 950 !important;
-    line-height: 1.15 !important;
-    text-shadow: 0 2px 7px rgba(0, 30, 80, 0.28) !important;
+.ecms-modal-title-icon.ecms-title-icon {
+    width: 2.15rem !important;
+    height: 2.15rem !important;
+    min-width: 2.15rem !important;
+    border-radius: var(--ecms-radius-md) !important;
 }
 
-.ecms-modal-title-icon {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    border-radius: 12px !important;
-    background: rgba(255,255,255,0.18) !important;
-    border: 1px solid rgba(255,255,255,0.36) !important;
-    box-shadow: none !important;
-}
-
-    .ecms-modal-title-icon i {
-        font-size: 16px !important;
-    }
-
-.ecms-modal-close,
-.ecms-dispatch-modal .close {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border-radius: 50% !important;
-    border: 1px solid rgba(255,255,255,0.48) !important;
-    background: rgba(255,255,255,0.18) !important;
-    color: #ffffff !important;
-    opacity: 1 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: none !important;
-}
-
-    .ecms-modal-close span,
-    .ecms-dispatch-modal .close span {
-        color: #ffffff !important;
-        font-size: 24px !important;
-        line-height: 1 !important;
-        margin-top: -2px !important;
-    }
-
-    .ecms-modal-close:hover,
-    .ecms-dispatch-modal .close:hover {
-        background: rgba(239, 68, 68, 0.96) !important;
-        transform: rotate(90deg) !important;
-    }
-
-.ecms-dispatch-modal .modal-body {
-    padding: 14px !important;
-    max-height: calc(100vh - 180px) !important;
+#DataTableDialog .modal-body,
+#DataTableDialogForLot .modal-body {
+    height: min(78vh, 760px) !important;
+    max-height: min(78vh, 760px) !important;
+    min-height: 28rem !important;
+    display: flex !important;
+    flex-direction: column !important;
     overflow: hidden !important;
 }
 
 .ecms-modal-toolbar {
-    padding: 0 !important;
-    margin: 0 0 10px !important;
+    flex: 0 0 auto !important;
+    margin: 0 0 .55rem 0 !important;
 }
 
 .ecms-advanced-search {
     width: 100% !important;
-    padding: 10px !important;
-    display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 8px !important;
-    flex-wrap: wrap !important;
-    border-radius: 14px !important;
-    background: rgba(255,255,255,0.72) !important;
-    border: 1px solid rgba(255,255,255,0.84) !important;
 }
 
     .ecms-advanced-search.d-none {
         display: none !important;
     }
 
-    .ecms-advanced-search select,
-    .ecms-advanced-search input,
-    .ecms-dispatch-in-modal textarea {
-        height: 36px !important;
-        padding: 7px 11px !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(70, 119, 184, 0.32) !important;
-        background: rgba(255,255,255,0.96) !important;
-        color: #0a234e !important;
-        font-weight: 800 !important;
-        outline: none !important;
-    }
+.search-field {
+    width: min(11rem, 100%) !important;
+}
 
-        .ecms-advanced-search input:focus,
-        .ecms-advanced-search select:focus,
-        .ecms-dispatch-in-modal textarea:focus {
-            border-color: rgba(47, 125, 255, 0.75) !important;
-            box-shadow: 0 0 0 3px rgba(47,125,255,0.15) !important;
-        }
+.search-input-container {
+    width: min(16rem, 100%) !important;
+}
 
-    .ecms-advanced-search .btn,
-    .ecms-dispatch-modal .modal-footer .btn {
-        min-height: 34px !important;
-        padding: 7px 14px !important;
-        border-radius: 10px !important;
-        font-size: 12px !important;
-        font-weight: 900 !important;
-        border: 0 !important;
-        box-shadow: 0 8px 17px rgba(0, 35, 100, 0.13) !important;
-    }
-
-    .ecms-advanced-search .btn-outline-primary,
-    .ecms-dispatch-modal .modal-footer .btn-primary {
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #2f7dff, #2351d8) !important;
-    }
-
-    .ecms-advanced-search .btn-outline-secondary,
-    .ecms-dispatch-modal .modal-footer .btn-secondary {
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #60738f, #344761) !important;
-    }
-
-    .ecms-advanced-search .btn-outline-success {
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #35c786, #149e6a) !important;
+    .search-input-container .form-control,
+    .ecms-advanced-search > .form-control {
+        width: 100% !important;
     }
 
 .ecms-modal-table-wrap {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
     min-height: 0 !important;
-    height: calc(100vh - 250px) !important;
     overflow: hidden !important;
 }
 
-/* Lot details alert */
+    .ecms-modal-table-wrap .dataTables_wrapper,
+    .ecms-modal-table-wrap .dt-container {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+    }
+
+.ecms-dispatch-modal .dt-top,
+.ecms-dispatch-modal .ecms-dt-toolbar {
+    width: 100% !important;
+    min-height: 2.75rem !important;
+    margin: 0 0 .5rem 0 !important;
+    padding: .25rem .25rem !important;
+    gap: .5rem !important;
+}
+
+/* Lot summary remains one compact horizontally-scrollable line. */
 .lot-details-scroll {
+    flex: 0 0 auto !important;
+    margin: 0 0 .55rem 0 !important;
     white-space: nowrap !important;
     overflow-x: auto !important;
-    margin-bottom: 10px !important;
-    padding: 9px 12px !important;
-    border: 1px solid rgba(72, 151, 235, 0.24) !important;
-    border-left: 5px solid #2f7dff !important;
-    border-radius: 12px !important;
-    color: #113262 !important;
-    background: rgba(230, 244, 255, 0.92) !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
 }
 
-/* Dispatch In modal */
-.ecms-dispatch-in-modal .modal-header {
-    background: linear-gradient(135deg, #173f8f, #347dff) !important;
-}
-
-.ecms-dispatch-in-modal .modal-body {
-    padding: 18px !important;
+/* -----------------------------------------------------
+   Generated Bootstrap custom checkboxes in modal DataTables
+   Expose and center the real input; JS selection logic remains intact.
+   ----------------------------------------------------- */
+.ecms-dispatch-modal .custom-control.custom-checkbox,
+.ecms-dispatch-modal .wd-30-f,
+.ecms-dispatch-modal td.noExport .custom-control.custom-checkbox,
+.ecms-dispatch-modal th.noExport .custom-control.custom-checkbox {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 1.5rem !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     overflow: visible !important;
-    max-height: none !important;
 }
 
-.ecms-dispatch-in-modal label {
-    color: #10254f !important;
-    font-weight: 900 !important;
-    font-size: 13px !important;
-    margin-bottom: 6px !important;
+.ecms-dispatch-modal .custom-control-input,
+.ecms-dispatch-modal .chkRequestId,
+.ecms-dispatch-modal input[type="checkbox"] {
+    position: static !important;
+    float: none !important;
+    display: inline-block !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    min-width: 1rem !important;
+    min-height: 1rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    accent-color: var(--ecms-success-500) !important;
+    cursor: pointer !important;
 }
 
+.ecms-dispatch-modal .custom-control-label,
+.ecms-dispatch-modal .custom-control-label::before,
+.ecms-dispatch-modal .custom-control-label::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* -----------------------------------------------------
+   Dispatch In modal
+   Global modal/form/button rules provide design; these are layout-only.
+   ----------------------------------------------------- */
 .ecms-dispatch-in-modal textarea {
     width: 100% !important;
-    min-height: 92px !important;
-    height: auto !important;
+    min-height: 5.75rem !important;
     resize: vertical !important;
 }
 
 .ecms-terms-box {
     display: flex !important;
     align-items: flex-start !important;
-    gap: 10px !important;
-    padding: 12px !important;
-    border-radius: 13px !important;
-    border: 1px solid rgba(70, 119, 184, 0.20) !important;
-    background: rgba(244, 249, 255, 0.94) !important;
+    gap: .65rem !important;
 }
 
     .ecms-terms-box #TermsConditions {
         position: static !important;
-        width: 16px !important;
-        height: 16px !important;
-        margin: 2px 0 0 !important;
-        flex: 0 0 16px !important;
-        accent-color: #2f7dff !important;
+        flex: 0 0 1rem !important;
+        margin: .15rem 0 0 0 !important;
     }
 
     .ecms-terms-box label {
         margin: 0 !important;
-        line-height: 1.35 !important;
-        color: #1d335b !important;
-        font-size: 12px !important;
-        font-weight: 800 !important;
+        line-height: 1.4 !important;
     }
 
-.ecms-dispatch-modal .modal-footer {
-    padding: 12px 16px !important;
-    border-top: 1px solid rgba(70, 119, 184, 0.14) !important;
-    background: rgba(236, 246, 255, 0.90) !important;
-}
-
-/* Preserve old helper classes */
+/* Existing helper class retained because it can be referenced by JS/markup. */
 .count-label {
-    background-color: #044C92;
-    text-align: center;
-    padding: 0.5rem !important;
-    margin-right: 0.25rem !important;
-    border: hidden;
-    font-weight: 700 !important;
-    color: #fff !important;
     width: 120px;
-    height: 60px;
+    min-height: 60px;
+    padding: .5rem !important;
+    text-align: center;
+    font-weight: 700 !important;
 }
 
-.modal-xl {
-    max-width: 90% !important;
-    width: 90% !important;
-}
-
-.table {
-    min-width: 100% !important;
-}
-
-.modal .modal-body .table-responsive {
-    max-height: 500px;
-}
-
-.thicker-bold {
-    font-weight: 500 !important;
-}
-
-.search-field {
-    max-width: 180px;
-}
-
-.search-input-container {
-    max-width: 250px;
-}
-
-/* Checkbox alignment for modal tables generated by JS */
-.ecms-dispatch-modal .custom-control.custom-checkbox,
-.ecms-dispatch-modal .wd-30-f {
-    position: static !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    min-height: 24px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: visible !important;
-}
-
-.ecms-dispatch-modal .custom-control-input,
-.ecms-dispatch-modal input[type="checkbox"] {
-    position: static !important;
-    width: 16px !important;
-    height: 16px !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    cursor: pointer !important;
-    accent-color: #31c48d !important;
-    appearance: auto !important;
-    -webkit-appearance: checkbox !important;
-}
-
-.ecms-dispatch-modal .custom-control-label {
-    display: none !important;
-}
-
-/* Bootstrap / DataTables old class fallback */
-.ecms-dispatch-page .dataTables_wrapper .row,
-.ecms-dispatch-modal .dataTables_wrapper .row {
-    width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-@media (max-width: 1300px) {
-    .ecms-dispatch-shell {
-        width: calc(100% - 70px) !important;
-        min-width: 0 !important;
-    }
-
-    .ecms-dispatch-header h3 {
-        font-size: 19px !important;
-    }
-}
-
-@media (max-width: 992px) {
+/* -----------------------------------------------------
+   Responsive fallback
+   Smaller screens use normal page scrolling while DataTables retain
+   their own internal horizontal/vertical scroll areas.
+   ----------------------------------------------------- */
+@media (max-width: 1199.98px) {
     html:has(.ecms-dispatch-page),
     body:has(.ecms-dispatch-page) {
         overflow-y: auto !important;
     }
 
-    body .page-header.page-header-dark .containerMain {
-        padding-left: 16px !important;
-        padding-right: 12px !important;
-    }
-
-    body .page-header.page-header-dark .page-header-title {
-        font-size: 12px !important;
-        gap: 5px !important;
-        max-width: calc(100vw - 32px) !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-
-    .ecms-dispatch-page {
+    .ecms-dispatch-page.ecms-page.ecms-page-full {
         height: auto !important;
-        min-height: calc(100vh - 255px) !important;
-        padding: 12px 12px 70px !important;
+        min-height: 0 !important;
+        margin-top: .5rem !important;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        padding: 0 !important;
         overflow: visible !important;
     }
 
     .ecms-dispatch-shell {
-        width: 100% !important;
-        min-width: 0 !important;
         height: auto !important;
+        overflow: visible !important;
     }
 
-    .ecms-dispatch-header {
-        height: auto !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
+    .ecms-dispatch-records {
+        min-height: 30rem !important;
     }
 
     .ecms-dispatch-table-panel {
-        height: auto !important;
-        min-height: 420px !important;
+        min-height: 26rem !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-dispatch-page.ecms-page.ecms-page-full {
+        width: calc(100vw - .75rem) !important;
     }
 
-    .ecms-dispatch-page .dt-scroll-body,
-    .ecms-dispatch-page .dataTables_scrollBody {
-        height: 300px !important;
-        max-height: 300px !important;
+    .ecms-dispatch-header {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
+
+    .ecms-ready-btn {
+        align-self: flex-start !important;
+    }
+
+    .ecms-dispatch-page .dt-top,
+    .ecms-dispatch-page .ecms-dt-toolbar,
+    .ecms-dispatch-modal .dt-top,
+    .ecms-dispatch-modal .ecms-dt-toolbar {
+        align-items: stretch !important;
+    }
+
+    .ecms-advanced-search {
+        align-items: stretch !important;
+    }
+
+    .search-field,
+    .search-input-container {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    #DataTableDialog .modal-body,
+    #DataTableDialogForLot .modal-body {
+        height: auto !important;
+        max-height: calc(100vh - 8rem) !important;
+        min-height: 0 !important;
+        overflow: auto !important;
+    }
+
+    .ecms-modal-table-wrap {
+        min-height: 24rem !important;
+    }
+}
+
+/* =====================================================
+   FINAL MODAL LAYOUT FIX
+   Shared ModernCSS continues to own modal/header/button/form/DataTable skin.
+   These rules fix only DispatchCard modal geometry and search-toolbar layout.
+   ===================================================== */
+
+/* Keep the large table dialogs centered and inside the viewport. */
+.ecms-dispatch-modal .ecms-dispatch-table-dialog {
+    width: min(94vw, 1420px) !important;
+    max-width: min(94vw, 1420px) !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+    .ecms-dispatch-modal .ecms-dispatch-table-dialog > .modal-content {
+        width: 100% !important;
+        height: min(82vh, 760px) !important;
+        max-height: calc(100vh - 2rem) !important;
+        min-height: 34rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+
+        /* Header keeps global ModernCSS design; only stop flex shrink. */
+        .ecms-dispatch-modal .ecms-dispatch-table-dialog > .modal-content > .modal-header {
+            flex: 0 0 auto !important;
+        }
+
+#DataTableDialog .modal-body,
+#DataTableDialogForLot .modal-body {
+    flex: 1 1 auto !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    padding: .75rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+/* Advanced search should be one compact toolbar on desktop.
+   Select2's global width:100% is intentionally overridden only in this toolbar. */
+#AdvSearch.ecms-advanced-search {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 3.1rem !important;
+    margin: 0 !important;
+    padding: .55rem .65rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: .5rem !important;
+}
+
+    #AdvSearch.ecms-advanced-search.d-none {
+        display: none !important;
+    }
+
+#AdvSearch .search-field,
+#AdvSearch > select#searchField {
+    flex: 0 0 12rem !important;
+    width: 12rem !important;
+    max-width: 12rem !important;
+    margin: 0 !important;
+}
+
+/* searchField may be enhanced by Select2; do not allow the generated wrapper to consume a full row. */
+#AdvSearch > .select2-container {
+    flex: 0 0 12rem !important;
+    width: 12rem !important;
+    max-width: 12rem !important;
+    margin: 0 !important;
+}
+
+#AdvSearch .search-input-container {
+    flex: 0 1 17rem !important;
+    width: 17rem !important;
+    max-width: 17rem !important;
+    min-width: 12rem !important;
+    margin: 0 !important;
+}
+
+    #AdvSearch .search-input-container > input,
+    #AdvSearch .search-input-container > select,
+    #AdvSearch .search-input-container > .select2-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+
+#AdvSearch .btn {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+}
+
+/* The modal table becomes a proper common ECMS section instead of floating in the body. */
+.ecms-modal-records {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: .6rem 0 0 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.ecms-modal-section-title {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+}
+
+.ecms-modal-records .ecms-modal-table-wrap {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding-top: .45rem !important;
+    overflow: hidden !important;
+}
+
+    .ecms-modal-records .ecms-modal-table-wrap .dataTables_wrapper,
+    .ecms-modal-records .ecms-modal-table-wrap .dt-container {
+        height: 100% !important;
+        min-height: 0 !important;
+    }
+
+/* Keep DataTable toolbar compact and aligned inside the modal. */
+.ecms-dispatch-modal .ecms-modal-records .dt-top,
+.ecms-dispatch-modal .ecms-modal-records .ecms-dt-toolbar {
+    min-height: 2.4rem !important;
+    margin-bottom: .4rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.ecms-dispatch-modal .ecms-modal-records .dataTables_filter input,
+.ecms-dispatch-modal .ecms-modal-records .dt-search input {
+    min-width: 13rem !important;
+}
+
+/* Lot summary remains compact and does not steal table height. */
+#DataTableDialogForLot .lot-details-scroll {
+    flex: 0 0 auto !important;
+    max-height: 4.5rem !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+}
+
+/* Medium screens: keep controls usable without forcing horizontal page scroll. */
+@media (max-width: 991.98px) {
+    .ecms-dispatch-modal .ecms-dispatch-table-dialog {
+        width: calc(100vw - 1rem) !important;
+        max-width: calc(100vw - 1rem) !important;
+        margin: .5rem auto !important;
+    }
+
+        .ecms-dispatch-modal .ecms-dispatch-table-dialog > .modal-content {
+            height: calc(100vh - 1rem) !important;
+            max-height: calc(100vh - 1rem) !important;
+            min-height: 0 !important;
+        }
+
+    #AdvSearch .search-field,
+    #AdvSearch > select#searchField,
+    #AdvSearch > .select2-container,
+    #AdvSearch .search-input-container {
+        flex: 1 1 14rem !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    #DataTableDialog .modal-body,
+    #DataTableDialogForLot .modal-body {
+        padding: .5rem !important;
+    }
+
+    #AdvSearch.ecms-advanced-search {
+        align-items: stretch !important;
+    }
+
+    #AdvSearch .search-field,
+    #AdvSearch > select#searchField,
+    #AdvSearch > .select2-container,
+    #AdvSearch .search-input-container,
+    #AdvSearch .btn {
+        flex: 1 1 100% !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .ecms-dispatch-modal .ecms-modal-records .dataTables_filter input,
+    .ecms-dispatch-modal .ecms-modal-records .dt-search input {
+        min-width: 0 !important;
+        width: 100% !important;
     }
 }
