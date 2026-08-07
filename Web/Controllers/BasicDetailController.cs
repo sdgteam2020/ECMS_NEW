@@ -8001,11 +8001,11 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenerateClosedHistoryPDF(string RequestId)
+        public async Task<IActionResult> GenerateClosedHistoryPDF(string Request)
         {
             string photoPath = string.Empty;
             string signaturePath = string.Empty;
-            int decryptedRequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(RequestId, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            int decryptedRequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
             // Initialize the generic response object            
             DTOGenericResponse<byte[]> response = new DTOGenericResponse<byte[]>();
             try
@@ -8035,7 +8035,7 @@ namespace Web.Controllers
                         {
                             var now = DateTime.Now;
                             string timestamp = $"{now:yyyy}{now:MMMM}{now:dd}{now:hh}{now:mm}{now:ss}";
-                            string pdfName = $"{cardHistoryResponseAll.BasicDetail.ServiceNo}_{RequestId}_{timestamp}.pdf";
+                            string pdfName = $"{cardHistoryResponseAll.BasicDetail.ServiceNo}_{decryptedRequestId}_{timestamp}.pdf";
                             response = await applCloseBL.GenerateClosedHistoryPDF(cardHistoryResponseAll, ipAddress);
                             return File(response.Value, "application/pdf", pdfName);
                         }
