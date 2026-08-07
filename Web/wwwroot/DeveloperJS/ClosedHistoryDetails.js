@@ -21,6 +21,21 @@ $(function () {
         }
     });
 });
+$("#BasicDetailClosedHistory")
+    .off("click", ".cls-btndownloadclosedhistorypdf")
+    .on("click", ".cls-btndownloadclosedhistorypdf", function (e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const requestId = parseInt($(this).attr("data-request-id"));
+
+        if (!isNaN(requestId) && requestId > 0) {
+            DownloadPdfHistory(requestId);
+        } else {
+            alert("Invalid request.");
+        }
+    });
 
 function BindData(UserType, ApplyForId) {
     globalThis.selectedIds = [];
@@ -163,20 +178,20 @@ function BindData(UserType, ApplyForId) {
             );
             tooltipTriggerList.forEach(el => {
                 new bootstrap.Tooltip(el);
-            });
-   
+            });   
             $("#tbldatatabledata_ClosedHistory tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
                 var rowData = table_ClosedHistory.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     GetClosedHistoryByRequestId(rowData.RequestId);
+                    SetCompletedHistoryHeader(rowData.RequestId);
                 }
             });
-            $("#tbldatatabledata_ClosedHistory tbody").off("click", ".cls-btndownloadpdf").on("click", ".cls-btndownloadpdf", function () {
+            $("#tbldatatabledata_ClosedHistory tbody").off("click", ".cls-btndownloadpdfphotosignature").on("click", ".cls-btndownloadpdfphotosignature", function () {
                 var rowData = table_ClosedHistory.row($(this).closest("tr")).data();
                 if (rowData != null) {
                     DownloadPdf(rowData.RequestId);
                 }
-            });
+            });       
         }
     });
     table_ClosedHistory.button('.buttons-copy').nodes().hide();
@@ -299,10 +314,10 @@ function getColumnsForClosedHistory(UserType, ApplyForId) {
                     orderable: false,
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
-                        // Add a download button next to the history button
-                            + `<button class="cls-btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Closed Details">
+                            // Add a download button next to the history button
+                        `<button class="cls-btndownloadpdfphotosignature" data-toggle="tooltip" data-placement="top" title="Download Details">
                                 <img src="/Images/digitalsign.png" width="40" />
-                                </button>`;
+                                </button>`;                          
                     }
                 },                                                    
             ];
@@ -420,9 +435,9 @@ function getColumnsForClosedHistory(UserType, ApplyForId) {
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                             // Add a download button next to the history button
-                            + `<button class="cls-btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Closed Details">
+                            + `<button class="cls-btndownloadpdfphotosignature" data-toggle="tooltip" data-placement="top" title="Download Closed Details">
                                 <img src="/Images/digitalsign.png" width="40" />
-                                </button>`;
+                                </button>`;                   
                     }
                 },
                
@@ -1081,10 +1096,26 @@ function createPostingOutHtml(posting) {
     `;
 }
 
-function DownloadPdf(RequestId) {
-    try {
-        const encryptedRequest = encryptPayloadData(RequestId);
-        //alert(RequestId);
+function SetCompletedHistoryHeader(requestId) {
+
+    let PdfbuttonHtml = `
+        <button type="button"
+                class="cls-btndownloadclosedhistorypdf btn btn-danger"
+                data-request-id="${requestId}"
+                data-toggle="tooltip"
+                data-placement="top"
+                title="Download Closed Details">
+            <i class="fas fa-file-pdf"></i>
+        </button>`;
+
+    let header = `I Card History ${PdfbuttonHtml}`;
+
+    $("#exampleModalLabel_BasicDetailViewPurpose").html(header);
+}
+
+function DownloadPdfHistory(RequestId) {
+    try {        
+        const encryptedRequest = encryptPayloadData(RequestId);        
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/BasicDetail/GenerateClosedHistoryPDF';
@@ -1093,10 +1124,40 @@ function DownloadPdf(RequestId) {
 
         const requestInput = document.createElement('input');
         requestInput.type = 'hidden';
-        requestInput.name = 'RequestId';
+        requestInput.name = 'Request';
         requestInput.value = encryptedRequest;
         form.appendChild(requestInput);
 
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '__RequestVerificationToken';
+        tokenInput.value = globalThis.RequestVerificationToken;
+        form.appendChild(tokenInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    } catch (e) {
+        Swal.fire({
+            text: errormsg002
+        });
+    }
+}
+
+function DownloadPdf(RequestId) {
+    try {
+        const encryptedRequest = encryptPayloadData(RequestId);
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/Log/CreatePdf';
+        form.target = '_blank';
+        form.style.display = 'none';
+
+        const requestInput = document.createElement('input');
+        requestInput.type = 'hidden';
+        requestInput.name = 'Request';
+        requestInput.value = encryptedRequest;
+        form.appendChild(requestInput);
         const tokenInput = document.createElement('input');
         tokenInput.type = 'hidden';
         tokenInput.name = '__RequestVerificationToken';
