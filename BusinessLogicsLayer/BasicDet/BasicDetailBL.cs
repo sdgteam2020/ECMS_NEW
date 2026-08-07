@@ -219,7 +219,7 @@ namespace BusinessLogicsLayer.BasicDet
 
             return data;
         }
-        public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
+        public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataDigitalXmlSignRequest Data)
         {
             var data = _iBasicDetailDB.GetDataDigitalXmlSign(Data);
             return data;
@@ -728,6 +728,10 @@ namespace BusinessLogicsLayer.BasicDet
 
         }
 
+        public async Task<DTOGenericResponse<DTOGetBasicDetailForPdfDigitalSignature>> GetBasicDetailForPdfDigitalSignature(int RequestId)
+        {
+            return await _iBasicDetailDB.GetBasicDetailForPdfDigitalSignature(RequestId);
+        }
         public async Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId)
         {
             return await _iBasicDetailDB.GetClosedHistoryByRequestId(RequestId);

@@ -868,15 +868,13 @@ function ActionOnRequest(spnRequestId, Flag) {
                     }, 2000);
                 } else {
                     if (response.Value.AfterAction_StepId == 2 || response.Value.AfterAction_StepId == 3 || response.Value.AfterAction_StepId == 4 ) {
-                        var lsts = new Array();
-                        var ids = spnRequestId;
-                        lsts.push(ids);
+
                         if (IsToken == true) {
 
-                            DataSignDigitaly(lsts, "tokenmsgforfwd", spnRequestId, response.Value.AfterAction_StepId);
+                            DataSignDigitaly("tokenmsgforfwd", spnRequestId, response.Value.AfterAction_StepId);
 
                         } else {
-                            DataSignDigitaly(lsts, "tokenmsgforfwd", spnRequestId, response.Value.AfterAction_StepId);
+                            DataSignDigitaly("tokenmsgforfwd", spnRequestId, response.Value.AfterAction_StepId);
                         }
                         if (response.Value.ApplyForId == 1) {
                             SaveNotification(response.Value.AfterAction_StepId, response.Value.AfterAction_StepId, response.Value.AspNetUsersId, spnRequestId)
@@ -1009,9 +1007,9 @@ function DataExport() {
     });
 }
 
-function DataSignDigitaly(Data, msgid, RequestId, stepId) {
+function DataSignDigitaly(msgid, RequestId, stepId) {
     var userdata = {
-        "Ids": Data,
+        "RequestId": RequestId,
         "StepId": stepId
     };
     $.ajax({

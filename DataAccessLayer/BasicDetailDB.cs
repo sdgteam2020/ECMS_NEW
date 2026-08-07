@@ -2287,7 +2287,72 @@ FROM
             }
             return response;
         }
+        public async Task<DTOGenericResponse<DTOGetBasicDetailForPdfDigitalSignature>> GetBasicDetailForPdfDigitalSignature(int RequestId)
+        {
+            DTOGenericResponse<DTOGetBasicDetailForPdfDigitalSignature> response = new DTOGenericResponse<DTOGetBasicDetailForPdfDigitalSignature>();
+            response.Result = false;
+            response.Value = new DTOGetBasicDetailForPdfDigitalSignature();
 
+            const string statusQuery = @"SELECT StatusId FROM TrnICardRequest WHERE RequestId = @RequestId;";
+
+            // StatusId = 1: Running request, fetch from current AFSAC database
+            const string runningRequestQuery = @"SELECT bd.DateOfIssue,bd.PlaceOfIssue
+                                                from TrnICardRequest icardreq
+                                                INNER JOIN BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId
+                                                where icardreq.RequestId=@RequestId";
+            // StatusId = 2 or 3: Completed/closed request, fetch from AFSAC2
+            const string completedOrClosedQuery = @"SELECT bd.DateOfIssue,bd.PlaceOfIssue
+                                                    from TrnICardRequest icardreq
+                                                    INNER JOIN AFSAC2.dbo.BasicDetails bd on bd.BasicDetailId=icardreq.BasicDetailId
+                                                    where icardreq.RequestId=@RequestId";
+            try
+            {
+                using (var connection = _contextDP.CreateConnection())
+                {
+                    int? statusId = await connection.QueryFirstOrDefaultAsync<int?>(statusQuery, new { RequestId });
+                    if (!statusId.HasValue)
+                    {
+                        response.Message = "The requested record could not be found.";
+                        return response;
+                    }
+                    string selectedQuery;
+
+                    switch (statusId.Value)
+                    {
+                        case 1:
+                            selectedQuery = runningRequestQuery;
+                            break;
+
+                        case 2:
+                        case 3:
+                            selectedQuery = completedOrClosedQuery;
+                            break;
+
+                        default:
+                            response.Message = "Invalid Request Status.";
+                            return response;
+                    }
+                    DTOGetBasicDetailForPdfDigitalSignature? basicDetail = await connection.QueryFirstOrDefaultAsync<DTOGetBasicDetailForPdfDigitalSignature>(selectedQuery, new { RequestId });
+                    if (basicDetail != null)
+                    {
+                        response.Message = "Success";
+                        response.Result = true;
+                        response.Value = basicDetail;
+                    }
+                    else
+                    {
+                        response.Message = "The requested information is currently unavailable. Please try again after some time.";
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(1001, ex, "BasicDetailDB->GetBasicDetailForPdfDigitalSignature");
+                response.Message = "Internal Server Error.";
+            }
+            return response;
+        }
 
         /// <summary>
         /// Retrieves a list of all ICard types available in the database.
@@ -3464,16 +3529,17 @@ FROM
         /// If an error occurs or no data is found, an empty response will be returned.
         /// </returns>
         /// <exception cref="Exception">Throws an exception if there is an error while executing the database query or processing the data.</exception>
-        public async Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data)
+        public async Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataDigitalXmlSignRequest Data)
         {
             DTOXMLDigitalSignResponse dTOXMLDigitalSignResponse = new DTOXMLDigitalSignResponse();
-            string query = @"select bas.*,issaut.Name IssuingAuth ,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, 
-                            trnup.SignatureImagePath,trnup.PhotoImagePath,IdenMark1,IdenMark2,AadhaarNo,Height,bld.BloodGroup,bld.BloodGroupId, 
-                            regi.Abbreviation RegimentalName,Muni.UnitName,uni.UnitMapId UnitId,icardreq.TypeId,icardreq.RegistrationId,
-                            ran.RankId,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,trnadd.AddressId,trnup.UploadId,
-                            trninfo.InfoId,MICardType.Name ICardType ,GETDATE() XmlCreatedOn,
+            string query = @"select bas.BasicDetailId,bas.ServiceNo,bas.DOB,bas.PlaceOfIssue,bas.DateOfIssue,bas.DateOfCommissioning,bas.PaperIcardNo,bas.FName,bas.LName,
+                            issaut.Name IssuingAuth,trnadd.State,trnadd.District,trnadd.PS,trnadd.PO,trnadd.Tehsil,trnadd.Village,trnadd.PinCode, 
+                            trnup.SignatureImagePath,trnup.PhotoImagePath,trninfo.IdenMark1,trninfo.AadhaarNo,trninfo.Height,bld.BloodGroup, 
+                            Muni.UnitName,ran.RankAbbreviation RankName,arm.Abbreviation ArmedName,
+                            MICardType.Name ICardType ,GETDATE() XmlCreatedOn,
                             App.Name ProApplyFor,reg.Name ProRegistraion,(select Name from MICardType where TypeId=icardreq.TypeId) ProType,users.DomainId ProDomainId,unit.UnitName ProUnitName,unit.Suffix ProSuffix,unit.Sus_no ProSUSNO,pro.Name ProName,ranks.RankAbbreviation ProRankName,pro.ArmyNo ProArmyName
                             from BasicDetails bas 
+                            inner join TrnICardRequest icardreq on icardreq.BasicDetailId = bas.BasicDetailId and icardreq.StatusId = 1  
                             inner join MIssuingAuthority issaut on issaut.IssuingAuthorityId=bas.IssuingAuthorityId
                             inner join TrnAddress trnadd on trnadd.BasicDetailId=bas.BasicDetailId 
                             inner join TrnUpload trnup on trnup.BasicDetailId=bas.BasicDetailId 
@@ -3483,21 +3549,20 @@ FROM
                             inner join MArmedType arm on arm.ArmedId=bas.ArmedId 
                             inner join MapUnit uni on uni.UnitMapId=bas.UnitId 
                             inner join MUnit Muni on Muni.UnitId=uni.UnitId 
-                            inner join TrnICardRequest icardreq on icardreq.BasicDetailId=bas.BasicDetailId and icardreq.StatusId=1  
                             inner join MICardType MICardType on MICardType.TypeId=icardreq.TypeId  
                             inner join TrnDomainMapping trn on trn.Id=icardreq.TrnDomainMappingId
                             inner join AspNetUsers users on users.Id = trn.AspNetUsersId 
                             inner join MapUnit mapuni on mapuni.UnitMapId = trn.UnitId 
                             inner join MUnit unit on unit.UnitId = mapuni.UnitId 
                             left join UserProfile pro on pro.UserId = trn.UserId 
-                            inner join MRank ranks on ranks.RankId = pro.RankId
-                            inner join MApplyFor App on App.ApplyForId=bas.ApplyForId
-                            inner join MRegistration reg on App.ApplyForId=reg.ApplyForId and App.ApplyForId=bas.ApplyForId and reg.RegistrationId= icardreq.RegistrationId
-                            left join MRegimental regi on regi.RegId=bas.RegimentalId where icardreq.RequestId in @Ids";
-            int[] Ids = Data.Ids;
+                            left join MRank ranks on ranks.RankId = pro.RankId
+                            left join MApplyFor App on App.ApplyForId=bas.ApplyForId
+                            left join MRegistration reg on App.ApplyForId=reg.ApplyForId and App.ApplyForId=bas.ApplyForId and reg.RegistrationId= icardreq.RegistrationId
+                            where icardreq.RequestId = @RequestId";
+
             using (var connection = _contextDP.CreateConnection())
             {
-                var BasicDetailList = await connection.QueryFirstAsync<dynamic>(query, new { Ids });
+                var BasicDetailList = await connection.QueryFirstAsync<dynamic>(query, new { Data.RequestId });
                 if (BasicDetailList != null)
                 {
                     ApplicationDetails applicationDetails = new ApplicationDetails();
@@ -3505,6 +3570,7 @@ FROM
                     string LN = BasicDetailList.LName != null ? BasicDetailList.LName : "";
 
                     applicationDetails.Name = (FN + " " + LN).Trim();
+                    applicationDetails.BasicDetailId = BasicDetailList.BasicDetailId;
                     applicationDetails.ServiceNo = BasicDetailList.ServiceNo;
                     applicationDetails.DOB = BasicDetailList.DOB;
                     applicationDetails.PlaceOfIssue = BasicDetailList.PlaceOfIssue;
@@ -3522,15 +3588,12 @@ FROM
                     applicationDetails.SignatureImagePath = BasicDetailList.SignatureImagePath;
                     applicationDetails.PhotoImagePath = BasicDetailList.PhotoImagePath;
                     applicationDetails.IdenMark1 = BasicDetailList.IdenMark1;
-                    applicationDetails.IdenMark2 = BasicDetailList.IdenMark2;
                     applicationDetails.AadhaarNo = Convert.ToString(BasicDetailList.AadhaarNo);
-                    applicationDetails.Height = Convert.ToString(BasicDetailList.Height);
+                    applicationDetails.Height = BasicDetailList.Height;
                     applicationDetails.BloodGroup = BasicDetailList.BloodGroup;
-                    applicationDetails.RegimentalName = BasicDetailList.RegimentalName;
                     applicationDetails.UnitName = BasicDetailList.UnitName;
                     applicationDetails.RankName = BasicDetailList.RankName;
                     applicationDetails.ArmedName = BasicDetailList.ArmedName;
-
                     applicationDetails.ICardType = BasicDetailList.ICardType;
                     applicationDetails.XmlCreatedOn = BasicDetailList.XmlCreatedOn;
 
@@ -3551,7 +3614,7 @@ FROM
                 }
 
                 DTOFwdLastRecForDigitalSign dTOFwdLastRecForDigitalSign = new DTOFwdLastRecForDigitalSign();
-                dTOFwdLastRecForDigitalSign = await ICardFwdLastRec(Ids[0]);
+                dTOFwdLastRecForDigitalSign = await ICardFwdLastRec(Data.RequestId);
                 dTOFwdLastRecForDigitalSign.StepId = Data.StepId;
                 dTOXMLDigitalSignResponse.RecForDigitalSign = dTOFwdLastRecForDigitalSign;
 

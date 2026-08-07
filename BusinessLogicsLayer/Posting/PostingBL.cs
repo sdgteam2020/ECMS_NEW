@@ -24,9 +24,9 @@ namespace BusinessLogicsLayer.Posting
            return await postingDB.GetArmyDataForPostingOut(ArmyNo);
         }
 
-        public async Task<bool> UpdateForPosting(TrnPostingOut Data)
+        public async Task<DTOGenericResponse<int>> UpdateForPosting(TrnPostingOut Data, DTOBeforePostingOutCheckedInputDataResponse closeResponse)
         {
-            return await postingDB.UpdateForPosting(Data);
+            return await postingDB.UpdateForPosting(Data, closeResponse);
         }
         public async Task<DTODataTablesResponse<DTOAppClosedListResponse>> GetAppClosedList(DTODataTableRequestForAppCloseList dTORecord)
         {

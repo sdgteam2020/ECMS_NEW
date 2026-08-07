@@ -41,7 +41,7 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTONotificationResult> GetNotification(int UserId);
         public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type, int applyForId);
         public Task<List<DTODataExportsResponse>> GetDataForExportAndUpdateRequestAndStep(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
-        public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
+        public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataDigitalXmlSignRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         Task<DTOUploadChipAndSerialResponse> CardPrintingCSVUpload(List<DTOCardPriningRequest> requests);
         Task<List<DTOCardPriningRequest>> CardPrintingCSVCheck(List<DTOCardPriningRequest> requests, int CardPrintedByAspNetUserId, int CardPrintedByUserId);
@@ -60,5 +60,6 @@ namespace DataAccessLayer.BaseInterfaces
         public Task<DTOGetMappingDetailsForClosedHistoryResponse> GetMappingDetailsForClosedHistory(DTODataTableRequestForAppClosedHistory dTO);
         public Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId);
         public Task<DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>> GetICardPrintPreviewByRequestId(int RequestId);
+        public Task<DTOGenericResponse<DTOGetBasicDetailForPdfDigitalSignature>> GetBasicDetailForPdfDigitalSignature(int RequestId);
     }
 }

@@ -20,6 +20,7 @@ using iText.Layout.Element;
 using iText.Layout.Properties;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -236,10 +237,7 @@ namespace Web.Controllers
                 var mm = now.ToString("mm");
                 var ss = now.ToString("ss");
 
-                // Initialize the array for the request ID and fetch the XML data
-                int[] d = new int[1];
-                d[0] = RequestId;
-                var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(d);
+                var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(RequestId);
 
                 // Replace any ampersand symbols with the proper XML encoding
                 string XmlFilesRemoveAndChar = sata.XmlFiles.Replace("&", "&amp;");
@@ -307,7 +305,7 @@ namespace Web.Controllers
                 var now = DateTime.Now;
                 string timestamp = $"{now:yyyy}{now:MMMM}{now:dd}{now:hh}{now:mm}{now:ss}";
 
-                var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(new[] { requestId });
+                var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData( requestId);
                 if (sata == null || string.IsNullOrWhiteSpace(sata.XmlFiles))
                     return BadRequest("XML data not found.");
 
@@ -318,16 +316,26 @@ namespace Web.Controllers
 
 
                 var digitalSignList = ProcessDigitalSignatures(xmlDoc);
-                DTOGenericResponse<DTOBasicDetailForParitalViewResponse> response = await BasicDetailBL.GetBasicDetailForParitalViewByRequestId(requestId);
 
-                if (response.Result == false)
+                ApplicationDetails? applicationDetails = GetApplicationDetails(xmlDoc);
+
+                if (applicationDetails == null)
                     return NotFound("The requested information is currently unavailable. Please try again after some time.");
 
-                var digitalSignPlusLogList = ProcessForwardingDetails(xmlDoc, levelDictionary, digitalSignList, response.Value.ServiceNo);
+                DTOGenericResponse<DTOGetBasicDetailForPdfDigitalSignature> response = await BasicDetailBL.GetBasicDetailForPdfDigitalSignature(requestId);
 
-                byte[] pdfBytes = await GeneratePdfDocument(response.Value, digitalSignPlusLogList, ipAddress, timestamp, requestId);
+                // Update applicationDetails with PlaceOfIssue and DateOfIssue if available
+                if (response.Result == true)
+                {
+                    applicationDetails.PlaceOfIssue = response.Value.PlaceOfIssue;
+                    applicationDetails.DateOfIssue = response.Value.DateOfIssue;
+                }
 
-                string pdfName = $"{response.Value.ServiceNo}_{requestId}_{timestamp}.pdf";
+                var digitalSignPlusLogList = ProcessForwardingDetails(xmlDoc, levelDictionary, digitalSignList, applicationDetails.ServiceNo);
+
+                byte[] pdfBytes = await GeneratePdfDocument(applicationDetails, digitalSignPlusLogList, ipAddress, timestamp, requestId);
+
+                string pdfName = $"{applicationDetails.ServiceNo}_{requestId}_{timestamp}.pdf";
 
                 return File(pdfBytes, "application/pdf", pdfName);
             }
@@ -520,17 +528,12 @@ namespace Web.Controllers
             return result;
         }
 
-        private async Task<byte[]> GeneratePdfDocument(
-             DTOBasicDetailForParitalViewResponse db,
-             List<DTODigitalSignPlusLog> digitalSignPlusLogList,
-             string ipAddress,
-             string timestamp,
-             int requestId)
+        private async Task<byte[]> GeneratePdfDocument(ApplicationDetails applicationDetails,List<DTODigitalSignPlusLog> digitalSignPlusLogList,string ipAddress,string timestamp,int requestId)
         {
             using var memoryStream = new MemoryStream();
 
-            var photoImage = await GetDecryptedImage(db.PhotoImagePath, "Photo", 60);
-            var signatureImage = await GetDecryptedImage(db.SignatureImagePath, "Signature", 80);
+            var photoImage = await GetDecryptedImage(applicationDetails.PhotoImagePath, "Photo", 60);
+            var signatureImage = await GetDecryptedImage(applicationDetails.SignatureImagePath, "Signature", 80);
 
             using (PdfWriter writer = new PdfWriter(memoryStream))
             using (PdfDocument pdf = new PdfDocument(writer))
@@ -544,7 +547,7 @@ namespace Web.Controllers
                 pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new BottomLeftDiagonalWatermarkHandler(ipAddress));
 
                 AddDocumentHeader(document);
-                AddPersonalDetailsTable(document, db, photoImage, signatureImage);
+                AddPersonalDetailsTable(document, applicationDetails, photoImage, signatureImage);
                 AddDigitalSignatureTable(document, digitalSignPlusLogList);
             }
 
@@ -564,7 +567,7 @@ namespace Web.Controllers
                 .SetFontSize(15));
         }
 
-        private void AddPersonalDetailsTable(Document document, DTOBasicDetailForParitalViewResponse db, iTextImage? photoImage, iTextImage? signatureImage)
+        private void AddPersonalDetailsTable(Document document, ApplicationDetails db, iTextImage? photoImage, iTextImage? signatureImage)
         {
             PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
             Table table = new Table(4);
@@ -574,7 +577,7 @@ namespace Web.Controllers
             table.AddCell(photoImage != null ? new Cell().Add(photoImage) : new Cell().Add(new Paragraph("N/A")));
 
             // Add personal details
-            AddTableRow(table, "NAME", $"{db.RankName} {db.FName} {db.LName}".Trim(), boldFont);
+            AddTableRow(table, "NAME", $"{db.RankName} {db.Name}".Trim(), boldFont);
             AddTableRow(table, "Rank", db.RankName ?? string.Empty, boldFont);
             AddTableRow(table, "Arm / Service", db.ArmedName ?? string.Empty, boldFont);
             AddTableRow(table, "Army No", db.ServiceNo, boldFont);
@@ -587,7 +590,7 @@ namespace Web.Controllers
             AddTableRow(table, "Date of Issue",
                 db.DateOfIssue is DateTime dateOfIssue && dateOfIssue != DateTime.MinValue ? dateOfIssue.ToString("dd-MMM-yyyy") : "",
                 boldFont);
-            AddTableRow(table, "Issuing Authority", db.IssuingAuthorityName, boldFont);
+            AddTableRow(table, "Issuing Authority", db.IssuingAuth, boldFont);
             AddTableRow(table, "Date of Commissioning/ Enrollment",
                 db.DateOfCommissioning.ToString("dd-MMM-yyyy"), boldFont);
 
@@ -852,6 +855,128 @@ namespace Web.Controllers
                       .EndText();
                 canvas.RestoreState();
             }
+        }
+
+        public ApplicationDetails? GetApplicationDetails(XmlDocument xmlDocument)
+        {
+            try
+            {
+                // Searches applicationDetails anywhere inside the XML.
+                XmlNode? applicationNode = xmlDocument.SelectSingleNode(
+                    "//*[local-name()='applicationDetails']");
+
+                if (applicationNode == null)
+                {
+                    return null;
+                }
+
+                ApplicationDetails applicationDetails =
+                    new ApplicationDetails
+                    {
+                        PaperIcardNo = GetNodeValue(applicationNode,"PaperIcardNo") ?? string.Empty,
+                        Name = GetNodeValue(applicationNode,"Name") ?? string.Empty,
+                        RankName = GetNodeValue(applicationNode, "RankName") ?? string.Empty,
+                        ArmedName = GetNodeValue(applicationNode, "ArmedName") ?? string.Empty,
+                        ServiceNo = GetNodeValue(applicationNode, "ServiceNo") ?? string.Empty,
+                        DOB = GetNullableDateTime(applicationNode,"DOB") ?? default(DateTime),
+                        Height = GetNullableFloat(applicationNode,"Height") ?? default(float),
+                        AadhaarNo = GetNodeValue(applicationNode,"AadhaarNo") ?? string.Empty,
+                        BloodGroup = GetNodeValue(applicationNode,"BloodGroup") ?? string.Empty,
+                        UnitName = GetNodeValue(applicationNode,"UnitName") ?? string.Empty,
+                        PlaceOfIssue = GetNodeValue(applicationNode,"PlaceOfIssue") ?? string.Empty,
+                        DateOfIssue = GetNullableDateTime(applicationNode,"DateOfIssue"),
+                        IssuingAuth = GetNodeValue(applicationNode,"IssuingAuth") ?? string.Empty,
+                        SignatureImagePath = GetNodeValue(applicationNode,"SignatureImagePath") ?? string.Empty,
+                        PhotoImagePath = GetNodeValue(applicationNode,"PhotoImagePath") ?? string.Empty,
+                        DateOfCommissioning = GetNullableDateTime(applicationNode,"DateOfCommissioning") ?? default(DateTime),
+                        State = GetNodeValue(applicationNode,"State") ?? string.Empty,
+                        District = GetNodeValue(applicationNode,"District") ?? string.Empty, 
+                        PS = GetNodeValue(applicationNode,"PS") ?? string.Empty, 
+                        PO = GetNodeValue(applicationNode,"PO") ?? string.Empty,
+                        Tehsil = GetNodeValue(applicationNode,"Tehsil"),
+                        Village = GetNodeValue(applicationNode,"Village"),
+                        PinCode = GetInt(applicationNode,"PinCode"),
+                        IdenMark1 = GetNodeValue(applicationNode,"IdenMark1") ?? string.Empty,
+                        ICardType = GetNodeValue(applicationNode,"ICardType") ?? string.Empty,
+                        XmlCreatedOn = GetNullableDateTime(applicationNode,"XmlCreatedOn") ?? default(DateTime)
+                    };
+
+                return applicationDetails;
+            }
+            catch (XmlException)
+            {
+                // XML format is invalid.
+                return null;
+            }
+            catch (Exception)
+            {
+                // Log the exception here if required.
+                return null;
+            }
+        }
+        private string? GetNodeValue(XmlNode parentNode,string nodeName)
+        {
+            XmlNode? childNode = parentNode.SelectSingleNode( $"*[local-name()='{nodeName}']");
+
+            string? value = childNode?.InnerText?.Trim();
+
+            return string.IsNullOrWhiteSpace(value)
+                ? null
+                : value;
+        }
+
+        private int GetInt(XmlNode parentNode,string nodeName)
+        {
+            string? value = GetNodeValue(parentNode,nodeName);
+
+            return int.TryParse(
+                value,
+                NumberStyles.Integer,
+                CultureInfo.InvariantCulture,
+                out int result)
+                    ? result
+                    : 0;
+        }
+        private byte? GetNullableByte(XmlNode parentNode, string nodeName)
+        {
+            string? value = GetNodeValue(parentNode, nodeName);
+
+            return byte.TryParse(
+                value,
+                NumberStyles.Integer,
+                CultureInfo.InvariantCulture,
+                out byte result)
+                    ? result
+                    : null;
+        }
+
+        private float? GetNullableFloat(XmlNode parentNode,string nodeName)
+        {
+            string? value = GetNodeValue(parentNode, nodeName);
+
+            return float.TryParse(
+                value,
+                NumberStyles.Float | NumberStyles.AllowThousands,
+                CultureInfo.InvariantCulture,
+                out float result)
+                    ? result
+                    : null;
+        }
+
+        private DateTime? GetNullableDateTime(XmlNode parentNode,string nodeName)
+        {
+            string? value = GetNodeValue(parentNode,nodeName);
+
+            if (DateTime.TryParse(
+                value,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out DateTime result))
+            {
+                return result;
+            }
+
+            return null;
         }
     }
 }

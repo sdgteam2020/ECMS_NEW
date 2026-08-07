@@ -22,27 +22,23 @@ namespace DataTransferObject.Response
     }
     public class ApplicationDetails
     {
+        public int BasicDetailId { get; set; }
         public string PaperIcardNo { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string? RankName { get; set; }
-        public string? ArmedName { get; set; }
+        public string RankName { get; set; } = string.Empty;
+        public string ArmedName { get; set; } = string.Empty;
         public string ServiceNo { get; set; } = string.Empty;
         public DateTime DOB { get; set; }
-        public string? Height { get; set; }
+        public float Height { get; set; }
         public string AadhaarNo { get; set; } = string.Empty;
-        public string? BloodGroup { get; set; }
-        public string? RegimentalName { get; set; }
-        public string? UnitName { get; set; }
-        public string PlaceOfIssue { get; set; } = string.Empty;
+        public string BloodGroup { get; set; } = string.Empty;
+        public string UnitName { get; set; } = string.Empty;
+        public string? PlaceOfIssue { get; set; }
         public DateTime? DateOfIssue { get; set; }
         public string IssuingAuth { get; set; } = string.Empty;
-        public int UploadId { get; set; }
         public string SignatureImagePath { get; set; } = string.Empty;
         public string PhotoImagePath { get; set; } = string.Empty;
         public DateTime DateOfCommissioning { get; set; }
-        public string PermanentAddress { get; set; } = string.Empty;
-        public byte StatusLevel { get; set; }
-        public string ApplyFor { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public string District { get; set; } = string.Empty;
         public string PS { get; set; } = string.Empty;
@@ -51,11 +47,8 @@ namespace DataTransferObject.Response
         public string? Village { get; set; } = string.Empty;
         public int PinCode { get; set; }
         public string IdenMark1 { get; set; } = string.Empty;
-        public string IdenMark2 { get; set; } = string.Empty;
-        public string? ICardType { get; set; }
+        public string ICardType { get; set; } = string.Empty;
         public DateTime XmlCreatedOn { get; set; }
-
-
     }
     public class Profiledtls
     {

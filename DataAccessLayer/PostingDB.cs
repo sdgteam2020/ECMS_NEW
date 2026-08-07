@@ -240,22 +240,48 @@ namespace DataAccessLayer
         /// <param name="Data">The <see cref="TrnPostingOut"/> data to update in the database.</param>
         /// <returns><c>true</c> if the update was successful; otherwise, <c>false</c>.</returns>
         /// <exception cref="Exception">Throws an exception if an error occurs during the update process.</exception>
-        public async Task<bool> UpdateForPosting(TrnPostingOut Data)
+        public async Task<DTOGenericResponse<int>> UpdateForPosting(TrnPostingOut Data, DTOBeforePostingOutCheckedInputDataResponse closeResponse)
         {
-            int ToAspNetUsersId = Data.ToAspNetUsersId;
-            int RequestId = Data.RequestId;
-            int ToUnitID = Data.ToUnitID;
-            //int Id=Data.Id;
-            
+            DTOGenericResponse<int> response = new DTOGenericResponse<int>();
+            response.Result = false;
+            response.Value = 0;
             // Initialize transaction for multiple database operations
             var (db, transaction) = _contextDP.CreateConnectionWithTransaction();
 
             try
             {
-                // Insert new posting record
-                var insertSql = @$" INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, RequestId, TrnFwdId,DispatchUpdatedBy,DispatchUpdatedOn,DispatchedOn,RefNo)
-                                OUTPUT INSERTED.Id 
-                                VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @RequestId, @TrnFwdId,{(Data.DispatchedOn.HasValue ? "@Updatedby"  : "null")},{(Data.DispatchedOn.HasValue ? "@UpdatedOn" : "null")},@DispatchedOn,@RefNo );";
+                var sql = @" 
+                                SET NOCOUNT ON;
+
+                                DECLARE @NewId TABLE
+                                (
+                                    Id INT
+                                );
+                                INSERT INTO TrnPostingOut (ReasonId, Authority, FromAspNetUsersId, FromUnitID, FromUserID, ToAspNetUsersId, ToUnitID, ToUserID, IsActive, UpdatedOn, Updatedby, SOSDate, RequestId, TrnFwdId,DispatchUpdatedBy,DispatchUpdatedOn,DispatchedOn,RefNo)
+                                OUTPUT INSERTED.Id INTO @NewId
+                                VALUES (@ReasonId, @Authority, @FromAspNetUsersId, @FromUnitID, @FromUserID, @ToAspNetUsersId, @ToUnitID, @ToUserID, @IsActive, @UpdatedOn, @Updatedby, @SOSDate, @RequestId, @TrnFwdId,
+                                        CASE
+                                            WHEN @DispatchedOn IS NOT NULL
+                                            THEN @Updatedby
+                                            ELSE NULL
+                                        END,
+
+                                        CASE
+                                            WHEN @DispatchedOn IS NOT NULL
+                                            THEN @UpdatedOn
+                                            ELSE NULL
+                                        END,
+
+                                        @DispatchedOn,
+                                        @RefNo);
+                                
+                                UPDATE TrnICardRequest SET TrnDomainMappingId = @TrnDomainMappingId WHERE RequestId = @RequestId;
+                                UPDATE BasicDetails SET UnitId = @ToUnitID,PlaceOfIssue = @PlaceOfIssue WHERE BasicDetailId = @BasicDetailId;
+                                UPDATE TrnFwds SET ToAspNetUsersId = @ToAspNetUsersId WHERE FwdStatusId = 3 AND IsComplete = 0 AND RequestId = @RequestId AND @TrnFwdId IS NOT NULL;
+
+                                SELECT Id
+                                FROM @NewId;
+                                ";
                 var parameters = new DynamicParameters();
                 parameters.Add("@ReasonId", Data.ReasonId, DbType.Byte, ParameterDirection.Input);
                 parameters.Add("@Authority", Data.Authority, DbType.String, ParameterDirection.Input,50);
@@ -271,51 +297,36 @@ namespace DataAccessLayer
                 parameters.Add("@SOSDate", Data.SOSDate, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@RequestId", Data.RequestId, DbType.Int32, ParameterDirection.Input);
                 parameters.Add("@TrnFwdId", Data.TrnFwdId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@TrnFwdId", Data.TrnFwdId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@BasicDetailId", closeResponse.BasicDetailId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@TrnDomainMappingId", closeResponse.TrnDomainMappingId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@PlaceOfIssue", closeResponse.PlaceOfIssue, DbType.AnsiString, ParameterDirection.Input,50);
                 parameters.Add("@DispatchedOn", Data.DispatchedOn, DbType.DateTime, ParameterDirection.Input);
                 parameters.Add("@RefNo", Data.RefNo, DbType.String, ParameterDirection.Input);
 
                 // Insert the new posting record and get its ID
-                var Id = await db.QuerySingleAsync<int>(insertSql, parameters, transaction:transaction);
-
-                // Update related TrnICardRequest with the new mapping
-                string query1 = " update TrnICardRequest set TrnDomainMappingId=(select Id from TrnDomainMapping where AspNetUsersId=@ToAspNetUsersId) where RequestId=@RequestId ";
-                await db.ExecuteAsync(query1, new { ToAspNetUsersId, RequestId },transaction:transaction);
-
-                // Update BasicDetails with the new unit ID
-                string query2 = " update BasicDetails set UnitId=@ToUnitID where BasicDetailId =(select BasicDetailId from TrnICardRequest where RequestId=@RequestId and StatusId=1) ";
-                await db.ExecuteAsync(query2, new { RequestId, ToUnitID }, transaction: transaction);
-
-                if (Data.TrnFwdId != null)
-                {
-                    //string query3 = " update TrnFwds set PostingOutId= @Id where RequestId=@RequestId and IsComplete=0 ";
-                    //await db.ExecuteAsync(query3, new { RequestId, Id }, transaction: transaction);
-
-                    string query4 = " if exists (select top 1 * from TrnFwds where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId)" +
-                                      " begin" +
-                                      " update TrnFwds set ToAspNetUsersId=@ToAspNetUsersId where FwdStatusId=3 and IsComplete=0 and RequestId=@RequestId " +
-                                      " end";
-                    await db.ExecuteAsync(query4, new { ToAspNetUsersId, RequestId, ToUnitID }, transaction: transaction);
-                }
-
+                var Id = await db.QuerySingleAsync<int>(sql, parameters, transaction:transaction);
 
                 
                 // Commit the transaction if all operations succeed
                 transaction.Commit();
-                return true;
+                
+                response.Result = true;
+                response.Message = "Posting Out successfully";
+                response.Value = Id;
             }
             catch (Exception ex)
             {
                 // Rollback the transaction if any operation fails
                 transaction.Rollback();
                 _logger.LogError(1001, ex, "PostingDB->UpdateForPosting");
-                return false;
+                response.Message = "Failed to update posting details.";
             }
             finally
             {
-                // Dispose of the connection
+                transaction.Dispose();
                 db.Dispose();
             }
+            return response;
         }
 
 
@@ -411,16 +422,19 @@ namespace DataAccessLayer
         {
             DTOBeforePostingOutCheckedInputDataResponse dTOBeforePostingOut = new DTOBeforePostingOutCheckedInputDataResponse();
 
-            string query = @"Select ISNULL(basi.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,req.StatusId,ISNULL(basic_2.UnitId, basi.UnitId) AS UnitId,tdm.AspNetUsersId as ToAspNetUsersId, tdm.UserId as ToUserID,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId from TrnICardRequest req
-                            LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId=req.BasicDetailId
-                            LEFT JOIN BasicDetails basi on basi.BasicDetailId=req.BasicDetailId
-                            LEFT JOIN TrnDomainMapping tdm on tdm.AspNetUsersId = @AspNetUsersId and tdm.UnitId =@UnitId and tdm.UserId =@UserId
-                            LEFT JOIN TrnFwds fwd on fwd.RequestId=req.RequestId
+            string query = @"Select req.BasicDetailId,req.StatusId,munit.Abbreviation as PlaceOfIssue,tdm.Id as TrnDomainMappingId,basi.UnitId,tdm.AspNetUsersId as ToAspNetUsersId, tdm.UserId as ToUserID,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId from TrnICardRequest req
+                            LEFT JOIN BasicDetails basi on basi.BasicDetailId = req.BasicDetailId
+                            LEFT JOIN TrnDomainMapping tdm on tdm.AspNetUsersId = @ToAspNetUsersId and tdm.UnitId =@ToUnitID and tdm.UserId =@ToUserID
+                            LEFT JOIN MapUnit mapunit on mapunit.UnitMapId = @ToUnitID
+                            LEFT JOIN MUnit munit on munit.UnitId = mapunit.UnitId
+                            LEFT JOIN TrnFwds fwd on fwd.RequestId = req.RequestId
                             where req.RequestId=@RequestId
                             GROUP BY 
-                                ISNULL(basi.BasicDetailId, basic_2.BasicDetailId),
+                                req.BasicDetailId,
                                 req.StatusId,
-                                ISNULL(basic_2.UnitId, basi.UnitId),
+                                munit.Abbreviation,
+                                tdm.Id,
+                                basi.UnitId,
                                 tdm.AspNetUsersId,
                                 tdm.UserId";
 
@@ -428,9 +442,9 @@ namespace DataAccessLayer
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@RequestId", trnPostingOut.RequestId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@UnitId", trnPostingOut.ToUnitID, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@AspNetUsersId", trnPostingOut.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
-                parameters.Add("@UserId", trnPostingOut.ToUserID, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUnitID", trnPostingOut.ToUnitID, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToAspNetUsersId", trnPostingOut.ToAspNetUsersId, DbType.Int32, ParameterDirection.Input);
+                parameters.Add("@ToUserID", trnPostingOut.ToUserID, DbType.Int32, ParameterDirection.Input);
 
 
                 dTOBeforePostingOut = await connection.QueryFirstAsync<DTOBeforePostingOutCheckedInputDataResponse>(query, parameters);

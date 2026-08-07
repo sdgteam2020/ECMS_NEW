@@ -3433,7 +3433,7 @@ namespace Web.Controllers
         {
             try
             {
-                DTODataExportRequest Data = await AESEncrytDecry.DecryptAESWithDTO<DTODataExportRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+                DTODataDigitalXmlSignRequest Data = await AESEncrytDecry.DecryptAESWithDTO<DTODataDigitalXmlSignRequest>(request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
                 if (Data == null)
                 {
                     return Json(KeyConstants.IncorrectData); // Return error message for invalid data
@@ -3446,7 +3446,7 @@ namespace Web.Controllers
 
                     // Step 2: Fetch existing XML data from the database based on provided IDs
                     // The BL (Business Layer) returns an object containing XML files if they exist
-                    var xmldata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(Data.Ids);
+                    var xmldata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(Data.RequestId);
 
                     // Step 3: Check if any XML data was retrieved
                     if (xmldata != null && !string.IsNullOrEmpty(xmldata.XmlFiles))
@@ -3456,7 +3456,7 @@ namespace Web.Controllers
 
                         // Step 3b: Generate XML for the last record in the provided IDs list
                         // This is likely the most recent data that needs to be added to existing XML
-                        string xml = await GenerateLastRecordXml(Data.Ids[0]);
+                        string xml = await GenerateLastRecordXml(Data.RequestId);
 
                         // Step 3c: Merge the existing XML from the database with the newly generated XML
                         // Ensures that the final XML contains all historical and latest records
@@ -3496,11 +3496,11 @@ namespace Web.Controllers
         /// <returns>
         /// Returns a string containing the XML representation of the last record, suitable for digital signing.
         /// </returns>
-        private async Task<string> GenerateLastRecordXml(int id)
+        private async Task<string> GenerateLastRecordXml(int RequestId)
         {
             // Step 1: Fetch the last record from the business layer (ICard forwarding context)
             // This typically retrieves the latest record associated with the provided ID
-            var lastRec = await basicDetailBL.ICardFwdLastRec(id);
+            var lastRec = await basicDetailBL.ICardFwdLastRec(RequestId);
 
             // Step 2: Initialize an XmlSerializer to convert the DTO object into XML
             // The type parameter is DTOFwdLastRecForDigitalSign which defines the XML schema
@@ -3566,7 +3566,7 @@ namespace Web.Controllers
         /// Returns a <see cref="JsonResult"/> containing either a structured update object
         /// with ID and JSON data or a plain JSON object when xmldata is null.
         /// </returns>
-        private async Task<IActionResult> GenerateJsonResponse(DTOXmlFilesFwdLogRequest xmldata, DTODataExportRequest Data)
+        private async Task<IActionResult> GenerateJsonResponse(DTOXmlFilesFwdLogRequest xmldata, DTODataDigitalXmlSignRequest Data)
         {
             // Step 1: Fetch the digital XML sign data as a fallback when original XML is missing
             var retData = await basicDetailBL.GetDataDigitalXmlSign(Data);
