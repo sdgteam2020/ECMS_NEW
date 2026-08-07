@@ -250,6 +250,12 @@ function BindData(Type, StepCounter, JCOOR, cvalue) {
                     console.error("RequestId not found in row data");
                 }
             });
+            $("#tbldatatabledata_Fwd tbody").off("click", ".cls-btndownloadxml").on("click", ".cls-btndownloadxml", function () {
+                var rowData = table_Fwd.row($(this).closest("tr")).data();
+                if (rowData != null) {
+                    DownloadXml(rowData.RequestId);
+                }
+            });
         }
     });
     $(document).on('change', '.chkRequestId', async function () {
@@ -412,6 +418,8 @@ function getColumnsForApprovalForIO(cvalue, JCOOR, Type) {
                         }
                         // Case 2: Processed + Download
                         else if (row.StepCounter != 1 && row.StepCounter != 7 && row.StepCounter != 8 && row.StepCounter != 9 && row.StepCounter != 10) {
+                            //html += `<button class="cls-btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>
+                            //            <button class="cls-btndownloadxml ml-2" id="btndownloadxml" data-toggle="tooltip" data-placement="top" title="Download Details">Xml</button>`;
                             html += `<button class="cls-btndownloadpdf" id="btndownloadpdf" data-toggle="tooltip" data-placement="top" title="Download Details"><img src="/Images/digitalsign.png" width="40" /></button>`;
                         }
                         return html; // Return the full HTML string

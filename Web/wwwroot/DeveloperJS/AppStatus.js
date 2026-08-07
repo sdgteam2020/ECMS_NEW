@@ -147,24 +147,26 @@ function GetDataFromBasicDetails(RequestId) {
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
-            if (response != "null" && response != null) {
-                $(".PhotoImagePath").attr('src', response.ExistingPhotoInBase64);
-                $(".SignaturePath").attr('src', response.ExistingSignatureInBase64);
-                $(".FName").html(response.FName);
-                $(".LName").html(response.LName == null ? "&nbsp;" : response.LName);
-                $(".RankName").html(response.RankName);
-                $(".ArmedName").html(response.ArmedName);
-                $(".ServiceNo").html(response.ServiceNo);
-                $(".IdenMark1").html(response.IdenMark1);
-                $(".DOB").html(DateFormateMMMM_dd_yyyy(response.DOB));
-                $(".Height").html(response.Height+' CM');
-                $(".AadhaarNo").html(response.AadhaarNo.replace(/\d(?=\d{4})/g, "X"));
-                $(".BloodGroup").html(response.BloodGroup);
-                $(".PlaceOfIssue").html(response.PlaceOfIssue);
-                $(".DateOfIssue").html(DateFormateMMMM_dd_yyyy(response.DateOfIssue));
-                $(".IssuingAuth").html(response.IssuingAuth);
-                $(".DateOfCommissioning").html(DateFormateMMMM_dd_yyyy(response.DateOfCommissioning));
-                //$("#lblfdaddress").html(response.Village + ',' + response.Tehsil + ',' + response.PO + ',' + response.PS + ',' + response.District + ',' + response.State + '' + response.PinCode);
+            if (response.Result === true) {
+                $(".PhotoImagePath").attr('src', response.Value.ExistingPhotoInBase64);
+                $(".SignaturePath").attr('src', response.Value.ExistingSignatureInBase64);
+                $(".FName").html(response.Value.FName);
+                $(".LName").html(response.Value.LName);
+                $(".RankName").html(response.Value.RankName);
+                $(".ArmedName").html(response.Value.ArmedName);
+                $(".ServiceNo").html(FormatServiceNo(response.Value.ServiceNo));
+                $(".IdenMark1").html(response.Value.IdenMark1);
+                $(".DOB").html(DateFormateMMMM_dd_yyyy(response.Value.DOB));
+                $(".Height").html(response.Value.Height + ' CM');
+                $(".AadhaarNo").html(response.Value.AadhaarNo);
+                $(".BloodGroup").html(response.Value.BloodGroup);
+                $(".PlaceOfIssue").html(response.Value.PlaceOfIssue);
+                $(".DateOfIssue").html(response.Value.DateOfIssue == null ? 'DEPENDS ON UNIT OF SECOND LEVEL APPROVER.' : DateFormateMMMM_dd_yyyy(response.Value.DateOfIssue));
+                $(".IssuingAuth").html(response.Value.IssuingAuthorityName);
+                $(".DateOfCommissioning").html(DateFormateMMMM_dd_yyyy(response.Value.DateOfCommissioning));
+            }
+            else {
+                toastr.error(response.Message);
             }
         }
     })

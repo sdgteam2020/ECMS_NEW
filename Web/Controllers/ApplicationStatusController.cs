@@ -1,10 +1,13 @@
 ﻿using BusinessLogicsLayer.BasicDet;
+using BusinessLogicsLayer.Helpers;
+using DataTransferObject.Requests;
 using DataTransferObject.Response;
 using DataTransferObject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Healpers.BaseInterfaces;
 using Web.Validation;
+using Web.WebHelpers;
 
 namespace Web.Controllers
 {
@@ -133,40 +136,50 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetBasicDetailByRequestId(int RequestId)
         {
-            // Fetch and return the basic details for the provided request ID as a JSON response
+            DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse> response = new DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>();
+            response.Result = false;
+            response.Value = new DTOGetICardPrintPreviewByRequestIdResponse();
+
             try
             {
-                DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await _basicDetailBL.GetBasicDetailByRequestId(RequestId);
-                if (basicDetailCrtAndUpdVM != null)
+                // Retrieve the basic detail record for the given RequestId
+                response = await _basicDetailBL.GetICardPrintPreviewByRequestId(RequestId);
+
+                if (response.Result == true)
                 {
+                    response.Value.AadhaarNo = _basicDetailBL.MaskAadhaar(response.Value.AadhaarNo);
                     // Define the root physical folder where images are stored
                     string sourceFolderPhy = Path.Combine(hostingEnvironment.WebRootPath, "WriteReadData");
 
                     // Build the full path for the photo image
-                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", basicDetailCrtAndUpdVM.PhotoImagePath);
+                    string sourcePathPhoto = Path.Combine(sourceFolderPhy, "Photo", response.Value.PhotoImagePath);
+                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", response.Value.SignatureImagePath);
 
-                    // Decrypt the photo image and assign it to the VM
-                    basicDetailCrtAndUpdVM.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
-
-                    // Build the full path for the signature image
-                    string sourcePathSignature = Path.Combine(sourceFolderPhy, "Signature", basicDetailCrtAndUpdVM.SignatureImagePath);
-
-                    // Decrypt the signature image and assign it to the VM
-                    basicDetailCrtAndUpdVM.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
-
-                    return Json(basicDetailCrtAndUpdVM);
+                    if (System.IO.File.Exists(sourcePathPhoto))
+                    {
+                        // Decrypt the photo image and assign it to the VM
+                        response.Value.ExistingPhotoInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathPhoto);
+                    }
+                    if (System.IO.File.Exists(sourcePathSignature))
+                    {
+                        // Decrypt the signature image and assign it to the VM
+                        response.Value.ExistingSignatureInBase64 = await imageEncryptAndDecrypt.DecryptImageToBase64(sourcePathSignature);
+                    }
                 }
-                else
-                {
-                    return Json(null);
-                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Log any exception with an error code and context
+                _logger.LogError(1001, ex, "ApplicationStatus->GetBasicDetailByRequestId");
+                response.Message = "Photo and Signature not found.";
             }
             catch (Exception ex)
             {
+                // Log any exception with an error code and context
                 _logger.LogError(1001, ex, "ApplicationStatus->GetBasicDetailByRequestId");
-                // In case of an exception, return null in the JSON response
-                return Json(null);
+                response.Message = "Internal Error.";
             }
+            return Json(response);
 
         }
 
