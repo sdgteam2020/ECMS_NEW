@@ -98,8 +98,8 @@ function BindData(UserType, ApplyForId) {
                 searchValue: searchStatus.currentSearchText,
                 sortColumn: data.order.length > 0 ? data.columns[data.order[0].column].data : '',  // Add a check for data.order
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order               
-                CValue:0,
-                UserType: UserType,              
+                CValue: 0,
+                UserType: UserType,
                 ApplyForId: ApplyForId,
                 searchTextChanged: searchStatus.searchChanged
             };
@@ -130,7 +130,7 @@ function BindData(UserType, ApplyForId) {
                     globalThis.selectedIds = [];
                     console.log("No results. Cleared selectedIds.");
                 }
-       
+
                 callback(result); // Sends data to DataTables
 
 
@@ -149,8 +149,8 @@ function BindData(UserType, ApplyForId) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No / Appl ID" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
-        
+        dom: "<'dt-top ecms-dt-toolbar d-flex justify-content-between align-items-center flex-wrap'lBf>rt<'ecms-dt-footer row no-gutters'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>", // Shared ModernCSS DataTable toolbar/footer
+
         // 👇 Show modal only after table (header + data) is fully rendered
         initComplete: function () {
             if (typeof callback === "function") {
@@ -178,7 +178,7 @@ function BindData(UserType, ApplyForId) {
             );
             tooltipTriggerList.forEach(el => {
                 new bootstrap.Tooltip(el);
-            });   
+            });
             $("#tbldatatabledata_ClosedHistory tbody").off("click", ".cls-historyRequest").on("click", ".cls-historyRequest", function () {
                 var rowData = table_ClosedHistory.row($(this).closest("tr")).data();
                 if (rowData != null) {
@@ -191,13 +191,13 @@ function BindData(UserType, ApplyForId) {
                 if (rowData != null) {
                     DownloadPdf(rowData.RequestId);
                 }
-            });       
+            });
         }
     });
     table_ClosedHistory.button('.buttons-copy').nodes().hide();
     table_ClosedHistory.button('.buttons-csv').nodes().hide();
     table_ClosedHistory.button('.buttons-print').nodes().hide();
-    
+
 }
 
 function getColumnsForClosedHistory(UserType, ApplyForId) {
@@ -205,7 +205,7 @@ function getColumnsForClosedHistory(UserType, ApplyForId) {
     switch (ApplyForId) {
         case "0":
             columns = [
-                
+
                 // Serial number column
                 {
                     title: "S No",
@@ -248,7 +248,7 @@ function getColumnsForClosedHistory(UserType, ApplyForId) {
                         }
                     }
                 },
-                
+
                 {
                     title: "Rank & Name",
                     data: null,
@@ -315,16 +315,16 @@ function getColumnsForClosedHistory(UserType, ApplyForId) {
                     render: function (data, type, row) {
                         return `<button class="btn btn-icon btn-round btn-primary mr-1 cls-historyRequest" data-toggle="tooltip" data-placement="left"><i class="fa fa-history" ></i></button>`
                             // Add a download button next to the history button
-                        `<button class="cls-btndownloadpdfphotosignature" data-toggle="tooltip" data-placement="top" title="Download Details">
+                            `<button class="cls-btndownloadpdfphotosignature" data-toggle="tooltip" data-placement="top" title="Download Details">
                                 <img src="/Images/digitalsign.png" width="40" />
-                                </button>`;                          
+                                </button>`;
                     }
-                },                                                    
+                },
             ];
             break;
         default:
             columns = [
-                
+
                 // Serial number column
                 {
                     title: "S No",
@@ -424,7 +424,7 @@ function getColumnsForClosedHistory(UserType, ApplyForId) {
                         return `<span class="dt-ellipsis" data-bs-toggle="tooltip" data-bs-placement="top" title="${data}">${data}</span>`;
                     }
                 },
-                                           
+
                 {
                     title: `<div>History</div>`,
                     className: "noExport",
@@ -437,10 +437,10 @@ function getColumnsForClosedHistory(UserType, ApplyForId) {
                             // Add a download button next to the history button
                             + `<button class="cls-btndownloadpdfphotosignature" data-toggle="tooltip" data-placement="top" title="Download Closed Details">
                                 <img src="/Images/digitalsign.png" width="40" />
-                                </button>`;                   
+                                </button>`;
                     }
                 },
-               
+
             ];
     }
     return columns;
@@ -474,7 +474,7 @@ function GetClosedHistoryByRequestId(RequestId) {
         type: 'POST',
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (response) {
-          
+
             if (response.Result == true) {
                 let listItem = "";
                 let listItem2 = "";
@@ -1114,8 +1114,8 @@ function SetCompletedHistoryHeader(requestId) {
 }
 
 function DownloadPdfHistory(RequestId) {
-    try {        
-        const encryptedRequest = encryptPayloadData(RequestId);        
+    try {
+        const encryptedRequest = encryptPayloadData(RequestId);
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/BasicDetail/GenerateClosedHistoryPDF';

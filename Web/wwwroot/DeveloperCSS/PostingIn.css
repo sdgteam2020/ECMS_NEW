@@ -1,43 +1,457 @@
-﻿.form-group .labelprofile {
-    font-weight: 600;
+﻿/* =====================================================
+   ECMS - Posting Out
+   Page-specific UI layout only.
+
+   Shared ModernCSS remains the source of truth for:
+   - page/background/breadcrumb
+   - cards/page title/section title
+   - form controls/buttons/badges
+   - colors/radius/shadows
+
+   This file only handles Posting Out page geometry,
+   profile/unit layouts and datetimepicker compatibility.
+   ===================================================== */
+
+
+/* =====================================================
+   DESKTOP FULL-WIDTH VIEWPORT FIT
+   ===================================================== */
+@media (min-width: 1200px) {
+    html:has(.ecms-postingin-page),
+    body:has(.ecms-postingin-page) {
+        overflow-y: hidden !important;
+    }
+
+    .ecms-postingin-page.ecms-page.ecms-page-full {
+        width: calc(100vw - 1rem) !important;
+        max-width: none !important;
+        height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height, var(--ecms-nav-height)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height)) - var(--ecms-footer-height) ) !important;
+        min-height: 0 !important;
+        margin: 0 auto !important;
+        padding: .5rem 0 !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+    }
 }
 
-.containerMain {
-    margin-left: 10%;
-    margin-right: 10%;
+
+/* =====================================================
+   MAIN CARD
+   ===================================================== */
+.ecms-postingin-shell {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: visible !important;
 }
 
-/* overall popup */
+
+/* =====================================================
+   PAGE TITLE
+   ===================================================== */
+.ecms-postingin-header {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin: 0 0 .55rem 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: .75rem !important;
+}
+
+.ecms-postingin-title-wrap {
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: .7rem !important;
+}
+
+    .ecms-postingin-title-wrap > div {
+        min-width: 0 !important;
+    }
+
+    .ecms-postingin-title-wrap h3 {
+        margin: 0 !important;
+    }
+
+.ecms-postingin-title-icon.ecms-title-icon {
+    background: linear-gradient( 135deg, var(--ecms-primary-500), var(--ecms-primary-700, var(--ecms-primary-600)) ) !important;
+}
+
+.ecms-postingin-armyno {
+    flex: 0 0 auto !important;
+    min-height: 2rem !important;
+    padding: .35rem .75rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: .35rem !important;
+    white-space: nowrap !important;
+}
+
+    .ecms-postingin-armyno strong {
+        margin-left: .15rem !important;
+    }
+
+
+/* =====================================================
+   FORM / MAIN GRID
+   ===================================================== */
+.ecms-postingin-form {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.ecms-postingin-grid {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(16rem, .34fr) minmax(0, .66fr) !important;
+    gap: .55rem !important;
+}
+
+
+/* =====================================================
+   PERSONAL DETAILS
+   ===================================================== */
+.ecms-postingin-profile {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+    .ecms-postingin-profile > .ecms-section-title,
+    .ecms-postingin-section > .ecms-section-title {
+        flex: 0 0 var(--ecms-section-title-height) !important;
+    }
+
+.ecms-postingin-profile-body {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    padding: .65rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .6rem !important;
+    overflow: auto !important;
+}
+
+.ecms-postingin-photo-wrap {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: .2rem !important;
+}
+
+.ecms-postingin-photo {
+    width: 8.75rem !important;
+    height: 9.75rem !important;
+    max-width: 100% !important;
+    border: var(--ecms-border) !important;
+    border-radius: var(--ecms-radius-lg) !important;
+    object-fit: cover !important;
+    background: var(--ecms-card-surface) !important;
+}
+
+.ecms-postingin-detail-list {
+    min-width: 0 !important;
+}
+
+
+/* =====================================================
+   COMMON DISPLAY ROWS
+   ===================================================== */
+.ecms-postingin-detail-row {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 2.15rem !important;
+    margin: 0 0 .3rem 0 !important;
+    padding: .38rem .55rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(7rem, 38%) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: .55rem !important;
+    border: var(--ecms-border) !important;
+    border-radius: var(--ecms-radius-md) !important;
+    background: var(--ecms-card-surface) !important;
+}
+
+    .ecms-postingin-detail-row:last-child {
+        margin-bottom: 0 !important;
+    }
+
+    .ecms-postingin-detail-row > span {
+        min-width: 0 !important;
+        font-weight: 800 !important;
+    }
+
+    .ecms-postingin-detail-row > strong {
+        min-width: 0 !important;
+        font-weight: 700 !important;
+        overflow-wrap: anywhere !important;
+    }
+
+
+/* =====================================================
+   WORKFLOW / SECTIONS
+   ===================================================== */
+.ecms-postingin-workflow {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .55rem !important;
+    overflow: visible !important;
+}
+
+.ecms-postingin-section {
+    min-width: 0 !important;
+    flex: 0 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: visible !important;
+}
+
+.ecms-postingin-section-body {
+    min-width: 0 !important;
+    padding: .55rem !important;
+}
+
+.ecms-postingin-form-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .45rem .75rem !important;
+}
+
+.ecms-postingin-unit-grid {
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .55rem !important;
+}
+
+.ecms-postingin-unit-body {
+    min-width: 0 !important;
+    padding: .55rem !important;
+}
+
+
+/* =====================================================
+   FORM FIELDS
+   Common ModernCSS owns control appearance.
+   ===================================================== */
+.ecms-postingin-field {
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(7rem, 34%) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: .55rem !important;
+}
+
+    .ecms-postingin-field > label {
+        min-width: 0 !important;
+        margin: 0 !important;
+        font-weight: 800 !important;
+    }
+
+    .ecms-postingin-field > div {
+        min-width: 0 !important;
+    }
+
+    .ecms-postingin-field .form-control,
+    .ecms-postingin-field .form-select,
+    .ecms-postingin-field select,
+    .ecms-postingin-field input {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+.ecms-postingin-readonly {
+    min-height: 2.15rem !important;
+    padding: .4rem .6rem !important;
+    display: flex !important;
+    align-items: center !important;
+    border: var(--ecms-border) !important;
+    border-radius: var(--ecms-radius-md) !important;
+    background: var(--ecms-card-surface) !important;
+    font-weight: 700 !important;
+}
+
+
+/* =====================================================
+   ACTIONS
+   ===================================================== */
+.ecms-postingin-actions {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 2.6rem !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#btnPostingOut {
+    min-width: 7.5rem !important;
+}
+
+
+/* =====================================================
+   DATETIMEPICKER
+   Keep the existing plugin behavior while improving fit.
+   ===================================================== */
 .bootstrap-datetimepicker-widget {
-    width: 440px !important;
-    font-size: 14px;
+    width: min(27.5rem, calc(100vw - 2rem)) !important;
+    max-width: calc(100vw - 2rem) !important;
+    z-index: 2055 !important;
+    border-radius: var(--ecms-radius-md) !important;
+    box-shadow: var(--ecms-shadow-lg) !important;
+    font-size: .875rem !important;
 }
 
-    /*calendar area width*/
     .bootstrap-datetimepicker-widget .datepicker {
-        width: 320px;
+        width: 20rem !important;
+        max-width: 100% !important;
     }
 
-    /*time area width*/
     .bootstrap-datetimepicker-widget .timepicker {
-        width: 100px;
+        width: 6.25rem !important;
     }
 
-    /*make day cells bigger/smaller*/
     .bootstrap-datetimepicker-widget table td,
     .bootstrap-datetimepicker-widget table th {
-        width: 36px;
-        height: 32px;
+        width: 2.25rem !important;
+        height: 2rem !important;
     }
 
-    /*optional: smaller/bigger buttons*/
     .bootstrap-datetimepicker-widget .btn {
-        padding: 4px 10px;
-        font-size: 13px;
+        padding: .25rem .625rem !important;
+        font-size: .8rem !important;
     }
 
 .dtp-okcancel {
-    padding: 8px 10px;
-    /*border-top: 1px solid #ddd;*/
-    text-align: right;
+    padding: .5rem .625rem !important;
+    text-align: right !important;
+}
+
+
+/* jQuery UI autocomplete must stay above page cards/widgets. */
+.ui-autocomplete {
+    z-index: 2060 !important;
+    max-height: 15rem !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+
+/* =====================================================
+   RESPONSIVE FALLBACK
+   ===================================================== */
+@media (max-width: 1199.98px) {
+    html:has(.ecms-postingin-page),
+    body:has(.ecms-postingin-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-postingin-page.ecms-page.ecms-page-full {
+        height: auto !important;
+        min-height: 0 !important;
+        margin-top: .5rem !important;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-postingin-shell,
+    .ecms-postingin-form {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+}
+
+
+@media (max-width: 991.98px) {
+    .ecms-postingin-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-postingin-profile-body {
+        overflow: visible !important;
+    }
+
+    .ecms-postingin-unit-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+@media (max-width: 767.98px) {
+    .ecms-postingin-page.ecms-page.ecms-page-full {
+        width: calc(100vw - .75rem) !important;
+    }
+
+    .ecms-postingin-header {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
+
+    .ecms-postingin-armyno {
+        align-self: flex-start !important;
+    }
+
+    .ecms-postingin-form-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-postingin-field,
+    .ecms-postingin-detail-row {
+        grid-template-columns: 1fr !important;
+        gap: .2rem !important;
+    }
+
+    .ecms-postingin-photo {
+        width: 7.5rem !important;
+        height: 8.5rem !important;
+    }
+}
+
+
+/* Very short desktop screens: let the workflow body scroll rather than
+   create a browser scrollbar. */
+@media (min-width: 1200px) and (max-height: 760px) {
+    .ecms-postingin-profile-body,
+    .ecms-postingin-workflow {
+        overflow-y: auto !important;
+        overflow-x: visible !important;
+    }
+
+    .ecms-postingin-photo {
+        width: 7.25rem !important;
+        height: 8rem !important;
+    }
+
+    .ecms-postingin-detail-row {
+        min-height: 1.95rem !important;
+        margin-bottom: .2rem !important;
+        padding-top: .28rem !important;
+        padding-bottom: .28rem !important;
+    }
+
+    .ecms-postingin-section-body,
+    .ecms-postingin-unit-body {
+        padding-top: .4rem !important;
+        padding-bottom: .4rem !important;
+    }
 }

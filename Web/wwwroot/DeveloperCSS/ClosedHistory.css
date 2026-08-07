@@ -1,16 +1,13 @@
 ﻿/* =====================================================
-   ECMS - Completed History
+   ECMS - I-Card Closed History
    Page-specific layout only.
 
    Shared ModernCSS remains the source of truth for:
-   - page/background/breadcrumb
-   - cards/page titles/section titles
-   - DataTables/search/length/pagination
-   - buttons/badges/modals/forms
-   - colors/radius/shadows
+   page/background/breadcrumb, cards, page titles, sections,
+   DataTables, buttons, badges, modals, colors, radius and shadows.
 
-   This file only handles CompletedHistory-specific sizing,
-   action geometry and the complex history modal layout.
+   This file only handles ClosedHistory-specific sizing,
+   action geometry and the complex three-column history modal.
    ===================================================== */
 
 
@@ -18,12 +15,12 @@
    DESKTOP FULL-WIDTH VIEWPORT FIT
    ===================================================== */
 @media (min-width: 1200px) {
-    html:has(.ecms-completedhistory-page),
-    body:has(.ecms-completedhistory-page) {
+    html:has(.ecms-closedhistory-page),
+    body:has(.ecms-closedhistory-page) {
         overflow-y: hidden !important;
     }
 
-    .ecms-completedhistory-page.ecms-page.ecms-page-full {
+    .ecms-closedhistory-page.ecms-page.ecms-page-full {
         width: calc(100vw - 1rem) !important;
         max-width: none !important;
         height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height, var(--ecms-nav-height)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height)) - var(--ecms-footer-height) ) !important;
@@ -38,9 +35,8 @@
 
 /* =====================================================
    MAIN CARD
-   ecms-card / ecms-card-body supply surface/radius/shadow.
    ===================================================== */
-.ecms-completedhistory-shell {
+.ecms-closedhistory-shell {
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
@@ -55,7 +51,7 @@
 /* =====================================================
    PAGE TITLE
    ===================================================== */
-.ecms-completedhistory-header {
+.ecms-closedhistory-header {
     flex: 0 0 auto !important;
     width: 100% !important;
     margin: 0 0 .55rem 0 !important;
@@ -65,26 +61,26 @@
     gap: .75rem !important;
 }
 
-.ecms-completedhistory-title-wrap {
+.ecms-closedhistory-title-wrap {
     min-width: 0 !important;
     display: flex !important;
     align-items: center !important;
     gap: .7rem !important;
 }
 
-    .ecms-completedhistory-title-wrap > div {
+    .ecms-closedhistory-title-wrap > div {
         min-width: 0 !important;
     }
 
-    .ecms-completedhistory-title-wrap h3 {
+    .ecms-closedhistory-title-wrap h3 {
         margin: 0 !important;
     }
 
-.ecms-completedhistory-title-icon.ecms-title-icon {
-    background: linear-gradient( 135deg, var(--ecms-success-500), var(--ecms-primary-500) ) !important;
+.ecms-closedhistory-title-icon.ecms-title-icon {
+    background: var(--ecms-primary-600) !important;
 }
 
-.ecms-completedhistory-status {
+.ecms-closedhistory-status {
     flex: 0 0 auto !important;
     min-height: 2rem !important;
     padding: .35rem .7rem !important;
@@ -96,9 +92,9 @@
 
 
 /* =====================================================
-   COMPLETED RECORDS SECTION
+   CLOSED RECORDS SECTION
    ===================================================== */
-.ecms-completedhistory-records {
+.ecms-closedhistory-records {
     flex: 1 1 auto !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -108,16 +104,16 @@
     overflow: hidden !important;
 }
 
-    .ecms-completedhistory-records > .ecms-section-title {
+    .ecms-closedhistory-records > .ecms-section-title {
         flex: 0 0 var(--ecms-section-title-height) !important;
     }
 
 
 /* =====================================================
    DATATABLE REMAINING-HEIGHT LAYOUT
-   Global ModernCSS controls visual appearance.
+   Shared ModernCSS controls the actual table styling.
    ===================================================== */
-.ecms-completedhistory-table-panel {
+.ecms-closedhistory-table-panel {
     flex: 1 1 auto !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -126,15 +122,15 @@
     overflow: hidden !important;
 }
 
-    .ecms-completedhistory-table-panel .dataTables_wrapper,
-    .ecms-completedhistory-table-panel .dt-container {
+    .ecms-closedhistory-table-panel .dataTables_wrapper,
+    .ecms-closedhistory-table-panel .dt-container {
         width: 100% !important;
         height: 100% !important;
         min-height: 0 !important;
     }
 
-.ecms-completedhistory-page .dt-top,
-.ecms-completedhistory-page .ecms-dt-toolbar {
+.ecms-closedhistory-page .dt-top,
+.ecms-closedhistory-page .ecms-dt-toolbar {
     flex: 0 0 auto !important;
     width: 100% !important;
     min-height: 2.75rem !important;
@@ -147,23 +143,22 @@
     gap: .5rem !important;
 }
 
-.ecms-completedhistory-page .dt-buttons:empty {
+.ecms-closedhistory-page .dt-buttons:empty {
     display: none !important;
 }
 
-.ecms-completedhistory-page .ecms-dt-footer {
+.ecms-closedhistory-page .ecms-dt-footer {
     flex: 0 0 auto !important;
 }
 
-.ecms-completedhistory-page .dt-ellipsis {
+.ecms-closedhistory-page .dt-ellipsis {
     max-width: 100% !important;
 }
 
 
-/* Application History action buttons generated by JS.
-   Keep only dimensions/alignment; common button classes own colors. */
-.ecms-completedhistory-page .cls-historyRequest.btn-icon,
-.ecms-completedhistory-page .cls-historyRequest.btn-round {
+/* History action button generated by JS */
+.ecms-closedhistory-page .cls-historyRequest.btn-icon,
+.ecms-closedhistory-page .cls-historyRequest.btn-round {
     width: 2.125rem !important;
     height: 2.125rem !important;
     min-width: 2.125rem !important;
@@ -174,12 +169,14 @@
     vertical-align: middle !important;
 }
 
-.ecms-completedhistory-page .cls-historyRequest i {
+.ecms-closedhistory-page .cls-historyRequest i {
     margin: 0 !important;
     line-height: 1 !important;
 }
 
-.ecms-completedhistory-page .cls-btndownloadpdfsignature {
+
+/* Signed-detail download icon generated by JS */
+.ecms-closedhistory-page .cls-btndownloadpdfphotosignature {
     width: 2.125rem !important;
     height: 2.125rem !important;
     min-width: 2.125rem !important;
@@ -193,7 +190,7 @@
     vertical-align: middle !important;
 }
 
-    .ecms-completedhistory-page .cls-btndownloadpdfsignature img {
+    .ecms-closedhistory-page .cls-btndownloadpdfphotosignature img {
         width: 1.75rem !important;
         height: 1.75rem !important;
         object-fit: contain !important;
@@ -201,37 +198,34 @@
 
 
 /* =====================================================
-   COMPLETED HISTORY MODAL
-   Global modal theme owns header/surface/buttons.
-   These rules only solve sizing and the 3-column generated content.
+   CLOSED HISTORY MODAL
+   Global modal theme owns the visual skin.
+   These rules only manage size and inner scrolling.
    ===================================================== */
-#BasicDetailCompletedHistory .ecms-completedhistory-dialog {
+#BasicDetailClosedHistory .ecms-closedhistory-dialog {
     width: min(96vw, 1500px) !important;
     max-width: min(96vw, 1500px) !important;
     margin-left: auto !important;
     margin-right: auto !important;
 }
 
-#BasicDetailCompletedHistory .modal-content {
+#BasicDetailClosedHistory .modal-content {
     max-height: calc(100vh - 2rem) !important;
     overflow: hidden !important;
 }
 
-#BasicDetailCompletedHistory .modal-header {
+#BasicDetailClosedHistory .modal-header,
+#BasicDetailClosedHistory .modal-footer {
     flex: 0 0 auto !important;
 }
 
-#BasicDetailCompletedHistory .modal-body {
+#BasicDetailClosedHistory .modal-body {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     overflow: hidden !important;
 }
 
-#BasicDetailCompletedHistory .modal-footer {
-    flex: 0 0 auto !important;
-}
-
-#BasicDetailCompletedHistory .ecms-completedhistory-modal-grid {
+#BasicDetailClosedHistory .ecms-closedhistory-modal-grid {
     height: 100% !important;
     margin: 0 !important;
     border: 0 !important;
@@ -239,13 +233,13 @@
     box-shadow: none !important;
 }
 
-    #BasicDetailCompletedHistory .ecms-completedhistory-modal-grid > .row {
+    #BasicDetailClosedHistory .ecms-closedhistory-modal-grid > .row {
         height: 100% !important;
         margin-left: -.35rem !important;
         margin-right: -.35rem !important;
     }
 
-        #BasicDetailCompletedHistory .ecms-completedhistory-modal-grid > .row > [class*="col-"] {
+        #BasicDetailClosedHistory .ecms-closedhistory-modal-grid > .row > [class*="col-"] {
             min-width: 0 !important;
             min-height: 0 !important;
             height: 100% !important;
@@ -255,44 +249,47 @@
             overflow: auto !important;
         }
 
-/* Generated Bootstrap cards inside the three columns should consume
-   the common card appearance without oversized legacy shadows. */
-#BasicDetailCompletedHistory .modal-body .card {
+
+/* Dynamically generated content */
+#BasicDetailClosedHistory .modal-body .card {
     margin-bottom: .6rem !important;
 }
 
-#BasicDetailCompletedHistory .modal-body .feature-box3 {
+#BasicDetailClosedHistory .modal-body .feature-box3 {
     min-height: 0 !important;
-    box-shadow: var(--ecms-shadow-sm) !important;
     border-radius: var(--ecms-radius-md) !important;
+    box-shadow: var(--ecms-shadow-sm) !important;
 }
 
-#BasicDetailCompletedHistory .modal-body img {
+#BasicDetailClosedHistory .modal-body img {
     max-width: 100% !important;
     object-fit: contain !important;
 }
 
-/* Keep photo/signature boxes stable. */
-#CompletedHistory_BasicDetail_Data img {
+#ClosedHistory_BasicDetail_Data img {
     height: auto !important;
 }
 
-    #CompletedHistory_BasicDetail_Data img[height="50"] {
+    #ClosedHistory_BasicDetail_Data img[height="50"] {
         height: 3.125rem !important;
     }
 
-/* Timeline content can be long; prevent horizontal page breaking. */
-#BasicDetailCompletedHistory .timeline-item-content,
-#BasicDetailCompletedHistory .posting-out-details,
-#BasicDetailCompletedHistory .form-control-plaintext {
+#BasicDetailClosedHistory .timeline-item-content,
+#BasicDetailClosedHistory .posting-out-details,
+#BasicDetailClosedHistory .form-control-plaintext {
     overflow-wrap: anywhere !important;
     word-break: normal !important;
 }
 
-#BasicDetailCompletedHistory .arrow-icon-box {
+#BasicDetailClosedHistory .arrow-icon-box {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+}
+
+#BasicDetailClosedHistory .cls-btndownloadclosedhistorypdf {
+    margin-left: .45rem !important;
+    vertical-align: middle !important;
 }
 
 
@@ -300,12 +297,12 @@
    RESPONSIVE FALLBACK
    ===================================================== */
 @media (max-width: 1199.98px) {
-    html:has(.ecms-completedhistory-page),
-    body:has(.ecms-completedhistory-page) {
+    html:has(.ecms-closedhistory-page),
+    body:has(.ecms-closedhistory-page) {
         overflow-y: auto !important;
     }
 
-    .ecms-completedhistory-page.ecms-page.ecms-page-full {
+    .ecms-closedhistory-page.ecms-page.ecms-page-full {
         height: auto !important;
         min-height: 0 !important;
         margin-top: .5rem !important;
@@ -314,30 +311,30 @@
         overflow: visible !important;
     }
 
-    .ecms-completedhistory-shell {
+    .ecms-closedhistory-shell {
         height: auto !important;
         min-height: 0 !important;
         overflow: visible !important;
     }
 
-    .ecms-completedhistory-records {
+    .ecms-closedhistory-records {
         min-height: 31rem !important;
     }
 
-    .ecms-completedhistory-table-panel {
+    .ecms-closedhistory-table-panel {
         min-height: 27rem !important;
     }
 }
 
 
 @media (max-width: 991.98px) {
-    #BasicDetailCompletedHistory .modal-body {
+    #BasicDetailClosedHistory .modal-body {
         overflow: auto !important;
     }
 
-    #BasicDetailCompletedHistory .ecms-completedhistory-modal-grid,
-    #BasicDetailCompletedHistory .ecms-completedhistory-modal-grid > .row,
-    #BasicDetailCompletedHistory .ecms-completedhistory-modal-grid > .row > [class*="col-"] {
+    #BasicDetailClosedHistory .ecms-closedhistory-modal-grid,
+    #BasicDetailClosedHistory .ecms-closedhistory-modal-grid > .row,
+    #BasicDetailClosedHistory .ecms-closedhistory-modal-grid > .row > [class*="col-"] {
         height: auto !important;
         overflow: visible !important;
     }
@@ -345,25 +342,25 @@
 
 
 @media (max-width: 767.98px) {
-    .ecms-completedhistory-page.ecms-page.ecms-page-full {
+    .ecms-closedhistory-page.ecms-page.ecms-page-full {
         width: calc(100vw - .75rem) !important;
     }
 
-    .ecms-completedhistory-header {
+    .ecms-closedhistory-header {
         align-items: flex-start !important;
         flex-direction: column !important;
     }
 
-    .ecms-completedhistory-status {
+    .ecms-closedhistory-status {
         align-self: flex-start !important;
     }
 
-    .ecms-completedhistory-page .dt-top,
-    .ecms-completedhistory-page .ecms-dt-toolbar {
+    .ecms-closedhistory-page .dt-top,
+    .ecms-closedhistory-page .ecms-dt-toolbar {
         align-items: stretch !important;
     }
 
-    #BasicDetailCompletedHistory .ecms-completedhistory-dialog {
+    #BasicDetailClosedHistory .ecms-closedhistory-dialog {
         width: calc(100vw - 1rem) !important;
         max-width: calc(100vw - 1rem) !important;
         margin: .5rem auto !important;

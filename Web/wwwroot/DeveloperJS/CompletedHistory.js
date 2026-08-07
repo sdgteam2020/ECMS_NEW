@@ -65,7 +65,7 @@ function BindData(UserType, ApplyForId) {
                 sortDirection: data.order.length > 0 ? data.order[0].dir : '', // Add a check for data.order
                 UserType: UserType,
                 ApplyForId: ApplyForId,
-                CValue:0
+                CValue: 0
             };
             let encryptedPayload = "";
             if (requestData) {
@@ -189,7 +189,7 @@ function BindData(UserType, ApplyForId) {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No / Appl ID" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top ecms-dt-toolbar d-flex justify-content-between align-items-center flex-wrap'lBf>rt<'ecms-dt-footer row no-gutters'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>", // Shared ModernCSS DataTable toolbar/footer
         buttons: [
             //{
             //    extend: 'copy',
@@ -635,10 +635,10 @@ function GetCompletedHistoryByRequestId(RequestId) {
                             ? `
                                 <ul>
                                     ${item.Remarks2
-                                                .split("#")
-                                                .filter(x => x.trim() !== "")
-                                                .map(x => `<li>${x}</li>`)
-                                                .join("")}
+                                .split("#")
+                                .filter(x => x.trim() !== "")
+                                .map(x => `<li>${x}</li>`)
+                                .join("")}
                                 </ul>
                               `
                             : "";
@@ -706,10 +706,10 @@ function GetCompletedHistoryByRequestId(RequestId) {
                             ? `
                                 <ul>
                                     ${faultyCardItem.RemarksNameList
-                                                .split("#")
-                                                .filter(x => x.trim() !== "")
-                                                .map(x => `<li>${x}</li>`)
-                                                .join("")}
+                                .split("#")
+                                .filter(x => x.trim() !== "")
+                                .map(x => `<li>${x}</li>`)
+                                .join("")}
                                 </ul>
                               `
                             : "";
@@ -807,7 +807,7 @@ function GetCompletedHistoryByRequestId(RequestId) {
                         </div>
                     `;
 
-                    return initialSubmissionHtml + movementHtml;
+                        return initialSubmissionHtml + movementHtml;
 
                     }).join("");
                 }

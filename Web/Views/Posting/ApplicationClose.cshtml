@@ -13,137 +13,156 @@
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Appl Close Indl Army No
-                        <small class="text-muted"><span id="iarmynopostingin"></span></small>
-                    </h3>
+<div class="containerMain mt-n10 ecms-appclose-page ecms-page ecms-page-full ecms-fit-screen">
+    <div class="ecms-appclose-shell ecms-card ecms-card-body">
+
+        <div class="ecms-appclose-header ecms-page-title">
+            <div class="ecms-appclose-title-wrap">
+                <span class="ecms-appclose-title-icon ecms-title-icon">
+                    <i class="fa fa-times-circle"></i>
+                </span>
+
+                <div>
+                    <h3>Application Close</h3>
+                    <p class="ecms-title-subtitle">
+                        Review individual details and submit the application closure request
+                    </p>
                 </div>
             </div>
+
+            <span class="ecms-appclose-armyno badge badge-primary">
+                <i class="fa fa-id-card"></i>
+                Army No:
+                <strong id="iarmynopostingin"></strong>
+            </span>
         </div>
-        <div class="card-body" >
-            <div class="row g-3 row-deck mb-3">
-                <form action="" id="SaveForm" method="post" name="SaveForm">
-                    <div class="row">
-                        <div class="col-md-12 ">
-                            <div class="card cardbg minheight mb-2 mt-2">
-                                <div class="mt-2 ml-4">
-                                    <div class="row">
-                                        <div class="col-sm-5">
-                                            <div class="row">
-                                                <div class="seven">
-                                                    <h1>Personal Details</h1>
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <div class="row">
-                                                        <div class="col-sm-12 text-center">
-                                                            <img src="" id="pstimage" height="180" class=" border border-primary" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <div class="row">
-                                                        <div class="col-sm-12">
-                                                            <div class="form-group row mb-2">
-                                                                <label class="col-form-label col-sm-4 labelprofile">First Name</label>
-                                                                <div class="col-sm-8">
-                                                                    <label id="lblFName" class="col-form-label"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12">
-                                                            <div class="form-group row mb-2">
-                                                                <label class="col-form-label col-sm-4 labelprofile">Last Name</label>
-                                                                <div class="col-sm-8">
-                                                                    <label id="lblLName" class="col-form-label"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12">
-                                                            <div class="form-group row mb-2">
-                                                                <label class="col-form-label col-sm-4 labelprofile">Category</label>
-                                                                <div class="col-sm-8">
-                                                                    <label id="lblCategory" class="col-form-label"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12">
-                                                            <div class="form-group row mb-2">
-                                                                <label class="col-form-label col-sm-4 labelprofile">Status of I Card</label>
-                                                                <div class="col-sm-8">
-                                                                    <label id="lblStatusofInds" class="col-form-label"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12">
-                                                            <div class="form-group row mb-2">
-                                                                <label class="col-form-label col-sm-4 labelprofile">Appl Id</label>
-                                                                <div class="col-sm-8">
-                                                                    <label id="lblApplId" class="col-form-label"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-7">
-                                            <div class="seven">
-                                                <h1>Appl Close Details</h1>
-                                            </div>
-                                            <div class="row p-2">
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Posting Type</label>
-                                                        <div class="col-sm-8">
-                                                            <label class="form-label">Appl Close</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Reason</label>
-                                                        <div class="col-sm-8">
-                                                            <select class="form-select full-width" id="ddlpostingReason" required>
-                                                                <option value="">Select One</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Authority</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="text" id="txtAuthority" class="form-control-Alphabets" placeholder="Enter Authority" maxlength="50" required />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="form-group row mb-2">
-                                                        <label class="col-form-label col-sm-4 labelprofile">Remarks</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="text" id="txtremarks" class="form-control alpha-num-only" maxlength="50" placeholder="Enter Remarks" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12 text-center mb-4">
-                                            <input type="button" class="btn btn-primary" id="btnApplicationClose" value="Appl Close" />
-                                        </div>
-                                    </div>
-                                </div>
+
+        <form action=""
+              id="SaveForm"
+              method="post"
+              name="SaveForm"
+              class="ecms-appclose-form">
+
+            <div class="ecms-appclose-grid">
+
+                <!-- Personal Details -->
+                <section class="ecms-appclose-profile ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-user"></i>
+                        Personal Details
+                    </h5>
+
+                    <div class="ecms-appclose-profile-body">
+
+                        <div class="ecms-appclose-photo-wrap">
+                            <img src=""
+                                 id="pstimage"
+                                 class="ecms-appclose-photo"
+                                 alt="Individual photograph" />
+                        </div>
+
+                        <div class="ecms-appclose-detail-list">
+
+                            <div class="ecms-appclose-detail-row">
+                                <span>First Name</span>
+                                <strong id="lblFName"></strong>
                             </div>
+
+                            <div class="ecms-appclose-detail-row">
+                                <span>Last Name</span>
+                                <strong id="lblLName"></strong>
+                            </div>
+
+                            <div class="ecms-appclose-detail-row">
+                                <span>Category</span>
+                                <strong id="lblCategory"></strong>
+                            </div>
+
+                            <div class="ecms-appclose-detail-row">
+                                <span>Status of I Card</span>
+                                <strong id="lblStatusofInds"></strong>
+                            </div>
+
+                            <div class="ecms-appclose-detail-row">
+                                <span>Appl Id</span>
+                                <strong id="lblApplId"></strong>
+                            </div>
+
                         </div>
                     </div>
-                </form>
+                </section>
+
+
+                <!-- Application Close Details -->
+                <section class="ecms-appclose-details ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-lock"></i>
+                        Appl Close Details
+                    </h5>
+
+                    <div class="ecms-appclose-details-body">
+
+                        <div class="ecms-appclose-control-row">
+                            <label>Posting Type</label>
+
+                            <div class="ecms-appclose-readonly">
+                                Appl Close
+                            </div>
+                        </div>
+
+                        <div class="ecms-appclose-control-row">
+                            <label for="ddlpostingReason">Reason</label>
+
+                            <div class="ecms-appclose-field-wrap">
+                                <select class="form-select full-width"
+                                        id="ddlpostingReason"
+                                        required>
+                                    <option value="">Select One</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="ecms-appclose-control-row">
+                            <label for="txtAuthority">Authority</label>
+
+                            <div class="ecms-appclose-field-wrap">
+                                <input type="text"
+                                       id="txtAuthority"
+                                       class="form-control form-control-Alphabets"
+                                       placeholder="Enter Authority"
+                                       maxlength="50"
+                                       required />
+                            </div>
+                        </div>
+
+                        <div class="ecms-appclose-control-row ecms-appclose-remarks-row">
+                            <label for="txtremarks">Remarks</label>
+
+                            <div class="ecms-appclose-field-wrap">
+                                <input type="text"
+                                       id="txtremarks"
+                                       class="form-control alpha-num-only"
+                                       maxlength="50"
+                                       placeholder="Enter Remarks" />
+                            </div>
+                        </div>
+
+                        <div class="ecms-appclose-actions ecms-form-actions">
+                            <input type="button"
+                                   class="btn btn-danger"
+                                   id="btnApplicationClose"
+                                   value="Appl Close" />
+                        </div>
+
+                    </div>
+                </section>
+
             </div>
-        </div>
+
+        </form>
+
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/apllclose.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>

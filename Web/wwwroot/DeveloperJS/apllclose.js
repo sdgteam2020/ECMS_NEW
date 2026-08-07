@@ -85,7 +85,7 @@ function Save() {
                     window.location.href = "/Posting/AppCloseList/?jcoor=SmNvL09ycw==";
                 }
             }
-             else {
+            else {
                 toastr.error(result.Message);
             }
         }
@@ -117,10 +117,10 @@ function GetdataPostingData(ArmyNo) {
 
                 $("#lblApplId").html(response.RequestId);
                 $("#pstimage").attr("src", response.PhotoImagePath);
-                $("#lblUnitname").html(response.UnitName + ' (' + response.Sus_no + '' + response.Suffix+')');
+                $("#lblUnitname").html(response.UnitName + ' (' + response.Sus_no + '' + response.Suffix + ')');
 
                 $("#lblRegdUser").html(response.Users_ArmyNo);
-                $("#lblFromName").html(response.Users_RankName + ' ' + response.Users_Name );
+                $("#lblFromName").html(response.Users_RankName + ' ' + response.Users_Name);
                 $("#lblFromDomainId").html(response.Users_DomainId);
                 RequestId = response.RequestId;
             }

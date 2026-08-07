@@ -5,7 +5,7 @@ $(function () {
     applyDataTableSearchValidation('#tbldata');
 
     BindData();
-    $("#btnAdd").on("click",function () {
+    $("#btnAdd").on("click", function () {
         $("#armynosearchAllName").html("");
         $("#txtarmynosearchAll").val("");
         $("#armynosearchAllpic").attr("src", "");
@@ -73,7 +73,7 @@ function BindData() {
                 title: "S No",
                 data: null,
                 name: "SerialNumber",
-                orderable: false, 
+                orderable: false,
                 className: "text-center col-sno",
                 width: "60px",
                 render: function (data, type, row, meta) {
@@ -199,7 +199,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Army No" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top ecms-dt-toolbar d-flex justify-content-between align-items-center flex-wrap'lBf>rt<'ecms-dt-footer row no-gutters'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>", // Shared ModernCSS DataTable toolbar/footer
         buttons: [
             //{
             //    extend: 'copy',
@@ -297,7 +297,7 @@ async function GetRemarksData(remarksRemarksIds) {
         if (result != null) {
             var remarksArray = result.split('#');
             if (remarksArray != null) {
-                var listItem="";
+                var listItem = "";
                 listItem += "<ul>";
                 for (var j = 0; j < remarksArray.length; j++) {
                     listItem += "<li>" + remarksArray[j] + "</li>";

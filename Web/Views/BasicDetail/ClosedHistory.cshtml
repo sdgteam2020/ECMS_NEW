@@ -4,6 +4,7 @@
 <link asp-href-include="~/select2/css/select2.min.css" rel="stylesheet" />
 <link asp-href-include="~/css/popupprintcss.css" rel="stylesheet" />
 <partial name="~/Views/Shared/_DataTableCSS.cshtml" />
+<link asp-href-include="~/developercss/ClosedHistory.css" rel="stylesheet" />
 
 <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
     <div class="containerMain">
@@ -41,65 +42,106 @@
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <span class="d-none" id="spnType">@ViewBag.UserType</span>
-            <span class="d-none" id="spnJCOOR">@ViewBag.ApplyForId</span>
-                  
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        @ViewBag.Title
-                        <small class="text-muted"></small>
-                    </h3>
+<div class="containerMain mt-n10 ecms-closedhistory-page ecms-page ecms-page-full ecms-fit-screen">
+    <div class="ecms-closedhistory-shell ecms-card ecms-card-body">
+
+        <span class="d-none" id="spnType">@ViewBag.UserType</span>
+        <span class="d-none" id="spnJCOOR">@ViewBag.ApplyForId</span>
+
+        <div class="ecms-closedhistory-header ecms-page-title">
+            <div class="ecms-closedhistory-title-wrap">
+                <span class="ecms-closedhistory-title-icon ecms-title-icon">
+                    <i class="fa fa-archive"></i>
+                </span>
+
+                <div>
+                    <h3>@ViewBag.Title</h3>
+                    <p class="ecms-title-subtitle">
+                        Review closed I-Card applications, closure details and complete history
+                    </p>
                 </div>
+            </div>
+
+            <span class="ecms-closedhistory-status badge badge-secondary">
+                <i class="fa fa-lock"></i>
+                Closed
+            </span>
+        </div>
+
+        <div class="ecms-closedhistory-records ecms-section ecms-min-0">
+            <h5 class="ecms-section-title">
+                <i class="fa fa-history"></i>
+                Closed Application Records
+            </h5>
+
+            <div class="ecms-closedhistory-table-panel ecms-dt-wrap ecms-min-0">
+                <table class="table table-striped table-hover border border-purple ecms-dt-table"
+                       role="grid"
+                       id="tbldatatabledata_ClosedHistory">
+                </table>
             </div>
         </div>
-        <div class="card-body card-body-min-height">
-            <div class="row">
-                <div class="col-xl-12">                          
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tbldatatabledata_ClosedHistory">
-                    </table>
-                </div>
-            </div>
-        </div><!-- Row End -->
-        <div class="modal fade" id="BasicDetailClosedHistory" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
-            <div class="modal-dialog modal-xl modal-dialog-centered">
+
+    </div>
+</div>
+
+<div class="modal fade ecms-closedhistory-modal"
+     id="BasicDetailClosedHistory"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered ecms-closedhistory-dialog">
         <div class="modal-content">
+
             <div class="modal-header">
-                        <h5 class="modal-title w-100 text-center" id="exampleModalLabel_BasicDetailViewPurpose">I Card History</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title w-100 text-center"
+                    id="exampleModalLabel_BasicDetailViewPurpose">
+                    I Card History
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
             </div>
+
             <div class="modal-body">
-                <div class="card">
+                <div class="card ecms-closedhistory-modal-grid">
                     <div class="row">
+
                         <div class="col-sm-4 mb-3">
-                           <div id="ClosedHistory_BasicDetail_Data">
-                            </div>
+                            <div id="ClosedHistory_BasicDetail_Data"></div>
                         </div>
-                        <div class="col-sm-4 mb-3 overflow-auto">
-                           <div id="ClosedHistory_Fwd_Details">
-                            </div>
-                        </div>
+
                         <div class="col-sm-4 mb-3">
-                         <div id="ClosedHistory_Dispatch_Details">
-                            </div>
+                            <div id="ClosedHistory_Fwd_Details"></div>
                         </div>
+
+                        <div class="col-sm-4 mb-3">
+                            <div id="ClosedHistory_Dispatch_Details"></div>
+                        </div>
+
                     </div>
                 </div>
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary d-print-none" data-bs-dismiss="modal">Close</button>
+                <button type="button"
+                        class="btn btn-secondary d-print-none"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
             </div>
+
         </div>
-    </div>
-</div>
     </div>
 </div>
 
 @section Scripts {
     <script asp-src-include="~/developerjs/ClosedHistoryDetails.js"></script>
-     
+
     <partial name="~/Views/Shared/_DataTableJS.cshtml" />
 }

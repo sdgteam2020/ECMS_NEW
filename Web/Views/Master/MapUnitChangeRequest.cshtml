@@ -27,30 +27,30 @@
     </div>
 </header>
 
-<div class="containerMain mt-n10 ecms-mapunitreq-page">
-    <div class="ecms-mapunitreq-shell">
-        <form action="" id="SaveMapUnitChange" method="post" name="SaveMapUnitChange" class="ecms-mapunitreq-form">
+<div class="containerMain mt-n10 ecms-mapunitreq-page ecms-page ecms-page-full ecms-fit-screen">
+    <div class="ecms-mapunitreq-shell ecms-card ecms-card-body">
+        <form action="" id="SaveMapUnitChange" method="post" name="SaveMapUnitChange" class="ecms-mapunitreq-form ecms-form">
             <span class="d-none" id="spnMapUnitChangeRequestId">@(ViewBag.MapUnitChangeRequestId ?? 0)</span>
             <span class="d-none" id="spnUnitMapId">@ViewBag.MapUnitId</span>
             <span class="d-none" id="spnRN">@ViewBag.RoleName</span>
 
-            <div class="ecms-mapunitreq-titlebar">
+            <div class="ecms-mapunitreq-titlebar ecms-page-title">
                 <div class="ecms-mapunitreq-title-wrap">
-                    <span class="ecms-mapunitreq-title-icon"><i class="fa fa-random"></i></span>
+                    <span class="ecms-mapunitreq-title-icon ecms-title-icon"><i class="fa fa-random"></i></span>
                     <div>
                         <h3>Profile Mapping Details</h3>
-                        <p>Review existing hierarchy and submit unit hierarchy recalibration request</p>
+                        <p class="ecms-title-subtitle">Review existing hierarchy and submit unit hierarchy recalibration request</p>
                     </div>
                 </div>
 
-                <span class="ecms-mapunitreq-role-pill">
+                <span class="ecms-mapunitreq-role-pill badge badge-primary">
                     <i class="fa fa-user"></i>
                     @ViewBag.RoleName
                 </span>
             </div>
 
             <div class="ecms-mapunitreq-info-row">
-                <div class="ecms-mapunitreq-info-card unit-info">
+                <div class="ecms-mapunitreq-info-card unit-info ecms-tile">
                     <span class="ecms-mapunitreq-info-icon"><i class="fa fa-building"></i></span>
                     <div>
                         <span class="ecms-mapunitreq-info-label">Unit Name</span>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
 
-                <div class="ecms-mapunitreq-info-card request-info">
+                <div class="ecms-mapunitreq-info-card request-info ecms-tile">
                     <span class="ecms-mapunitreq-info-icon"><i class="fa fa-user-circle"></i></span>
                     <div>
                         <span class="ecms-mapunitreq-info-label">Request By</span>
@@ -68,13 +68,13 @@
             </div>
 
             <div class="ecms-mapunitreq-grid">
-                <div class="ecms-mapunitreq-panel">
-                    <div class="ecms-mapunitreq-panel-header">
+                <div class="ecms-mapunitreq-panel ecms-section ecms-min-0">
+                    <div class="ecms-mapunitreq-panel-header ecms-section-title">
                         <i class="fa fa-sitemap"></i>
                         <span>Current Hierarchy</span>
                     </div>
 
-                    <div id="CurrentUnitHierarchy" class="ecms-mapunitreq-panel-body d-none">
+                    <div id="CurrentUnitHierarchy" class="ecms-mapunitreq-panel-body ecms-min-0 d-none">
                         <div class="ecms-mapunitreq-detail-row">
                             <span class="labelUnit">Unit Type</span>
                             <strong id="lblUnitType"></strong>
@@ -117,13 +117,13 @@
                     </div>
                 </div>
 
-                <div class="ecms-mapunitreq-panel">
-                    <div class="ecms-mapunitreq-panel-header">
+                <div class="ecms-mapunitreq-panel ecms-section ecms-min-0">
+                    <div class="ecms-mapunitreq-panel-header ecms-section-title">
                         <i class="fa fa-refresh"></i>
                         <span>Unit Hierarchy Recalibration</span>
                     </div>
 
-                    <div id="ChangeUnitHierarchy" class="ecms-mapunitreq-panel-body d-none">
+                    <div id="ChangeUnitHierarchy" class="ecms-mapunitreq-panel-body ecms-min-0 d-none">
                         <div class="ecms-mapunitreq-control-row unittype">
                             <label for="ddlCommand" class="labelUnit">Comd / PSO<i class="fa fa-asterisk mand1"></i></label>
                             <select class="form-select" name="ddlCommand" required id="ddlCommand">
@@ -176,7 +176,7 @@
                         <div class="ecms-mapunitreq-control-row textarea-row">
                             <label for="txtRemark" class="labelUnit">Remark<i class="fa fa-asterisk mand1"></i></label>
                             <div class="ecms-mapunitreq-field-wrap">
-                                <textarea class="form-control1 textarea-auto-height js-uppercase" name="txtRemark" id="txtRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                <textarea class="form-control form-control1 textarea-auto-height js-uppercase" name="txtRemark" id="txtRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
                                 <span class="text-danger field-validation-valid" data-valmsg-for="txtRemark" data-valmsg-replace="true"></span>
                             </div>
                         </div>
@@ -184,14 +184,14 @@
                         <div class="ecms-mapunitreq-control-row textarea-row AdminRemark d-none">
                             <label for="txtAdminRemark" class="labelUnit">Admin Remark<i class="fa fa-asterisk mand1"></i></label>
                             <div class="ecms-mapunitreq-field-wrap">
-                                <textarea class="form-control1 textarea-auto-height js-uppercase" name="txtAdminRemark" id="txtAdminRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+                                <textarea class="form-control form-control1 textarea-auto-height js-uppercase" name="txtAdminRemark" id="txtAdminRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
                                 <span class="text-danger field-validation-valid" data-valmsg-for="txtAdminRemark" data-valmsg-replace="true"></span>
                             </div>
                         </div>
 
-                        <div class="ecms-mapunitreq-button-row">
-                            <input type="button" class="btn btn-primary ecms-reject-btn" id="btnReject" value="Reject" />
-                            <input type="button" class="btn btn-primary ecms-accept-btn" id="btnAccept" value="Accept and Update Mapping" />
+                        <div class="ecms-mapunitreq-button-row ecms-form-actions">
+                            <input type="button" class="btn btn-danger ecms-reject-btn" id="btnReject" value="Reject" />
+                            <input type="button" class="btn btn-success ecms-accept-btn" id="btnAccept" value="Accept and Update Mapping" />
                             <input type="button" class="btn btn-primary ecms-submit-btn" id="btnSubmit" value="Submit" />
                         </div>
                     </div>
