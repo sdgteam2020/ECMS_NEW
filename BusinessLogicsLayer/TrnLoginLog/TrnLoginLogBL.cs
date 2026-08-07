@@ -53,7 +53,7 @@ namespace BusinessLogicsLayer.TrnLoginLog
         {
             return _iTrnLoginLogDB.XmlFileDigitalSign(Data);
         } 
-        public Task<DTOXmlFilesFwdLogRequest> XmlFileDigitalSignFromData(int[] RequestId)
+        public Task<DTOXmlFilesFwdLogRequest> XmlFileDigitalSignFromData(int RequestId)
         {
             return _iTrnLoginLogDB.XmlFileDigitalSignFromData(RequestId);
         }

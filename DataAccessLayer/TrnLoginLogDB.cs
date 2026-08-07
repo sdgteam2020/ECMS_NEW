@@ -81,15 +81,15 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="RequestId">The array of RequestId(s) to query.</param>
         /// <returns>Returns the first matching XmlFilesFwdLog record.</returns>
-        public async Task<DTOXmlFilesFwdLogRequest> XmlFileDigitalSignFromData(int[] RequestId)
+        public async Task<DTOXmlFilesFwdLogRequest> XmlFileDigitalSignFromData(int RequestId)
         {
           
-            string query = "select Id,[XmlFiles],[RequestId],[Updatedby],[UpdatedOn],[IsActive] from XmlFilesFwdLog where RequestId in @RequestId";
+            string query = "select Id,[XmlFiles],[RequestId],[Updatedby],[UpdatedOn],[IsActive] from XmlFilesFwdLog where RequestId = @RequestId";
 
             using (var connection = _contextDP2.CreateConnection())
             {
-                var Ret = await connection.QueryAsync<DTOXmlFilesFwdLogRequest>(query, new { RequestId });
-                return Ret.FirstOrDefault();
+                var Ret = await connection.QueryFirstOrDefaultAsync<DTOXmlFilesFwdLogRequest>(query, new { RequestId });
+                return Ret;
             }
         }
 

@@ -279,6 +279,7 @@ namespace Web.Controllers
                 trnPostingOut.Updatedby = CurrentAspNetUsersId;
                 trnPostingOut.UpdatedOn = DateTime.Now;  // Set the updated timestamp
 
+
                 // Check if the model is valid
                 ModelState.Clear();
                 if (TryValidateModel(dTO))
@@ -286,18 +287,19 @@ namespace Web.Controllers
                     closeResponse = await _iPostingBL.BeforePostingOutCheckedInputData(trnPostingOut);
                     if (closeResponse.Result == true)
                     {
+                        DTOGenericResponse<int> result = new DTOGenericResponse<int>();
                         // If it's a new record, use UpdateForPosting method (this handles both add and update)
-                        bool result = await _iPostingBL.UpdateForPosting(trnPostingOut);  // Attempt to add or update the record
-                        if (result == true)
+                        result = await _iPostingBL.UpdateForPosting(trnPostingOut, closeResponse);  // Attempt to add or update the record
+                        if (result.Result == true)
                         {
-                            response.Message = "Posting Out successfully";
+                            response.Message = result.Message;
                             response.Value = closeResponse;
                             response.Result = true;
                             return Ok(response);
                         }
                         else
                         {
-                            response.Message = "Internal Server Error.";
+                            response.Message = result.Message;
                             response.Value = closeResponse;
                             response.Result = false;
                             return Ok(response);

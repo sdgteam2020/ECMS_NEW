@@ -42,7 +42,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<DTONotificationResult> GetNotification(int UserId);
         public Task<List<DTONotificationResponse>?> GetNotificationRequestId(int UserId, int Type,int applyForId);
         public Task<List<DTODataExportsResponse>> GetDataForExportAndUpdateRequestAndStep(DTODataExportRequest Data, DTOApplFwdConditionRequest dTOApplFwdCondition);
-        public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataExportRequest Data);
+        public Task<DTOXMLDigitalResponse> GetDataDigitalXmlSign(DTODataDigitalXmlSignRequest Data);
         public Task<List<MRecordOffice>?> GetROListByArmedId(byte ArmedId);
         Task<List<DTOCardPriningRequest>> ValidateCardPrinitng(List<DTOCardPriningRequest> request, int CardPrintedByAspNetUserId, int CardPrintedByUserId);
         public Task<List<DTOCardDispatchCheckRequest>> ValidateCardDispatchData(int[] RequestIds, byte ClaimValue, DTODispatchOutRequest dTO);
@@ -62,6 +62,7 @@ namespace BusinessLogicsLayer.BasicDet
         public Task<ICardHistoryResponseAll> GetCompletedHistoryByRequestId(int RequestId);
         public Task<ICardHistoryResponseAll?> GetClosedHistoryByRequestId(int RequestId);
         public Task<DTOGenericResponse<DTOGetICardPrintPreviewByRequestIdResponse>> GetICardPrintPreviewByRequestId(int RequestId);
+        public Task<DTOGenericResponse<DTOGetBasicDetailForPdfDigitalSignature>> GetBasicDetailForPdfDigitalSignature(int RequestId);
         public string MaskAadhaar(string? aadhaarNumber);
         public string FormatServiceNo(string? serviceNo);
     }
