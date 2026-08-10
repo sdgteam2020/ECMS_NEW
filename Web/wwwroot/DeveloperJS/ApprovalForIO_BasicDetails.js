@@ -272,10 +272,12 @@ function getColumnsForApprovalForIO(cvalue, JCOOR, Type) {
         case "0":
             columns = [
                 {
-                    title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_ApprovalForIO">
-                    <label class="custom-control-label" for="chkAll_ApprovalForIO"></label>
-                    </div></div>`,
+                    title: `<div class="wd-30-f ecms-checkbox-cell">
+                    <input type="checkbox"
+                           class="ecms-dt-checkbox"
+                           id="chkAll_ApprovalForIO"
+                           aria-label="Select all applications">
+                    </div>`,
                     className: "noExport",
                     width: "40px",
                     data: null,
@@ -283,15 +285,22 @@ function getColumnsForApprovalForIO(cvalue, JCOOR, Type) {
                     orderable: false, // Disable sorting for this column
                     render: function (data, type, row, meta) {
                         if ($("#chkAll_ApprovalForIO").prop('checked')) {
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                            return `<div class="ecms-checkbox-cell">
+                                    <input type="checkbox"
+                                           class="ecms-dt-checkbox chkRequestId"
+                                           id="${row.RequestId}"
+                                           value="${row.RequestId}"
+                                           aria-label="Select application ${row.RequestId}"
+                                           checked>
                                 </div>`;
                         } else {
 
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                            return `<div class="ecms-checkbox-cell">
+                                    <input type="checkbox"
+                                           class="ecms-dt-checkbox chkRequestId"
+                                           id="${row.RequestId}"
+                                           value="${row.RequestId}"
+                                           aria-label="Select application ${row.RequestId}">
                                 </div>`;
                         }
                     }
@@ -422,10 +431,12 @@ function getColumnsForApprovalForIO(cvalue, JCOOR, Type) {
         default:
             columns = [
                 {
-                    title: `<div class="wd-30-f"><div class="custom-control custom-checkbox small">
-                    <input type="checkbox" class="custom-control-input" id="chkAll_ApprovalForIO">
-                    <label class="custom-control-label" for="chkAll_ApprovalForIO"></label>
-                    </div></div>`,
+                    title: `<div class="wd-30-f ecms-checkbox-cell">
+                    <input type="checkbox"
+                           class="ecms-dt-checkbox"
+                           id="chkAll_ApprovalForIO"
+                           aria-label="Select all applications">
+                    </div>`,
                     className: "noExport",
                     width: "40px",
                     data: null,
@@ -433,15 +444,22 @@ function getColumnsForApprovalForIO(cvalue, JCOOR, Type) {
                     orderable: false, // Disable sorting for this column
                     render: function (data, type, row, meta) {
                         if ($("#chkAll_ApprovalForIO").prop('checked')) {
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}" checked>
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                            return `<div class="ecms-checkbox-cell">
+                                    <input type="checkbox"
+                                           class="ecms-dt-checkbox chkRequestId"
+                                           id="${row.RequestId}"
+                                           value="${row.RequestId}"
+                                           aria-label="Select application ${row.RequestId}"
+                                           checked>
                                 </div>`;
                         } else {
 
-                            return `<div class="custom-control custom-checkbox small">
-                                    <input type="checkbox" class="custom-control-input chkRequestId" id="${row.RequestId}" value="${row.RequestId}">
-                                    <label class="custom-control-label" for="${row.RequestId}"></label>
+                            return `<div class="ecms-checkbox-cell">
+                                    <input type="checkbox"
+                                           class="ecms-dt-checkbox chkRequestId"
+                                           id="${row.RequestId}"
+                                           value="${row.RequestId}"
+                                           aria-label="Select application ${row.RequestId}">
                                 </div>`;
                         }
                     }

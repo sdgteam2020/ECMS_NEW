@@ -150,21 +150,21 @@
 }
 
 /* -----------------------------------------------------
-   Checkbox alignment
-   ApprovalForIO generates Bootstrap custom-control markup from JS.
-   The real checkbox is centered so master/row selection remains
-   unchanged and usable.
+   DataTable checkbox visibility + alignment
+
+   IMPORTANT:
+   The table now renders native checkbox inputs instead of Bootstrap
+   .custom-control-input markup. Bootstrap hides custom-control-input
+   with opacity/position rules; native inputs avoid that conflict.
+   Existing IDs/classes used by CheckedFunction.js are preserved.
    ----------------------------------------------------- */
-.ecms-approval-page .wd-30-f,
-.ecms-approval-page .wd-30-f .custom-control,
-.ecms-approval-page .custom-control.custom-checkbox.small,
-.ecms-approval-page td.noExport .custom-control.custom-checkbox,
-.ecms-approval-page th.noExport .custom-control.custom-checkbox {
+.ecms-approval-page .wd-30-f.ecms-checkbox-cell,
+.ecms-approval-page .ecms-checkbox-cell {
     position: static !important;
     width: 100% !important;
     min-width: 0 !important;
-    min-height: 1.5rem !important;
-    margin: 0 auto !important;
+    min-height: 1.6rem !important;
+    margin: 0 !important;
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
@@ -172,45 +172,72 @@
     overflow: visible !important;
 }
 
-.ecms-approval-page #chkAll_ApprovalForIO,
-.ecms-approval-page .chkRequestId,
-.ecms-approval-page .custom-control-input {
+/* Native master + row checkboxes.
+   Explicitly reset every property commonly used to hide Bootstrap
+   custom-control inputs. */
+.ecms-approval-page #chkAll_ApprovalForIO.ecms-dt-checkbox,
+.ecms-approval-page .chkRequestId.ecms-dt-checkbox,
+.ecms-approval-page input.ecms-dt-checkbox {
     position: static !important;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
     float: none !important;
-    display: inline-block !important;
-    width: 1rem !important;
-    height: 1rem !important;
-    min-width: 1rem !important;
-    min-height: 1rem !important;
-    margin: 0 !important;
+    display: block !important;
+    width: 1.15rem !important;
+    height: 1.15rem !important;
+    min-width: 1.15rem !important;
+    min-height: 1.15rem !important;
+    margin: 0 auto !important;
     padding: 0 !important;
     opacity: 1 !important;
     visibility: visible !important;
+    clip: auto !important;
+    clip-path: none !important;
     transform: none !important;
     appearance: auto !important;
     -webkit-appearance: checkbox !important;
     accent-color: var(--ecms-success-500) !important;
+    pointer-events: auto !important;
     cursor: pointer !important;
+    z-index: 2 !important;
 }
 
+/* Ensure the checkbox column remains visible and centered in both
+   DataTables' cloned header and body table. */
+.ecms-approval-page #tbldatatabledata_Fwd th.noExport:first-child,
+.ecms-approval-page #tbldatatabledata_Fwd td.noExport:first-child,
+.ecms-approval-page .dataTables_scrollHead th.noExport:first-child,
+.ecms-approval-page .dt-scroll-head th.noExport:first-child,
+.ecms-approval-page .dataTables_scrollBody td.noExport:first-child,
+.ecms-approval-page .dt-scroll-body td.noExport:first-child {
+    width: 3rem !important;
+    min-width: 3rem !important;
+    max-width: 3rem !important;
+    padding-left: .25rem !important;
+    padding-right: .25rem !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+}
+
+/* The master checkbox is inside the blue table header. */
+.ecms-approval-page .dataTables_scrollHead #chkAll_ApprovalForIO,
+.ecms-approval-page .dt-scroll-head #chkAll_ApprovalForIO,
+.ecms-approval-page thead #chkAll_ApprovalForIO {
+    outline: 1px solid rgba(255, 255, 255, .75) !important;
+    outline-offset: 1px !important;
+}
+
+/* Remove any legacy Bootstrap custom-control label artifact if an old
+   cached row exists during a DataTable redraw. */
 .ecms-approval-page .custom-control-label,
 .ecms-approval-page .custom-control-label::before,
 .ecms-approval-page .custom-control-label::after {
     display: none !important;
     content: none !important;
-}
-
-/* Generated first checkbox column must stay compact and centered. */
-.ecms-approval-page #tbldatatabledata_Fwd th.noExport:first-child,
-.ecms-approval-page #tbldatatabledata_Fwd td.noExport:first-child,
-.ecms-approval-page .dataTables_scrollHead th.noExport:first-child,
-.ecms-approval-page .dt-scroll-head th.noExport:first-child {
-    width: 3rem !important;
-    min-width: 3rem !important;
-    max-width: 3rem !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    text-align: center !important;
 }
 
 /* JS-generated icon contains Bootstrap mt-2; keep icon centered. */
