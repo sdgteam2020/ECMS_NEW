@@ -67,10 +67,8 @@ namespace DataAccessLayer
             List<DTODispatchCardForCSVResponse> dTOs = new List<DTODispatchCardForCSVResponse>();
 
             // SQL query to select dispatch card data based on the provided RequestIds
-            string query = @"SELECT req.RequestId as ApplId,
-                            ranks.RankAbbreviation as RankName,
-                            basi.FName as FName_1, basi.LName as LName_1,basic_2.FName as FName_2, basic_2.LName as LName_2, basi.ServiceNo,
-                            req.ChipNo, req.CardSerialNo
+            string query = @"SELECT req.RequestId as ApplId,req.ChipNo, req.CardSerialNo,ranks.RankAbbreviation as RankName,
+                            basi.FName as FName_1, basi.LName as LName_1,basic_2.FName as FName_2, basic_2.LName as LName_2, ISNULL(basi.ServiceNo,basic_2.ServiceNo) as ServiceNo
                          from TrnICardRequest req
                          LEFT JOIN BasicDetails basi on req.BasicDetailId = basi.BasicDetailId
 						 LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
@@ -330,7 +328,7 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetAllDispatchCard");
+                _logger.LogError(1001, ex, "BasicDetailDB->GetDispatchCardStatusListForDialog");
                 List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
                 var responseData = new DTODataTablesWithSelectedIdsResponse<DTODispatchCardStatusResponse>
                 {
@@ -470,7 +468,7 @@ namespace DataAccessLayer
             }
             catch (Exception ex)
             {
-                _logger.LogError(1001, ex, "BasicDetailDB->GetAllDispatchCard");
+                _logger.LogError(1001, ex, "BasicDetailDB->GetDispatchCardStatusListForExport");
                 List<DTODispatchCardStatusResponse> dTOCards = new List<DTODispatchCardStatusResponse>();
                 var responseData = new DTODataTablesResponse<DTODispatchCardStatusResponse>
                 {
@@ -855,99 +853,102 @@ namespace DataAccessLayer
                     if (connection.State != ConnectionState.Open)
                         connection.Open(); // Keep connection open throughout
 
+                    // Only running requests
+                    var runningRequests = context.TrnICardRequest.Where(x => x.StatusId == (byte)RequestStatusEnum.Running);
+
                     foreach (var batchRecords in RequestIds.Chunk(5000))
                     {
-                        var resultInChunks = await Task.Run(() =>
+                        List<DTOCardDispatchCheckRequest> resultInChunks;
+
+                        if (ClaimValue == 1)
                         {
-                            if (ClaimValue == 1)
+                            if (dTO.ApplyForId == 1)
                             {
-                                if (dTO.ApplyForId == 1)
-                                {
-                                    return (from record in batchRecords
-                                            join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
-                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
-                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
-                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
-                                            select new DTOCardDispatchCheckRequest
-                                            {
-                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
-                                                ApplId = RequestIdExists?.RequestId ?? 0,
-                                                IsValid = RequestIdExists != null && RequestIdExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null,
-                                                Status = RequestIdExists != null && RequestIdExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null ? "Valid" : "DbInvalid",
-                                                Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
-                                                          (RequestIdExists != null && RequestIdExists.RecordOfficeId != dTO.RecordOfficeId ? "Appl number not Valid match to RecordOffice; " : "") +
-                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
-                                            }).ToList();
-                                }
-                                else
-                                {
-                                    return (from record in batchRecords
-                                            join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
-                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
-                                            join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.RegimentalId } into bdMatchJoin
-                                            from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
-                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
-                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
-                                            select new DTOCardDispatchCheckRequest
-                                            {
-                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
-                                                ApplId = RequestIdExists?.RequestId ?? 0,
-                                                IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
-                                                Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
-                                                Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
-                                                          (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Regiment; " : "") +
-                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
-                                            }).ToList();
-                                }
+                                resultInChunks =
+                                        (from record in batchRecords
+                                        join request in runningRequests on record equals request.RequestId into requestJoin
+                                        from requestExists in requestJoin.DefaultIfEmpty()
+                                        join stepStatus in context.TrnStepCounter on new { RequestId = requestExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                                        from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
+                                        select new DTOCardDispatchCheckRequest
+                                        {
+                                            ChipNo = requestExists?.ChipNo ?? string.Empty,
+                                            ApplId = requestExists?.RequestId ?? 0,
+                                            IsValid = requestExists != null && requestExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null,
+                                            Status = requestExists != null && requestExists.RecordOfficeId == dTO.RecordOfficeId && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                            Remarks = (requestExists == null ? "Appl number not exists or request is not running; " : "") +
+                                                        (requestExists != null && requestExists.RecordOfficeId != dTO.RecordOfficeId ? "Appl number not Valid match to RecordOffice; " : "") +
+                                                        (requestExists != null && stepStatusExists == null ? Remarks : "")
+                                        }).ToList();
                             }
                             else
                             {
-                                if (dTO.ApplyForId == 1)
-                                {
-                                    return (from record in batchRecords
-                                            join RequestIdMatch in context.TrnICardRequest on new { RequestId = record, RecordOfficeId = dTO.RecordOfficeId ?? 0}  equals new { RequestIdMatch.RequestId, RequestIdMatch.RecordOfficeId} into RequestIdJoin
-                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
-                                            join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId } into bdMatchJoin
-                                            from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
-                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
-                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
-                                            select new DTOCardDispatchCheckRequest
-                                            {
-                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
-                                                ApplId = RequestIdExists?.RequestId ?? 0,
-                                                IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
-                                                Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
-                                                Remarks = (RequestIdExists == null ? "Appl number not exists / Invalid ORO Id ; " : "") +
-                                                          (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Unit; " : "") +
-                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
-                                            }).ToList();
-                                }
-                                else
-                                {
-                                    return (from record in batchRecords
-                                            join RequestIdMatch in context.TrnICardRequest on record equals RequestIdMatch.RequestId into RequestIdJoin
-                                            from RequestIdExists in RequestIdJoin.DefaultIfEmpty()
-                                            join bdMatch in context.BasicDetails on new { BasicDetailId = RequestIdExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId, RegimentalId = dTO.RegId } equals new { bdMatch.BasicDetailId, bdMatch.UnitId, bdMatch.RegimentalId } into bdMatchJoin
-                                            from bdMatchExists in bdMatchJoin.DefaultIfEmpty()
-                                            join stepStatusMatch in context.TrnStepCounter on new { RequestId = RequestIdExists?.RequestId ?? 0, StepId } equals new { stepStatusMatch.RequestId, stepStatusMatch.StepId } into stepStatusJoin
-                                            from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
-                                            select new DTOCardDispatchCheckRequest
-                                            {
-                                                ChipNo = RequestIdExists?.ChipNo ?? string.Empty,
-                                                ApplId = RequestIdExists?.RequestId ?? 0,
-                                                IsValid = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null,
-                                                Status = RequestIdExists != null && bdMatchExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
-                                                Remarks = (RequestIdExists == null ? "Appl number not exists; " : "") +
-                                                          (RequestIdExists != null && bdMatchExists == null ? "Appl number not Valid match to Unit / Invalid Regiment Id; " : "") +
-                                                          (RequestIdExists != null && stepStatusExists == null ? Remarks : "")
-                                            }).ToList();
-                                }
+                                resultInChunks =
+                                        (from record in batchRecords
+                                        join request in runningRequests on record equals request.RequestId into requestJoin
+                                        from requestExists in requestJoin.DefaultIfEmpty()
+                                        join bd in context.BasicDetails on new { BasicDetailId = requestExists?.BasicDetailId ?? 0, RegimentalId = dTO.RegId } equals new { bd.BasicDetailId, bd.RegimentalId } into bdJoin
+                                        from bdExists in bdJoin.DefaultIfEmpty()
+                                        join stepStatus in context.TrnStepCounter on new { RequestId = requestExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                                        from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
+                                        select new DTOCardDispatchCheckRequest
+                                        {
+                                            ChipNo = requestExists?.ChipNo ?? string.Empty,
+                                            ApplId = requestExists?.RequestId ?? 0,
+                                            IsValid = requestExists != null && bdExists != null && stepStatusExists != null,
+                                            Status = requestExists != null && bdExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                            Remarks = (requestExists == null ? "Appl number not exists or request is not running; " : "") +
+                                                        (requestExists != null && bdExists == null ? "Appl number not Valid match to Regiment; " : "") +
+                                                        (requestExists != null && stepStatusExists == null ? Remarks : "")
+                                        }).ToList();
                             }
-
-                        });
+                        }
+                        else
+                        {
+                            if (dTO.ApplyForId == 1)
+                            {
+                                resultInChunks =
+                                        (from record in batchRecords
+                                        join request in runningRequests on new { RequestId = record, RecordOfficeId = dTO.RecordOfficeId ?? 0}  equals new { request.RequestId, request.RecordOfficeId} into requestJoin
+                                        from requestExists in requestJoin.DefaultIfEmpty()
+                                        join bd in context.BasicDetails on new { BasicDetailId = requestExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId } equals new { bd.BasicDetailId, bd.UnitId } into bdJoin
+                                        from bdExists in bdJoin.DefaultIfEmpty()
+                                        join stepStatus in context.TrnStepCounter on new { RequestId = requestExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                                        from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
+                                        select new DTOCardDispatchCheckRequest
+                                        {
+                                            ChipNo = requestExists?.ChipNo ?? string.Empty,
+                                            ApplId = requestExists?.RequestId ?? 0,
+                                            IsValid = requestExists != null && bdExists != null && stepStatusExists != null,
+                                            Status = requestExists != null && bdExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                            Remarks = (requestExists == null ? "Appl number not exists / Invalid ORO Id / Request is not running; " : "") +
+                                                        (requestExists != null && bdExists == null ? "Appl number not Valid match to Unit; " : "") +
+                                                        (requestExists != null && stepStatusExists == null ? Remarks : "")
+                                        }).ToList();
+                            }
+                            else
+                            {
+                                return (from record in batchRecords
+                                        join request in runningRequests on record equals request.RequestId into requestJoin
+                                        from requestExists in requestJoin.DefaultIfEmpty()
+                                        join bd in context.BasicDetails on new { BasicDetailId = requestExists?.BasicDetailId ?? 0, UnitId = dTO.ToUnitId, RegimentalId = dTO.RegId } equals new { bd.BasicDetailId, bd.UnitId, bd.RegimentalId } into bdJoin
+                                        from bdExists in bdJoin.DefaultIfEmpty()
+                                        join stepStatus in context.TrnStepCounter on new { RequestId = requestExists?.RequestId ?? 0, StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
+                                        from stepStatusExists in stepStatusJoin.DefaultIfEmpty()
+                                        select new DTOCardDispatchCheckRequest
+                                        {
+                                            ChipNo = requestExists?.ChipNo ?? string.Empty,
+                                            ApplId = requestExists?.RequestId ?? 0,
+                                            IsValid = requestExists != null && bdExists != null && stepStatusExists != null,
+                                            Status = requestExists != null && bdExists != null && stepStatusExists != null ? "Valid" : "DbInvalid",
+                                            Remarks = (requestExists == null ? "Appl number not exists or request is not running; " : "") +
+                                                        (requestExists != null && bdExists == null ? "Appl number not Valid match to Unit / Invalid Regiment Id; " : "") +
+                                                        (requestExists != null && stepStatusExists == null ? Remarks : "")
+                                        }).ToList();
+                            }
+                        }
                         response.AddRange(resultInChunks);
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -1382,7 +1383,18 @@ namespace DataAccessLayer
         /// <returns>True if the Army No exists in the BasicDetails table, otherwise false.</returns>
         public async Task<bool> CheckArmyNO(string ArmyNo)
         {
-            return await _context.BasicDetails.AnyAsync(x => x.ServiceNo == ArmyNo);
+            var table1 = _context.BasicDetails
+                .Where(x => x.ServiceNo == ArmyNo)
+                .Select(x => x.ServiceNo);
+
+            var table2 = _context.BasicDetailsAFSAC2
+                .Where(x => x.ServiceNo == ArmyNo)
+                .Select(x => x.ServiceNo);
+
+            return await table1
+                            .Concat(table2)
+                            .AnyAsync();
+
         }
 
 
@@ -1396,16 +1408,26 @@ namespace DataAccessLayer
         {
             try
             {
-                var ret = await (from bd in _context.BasicDetails
-                                 join irequest in _context.TrnICardRequest on bd.BasicDetailId equals irequest.BasicDetailId
-                                 where bd.ServiceNo.Contains(ArmyNo) && irequest.StatusId == 1
-                                 select new DTOTopArmyNoFromICardRequestResponse
-                                 {
-                                     RequestId = irequest.RequestId,
-                                     ServiceNo = bd.ServiceNo,
-                                 }
-                                ).Take(5).ToListAsync();
-                return ret;
+                if (string.IsNullOrWhiteSpace(ArmyNo))
+                {
+                    return new List<DTOTopArmyNoFromICardRequestResponse>();
+                }
+
+                ArmyNo = ArmyNo.Trim();
+
+                return await (
+                   from request in _context.TrnICardRequest where request.StatusId == (byte)RequestStatusEnum.Running
+                   join bd in _context.BasicDetails on request.BasicDetailId equals bd.BasicDetailId
+                   where bd.ServiceNo.StartsWith(ArmyNo)
+                   orderby bd.ServiceNo
+                   select new DTOTopArmyNoFromICardRequestResponse
+                   {
+                       RequestId = request.RequestId,
+                       ServiceNo = bd.ServiceNo
+                   }
+                )
+                .Take(5)
+                .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -1424,21 +1446,24 @@ namespace DataAccessLayer
         {
             try
             {
-                var ret = await (from irequest in _context.TrnICardRequest
-                                 join bd in _context.BasicDetails on irequest.BasicDetailId equals bd.BasicDetailId
-                                 join rk in _context.MRank on bd.RankId equals rk.RankId
-                                 join umap in _context.MapUnit on bd.UnitId equals umap.UnitMapId
-                                 join munit in _context.MUnit on umap.UnitId equals munit.UnitId
-                                 where irequest.RequestId == RequestId
-                                 select new DTOBDetailByRequestIdResponse
-                                 {
-                                     RankName = rk.RankAbbreviation,
-                                     FName = bd.FName,
-                                     LName = bd.LName,
-                                     UnitName = munit.UnitName,
-                                 }
-                                ).FirstOrDefaultAsync();
-                return ret;
+                DTOBDetailByRequestIdResponse? result = 
+                    await (from req in _context.TrnICardRequest
+                            where req.RequestId == RequestId && req.StatusId == (byte)RequestStatusEnum.Running
+                            join bd in _context.BasicDetails on req.BasicDetailId equals bd.BasicDetailId
+                            join ranks in _context.MRank on bd.RankId equals ranks.RankId
+                            join mapunit in _context.MapUnit on bd.UnitId equals mapunit.UnitMapId
+                            join munit in _context.MUnit on mapunit.UnitId equals munit.UnitId
+                            
+                            select new DTOBDetailByRequestIdResponse
+                            {
+                                RankName = ranks.RankAbbreviation,
+                                FName = bd.FName,
+                                LName = bd.LName,
+                                UnitName = munit.UnitName,
+                            }
+                        ).FirstOrDefaultAsync();
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -1455,71 +1480,92 @@ namespace DataAccessLayer
         public async Task<DTODataTablesResponse<DTOICardRequestHoldResponse>> GetAllICardRequestHold(DTODataTablesRequest dTO)
         {
             string selectFields = "";
+            string fromJoinCount = "";
             string fromJoinClause = "";
-            string whereClause = "";
+            string searchFilter = "";
+
             // Map allowed sort columns to DB fields
             Dictionary<string, string> allowedSortColumns = new Dictionary<string, string>();
             allowedSortColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                ["DispatchCardId"] = "RequestId",
-                ["ApplyFor"] = "ApplyFor",
+                ["DispatchCardId"] = "trnicrd.RequestId",
+                ["ServiceNo"] = "ISNULL(B.ServiceNo, basic_2.ServiceNo)",
+                ["ApplyFor"] = "Afor.Name",
+                ["DomainId"] = "u.DomainId",
+                ["HoldReason"] = "thold.HoldReason",
+                ["IsHold"] = "thold.IsHold",
+                ["UpdatedOn"] = "u.UpdatedOn"
             };
+            string sortColumn = allowedSortColumns.TryGetValue(dTO.sortColumn ?? string.Empty,out string? column) ? column : "thold.ICardHoldId";
+            string sortOrder = string.Equals(dTO.sortDirection,"desc",StringComparison.OrdinalIgnoreCase) ? "DESC" : "ASC";
 
-            var sortOrder = dTO.sortDirection == "desc" ? "DESC" : "ASC";
-            selectFields = @"munit.UnitName,B.FName as FName_1, B.LName as LName_1,basic_2.FName as FName_2, basic_2.LName as LName_2,B.ServiceNo,trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn";
+            selectFields = @"munit.UnitName,B.FName as FName_1, B.LName as LName_1,basic_2.FName as FName_2, basic_2.LName as LName_2,ISNULL(B.ServiceNo, basic_2.ServiceNo) AS ServiceNo,
+                            trnicrd.RequestId,Afor.Name ApplyFor,ran.RankAbbreviation RankName,thold.ICardHoldId,thold.HoldReason,thold.UnHoldReason,thold.IsHold,u.DomainId,u.UpdatedOn";
             fromJoinClause = @"FROM MTrnICardHold thold
                                 inner join AspNetUsers u on u.Id = thold.Updatedby
                                 inner join TrnICardRequest trnicrd on trnicrd.RequestId = thold.RequestId                           
                                 LEFT JOIN BasicDetails B on B.BasicDetailId = trnicrd.BasicDetailId
                                 LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = trnicrd.BasicDetailId
-                                inner join MRank ran on ran.RankId=B.RankId
-                                inner join MapUnit mapunit on mapunit.UnitMapId=B.UnitId
-                                inner join MUnit munit on munit.UnitId=mapunit.UnitId
-                                inner join MApplyFor Afor on Afor.ApplyForId = B.ApplyForId";
-            whereClause = @"WHERE
-                                trnicrd.RequestId LIKE '%' + @SearchTerm + '%' OR
-                                B.ServiceNo LIKE '%' + @SearchTerm + '%'
-                                ";
+                                inner join MRank ran on ran.RankId = ISNULL(B.RankId, basic_2.RankId)
+                                inner join MapUnit mapunit on mapunit.UnitMapId = ISNULL(B.UnitId, basic_2.UnitId)
+                                inner join MUnit munit on munit.UnitId = mapunit.UnitId
+                                inner join MApplyFor Afor on Afor.ApplyForId = ISNULL(B.ApplyForId, basic_2.ApplyForId)";
+            
+            fromJoinCount = @"FROM MTrnICardHold thold
+                                inner join AspNetUsers u on u.Id = thold.Updatedby
+                                inner join TrnICardRequest trnicrd on trnicrd.RequestId = thold.RequestId                           
+                                LEFT JOIN BasicDetails B on B.BasicDetailId = trnicrd.BasicDetailId
+                                LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = trnicrd.BasicDetailId";
+
+            searchFilter = @"
+                            WHERE
+                            (
+                                @SearchTerm IS NULL
+                                OR ISNULL(B.ServiceNo, basic_2.ServiceNo) LIKE @SearchTerm
+                                OR u.DomainId LIKE @SearchTerm
+                            )";
             try
             {
-                var sortColumn = allowedSortColumns.ContainsKey(dTO.sortColumn ?? "")
-                ? allowedSortColumns[dTO.sortColumn!]
-                : "thold.ICardHoldId";
-                var multiQuery = $@"
-                        WITH RecordCTE AS (
-                            select  Count(*) OVER () as TotalFilteredRecords,ROW_NUMBER() OVER (ORDER BY {sortColumn} {sortOrder}) AS RowNum, {selectFields} {fromJoinClause} {whereClause}
-                        )
-                        SELECT * FROM RecordCTE WHERE RowNum BETWEEN @Offset AND @Limit;";
+                var sql = $@"
+                            SELECT COUNT(1) AS TotalRecords
+                            {fromJoinCount}
+                            {searchFilter}
+                            OPTION (RECOMPILE);
+
+                            SELECT DISTINCT
+                                    {selectFields}     
+                            {fromJoinClause}
+                            {searchFilter}
+                            ORDER BY {sortColumn} {sortOrder}
+                            OFFSET @Start ROWS
+                            FETCH NEXT @Length ROWS ONLY;
+                            ";
 
                 using (var connection = _contextDP.CreateConnection())
                 {
-                    dTO.searchValue = string.IsNullOrEmpty(dTO.searchValue) ? string.Empty : dTO.searchValue.Trim();
+                    var searchTerm = string.IsNullOrWhiteSpace(dTO.searchValue) ? null : $"{dTO.searchValue}%";
                     var parameters = new DynamicParameters();
-                    parameters.Add("@Offset", dTO.Start + 1, DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@Limit", (dTO.Start + dTO.Length), DbType.Int32, ParameterDirection.Input);
-                    parameters.Add("@SearchTerm", dTO.searchValue, DbType.String, ParameterDirection.Input);
+                    parameters.Add("@Start", dTO.Start, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@Length", dTO.Length, DbType.Int32, ParameterDirection.Input);
+                    parameters.Add("@SearchTerm", searchTerm, DbType.String, ParameterDirection.Input);
 
-                    var ret = await connection.QueryMultipleAsync(multiQuery, parameters);
-                    var records = (await ret.ReadAsync<DTOICardRequestHoldResponse>()).ToList();
-                    if (records != null)
+                    using var multi = await connection.QueryMultipleAsync(sql, parameters);
+
+                    var totalRecords = await multi.ReadFirstOrDefaultAsync<int>();
+
+                    List<DTOICardRequestHoldResponse> records = (await multi.ReadAsync<DTOICardRequestHoldResponse>()).ToList();
+
+                    foreach (var item in records)
                     {
-                        foreach (var item in records)
-                        {
-                            item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
-                            item.LName = item.LName_2 ?? item.LName_1;
-                        }                    
+                        item.FName = item.FName_2 ?? item.FName_1 ?? string.Empty;
+                        item.LName = item.LName_2 ?? item.LName_1;
                     }
-                    else
-                    {
-                        return null;
-                    }
-                    var totalFilteredRecords = records?.FirstOrDefault()?.TotalFilteredRecords;
 
                     var responseData = new DTODataTablesResponse<DTOICardRequestHoldResponse>
                     {
                         draw = dTO.Draw,
-                        recordsTotal = totalFilteredRecords.GetValueOrDefault(),
-                        recordsFiltered = totalFilteredRecords.GetValueOrDefault(),
+                        recordsTotal = totalRecords,
+                        recordsFiltered = totalRecords,
                         data = records,
                         Result = true,
                         Message = "Data retrieved successfully."
@@ -1964,24 +2010,24 @@ namespace DataAccessLayer
         public async Task<int?> MaxBasicDetailId(string ServiceNo)
         {
             const string query = @"SELECT MAX(MaxBasicDetailId) AS MaxBasicDetailId
-FROM
-(
-    SELECT MAX(BasicDetailId) AS MaxBasicDetailId
-    FROM dbo.BasicDetails
-    WHERE ServiceNo = @ServiceNo
+                                    FROM
+                                    (
+                                        SELECT MAX(BasicDetailId) AS MaxBasicDetailId
+                                        FROM dbo.BasicDetails
+                                        WHERE ServiceNo = @ServiceNo
 
-    UNION ALL
+                                        UNION ALL
 
-    SELECT MAX(BasicDetailId) AS MaxBasicDetailId
-    FROM AFSAC2.dbo.BasicDetails
-    WHERE ServiceNo = @ServiceNo
-) AS T;";
+                                        SELECT MAX(BasicDetailId) AS MaxBasicDetailId
+                                        FROM AFSAC2.dbo.BasicDetails
+                                        WHERE ServiceNo = @ServiceNo
+                                    ) AS T;";
 
             try
             {
                 using var connection = _contextDP.CreateConnection();
 
-                int? result = await connection.QueryFirstOrDefaultAsync<int?>(query, new { ServiceNo = ServiceNo });
+                int? result = await connection.QueryFirstOrDefaultAsync<int?>(query, new { ServiceNo });
 
                 return result;
             }
@@ -2007,7 +2053,7 @@ FROM
             {
                 query = @"Select Distinct TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,req.CardSerialNo,req.ChipNo
                             from TrnICardRequest req
-                            inner join TrnDomainMapping map on map.Id = req.TrnDomainMappingId AND map.UnitId=@MapUnitId AND req.StatusId=1
+                            inner join TrnDomainMapping map on map.Id = req.TrnDomainMappingId AND map.UnitId=@MapUnitId AND req.StatusId=@RunningStatusId
                             inner join BasicDetails basi on basi.BasicDetailId=req.BasicDetailId 
                             inner join TrnUpload trnu on basi.BasicDetailId=trnu.BasicDetailId 
                             where ServiceNo like @ServiceNo ";
@@ -2016,25 +2062,23 @@ FROM
             {
                 if (dto.Claim == 1)
                 {
-                    query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                    query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,req.CardSerialNo,req.ChipNo
                                 from TrnICardRequest req
-                                inner join TrnStepCounter stepcount on stepcount.RequestId = req.RequestId AND stepcount.StepId=6 AND req.StatusId=1
+                                inner join TrnStepCounter stepcount on stepcount.RequestId = req.RequestId AND stepcount.StepId=6 AND req.StatusId=@RunningStatusId
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                                 inner join BasicDetails basi on basi.BasicDetailId=req.BasicDetailId 
                                 inner join TrnUpload trnu on trnu.BasicDetailId = basi.BasicDetailId
-                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 where ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
                 }
                 else
                 {
-                    query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                    query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,req.CardSerialNo,req.ChipNo
                                 from TrnICardRequest req
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId=14 AND req.StatusId=1
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId=14 AND req.StatusId=@RunningStatusId
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 inner join BasicDetails basi on basi.BasicDetailId=req.BasicDetailId 
                                 inner join TrnUpload trnu on trnu.BasicDetailId = basi.BasicDetailId
-                                LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                                 where ServiceNo like @ServiceNo
                                 Group by basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath,req.RequestId,req.CardSerialNo,req.ChipNo";
                 }
@@ -2042,15 +2086,14 @@ FROM
             }
             else if (dto.TypeId == KeyConstants.HoltlistCardRequest)
             {
-                query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,req.CardSerialNo,req.ChipNo
                             from TrnICardRequest req
-                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId = 15 AND req.StatusId = 2
+                            inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId = 15 AND req.StatusId = @CompleteStatusId
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                             LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId 
                             LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
                             LEFT JOIN TrnUpload trnu on trnu.BasicDetailId = bd.BasicDetailId
                             LEFT JOIN AFSAC2.dbo.TrnUpload trnu_2 on trnu_2.BasicDetailId = basic_2.BasicDetailId
-                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                             Left join TrnHotlistCards thc on req.RequestId = thc.RequestId
                             where thc.RequestId is null AND (bd.ServiceNo LIKE @ServiceNo OR basic_2.ServiceNo LIKE @ServiceNo)
                             Group by 
@@ -2067,7 +2110,7 @@ FROM
             }
             else if (dto.TypeId == KeyConstants.LostCardRequest)
             {
-                query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,req.CardSerialNo,req.ChipNo
                             from TrnICardRequest req
                             inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId in (6,11,12,13,14,15) AND req.StatusId in (1,2)
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
@@ -2075,7 +2118,6 @@ FROM
                             LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
                             LEFT JOIN TrnUpload trnu on trnu.BasicDetailId = bd.BasicDetailId
                             LEFT JOIN AFSAC2.dbo.TrnUpload trnu_2 on trnu_2.BasicDetailId = basic_2.BasicDetailId
-                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                             Left join TrnLostCards tlc on req.RequestId = tlc.RequestId
                             Left join TrnDestructionCards tld on req.RequestId = tld.RequestId
                             where tlc.RequestId is null AND tld.RequestId is null AND (bd.ServiceNo LIKE @ServiceNo OR basic_2.ServiceNo LIKE @ServiceNo)
@@ -2095,7 +2137,7 @@ FROM
             {
                 query = @$"Select TOP 5 basi.BasicDetailId,FName,LName,ServiceNo,PhotoImagePath Image,req.RequestId,0 AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
                                 from TrnICardRequest req
-                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId=14 AND req.StatusId=1
+                                inner join TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND stepcount.StepId=14 AND req.StatusId = @RunningStatusId
                                 inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId and tdm.UnitId=@MapUnitId
                                 inner join BasicDetails basi on basi.BasicDetailId=req.BasicDetailId 
                                 inner join TrnUpload trnu on trnu.BasicDetailId = basi.BasicDetailId
@@ -2106,15 +2148,14 @@ FROM
             }
             else if (dto.TypeId == KeyConstants.DestructionCardRequest)
             {
-                query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,COALESCE(MAX(fwd.TrnFwdId), NULL) AS MaxTrnFwdId,req.CardSerialNo,req.ChipNo
+                query = @$"Select TOP 5 ISNULL(bd.BasicDetailId, basic_2.BasicDetailId) AS BasicDetailId,bd.FName AS FName_1,bd.LName AS LName_1,basic_2.FName AS FName_2,basic_2.LName AS LName_2,ISNULL(bd.ServiceNo, basic_2.ServiceNo) AS ServiceNo,ISNULL(trnu.PhotoImagePath, trnu_2.PhotoImagePath) AS Image,req.RequestId,req.CardSerialNo,req.ChipNo
                             from TrnICardRequest req
-                            INNER JOIN TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND ((stepcount.StepId in (15) AND req.StatusId = 2) OR (stepcount.StepId in (14) AND req.StatusId = 3))
+                            INNER JOIN TrnStepCounter stepcount on req.RequestId=stepcount.RequestId AND ((stepcount.StepId in (15) AND req.StatusId = @CompleteStatusId) OR (stepcount.StepId in (14) AND req.StatusId = @ClosedStatusId))
                             inner join TrnDomainMapping tdm on tdm.Id=req.TrnDomainMappingId
                             LEFT JOIN BasicDetails bd on bd.BasicDetailId=req.BasicDetailId 
                             LEFT JOIN AFSAC2.dbo.BasicDetails basic_2 on basic_2.BasicDetailId = req.BasicDetailId
                             LEFT JOIN TrnUpload trnu on trnu.BasicDetailId = bd.BasicDetailId
                             LEFT JOIN AFSAC2.dbo.TrnUpload trnu_2 on trnu_2.BasicDetailId = basic_2.BasicDetailId
-                            LEFT JOIN TrnFwds fwd ON fwd.RequestId = req.RequestId
                             Left join TrnDestructionCards tlc on req.RequestId = tlc.RequestId
                             where tlc.RequestId is null AND (bd.ServiceNo LIKE @ServiceNo OR basic_2.ServiceNo LIKE @ServiceNo)
                             Group by 
@@ -2139,6 +2180,9 @@ FROM
                     parameters.Add("@AspNetUsersId", dto.AspNetUsersId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@MapUnitId", dto.MapUnitId, DbType.Int32, ParameterDirection.Input);
                     parameters.Add("@ServiceNo", $"%{dto.ArmyNo}%", DbType.String, ParameterDirection.Input);
+                    parameters.Add("@RunningStatusId", (byte)RequestStatusEnum.Running, DbType.Byte);
+                    parameters.Add("@CompleteStatusId", (byte)RequestStatusEnum.Complete, DbType.Byte);
+                    parameters.Add("@ClosedStatusId", (byte)RequestStatusEnum.Closed, DbType.Byte);
 
                     var basicDetail = await connection.QueryAsync<DTOSmartSearch>(query, parameters);
                     if (basicDetail != null)
@@ -4572,19 +4616,28 @@ FROM
         {
             byte StepId = 5;
             var response = new List<DTOCardPriningRequest>();
+
+            // Only running requests
+            var runningRequests = _context.TrnICardRequest.Where(x => x.StatusId == (byte)RequestStatusEnum.Running);
+
             foreach (var batchRecords in requests.Chunk(5000))
             {
                 using (var connection = _contextDP.CreateConnection())
                 {
                     var resultInChunks = (from record in batchRecords
-                                          join dbrecord in _context.TrnICardRequest on record.ApplId equals dbrecord.RequestId.ToString() into dbRecordJoin
+                                            // Application must exist and StatusId must be 1
+                                          join dbrecord in runningRequests on record.ApplId equals dbrecord.RequestId.ToString() into dbRecordJoin
                                           from matchRecord in dbRecordJoin.DefaultIfEmpty()
+                                              // Check CardSerialNo duplicate
                                           join cardNoMatch in _context.TrnICardRequest on record.CardSerialNo equals cardNoMatch.CardSerialNo into cardNoJoin
                                           from cardNoExists in cardNoJoin.DefaultIfEmpty()
+                                              // Check ChipNo duplicate
                                           join chipNoMatch in _context.TrnICardRequest on record.ChipNo equals chipNoMatch.ChipNo into chipNoJoin
                                           from chipNoExists in chipNoJoin.DefaultIfEmpty()
+                                              // Check StepId = 5
                                           join stepStatus in _context.TrnStepCounter on new { RequestId = (matchRecord == null ? 0 : matchRecord.RequestId), StepId } equals new { stepStatus.RequestId, stepStatus.StepId } into stepStatusJoin
                                           from stepStatus in stepStatusJoin.DefaultIfEmpty()
+                                              // Validate ServiceNo against BasicDetailId
                                           join armyNoCheck in _context.BasicDetails on new { BasicDetailId = (matchRecord == null ? 0 : matchRecord.BasicDetailId), ServiceNo = record.ServiceNo } equals new { armyNoCheck.BasicDetailId, armyNoCheck.ServiceNo } into basicDetailJoin
                                           from armyNoCheck in basicDetailJoin.DefaultIfEmpty()
                                           select new DTOCardPriningRequest
@@ -4597,7 +4650,7 @@ FROM
                                               Status = matchRecord != null && cardNoExists == null && chipNoExists == null && stepStatus != null ? "Valid" : "DbInvalid",
                                               CardPrintedByAspNetUserId = CardPrintedByAspNetUserId,
                                               CardPrintedByUserId = CardPrintedByUserId,
-                                              Remarks = (matchRecord == null ? "ApplId not exists; " : "") +
+                                              Remarks = (matchRecord == null ? "Application does not exist or is not running; " : "") +
                                                             (cardNoExists != null ? "CardSerialNo already exists; " : "") +
                                                             (chipNoExists != null ? "ChipNo already exists; " : "") +
                                                             (matchRecord != null && stepStatus == null ? "Card application is not available for printing; " : "") +

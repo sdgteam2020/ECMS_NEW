@@ -3,7 +3,6 @@ var data = {};
 var TokenArmyNo = "";
 var token;
 var spnLostCardRequestId = 0;
-var spnMaxTrnFwdId = 0;
 
 $(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
@@ -125,12 +124,10 @@ $(async function () {
                 if (response.Result === true) {
                     let ArmyNo = response.Value.ArmyNo;
                     let RequestIdForFaulty = response.Value.RequestIdForFaulty;
-                    let MaxTrnFwdId = response.Value.MaxTrnFwdId
 
                     // Updating UI elements with the received data
                     $("#spnArmyNo").text(ArmyNo);
                     spnLostCardRequestId = RequestIdForFaulty;
-                    spnMaxTrnFwdId = MaxTrnFwdId;
 
                     $("#lblFaultyRequestId").text(RequestIdForFaulty);
 

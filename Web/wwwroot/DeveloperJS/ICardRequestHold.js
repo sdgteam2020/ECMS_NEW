@@ -270,7 +270,7 @@ function BindData(cvalue, callback) {
         columns: columns,
         language: {
             search: "",
-            searchPlaceholder: "Search Army No / Name",
+            searchPlaceholder: "Search Army No / Held By",
             emptyTable: "No I-Card hold records found"
         },
         dom: "<'row g-2 align-items-center dt-top ecms-dt-toolbar'<'col-auto'l><'col-auto'B><'col ml-auto ms-auto'f>>" +

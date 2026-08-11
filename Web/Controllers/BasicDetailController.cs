@@ -164,7 +164,7 @@ namespace Web.Controllers
             this.applCloseBL = applCloseBL;
         }
 
-        #region Index/ApprovalForIO/View/InaccurateData/InaccurateDataView/RequestType
+        #region Index/ApprovalForIO/InaccurateData/InaccurateDataView/RequestType
         /// <summary>
         /// Handles requests to display the Index view for I-Card application statuses.
         /// Accepts a Base64 encoded Id string and an optional coordinate string (jcoor),
@@ -526,78 +526,6 @@ namespace Web.Controllers
                 // Log the error with event id 1001 and return 400 Bad Request
                 _logger.LogError(1001, ex, "Home->GetAllApprovalForIOData");
                 return BadRequest(new { message = "Internal Server Error" });
-            }
-        }
-
-
-        /// <summary>
-        /// Handles GET requests to view details of a specific record.
-        /// The Id parameter is decrypted and validated, then used to fetch
-        /// the corresponding basic detail record from the business layer.
-        /// </summary>
-        /// <param name="Id">
-        /// A protected (encrypted) string representing the request identifier.
-        /// This is decrypted and converted into an integer to fetch details.
-        /// </param>
-        /// <returns>
-        /// An <see cref="ActionResult"/> rendering the detail view if the record exists,
-        /// the "BasicDetailNotFound" view if no record is found, or redirects to 
-        /// "ContactUs" with an error if the Id is invalid or tampered.
-        /// </returns>
-        [HttpGet]
-        public async Task<ActionResult> View(string Id)
-        {
-            // Retrieve current logged-in user's identifier (string form)
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            string decryptedId = string.Empty; // will hold decrypted string value
-            int decryptedIntId = 0;            // will hold decrypted integer value
-
-
-            try
-            {
-                // Attempt to decrypt the provided Id using Unprotect method
-                decryptedId = protector.Unprotect(Id);
-
-                // Convert decrypted string into integer for DB lookup
-                decryptedIntId = Convert.ToInt32(decryptedId);
-            }
-            catch (System.Security.Cryptography.CryptographicException ex)
-            {
-                // Log cryptographic exceptions (tampered or invalid protected Ids)
-                _logger.LogError(ex, "Cryptographic error occurred while processing the Id: {Id}.", Id);
-
-                TempData["error"] = "Invalid or tampered request.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
-            catch (Exception ex)
-            {
-                // Log generic errors (e.g., non-numeric Id after decryption)
-                _logger.LogError(1001, ex, message: "This error occure because Id : {Id} value change by user.", Id);
-
-                TempData["error"] = "Invalid or tampered request.";
-                TempData.Keep("error");
-                return RedirectToAction("ContactUs", "Home");
-            }
-
-            // Fetch basic detail record by decrypted integer Id
-            DTOBasicDetailByRequestIdResponse? basicDetailCrtAndUpdVM = await basicDetailBL.GetBasicDetailByRequestId(decryptedIntId);
-
-            if (basicDetailCrtAndUpdVM != null)
-            {
-                // Mask Aadhaar number: keep only last 4 digits visible
-                basicDetailCrtAndUpdVM.AadhaarNo = basicDetailCrtAndUpdVM.AadhaarNo
-                    .Substring((basicDetailCrtAndUpdVM.AadhaarNo.Length - 4), 4);
-
-                // Return detail view with populated ViewModel
-                return View(basicDetailCrtAndUpdVM);
-            }
-            else
-            {
-                // Record not found → set status code and show "not found" view
-                Response.StatusCode = 404;
-                return View("BasicDetailNotFound", decryptedId.ToString());
             }
         }
 

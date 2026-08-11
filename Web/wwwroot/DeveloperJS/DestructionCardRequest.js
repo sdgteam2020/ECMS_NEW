@@ -137,11 +137,9 @@ $(async function () {
                 if (response.Result === true) {
                     let ArmyNo = response.Value.ArmyNo;
                     let RequestIdForFaulty = response.Value.RequestIdForFaulty;
-                    let MaxTrnFwdId = response.Value.MaxTrnFwdId
 
                     $("#spnArmyNo").html(ArmyNo);
                     spnDestructionCardRequestId = RequestIdForFaulty;
-                    $("#spnMaxTrnFwdId").html(MaxTrnFwdId);
                     $("#lblFaultyRequestId").html(RequestIdForFaulty);
 
                     GetBasicDetailForParitalViewByRequestId(RequestIdForFaulty);

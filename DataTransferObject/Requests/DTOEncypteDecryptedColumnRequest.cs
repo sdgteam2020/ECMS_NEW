@@ -10,6 +10,5 @@ namespace DataTransferObject.Requests
     {
         public string ArmyNo { get; set; } = string.Empty;
         public int RequestIdForFaulty { get; set; }
-        public int MaxTrnFwdId { get; set; }
     }
 }
