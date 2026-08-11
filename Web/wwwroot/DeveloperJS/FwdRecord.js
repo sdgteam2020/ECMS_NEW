@@ -1158,35 +1158,35 @@ function jsonToXml(json) {
 }
 
 function DownloadXml(RequestId) {
-    var userdata = {
-        "Request": encryptPayloadData(RequestId),
-    };
-    $.ajax({
-        url: '/Log/CreateXml',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+    try {
+        const encryptedRequest = encryptPayloadData(RequestId);
 
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                } else {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/Log/CreateXml';
+        form.target = '_blank';
+        form.style.display = 'none';
 
-                    var url = "" + window.location.host + '/DigitallysignatureXml/' + response;
-                    window.open(url, '_blank');
-                }
-            }
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
+        const requestInput = document.createElement('input');
+        requestInput.type = 'hidden';
+        requestInput.name = 'Request';
+        requestInput.value = encryptedRequest;
+        form.appendChild(requestInput);
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '__RequestVerificationToken';
+        tokenInput.value = globalThis.RequestVerificationToken;
+        form.appendChild(tokenInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    } catch (e) {
+        Swal.fire({
+            text: errormsg002
+        });
+    }
 }
 function DownloadPdf(RequestId) {
     try {
@@ -1263,49 +1263,54 @@ function digitalpdfsignature(Thumbprint, pdfpath, XCoordinate, YCoordinate, Requ
     });
 
 }
+
+
 function digitalpdfsignatureSave(RequestId, base64) {
-    var userdata = {
-        "RequestId": RequestId,
-        "base64": base64,
+    try {
+        const userdata = {
+            RequestId: RequestId,
+            base64: base64
+        };
 
+        const form = document.createElement('form');
 
-    };
-    $.ajax({
-        url: '/Log/DigitalpdfsignatureSave',
-        contentType: 'application/x-www-form-urlencoded',
-        data: userdata,
-        type: 'POST',
-        headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
+        form.method = 'POST';
+        form.action = '/Log/DigitalpdfsignatureSave';
+        form.target = '_blank';
+        form.style.display = 'none';
 
-        success: function (response) {
-            if (response != "null" && response != null) {
-                if (response == InternalServerError) {
-                    Swal.fire({
-                        text: errormsg
-                    });
-                } else {
+        // Append userdata to form
+        Object.entries(userdata).forEach(([key, value]) => {
 
+            const input = document.createElement('input');
 
-                    //  window.open('/DigitallysignaturePdf/' + response, '_blank');
-                    //  if ($("#aspntokenarmyno").html() == $("#txtspnTokenArmyNo").val()) {
-                    var url = "" + window.location.host + '/DigitallysignaturePdf/' + response;
-                    window.open(url, '_blank');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value ?? '';
 
-                }
+            form.appendChild(input);
+        });
 
+        // Anti-forgery token
+        const tokenInput = document.createElement('input');
 
-            }
+        tokenInput.type = 'hidden';
+        tokenInput.name = '__RequestVerificationToken';
+        tokenInput.value = globalThis.RequestVerificationToken;
 
+        form.appendChild(tokenInput);
 
+        document.body.appendChild(form);
 
+        form.submit();
 
-        },
-        error: function (result) {
-            Swal.fire({
-                text: errormsg002
-            });
-        }
-    });
+        document.body.removeChild(form);
+    }
+    catch (e) {
+        Swal.fire({
+            text: errormsg002
+        });
+    }
 }
 function base64toPDF(data) {
     var datat = data;

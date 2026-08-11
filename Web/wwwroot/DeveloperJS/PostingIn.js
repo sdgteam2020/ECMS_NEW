@@ -283,7 +283,6 @@
     });
 });
 function Save() {
-    const trnFwdId = parseInt($(".spnTrnFwdId").html());
     const payload = {
         "ReasonId": $("#ddlpostingReason").val(),
         "Authority": $("#txtAuthority").val(),
@@ -292,7 +291,7 @@ function Save() {
         "ToUnitID": $("#postingoutUnitId").html(),
         "ToUserID": $(".spnToUserID").html(),
         "RequestId": $(".spnRequestId").html(),
-        "TrnFwdId": trnFwdId > 0 ? trnFwdId : null,
+        "TrnFwdId": null,
         "DispatchedOn": formatDateToSqlString($("#txtDispatchDate").val()),
         "RefNo": $("#txtRefNo").val(),
     }

@@ -30,6 +30,7 @@ using System.Xml.Linq;
 using Web.Healpers;
 using Web.Healpers.BaseInterfaces;
 using Web.WebHelpers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using iTextImage = iText.Layout.Element.Image;
 using Path = System.IO.Path;
 
@@ -198,20 +199,40 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DigitalpdfsignatureSave(int RequestId, string base64)
         {
-            // Retrieve the basic details of the request based on the RequestId
-            DTOBasicDetailByRequestIdResponse? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
+            if (string.IsNullOrWhiteSpace(base64))
+                return BadRequest("PDF data not found.");
 
-            // Define the file path where the PDF will be saved
-            var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignaturePdf\\" + db.ServiceNo + "_" + RequestId + ".pdf");
+            try
+            {
+                // If Base64 contains prefix like:
+                // data:application/pdf;base64,JVBERi0x...
+                if (base64.Contains(","))
+                {
+                    base64 = base64.Substring(base64.IndexOf(",") + 1);
+                }
 
-            // Convert the base64 string to a byte array representing the PDF
-            byte[] pdfBytes = Convert.FromBase64String(base64);
+                byte[] pdfBytes = Convert.FromBase64String(base64);
 
-            // Write the PDF bytes to the specified file path
-            System.IO.File.WriteAllBytes(filePath1, pdfBytes);
+                string fileName = $"ApplicationNo_{RequestId}.pdf";
 
-            // Return the filename of the saved PDF in the response
-            return Json(db.ServiceNo + "_" + RequestId + ".pdf");
+                return File(pdfBytes,"application/pdf",fileName);
+            }
+            catch (FormatException ex)
+            {
+                _logger.LogError(ex,"Invalid PDF Base64 for RequestId: {RequestId}",RequestId);
+                return BadRequest("Invalid PDF data.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error returning digitally signed PDF for RequestId: {RequestId}",
+                    RequestId);
+
+                return StatusCode(
+                    500,
+                    "Error generating PDF.");
+            }
         }
 
         /// <summary>
@@ -222,65 +243,98 @@ namespace Web.Controllers
         /// <param name="RequestId">The ID of the request used to generate the XML file.</param>
         /// <returns>A JSON response containing the filename of the saved XML file, or 0 in case of an error.</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateXmlAsync(string Request)
+        public async Task<IActionResult> CreateXml(string Request)
         {
-            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token").Salt);
+            var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
+            if (session == null)
+                return Unauthorized();
+
+            int RequestId = await AESEncrytDecry.DecryptAESWithDTO<int>(Request, session.Salt);
+            if (RequestId <= 0)
+                return BadRequest("Invalid RequestId");
 
             try
             {
-                // Generate date components for naming the file
-                var now = DateTime.Now;
-                var yearName = now.ToString("yyyy");
-                var monthName = now.ToString("MMMM");
-                var dayName = now.ToString("dd");
-                var hh = now.ToString("hh");
-                var mm = now.ToString("mm");
-                var ss = now.ToString("ss");
-
                 var sata = await _iTrnLoginLogBL.XmlFileDigitalSignFromData(RequestId);
 
+                if (sata == null || string.IsNullOrWhiteSpace(sata.XmlFiles))
+                    return BadRequest("XML data not found.");
+
                 // Replace any ampersand symbols with the proper XML encoding
-                string XmlFilesRemoveAndChar = sata.XmlFiles.Replace("&", "&amp;");
+                string xmlContent = sata.XmlFiles.Replace("&", "&amp;").Trim();
 
-                // Parse the cleaned-up XML data into an XDocument
-                XDocument document = XDocument.Parse(Convert.ToString(XmlFilesRemoveAndChar));
-
-                // Retrieve basic details of the request for naming the XML file
-                DTOBasicDetailByRequestIdResponse? db = await BasicDetailBL.GetBasicDetailByRequestId(RequestId);
-
-                // Define the directory where the XML file will be saved
-                string sourceFolder = Path.Combine(hostingEnvironment.WebRootPath, "DigitallysignatureXml");
-
-                // Check if the directory exists, and create it if it does not
-                if (!Directory.Exists(sourceFolder))
+                // Load database XML content
+                XmlDocument xmlDocument = new XmlDocument
                 {
-                    Directory.CreateDirectory(sourceFolder);
+                    PreserveWhitespace = true
+                };
+
+                xmlDocument.LoadXml(xmlContent);
+
+                // Get ServiceNo from XML
+                string serviceNo = string.Empty;
+
+                XmlNode? applicationNode =
+                    xmlDocument.SelectSingleNode(
+                        "//*[local-name()='applicationDetails']");
+
+                if (applicationNode != null)
+                {
+                    XmlNode? serviceNoNode =
+                        applicationNode.SelectSingleNode(
+                            "*[local-name()='ServiceNo']");
+
+                    serviceNo = serviceNoNode?.InnerText?.Trim() ?? string.Empty;
                 }
 
-                // Generate the XML file name based on the request details and current timestamp
-                string xmlname = db.ServiceNo + "_" + RequestId + "_" + yearName + "" + monthName + "" + dayName + "" + hh + "" + mm + "" + ss + ".xml";
-                var filePath1 = System.IO.Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot\\DigitallysignatureXml\\" + xmlname);
+                // Safe fallback
+                if (string.IsNullOrWhiteSpace(serviceNo))
+                {
+                    serviceNo = "Request";
+                }
 
-                // Save the XML document to the specified file path
-                document.Save(filePath1);
+                // Generate filename
+                string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
 
-                // Return the filename of the saved XML file as a JSON response
-                return Json(xmlname);
+                string xmlName = $"{serviceNo}_{RequestId}_{timestamp}.xml";
+
+                // Convert XmlDocument to byte[]
+                using MemoryStream memoryStream = new MemoryStream();
+
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Encoding = new UTF8Encoding(false),
+                    Indent = true,
+                    OmitXmlDeclaration = false
+                };
+
+                using (XmlWriter writer = XmlWriter.Create(memoryStream,settings))
+                {
+                    xmlDocument.Save(writer);
+                }
+
+                byte[] xmlBytes = memoryStream.ToArray();
+
+                // Return XML file to browser
+                return File(
+                    xmlBytes,
+                    "application/xml",
+                    xmlName);
             }
-            catch (System.IO.DirectoryNotFoundException ex)
+            catch (XmlException ex)
             {
-                // Return an error response if the directory is not found
-                return Json(0);
+                _logger.LogError(ex,"Invalid XML data for RequestId: {RequestId}", RequestId);
+                return BadRequest("Invalid XML data.");
             }
             catch (Exception ex)
             {
-                // Return a generic error response for other exceptions
-                return Json(0);
+                _logger.LogError(ex, "Error creating XML for RequestId: {RequestId}", RequestId);
+                return StatusCode(500, "Error generating XML");
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePdfAsync(string Request)
+        public async Task<IActionResult> CreatePdf(string Request)
         {
             var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
             if (session == null)
@@ -346,49 +400,6 @@ namespace Web.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> DownloadGeneratedPdf(int requestId)
-        {
-            try
-            {
-                var session = SessionHeplers.GetObject<DtoSession>(HttpContext.Session, "Token");
-                if (session == null)
-                    return Unauthorized();
-
-                // Add your authorization check here if needed
-                // Example:
-                // bool allowed = await _logBL.UserCanAccessRequest(requestId, session.UserId);
-                // if (!allowed) return Forbid();
-
-                DTOBasicDetailByRequestIdResponse? db = await BasicDetailBL.GetBasicDetailByRequestId(requestId);
-                if (db == null)
-                    return NotFound();
-
-                string secureFolder = Path.Combine(hostingEnvironment.ContentRootPath, "SecurePdfFiles");
-                if (!Directory.Exists(secureFolder))
-                    return NotFound();
-
-                // find latest generated PDF for this request
-                string searchPattern = $"*_{requestId}_*.pdf";
-                string? latestFile = Directory.GetFiles(secureFolder, searchPattern)
-                                              .OrderByDescending(System.IO.File.GetCreationTime)
-                                              .FirstOrDefault();
-
-                if (string.IsNullOrWhiteSpace(latestFile) || !System.IO.File.Exists(latestFile))
-                    return NotFound();
-
-                byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(latestFile);
-                string fileName = Path.GetFileName(latestFile);
-
-                return File(fileBytes, "application/pdf", fileName);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error downloading PDF for RequestId: {RequestId}", requestId);
-                return StatusCode(500, "Unable to download PDF.");
-            }
-        }
-
         private List<DTOFwdLastRecForDigitalSign> ProcessDigitalSignatures(XmlDocument xmlDoc)
         {
 
@@ -403,7 +414,6 @@ namespace Web.Controllers
                     {
                         byte[] certBytes = Convert.FromBase64String(node.InnerText);
                         using var certificate = new X509Certificate2(certBytes);
-
                         // Optimized subject parsing
                         var subjectDict = new Dictionary<string, string>();
                         var subjectParts = certificate.Subject.Split(',', StringSplitOptions.RemoveEmptyEntries);

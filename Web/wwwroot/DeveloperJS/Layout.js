@@ -124,8 +124,7 @@ $(function () {
             try {
                 const requestData = {
                     ArmyNo: $("#txtarmynosearchAll").val(),
-                    RequestIdForFaulty: $("#RequestId_unitoffrsModal").val(),
-                    MaxTrnFwdId: $("#MaxTrnFwdId_unitoffrsModal").val()
+                    RequestIdForFaulty: $("#RequestId_unitoffrsModal").val()
                 };
 
                 let jsonData = JSON.stringify(requestData);
@@ -222,14 +221,12 @@ $(function () {
                                 ServiceNo: item.ServiceNo,
                                 Name: item.FName + (item.LName ? item.LName : ""),
                                 Image: item.Image,
-                                RequestId: item.RequestId,
-                                MaxTrnFwdId: item.MaxTrnFwdId ?? 0
+                                RequestId: item.RequestId
                             })));
                         } else {
                             $("#armynosearchAllName").html("");
                             $("#txtarmynosearchAll").val("");
                             $("#RequestId_unitoffrsModal").val("");
-                            $("#MaxTrnFwdId_unitoffrsModal").val("");
                             $("#armynosearchAllpic").attr("src", "");
                             //toastr.error("");
                             Swal.fire({
@@ -253,7 +250,6 @@ $(function () {
             $("#txtarmynosearchAll").val(i.item.ServiceNo);
             $("#armynosearchAllpic").attr("src", i.item.Image);
             $("#RequestId_unitoffrsModal").val(i.item.RequestId);
-            $("#MaxTrnFwdId_unitoffrsModal").val(i.item.MaxTrnFwdId);
         },
         open: function () {
             // make dropdown width = input width

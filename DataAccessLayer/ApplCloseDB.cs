@@ -39,9 +39,9 @@ namespace DataAccessLayer
             DTOApplicationCloseResponse closeResponse = new DTOApplicationCloseResponse();
 
             string query = @"Select ISNULL(basi.BasicDetailId, basi2.BasicDetailId) AS BasicDetailId ,req.StatusId,ISNULL(basi.UnitId, basi2.UnitId) AS UnitId,appclose.Id as ApplCloseId from TrnICardRequest req 
-                            LEFT join BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
+                            LEFT JOIN BasicDetails basi on req.BasicDetailId=basi.BasicDetailId
 							LEFT JOIN AFSAC2.dbo.BasicDetails basi2 on req.BasicDetailId=basi2.BasicDetailId  
-                            left join TrnApplClose appclose on appclose.RequestId = req.RequestId
+                            LEFT JOIN TrnApplClose appclose on appclose.RequestId = req.RequestId
                             where req.RequestId=@RequestId";
 
             using (var connection = _contextDP.CreateConnection())

@@ -4,7 +4,6 @@ using BusinessLogicsLayer.Service;
 using DataAccessLayer;
 using DataTransferObject;
 using DataAccessLayer.Logger;
-using DataAccessLayer.Security;
 using DataTransferObject.Domain.Identitytable;
 using EntityFramework.Exceptions.SqlServer;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -194,8 +193,6 @@ builder.Services.AddResponseCompression(options =>
 //});
 //------------------- End Instructions----------------------
 
-builder.Services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
-builder.Services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
 builder.Services.AddSingleton<DataProtectionPurposeStrings>();
 
 builder.Services.AddHsts(options =>

@@ -58,11 +58,9 @@
                 if (response.Result === true) {
                     let ArmyNo = response.Value.ArmyNo;
                     let RequestIdForFaulty = response.Value.RequestIdForFaulty;
-                    let MaxTrnFwdId = response.Value.MaxTrnFwdId
 
                     $("#spnArmyNo").html(ArmyNo);
                     $("#spnDistributeCardRequestId").html(RequestIdForFaulty);
-                    $("#spnMaxTrnFwdId").html(MaxTrnFwdId);
                     $("#lblFaultyRequestId").html(RequestIdForFaulty);
 
                     GetBasicDetailForParitalViewByRequestId(RequestIdForFaulty);

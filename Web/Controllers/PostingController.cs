@@ -267,7 +267,6 @@ namespace Web.Controllers
                 }
                 trnPostingOut.Id = 0;
                 trnPostingOut.RequestId= dTO.RequestId;
-                trnPostingOut.TrnFwdId= dTO.TrnFwdId;
                 trnPostingOut.SOSDate= dTO.SOSDate;
                 trnPostingOut.ReasonId= dTO.ReasonId;
                 trnPostingOut.Authority= dTO.Authority;
@@ -288,6 +287,7 @@ namespace Web.Controllers
                     if (closeResponse.Result == true)
                     {
                         DTOGenericResponse<int> result = new DTOGenericResponse<int>();
+                        trnPostingOut.TrnFwdId = closeResponse.MaxTrnFwdId;
                         // If it's a new record, use UpdateForPosting method (this handles both add and update)
                         result = await _iPostingBL.UpdateForPosting(trnPostingOut, closeResponse);  // Attempt to add or update the record
                         if (result.Result == true)
