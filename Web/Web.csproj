@@ -85,8 +85,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\DigitallysignaturePdf\" />
-    <Folder Include="wwwroot\DigitallysignatureXml\" />
     <Folder Include="wwwroot\WriteReadData\Document\" />
     <Folder Include="wwwroot\WriteReadData\ExportAFSACCell\" />
     <Folder Include="wwwroot\WriteReadData\CSVFile\" />
