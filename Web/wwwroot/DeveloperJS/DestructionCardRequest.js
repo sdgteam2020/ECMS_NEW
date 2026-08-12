@@ -65,7 +65,7 @@ $(async function () {
     $('#txtDestructiononinp').on('keydown', (e) => {
         e.preventDefault();
         return false;
-    });    
+    });
 
 
     var RemarkTypeID = [8];
@@ -209,7 +209,7 @@ function Save() {
     let inputDate = $("#txtDestructiononinp").val();
     var DestructionlistRemarkIds = $("#ddlDestructionRemark").val();
     $.ajax({
-        url: '/BasicDetail/SaveDestructionCardRequest' ,
+        url: '/BasicDetail/SaveDestructionCardRequest',
         type: 'POST',
         data: {
             "RequestId": spnDestructionCardRequestId,
@@ -226,7 +226,7 @@ function Save() {
                 const btnBackDashboard = document.getElementById("btnBackDashboard");
                 let Message = `Record successfully inserted in DB with ID : <strong>${result.Value.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.Value.CurrentTime)}</strong>.`;
 
-                document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
+                document.getElementById("ConfirmationDialog_Data").innerHTML = Message;
                 btnSearchNew.textContent = "Search New";
                 btnBackDashboard.textContent = "Back to Dashboard";
                 myModal.show();
@@ -248,17 +248,17 @@ function GetBasicDetailForParitalViewByRequestId(RequestId) {
         },
         body: param
     })
-    .then(response => response.text())
-    .then(html =>{
-        //let $html = $('<div>').html(html);
-        //$html.find('#basicDetailsButtons').append('');
-        //let updatedHtmlString = $html.html();
-        document.getElementById("partialContainerBD").innerHTML = html;
-        //BindParitalViewEvents();
-    })
-    .catch(error => {
-       alert("Error: " + error.message);
-    });
+        .then(response => response.text())
+        .then(html => {
+            //let $html = $('<div>').html(html);
+            //$html.find('#basicDetailsButtons').append('');
+            //let updatedHtmlString = $html.html();
+            document.getElementById("partialContainerBD").innerHTML = html;
+            //BindParitalViewEvents();
+        })
+        .catch(error => {
+            alert("Error: " + error.message);
+        });
 }
 
 

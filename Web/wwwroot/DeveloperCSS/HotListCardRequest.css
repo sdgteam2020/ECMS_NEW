@@ -1,28 +1,411 @@
-﻿.containerMain {
-    margin-left: 10%;
-    margin-right: 10%;
+﻿/* =====================================================
+   ECMS - Hotlist Card Request
+   Page-specific layout only.
+
+   Shared ModernCSS remains the source of truth for:
+   - page/background/breadcrumb
+   - cards/page titles/section titles
+   - forms/buttons/badges/modals
+   - colors/radius/shadows
+
+   This file handles only HotlistCardRequest-specific geometry,
+   the dynamic applicant partial, Select2 and responsive behavior.
+   ===================================================== */
+
+
+/* =====================================================
+   DESKTOP FULL-WIDTH VIEWPORT FIT
+   ===================================================== */
+@media (min-width: 1200px) {
+    html:has(.ecms-hotlistreq-page),
+    body:has(.ecms-hotlistreq-page) {
+        overflow-y: hidden !important;
+    }
+
+    .ecms-hotlistreq-page.ecms-page.ecms-page-full {
+        width: calc(100vw - 1rem) !important;
+        max-width: none !important;
+        height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height, var(--ecms-nav-height)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height)) - var(--ecms-footer-height) ) !important;
+        min-height: 0 !important;
+        margin: 0 auto !important;
+        padding: .5rem 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
 }
 
-.faulty {
-    background-color: #044C92;
-    text-align: center;
-    padding: 0.5rem !important;
-    margin-right: 0.25rem !important;
-    border: hidden;
-    font-weight: 400 !important;
-    color: #fff !important;
-    width: 170px;
-    height: 60px;
+
+/* =====================================================
+   MAIN CARD
+   ===================================================== */
+.ecms-hotlistreq-shell {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
-.modal.left .modal-dialog, .modal.right .modal-dialog {
-    position: fixed;
-    margin: auto;
-    width: 700px;
-    height: 100%;
-    text-align: left;
-    -webkit-transform: translate3d(0%, 0, 0);
-    -ms-transform: translate3d(0%, 0, 0);
-    -o-transform: translate3d(0%, 0, 0);
-    transform: translate3d(0%, 0, 0);
+
+/* =====================================================
+   PAGE TITLE
+   ===================================================== */
+.ecms-hotlistreq-header {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin: 0 0 .55rem 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: .75rem !important;
+}
+
+.ecms-hotlistreq-title-wrap {
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: .7rem !important;
+}
+
+    .ecms-hotlistreq-title-wrap > div {
+        min-width: 0 !important;
+    }
+
+    .ecms-hotlistreq-title-wrap h3 {
+        margin: 0 !important;
+    }
+
+/* Hot-list semantic accent using shared tokens only. */
+.ecms-hotlistreq-title-icon.ecms-title-icon {
+    background: linear-gradient( 135deg, var(--ecms-warning-500), var(--ecms-danger-500) ) !important;
+}
+
+.ecms-hotlistreq-armyno {
+    flex: 0 0 auto !important;
+    min-height: 2rem !important;
+    padding: .35rem .75rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: .35rem !important;
+    white-space: nowrap !important;
+}
+
+    .ecms-hotlistreq-armyno strong {
+        margin-left: .15rem !important;
+    }
+
+
+/* =====================================================
+   FORM / TWO-COLUMN LAYOUT
+   ===================================================== */
+.ecms-hotlistreq-form {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.ecms-hotlistreq-grid {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.2fr) minmax(23rem, .8fr) !important;
+    gap: .55rem !important;
+}
+
+
+/* =====================================================
+   COMMON PANELS
+   ===================================================== */
+.ecms-hotlistreq-applicant,
+.ecms-hotlistreq-report {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+    .ecms-hotlistreq-applicant > .ecms-section-title,
+    .ecms-hotlistreq-report > .ecms-section-title {
+        flex: 0 0 var(--ecms-section-title-height) !important;
+    }
+
+
+/* =====================================================
+   DYNAMIC APPLICANT / CARD PARTIAL
+   ===================================================== */
+.ecms-hotlistreq-applicant-body {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: .55rem !important;
+    overflow: auto !important;
+}
+
+#partialContainerBD {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+    #partialContainerBD,
+    #partialContainerBD * {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+
+        #partialContainerBD img {
+            max-width: 100% !important;
+            object-fit: contain !important;
+        }
+
+        /* Keep the dynamic partial from creating unnecessary visual layering. */
+        #partialContainerBD > .card,
+        #partialContainerBD > .row > .card,
+        #partialContainerBD .card:first-child {
+            margin-top: 0 !important;
+        }
+
+
+/* Applicant action strip stays visible below partial content. */
+.ecms-hotlistreq-applicant-actions {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 3.2rem !important;
+    margin: 0 !important;
+    padding: .5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: .45rem !important;
+    border-top: var(--ecms-border) !important;
+}
+
+    .ecms-hotlistreq-applicant-actions .btn {
+        min-width: 10.5rem !important;
+        min-height: 2.25rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+
+/* =====================================================
+   REPORT HOTLIST CARD
+   ===================================================== */
+.ecms-hotlistreq-report-body {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: .75rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .55rem !important;
+    overflow: auto !important;
+}
+
+.ecms-hotlistreq-control-row {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 2.65rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(9rem, 34%) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: .65rem !important;
+}
+
+    .ecms-hotlistreq-control-row > label {
+        min-width: 0 !important;
+        margin: 0 !important;
+        font-weight: 850 !important;
+        line-height: 1.25 !important;
+    }
+
+.ecms-hotlistreq-field-wrap {
+    min-width: 0 !important;
+}
+
+    .ecms-hotlistreq-field-wrap .form-control,
+    .ecms-hotlistreq-field-wrap .form-select,
+    .ecms-hotlistreq-field-wrap select,
+    .ecms-hotlistreq-field-wrap textarea {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+.ecms-hotlistreq-remarks-row {
+    align-items: start !important;
+}
+
+#txtHotlistRemark {
+    min-height: 5.5rem !important;
+    max-height: 8.5rem !important;
+    resize: vertical !important;
+}
+
+.ecms-hotlistreq-field-wrap .text-danger,
+.ecms-hotlistreq-field-wrap .field-validation-error {
+    display: block !important;
+    margin-top: .2rem !important;
+    font-size: .72rem !important;
+    line-height: 1.15 !important;
+}
+
+.ecms-hotlistreq-page .mand1 {
+    margin-left: .12rem !important;
+    color: var(--ecms-danger-500) !important;
+    font-size: .45rem !important;
+    vertical-align: super !important;
+}
+
+
+/* =====================================================
+   SELECT2
+   Existing plugin functionality remains unchanged.
+   ===================================================== */
+.ecms-hotlistreq-page .select2-container {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+    .ecms-hotlistreq-page .select2-container .select2-selection--multiple {
+        min-height: 2.35rem !important;
+        border: var(--ecms-border) !important;
+        border-radius: var(--ecms-radius-md) !important;
+        background: var(--ecms-card-surface) !important;
+    }
+
+.ecms-hotlistreq-page .select2-container--default.select2-container--focus
+.select2-selection--multiple {
+    border-color: var(--ecms-primary-500) !important;
+}
+
+.ecms-hotlistreq-page .select2-selection__rendered {
+    min-width: 0 !important;
+}
+
+
+/* =====================================================
+   SUBMIT
+   ===================================================== */
+.ecms-hotlistreq-submit-row {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 2.8rem !important;
+    margin-top: .25rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#btnAccept {
+    min-width: 7rem !important;
+}
+
+
+/* =====================================================
+   RESPONSIVE FALLBACK
+   ===================================================== */
+@media (max-width: 1199.98px) {
+    html:has(.ecms-hotlistreq-page),
+    body:has(.ecms-hotlistreq-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-hotlistreq-page.ecms-page.ecms-page-full {
+        height: auto !important;
+        min-height: 0 !important;
+        margin-top: .5rem !important;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-hotlistreq-shell,
+    .ecms-hotlistreq-form {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-hotlistreq-applicant-body,
+    .ecms-hotlistreq-report-body {
+        overflow: visible !important;
+    }
+}
+
+
+@media (max-width: 991.98px) {
+    .ecms-hotlistreq-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-hotlistreq-applicant,
+    .ecms-hotlistreq-report {
+        min-height: 27rem !important;
+    }
+}
+
+
+@media (max-width: 767.98px) {
+    .ecms-hotlistreq-page.ecms-page.ecms-page-full {
+        width: calc(100vw - .75rem) !important;
+    }
+
+    .ecms-hotlistreq-header {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
+
+    .ecms-hotlistreq-armyno {
+        align-self: flex-start !important;
+    }
+
+    .ecms-hotlistreq-control-row {
+        grid-template-columns: 1fr !important;
+        gap: .25rem !important;
+    }
+
+    .ecms-hotlistreq-applicant-actions {
+        align-items: stretch !important;
+    }
+
+        .ecms-hotlistreq-applicant-actions .btn {
+            flex: 1 1 11rem !important;
+        }
+}
+
+
+/* Short-height desktops:
+   keep browser fixed and scroll only inside the two content panels. */
+@media (min-width: 1200px) and (max-height: 720px) {
+    .ecms-hotlistreq-report-body {
+        padding-top: .5rem !important;
+        padding-bottom: .5rem !important;
+        gap: .35rem !important;
+    }
+
+    .ecms-hotlistreq-control-row {
+        min-height: 2.3rem !important;
+    }
+
+    #txtHotlistRemark {
+        min-height: 4.5rem !important;
+    }
+
+    .ecms-hotlistreq-applicant-actions {
+        min-height: 2.85rem !important;
+        padding-top: .35rem !important;
+        padding-bottom: .35rem !important;
+    }
 }

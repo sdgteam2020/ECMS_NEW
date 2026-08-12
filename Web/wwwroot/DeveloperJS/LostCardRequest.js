@@ -13,7 +13,7 @@ $(async function () {
     if ($('#txtlostoninp').data('DateTimePicker')) {
         $('#txtlostoninp').data('DateTimePicker').destroy();
     }
-    
+
     $('#txtlostoninp').datetimepicker({
         format: 'DD/MM/YYYY HH:mm',
         sideBySide: true,
@@ -62,11 +62,11 @@ $(async function () {
     $('#txtlostoninp').on('keydown', (e) => {
         e.preventDefault();
         return false;
-    });    
+    });
 
     var RemarkTypeID = [7];
     GetRemarks("ddlLostRemark", 0, RemarkTypeID);
-      
+
     $('.select2').select2({
         placeholder: "Please select a Reason",
         allowClear: true,
@@ -149,7 +149,7 @@ $(async function () {
 
 function Proceed() {
     ResetErrorMessage();
-    let formId = '#SaveLostCardRequest';    
+    let formId = '#SaveLostCardRequest';
     $.validator.unobtrusive.parse($(formId));
 
     if ($(formId).valid()) {
@@ -227,7 +227,7 @@ async function Save() {
         }
 
     }
-    var base64Encoded = btoa(signedXML); 
+    var base64Encoded = btoa(signedXML);
 
     data.SignedXML = base64Encoded;
 
@@ -271,11 +271,11 @@ async function Save() {
     // -------------------------------
 
     $.ajax({
-        url: '/BasicDetail/SaveLostCardRequest' ,
+        url: '/BasicDetail/SaveLostCardRequest',
         type: 'POST',
         data: formData,
-        processData: false, 
-        contentType: false, 
+        processData: false,
+        contentType: false,
         headers: { 'RequestVerificationToken': globalThis.RequestVerificationToken },
         success: function (result) {
 
@@ -285,7 +285,7 @@ async function Save() {
                 const btnBackDashboard = document.getElementById("btnBackDashboard");
                 let Message = `Record successfully inserted in DB with ID : <strong>${result.Value.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.Value.CurrentTime)}</strong>.`;
 
-                document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
+                document.getElementById("ConfirmationDialog_Data").innerHTML = Message;
                 btnSearchNew.textContent = "Search New";
                 btnBackDashboard.textContent = "Back to Dashboard";
 
@@ -308,13 +308,13 @@ function GetBasicDetailForParitalViewByRequestId(RequestId) {
         },
         body: param
     })
-    .then(response => response.text())
-    .then(html =>{
+        .then(response => response.text())
+        .then(html => {
             document.getElementById("partialContainerBD").innerHTML = html;
-    })
-    .catch(error => {
-       alert("Error: " + error.message);
-    });
+        })
+        .catch(error => {
+            alert("Error: " + error.message);
+        });
 }
 function DownloadPdf(RequestId) {
     try {
@@ -457,9 +457,9 @@ function Reset() {
     //$('.select2-selection__clear').trigger('click');
     $('.select2').val(null).trigger('change');
     $('#SaveLostCardRequest').find(':input')
-        .not(':button, :submit, :reset, :hidden') 
-        .val('')                                   
-        .prop('checked', false)                    
+        .not(':button, :submit, :reset, :hidden')
+        .val('')
+        .prop('checked', false)
         .prop('selected', false);
 }
 async function GetTokenDetails(ApiId, xml) {

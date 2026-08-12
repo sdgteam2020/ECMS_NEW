@@ -1,62 +1,506 @@
-﻿.containerMain {
-    margin-left: 10%;
-    margin-right: 10%;
-}
-/*     .faulty {
-        background-color: #044C92;
-        text-align: center;
-        padding: 0.5rem !important;
-        margin-right: 0.25rem !important;
-        border: hidden;
-        font-weight: 400 !important;
-        color: #fff !important;
-        width: 170px;
-        height: 60px;
+﻿/* =====================================================
+   ECMS - Lost Card Request
+   Page-specific layout only.
+
+   Shared ModernCSS remains the source of truth for:
+   - page/background/breadcrumb
+   - cards/page titles/section titles
+   - forms/buttons/badges/modals
+   - colors/radius/shadows
+
+   This file only handles LostCardRequest-specific geometry,
+   the dynamic applicant partial, Select2, file/radio controls
+   and datetimepicker compatibility.
+   ===================================================== */
+
+
+/* =====================================================
+   DESKTOP VIEWPORT FIT / FULL WIDTH
+   ===================================================== */
+@media (min-width: 1200px) {
+    html:has(.ecms-lostrequest-page),
+    body:has(.ecms-lostrequest-page) {
+        overflow-y: hidden !important;
     }
- */
-.modal.left .modal-dialog, .modal.right .modal-dialog {
-    position: fixed;
-    margin: auto;
-    width: 700px;
-    height: 100%;
-    text-align: left;
-    -webkit-transform: translate3d(0%, 0, 0);
-    -ms-transform: translate3d(0%, 0, 0);
-    -o-transform: translate3d(0%, 0, 0);
-    transform: translate3d(0%, 0, 0);
+
+    .ecms-lostrequest-page.ecms-page.ecms-page-full {
+        width: calc(100vw - 1rem) !important;
+        max-width: none !important;
+        height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height, var(--ecms-nav-height)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height)) - var(--ecms-footer-height) ) !important;
+        min-height: 0 !important;
+        margin: 0 auto !important;
+        padding: .5rem 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
 }
 
-/* overall popup */
+
+/* =====================================================
+   MAIN CARD
+   ===================================================== */
+.ecms-lostrequest-shell {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+
+/* =====================================================
+   PAGE TITLE
+   ===================================================== */
+.ecms-lostrequest-header {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin: 0 0 .55rem 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: .75rem !important;
+}
+
+.ecms-lostrequest-title-wrap {
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: .7rem !important;
+}
+
+    .ecms-lostrequest-title-wrap > div {
+        min-width: 0 !important;
+    }
+
+    .ecms-lostrequest-title-wrap h3 {
+        margin: 0 !important;
+    }
+
+/* Lost-card warning accent from shared theme tokens. */
+.ecms-lostrequest-title-icon.ecms-title-icon {
+    background: linear-gradient( 135deg, var(--ecms-warning-500), var(--ecms-danger-500) ) !important;
+}
+
+.ecms-lostrequest-armyno {
+    flex: 0 0 auto !important;
+    min-height: 2rem !important;
+    padding: .35rem .75rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: .35rem !important;
+    white-space: nowrap !important;
+}
+
+    .ecms-lostrequest-armyno strong {
+        margin-left: .15rem !important;
+    }
+
+
+/* =====================================================
+   FORM / MAIN TWO-COLUMN GRID
+   ===================================================== */
+.ecms-lostrequest-form {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.ecms-lostrequest-grid {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.18fr) minmax(23rem, .82fr) !important;
+    gap: .55rem !important;
+}
+
+
+/* =====================================================
+   SHARED SECTION GEOMETRY
+   ===================================================== */
+.ecms-lostrequest-applicant,
+.ecms-lostrequest-report {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+    .ecms-lostrequest-applicant > .ecms-section-title,
+    .ecms-lostrequest-report > .ecms-section-title {
+        flex: 0 0 var(--ecms-section-title-height) !important;
+    }
+
+
+/* =====================================================
+   APPLICANT DETAILS / DYNAMIC PARTIAL
+   ===================================================== */
+.ecms-lostrequest-applicant-body {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: .55rem !important;
+    overflow: auto !important;
+}
+
+#partialContainerBD {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+    /* The partial already generates its own content card. Remove only the
+   extra outer-layer feel so this page has one clean section surface. */
+    #partialContainerBD > .card,
+    #partialContainerBD > .row > .card,
+    #partialContainerBD .card:first-child {
+        margin-top: 0 !important;
+    }
+
+    /* Prevent long address / identification fields in the partial from
+   forcing horizontal page scroll. */
+    #partialContainerBD,
+    #partialContainerBD * {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+
+        #partialContainerBD img {
+            max-width: 100% !important;
+            object-fit: contain !important;
+        }
+
+
+/* Fixed action strip below applicant detail scroll region. */
+.ecms-lostrequest-applicant-actions {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 3.2rem !important;
+    margin: 0 !important;
+    padding: .5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: .45rem !important;
+    border-top: var(--ecms-border) !important;
+}
+
+    .ecms-lostrequest-applicant-actions .btn {
+        min-width: 8.75rem !important;
+    }
+
+
+/* =====================================================
+   REPORT LOST CARD FORM
+   ===================================================== */
+.ecms-lostrequest-report-body {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: .75rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .45rem !important;
+    overflow: auto !important;
+}
+
+.ecms-lostrequest-control-row {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 2.6rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(10rem, 38%) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: .65rem !important;
+}
+
+    .ecms-lostrequest-control-row > label {
+        min-width: 0 !important;
+        margin: 0 !important;
+        font-weight: 850 !important;
+        line-height: 1.25 !important;
+    }
+
+.ecms-lostrequest-field-wrap {
+    min-width: 0 !important;
+}
+
+    .ecms-lostrequest-field-wrap .form-control,
+    .ecms-lostrequest-field-wrap select,
+    .ecms-lostrequest-field-wrap textarea {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+.ecms-lostrequest-remarks-row {
+    align-items: start !important;
+}
+
+    .ecms-lostrequest-remarks-row textarea {
+        min-height: 5.5rem !important;
+        max-height: 8.5rem !important;
+        resize: vertical !important;
+    }
+
+.ecms-lostrequest-field-wrap .text-danger,
+.ecms-lostrequest-field-wrap .field-validation-error {
+    display: block !important;
+    margin-top: .2rem !important;
+    font-size: .72rem !important;
+    line-height: 1.15 !important;
+}
+
+.ecms-lostrequest-page .mand1 {
+    margin-left: .12rem !important;
+    color: var(--ecms-danger-500) !important;
+    font-size: .45rem !important;
+    vertical-align: super !important;
+}
+
+
+/* =====================================================
+   SELECT2
+   Keep existing plugin functionality while matching common forms.
+   ===================================================== */
+.ecms-lostrequest-page .select2-container {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+    .ecms-lostrequest-page .select2-container .select2-selection--multiple {
+        min-height: 2.35rem !important;
+        border: var(--ecms-border) !important;
+        border-radius: var(--ecms-radius-md) !important;
+        background: var(--ecms-card-surface) !important;
+    }
+
+.ecms-lostrequest-page .select2-container--default.select2-container--focus
+.select2-selection--multiple {
+    border-color: var(--ecms-primary-500) !important;
+}
+
+.ecms-lostrequest-page .select2-selection__rendered {
+    min-width: 0 !important;
+}
+
+
+/* =====================================================
+   RADIO GROUP
+   ===================================================== */
+.ecms-lostrequest-radio-group {
+    min-height: 2.25rem !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: .4rem .9rem !important;
+}
+
+    .ecms-lostrequest-radio-group .form-check {
+        margin: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: .35rem !important;
+    }
+
+    .ecms-lostrequest-radio-group .form-check-input {
+        margin: 0 !important;
+        cursor: pointer !important;
+        accent-color: var(--ecms-primary-500) !important;
+    }
+
+    .ecms-lostrequest-radio-group .form-check-label {
+        margin: 0 !important;
+        cursor: pointer !important;
+    }
+
+
+/* =====================================================
+   FILE INPUT
+   ===================================================== */
+.ecms-lostrequest-file-input {
+    width: 100% !important;
+    min-width: 0 !important;
+    cursor: pointer !important;
+}
+
+    .ecms-lostrequest-file-input::file-selector-button {
+        margin: -.375rem .75rem -.375rem -.75rem !important;
+        padding: .45rem .8rem !important;
+        border: 0 !important;
+        border-right: var(--ecms-border) !important;
+        color: var(--ecms-text) !important;
+        background: var(--ecms-card-surface) !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+    }
+
+    .ecms-lostrequest-file-input:disabled {
+        cursor: not-allowed !important;
+        opacity: .72 !important;
+    }
+
+
+/* =====================================================
+   FORM ACTIONS
+   ===================================================== */
+.ecms-lostrequest-submit-row {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 2.75rem !important;
+    margin-top: .4rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: .5rem !important;
+}
+
+    .ecms-lostrequest-submit-row .btn {
+        min-width: 6.5rem !important;
+    }
+
+
+/* =====================================================
+   DATETIMEPICKER
+   Existing JS behavior remains completely unchanged.
+   ===================================================== */
 .bootstrap-datetimepicker-widget {
-    width: 440px !important;
-    font-size: 14px;
+    width: min(29.5rem, calc(100vw - 2rem)) !important;
+    max-width: calc(100vw - 2rem) !important;
+    z-index: 2055 !important;
+    border-radius: var(--ecms-radius-md) !important;
+    box-shadow: var(--ecms-shadow-lg) !important;
+    font-size: .875rem !important;
 }
 
-/*calendar area width*/
-.bootstrap-datetimepicker-widget .datepicker {
-        width: 320px;
+    .bootstrap-datetimepicker-widget .datepicker {
+        width: 20rem !important;
+        max-width: 100% !important;
     }
 
-/*time area width*/
-.bootstrap-datetimepicker-widget .timepicker {
-    width: 100px;
-}
+    .bootstrap-datetimepicker-widget .timepicker {
+        width: 6.25rem !important;
+    }
 
-/*make day cells bigger/smaller*/
-.bootstrap-datetimepicker-widget table td,
-.bootstrap-datetimepicker-widget table th {
-    width: 36px;
-    height: 32px;
-}
+    .bootstrap-datetimepicker-widget table td,
+    .bootstrap-datetimepicker-widget table th {
+        width: 2.25rem !important;
+        height: 2rem !important;
+    }
 
-/*optional: smaller/bigger buttons*/
-.bootstrap-datetimepicker-widget .btn {
-    padding: 4px 10px;
-    font-size: 13px;
-}
+    .bootstrap-datetimepicker-widget .btn {
+        padding: .25rem .625rem !important;
+        font-size: .8rem !important;
+    }
 
 .dtp-okcancel {
-    padding: 8px 10px;
-    /*border-top: 1px solid #ddd;*/
-    text-align: right;
+    padding: .5rem .625rem !important;
+    text-align: right !important;
+}
+
+
+/* =====================================================
+   RESPONSIVE FALLBACK
+   ===================================================== */
+@media (max-width: 1199.98px) {
+    html:has(.ecms-lostrequest-page),
+    body:has(.ecms-lostrequest-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-lostrequest-page.ecms-page.ecms-page-full {
+        height: auto !important;
+        min-height: 0 !important;
+        margin-top: .5rem !important;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-lostrequest-shell,
+    .ecms-lostrequest-form {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-lostrequest-applicant-body,
+    .ecms-lostrequest-report-body {
+        overflow: visible !important;
+    }
+}
+
+
+@media (max-width: 991.98px) {
+    .ecms-lostrequest-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-lostrequest-applicant,
+    .ecms-lostrequest-report {
+        min-height: 28rem !important;
+    }
+}
+
+
+@media (max-width: 767.98px) {
+    .ecms-lostrequest-page.ecms-page.ecms-page-full {
+        width: calc(100vw - .75rem) !important;
+    }
+
+    .ecms-lostrequest-header {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
+
+    .ecms-lostrequest-armyno {
+        align-self: flex-start !important;
+    }
+
+    .ecms-lostrequest-control-row {
+        grid-template-columns: 1fr !important;
+        gap: .25rem !important;
+    }
+
+    .ecms-lostrequest-applicant-actions,
+    .ecms-lostrequest-submit-row {
+        align-items: stretch !important;
+    }
+
+        .ecms-lostrequest-applicant-actions .btn,
+        .ecms-lostrequest-submit-row .btn {
+            flex: 1 1 10rem !important;
+        }
+}
+
+
+/* Short-height desktop: keep browser fixed and scroll inside panels. */
+@media (min-width: 1200px) and (max-height: 760px) {
+    .ecms-lostrequest-report-body {
+        padding-top: .5rem !important;
+        padding-bottom: .5rem !important;
+        gap: .3rem !important;
+    }
+
+    .ecms-lostrequest-control-row {
+        min-height: 2.25rem !important;
+    }
+
+    .ecms-lostrequest-remarks-row textarea {
+        min-height: 4.5rem !important;
+    }
+
+    .ecms-lostrequest-applicant-actions {
+        min-height: 2.8rem !important;
+        padding-top: .35rem !important;
+        padding-bottom: .35rem !important;
+    }
 }

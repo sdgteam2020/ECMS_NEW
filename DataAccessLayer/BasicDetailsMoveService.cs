@@ -28,33 +28,33 @@ namespace DataAccessLayer
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                DateTime now = DateTime.Now;
-
-                DateTime nextRun = DateTime.Today
-                    .AddHours(23)
-                    .AddMinutes(55); // 11:55 PM
-
-                if (now > nextRun)
-                {
-                    nextRun = nextRun.AddDays(1);
-                }
-
-                TimeSpan delay = nextRun - now;
-
-                _logger.LogInformation("BasicDetailsMoveService next run at: {NextRun}", nextRun);
-
-                await Task.Delay(delay, stoppingToken);
-
-                await MoveDataAsync(stoppingToken);
-            }
-            //For testing purposes, you can use the below code to run the data move every minute instead of once a day at 11:55 PM. Just remember to comment out the above code block and uncomment the below block.
             //while (!stoppingToken.IsCancellationRequested)
             //{
-            //    await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+            //    DateTime now = DateTime.Now;
+
+            //    DateTime nextRun = DateTime.Today
+            //        .AddHours(23)
+            //        .AddMinutes(55); // 11:55 PM
+
+            //    if (now > nextRun)
+            //    {
+            //        nextRun = nextRun.AddDays(1);
+            //    }
+
+            //    TimeSpan delay = nextRun - now;
+
+            //    _logger.LogInformation("BasicDetailsMoveService next run at: {NextRun}", nextRun);
+
+            //    await Task.Delay(delay, stoppingToken);
+
             //    await MoveDataAsync(stoppingToken);
             //}
+            //For testing purposes, you can use the below code to run the data move every minute instead of once a day at 11:55 PM. Just remember to comment out the above code block and uncomment the below block.
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await MoveDataAsync(stoppingToken);
+            }
         }
         private async Task MoveDataAsync(CancellationToken cancellationToken)
         {

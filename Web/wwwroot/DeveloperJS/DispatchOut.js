@@ -67,7 +67,7 @@ $(async function () {
     $('#txtDispatchDate').on('keydown', (e) => {
         e.preventDefault();
         return false;
-    });    
+    });
 
     mMsater(0, "ddlDispatch", DispatchMode, "");
     ClaimValue = parseInt($("#spnCValue").html());
@@ -108,46 +108,45 @@ $(async function () {
         let AspNetUsersId = $(this).val(); // Get the selected value
         await GetUserIdWithName(AspNetUsersId);
     });
-+
+    +
 
-    $("#btnSubmit").on('click', async function (e) {
-        let formId = '#SaveDispatchCard';
-        $.validator.unobtrusive.parse($(formId));
+        $("#btnSubmit").on('click', async function (e) {
+            let formId = '#SaveDispatchCard';
+            $.validator.unobtrusive.parse($(formId));
 
-        // 1. Check Form Validation
-        if ($(formId).valid()) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Save it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Save();
-                }
-            })
-        }
-        else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please fill required field.',
+            // 1. Check Form Validation
+            if ($(formId).valid()) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Save it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Save();
+                    }
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please fill required field.',
 
-            })
-            toastr.error('Please fill required field.');
-            return false;
-        }
-    });
+                })
+                toastr.error('Please fill required field.');
+                return false;
+            }
+        });
 
 });
 
 
 async function Save() {
-    try
-    {
+    try {
         $("#loading").show();
 
         let formData = new FormData();
@@ -165,7 +164,7 @@ async function Save() {
         formData.append('ToAspNetUsersId', $("#ddlDID").val());
         formData.append('ToUserId', ToUserId);
 
-        
+
 
         // convert FormData to plain object
         let obj = Object.fromEntries(formData.entries());
@@ -254,8 +253,8 @@ async function Save() {
             }
         }
     }
-     catch (error) {
-    alert("Error: " + error.message);
+    catch (error) {
+        alert("Error: " + error.message);
     }
     finally {
         // Hide loader in all cases
@@ -267,7 +266,7 @@ async function GetUserIdWithName(AspNetUsersId) {
     let param = new URLSearchParams({
         "AspNetUsersId": AspNetUsersId
     });
-    
+
     try {
         const response = await fetch('/BasicDetail/GetUserIdWithName', {
             method: 'POST',
@@ -290,7 +289,7 @@ async function GetUserIdWithName(AspNetUsersId) {
             $("#txtRkName").val(`${result.Value.RankAbbreviation} ${result.Value.Name}`);
 
         } else {
-            ToUserId = 0;   
+            ToUserId = 0;
             $("#txtRkName").val(``);
             $("#txtArmyNo").val(``);
             toastr.error(`${result.Message}`);
@@ -305,7 +304,7 @@ async function GetDispatchToData(CategeryId, RecordRegimentId) {
     let param = new URLSearchParams({
         "CategeryIds": encryptPayloadData(CategeryId),
         "RecordRegimentIds": encryptPayloadData(RecordRegimentId)
-        });
+    });
 
     try {
         const response = await fetch('/BasicDetail/GetDispatchToData', {
@@ -436,8 +435,8 @@ async function GetDDMappedForRecord() {
     }
 }
 function Reset() {
-    ToUnitId=0;
-    ToUserId=0;
+    ToUnitId = 0;
+    ToUserId = 0;
 
     $("#lblToUnitName").text(``);
     $("#lblRecordRegiment").text(``);

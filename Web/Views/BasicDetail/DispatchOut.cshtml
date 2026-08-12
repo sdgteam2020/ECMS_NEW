@@ -20,122 +20,329 @@
         </div>
     </div>
 </header>
-<div class="containerMain">
-    <div class="card mb-3">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-sm-12 text-left">
-                    <h3>
-                        Dispatch Card
-                    </h3>
+<div class="containerMain mt-n10 ecms-dispatchout-page ecms-page ecms-page-full ecms-fit-screen">
+    <div class="ecms-dispatchout-shell ecms-card ecms-card-body">
+
+        <div class="ecms-dispatchout-header ecms-page-title">
+            <div class="ecms-dispatchout-title-wrap">
+                <span class="ecms-dispatchout-title-icon ecms-title-icon">
+                    <i class="fa fa-truck"></i>
+                </span>
+
+                <div>
+                    <h3>Dispatch Card</h3>
+                    <p class="ecms-title-subtitle">
+                        Record card dispatch details and destination recipient information
+                    </p>
                 </div>
             </div>
+
+            <span class="ecms-dispatchout-status badge badge-success">
+                <i class="fa fa-check-circle"></i>
+                Ready for Dispatch
+            </span>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row g-3 row-deck mb-3">
-                <form action="" enctype="multipart/form-data" id="SaveDispatchCard" method="post" name="SaveDispatchCard">
-                    @Html.AntiForgeryToken()
-                    <div class="row">
-                        <span class=" d-none" id="spnCValue">@claimValue</span>
-                        <span class=" d-none" id="spnField">@ViewBag.SearchField</span>
-                        <span class=" d-none" id="spnSearchText">@ViewBag.SearchText</span>
-                        <div class="col-sm-12 mx-auto">
-                            <div class="row">
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Dispatch Date<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <div class="position-relative">
-                                        <input type="text" id="txtDispatchDate" name="txtDispatchDate" class="form-control" autocomplete="off" required />@* datetimepickerpast *@
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtDispatchDate" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Mode of Dispatch<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <select class="form-select full-width"  id="ddlDispatch" name="ddlDispatch" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Mode of Dispatch is required." data-val-regex-pattern="^[\d]+$">
-                                        </select>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="ddlDispatch" data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Name of Courier Incharge<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" class="form-control alpha-num-only full-width" name="txtCourierIncharge" id="txtCourierIncharge" maxlength="50" placeholder="Name of Courier Incharge" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Name of Courier Incharge is required." data-val-regex-pattern="^[\w ]*$" />
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtCourierIncharge" data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Ref of Dispatch<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" class="form-control alpha-num-only full-width" name="txtRefOfDispatch" id="txtRefOfDispatch" maxlength="50" placeholder="Ref of Dispatch" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Ref of Dispatch is required." data-val-regex-pattern="^[\w ]*$" />
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtRefOfDispatch" data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Remark<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <textarea class="form-control1 textarea-auto-height" name="txtFromRemark" id="txtFromRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtFromRemark" data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
-                                @if (claimValue == 2)
-                                {
-                                    <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">ORO<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <label class="form-control" id="lblRecordRegiment" readonly></label>
-                                        </div>
-                                    </div>
-                                }
-                                else if (claimValue == 3)
-                                {
-                                    <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Regiment<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <label class="form-control" id="lblRecordRegiment" readonly></label>
-                                        </div>
-                                    </div>
-                                }
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Unit<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <label class="form-control" id="lblToUnitName" readonly></label>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Select DID<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <select class="form-select full-width"  id="ddlDID" name="ddlDID" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="DID is required." data-val-regex-pattern="^[\d]+$">
-                                        </select>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="ddlDID" data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Army No<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <input class="form-control" placeholder="Army No" id="txtArmyNo" name="txtArmyNo" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Army No is required." data-val-regex-pattern="^[\w ]*$" readonly />
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtArmyNo" data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-2">
-                                    <label class="col-form-label col-sm-5 labelprofile">Rk & Offr Name<i class="fas fa-asterisk mand1"></i></label>
-                                    <div class="col-sm-7">
-                                        <input class="form-control" placeholder="Rk & Offr Name" id="txtRkName" name="txtRkName" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Rk & Offr Name is required." data-val-regex-pattern="^[\w ]*$" readonly />
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtRkName" data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 text-center mb-4">
-                                    <input type="button" class="btn btn-primary" id="btnSubmit" value="Proceed" />
-                                </div>
+
+        <form action=""
+              enctype="multipart/form-data"
+              id="SaveDispatchCard"
+              method="post"
+              name="SaveDispatchCard"
+              class="ecms-dispatchout-form">
+
+            @Html.AntiForgeryToken()
+
+            <span class="d-none" id="spnCValue">@claimValue</span>
+            <span class="d-none" id="spnField">@ViewBag.SearchField</span>
+            <span class="d-none" id="spnSearchText">@ViewBag.SearchText</span>
+
+            <div class="ecms-dispatchout-grid">
+
+                <!-- Dispatch Details -->
+                <section class="ecms-dispatchout-section ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-shipping-fast"></i>
+                        Dispatch Details
+                    </h5>
+
+                    <div class="ecms-dispatchout-section-body">
+
+                        <div class="ecms-dispatchout-control-row">
+                            <label for="txtDispatchDate">
+                                Dispatch Date
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-dispatchout-field-wrap position-relative">
+                                <input type="text"
+                                       id="txtDispatchDate"
+                                       name="txtDispatchDate"
+                                       class="form-control"
+                                       autocomplete="off"
+                                       placeholder="DD/MM/YYYY HH:mm"
+                                       required />
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtDispatchDate"
+                                      data-valmsg-replace="true"></span>
                             </div>
                         </div>
+
+
+                        <div class="ecms-dispatchout-control-row">
+                            <label for="ddlDispatch">
+                                Mode of Dispatch
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-dispatchout-field-wrap">
+                                <select class="form-select full-width"
+                                        id="ddlDispatch"
+                                        name="ddlDispatch"
+                                        data-val="true"
+                                        data-val-regex="This special chars not allowed for security reasons."
+                                        data-val-required="Mode of Dispatch is required."
+                                        data-val-regex-pattern="^[\d]+$">
+                                </select>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="ddlDispatch"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-dispatchout-control-row">
+                            <label for="txtCourierIncharge">
+                                Name of Courier Incharge
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-dispatchout-field-wrap">
+                                <input type="text"
+                                       class="form-control alpha-num-only full-width"
+                                       name="txtCourierIncharge"
+                                       id="txtCourierIncharge"
+                                       maxlength="50"
+                                       placeholder="Name of Courier Incharge"
+                                       data-val="true"
+                                       data-val-regex="This special chars and space not allowed for security reasons."
+                                       data-val-required="Name of Courier Incharge is required."
+                                       data-val-regex-pattern="^[\w ]*$" />
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtCourierIncharge"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-dispatchout-control-row">
+                            <label for="txtRefOfDispatch">
+                                Ref of Dispatch
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-dispatchout-field-wrap">
+                                <input type="text"
+                                       class="form-control alpha-num-only full-width"
+                                       name="txtRefOfDispatch"
+                                       id="txtRefOfDispatch"
+                                       maxlength="50"
+                                       placeholder="Ref of Dispatch"
+                                       data-val="true"
+                                       data-val-regex="This special chars and space not allowed for security reasons."
+                                       data-val-required="Ref of Dispatch is required."
+                                       data-val-regex-pattern="^[\w ]*$" />
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtRefOfDispatch"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-dispatchout-control-row ecms-dispatchout-remarks-row">
+                            <label for="txtFromRemark">
+                                Remark
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-dispatchout-field-wrap">
+                                <textarea class="form-control form-control1 textarea-auto-height"
+                                          name="txtFromRemark"
+                                          id="txtFromRemark"
+                                          rows="4"
+                                          maxlength="100"
+                                          placeholder="Enter dispatch remarks"
+                                          data-val-maxlength="Maximum length of Message is 100 character."
+                                          data-val-maxlength-max="100"
+                                          data-val="true"
+                                          data-val-regex="This special chars not allowed for security reasons."
+                                          data-val-required="Remark is required."
+                                          data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtFromRemark"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
                     </div>
-                </form>
+                </section>
+
+
+                <!-- Destination Details -->
+                <section class="ecms-dispatchout-section ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-map-marker-alt"></i>
+                        Dispatch To
+                    </h5>
+
+                    <div class="ecms-dispatchout-section-body">
+
+                        @if (claimValue == 2)
+                        {
+                            <div class="ecms-dispatchout-control-row">
+                                <label>
+                                    ORO
+                                    <i class="fas fa-asterisk mand1"></i>
+                                </label>
+
+                                <div class="ecms-dispatchout-field-wrap">
+                                    <div class="ecms-dispatchout-readonly" id="lblRecordRegiment"></div>
+                                </div>
+                            </div>
+                        }
+                        else if (claimValue == 3)
+                        {
+                            <div class="ecms-dispatchout-control-row">
+                                <label>
+                                    Regiment
+                                    <i class="fas fa-asterisk mand1"></i>
+                                </label>
+
+                                <div class="ecms-dispatchout-field-wrap">
+                                    <div class="ecms-dispatchout-readonly" id="lblRecordRegiment"></div>
+                                </div>
+                            </div>
+                        }
+
+
+                        <div class="ecms-dispatchout-control-row">
+                            <label>
+                                Unit
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-dispatchout-field-wrap">
+                                <div class="ecms-dispatchout-readonly" id="lblToUnitName"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-dispatchout-control-row">
+                            <label for="ddlDID">
+                                Select DID
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-dispatchout-field-wrap">
+                                <select class="form-select full-width"
+                                        id="ddlDID"
+                                        name="ddlDID"
+                                        data-val="true"
+                                        data-val-regex="This special chars not allowed for security reasons."
+                                        data-val-required="DID is required."
+                                        data-val-regex-pattern="^[\d]+$">
+                                </select>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="ddlDID"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-dispatchout-control-row">
+                            <label for="txtArmyNo">
+                                Army No
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-dispatchout-field-wrap">
+                                <input class="form-control"
+                                       placeholder="Army No"
+                                       id="txtArmyNo"
+                                       name="txtArmyNo"
+                                       data-val="true"
+                                       data-val-regex="This special chars not allowed for security reasons."
+                                       data-val-required="Army No is required."
+                                       data-val-regex-pattern="^[\w ]*$"
+                                       readonly />
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtArmyNo"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-dispatchout-control-row">
+                            <label for="txtRkName">
+                                Rk &amp; Offr Name
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-dispatchout-field-wrap">
+                                <input class="form-control"
+                                       placeholder="Rk & Offr Name"
+                                       id="txtRkName"
+                                       name="txtRkName"
+                                       data-val="true"
+                                       data-val-regex="This special chars not allowed for security reasons."
+                                       data-val-required="Rk & Offr Name is required."
+                                       data-val-regex-pattern="^[\w ]*$"
+                                       readonly />
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtRkName"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-dispatchout-destination-note">
+                            <span class="ecms-dispatchout-note-icon">
+                                <i class="fa fa-info-circle"></i>
+                            </span>
+
+                            <div>
+                                <strong>Recipient verification</strong>
+                                <span>
+                                    Unit, DID, Army No and rank/name are populated from the selected dispatch destination.
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
             </div>
-        </div>
+
+
+            <div class="ecms-dispatchout-actions ecms-form-actions">
+                <input type="button"
+                       class="btn btn-primary"
+                       id="btnSubmit"
+                       value="Proceed" />
+            </div>
+
+        </form>
+
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/DispatchOut.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/select2/js/select2.min.js"></script>

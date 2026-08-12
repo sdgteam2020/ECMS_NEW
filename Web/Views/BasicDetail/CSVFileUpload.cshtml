@@ -46,56 +46,90 @@
         </div>
     </div>
 </header>
-<div class="containerMain">
-    <div class="card mb-3 ">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                       CSV File Import
-                        <small class="text-muted"></small>
-                    </h3>
+<div class="containerMain mt-n10 ecms-csvupload-page ecms-page ecms-page-full ecms-fit-screen">
+    <div class="ecms-csvupload-shell ecms-card ecms-card-body">
+
+        <div class="ecms-csvupload-header ecms-page-title">
+            <div class="ecms-csvupload-title-wrap">
+                <span class="ecms-csvupload-title-icon ecms-title-icon">
+                    <i class="fa fa-file-csv"></i>
+                </span>
+                <div>
+                    <h3>CSV File Import</h3>
+                    <p class="ecms-title-subtitle">
+                        Upload, validate and process I-Card CSV files with import history
+                    </p>
                 </div>
             </div>
+
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row">
-                <form enctype="multipart/form-data" action="" id="csvUploadForm" name="csvUploadForm" method="post">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group row mb-0">
-                                <label class="col-form-label col-md-2 fw-bold">Please upload only csv format<i class="fas fa-asterisk mand1"></i><br />
-                                </label>
-                                <div class="col-md-8 d-flex justify-content-start">
-                                    <input asp-for="CSVFile" class="form-control alpha-num-only col-md-2" accept="text/csv" />
-                                    <button type="button" class="btn btn-primary col-md-1 ml-1" id="btnsave">Submit</button>
-                                    <span id="lblCSVFile" class="col-md-3 text-red"></span>
-                                    <span asp-validation-for="CSVFile" class="text-danger col-md-1"></span>
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group row mb-2">
-                                <label class="col-md-2">
-                                </label>
-                                <div class="col-md-8">
-                                    <span id="lblCSVFileNotification" class="text-danger col-md-1">File Upload Upto 5MB</span>
-                                </div>
-                            </div>
-                        </div>
+
+        <section class="ecms-csvupload-upload-section ecms-section">
+            <h5 class="ecms-section-title">
+                <i class="fa fa-cloud-upload-alt"></i>
+                Upload CSV File
+            </h5>
+
+            <form enctype="multipart/form-data"
+                  action=""
+                  id="csvUploadForm"
+                  name="csvUploadForm"
+                  method="post"
+                  class="ecms-csvupload-form">
+
+                <div class="ecms-csvupload-form-row">
+                    <div class="ecms-csvupload-label-wrap">
+                        <label for="CSVFile">
+                            Select CSV File
+                            <i class="fas fa-asterisk mand1"></i>
+                        </label>
+                        <span class="ecms-csvupload-help">
+                            Maximum file size: 5 MB
+                        </span>
                     </div>
-                </form>
-                <div class="col-xl-12">
-                    
-                    <table class="table table-striped table-hover border border-purple" role="grid" id="tblData">
-                    </table>
+
+                    <div class="ecms-csvupload-input-wrap">
+                        <input asp-for="CSVFile"
+                               class="form-control alpha-num-only ecms-csvupload-file-input"
+                               accept=".csv,text/csv" />
+
+                        <button type="button"
+                                class="btn btn-primary ecms-csvupload-submit"
+                                id="btnsave">
+                            <i class="fa fa-upload mr-1"></i>
+                            Submit
+                        </button>
+                    </div>
+
+                    <div class="ecms-csvupload-validation">
+                        <span id="lblCSVFile" class="text-red"></span>
+                        <span asp-validation-for="CSVFile" class="text-danger"></span>
+                        <span id="lblCSVFileNotification" class="text-danger">
+                            File Upload Upto 5MB
+                        </span>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    </div>
                 </div>
+            </form>
+        </section>
+
+        <section class="ecms-csvupload-records ecms-section ecms-min-0">
+            <h5 class="ecms-section-title">
+                <i class="fa fa-history"></i>
+                CSV Upload History
+            </h5>
+
+            <div class="ecms-csvupload-table-panel ecms-dt-wrap ecms-min-0">
+                <table class="table table-striped table-hover border border-purple ecms-dt-table"
+                       role="grid"
+                       id="tblData">
+                </table>
             </div>
-        </div>
+        </section>
+
     </div>
 </div>
- 
+
 <script asp-src-include="~/developerjs/commandvalidation.js"></script>
 <script asp-src-include="~/developerjs/CSVFileUpload.js"></script>
 

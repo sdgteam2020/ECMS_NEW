@@ -19,86 +19,206 @@
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Card Destruction Request Indl Army No
-                        <small class="text-muted"><span id="spnArmyNo"></span></small>
-                    </h3>
+<div class="containerMain mt-n10 ecms-destructionreq-page ecms-page ecms-page-full ecms-fit-screen">
+    <div class="ecms-destructionreq-shell ecms-card ecms-card-body">
+
+        <div class="ecms-destructionreq-header ecms-page-title">
+            <div class="ecms-destructionreq-title-wrap">
+                <span class="ecms-destructionreq-title-icon ecms-title-icon">
+                    <i class="fa fa-trash"></i>
+                </span>
+
+                <div>
+                    <h3>Card Destruction Request</h3>
+                    <p class="ecms-title-subtitle">
+                        Review card-holder details and submit the destruction request
+                    </p>
                 </div>
             </div>
-        </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row g-3 row-deck mb-3">
-                <form action="" id="SaveDestructionCardRequest" method="post" name="SaveDestructionCardRequest">
-                    <div class="row">
-                        <div class="col-sm-7">
-                            <div class="card p-1">
-                                <div id="partialContainerBD">
 
-                                </div>
-                                <div class="mt-4 mb-4 d-flex justify-content-center gap-3 interactive-buttons flex-wrap" id="basicDetailsButtons">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button> 
-                                    <button type="button" class="btn btn-outline-info btn-sm" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
-                                    <button type="button" class="btn btn-outline-info btn-sm" id="btnCardHistory" name="btnApplMoveHistory">I-Card History</button>
-                                    <button type="button" class="btn btn-outline-primary btn-sm" id="btnDestructionCardsList" name="btnDestructionCardsList">View Destructed Cards</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-5">
-                            <div class="row">
-                                <div class="card p-2">
-                                    <div class="feature-box3">
-                                        <div class="top-block_ind d-flex">
-                                            <div class="text-block">
-                                                <h5 class="mb-1 text-font2 font-weight600">Report Card Destruction</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Select Reason<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <select class="form-control alpha-num-only select2 select2-accessible text-uppercase full-width" multiple tabindex="-1" name="ddlDestructionRemark" id="ddlDestructionRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Destruction Reason is required.">
-                                            </select>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlDestructionRemark" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Date Of Destruction<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <input type="text" id="txtDestructiononinp" class="form-control" name="txtDestructiononinp" autocomplete="off" data-val="true" data-val-required="Date Of Destruction is required.">
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtDestructiononinp" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Remarks<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <textarea class="form-control1" name="txtDestructionRemark" id="txtDestructionRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtDestructionRemark" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-check mt-4">
-                                        <input class="form-check-input" type="checkbox" id="declarationCheckbox">
-                                        <label class="form-check-label labelprofile" for="declarationCheckbox">
-                                            I hereby declare that the details furnished above are true to the best of my knowledge. I am fully aware of this declaration and hereby consent that the Smart I-Card has been destroyed.
-                                        </label>
-                                    </div>
-                                    <div class="col-sm-12 d-flex justify-content-center gap-3 mb-4">
-                                        <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" disabled/>
-                                        <input type="button" class="btn btn-warning" id="btnReset" value="Reset" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            <span class="ecms-destructionreq-armyno badge badge-danger">
+                <i class="fa fa-id-card"></i>
+                Army No:
+                <strong id="spnArmyNo"></strong>
+            </span>
         </div>
+
+        <form action=""
+              id="SaveDestructionCardRequest"
+              method="post"
+              name="SaveDestructionCardRequest"
+              class="ecms-destructionreq-form">
+
+            <div class="ecms-destructionreq-grid">
+
+                <!-- Applicant / Card Details -->
+                <section class="ecms-destructionreq-applicant ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-user"></i>
+                        Applicant &amp; Card Details
+                    </h5>
+
+                    <div class="ecms-destructionreq-applicant-body ecms-min-0">
+                        <div id="partialContainerBD"></div>
+                    </div>
+
+                    <div class="ecms-destructionreq-applicant-actions ecms-form-actions"
+                         id="basicDetailsButtons">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                id="btnCardPreview"
+                                name="btnCardPreview">
+                            <i class="fa fa-eye mr-1"></i>
+                            I-Card Preview
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-info"
+                                id="btnApplMoveHistory"
+                                name="btnApplMoveHistory">
+                            <i class="fa fa-history mr-1"></i>
+                            I-Card Move History
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-info"
+                                id="btnCardHistory"
+                                name="btnApplMoveHistory">
+                            <i class="fa fa-list-alt mr-1"></i>
+                            I-Card History
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-primary"
+                                id="btnDestructionCardsList"
+                                name="btnDestructionCardsList">
+                            <i class="fa fa-trash mr-1"></i>
+                            View Destructed Cards
+                        </button>
+
+                    </div>
+                </section>
+
+
+                <!-- Destruction Request -->
+                <section class="ecms-destructionreq-report ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-file-alt"></i>
+                        Report Card Destruction
+                    </h5>
+
+                    <div class="ecms-destructionreq-report-body">
+
+                        <div class="ecms-destructionreq-control-row">
+                            <label for="ddlDestructionRemark">
+                                Select Reason
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-destructionreq-field-wrap">
+                                <select class="form-control alpha-num-only select2 select2-accessible text-uppercase full-width"
+                                        multiple
+                                        tabindex="-1"
+                                        name="ddlDestructionRemark"
+                                        id="ddlDestructionRemark"
+                                        data-val="true"
+                                        data-val-regex="This special chars and space not allowed for security reasons."
+                                        data-val-required="Destruction Reason is required.">
+                                </select>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="ddlDestructionRemark"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-destructionreq-control-row">
+                            <label for="txtDestructiononinp">
+                                Date Of Destruction
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-destructionreq-field-wrap">
+                                <input type="text"
+                                       id="txtDestructiononinp"
+                                       class="form-control"
+                                       name="txtDestructiononinp"
+                                       autocomplete="off"
+                                       placeholder="DD/MM/YYYY HH:mm"
+                                       data-val="true"
+                                       data-val-required="Date Of Destruction is required." />
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtDestructiononinp"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-destructionreq-control-row ecms-destructionreq-remarks-row">
+                            <label for="txtDestructionRemark">
+                                Remarks
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-destructionreq-field-wrap">
+                                <textarea class="form-control form-control1"
+                                          name="txtDestructionRemark"
+                                          id="txtDestructionRemark"
+                                          rows="4"
+                                          maxlength="100"
+                                          placeholder="Enter remarks"
+                                          data-val-maxlength="Maximum length of Message is 100 character."
+                                          data-val-maxlength-max="100"
+                                          data-val="true"
+                                          data-val-regex="This special chars not allowed for security reasons."
+                                          data-val-required="Remark is required."
+                                          data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtDestructionRemark"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-destructionreq-declaration">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="declarationCheckbox" />
+
+                            <label class="form-check-label"
+                                   for="declarationCheckbox">
+                                I hereby declare that the details furnished above are true to the best of my knowledge.
+                                I am fully aware of this declaration and hereby consent that the Smart I-Card has been destroyed.
+                            </label>
+                        </div>
+
+
+                        <div class="ecms-destructionreq-submit-row ecms-form-actions">
+                            <input type="button"
+                                   class="btn btn-danger"
+                                   id="btnSubmit"
+                                   value="Submit"
+                                   disabled />
+
+                            <input type="button"
+                                   class="btn btn-warning"
+                                   id="btnReset"
+                                   value="Reset" />
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+        </form>
+
     </div>
 </div>
+
 <script asp-src-include="~/select2/js/select2.min.js"></script>
 <script asp-src-include="~/developerjs/DestructionCardRequest.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>

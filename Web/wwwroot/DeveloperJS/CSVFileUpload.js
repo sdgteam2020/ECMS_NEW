@@ -245,7 +245,7 @@ function BindData() {
     table = $("#tblData").DataTable({
         scrollY: '65vh',          // ✅ vertical scroll
         scrollX: true,            // ✅ horizontal scroll
-        scrollCollapse: true,    
+        scrollCollapse: true,
         scroller: true,           // ✅ Enable virtual scrolling for better performance
         deferScroll: true,        // ✅ Improve scrolling performance
         fixedHeader: false,       // ❌ disable when using scrollY
@@ -283,7 +283,7 @@ function BindData() {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
                 let result = await response.json();
-/*                $("#lblTotal").html(result.recordsTotal);*/
+                /*                $("#lblTotal").html(result.recordsTotal);*/
                 callback(result); // Sends data to DataTables
 
 
@@ -389,7 +389,7 @@ function BindData() {
             search: "", // Remove the default "Search:" label
             searchPlaceholder: "Search Type / Value" // Add custom placeholder
         },
-        dom: "<'dt-top'lBf>rtip", // Add buttons to the DOM
+        dom: "<'dt-top ecms-dt-toolbar d-flex justify-content-between align-items-center flex-wrap'lBf>rt<'ecms-dt-footer row no-gutters'<'col-12 col-md-6 dt-info-col'i><'col-12 col-md-6 dt-page-col'p>>", // Shared ModernCSS DataTable toolbar/footer
         buttons: [
             //{
             //    extend: 'copy',
@@ -437,7 +437,7 @@ function BindData() {
                 var rowData = table.row($(this).closest("tr")).data();
                 DownloadCSV("CSVWithoutRemarks", rowData.FileName);
             });
-            
+
 
             $("#tblData tbody").off("click", ".cls-validatedCsv").on("click", ".cls-validatedCsv", function () {
                 var rowData = table.row($(this).closest("tr")).data();
@@ -448,7 +448,7 @@ function BindData() {
 }
 
 function Save() {
-    
+
 }
 
 function DownloadCSV(fileLoc, FileName) {

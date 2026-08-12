@@ -19,141 +19,248 @@
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Lost Card Request Indl Army No
-                        <small class="text-muted"><span id="spnArmyNo"></span></small>
-                    </h3>
+<div class="containerMain mt-n10 ecms-lostrequest-page ecms-page ecms-page-full ecms-fit-screen">
+    <div class="ecms-lostrequest-shell ecms-card ecms-card-body">
+
+        <div class="ecms-lostrequest-header ecms-page-title">
+            <div class="ecms-lostrequest-title-wrap">
+                <span class="ecms-lostrequest-title-icon ecms-title-icon">
+                    <i class="fa fa-exclamation-triangle"></i>
+                </span>
+
+                <div>
+                    <h3>Lost Card Request</h3>
+                    <p class="ecms-title-subtitle">
+                        Review card-holder details and submit the AFSAC loss report
+                    </p>
                 </div>
             </div>
+
+            <span class="ecms-lostrequest-armyno badge badge-warning">
+                <i class="fa fa-id-card"></i>
+                Army No:
+                <strong id="spnArmyNo"></strong>
+            </span>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row g-3 row-deck mb-3">
-                <form action="" id="SaveLostCardRequest" method="post" name="SaveLostCardRequest">
-                    <div class="row">
-                        <div class="col-sm-7">
-                            <div class="card p-1">
-                                <div id="partialContainerBD" class="mb-2">
-                                </div>
-                               <div class="card p-2">
-                                    <div class="text-center">                                        
-                                        <button type="button" class="btn btn-info" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
-                                        <button type="button" class="btn btn-primary" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button>
-                                        <button type="button" class="btn btn-warning" id="btnLostCardsList" name="btnLostCardsList">View Lost Cards</button>
-                                    </div>
-                               </div>
+
+        <form action=""
+              id="SaveLostCardRequest"
+              method="post"
+              name="SaveLostCardRequest"
+              class="ecms-lostrequest-form">
+
+            <div class="ecms-lostrequest-grid">
+
+                <!-- Applicant details / dynamic partial -->
+                <section class="ecms-lostrequest-applicant ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-user"></i>
+                        Applicant Details
+                    </h5>
+
+                    <div class="ecms-lostrequest-applicant-body ecms-min-0">
+                        <div id="partialContainerBD"></div>
+                    </div>
+
+                    <div class="ecms-lostrequest-applicant-actions ecms-form-actions">
+                        <button type="button"
+                                class="btn btn-info"
+                                id="btnApplMoveHistory"
+                                name="btnApplMoveHistory">
+                            <i class="fa fa-history mr-1"></i>
+                            I-Card Move History
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-primary"
+                                id="btnCardPreview"
+                                name="btnCardPreview">
+                            <i class="fa fa-eye mr-1"></i>
+                            I-Card Preview
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-warning"
+                                id="btnLostCardsList"
+                                name="btnLostCardsList">
+                            <i class="fa fa-list mr-1"></i>
+                            View Lost Cards
+                        </button>
+                    </div>
+                </section>
+
+
+                <!-- Report lost card -->
+                <section class="ecms-lostrequest-report ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-file-alt"></i>
+                        Report Lost Card
+                    </h5>
+
+                    <div class="ecms-lostrequest-report-body">
+
+                        <!-- Reason of Loss -->
+                        <div class="ecms-lostrequest-control-row">
+                            <label for="ddlLostRemark">
+                                Reason of Loss
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-lostrequest-field-wrap">
+                                <select class="form-control select2 text-uppercase"
+                                        multiple
+                                        name="ddlLostRemark"
+                                        id="ddlLostRemark"
+                                        data-val="true"
+                                        data-val-regex="This special chars and space not allowed for security reasons."
+                                        data-val-required="Reason of Loss is required.">
+                                </select>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="ddlLostRemark"
+                                      data-valmsg-replace="true"></span>
                             </div>
                         </div>
-                        <div class="col-sm-5">
-                            <div class="card p-3">
-                                <div class="feature-box3 mb-3">
-                                    <div class="top-block_ind d-flex">
-                                        <div class="text-block">
-                                            <h5 class="mb-1 text-font2 fw-bold">Report Lost Card</h5>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <!-- Reason of Loss -->
-                                <div class="mb-3 row">
-                                    <label class="col-sm-5 col-form-label labelprofile">
-                                        Reason of Loss <i class="fas fa-asterisk mand1"></i>
-                                    </label>
-                                    <div class="col-sm-7">
-                                        <select class="form-control select2 text-uppercase" multiple name="ddlLostRemark" id="ddlLostRemark"
-                                                data-val="true" data-val-regex="This special chars and space not allowed for security reasons."
-                                                data-val-required="Reason of Loss is required.">
-                                        </select>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="ddlLostRemark"
-                                              data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
 
-                                <!-- Date Of Loss -->
-                                <div class="mb-3 row">
-                                    <label class="col-sm-5 col-form-label labelprofile">
-                                        Date Of Loss <i class="fas fa-asterisk mand1"></i>
-                                    </label>
-                                    <div class="col-sm-7">
-                                        <input type="text" id="txtlostoninp" class="form-control"
-                                               name="txtlostoninp" autocomplete="off" data-val="true"
-                                               data-val-required="Date Of Loss is required.">
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtlostoninp"
-                                              data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
+                        <!-- Date Of Loss -->
+                        <div class="ecms-lostrequest-control-row">
+                            <label for="txtlostoninp">
+                                Date Of Loss
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
 
-                                <!-- FIR Lodged -->
-                                <div class="mb-3 row">
-                                    <label class="col-sm-5 col-form-label labelprofile">
-                                        Have Indl Lodged FIR in Police Stn? <i class="fas fa-asterisk mand1"></i>
-                                    </label>
-                                    <div class="col-sm-7">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="isFIRLogged" id="isFIRLoggedYes"
-                                                   value="true" data-val="true" data-val-required="This field is required.">
-                                            <label class="form-check-label" for="isFIRLoggedYes">Yes</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="isFIRLogged" id="isFIRLoggedNo"
-                                                   value="false" data-val="true" data-val-required="This field is required.">
-                                            <label class="form-check-label" for="isFIRLoggedNo">No</label>
-                                        </div>
-                                        <span class="text-danger d-block mt-1 field-validation-valid"
-                                              data-valmsg-for="isFIRLogged" data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
+                            <div class="ecms-lostrequest-field-wrap">
+                                <input type="text"
+                                       id="txtlostoninp"
+                                       class="form-control"
+                                       name="txtlostoninp"
+                                       autocomplete="off"
+                                       placeholder="DD/MM/YYYY HH:mm"
+                                       data-val="true"
+                                       data-val-required="Date Of Loss is required." />
 
-                                <!-- Upload FIR -->
-                                <div class="mb-3 row">
-                                    <label class="col-sm-5 col-form-label labelprofile">
-                                        Upload FIR Report / Court of Inquiry Document (PDF)
-                                    </label>
-                                    <div class="col-sm-7">
-                                        <input class="form-control" accept="application/pdf" type="file" id="supportingDoc"
-                                               name="supportingDoc" data-val="true">
-                                        <small id="lblCSVFileNotification" class="text-danger">File Upload Upto 5MB</small>
-                                    </div>
-                                </div>
-
-                                <!-- Remarks -->
-                                <div class="mb-3 row">
-                                    <label class="col-sm-5 col-form-label labelprofile">
-                                        Remarks <i class="fas fa-asterisk mand1"></i>
-                                    </label>
-                                    <div class="col-sm-7">
-                                        <textarea class="form-control" name="txtLostRemark" id="txtLostRemark"
-                                                  rows="3" maxlength="100"
-                                                  data-val="true"
-                                                  data-val-maxlength="Maximum length of Message is 100 character."
-                                                  data-val-maxlength-max="100"
-                                                  data-val-regex="This special chars not allowed for security reasons."
-                                                  data-val-regex-pattern="^[\w\&\.\-\; ]*$"
-                                                  data-val-required="Remark is required."></textarea>
-                                        <span class="text-danger field-validation-valid" data-valmsg-for="txtLostRemark"
-                                              data-valmsg-replace="true"></span>
-                                    </div>
-                                </div>
-
-                                <!-- Buttons -->
-                                <div class="d-flex justify-content-center gap-3 mb-2">
-                                    <button type="button" class="btn btn-primary" id="btnSubmit">Submit</button>
-                                    <button type="button" class="btn btn-warning" id="btnReset">Reset</button>
-                                </div>
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtlostoninp"
+                                      data-valmsg-replace="true"></span>
                             </div>
+                        </div>
+
+
+                        <!-- FIR Lodged -->
+                        <div class="ecms-lostrequest-control-row ecms-lostrequest-radio-row">
+                            <label>
+                                Have Indl Lodged FIR in Police Stn?
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-lostrequest-field-wrap">
+                                <div class="ecms-lostrequest-radio-group">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="isFIRLogged"
+                                               id="isFIRLoggedYes"
+                                               value="true"
+                                               data-val="true"
+                                               data-val-required="This field is required." />
+                                        <label class="form-check-label" for="isFIRLoggedYes">Yes</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="isFIRLogged"
+                                               id="isFIRLoggedNo"
+                                               value="false"
+                                               data-val="true"
+                                               data-val-required="This field is required." />
+                                        <label class="form-check-label" for="isFIRLoggedNo">No</label>
+                                    </div>
+                                </div>
+
+                                <span class="text-danger d-block mt-1 field-validation-valid"
+                                      data-valmsg-for="isFIRLogged"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <!-- Upload FIR -->
+                        <div class="ecms-lostrequest-control-row ecms-lostrequest-file-row">
+                            <label for="supportingDoc">
+                                Upload FIR Report / Court of Inquiry Document
+                            </label>
+
+                            <div class="ecms-lostrequest-field-wrap">
+                                <input class="form-control ecms-lostrequest-file-input"
+                                       accept="application/pdf"
+                                       type="file"
+                                       id="supportingDoc"
+                                       name="supportingDoc"
+                                       data-val="true" />
+
+                                <small id="lblCSVFileNotification" class="text-danger">
+                                    PDF only · Maximum 5 MB
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <!-- Remarks -->
+                        <div class="ecms-lostrequest-control-row ecms-lostrequest-remarks-row">
+                            <label for="txtLostRemark">
+                                Remarks
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-lostrequest-field-wrap">
+                                <textarea class="form-control"
+                                          name="txtLostRemark"
+                                          id="txtLostRemark"
+                                          rows="4"
+                                          maxlength="100"
+                                          placeholder="Enter remarks"
+                                          data-val="true"
+                                          data-val-maxlength="Maximum length of Message is 100 character."
+                                          data-val-maxlength-max="100"
+                                          data-val-regex="This special chars not allowed for security reasons."
+                                          data-val-regex-pattern="^[\w\&\.\-\; ]*$"
+                                          data-val-required="Remark is required."></textarea>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtLostRemark"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-lostrequest-submit-row ecms-form-actions">
+                            <button type="button"
+                                    class="btn btn-primary"
+                                    id="btnSubmit">
+                                <i class="fa fa-paper-plane mr-1"></i>
+                                Submit
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-warning"
+                                    id="btnReset">
+                                <i class="fa fa-undo mr-1"></i>
+                                Reset
+                            </button>
                         </div>
 
                     </div>
-                </form>
+                </section>
+
             </div>
-        </div>
+        </form>
+
     </div>
 </div>
-<script asp-src-include="~/select2/js/select2.min.js"></script> 
+
+<script asp-src-include="~/select2/js/select2.min.js"></script>
 <script asp-src-include="~/developerjs/LostCardRequest.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/ICardPrint.js"></script>

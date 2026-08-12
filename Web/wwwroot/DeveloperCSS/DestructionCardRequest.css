@@ -1,92 +1,514 @@
-﻿.containerMain {
-    margin-left: 10%;
-    margin-right: 10%;
+﻿/* =====================================================
+   ECMS - Card Destruction Request
+   Page-specific layout only.
+
+   Shared ModernCSS remains the source of truth for:
+   - page/background/breadcrumb
+   - cards/page titles/section titles
+   - forms/buttons/badges/modals
+   - colors/radius/shadows
+
+   This file handles only destruction-request geometry,
+   the dynamic applicant partial, Select2, declaration control
+   and datetimepicker compatibility.
+   ===================================================== */
+
+
+/* =====================================================
+   DESKTOP FULL-WIDTH VIEWPORT FIT
+   ===================================================== */
+@media (min-width: 1200px) {
+    html:has(.ecms-destructionreq-page),
+    body:has(.ecms-destructionreq-page) {
+        overflow-y: hidden !important;
+    }
+
+    .ecms-destructionreq-page.ecms-page.ecms-page-full {
+        width: calc(100vw - 1rem) !important;
+        max-width: none !important;
+        height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height, var(--ecms-nav-height)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height)) - var(--ecms-footer-height) ) !important;
+        min-height: 0 !important;
+        margin: 0 auto !important;
+        padding: .5rem 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
 }
 
-.faulty {
-    background-color: #044C92;
-    text-align: center;
-    padding: 0.5rem !important;
-    margin-right: 0.25rem !important;
-    border: hidden;
-    font-weight: 400 !important;
-    color: #fff !important;
-    width: 170px;
-    height: 60px;
+
+/* =====================================================
+   MAIN CARD
+   ===================================================== */
+.ecms-destructionreq-shell {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
-.modal.left .modal-dialog, .modal.right .modal-dialog {
-    position: fixed;
-    margin: auto;
-    width: 700px;
-    height: 100%;
-    text-align: left;
-    -webkit-transform: translate3d(0%, 0, 0);
-    -ms-transform: translate3d(0%, 0, 0);
-    -o-transform: translate3d(0%, 0, 0);
-    transform: translate3d(0%, 0, 0);
+
+/* =====================================================
+   PAGE TITLE
+   ===================================================== */
+.ecms-destructionreq-header {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin: 0 0 .55rem 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: .75rem !important;
 }
 
-.interactive-buttons .btn {
-    min-width: 180px;
-    font-weight: 500;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.ecms-destructionreq-title-wrap {
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: .7rem !important;
 }
 
-    .interactive-buttons .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    .ecms-destructionreq-title-wrap > div {
+        min-width: 0 !important;
     }
 
-    .interactive-buttons .btn:focus {
-        outline: none;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+    .ecms-destructionreq-title-wrap h3 {
+        margin: 0 !important;
     }
 
-/* overall popup */
-.bootstrap-datetimepicker-widget {
-    width: 440px !important;
-    font-size: 14px;
+/* Destruction state accent uses only common tokens. */
+.ecms-destructionreq-title-icon.ecms-title-icon {
+    background: linear-gradient( 135deg, var(--ecms-danger-500), var(--ecms-danger-600, var(--ecms-danger-500)) ) !important;
 }
 
-    /*calendar area width*/
-    .bootstrap-datetimepicker-widget .datepicker {
-        width: 320px;
+.ecms-destructionreq-armyno {
+    flex: 0 0 auto !important;
+    min-height: 2rem !important;
+    padding: .35rem .75rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: .35rem !important;
+    white-space: nowrap !important;
+}
+
+    .ecms-destructionreq-armyno strong {
+        margin-left: .15rem !important;
     }
 
-    /*time area width*/
-    .bootstrap-datetimepicker-widget .timepicker {
-        width: 100px;
+
+/* =====================================================
+   FORM / TWO-COLUMN SCREEN
+   ===================================================== */
+.ecms-destructionreq-form {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.ecms-destructionreq-grid {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.2fr) minmax(24rem, .8fr) !important;
+    gap: .55rem !important;
+}
+
+
+/* =====================================================
+   COMMON PANEL GEOMETRY
+   ===================================================== */
+.ecms-destructionreq-applicant,
+.ecms-destructionreq-report {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+    .ecms-destructionreq-applicant > .ecms-section-title,
+    .ecms-destructionreq-report > .ecms-section-title {
+        flex: 0 0 var(--ecms-section-title-height) !important;
     }
 
-    /*make day cells bigger/smaller*/
-    .bootstrap-datetimepicker-widget table td,
-    .bootstrap-datetimepicker-widget table th {
-        width: 36px;
-        height: 32px;
+
+/* =====================================================
+   DYNAMIC APPLICANT/CARD PARTIAL
+   ===================================================== */
+.ecms-destructionreq-applicant-body {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: .55rem !important;
+    overflow: auto !important;
+}
+
+#partialContainerBD {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+    #partialContainerBD,
+    #partialContainerBD * {
+        max-width: 100%;
+        overflow-wrap: anywhere;
     }
 
-    /*optional: smaller/bigger buttons*/
-    .bootstrap-datetimepicker-widget .btn {
-        padding: 4px 10px;
-        font-size: 13px;
+        #partialContainerBD img {
+            max-width: 100% !important;
+            object-fit: contain !important;
+        }
+
+        /* If the shared partial returns its own card, prevent excessive
+   nested-card spacing without altering the partial itself. */
+        #partialContainerBD > .card,
+        #partialContainerBD > .row > .card,
+        #partialContainerBD .card:first-child {
+            margin-top: 0 !important;
+        }
+
+
+/* Applicant action bar stays visible below the scrollable detail area. */
+.ecms-destructionreq-applicant-actions {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 3.2rem !important;
+    margin: 0 !important;
+    padding: .5rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    align-items: center !important;
+    gap: .45rem !important;
+    border-top: var(--ecms-border) !important;
+}
+
+    .ecms-destructionreq-applicant-actions .btn {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 2.25rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
-.dtp-okcancel {
-    padding: 8px 10px;
-    /*border-top: 1px solid #ddd;*/
-    text-align: right;
+
+/* =====================================================
+   REPORT CARD DESTRUCTION
+   ===================================================== */
+.ecms-destructionreq-report-body {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: .75rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .55rem !important;
+    overflow: auto !important;
+}
+
+.ecms-destructionreq-control-row {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 2.65rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(9.5rem, 36%) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: .65rem !important;
+}
+
+    .ecms-destructionreq-control-row > label {
+        min-width: 0 !important;
+        margin: 0 !important;
+        font-weight: 850 !important;
+        line-height: 1.25 !important;
+    }
+
+.ecms-destructionreq-field-wrap {
+    min-width: 0 !important;
+}
+
+    .ecms-destructionreq-field-wrap .form-control,
+    .ecms-destructionreq-field-wrap select,
+    .ecms-destructionreq-field-wrap textarea {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+.ecms-destructionreq-remarks-row {
+    align-items: start !important;
 }
 
 #txtDestructionRemark {
-    height: auto !important;
-}
-.swal-details {
-    text-align: left;
-    font-size: 16px;
+    min-height: 5.5rem !important;
+    max-height: 8.5rem !important;
+    resize: vertical !important;
 }
 
-.swal-details p {
-    margin: 6px 0;
+.ecms-destructionreq-field-wrap .text-danger,
+.ecms-destructionreq-field-wrap .field-validation-error {
+    display: block !important;
+    margin-top: .2rem !important;
+    font-size: .72rem !important;
+    line-height: 1.15 !important;
+}
+
+.ecms-destructionreq-page .mand1 {
+    margin-left: .12rem !important;
+    color: var(--ecms-danger-500) !important;
+    font-size: .45rem !important;
+    vertical-align: super !important;
+}
+
+
+/* =====================================================
+   SELECT2
+   ===================================================== */
+.ecms-destructionreq-page .select2-container {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+    .ecms-destructionreq-page .select2-container .select2-selection--multiple {
+        min-height: 2.35rem !important;
+        border: var(--ecms-border) !important;
+        border-radius: var(--ecms-radius-md) !important;
+        background: var(--ecms-card-surface) !important;
+    }
+
+.ecms-destructionreq-page .select2-container--default.select2-container--focus
+.select2-selection--multiple {
+    border-color: var(--ecms-primary-500) !important;
+}
+
+
+/* =====================================================
+   DECLARATION
+   ===================================================== */
+.ecms-destructionreq-declaration {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: .35rem !important;
+    padding: .7rem .75rem !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: .55rem !important;
+    border: var(--ecms-border) !important;
+    border-radius: var(--ecms-radius-md) !important;
+    background: var(--ecms-card-surface) !important;
+}
+
+    .ecms-destructionreq-declaration .form-check-input {
+        position: static !important;
+        width: 1.05rem !important;
+        height: 1.05rem !important;
+        margin: .12rem 0 0 0 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        appearance: auto !important;
+        -webkit-appearance: checkbox !important;
+        accent-color: var(--ecms-danger-500) !important;
+        cursor: pointer !important;
+    }
+
+    .ecms-destructionreq-declaration .form-check-label {
+        margin: 0 !important;
+        color: var(--ecms-text) !important;
+        font-size: .78rem !important;
+        font-weight: 750 !important;
+        line-height: 1.35 !important;
+        cursor: pointer !important;
+    }
+
+
+/* =====================================================
+   FORM ACTIONS
+   Submit remains disabled until declaration is checked by JS.
+   ===================================================== */
+.ecms-destructionreq-submit-row {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 2.8rem !important;
+    margin-top: .25rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: .5rem !important;
+}
+
+    .ecms-destructionreq-submit-row .btn {
+        min-width: 6.5rem !important;
+    }
+
+
+/* =====================================================
+   SWEETALERT CONFIRMATION DETAIL
+   ===================================================== */
+.swal-details {
+    text-align: left !important;
+    font-size: .875rem !important;
+}
+
+    .swal-details p {
+        margin: .4rem 0 !important;
+    }
+
+
+/* =====================================================
+   DATETIMEPICKER
+   Existing JS min/max date and OK/Cancel functionality preserved.
+   ===================================================== */
+.bootstrap-datetimepicker-widget {
+    width: min(29.5rem, calc(100vw - 2rem)) !important;
+    max-width: calc(100vw - 2rem) !important;
+    z-index: 2055 !important;
+    border-radius: var(--ecms-radius-md) !important;
+    box-shadow: var(--ecms-shadow-lg) !important;
+    font-size: .875rem !important;
+}
+
+    .bootstrap-datetimepicker-widget .datepicker {
+        width: 20rem !important;
+        max-width: 100% !important;
+    }
+
+    .bootstrap-datetimepicker-widget .timepicker {
+        width: 6.25rem !important;
+    }
+
+    .bootstrap-datetimepicker-widget table td,
+    .bootstrap-datetimepicker-widget table th {
+        width: 2.25rem !important;
+        height: 2rem !important;
+    }
+
+    .bootstrap-datetimepicker-widget .btn {
+        padding: .25rem .625rem !important;
+        font-size: .8rem !important;
+    }
+
+.dtp-okcancel {
+    padding: .5rem .625rem !important;
+    text-align: right !important;
+}
+
+
+/* =====================================================
+   RESPONSIVE FALLBACK
+   ===================================================== */
+@media (max-width: 1199.98px) {
+    html:has(.ecms-destructionreq-page),
+    body:has(.ecms-destructionreq-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-destructionreq-page.ecms-page.ecms-page-full {
+        height: auto !important;
+        min-height: 0 !important;
+        margin-top: .5rem !important;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-destructionreq-shell,
+    .ecms-destructionreq-form {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-destructionreq-applicant-body,
+    .ecms-destructionreq-report-body {
+        overflow: visible !important;
+    }
+}
+
+
+@media (max-width: 991.98px) {
+    .ecms-destructionreq-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-destructionreq-applicant,
+    .ecms-destructionreq-report {
+        min-height: 28rem !important;
+    }
+
+    .ecms-destructionreq-applicant-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+
+@media (max-width: 767.98px) {
+    .ecms-destructionreq-page.ecms-page.ecms-page-full {
+        width: calc(100vw - .75rem) !important;
+    }
+
+    .ecms-destructionreq-header {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
+
+    .ecms-destructionreq-armyno {
+        align-self: flex-start !important;
+    }
+
+    .ecms-destructionreq-control-row {
+        grid-template-columns: 1fr !important;
+        gap: .25rem !important;
+    }
+
+    .ecms-destructionreq-applicant-actions {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-destructionreq-submit-row {
+        align-items: stretch !important;
+    }
+
+        .ecms-destructionreq-submit-row .btn {
+            flex: 1 1 8rem !important;
+        }
+}
+
+
+/* Short-height desktops:
+   browser stays fixed; each panel body handles its own scrolling. */
+@media (min-width: 1200px) and (max-height: 760px) {
+    .ecms-destructionreq-report-body {
+        padding-top: .5rem !important;
+        padding-bottom: .5rem !important;
+        gap: .35rem !important;
+    }
+
+    .ecms-destructionreq-control-row {
+        min-height: 2.25rem !important;
+    }
+
+    #txtDestructionRemark {
+        min-height: 4.5rem !important;
+    }
+
+    .ecms-destructionreq-declaration {
+        padding-top: .5rem !important;
+        padding-bottom: .5rem !important;
+    }
+
+    .ecms-destructionreq-applicant-actions {
+        min-height: 2.85rem !important;
+        padding-top: .35rem !important;
+        padding-bottom: .35rem !important;
+    }
 }

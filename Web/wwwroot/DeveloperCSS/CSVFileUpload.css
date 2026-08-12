@@ -1,111 +1,402 @@
-﻿.login-wrap {
-    margin-top: 15px;
-    margin-left: 33%;
-    margin-right: 33%;
-    /*margin-bottom: 100px;*/
-    /*    margin-left: -50px;*/
-    /*  border: 7px double #242c6d;*/
-    width: 33%;
-}
-.text-red {
-    color: red;
-}
-/* Text intro in preview popup */
-.csv-preview-intro {
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: #333;
-}
+﻿/* =====================================================
+   ECMS - CSV File Upload
+   Page-specific layout only.
 
-/* Table wrapper: horizontal scroll for many columns */
-.csv-preview-table-wrapper {
-    overflow-x: auto;
-}
+   Shared ModernCSS remains the source of truth for page/background/
+   breadcrumb, cards, page titles, sections, DataTables, forms,
+   buttons, badges, colors, radius and shadows.
+   ===================================================== */
 
-/* Optional: extra styling for preview table */
-/*.csv-preview-table {
-    margin-top: 10px;
-}*/
+@media (min-width: 1200px) {
+    html:has(.ecms-csvupload-page),
+    body:has(.ecms-csvupload-page) {
+        overflow-y: hidden !important;
+    }
 
-/* Button group in validation complete popup */
-.csv-btn-group {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 1rem;
+    .ecms-csvupload-page.ecms-page.ecms-page-full {
+        width: calc(100vw - 1rem) !important;
+        max-width: none !important;
+        height: calc( 100vh - var(--ecms-header-height) - var(--ecms-nav-strip-height, var(--ecms-nav-height)) - var(--ecms-breadcrumb-strip-height, var(--ecms-breadcrumb-height)) - var(--ecms-footer-height) ) !important;
+        min-height: 0 !important;
+        margin: 0 auto !important;
+        padding: .5rem 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
 }
 
-/* Individual buttons using SweetAlert2 base classes + custom colors */
-.csv-btn-download {
-    background-color: #28a745 !important; /* green */
+.ecms-csvupload-shell {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .55rem !important;
+    overflow: hidden !important;
 }
 
-.csv-btn-proceed {
-    background-color: #007bff !important; /* blue */
+.ecms-csvupload-header {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: .75rem !important;
 }
 
-.csv-btn-cancel {
-    background-color: #dc3545 !important; /* red */
+.ecms-csvupload-title-wrap {
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: .7rem !important;
 }
 
-/* NEW CSS*/
+    .ecms-csvupload-title-wrap > div {
+        min-width: 0 !important;
+    }
 
+    .ecms-csvupload-title-wrap h3 {
+        margin: 0 !important;
+    }
+
+.ecms-csvupload-title-icon.ecms-title-icon {
+    background: linear-gradient( 135deg, var(--ecms-success-500), var(--ecms-primary-500) ) !important;
+}
+
+.ecms-csvupload-format {
+    flex: 0 0 auto !important;
+    min-height: 2rem !important;
+    padding: .35rem .7rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: .35rem !important;
+    white-space: nowrap !important;
+}
+
+.ecms-csvupload-upload-section {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: visible !important;
+}
+
+    .ecms-csvupload-upload-section > .ecms-section-title,
+    .ecms-csvupload-records > .ecms-section-title {
+        flex: 0 0 var(--ecms-section-title-height) !important;
+    }
+
+.ecms-csvupload-form {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: .6rem .75rem !important;
+}
+
+.ecms-csvupload-form-row {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(10.5rem, 18%) minmax(22rem, 48%) minmax(12rem, 1fr) !important;
+    align-items: center !important;
+    gap: .75rem !important;
+}
+
+.ecms-csvupload-label-wrap {
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .15rem !important;
+}
+
+    .ecms-csvupload-label-wrap > label {
+        margin: 0 !important;
+        color: var(--ecms-text) !important;
+        font-weight: 850 !important;
+    }
+
+.ecms-csvupload-help {
+    color: var(--ecms-text-muted, var(--ecms-text)) !important;
+    font-size: .72rem !important;
+    font-weight: 650 !important;
+}
+
+.ecms-csvupload-input-wrap {
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: .5rem !important;
+}
+
+.ecms-csvupload-file-input {
+    width: 100% !important;
+    min-width: 0 !important;
+    cursor: pointer !important;
+}
+
+    .ecms-csvupload-file-input::file-selector-button {
+        margin: -.375rem .75rem -.375rem -.75rem !important;
+        padding: .45rem .8rem !important;
+        border: 0 !important;
+        border-right: var(--ecms-border) !important;
+        color: var(--ecms-text) !important;
+        background: var(--ecms-card-surface) !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+    }
+
+.ecms-csvupload-submit {
+    min-width: 6.5rem !important;
+    min-height: 2.25rem !important;
+}
+
+.ecms-csvupload-validation {
+    min-width: 0 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: .3rem .6rem !important;
+    font-size: .75rem !important;
+}
+
+.text-red,
+.ecms-csvupload-page .text-danger {
+    color: var(--ecms-danger-500) !important;
+}
+
+.ecms-csvupload-page .mand1 {
+    margin-left: .15rem !important;
+    color: var(--ecms-danger-500) !important;
+    font-size: .45rem !important;
+    vertical-align: super !important;
+}
+
+.ecms-csvupload-records {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.ecms-csvupload-table-panel {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding-top: .55rem !important;
+    overflow: hidden !important;
+}
+
+    .ecms-csvupload-table-panel .dataTables_wrapper,
+    .ecms-csvupload-table-panel .dt-container {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+.ecms-csvupload-page .dt-top,
+.ecms-csvupload-page .ecms-dt-toolbar {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 2.75rem !important;
+    margin: 0 0 .5rem 0 !important;
+    padding: .25rem .45rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: .5rem !important;
+}
+
+.ecms-csvupload-page .dt-buttons:empty,
+.ecms-csvupload-page .dataTables_filter:empty {
+    display: none !important;
+}
+
+.ecms-csvupload-page .dataTables_scroll,
+.ecms-csvupload-page .dt-scroll {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.ecms-csvupload-page .dataTables_scrollHead,
+.ecms-csvupload-page .dt-scroll-head {
+    flex: 0 0 auto !important;
+}
+
+.ecms-csvupload-page .dataTables_scrollBody,
+.ecms-csvupload-page .dt-scroll-body {
+    flex: 1 1 auto !important;
+    min-height: 5rem !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: auto !important;
+}
+
+.ecms-csvupload-page .ecms-dt-footer {
+    flex: 0 0 auto !important;
+}
+
+.ecms-csvupload-page #tblData .badge {
+    min-width: 2.4rem !important;
+}
+
+/* SweetAlert CSV preview */
 .csv-preview-popup {
     width: 96vw !important;
     max-width: 96vw !important;
-    padding: 1.25rem !important;
+    padding: 1.1rem !important;
 }
 
 .csv-preview-title {
-    margin-bottom: 10px;
+    margin-bottom: .55rem !important;
 }
 
 .csv-preview-intro {
-    margin-bottom: 14px;
-    text-align: center;
-    font-size: 14px;
+    margin: 0 0 .75rem 0 !important;
+    color: var(--ecms-text) !important;
+    text-align: center !important;
+    font-size: .82rem !important;
 }
 
 .csv-preview-wrapper {
-    width: 100%;
-    max-width: 100%;
-    max-height: 60vh;
-    overflow-x: auto;
-    overflow-y: auto;
-    border: 1px solid #dcdcdc;
-    background: #fff;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 60vh !important;
+    overflow: auto !important;
+    border: var(--ecms-border) !important;
+    border-radius: var(--ecms-radius-md) !important;
+    background: var(--ecms-card-surface) !important;
 }
 
 .csv-preview-table {
-    border-collapse: collapse;
-    min-width: 2200px;
-    width: max-content;
-    table-layout: auto;
+    width: max-content !important;
+    min-width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    table-layout: auto !important;
 }
 
     .csv-preview-table th,
     .csv-preview-table td {
-        white-space: nowrap;
+        padding: .5rem .7rem !important;
+        border-right: var(--ecms-border) !important;
+        border-bottom: var(--ecms-border) !important;
+        white-space: nowrap !important;
         word-break: normal !important;
         overflow-wrap: normal !important;
-        padding: 8px 12px;
-        border: 1px solid #dee2e6;
-        font-size: 14px;
-        text-align: left;
+        color: var(--ecms-text) !important;
+        font-size: .8rem !important;
+        text-align: left !important;
     }
 
     .csv-preview-table thead th {
-        position: sticky;
-        top: 0;
-        z-index: 5;
-        background: #0d5ea8;
-        color: #fff;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 5 !important;
+        color: var(--ecms-white) !important;
+        background: linear-gradient( 90deg, var(--ecms-primary-700, var(--ecms-primary-600)), var(--ecms-primary-500) ) !important;
     }
 
 .csv-btn-group {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 16px;
-    flex-wrap: wrap;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: .55rem !important;
+    margin-top: 1rem !important;
+}
+
+.csv-btn-download {
+    background: var(--ecms-success-500) !important;
+}
+
+.csv-btn-proceed {
+    background: var(--ecms-primary-500) !important;
+}
+
+.csv-btn-cancel {
+    background: var(--ecms-danger-500) !important;
+}
+
+@media (max-width: 1199.98px) {
+    html:has(.ecms-csvupload-page),
+    body:has(.ecms-csvupload-page) {
+        overflow-y: auto !important;
+    }
+
+    .ecms-csvupload-page.ecms-page.ecms-page-full {
+        height: auto !important;
+        min-height: 0 !important;
+        margin-top: .5rem !important;
+        margin-bottom: calc(var(--ecms-footer-height) + .75rem) !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-csvupload-shell {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-csvupload-records {
+        min-height: 31rem !important;
+    }
+
+    .ecms-csvupload-table-panel {
+        min-height: 27rem !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .ecms-csvupload-form-row {
+        grid-template-columns: 1fr !important;
+        gap: .45rem !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-csvupload-page.ecms-page.ecms-page-full {
+        width: calc(100vw - .75rem) !important;
+    }
+
+    .ecms-csvupload-header {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
+
+    .ecms-csvupload-format {
+        align-self: flex-start !important;
+    }
+
+    .ecms-csvupload-input-wrap {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-csvupload-submit {
+        width: 100% !important;
+    }
+
+    .ecms-csvupload-page .dt-top,
+    .ecms-csvupload-page .ecms-dt-toolbar {
+        align-items: stretch !important;
+    }
+
+    .csv-preview-popup {
+        width: calc(100vw - 1rem) !important;
+        max-width: calc(100vw - 1rem) !important;
+        padding: .7rem !important;
+    }
 }

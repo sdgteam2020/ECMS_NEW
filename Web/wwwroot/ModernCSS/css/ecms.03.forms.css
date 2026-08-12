@@ -60,11 +60,11 @@ textarea {
     }
 
 /* Keep native select arrow. Select2 will hide original select separately. */
-select.form-control,
+/*select.form-control,
 select.form-select {
     appearance: auto;
     -webkit-appearance: auto;
-}
+}*/
 
 /* Radio/checkbox selected state remains visible. */
 .form-check-input,

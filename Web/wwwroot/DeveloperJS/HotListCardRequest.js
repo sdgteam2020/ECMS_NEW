@@ -4,7 +4,7 @@ $(async function () {
 
     var RemarkTypeID = [6];
     GetRemarks("ddlHotlistRemark", 0, RemarkTypeID);
-      
+
     $('.select2').select2({
         placeholder: "Please select a Reason",
         allowClear: true,
@@ -44,7 +44,7 @@ $(async function () {
     $("#btnBackDashboard").on("click", function () {
         window.location.href = '/BasicDetail/HotlistCard';
     });
-    
+
     return new Promise((resolve, reject) => {
         fetch('/BasicDetail/DataRecForGetSession', {
             method: 'POST',
@@ -80,7 +80,7 @@ $(async function () {
 
 });
 function Proceed() {
-    if ($("#ddlHotlistRemark").val().length == 0 ) {
+    if ($("#ddlHotlistRemark").val().length == 0) {
         toastr.error('Reason is required.');
         return false;
     }
@@ -91,7 +91,7 @@ function Proceed() {
 
     let formId = '#SaveHotlistCardRequest';
     $.validator.unobtrusive.parse($(formId));
-    
+
     if ($(formId).valid()) {
         let ApplicantName = $("#lblpvFName").html() + $("#lblpvLName").html();
         let ApplicantNameWithRank = $("#lblpvRank").html() + " " + ApplicantName.trim();
@@ -133,7 +133,7 @@ function Proceed() {
 function Save() {
     var HotlistRemarkIds = $("#ddlHotlistRemark").val();
     $.ajax({
-        url: '/BasicDetail/SaveHotlistCardRequest' ,
+        url: '/BasicDetail/SaveHotlistCardRequest',
         type: 'POST',
         data: {
             "RequestId": spnHotlistCardRequestId,
@@ -149,7 +149,7 @@ function Save() {
                 const btnBackDashboard = document.getElementById("btnBackDashboard");
                 let Message = `Record successfully inserted in DB with ID : <strong>${result.Value.Id}</strong><br/> Timestamp : <strong>${DateFormateddMMyyyyhhmmss(result.Value.CurrentTime)}</strong>.`;
 
-                document.getElementById("ConfirmationDialog_Data").innerHTML= Message;
+                document.getElementById("ConfirmationDialog_Data").innerHTML = Message;
                 btnSearchNew.textContent = "Search New";
                 btnBackDashboard.textContent = "Back to Dashboard";
                 myModal.show();
@@ -171,13 +171,13 @@ function GetBasicDetailForParitalViewByRequestId(RequestId) {
         },
         body: param
     })
-    .then(response => response.text())
-    .then(html =>{
+        .then(response => response.text())
+        .then(html => {
             document.getElementById("partialContainerBD").innerHTML = html;
-    })
-    .catch(error => {
-       alert("Error: " + error.message);
-    });
+        })
+        .catch(error => {
+            alert("Error: " + error.message);
+        });
 }
 function DownloadPdf(RequestId) {
     try {

@@ -19,96 +19,232 @@
         </div>
     </div>
 </header>
-<div class="containerMain mt-n10">
-    <div class="card mb-3">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-xl-12 text-left">
-                    <h3>
-                        Misprinted/Faulty Card Request
-                        <small class="text-muted"><span id="spnArmyNo"></span></small>
-                    </h3>
+<div class="containerMain mt-n10 ecms-faultyreq-page ecms-page ecms-page-full ecms-fit-screen">
+    <div class="ecms-faultyreq-shell ecms-card ecms-card-body">
+
+        <span class="d-none" id="spnTrnFaultyCardId">@ViewBag.TrnFaultyCardId</span>
+        <span class="d-none" id="spnCValue">@ViewBag.Claim</span>
+
+        <div class="ecms-faultyreq-header ecms-page-title">
+            <div class="ecms-faultyreq-title-wrap">
+                <span class="ecms-faultyreq-title-icon ecms-title-icon">
+                    <i class="fa fa-exclamation-triangle"></i>
+                </span>
+
+                <div>
+                    <h3>Misprinted / Faulty Card Request</h3>
+                    <p class="ecms-title-subtitle">
+                        Review card-holder details and report card printing or physical defects
+                    </p>
                 </div>
             </div>
+
+            <span class="ecms-faultyreq-armyno badge badge-warning">
+                <i class="fa fa-id-card"></i>
+                Army No:
+                <strong id="spnArmyNo"></strong>
+            </span>
         </div>
-        <div class="card-body card-body-min-height" >
-            <div class="row g-3 row-deck mb-3">
-                <form action="" id="SaveFaultyCardRequest" method="post" name="SaveFaultyCardRequest">
-                    <div class="row">
-                        <span class=" d-none" id="spnTrnFaultyCardId">@ViewBag.TrnFaultyCardId</span>
-                        <span class=" d-none" id="spnCValue">@ViewBag.Claim</span>
-                        <div class="col-sm-7">
-                            <div class="card p-1">
-                                <div id="partialContainerBD">
-                                </div>
-                                <div class="text-center">
-                                    <button type="button" class="faulty" id="btnCardPreview" name="btnCardPreview">I-Card Preview</button> 
-                                    <button type="button" class="faulty" id="btnApplMoveHistory" name="btnApplMoveHistory">I-Card Move History</button>
-                                    <button type="button" class="faulty" id="btnFaultyCardsList" name="btnFaultyCardsList">View Faulty Cards</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-5">
-                            <div class="row">
-                                <div class="card p-2">
-                                    <div class="feature-box3">
-                                        <div class="top-block_ind d-flex">
-                                            <div class="text-block">
-                                                <h5 class="mb-1 text-font2 font-weight600">Report Faulty Card</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-0">
-                                        <label class="col-form-label col-sm-5 labelprofile">Request Id</label>
-                                        <div class="col-sm-7">
-                                            <label id="lblFaultyRequestId" class="col-form-label"></label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2 Stage d-none">
-                                        <label class="col-form-label col-sm-5 labelprofile">Stage<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <select class="form-select full-width"  id="ddlStage" name="ddlStage" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Stage is required." data-val-regex-pattern="^[\d]+$">
-                                                <option value="">Select One</option>
-                                            </select>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlStage" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Select Faulty Fd/ Reason<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <select class="form-control alpha-num-only text-uppercase full-width" multiple tabindex="-1" name="ddlFaultyRemark" id="ddlFaultyRemark" data-val="true" data-val-regex="This special chars and space not allowed for security reasons." data-val-required="Faulty Reason is required.">
-                                            </select>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="ddlFaultyRemark" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2">
-                                        <label class="col-form-label col-sm-5 labelprofile">Issues Related to Card Misprint/Faulty<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <textarea class="form-control1 textarea-auto-height" name="txtFromRemark" id="txtFromRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-required="Remark is required." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtFromRemark" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row mb-2 ToRemark d-none">
-                                        <label class="col-form-label col-sm-5 labelprofile">AFSAC Cell Remark<i class="fas fa-asterisk mand1"></i></label>
-                                        <div class="col-sm-7">
-                                            <textarea class="form-control1 textarea-auto-height" name="txtToRemark" id="txtToRemark" rows="3" maxlength="100" data-val-maxlength="Maximum length of Message is 100 character." data-val-maxlength-max="100" data-val="true" data-val-regex="This special chars not allowed for security reasons." data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
-                                            <span class="text-danger field-validation-valid" data-valmsg-for="txtToRemark" data-valmsg-replace="true"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 text-center mb-4">
-                                        <input type="button" class="btn btn-primary" id="btnReject" value="Reject" />
-                                        <input type="button" class="btn btn-primary" id="btnAccept" value="Accept and Fwd to Export" />
-                                        <input type="button" class="btn btn-primary" id="btnSubmit" value="Submit" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+        <form action=""
+              id="SaveFaultyCardRequest"
+              method="post"
+              name="SaveFaultyCardRequest"
+              class="ecms-faultyreq-form">
+
+            <div class="ecms-faultyreq-grid">
+
+                <!-- Applicant / Card Details -->
+                <section class="ecms-faultyreq-applicant ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-user"></i>
+                        Applicant &amp; Card Details
+                    </h5>
+
+                    <div class="ecms-faultyreq-applicant-body ecms-min-0">
+                        <div id="partialContainerBD"></div>
                     </div>
-                </form>
+
+                    <div class="ecms-faultyreq-applicant-actions ecms-form-actions">
+
+                        <button type="button"
+                                class="btn btn-primary"
+                                id="btnCardPreview"
+                                name="btnCardPreview">
+                            <i class="fa fa-eye mr-1"></i>
+                            I-Card Preview
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-info"
+                                id="btnApplMoveHistory"
+                                name="btnApplMoveHistory">
+                            <i class="fa fa-history mr-1"></i>
+                            I-Card Move History
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-warning"
+                                id="btnFaultyCardsList"
+                                name="btnFaultyCardsList">
+                            <i class="fa fa-list mr-1"></i>
+                            View Faulty Cards
+                        </button>
+
+                    </div>
+                </section>
+
+
+                <!-- Faulty Card Request -->
+                <section class="ecms-faultyreq-report ecms-section ecms-min-0">
+                    <h5 class="ecms-section-title">
+                        <i class="fa fa-tools"></i>
+                        Report Faulty Card
+                    </h5>
+
+                    <div class="ecms-faultyreq-report-body">
+
+                        <div class="ecms-faultyreq-control-row">
+                            <label>Request Id</label>
+
+                            <div class="ecms-faultyreq-field-wrap">
+                                <div class="ecms-faultyreq-readonly"
+                                     id="lblFaultyRequestId"></div>
+                            </div>
+                        </div>
+
+
+                        <!-- Hidden/displayed by existing JS according to claim -->
+                        <div class="ecms-faultyreq-control-row Stage d-none">
+                            <label for="ddlStage">
+                                Stage
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-faultyreq-field-wrap">
+                                <select class="form-select full-width"
+                                        id="ddlStage"
+                                        name="ddlStage"
+                                        data-val="true"
+                                        data-val-regex="This special chars not allowed for security reasons."
+                                        data-val-required="Stage is required."
+                                        data-val-regex-pattern="^[\d]+$">
+                                    <option value="">Select One</option>
+                                </select>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="ddlStage"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-faultyreq-control-row">
+                            <label for="ddlFaultyRemark">
+                                Select Faulty Fd / Reason
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-faultyreq-field-wrap">
+                                <select class="form-control select2 text-uppercase full-width"
+                                        multiple
+                                        tabindex="-1"
+                                        name="ddlFaultyRemark"
+                                        id="ddlFaultyRemark"
+                                        data-val="true"
+                                        data-val-regex="This special chars and space not allowed for security reasons."
+                                        data-val-required="Faulty Reason is required.">
+                                </select>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="ddlFaultyRemark"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-faultyreq-control-row ecms-faultyreq-remarks-row">
+                            <label for="txtFromRemark">
+                                Issues Related to Card Misprint/Faulty
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-faultyreq-field-wrap">
+                                <textarea class="form-control form-control1 textarea-auto-height"
+                                          name="txtFromRemark"
+                                          id="txtFromRemark"
+                                          rows="4"
+                                          maxlength="100"
+                                          placeholder="Describe the card misprint / fault"
+                                          data-val-maxlength="Maximum length of Message is 100 character."
+                                          data-val-maxlength-max="100"
+                                          data-val="true"
+                                          data-val-regex="This special chars not allowed for security reasons."
+                                          data-val-required="Remark is required."
+                                          data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtFromRemark"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <!-- Existing JS shows this for AFSAC approval mode -->
+                        <div class="ecms-faultyreq-control-row ecms-faultyreq-remarks-row ToRemark d-none">
+                            <label for="txtToRemark">
+                                AFSAC Cell Remark
+                                <i class="fas fa-asterisk mand1"></i>
+                            </label>
+
+                            <div class="ecms-faultyreq-field-wrap">
+                                <textarea class="form-control form-control1 textarea-auto-height"
+                                          name="txtToRemark"
+                                          id="txtToRemark"
+                                          rows="4"
+                                          maxlength="100"
+                                          placeholder="Enter AFSAC Cell remark"
+                                          data-val-maxlength="Maximum length of Message is 100 character."
+                                          data-val-maxlength-max="100"
+                                          data-val="true"
+                                          data-val-regex="This special chars not allowed for security reasons."
+                                          data-val-regex-pattern="^[\w\&\.\-\; ]*$"></textarea>
+
+                                <span class="text-danger field-validation-valid"
+                                      data-valmsg-for="txtToRemark"
+                                      data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="ecms-faultyreq-submit-row ecms-form-actions">
+
+                            <input type="button"
+                                   class="btn btn-danger d-none"
+                                   id="btnReject"
+                                   value="Reject" />
+
+                            <input type="button"
+                                   class="btn btn-success d-none"
+                                   id="btnAccept"
+                                   value="Accept and Fwd to Export" />
+
+                            <input type="button"
+                                   class="btn btn-primary"
+                                   id="btnSubmit"
+                                   value="Submit" />
+
+                        </div>
+
+                    </div>
+                </section>
+
             </div>
-        </div>
+        </form>
+
     </div>
 </div>
+
 <script asp-src-include="~/developerjs/FaultyCardRequest.js"></script>
 <script asp-src-include="~/developerjs/mtables.js"></script>
 <script asp-src-include="~/developerjs/ICardPrint.js"></script>
