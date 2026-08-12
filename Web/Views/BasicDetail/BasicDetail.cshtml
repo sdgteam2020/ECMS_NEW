@@ -244,16 +244,17 @@
                                             <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd-MMM-yyyy")" readonly />
                                         </div>
                                     </div>
+                                    
+                                </div>
+                                <div class="col-xl-4 ecms-field-column ecms-right-fields">
                                     <div class="row mb-1 required">
-                                        <label class="col-sm-1 col-form-label text-center font-weight-bold">@(sno++).</label>
-                                        <label class="col-sm-3 col-form-label form-label labelprofile">Height(CM)</label>
-                                        <div class="col-sm-8">
+                                        <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
+                                        <label class="col-sm-4 col-form-label form-label labelprofile">Height(CM)</label>
+                                        <div class="col-sm-6">
                                             <input asp-for="Height" class="form-control" min="100" max="250" required placeholder="Height in CM" data-toggle="tooltip" title="Height in CM " />
                                             <span asp-validation-for="Height" class="text-danger"></span>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-xl-4 ecms-field-column ecms-right-fields">
                                     <div class="row mb-1 required">
                                         <label class="col-sm-2 col-form-label text-center font-weight-bold">@(sno++).</label>
                                         <label asp-for="AadhaarNo" class="col-sm-4 col-form-label form-label labelprofile"></label>

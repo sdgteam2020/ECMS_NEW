@@ -60,7 +60,7 @@ body:has(.ecms-registration-page) {
     background: linear-gradient(135deg, rgba(245, 250, 255, 0.96), rgba(215, 231, 249, 0.94)) !important;
     box-shadow: 0 24px 52px rgba(0, 0, 0, 0.26) !important;
     overflow: visible !important;
-    padding: 12px !important;
+    padding: 0px !important;
 }
 
 .ecms-registration-main-header {
@@ -222,7 +222,7 @@ body:has(.ecms-registration-page) {
     color: #061b44 !important;
     font-size: 13px !important;
     font-weight: 900 !important;
-    line-height: 1.35 !important;
+/*    line-height: 1.35 !important;*/
 }
 
 .ecms-registration-page .required .form-label::after,
@@ -436,173 +436,272 @@ body:has(.ecms-registration-page) {
 
 
 /* =====================================================
-   FINAL FIX - Registration: remove PAGE scrollbar
-   The browser/page scrollbar is removed. If content is taller,
-   only the registration card body scrolls internally, and that
-   internal scrollbar is hidden visually.
-   UI only - no functionality changed.
-===================================================== */
+   REGISTRATION PAGE - FIXED VIEWPORT / NO PAGE SCROLL
 
-html:has(.ecms-registration-page),
-body.ecms-registration-body,
-body:has(.ecms-registration-page) {
-    height: 100vh !important;
-    max-height: 100vh !important;
-    overflow: hidden !important;
-    padding-bottom: 0 !important;
-}
+   Requirements for this specific page:
+   1. Keep the existing centred 1280px page width.
+   2. Never create a browser/page vertical scrollbar on desktop.
+   3. Keep the title fixed inside the card.
+   4. Scroll only the card body when all registration fields cannot
+      fit in the available viewport height.
+   5. Hide the inner scrollbar visually while keeping wheel/touch/
+      keyboard scrolling functional.
 
-    body:has(.ecms-registration-page) .content-wrapper,
-    body:has(.ecms-registration-page) .main-panel,
-    body:has(.ecms-registration-page) main {
+   UI only - no IDs, form bindings, validation or JavaScript changed.
+   ===================================================== */
+
+/* -----------------------------------------------------
+   Desktop: remove document scroll completely.
+   The page is fixed between the theme navigation and footer.
+   Fallback pixel values match the current ECMS layout if the
+   shared ModernCSS height variables are not available.
+   ----------------------------------------------------- */
+@media (min-width: 992px) {
+    html:has(.ecms-registration-page),
+    body.ecms-registration-body,
+    body:has(.ecms-registration-page) {
+        width: 100% !important;
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        max-height: 100dvh !important;
+        overflow: hidden !important;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important;
+        padding-bottom: 0 !important;
+        overscroll-behavior: none !important;
+    }
+
+        /* Stop common theme wrappers from re-introducing document scroll. */
+        body:has(.ecms-registration-page) .wrapper,
+        body:has(.ecms-registration-page) .content-wrapper,
+        body:has(.ecms-registration-page) .main-panel,
+        body:has(.ecms-registration-page) .main-content,
+        body:has(.ecms-registration-page) main {
+            max-height: 100dvh !important;
+            overflow: hidden !important;
+        }
+
+    /*
+       IMPORTANT: width intentionally stays the same as the current page.
+       We do NOT convert Registration to the full-width layout used on
+       list/report pages.
+    */
+    .ecms-registration-page {
+        position: fixed !important;
+        z-index: 5 !important;
+        top: calc( var(--ecms-header-height, 158px) + var(--ecms-nav-strip-height, var(--ecms-nav-height, 39px)) + 8px ) !important;
+        bottom: calc(var(--ecms-footer-height, 32px) + 8px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: min(1280px, calc(100vw - 32px)) !important;
+        max-width: 1280px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 14px !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .ecms-registration-card {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
         overflow: hidden !important;
     }
 
-/* Keep the full registration page between breadcrumb row and fixed footer */
-.ecms-registration-page {
-    height: calc(100vh - 237px) !important;
-    max-height: calc(100vh - 237px) !important;
-    min-height: 560px !important;
-    margin: 14px auto 14px auto !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* Main white/glass card should not create document scroll */
-.ecms-registration-card {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    height: 100% !important;
-    max-height: 100% !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* Title stays fixed inside the card */
-.ecms-registration-main-header {
-    flex: 0 0 auto !important;
-    padding: 10px 14px !important;
-    margin-bottom: 8px !important;
-}
-
-    .ecms-registration-main-header h3 {
-        font-size: 22px !important;
-        line-height: 1.15 !important;
-    }
-
-        .ecms-registration-main-header h3::before {
-            width: 38px !important;
-            height: 38px !important;
-        }
-
-/* This is the only scrollable area, but scrollbar is hidden */
-.ecms-registration-card > .card-body.card-body-min-height,
-.ecms-registration-card > .card-body {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    height: auto !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    padding: 0 4px 18px 4px !important;
-    scrollbar-width: none !important; /* Firefox */
-    -ms-overflow-style: none !important; /* Old Edge/IE */
-}
-
-    .ecms-registration-card > .card-body.card-body-min-height::-webkit-scrollbar,
-    .ecms-registration-card > .card-body::-webkit-scrollbar {
-        width: 0 !important;
-        height: 0 !important;
-        display: none !important;
-    }
-
-/* Compact the two sections so most of the form is visible without page scroll */
-.ecms-reg-section {
-    margin: 6px 0 10px 0 !important;
-}
-
-.ecms-registration-page .seven h1 {
-    min-height: 32px !important;
-    padding: 7px 14px !important;
-    font-size: 15px !important;
-}
-
-.ecms-registration-page .mt-2.ml-4 {
-    padding: 12px 14px 8px 14px !important;
-}
-
-.ecms-requisition-section .form-group {
-    min-height: 44px !important;
-    margin-bottom: 7px !important;
-    padding: 7px 10px !important;
-}
-
-.ecms-registration-form-body {
-    padding: 12px 16px 12px 16px !important;
-}
-
-.ecms-registration-page .form-group.row {
-    margin-bottom: 7px !important;
-}
-
-.ecms-registration-page .form-control,
-.ecms-registration-page .form-select,
-.ecms-registration-page select,
-.ecms-registration-page textarea {
-    min-height: 34px !important;
-    height: auto !important;
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
-}
-
-.ecms-registration-page textarea {
-    min-height: 86px !important;
-}
-
-.ecms-registration-note {
-    margin: 8px 0 6px 0 !important;
-    padding: 9px 12px !important;
-}
-
-.ecms-registration-actions {
-    margin: 10px 0 4px 0 !important;
-}
-
-.ecms-registration-page #btnclear,
-.ecms-registration-page #btnsubmit {
-    min-height: 36px !important;
-    padding: 7px 20px !important;
-}
-
-/* On smaller height screens, keep browser scrollbar hidden and allow hidden inner-scroll */
-@media (max-height: 850px) {
-    .ecms-registration-page {
-        height: calc(100vh - 302px) !important;
-        max-height: calc(100vh - 302px) !important;
-        min-height: 520px !important;
-        margin-top: 10px !important;
-        margin-bottom: 44px !important;
-    }
-
+    /* Main title stays visible while form content moves underneath it. */
     .ecms-registration-main-header {
-        padding: 8px 12px !important;
+        flex: 0 0 auto !important;
+        position: relative !important;
+        z-index: 4 !important;
+        margin-bottom: 0px !important;
+        padding: 3px 14px !important;
     }
 
         .ecms-registration-main-header h3 {
-            font-size: 20px !important;
+            font-size: 22px !important;
+            line-height: 1.15 !important;
         }
 
+            .ecms-registration-main-header h3::before {
+                width: 38px !important;
+                height: 38px !important;
+            }
+
+    /* This is the ONLY vertically scrollable area on desktop. */
+    .ecms-registration-card > .card-body.card-body-min-height,
+    .ecms-registration-card > .card-body {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        height: 0 !important;
+        max-height: none !important;
+        padding: 0 4px 12px 4px !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+
+        .ecms-registration-card > .card-body.card-body-min-height::-webkit-scrollbar,
+        .ecms-registration-card > .card-body::-webkit-scrollbar {
+            width: 0 !important;
+            height: 0 !important;
+            display: none !important;
+        }
+
+    /* Compact spacing without changing the current page width. */
+    .ecms-reg-section {
+        margin: 6px 0 9px 0 !important;
+    }
+
+    .ecms-registration-page .seven h1 {
+        min-height: 32px !important;
+        padding: 7px 14px !important;
+        font-size: 15px !important;
+    }
+
+    .ecms-registration-page .mt-2.ml-4 {
+        padding: 10px 14px 7px 14px !important;
+    }
+
     .ecms-requisition-section .form-group {
-        min-height: 40px !important;
+        min-height: 42px !important;
+        margin-bottom: 6px !important;
         padding: 6px 10px !important;
     }
 
     .ecms-registration-form-body {
-        padding: 10px 14px !important;
+        padding: 0px 14px 10px 14px !important;
+    }
+
+    .ecms-registration-page .form-group.row {
+        margin-bottom: 6px !important;
+    }
+
+    .ecms-registration-page .form-control,
+    .ecms-registration-page .form-select,
+    .ecms-registration-page select,
+    .ecms-registration-page textarea {
+        min-height: 34px !important;
+        height: auto !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
     }
 
     .ecms-registration-page textarea {
-        min-height: 76px !important;
+        min-height: 78px !important;
+    }
+
+    .ecms-registration-note {
+        margin: 0 !important;
+        padding: 0px 11px !important;
+    }
+
+    .ecms-registration-actions {
+        margin: 8px 0 3px 0 !important;
+    }
+
+    .ecms-registration-page #btnclear,
+    .ecms-registration-page #btnsubmit {
+        min-height: 36px !important;
+        padding: 7px 20px !important;
+    }
+}
+
+
+/* -----------------------------------------------------
+   Short desktop screens: compact vertically a little more.
+   The page itself still never scrolls.
+   ----------------------------------------------------- */
+@media (min-width: 992px) and (max-height: 820px) {
+    .ecms-registration-page {
+        top: calc( var(--ecms-header-height, 158px) + var(--ecms-nav-strip-height, var(--ecms-nav-height, 39px)) + 5px ) !important;
+        bottom: calc(var(--ecms-footer-height, 32px) + 5px) !important;
+    }
+
+    .ecms-registration-main-header {
+        padding: 7px 11px !important;
+        margin-bottom: 5px !important;
+    }
+
+        .ecms-registration-main-header h3 {
+            font-size: 19px !important;
+        }
+
+            .ecms-registration-main-header h3::before {
+                width: 34px !important;
+                height: 34px !important;
+            }
+
+    .ecms-registration-page .seven h1 {
+        min-height: 29px !important;
+        padding: 5px 12px !important;
+        font-size: 14px !important;
+    }
+
+    .ecms-requisition-section .form-group {
+        min-height: 38px !important;
+        margin-bottom: 5px !important;
+        padding: 5px 9px !important;
+    }
+
+    .ecms-registration-form-body {
+        padding: 8px 12px !important;
+    }
+
+    .ecms-registration-page .form-group.row {
+        margin-bottom: 5px !important;
+    }
+
+    .ecms-registration-page textarea {
+        min-height: 68px !important;
+    }
+
+    .ecms-registration-note {
+        margin-top: 5px !important;
+        padding: 7px 10px !important;
+    }
+}
+
+
+/* -----------------------------------------------------
+   Tablet/mobile fallback.
+   The desktop no-page-scroll requirement is intentionally scoped
+   above so the form remains usable on narrow devices.
+   ----------------------------------------------------- */
+@media (max-width: 991.98px) {
+    html:has(.ecms-registration-page),
+    body.ecms-registration-body,
+    body:has(.ecms-registration-page) {
+        height: auto !important;
+        max-height: none !important;
+        overflow-y: auto !important;
+    }
+
+    .ecms-registration-page {
+        position: static !important;
+        transform: none !important;
+        width: calc(100vw - 16px) !important;
+        max-width: 1280px !important;
+        height: auto !important;
+        max-height: none !important;
+        margin: 10px auto calc(var(--ecms-footer-height, 54px) + 14px) auto !important;
+        padding: 0 8px !important;
+        overflow: visible !important;
+    }
+
+    .ecms-registration-card,
+    .ecms-registration-card > .card-body {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
     }
 }
