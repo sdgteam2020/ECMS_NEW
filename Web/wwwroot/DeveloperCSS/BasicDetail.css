@@ -347,7 +347,7 @@ body:has(.ecms-basicdetail-page) {
 
 .ecms-upload-column .box,
 .ecms-upload-column .box_sig {
-    width: 176px !important;
+    width: 165px !important;
     margin: 7px auto !important;
     border: 2px solid rgba(255, 151, 36, .86) !important;
     border-radius: 12px !important;
@@ -704,3 +704,1026 @@ body:has(.ecms-basicdetail-page) .ecms-upload-column .upload-options_sign {
         font-size: 0 !important; /* removes any accidental native/old label text */
         text-indent: 0 !important;
     }
+
+
+/* =====================================================
+   BASIC DETAIL - FULL WIDTH / ZERO FORM SCROLL / MEDIA UX
+   Page-specific override only. Shared ModernCSS/theme files remain
+   untouched and are still the source of common colors/components.
+   ===================================================== */
+
+@media (min-width: 1200px) {
+    html:has(.ecms-basicdetail-page),
+    body.ecms-basicdetail-body,
+    body:has(.ecms-basicdetail-page) {
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        max-height: 100dvh !important;
+        overflow: hidden !important;
+        padding-bottom: 0 !important;
+    }
+
+        body:has(.ecms-basicdetail-page) .wrapper,
+        body:has(.ecms-basicdetail-page) .content-wrapper,
+        body:has(.ecms-basicdetail-page) .main-panel,
+        body:has(.ecms-basicdetail-page) .main-content,
+        body:has(.ecms-basicdetail-page) main {
+            max-height: 100dvh !important;
+            overflow: hidden !important;
+        }
+
+    /* Same full-width behavior as the modern DataTable pages. */
+    .ecms-basicdetail-shell {
+        position: fixed !important;
+        z-index: 5 !important;
+        top: calc( var(--ecms-header-height, 158px) + var(--ecms-nav-strip-height, var(--ecms-nav-height, 39px)) + 8px ) !important;
+        bottom: calc(var(--ecms-footer-height, 32px) + 8px) !important;
+        left: .5rem !important;
+        right: .5rem !important;
+        width: auto !important;
+        max-width: none !important;
+        height: auto !important;
+        max-height: none !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: .55rem !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .ecms-basicdetail-form,
+    .ecms-basicdetail-page {
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+        .ecms-basicdetail-page > .row {
+            height: 100% !important;
+            grid-template-rows: auto minmax(0, 1fr) !important;
+            gap: .45rem !important;
+        }
+
+    /* Compact summary so all editable fields fit below without scrolling. */
+    .ecms-summary-card > .mt-2.ml-4 {
+        padding: .45rem .7rem !important;
+    }
+
+        .ecms-summary-card > .mt-2.ml-4 > .row {
+            row-gap: .35rem !important;
+        }
+
+    .ecms-summary-card .form-group {
+        min-height: 2.25rem !important;
+        padding: .28rem .6rem !important;
+        border-radius: var(--ecms-radius-md, 10px) !important;
+    }
+
+    .ecms-summary-card .labelprofile,
+    .ecms-summary-card label[id] {
+        font-size: .76rem !important;
+        line-height: 1.15 !important;
+    }
+
+    .ecms-basicdetail-page .seven h1 {
+        height: 1.9rem !important;
+        min-height: 1.9rem !important;
+        padding: .28rem .7rem !important;
+        font-size: .88rem !important;
+        line-height: 1 !important;
+    }
+
+    .ecms-form-wrap,
+    .ecms-initiate-card {
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+        /* Critical requirement: NO form scrollbar. */
+        .ecms-initiate-card > .mt-2.ml-4 {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: .55rem .75rem .45rem .75rem !important;
+            overflow: hidden !important;
+            scrollbar-width: none !important;
+        }
+
+            .ecms-initiate-card > .mt-2.ml-4::-webkit-scrollbar {
+                display: none !important;
+            }
+
+            .ecms-initiate-card > .mt-2.ml-4 > .row {
+                width: 100% !important;
+                height: 100% !important;
+                min-height: 0 !important;
+                grid-template-columns: 12rem minmax(0, 1fr) minmax(0, 1fr) !important;
+                grid-template-rows: minmax(0, 1fr) auto auto !important;
+                gap: .35rem 1rem !important;
+                align-content: stretch !important;
+                overflow: hidden !important;
+            }
+
+    .ecms-upload-column,
+    .ecms-left-fields,
+    .ecms-right-fields {
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .ecms-left-fields,
+    .ecms-right-fields {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+    }
+
+    /* Make nine rows in each field column fit the available height. */
+    .ecms-basicdetail-page .row.mb-1,
+    .ecms-basicdetail-page .row.mb-2,
+    .ecms-basicdetail-page .row.mb-3 {
+        min-height: 0 !important;
+        margin-bottom: .24rem !important;
+        line-height: 1.1 !important;
+    }
+
+    .ecms-basicdetail-page .col-form-label,
+    .ecms-basicdetail-page .form-label,
+    .ecms-basicdetail-page .font-weight-bold {
+        padding-top: .22rem !important;
+        padding-bottom: .22rem !important;
+        font-size: .72rem !important;
+        line-height: 1.15 !important;
+    }
+
+    .ecms-basicdetail-page .form-control,
+    .ecms-basicdetail-page .form-select,
+    .ecms-basicdetail-page select,
+    .ecms-basicdetail-page textarea,
+    .ecms-basicdetail-page .select2-container--default .select2-selection--single {
+        min-height: 1.9rem !important;
+        height: 1.9rem !important;
+        padding-top: .22rem !important;
+        padding-bottom: .22rem !important;
+        font-size: .72rem !important;
+        border-radius: var(--ecms-radius-sm, 7px) !important;
+    }
+
+    .ecms-basicdetail-page #IdenMark1 {
+        min-height: 3.45rem !important;
+        height: 3.45rem !important;
+        resize: none !important;
+    }
+
+    .ecms-basicdetail-page #PermanentAddress {
+        min-height: 4.95rem !important;
+        height: 4.95rem !important;
+        resize: none !important;
+    }
+
+    .ecms-basicdetail-page .text-danger,
+    .ecms-basicdetail-page .text-red,
+    .ecms-basicdetail-page .field-validation-error {
+        font-size: .62rem !important;
+        line-height: 1.05 !important;
+        margin-top: .05rem !important;
+    }
+
+    /* Declaration and Save stay visible at the bottom without scrolling. */
+    .ecms-initiate-card .col-xl-12 {
+        min-height: 0 !important;
+    }
+
+    .ecms-declaration-check {
+        margin: .18rem 0 !important;
+        padding: .38rem .55rem !important;
+        min-height: 2.65rem !important;
+        border-radius: var(--ecms-radius-md, 10px) !important;
+    }
+
+        .ecms-declaration-check .notefont {
+            margin: 0 !important;
+            padding-left: 1rem !important;
+            font-size: .62rem !important;
+            line-height: 1.2 !important;
+        }
+
+    .ecms-save-row {
+        margin: .18rem 0 0 0 !important;
+        min-height: 2.3rem !important;
+    }
+
+    .ecms-basicdetail-page #btnsave {
+        min-height: 2rem !important;
+        padding: .35rem 1.25rem !important;
+        font-size: .76rem !important;
+    }
+}
+
+/* =====================================================
+   PHOTO / SIGNATURE - MODERN COMPACT CARDS
+   ===================================================== */
+.ecms-media-stack {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: minmax(0, 1.45fr) minmax(0, 1fr) !important;
+    gap: .5rem !important;
+}
+
+.ecms-media-card {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: .45rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .3rem !important;
+    border: var(--ecms-border, 1px solid rgba(181,202,231,.8)) !important;
+    border-radius: var(--ecms-radius-lg, 12px) !important;
+    background: var(--ecms-card-surface, rgba(255,255,255,.94)) !important;
+    box-shadow: var(--ecms-shadow-sm, 0 6px 16px rgba(12,42,92,.10)) !important;
+    overflow: hidden !important;
+}
+
+.ecms-media-card-head {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: .4rem !important;
+    min-width: 0 !important;
+}
+
+.ecms-media-card-icon {
+    flex: 0 0 1.65rem !important;
+    width: 1.65rem !important;
+    height: 1.65rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: var(--ecms-radius-md, 8px) !important;
+    color: var(--ecms-white, #fff) !important;
+    background: linear-gradient(135deg, var(--ecms-primary-500, #3f7cff), var(--ecms-primary-700, #27499d)) !important;
+}
+
+.ecms-media-card-head > div {
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.ecms-media-card-head strong {
+    color: var(--ecms-text, #061b44) !important;
+    font-size: .72rem !important;
+    line-height: 1.05 !important;
+}
+
+.ecms-media-card-head small {
+    color: var(--ecms-text-muted, #64748b) !important;
+    font-size: .58rem !important;
+    line-height: 1.1 !important;
+}
+
+.ecms-media-preview {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    border: var(--ecms-border, 1px solid rgba(181,202,231,.8)) !important;
+    border-radius: var(--ecms-radius-md, 9px) !important;
+    background: linear-gradient(135deg, rgba(248,251,255,.96), rgba(235,243,253,.94)) !important;
+}
+
+.ecms-photo-preview {
+    min-height: 5.6rem !important;
+}
+
+.ecms-signature-preview {
+    min-height: 2.8rem !important;
+}
+
+.ecms-media-preview img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    object-position: center !important;
+}
+
+.ecms-media-upload-btn {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 1.9rem !important;
+    padding: .28rem .4rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: .66rem !important;
+    white-space: nowrap !important;
+}
+
+.ecms-media-feedback {
+    flex: 0 0 auto !important;
+    min-height: .9rem !important;
+    text-align: center !important;
+    line-height: 1 !important;
+}
+
+    .ecms-media-feedback > span {
+        display: block !important;
+    }
+
+.ecms-media-limit {
+    color: var(--ecms-text-muted, #64748b) !important;
+    font-size: .56rem !important;
+    font-weight: 700 !important;
+}
+
+/* =====================================================
+   PHOTO / SIGNATURE MODALS
+   ===================================================== */
+.ecms-media-modal .modal-dialog {
+    width: min(48rem, calc(100vw - 2rem)) !important;
+    max-width: min(48rem, calc(100vw - 2rem)) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.ecms-media-modal .modal-content {
+    overflow: hidden !important;
+    border: var(--ecms-border, 1px solid rgba(255,255,255,.75)) !important;
+    border-radius: var(--ecms-radius-xl, 16px) !important;
+    background: linear-gradient(135deg, rgba(247,251,255,.99), rgba(225,238,253,.98)) !important;
+    box-shadow: var(--ecms-shadow-lg, 0 22px 54px rgba(0,0,0,.28)) !important;
+}
+
+.ecms-media-modal .modal-header {
+    min-height: 3.6rem !important;
+    padding: .65rem .85rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-bottom: 0 !important;
+    color: var(--ecms-white, #fff) !important;
+    background: linear-gradient(90deg, var(--ecms-primary-700, #3155ae), var(--ecms-primary-500, #4b7bff)) !important;
+}
+
+.ecms-media-modal-title {
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: .55rem !important;
+}
+
+.ecms-media-modal-icon {
+    flex: 0 0 2rem !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid rgba(255,255,255,.35) !important;
+    border-radius: .65rem !important;
+    background: rgba(255,255,255,.14) !important;
+}
+
+.ecms-media-modal-title h5 {
+    margin: 0 !important;
+    color: inherit !important;
+    font-size: .9rem !important;
+    font-weight: 900 !important;
+}
+
+.ecms-media-modal-title small {
+    display: block !important;
+    margin-top: .08rem !important;
+    color: rgba(255,255,255,.86) !important;
+    font-size: .64rem !important;
+    line-height: 1.2 !important;
+}
+
+.ecms-media-close {
+    width: 2rem !important;
+    height: 2rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 2px solid rgba(255,255,255,.9) !important;
+    border-radius: 50% !important;
+    color: #fff !important;
+    background: var(--ecms-danger-500, #ef4b5f) !important;
+    opacity: 1 !important;
+    box-shadow: 0 5px 13px rgba(196,36,56,.25) !important;
+}
+
+    .ecms-media-close span {
+        line-height: 1 !important;
+    }
+
+.ecms-media-modal .modal-body {
+    padding: .85rem !important;
+}
+
+.ecms-media-modal-grid {
+    display: grid !important;
+    grid-template-columns: minmax(15rem, .9fr) minmax(18rem, 1.1fr) !important;
+    gap: .85rem !important;
+    align-items: stretch !important;
+}
+
+.ecms-media-guidance,
+.ecms-media-picker-panel {
+    min-width: 0 !important;
+    padding: .8rem !important;
+    border: var(--ecms-border, 1px solid rgba(181,202,231,.8)) !important;
+    border-radius: var(--ecms-radius-lg, 12px) !important;
+}
+
+.ecms-media-guidance {
+    background: linear-gradient(135deg, rgba(220,248,251,.96), rgba(230,246,255,.96)) !important;
+}
+
+.ecms-media-picker-panel {
+    background: rgba(255,255,255,.68) !important;
+}
+
+.ecms-media-guidance-title,
+.ecms-media-picker-label,
+.ecms-media-selected-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: .4rem !important;
+    color: var(--ecms-text, #061b44) !important;
+    font-size: .76rem !important;
+    font-weight: 900 !important;
+}
+
+    .ecms-media-guidance-title i {
+        color: var(--ecms-success-500, #2fb56f) !important;
+    }
+
+.ecms-media-guidance ul {
+    margin: .55rem 0 0 0 !important;
+    padding-left: 1rem !important;
+    color: var(--ecms-text, #17345f) !important;
+    font-size: .72rem !important;
+    line-height: 1.55 !important;
+}
+
+.ecms-media-file-shell {
+    margin-top: .45rem !important;
+    padding: .4rem !important;
+    border: 1px dashed var(--ecms-primary-400, #7aa1ff) !important;
+    border-radius: var(--ecms-radius-md, 10px) !important;
+    background: var(--ecms-card-surface, #fff) !important;
+}
+
+    .ecms-media-file-shell input[type="file"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        font-size: .72rem !important;
+    }
+
+        .ecms-media-file-shell input[type="file"]::file-selector-button {
+            margin-right: .6rem !important;
+            padding: .35rem .65rem !important;
+            border: 0 !important;
+            border-radius: .45rem !important;
+            color: #fff !important;
+            background: var(--ecms-primary-500, #4b7bff) !important;
+            font-weight: 800 !important;
+            cursor: pointer !important;
+        }
+
+.ecms-media-picker-help {
+    display: block !important;
+    margin-top: .4rem !important;
+    color: var(--ecms-text-muted, #64748b) !important;
+    font-size: .65rem !important;
+    line-height: 1.3 !important;
+}
+
+.ecms-media-modal-message {
+    min-height: 1rem !important;
+    margin-top: .45rem !important;
+    font-size: .68rem !important;
+    font-weight: 800 !important;
+}
+
+.ecms-media-selected-preview {
+    margin-top: .55rem !important;
+}
+
+.ecms-media-selected-stage {
+    margin-top: .35rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    border: var(--ecms-border, 1px solid rgba(181,202,231,.8)) !important;
+    border-radius: var(--ecms-radius-md, 10px) !important;
+    background: #fff !important;
+}
+
+.ecms-media-selected-photo {
+    height: 11rem !important;
+}
+
+.ecms-media-selected-signature {
+    height: 6rem !important;
+}
+
+.ecms-media-selected-stage img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+.ecms-media-file-info {
+    margin-top: .35rem !important;
+    color: var(--ecms-text-muted, #64748b) !important;
+    font-size: .65rem !important;
+    text-align: center !important;
+}
+
+.ecms-media-modal .modal-footer {
+    padding: .55rem .8rem !important;
+    gap: .4rem !important;
+    border-top: var(--ecms-border, 1px solid rgba(181,202,231,.7)) !important;
+    background: rgba(238,245,254,.92) !important;
+}
+
+    .ecms-media-modal .modal-footer .btn {
+        min-height: 2rem !important;
+        padding: .35rem .7rem !important;
+        font-size: .72rem !important;
+    }
+
+@media (max-width: 1199.98px) {
+    .ecms-basicdetail-shell {
+        position: static !important;
+        width: calc(100vw - 1rem) !important;
+        height: auto !important;
+        max-height: none !important;
+        margin: .5rem auto calc(var(--ecms-footer-height, 54px) + .75rem) auto !important;
+    }
+
+    .ecms-initiate-card > .mt-2.ml-4 {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .ecms-media-stack {
+        height: auto !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-template-rows: auto !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ecms-media-stack,
+    .ecms-media-modal-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+/* =====================================================
+   BASIC DETAIL - FINAL TYPOGRAPHY + RESPONSIVE SCROLL FIX
+   -----------------------------------------------------
+   Requirements:
+   1. Keep the full-width DataTable-style page on normal desktops.
+   2. Keep the complete form visible without scrolling when the
+      viewport has enough vertical space.
+   3. Do NOT shrink text excessively just to force a fit.
+   4. On laptops / short-height / smaller screens, restore normal
+      page scrolling instead of clipping the bottom of the form.
+   5. Shared theme files remain untouched.
+   ===================================================== */
+
+
+/* -----------------------------------------------------
+   NORMAL / LARGE DESKTOP
+   Improve readability while still keeping the form in one screen.
+   ----------------------------------------------------- */
+@media (min-width: 1200px) and (min-height: 800px) {
+
+    /* Summary typography */
+    .ecms-summary-card .labelprofile {
+        font-size: .82rem !important;
+        line-height: 1.2 !important;
+    }
+
+    .ecms-summary-card label[id] {
+        font-size: .86rem !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Section bars */
+    .ecms-basicdetail-page .seven h1 {
+        height: 2rem !important;
+        min-height: 2rem !important;
+        padding: .3rem .75rem !important;
+        font-size: .94rem !important;
+        line-height: 1.1 !important;
+    }
+
+    /* Main field labels */
+    .ecms-basicdetail-page .col-form-label,
+    .ecms-basicdetail-page .form-label,
+    .ecms-basicdetail-page .font-weight-bold,
+    .ecms-basicdetail-page .labelprofile {
+        font-size: .80rem !important;
+        line-height: 1.18 !important;
+    }
+
+    /* Main fields */
+    .ecms-basicdetail-page .form-control,
+    .ecms-basicdetail-page .form-select,
+    .ecms-basicdetail-page select,
+    .ecms-basicdetail-page textarea,
+    .ecms-basicdetail-page .select2-container--default .select2-selection--single {
+        min-height: 2.05rem !important;
+        height: 2.05rem !important;
+        padding-top: .25rem !important;
+        padding-bottom: .25rem !important;
+        font-size: .80rem !important;
+    }
+
+        .ecms-basicdetail-page .select2-container--default
+        .select2-selection--single .select2-selection__rendered {
+            line-height: 1.9rem !important;
+            font-size: .80rem !important;
+        }
+
+    .ecms-basicdetail-page #IdenMark1 {
+        min-height: 3.7rem !important;
+        height: 3.7rem !important;
+        font-size: .80rem !important;
+    }
+
+    .ecms-basicdetail-page #PermanentAddress {
+        min-height: 5.25rem !important;
+        height: 5.25rem !important;
+        font-size: .80rem !important;
+        line-height: 1.3 !important;
+    }
+
+    /* Slightly tighter row spacing compensates for larger text. */
+    .ecms-basicdetail-page .row.mb-1,
+    .ecms-basicdetail-page .row.mb-2,
+    .ecms-basicdetail-page .row.mb-3 {
+        margin-bottom: .18rem !important;
+    }
+
+    /* Validation remains readable without consuming excessive height. */
+    .ecms-basicdetail-page .text-danger,
+    .ecms-basicdetail-page .text-red,
+    .ecms-basicdetail-page .field-validation-error {
+        font-size: .69rem !important;
+        line-height: 1.08 !important;
+    }
+
+    /* Declaration text */
+    .ecms-declaration-check .notefont {
+        font-size: .69rem !important;
+        line-height: 1.22 !important;
+    }
+
+    .ecms-basicdetail-page #btnsave {
+        min-height: 2.1rem !important;
+        padding: .38rem 1.35rem !important;
+        font-size: .80rem !important;
+    }
+
+
+    /* -------------------------------------------------
+       PHOTO / SIGNATURE
+       Larger, clearer labels without enlarging the column.
+       ------------------------------------------------- */
+    .ecms-media-card {
+        padding: .5rem !important;
+        gap: .35rem !important;
+    }
+
+    .ecms-media-card-icon {
+        flex-basis: 1.8rem !important;
+        width: 1.8rem !important;
+        height: 1.8rem !important;
+    }
+
+    .ecms-media-card-head strong {
+        font-size: .79rem !important;
+        line-height: 1.1 !important;
+    }
+
+    .ecms-media-card-head small {
+        font-size: .66rem !important;
+        line-height: 1.15 !important;
+    }
+
+    .ecms-photo-preview {
+        min-height: 6.1rem !important;
+    }
+
+    .ecms-signature-preview {
+        min-height: 3.1rem !important;
+    }
+
+    .ecms-media-upload-btn {
+        min-height: 2rem !important;
+        font-size: .74rem !important;
+    }
+
+    .ecms-media-limit {
+        font-size: .64rem !important;
+        line-height: 1.15 !important;
+    }
+}
+
+
+/* -----------------------------------------------------
+   SHORT-HEIGHT DESKTOP / LAPTOP
+   Example: 1366x768, 1440x768, browser with larger top chrome.
+
+   The earlier desktop rule intentionally hides the page scrollbar.
+   For these screens that is NOT appropriate, so explicitly restore
+   normal document flow and page scrolling.
+   ----------------------------------------------------- */
+@media (min-width: 1200px) and (max-height: 799.98px) {
+
+    html:has(.ecms-basicdetail-page),
+    body.ecms-basicdetail-body,
+    body:has(.ecms-basicdetail-page) {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        max-height: none !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        padding-bottom: calc(var(--ecms-footer-height, 32px) + 1rem) !important;
+    }
+
+        body:has(.ecms-basicdetail-page) .wrapper,
+        body:has(.ecms-basicdetail-page) .content-wrapper,
+        body:has(.ecms-basicdetail-page) .main-panel,
+        body:has(.ecms-basicdetail-page) .main-content,
+        body:has(.ecms-basicdetail-page) main {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
+    .ecms-basicdetail-shell {
+        position: static !important;
+        width: calc(100vw - 1rem) !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: .5rem auto calc(var(--ecms-footer-height, 32px) + 1rem) auto !important;
+        padding: .55rem !important;
+        overflow: visible !important;
+    }
+
+    .ecms-basicdetail-form,
+    .ecms-basicdetail-page,
+    .ecms-basicdetail-page > .row,
+    .ecms-form-wrap,
+    .ecms-initiate-card {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+        .ecms-basicdetail-page > .row {
+            display: grid !important;
+            grid-template-rows: auto auto !important;
+        }
+
+    .ecms-initiate-card {
+        display: block !important;
+    }
+
+        .ecms-initiate-card > .mt-2.ml-4 {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            padding: .75rem !important;
+            overflow: visible !important;
+        }
+
+            .ecms-initiate-card > .mt-2.ml-4 > .row {
+                height: auto !important;
+                min-height: 0 !important;
+                max-height: none !important;
+                grid-template-columns: 12.5rem minmax(0, 1fr) minmax(0, 1fr) !important;
+                grid-template-rows: auto auto auto !important;
+                overflow: visible !important;
+            }
+
+    .ecms-upload-column,
+    .ecms-left-fields,
+    .ecms-right-fields {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    /* Use normal readable sizes on a laptop; scrolling is allowed. */
+    .ecms-basicdetail-page .col-form-label,
+    .ecms-basicdetail-page .form-label,
+    .ecms-basicdetail-page .font-weight-bold,
+    .ecms-basicdetail-page .labelprofile {
+        font-size: .82rem !important;
+    }
+
+    .ecms-basicdetail-page .form-control,
+    .ecms-basicdetail-page .form-select,
+    .ecms-basicdetail-page select,
+    .ecms-basicdetail-page textarea,
+    .ecms-basicdetail-page .select2-container--default .select2-selection--single {
+        min-height: 2.15rem !important;
+        height: auto !important;
+        font-size: .82rem !important;
+    }
+
+    .ecms-basicdetail-page #IdenMark1 {
+        min-height: 4rem !important;
+        height: 4rem !important;
+    }
+
+    .ecms-basicdetail-page #PermanentAddress {
+        min-height: 5.8rem !important;
+        height: 5.8rem !important;
+    }
+
+    .ecms-media-stack {
+        height: auto !important;
+        min-height: 0 !important;
+    }
+
+    .ecms-media-card {
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ecms-photo-preview {
+        min-height: 7rem !important;
+    }
+
+    .ecms-signature-preview {
+        min-height: 3.6rem !important;
+    }
+}
+
+
+/* -----------------------------------------------------
+   TABLET / SMALLER WIDTH
+   Restore normal page scrolling. The old base CSS used
+   overflow:hidden on body, so this explicit override is required.
+   ----------------------------------------------------- */
+@media (max-width: 1199.98px) {
+
+    html:has(.ecms-basicdetail-page),
+    body.ecms-basicdetail-body,
+    body:has(.ecms-basicdetail-page) {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        max-height: none !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        padding-bottom: calc(var(--ecms-footer-height, 32px) + 1rem) !important;
+    }
+
+        body:has(.ecms-basicdetail-page) .wrapper,
+        body:has(.ecms-basicdetail-page) .content-wrapper,
+        body:has(.ecms-basicdetail-page) .main-panel,
+        body:has(.ecms-basicdetail-page) .main-content,
+        body:has(.ecms-basicdetail-page) main {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
+    .ecms-basicdetail-shell {
+        position: static !important;
+        width: calc(100vw - 1rem) !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: .5rem auto calc(var(--ecms-footer-height, 32px) + 1rem) auto !important;
+        overflow: visible !important;
+    }
+
+    .ecms-basicdetail-form,
+    .ecms-basicdetail-page,
+    .ecms-basicdetail-page > .row,
+    .ecms-form-wrap,
+    .ecms-initiate-card,
+    .ecms-initiate-card > .mt-2.ml-4 {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+        .ecms-initiate-card > .mt-2.ml-4 {
+            padding: .75rem !important;
+        }
+
+            .ecms-initiate-card > .mt-2.ml-4 > .row {
+                height: auto !important;
+                min-height: 0 !important;
+                max-height: none !important;
+                grid-template-rows: auto !important;
+                overflow: visible !important;
+            }
+
+        /* Do not force compact desktop font sizes on smaller screens. */
+        .ecms-basicdetail-page .col-form-label,
+        .ecms-basicdetail-page .form-label,
+        .ecms-basicdetail-page .font-weight-bold,
+        .ecms-basicdetail-page .labelprofile {
+            font-size: .84rem !important;
+            line-height: 1.25 !important;
+        }
+
+        .ecms-basicdetail-page .form-control,
+        .ecms-basicdetail-page .form-select,
+        .ecms-basicdetail-page select,
+        .ecms-basicdetail-page textarea,
+        .ecms-basicdetail-page .select2-container--default .select2-selection--single {
+            min-height: 2.25rem !important;
+            height: auto !important;
+            font-size: .84rem !important;
+        }
+
+        .ecms-basicdetail-page #IdenMark1 {
+            min-height: 4.25rem !important;
+            height: auto !important;
+        }
+
+        .ecms-basicdetail-page #PermanentAddress {
+            min-height: 6rem !important;
+            height: auto !important;
+        }
+
+    .ecms-media-card-head strong {
+        font-size: .84rem !important;
+    }
+
+    .ecms-media-card-head small,
+    .ecms-media-limit {
+        font-size: .72rem !important;
+    }
+
+    .ecms-media-upload-btn {
+        font-size: .78rem !important;
+    }
+}
+
+
+/* -----------------------------------------------------
+   PHONE
+   Use a simple single-column flow and normal page scrolling.
+   ----------------------------------------------------- */
+@media (max-width: 767.98px) {
+
+    .ecms-initiate-card > .mt-2.ml-4 > .row {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: .75rem !important;
+    }
+
+    .ecms-upload-column,
+    .ecms-left-fields,
+    .ecms-right-fields,
+    .ecms-initiate-card .col-xl-12 {
+        grid-column: 1 !important;
+    }
+
+    .ecms-media-stack {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ecms-summary-card > .mt-2.ml-4 > .row {
+        display: block !important;
+    }
+
+    .ecms-summary-card .form-group {
+        margin-bottom: .5rem !important;
+    }
+}

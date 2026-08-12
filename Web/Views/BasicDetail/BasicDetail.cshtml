@@ -88,79 +88,73 @@
 
                             <div class="row">
                                 <div class="col-xl-2 ecms-upload-column">
-                                    <div class="row mb-1 required">
-                                        <div class="col-xl-12">
-                                            <span class="text-danger text-center">Please upload only jpeg,jpg,png format</span>
+                                    <div class="ecms-media-stack">
 
-                                            <div class="col-sm-12">
+                                        <div class="ecms-media-card ecms-photo-card">
+                                            <div class="ecms-media-card-head">
+                                                <span class="ecms-media-card-icon"><i class="fa fa-user"></i></span>
+                                                <div>
+                                                    <strong>Photograph</strong>
+                                                    <small>JPG / JPEG / PNG · Max 200 KB</small>
+                                                </div>
+                                            </div>
 
+                                            <div class="ecms-media-preview ecms-photo-preview">
                                                 @if (Model.ExistingPhotoInBase64 != null)
                                                 {
-                                                    <div class="box">
-                                                        <div class="js--image-preview">
-                                                            <img id="PhotoPath" src="@Model.ExistingPhotoInBase64" height="158" width="180" loading="lazy" alt="Applicant photo preview" />
-                                                        </div>
-                                                        <div class="text-center mt-2">
-                                                            <button type="button" id="btnOpenPhotoModal" class="btn btn-sm btn-primary">
-                                                                Upload / Change Photo
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                    <img id="PhotoPath" src="@Model.ExistingPhotoInBase64" loading="lazy" alt="Applicant photo preview" />
                                                 }
                                                 else
                                                 {
-                                                    <div class="box">
-                                                        <div class="js--image-preview">
-                                                            <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="158" width="180" loading="lazy" alt="Applicant photo preview" />
-                                                        </div>
-                                                        <div class="text-center mt-2">
-                                                            <button type="button" id="btnOpenPhotoModal" class="btn btn-sm btn-primary">
-                                                                Upload Photo
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                    <img id="PhotoPath" src="~/writereaddata/images/noimage.png" loading="lazy" alt="Applicant photo preview" />
                                                 }
+                                            </div>
 
+                                            <button type="button" id="btnOpenPhotoModal" class="btn btn-primary ecms-media-upload-btn">
+                                                <i class="fa fa-camera mr-1"></i>
+                                                @(Model.ExistingPhotoInBase64 != null ? "Change Photo" : "Upload Photo")
+                                            </button>
+
+                                            <div class="ecms-media-feedback">
                                                 <span id="lblPhoto" class="text-red"></span>
                                                 <span asp-validation-for="Photo_" class="text-danger"></span>
-                                                <span id="lblPhotoNotification" class="text-danger">Photo Upload Upto 200KB</span>
+                                                <span id="lblPhotoNotification" class="ecms-media-limit">Passport-size colour photograph</span>
                                             </div>
                                         </div>
 
-                                        <div class="col-xl-12">
-                                            <div class="col-sm-12">
+
+                                        <div class="ecms-media-card ecms-signature-card">
+                                            <div class="ecms-media-card-head">
+                                                <span class="ecms-media-card-icon"><i class="fa fa-pen-nib"></i></span>
+                                                <div>
+                                                    <strong>Signature</strong>
+                                                    <small>JPG / JPEG / PNG · Max 50 KB</small>
+                                                </div>
+                                            </div>
+
+                                            <div class="ecms-media-preview ecms-signature-preview">
                                                 @if (Model.ExistingSignatureInBase64 != null)
                                                 {
-                                                    <div class="box_sig">
-                                                        <div class="js--image-preview_sig">
-                                                            <img id="SignaturePath" src="@Model.ExistingSignatureInBase64" height="80" width="180" loading="lazy" alt="Applicant signature preview" />
-                                                        </div>
-                                                        <div class="text-center mt-2">
-                                                            <button type="button" id="btnOpenSignatureModal" class="btn btn-sm btn-primary">
-                                                                Upload / Change Signature
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                    <img id="SignaturePath" src="@Model.ExistingSignatureInBase64" loading="lazy" alt="Applicant signature preview" />
                                                 }
                                                 else
                                                 {
-                                                    <div class="box_sig">
-                                                        <div class="js--image-preview_sig">
-                                                            <img id="SignaturePath" src="~/writereaddata/images/noimage.png" height="80" width="180" loading="lazy" alt="Applicant signature preview" />
-                                                        </div>
-                                                        <div class="text-center mt-2">
-                                                            <button type="button" id="btnOpenSignatureModal" class="btn btn-sm btn-primary">
-                                                                Upload Signature
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                    <img id="SignaturePath" src="~/writereaddata/images/noimage.png" loading="lazy" alt="Applicant signature preview" />
                                                 }
+                                            </div>
 
+                                            <button type="button" id="btnOpenSignatureModal" class="btn btn-primary ecms-media-upload-btn">
+                                                <i class="fa fa-signature mr-1"></i>
+                                                @(Model.ExistingSignatureInBase64 != null ? "Change Signature" : "Upload Signature")
+                                            </button>
+
+                                            <div class="ecms-media-feedback">
                                                 <span id="lblSignature" class="text-red"></span>
                                                 <span asp-validation-for="Signature_" class="text-danger"></span>
-                                                <span id="lblSignatureNotification" class="text-danger">Signature Upload Upto 50KB</span>
+                                                <span id="lblSignatureNotification" class="ecms-media-limit">Clear blue/black ink signature</span>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                                 <div class="col-xl-5 ecms-field-column ecms-left-fields">
@@ -249,7 +243,7 @@
                                             <input type="text" id="DOB_" name="DOB_" class="form-control" value="@Model.DOB.ToString("dd-MMM-yyyy")" readonly />
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="col-xl-4 ecms-field-column ecms-right-fields">
                                     <div class="row mb-1 required">
@@ -357,96 +351,144 @@
 
 
         <!-- Photo Upload Modal -->
-        <div class="modal fade" id="photoUploadModal" tabindex="-1" role="dialog" aria-labelledby="photoUploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal fade ecms-media-modal ecms-photo-modal" id="photoUploadModal" tabindex="-1" role="dialog" aria-labelledby="photoUploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="photoUploadModalTitle">Upload Photograph</h5>
-                        <button type="button" class="close js-photo-cancel" aria-label="Close">
+                        <div class="ecms-media-modal-title">
+                            <span class="ecms-media-modal-icon"><i class="fa fa-camera"></i></span>
+                            <div>
+                                <h5 class="modal-title" id="photoUploadModalTitle">Upload Photograph</h5>
+                                <small>Review the image before applying it to the I-Card request</small>
+                            </div>
+                        </div>
+                        <button type="button" class="close js-photo-cancel ecms-media-close" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="alert alert-info mb-0" role="note">
-                                    <strong>Photograph requirements</strong>
-                                    <ul class="mb-0 mt-2 pl-3">
-                                        <li>File format: JPG, JPEG or PNG only.</li>
-                                        <li>Maximum file size: 200 KB.</li>
-                                        <li>Use a recent passport-size colour photograph.</li>
-                                        <li>Use a plain white or light-coloured background.</li>
-                                        <li>Face should be front-facing, centred and clearly visible.</li>
-                                        <li>Avoid cap, dark glasses, blur, heavy shadow or cropped face.</li>
-                                    </ul>
+                        <div class="ecms-media-modal-grid">
+                            <aside class="ecms-media-guidance" role="note">
+                                <div class="ecms-media-guidance-title">
+                                    <i class="fa fa-check-circle"></i>
+                                    Photograph requirements
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="Photo_" class="font-weight-bold">Select photograph</label>
-                                <input asp-for="Photo_" id="Photo_" type="file" form="SaveForm" class="form-control-file" accept="image/jpeg,image/jpg,image/png" />
-                                <small class="form-text text-muted">The page preview will change only after you confirm this photograph.</small>
+                                <ul>
+                                    <li>JPG, JPEG or PNG only.</li>
+                                    <li>Maximum file size: <strong>200 KB</strong>.</li>
+                                    <li>Recent passport-size colour photograph.</li>
+                                    <li>Plain white or light-coloured background.</li>
+                                    <li>Face front-facing, centred and clearly visible.</li>
+                                    <li>No cap, dark glasses, blur, heavy shadow or cropped face.</li>
+                                </ul>
+                            </aside>
 
-                                <div id="PhotoModalMessage" class="text-danger mt-2" aria-live="polite"></div>
+                            <div class="ecms-media-picker-panel">
+                                <label for="Photo_" class="ecms-media-picker-label">
+                                    <i class="fa fa-image"></i>
+                                    Select photograph
+                                </label>
+                                <div class="ecms-media-file-shell">
+                                    <input asp-for="Photo_" id="Photo_" type="file" form="SaveForm" class="form-control-file" accept="image/jpeg,image/jpg,image/png" />
+                                </div>
+                                <small class="ecms-media-picker-help">The main page preview changes only after you confirm the selected photograph.</small>
 
-                                <div id="PhotoModalPreviewWrap" class="text-center mt-3 d-none">
-                                    <div class="font-weight-bold mb-2">Selected Photo Preview</div>
-                                    <img id="PhotoModalPreview" class="img-thumbnail" width="220" height="260" alt="Selected photograph preview" />
-                                    <div id="PhotoModalFileInfo" class="small text-muted mt-2"></div>
+                                <div id="PhotoModalMessage" class="text-danger ecms-media-modal-message" aria-live="polite"></div>
+
+                                <div id="PhotoModalPreviewWrap" class="ecms-media-selected-preview d-none">
+                                    <div class="ecms-media-selected-title">
+                                        <i class="fa fa-eye"></i>
+                                        Selected Photo Preview
+                                    </div>
+                                    <div class="ecms-media-selected-stage ecms-media-selected-photo">
+                                        <img id="PhotoModalPreview" alt="Selected photograph preview" />
+                                    </div>
+                                    <div id="PhotoModalFileInfo" class="ecms-media-file-info"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary js-photo-cancel">Cancel</button>
-                        <button type="button" id="btnUsePhoto" class="btn btn-primary" disabled>Use Photo &amp; Close</button>
+                        <button type="button" class="btn btn-secondary js-photo-cancel">
+                            <i class="fa fa-times mr-1"></i>Cancel
+                        </button>
+                        <button type="button" id="btnUsePhoto" class="btn btn-primary" disabled>
+                            <i class="fa fa-check mr-1"></i>Use Photo &amp; Close
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Signature Upload Modal -->
-        <div class="modal fade" id="signatureUploadModal" tabindex="-1" role="dialog" aria-labelledby="signatureUploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal fade ecms-media-modal ecms-signature-modal" id="signatureUploadModal" tabindex="-1" role="dialog" aria-labelledby="signatureUploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="signatureUploadModalTitle">Upload Signature</h5>
-                        <button type="button" class="close js-signature-cancel" aria-label="Close">
+                        <div class="ecms-media-modal-title">
+                            <span class="ecms-media-modal-icon"><i class="fa fa-signature"></i></span>
+                            <div>
+                                <h5 class="modal-title" id="signatureUploadModalTitle">Upload Signature</h5>
+                                <small>Confirm a clean signature image before applying it to the request</small>
+                            </div>
+                        </div>
+                        <button type="button" class="close js-signature-cancel ecms-media-close" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="alert alert-info mb-0" role="note">
-                                    <strong>Signature requirements</strong>
-                                    <ul class="mb-0 mt-2 pl-3">
-                                        <li>File format: JPG, JPEG or PNG only.</li>
-                                        <li>Maximum file size: 50 KB.</li>
-                                        <li>Use a plain white or light-coloured background.</li>
-                                        <li>Use a clear blue or black ink signature.</li>
-                                        <li>Keep the complete signature inside the image.</li>
-                                        <li>Avoid blur, shadow, extra text or unnecessary background.</li>
-                                    </ul>
+                        <div class="ecms-media-modal-grid">
+                            <aside class="ecms-media-guidance" role="note">
+                                <div class="ecms-media-guidance-title">
+                                    <i class="fa fa-check-circle"></i>
+                                    Signature requirements
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="Signature_" class="font-weight-bold">Select signature</label>
-                                <input asp-for="Signature_" id="Signature_" type="file" form="SaveForm" class="form-control-file" accept="image/jpeg,image/jpg,image/png" />
-                                <small class="form-text text-muted">The page preview will change only after you confirm this signature.</small>
+                                <ul>
+                                    <li>JPG, JPEG or PNG only.</li>
+                                    <li>Maximum file size: <strong>50 KB</strong>.</li>
+                                    <li>Plain white or light-coloured background.</li>
+                                    <li>Clear blue or black ink signature.</li>
+                                    <li>Complete signature must remain inside the image.</li>
+                                    <li>No blur, shadow, extra text or unnecessary background.</li>
+                                </ul>
+                            </aside>
 
-                                <div id="SignatureModalMessage" class="text-danger mt-2" aria-live="polite"></div>
+                            <div class="ecms-media-picker-panel">
+                                <label for="Signature_" class="ecms-media-picker-label">
+                                    <i class="fa fa-pen-nib"></i>
+                                    Select signature
+                                </label>
+                                <div class="ecms-media-file-shell">
+                                    <input asp-for="Signature_" id="Signature_" type="file" form="SaveForm" class="form-control-file" accept="image/jpeg,image/jpg,image/png" />
+                                </div>
+                                <small class="ecms-media-picker-help">The main page preview changes only after you confirm the selected signature.</small>
 
-                                <div id="SignatureModalPreviewWrap" class="text-center mt-3 d-none">
-                                    <div class="font-weight-bold mb-2">Selected Signature Preview</div>
-                                    <img id="SignatureModalPreview" class="img-thumbnail" width="300" height="120" alt="Selected signature preview" />
-                                    <div id="SignatureModalFileInfo" class="small text-muted mt-2"></div>
+                                <div id="SignatureModalMessage" class="text-danger ecms-media-modal-message" aria-live="polite"></div>
+
+                                <div id="SignatureModalPreviewWrap" class="ecms-media-selected-preview d-none">
+                                    <div class="ecms-media-selected-title">
+                                        <i class="fa fa-eye"></i>
+                                        Selected Signature Preview
+                                    </div>
+                                    <div class="ecms-media-selected-stage ecms-media-selected-signature">
+                                        <img id="SignatureModalPreview" alt="Selected signature preview" />
+                                    </div>
+                                    <div id="SignatureModalFileInfo" class="ecms-media-file-info"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary js-signature-cancel">Cancel</button>
-                        <button type="button" id="btnUseSignature" class="btn btn-primary" disabled>Use Signature &amp; Close</button>
+                        <button type="button" class="btn btn-secondary js-signature-cancel">
+                            <i class="fa fa-times mr-1"></i>Cancel
+                        </button>
+                        <button type="button" id="btnUseSignature" class="btn btn-primary" disabled>
+                            <i class="fa fa-check mr-1"></i>Use Signature &amp; Close
+                        </button>
                     </div>
                 </div>
             </div>
