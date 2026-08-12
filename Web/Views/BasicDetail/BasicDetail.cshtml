@@ -97,27 +97,30 @@
                                                 @if (Model.ExistingPhotoInBase64 != null)
                                                 {
                                                     <div class="box">
-
-                                                        <div class="js--image-preview"> <img id="PhotoPath" src="@Model.ExistingPhotoInBase64" height="158px" width="180px" loading="lazy" /></div>
-                                                        <div class="upload-options">
-                                                            <label>
-                                                                <input asp-for="Photo_" class="form-control alpha-num-only" accept="image/jpeg,image/jpg,image/png" />
-                                                            </label>
+                                                        <div class="js--image-preview">
+                                                            <img id="PhotoPath" src="@Model.ExistingPhotoInBase64" height="158" width="180" loading="lazy" alt="Applicant photo preview" />
+                                                        </div>
+                                                        <div class="text-center mt-2">
+                                                            <button type="button" id="btnOpenPhotoModal" class="btn btn-sm btn-primary">
+                                                                Upload / Change Photo
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 }
                                                 else
                                                 {
                                                     <div class="box">
-                                                        <div class="js--image-preview"> <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="158px" width="180px" loading="lazy" /></div>
-                                                        <div class="upload-options">
-                                                            <label>
-                                                                <input asp-for="Photo_" class="form-control alpha-num-only" accept="image/jpeg,image/jpg,image/png" />
-                                                            </label>
+                                                        <div class="js--image-preview">
+                                                            <img id="PhotoPath" src="~/writereaddata/images/noimage.png" height="158" width="180" loading="lazy" alt="Applicant photo preview" />
+                                                        </div>
+                                                        <div class="text-center mt-2">
+                                                            <button type="button" id="btnOpenPhotoModal" class="btn btn-sm btn-primary">
+                                                                Upload Photo
+                                                            </button>
                                                         </div>
                                                     </div>
-
                                                 }
+
                                                 <span id="lblPhoto" class="text-red"></span>
                                                 <span asp-validation-for="Photo_" class="text-danger"></span>
                                                 <span id="lblPhotoNotification" class="text-danger">Photo Upload Upto 200KB</span>
@@ -125,35 +128,37 @@
                                         </div>
 
                                         <div class="col-xl-12">
-
-                                             
                                             <div class="col-sm-12">
                                                 @if (Model.ExistingSignatureInBase64 != null)
                                                 {
                                                     <div class="box_sig">
-                                                        <div class="js--image-preview_sig"> <img id="SignaturePath" src="@Model.ExistingSignatureInBase64" height="80px" width="180px" loading="lazy" /></div>
-                                                        <div class="upload-options_sign">
-                                                            <label>
-                                                                <input asp-for="Signature_" class="form-control alpha-num-only" accept="image/jpeg,image/jpg,image/png" loading="lazy" />
-                                                            </label>
+                                                        <div class="js--image-preview_sig">
+                                                            <img id="SignaturePath" src="@Model.ExistingSignatureInBase64" height="80" width="180" loading="lazy" alt="Applicant signature preview" />
+                                                        </div>
+                                                        <div class="text-center mt-2">
+                                                            <button type="button" id="btnOpenSignatureModal" class="btn btn-sm btn-primary">
+                                                                Upload / Change Signature
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 }
                                                 else
                                                 {
                                                     <div class="box_sig">
-                                                        <div class="js--image-preview_sig">  <img id="SignaturePath" src="~/writereaddata/images/noimage.png" height="80px" width="180px" loading="lazy" /></div>
-                                                        <div class="upload-options_sign">
-                                                            <label>
-
-                                                                <input asp-for="Signature_" class="form-control alpha-num-only" accept="image/jpeg,image/jpg,image/png" />
-                                                            </label>
+                                                        <div class="js--image-preview_sig">
+                                                            <img id="SignaturePath" src="~/writereaddata/images/noimage.png" height="80" width="180" loading="lazy" alt="Applicant signature preview" />
+                                                        </div>
+                                                        <div class="text-center mt-2">
+                                                            <button type="button" id="btnOpenSignatureModal" class="btn btn-sm btn-primary">
+                                                                Upload Signature
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 }
+
                                                 <span id="lblSignature" class="text-red"></span>
                                                 <span asp-validation-for="Signature_" class="text-danger"></span>
-                                                <span id="lblSignatureNotification" class="text-danger"> Signature Upload Upto 50KB</span>
+                                                <span id="lblSignatureNotification" class="text-danger">Signature Upload Upto 50KB</span>
                                             </div>
                                         </div>
                                     </div>
@@ -348,6 +353,104 @@
 
             </div>
         </div>
+
+
+        <!-- Photo Upload Modal -->
+        <div class="modal fade" id="photoUploadModal" tabindex="-1" role="dialog" aria-labelledby="photoUploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="photoUploadModalTitle">Upload Photograph</h5>
+                        <button type="button" class="close js-photo-cancel" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="alert alert-info mb-0" role="note">
+                                    <strong>Photograph requirements</strong>
+                                    <ul class="mb-0 mt-2 pl-3">
+                                        <li>File format: JPG, JPEG or PNG only.</li>
+                                        <li>Maximum file size: 200 KB.</li>
+                                        <li>Use a recent passport-size colour photograph.</li>
+                                        <li>Use a plain white or light-coloured background.</li>
+                                        <li>Face should be front-facing, centred and clearly visible.</li>
+                                        <li>Avoid cap, dark glasses, blur, heavy shadow or cropped face.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="Photo_" class="font-weight-bold">Select photograph</label>
+                                <input asp-for="Photo_" id="Photo_" type="file" form="SaveForm" class="form-control-file" accept="image/jpeg,image/jpg,image/png" />
+                                <small class="form-text text-muted">The page preview will change only after you confirm this photograph.</small>
+
+                                <div id="PhotoModalMessage" class="text-danger mt-2" aria-live="polite"></div>
+
+                                <div id="PhotoModalPreviewWrap" class="text-center mt-3 d-none">
+                                    <div class="font-weight-bold mb-2">Selected Photo Preview</div>
+                                    <img id="PhotoModalPreview" class="img-thumbnail" width="220" height="260" alt="Selected photograph preview" />
+                                    <div id="PhotoModalFileInfo" class="small text-muted mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary js-photo-cancel">Cancel</button>
+                        <button type="button" id="btnUsePhoto" class="btn btn-primary" disabled>Use Photo &amp; Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signature Upload Modal -->
+        <div class="modal fade" id="signatureUploadModal" tabindex="-1" role="dialog" aria-labelledby="signatureUploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="signatureUploadModalTitle">Upload Signature</h5>
+                        <button type="button" class="close js-signature-cancel" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="alert alert-info mb-0" role="note">
+                                    <strong>Signature requirements</strong>
+                                    <ul class="mb-0 mt-2 pl-3">
+                                        <li>File format: JPG, JPEG or PNG only.</li>
+                                        <li>Maximum file size: 50 KB.</li>
+                                        <li>Use a plain white or light-coloured background.</li>
+                                        <li>Use a clear blue or black ink signature.</li>
+                                        <li>Keep the complete signature inside the image.</li>
+                                        <li>Avoid blur, shadow, extra text or unnecessary background.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="Signature_" class="font-weight-bold">Select signature</label>
+                                <input asp-for="Signature_" id="Signature_" type="file" form="SaveForm" class="form-control-file" accept="image/jpeg,image/jpg,image/png" />
+                                <small class="form-text text-muted">The page preview will change only after you confirm this signature.</small>
+
+                                <div id="SignatureModalMessage" class="text-danger mt-2" aria-live="polite"></div>
+
+                                <div id="SignatureModalPreviewWrap" class="text-center mt-3 d-none">
+                                    <div class="font-weight-bold mb-2">Selected Signature Preview</div>
+                                    <img id="SignatureModalPreview" class="img-thumbnail" width="300" height="120" alt="Selected signature preview" />
+                                    <div id="SignatureModalFileInfo" class="small text-muted mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary js-signature-cancel">Cancel</button>
+                        <button type="button" id="btnUseSignature" class="btn btn-primary" disabled>Use Signature &amp; Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </form>
 </div>
 @* </div> *@

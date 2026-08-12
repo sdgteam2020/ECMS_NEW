@@ -1,4 +1,9 @@
 ﻿var skey = "";
+
+let photoOriginalFiles = [];
+let signatureOriginalFiles = [];
+let pendingPhotoDataUrl = "";
+let pendingSignatureDataUrl = "";
 $(async function () {
     globalThis.RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
 
@@ -13,12 +18,7 @@ $(async function () {
         }
     });
 
-    $("#Signature_").on("change", function () {
-        beforeUploadSignatureCheck(this);
-    });
-    $("#Photo_").on("change", function () {
-        beforeUploadPhotoCheck(this);
-    });
+    initializeMediaUploadModals();
     if ($("#spnBloodGroupId").val() > 0) {
         mMsater($("#spnBloodGroupId").val(), "BloodGroupId", BloodGroup, "");
     }
@@ -296,6 +296,9 @@ function GetRegimentalListByArmedId(ArmedId, sectid) {
         }
     });
 }
+function isInvalidValue(val) {
+    return val === null || val === undefined || val.toString().trim() === '' || val === '0';
+}
 window.addEventListener("load", function () {
     if ($.validator) {
         $.validator.addMethod("regimentalRequired", function (value, element) {
@@ -343,7 +346,6 @@ async function CheckValidation() {
 
     $("#EncryptedData").val(encrypted);
 
-    $("#SaveForm")[0].submit(); // native submit
     return true;
 }
 function GetUnit() {
@@ -423,116 +425,237 @@ function getApplyIcardDetails() {
         }
     });
 }
-function beforeUploadSignatureCheck(id) {
-    $("#lblSignature").html("");
-    //$("#Signature_").prop('required', true);
-    const file = id.files[0];
-    if (file) {
-        var size = parseFloat(file.size);
-        var maxSizeKB = 50; //Size in KB.
-        var maxSize = maxSizeKB * 1024; //File size is returned in Bytes.
-        var allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        if (!allowedTypes.includes(file.type)) {
-            $("#lblSignature").html("Invalid file type. Only JPG, JPEG, and PNG files are allowed. </br>");
-            $("#lblSignatureNotification").addClass("text-danger");
-            $("#lblSignatureNotification").removeClass("text-success");
-            //$("#SignaturePath").attr({
-            //    'src': '/writereaddata/images/noimage.png',
-            //    'width': '180px',
-            //    'height': '80px'
-            //});
-            $("#Signature_").val(null);
-            return false;
-        }
-        else {
-            if (size > maxSize) {
-                $("#lblSignature").html("Maximum file size " + maxSizeKB + "KB allowed.");
-                //$("#SignaturePath").attr({
-                //    'src': '/writereaddata/images/noimage.png',
-                //    'width': '180px',
-                //    'height': '80px'
-                //});
-                $("#Signature_").val(null);
-                $("#lblSignatureNotification").addClass("text-danger");
-                $("#lblSignatureNotification").removeClass("text-success");
-                return false;
-            }
-            else {
-                $("#lblSignatureNotification").addClass("text-success");
-                $("#lblSignatureNotification").removeClass("text-danger");
-                signatureChange(id);
-            }
+function initializeMediaUploadModals() {
+    $("#btnOpenPhotoModal").on("click", function () {
+        const photoInput = document.getElementById("Photo_");
+        photoOriginalFiles = getCurrentFiles(photoInput);
+        clearPhotoModalState();
+        $("#photoUploadModal").modal("show");
+    });
+
+    $("#btnOpenSignatureModal").on("click", function () {
+        const signatureInput = document.getElementById("Signature_");
+        signatureOriginalFiles = getCurrentFiles(signatureInput);
+        clearSignatureModalState();
+        $("#signatureUploadModal").modal("show");
+    });
+
+    $("#Photo_").on("change", function () {
+        handlePhotoSelection(this);
+    });
+
+    $("#Signature_").on("change", function () {
+        handleSignatureSelection(this);
+    });
+
+    $("#btnUsePhoto").on("click", function () {
+        if (!pendingPhotoDataUrl || !document.getElementById("Photo_").files.length) {
+            return;
         }
 
-    }
-}
-function beforeUploadPhotoCheck(id) {
-    $("#lblPhoto").html("");
-    const file = id.files[0];
-    if (file) {
-        var size = parseFloat(file.size);
-        var maxSizeKB = 200; //Size in KB.
-        var maxSize = maxSizeKB * 1024; //File size is returned in Bytes.
-        var allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        $("#PhotoPath").attr("src", pendingPhotoDataUrl);
+        $("#lblPhoto").html("");
+        $("#lblPhotoNotification")
+            .removeClass("text-danger")
+            .addClass("text-success")
+            .text("Photo selected successfully");
 
-        if (!allowedTypes.includes(file.type)) {
-            $("#lblPhoto").html("Invalid file type. Only JPG, JPEG, and PNG files are allowed. </br>");
-            $("#lblPhotoNotification").addClass("text-danger");
-            $("#lblPhotoNotification").removeClass("text-success");
-            //$("#PhotoPath").attr({
-            //    'src': '/writereaddata/images/noimage.png',
-            //    'width': '180px',
-            //    'height': '158px'
-            //});
-            $("#Photo_").val(null);
-            return false;
+        $("#btnOpenPhotoModal").text("Upload / Change Photo");
+        $("#photoUploadModal").modal("hide");
+    });
+
+    $("#btnUseSignature").on("click", function () {
+        if (!pendingSignatureDataUrl || !document.getElementById("Signature_").files.length) {
+            return;
         }
-        else {
-            if (size > maxSize) {
-                $("#lblPhoto").html("Maximum file size " + maxSizeKB + "KB allowed. </br>");
-                //$("#PhotoPath").attr({
-                //    'src': '/writereaddata/images/noimage.png',
-                //    'width': '180px',
-                //    'height': '158px'
-                //});
-                $("#Photo_").val(null);
-                $("#lblPhotoNotification").addClass("text-danger");
-                $("#lblPhotoNotification").removeClass("text-success");
-                return false;
-            } else {
-                $("#lblPhotoNotification").addClass("text-success");
-                $("#lblPhotoNotification").removeClass("text-danger");
-                photoChange(id);
-            }
-        }
-    }
-}
-function isInvalidValue(val) {
-    return val === null || val === undefined || val.toString().trim() === '' || val === '0';
-}
-function signatureChange(id) {
-    const file = id.files[0];
-    if (file) {
-        let reader = new FileReader();
-        reader.onload = function (event) {
-            $("#SignaturePath")
-                .attr("src", event.target.result);
-        };
-        reader.readAsDataURL(file);
-    }
-}
-function photoChange(id) {
-    const file = id.files[0];
-    if (file) {
-        let reader = new FileReader();
-        reader.onload = function (event) {
-            $("#PhotoPath")
-                .attr("src", event.target.result);
-        };
-        reader.readAsDataURL(file);
-    }
+
+        $("#SignaturePath").attr("src", pendingSignatureDataUrl);
+        $("#lblSignature").html("");
+        $("#lblSignatureNotification")
+            .removeClass("text-danger")
+            .addClass("text-success")
+            .text("Signature selected successfully");
+
+        $("#btnOpenSignatureModal").text("Upload / Change Signature");
+        $("#signatureUploadModal").modal("hide");
+    });
+
+    $(document).on("click", ".js-photo-cancel", function () {
+        restoreInputFiles(document.getElementById("Photo_"), photoOriginalFiles);
+        $("#photoUploadModal").modal("hide");
+    });
+
+    $(document).on("click", ".js-signature-cancel", function () {
+        restoreInputFiles(document.getElementById("Signature_"), signatureOriginalFiles);
+        $("#signatureUploadModal").modal("hide");
+    });
+
+    $("#photoUploadModal").on("hidden.bs.modal", function () {
+        clearPhotoModalState();
+    });
+
+    $("#signatureUploadModal").on("hidden.bs.modal", function () {
+        clearSignatureModalState();
+    });
 }
 
+function handlePhotoSelection(input) {
+    clearPhotoValidationMessage();
+    pendingPhotoDataUrl = "";
+    $("#btnUsePhoto").prop("disabled", true);
+    $("#PhotoModalPreviewWrap").addClass("d-none");
+
+    const file = input.files && input.files[0];
+    if (!file) {
+        return;
+    }
+
+    const validationMessage = validateImageUpload(file, 200);
+    if (validationMessage) {
+        $("#PhotoModalMessage").text(validationMessage);
+        input.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        pendingPhotoDataUrl = event.target.result;
+        $("#PhotoModalPreview").attr("src", pendingPhotoDataUrl);
+        $("#PhotoModalFileInfo").text(buildFileInfo(file));
+        $("#PhotoModalPreviewWrap").removeClass("d-none");
+        $("#PhotoModalMessage")
+            .removeClass("text-danger")
+            .addClass("text-success")
+            .text("Photo is valid. Review it and click Use Photo & Close.");
+        $("#btnUsePhoto").prop("disabled", false);
+    };
+    reader.onerror = function () {
+        $("#PhotoModalMessage").text("Unable to read the selected photo. Please choose another file.");
+        input.value = "";
+    };
+    reader.readAsDataURL(file);
+}
+
+function handleSignatureSelection(input) {
+    clearSignatureValidationMessage();
+    pendingSignatureDataUrl = "";
+    $("#btnUseSignature").prop("disabled", true);
+    $("#SignatureModalPreviewWrap").addClass("d-none");
+
+    const file = input.files && input.files[0];
+    if (!file) {
+        return;
+    }
+
+    const validationMessage = validateImageUpload(file, 50);
+    if (validationMessage) {
+        $("#SignatureModalMessage").text(validationMessage);
+        input.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        pendingSignatureDataUrl = event.target.result;
+        $("#SignatureModalPreview").attr("src", pendingSignatureDataUrl);
+        $("#SignatureModalFileInfo").text(buildFileInfo(file));
+        $("#SignatureModalPreviewWrap").removeClass("d-none");
+        $("#SignatureModalMessage")
+            .removeClass("text-danger")
+            .addClass("text-success")
+            .text("Signature is valid. Review it and click Use Signature & Close.");
+        $("#btnUseSignature").prop("disabled", false);
+    };
+    reader.onerror = function () {
+        $("#SignatureModalMessage").text("Unable to read the selected signature. Please choose another file.");
+        input.value = "";
+    };
+    reader.readAsDataURL(file);
+}
+
+function validateImageUpload(file, maxSizeKB) {
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+    if (!allowedTypes.includes(file.type)) {
+        return "Invalid file type. Only JPG, JPEG and PNG files are allowed.";
+    }
+
+    const maxSizeBytes = maxSizeKB * 1024;
+    if (file.size > maxSizeBytes) {
+        return "Maximum file size " + maxSizeKB + " KB allowed. Selected file is " + formatFileSize(file.size) + ".";
+    }
+
+    return "";
+}
+
+function buildFileInfo(file) {
+    return file.name + " • " + formatFileSize(file.size);
+}
+
+function formatFileSize(bytes) {
+    return (bytes / 1024).toFixed(1) + " KB";
+}
+
+function getCurrentFiles(input) {
+    if (!input || !input.files) {
+        return [];
+    }
+
+    return Array.from(input.files);
+}
+
+function restoreInputFiles(input, files) {
+    if (!input) {
+        return;
+    }
+
+    if (!files || files.length === 0) {
+        input.value = "";
+        return;
+    }
+
+    if (typeof DataTransfer === "undefined") {
+        return;
+    }
+
+    const transfer = new DataTransfer();
+    files.forEach(function (file) {
+        transfer.items.add(file);
+    });
+    input.files = transfer.files;
+}
+
+function clearPhotoValidationMessage() {
+    $("#PhotoModalMessage")
+        .removeClass("text-success")
+        .addClass("text-danger")
+        .text("");
+}
+
+function clearSignatureValidationMessage() {
+    $("#SignatureModalMessage")
+        .removeClass("text-success")
+        .addClass("text-danger")
+        .text("");
+}
+
+function clearPhotoModalState() {
+    pendingPhotoDataUrl = "";
+    clearPhotoValidationMessage();
+    $("#PhotoModalPreview").attr("src", "");
+    $("#PhotoModalFileInfo").text("");
+    $("#PhotoModalPreviewWrap").addClass("d-none");
+    $("#btnUsePhoto").prop("disabled", true);
+}
+
+function clearSignatureModalState() {
+    pendingSignatureDataUrl = "";
+    clearSignatureValidationMessage();
+    $("#SignatureModalPreview").attr("src", "");
+    $("#SignatureModalFileInfo").text("");
+    $("#SignatureModalPreviewWrap").addClass("d-none");
+    $("#btnUseSignature").prop("disabled", true);
+}
 
 /* BasicDetail UI-only helper */
 $(function () {
