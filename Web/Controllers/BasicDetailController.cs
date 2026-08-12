@@ -1582,9 +1582,15 @@ namespace Web.Controllers
                 }
                 else
                 {
+                    // Get files BEFORE replacing model
+
                     IFormFile photoes = model.Photo_;
                     IFormFile Signture = model.Signature_;
+
+                    // Replace normal values with decrypted DTO
                     model = modeldec;
+                    
+                    // Put multipart files back into decrypted model
                     model.Photo_ = photoes;
                     model.Signature_ = Signture;
 
